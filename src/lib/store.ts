@@ -111,6 +111,13 @@ export const useHubStore = create<HubStore>()(
           status: "connected",
           lastSync: "2026-01-26T17:00:00Z",
         },
+        {
+          id: "4",
+          name: "Google",
+          type: "google",
+          status: "connected",
+          lastSync: "2026-01-26T17:00:00Z",
+        },
       ],
 
       // Initial skills

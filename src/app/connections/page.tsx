@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useHubStore, Connection } from "@/lib/store";
-import { Plus, Trash2, RefreshCw, ExternalLink, X, Check, AlertCircle } from "lucide-react";
+import { Plus, Trash2, RefreshCw, X, Check, AlertCircle } from "lucide-react";
 
 const connectionTypes: { type: Connection["type"]; name: string; icon: string }[] = [
   { type: "github", name: "GitHub", icon: "🐙" },
@@ -44,14 +44,14 @@ export default function ConnectionsPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Connections</h1>
-          <p className="text-gray-400 mt-1">Manage your service integrations</p>
+          <h1 className="text-2xl lg:text-3xl font-bold">Connections</h1>
+          <p className="text-gray-400 mt-1 text-sm lg:text-base">Manage your service integrations</p>
         </div>
         <button
           onClick={() => setShowModal(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-accent-purple rounded-lg hover:bg-accent-purple/80 transition-colors"
+          className="flex items-center justify-center gap-2 px-4 py-2 bg-accent-purple rounded-lg hover:bg-accent-purple/80 transition-colors w-full sm:w-auto"
         >
           <Plus className="w-5 h-5" />
           Add Connection
@@ -59,20 +59,20 @@ export default function ConnectionsPage() {
       </div>
 
       {/* Connections Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-4">
         {connections.map((conn) => {
           const typeInfo = connectionTypes.find((t) => t.type === conn.type);
           return (
             <div
               key={conn.id}
-              className="bg-dark-800 rounded-xl border border-dark-600 p-6 hover:border-dark-500 transition-all"
+              className="bg-dark-800 rounded-xl border border-dark-600 p-4 lg:p-6 hover:border-dark-500 transition-all"
             >
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
-                  <span className="text-3xl">{typeInfo?.icon || "🔧"}</span>
+                  <span className="text-2xl lg:text-3xl">{typeInfo?.icon || "🔧"}</span>
                   <div>
-                    <h3 className="font-semibold">{conn.name}</h3>
-                    <p className="text-sm text-gray-400">{typeInfo?.name || conn.type}</p>
+                    <h3 className="font-semibold text-sm lg:text-base">{conn.name}</h3>
+                    <p className="text-xs lg:text-sm text-gray-400">{typeInfo?.name || conn.type}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
@@ -86,13 +86,13 @@ export default function ConnectionsPage() {
                 </div>
               </div>
 
-              <div className="mt-4 flex items-center justify-between text-sm">
+              <div className="mt-4 flex items-center justify-between text-xs lg:text-sm">
                 <span className="text-gray-400">
                   {conn.lastSync
-                    ? `Last sync: ${new Date(conn.lastSync).toLocaleDateString()}`
+                    ? `Synced ${new Date(conn.lastSync).toLocaleDateString()}`
                     : "Never synced"}
                 </span>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1">
                   <button
                     onClick={() => handleRefresh(conn.id)}
                     className="p-2 text-gray-400 hover:text-white hover:bg-dark-700 rounded-lg transition-colors"
@@ -111,8 +111,8 @@ export default function ConnectionsPage() {
               </div>
 
               {conn.apiKey && (
-                <div className="mt-3 p-2 bg-dark-700 rounded text-xs font-mono text-gray-400">
-                  {conn.apiKey.slice(0, 10)}...{conn.apiKey.slice(-4)}
+                <div className="mt-3 p-2 bg-dark-700 rounded text-xs font-mono text-gray-400 truncate">
+                  {conn.apiKey.slice(0, 8)}...{conn.apiKey.slice(-4)}
                 </div>
               )}
             </div>
@@ -122,11 +122,11 @@ export default function ConnectionsPage() {
 
       {/* Add Connection Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-dark-800 rounded-xl border border-dark-600 p-6 w-full max-w-md">
+        <div className="fixed inset-0 bg-black/50 flex items-end sm:items-center justify-center z-50 p-4">
+          <div className="bg-dark-800 rounded-xl border border-dark-600 p-6 w-full max-w-md max-h-[80vh] overflow-auto">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-semibold">Add Connection</h2>
-              <button onClick={() => setShowModal(false)} className="text-gray-400 hover:text-white">
+              <button onClick={() => setShowModal(false)} className="text-gray-400 hover:text-white p-2">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -136,7 +136,7 @@ export default function ConnectionsPage() {
                 <select
                   value={newConn.type}
                   onChange={(e) => setNewConn({ ...newConn, type: e.target.value as Connection["type"] })}
-                  className="w-full px-3 py-2 bg-dark-700 rounded-lg border border-dark-600 focus:border-accent-purple focus:outline-none"
+                  className="w-full px-3 py-3 bg-dark-700 rounded-lg border border-dark-600 focus:border-accent-purple focus:outline-none text-base"
                 >
                   {connectionTypes.map((t) => (
                     <option key={t.type} value={t.type}>
@@ -151,7 +151,7 @@ export default function ConnectionsPage() {
                   type="text"
                   value={newConn.name}
                   onChange={(e) => setNewConn({ ...newConn, name: e.target.value })}
-                  className="w-full px-3 py-2 bg-dark-700 rounded-lg border border-dark-600 focus:border-accent-purple focus:outline-none"
+                  className="w-full px-3 py-3 bg-dark-700 rounded-lg border border-dark-600 focus:border-accent-purple focus:outline-none text-base"
                   placeholder="Connection name"
                 />
               </div>
@@ -161,13 +161,13 @@ export default function ConnectionsPage() {
                   type="password"
                   value={newConn.apiKey || ""}
                   onChange={(e) => setNewConn({ ...newConn, apiKey: e.target.value })}
-                  className="w-full px-3 py-2 bg-dark-700 rounded-lg border border-dark-600 focus:border-accent-purple focus:outline-none font-mono"
+                  className="w-full px-3 py-3 bg-dark-700 rounded-lg border border-dark-600 focus:border-accent-purple focus:outline-none font-mono text-base"
                   placeholder="sk-..."
                 />
               </div>
               <button
                 onClick={handleAdd}
-                className="w-full py-2 bg-accent-purple rounded-lg hover:bg-accent-purple/80 transition-colors font-medium"
+                className="w-full py-3 bg-accent-purple rounded-lg hover:bg-accent-purple/80 transition-colors font-medium text-base"
               >
                 Add Connection
               </button>

@@ -62,28 +62,28 @@ export default function Dashboard() {
     .slice(0, 5);
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 lg:space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold">Dashboard</h1>
-        <p className="text-gray-400 mt-1">Welcome to Clawdbot Hub</p>
+        <h1 className="text-2xl lg:text-3xl font-bold">Dashboard</h1>
+        <p className="text-gray-400 mt-1 text-sm lg:text-base">Welcome to Clawdbot Hub</p>
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
         {stats.map((stat) => (
           <Link
             key={stat.label}
             href={stat.href}
-            className="bg-dark-800 rounded-xl p-6 border border-dark-600 hover:border-accent-purple/50 transition-all"
+            className="bg-dark-800 rounded-xl p-4 lg:p-6 border border-dark-600 hover:border-accent-purple/50 transition-all active:scale-95"
           >
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-400 text-sm">{stat.label}</p>
-                <p className="text-3xl font-bold mt-1">{stat.value}</p>
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-2">
+              <div className="order-2 lg:order-1">
+                <p className="text-gray-400 text-xs lg:text-sm">{stat.label}</p>
+                <p className="text-2xl lg:text-3xl font-bold mt-1">{stat.value}</p>
               </div>
-              <div className={`${stat.color} p-3 rounded-lg`}>
-                <stat.icon className="w-6 h-6 text-white" />
+              <div className={`${stat.color} p-2 lg:p-3 rounded-lg w-fit order-1 lg:order-2`}>
+                <stat.icon className="w-5 h-5 lg:w-6 lg:h-6 text-white" />
               </div>
             </div>
           </Link>
@@ -91,34 +91,34 @@ export default function Dashboard() {
       </div>
 
       {/* Main Content */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
         {/* Recent Tasks */}
-        <div className="bg-dark-800 rounded-xl border border-dark-600 p-6">
+        <div className="bg-dark-800 rounded-xl border border-dark-600 p-4 lg:p-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold">Recent Tasks</h2>
+            <h2 className="text-lg lg:text-xl font-semibold">Recent Tasks</h2>
             <Link href="/tasks" className="text-accent-purple text-sm hover:underline">
               View all
             </Link>
           </div>
-          <div className="space-y-3">
+          <div className="space-y-2 lg:space-y-3">
             {recentTasks.map((task) => (
               <div
                 key={task.id}
                 className="flex items-center gap-3 p-3 bg-dark-700 rounded-lg"
               >
                 {task.status === "done" ? (
-                  <CheckCircle2 className="w-5 h-5 text-accent-green" />
+                  <CheckCircle2 className="w-5 h-5 text-accent-green flex-shrink-0" />
                 ) : task.status === "in-progress" ? (
-                  <Clock className="w-5 h-5 text-accent-yellow" />
+                  <Clock className="w-5 h-5 text-accent-yellow flex-shrink-0" />
                 ) : (
-                  <AlertCircle className="w-5 h-5 text-gray-500" />
+                  <AlertCircle className="w-5 h-5 text-gray-500 flex-shrink-0" />
                 )}
                 <div className="flex-1 min-w-0">
-                  <p className="font-medium truncate">{task.title}</p>
-                  <p className="text-sm text-gray-400 truncate">{task.description}</p>
+                  <p className="font-medium truncate text-sm lg:text-base">{task.title}</p>
+                  <p className="text-xs lg:text-sm text-gray-400 truncate">{task.description}</p>
                 </div>
                 <span
-                  className={`px-2 py-1 rounded text-xs font-medium ${
+                  className={`px-2 py-1 rounded text-xs font-medium hidden sm:block ${
                     task.priority === "high"
                       ? "bg-accent-red/20 text-accent-red"
                       : task.priority === "medium"
@@ -130,25 +130,28 @@ export default function Dashboard() {
                 </span>
               </div>
             ))}
+            {recentTasks.length === 0 && (
+              <p className="text-gray-500 text-center py-4">No tasks yet</p>
+            )}
           </div>
         </div>
 
         {/* Active Connections */}
-        <div className="bg-dark-800 rounded-xl border border-dark-600 p-6">
+        <div className="bg-dark-800 rounded-xl border border-dark-600 p-4 lg:p-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold">Connections</h2>
+            <h2 className="text-lg lg:text-xl font-semibold">Connections</h2>
             <Link href="/connections" className="text-accent-purple text-sm hover:underline">
               Manage
             </Link>
           </div>
-          <div className="space-y-3">
+          <div className="space-y-2 lg:space-y-3">
             {connections.map((conn) => (
               <div
                 key={conn.id}
                 className="flex items-center gap-3 p-3 bg-dark-700 rounded-lg"
               >
                 <div
-                  className={`w-3 h-3 rounded-full ${
+                  className={`w-3 h-3 rounded-full flex-shrink-0 ${
                     conn.status === "connected"
                       ? "bg-accent-green"
                       : conn.status === "error"
@@ -156,11 +159,11 @@ export default function Dashboard() {
                       : "bg-gray-500"
                   }`}
                 />
-                <div className="flex-1">
-                  <p className="font-medium">{conn.name}</p>
-                  <p className="text-sm text-gray-400">{conn.type}</p>
+                <div className="flex-1 min-w-0">
+                  <p className="font-medium text-sm lg:text-base">{conn.name}</p>
+                  <p className="text-xs lg:text-sm text-gray-400">{conn.type}</p>
                 </div>
-                <span className="text-sm text-gray-400">
+                <span className="text-xs lg:text-sm text-gray-400">
                   {conn.status === "connected" ? "Active" : conn.status}
                 </span>
               </div>

@@ -13,10 +13,12 @@ import {
   Bot,
   Menu,
   X,
+  MessageCircle,
 } from "lucide-react";
 
 const navItems = [
   { href: "/", icon: LayoutDashboard, label: "Dashboard" },
+  { href: "/chat", icon: MessageCircle, label: "Chat" },
   { href: "/tasks", icon: ListTodo, label: "Tasks" },
   { href: "/connections", icon: Plug, label: "Connections" },
   { href: "/skills", icon: Sparkles, label: "Skills" },

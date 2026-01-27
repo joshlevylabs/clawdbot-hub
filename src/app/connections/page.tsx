@@ -23,13 +23,12 @@ export default function ConnectionsPage() {
     status: "disconnected",
   });
 
-  const handleAdd = () => {
+  const handleAdd = async () => {
     if (newConn.name && newConn.type) {
-      addConnection({
+      await addConnection({
         name: newConn.name,
         type: newConn.type,
-        status: newConn.apiKey ? "connected" : "disconnected",
-        apiKey: newConn.apiKey,
+        status: "connected",
         lastSync: new Date().toISOString(),
       });
       setNewConn({ name: "", type: "custom", status: "disconnected" });
@@ -37,8 +36,8 @@ export default function ConnectionsPage() {
     }
   };
 
-  const handleRefresh = (id: string) => {
-    updateConnection(id, { lastSync: new Date().toISOString() });
+  const handleRefresh = async (id: string) => {
+    await updateConnection(id, { lastSync: new Date().toISOString() });
   };
 
   return (
@@ -109,12 +108,6 @@ export default function ConnectionsPage() {
                   </button>
                 </div>
               </div>
-
-              {conn.apiKey && (
-                <div className="mt-3 p-2 bg-dark-700 rounded text-xs font-mono text-gray-400 truncate">
-                  {conn.apiKey.slice(0, 8)}...{conn.apiKey.slice(-4)}
-                </div>
-              )}
             </div>
           );
         })}
@@ -153,16 +146,6 @@ export default function ConnectionsPage() {
                   onChange={(e) => setNewConn({ ...newConn, name: e.target.value })}
                   className="w-full px-3 py-3 bg-dark-700 rounded-lg border border-dark-600 focus:border-accent-purple focus:outline-none text-base"
                   placeholder="Connection name"
-                />
-              </div>
-              <div>
-                <label className="block text-sm text-gray-400 mb-1">API Key (optional)</label>
-                <input
-                  type="password"
-                  value={newConn.apiKey || ""}
-                  onChange={(e) => setNewConn({ ...newConn, apiKey: e.target.value })}
-                  className="w-full px-3 py-3 bg-dark-700 rounded-lg border border-dark-600 focus:border-accent-purple focus:outline-none font-mono text-base"
-                  placeholder="sk-..."
                 />
               </div>
               <button

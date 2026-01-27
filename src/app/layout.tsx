@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Sidebar } from "@/components/Sidebar";
+import { StoreProvider } from "@/components/StoreProvider";
 
 export const metadata: Metadata = {
   title: "Clawdbot Hub",
@@ -16,12 +17,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="bg-dark-900 text-gray-100 min-h-screen">
-        <div className="flex min-h-screen">
-          <Sidebar />
-          <main className="flex-1 overflow-auto p-4 lg:p-6 pt-20 lg:pt-6">
-            {children}
-          </main>
-        </div>
+        <StoreProvider>
+          <div className="flex min-h-screen">
+            <Sidebar />
+            <main className="flex-1 overflow-auto p-4 lg:p-6 pt-20 lg:pt-6">
+              {children}
+            </main>
+          </div>
+        </StoreProvider>
       </body>
     </html>
   );

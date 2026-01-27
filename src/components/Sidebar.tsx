@@ -14,7 +14,9 @@ import {
   Menu,
   X,
   MessageCircle,
+  LogOut,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const navItems = [
   { href: "/", icon: LayoutDashboard, label: "Dashboard" },
@@ -28,7 +30,14 @@ const navItems = [
 
 export function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
+
+  const handleLogout = async () => {
+    await fetch('/api/auth/logout', { method: 'POST' });
+    router.push('/login');
+    router.refresh();
+  };
 
   return (
     <>
@@ -104,12 +113,19 @@ export function Sidebar() {
           })}
         </nav>
 
-        {/* Status */}
-        <div className="p-4 border-t border-dark-600">
+        {/* Status & Logout */}
+        <div className="p-4 border-t border-dark-600 space-y-3">
           <div className="flex items-center gap-2 text-sm">
             <div className="w-2 h-2 bg-accent-green rounded-full animate-pulse" />
             <span className="text-gray-400">Gateway Online</span>
           </div>
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-2 text-sm text-gray-400 hover:text-red-400 transition-colors w-full px-2 py-1.5 rounded hover:bg-dark-700"
+          >
+            <LogOut className="w-4 h-4" />
+            <span>Sign Out</span>
+          </button>
         </div>
       </aside>
     </>

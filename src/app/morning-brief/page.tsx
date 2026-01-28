@@ -285,7 +285,7 @@ export default function MorningBriefPage() {
                               }`}
                             >
                               <ChevronRight className="w-4 h-4 mt-0.5 text-slate-600 flex-shrink-0" strokeWidth={1.5} />
-                              <span className="flex-1">{newsItem.headline || newsItem}</span>
+                              <span className="flex-1">{newsItem.headline || (typeof item === "string" ? item : "")}</span>
                               {hasLink && (
                                 <ExternalLink className="w-3.5 h-3.5 mt-0.5 opacity-0 group-hover:opacity-100 transition-opacity text-accent-500 flex-shrink-0" strokeWidth={1.5} />
                               )}
@@ -321,7 +321,7 @@ export default function MorningBriefPage() {
                         hasLink ? "cursor-pointer hover:bg-slate-800 hover:text-slate-200" : ""
                       }`}
                     >
-                      <span>{aiItem.headline || aiItem}</span>
+                      <span>{aiItem.headline || (typeof item === "string" ? item : "")}</span>
                       {hasLink && (
                         <ExternalLink className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity text-accent-500 flex-shrink-0 ml-2" strokeWidth={1.5} />
                       )}

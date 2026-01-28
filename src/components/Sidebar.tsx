@@ -4,13 +4,11 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  LayoutGrid,
   CheckSquare,
   Link2,
   Zap,
   Settings,
   BarChart2,
-  MessageSquare,
   Menu,
   X,
   LogOut,
@@ -20,8 +18,6 @@ import {
 import { useRouter } from "next/navigation";
 
 const navItems = [
-  { href: "/", icon: LayoutGrid, label: "Dashboard" },
-  { href: "/chat", icon: MessageSquare, label: "Chat" },
   { href: "/tasks", icon: CheckSquare, label: "Tasks" },
   { href: "/morning-brief", icon: Sunrise, label: "Morning Brief" },
   { href: "/schedules", icon: Clock, label: "Schedules" },

@@ -13,16 +13,25 @@
     "calendar": {
       "title": "Calendar",
       "items": [
-        "✅ Chris & Josh Sync — 9am (done)",
-        "📅 Tomorrow: Regalis Capital — 11am"
+        "Chris & Josh Sync — 9am (done)",
+        "Tomorrow: Regalis Capital — 11am"
       ]
     },
     "email": {
       "title": "Important Emails",
       "items": [
-        "🔐 Google Security Alert",
-        "📈 Technical Traders — 2nd target hit, close position; Feb mentoring sessions",
-        "💼 Schwab — beneficiary designation reminder"
+        {
+          "subject": "Google Security Alert",
+          "url": "https://mail.google.com"
+        },
+        {
+          "subject": "Technical Traders — 2nd target hit, close position",
+          "url": "https://mail.google.com"
+        },
+        {
+          "subject": "Schwab — beneficiary designation reminder",
+          "url": "https://mail.google.com"
+        }
       ]
     },
     "news": {
@@ -31,25 +40,52 @@
         "israel": {
           "title": "Israel",
           "items": [
-            "Final hostage Ran Gvili returned — IDF covert op in northern Gaza. Netanyahu: \"We brought home a hero\"",
-            "Trump affirms Hamas disarmament as next step",
-            "Hezbollah warns won't \"stand idly by\" if Iran attacked"
+            {
+              "headline": "Final hostage Ran Gvili returned — IDF covert op in northern Gaza",
+              "url": "https://www.timesofisrael.com"
+            },
+            {
+              "headline": "Trump affirms Hamas disarmament as next step",
+              "url": "https://www.jpost.com"
+            },
+            {
+              "headline": "Hezbollah warns won't \"stand idly by\" if Iran attacked",
+              "url": "https://www.timesofisrael.com"
+            }
           ]
         },
         "iran": {
           "title": "Iran",
           "items": [
-            "Trump weighing limited strikes; US forces building up",
-            "EU MP: Military intervention may be unavoidable",
-            "Regime cracking — officials leaking to Western media"
+            {
+              "headline": "Trump weighing limited strikes; US forces building up",
+              "url": "https://www.reuters.com"
+            },
+            {
+              "headline": "EU MP: Military intervention may be unavoidable",
+              "url": "https://www.politico.eu"
+            },
+            {
+              "headline": "Regime cracking — officials leaking to Western media",
+              "url": "https://www.wsj.com"
+            }
           ]
         },
         "us": {
           "title": "US",
           "items": [
-            "Ye apologizes for antisemitism — full-page WSJ ad: \"I lost touch with reality\"",
-            "Tim Walz invokes Anne Frank pressing Trump to end Minnesota ICE ops",
-            "Columbia appoints Jewish scholar Jennifer Mnookin as President"
+            {
+              "headline": "Ye apologizes for antisemitism — full-page WSJ ad",
+              "url": "https://www.wsj.com"
+            },
+            {
+              "headline": "Tim Walz invokes Anne Frank pressing Trump to end Minnesota ICE ops",
+              "url": "https://www.foxnews.com"
+            },
+            {
+              "headline": "Columbia appoints Jewish scholar Jennifer Mnookin as President",
+              "url": "https://www.nytimes.com"
+            }
           ]
         }
       }
@@ -57,10 +93,22 @@
     "ai": {
       "title": "AI Intel",
       "items": [
-        "ChatGPT Containers now run bash, pip/npm install, file downloads (Simon Willison)",
-        "Qwen3-Max-Thinking (Alibaba) — #1 on HN, 372 pts",
-        "\"RIP Low-Code 2014-2025\" — AI making low-code obsolete",
-        "Fedora Asahi works on M3 Macs — 320 pts on HN"
+        {
+          "headline": "ChatGPT Containers now run bash, pip/npm install, file downloads",
+          "url": "https://simonwillison.net"
+        },
+        {
+          "headline": "Qwen3-Max-Thinking (Alibaba) — #1 on HN, 372 pts",
+          "url": "https://news.ycombinator.com"
+        },
+        {
+          "headline": "\"RIP Low-Code 2014-2025\" — AI making low-code obsolete",
+          "url": "https://news.ycombinator.com"
+        },
+        {
+          "headline": "Fedora Asahi works on M3 Macs — 320 pts on HN",
+          "url": "https://news.ycombinator.com"
+        }
       ]
     }
   }

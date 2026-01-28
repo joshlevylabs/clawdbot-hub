@@ -1,19 +1,25 @@
 "use client";
 
+import { useEffect } from "react";
 import { useHubStore } from "@/lib/store";
 import {
-  ListTodo,
-  Plug,
-  Sparkles,
+  CheckSquare,
+  Link2,
+  Zap,
   TrendingUp,
-  CheckCircle2,
+  CheckCircle,
   Clock,
-  AlertCircle,
+  Circle,
+  ArrowRight,
 } from "lucide-react";
 import Link from "next/link";
 
 export default function Dashboard() {
-  const { tasks, connections, skills, usage } = useHubStore();
+  const { tasks, connections, skills, usage, initialize } = useHubStore();
+
+  useEffect(() => {
+    initialize();
+  }, [initialize]);
 
   const tasksByStatus = {
     backlog: tasks.filter((t) => t.status === "backlog").length,
@@ -30,29 +36,33 @@ export default function Dashboard() {
     {
       label: "Active Tasks",
       value: tasksByStatus["in-progress"] + tasksByStatus.review,
-      icon: ListTodo,
-      color: "bg-accent-blue",
+      subtext: `${tasksByStatus.done} completed`,
+      icon: CheckSquare,
+      color: "primary",
       href: "/tasks",
     },
     {
       label: "Connections",
       value: connectedServices,
-      icon: Plug,
-      color: "bg-accent-green",
+      subtext: `${connections.length} total`,
+      icon: Link2,
+      color: "accent",
       href: "/connections",
     },
     {
       label: "Skills",
       value: enabledSkills,
-      icon: Sparkles,
-      color: "bg-accent-purple",
+      subtext: `${skills.length} total`,
+      icon: Zap,
+      color: "accent",
       href: "/skills",
     },
     {
       label: "Tokens Today",
       value: todayUsage ? `${((todayUsage.inputTokens + todayUsage.outputTokens) / 1000).toFixed(1)}k` : "0",
+      subtext: todayUsage ? `$${todayUsage.cost.toFixed(2)}` : "$0.00",
       icon: TrendingUp,
-      color: "bg-accent-yellow",
+      color: "primary",
       href: "/usage",
     },
   ];
@@ -61,29 +71,47 @@ export default function Dashboard() {
     .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
     .slice(0, 5);
 
+  const priorityStyles = {
+    high: "bg-status-error/15 text-status-error",
+    medium: "bg-status-warning/15 text-status-warning",
+    low: "bg-slate-700/50 text-slate-400",
+  };
+
+  const statusIcon = {
+    done: <CheckCircle className="w-4 h-4 text-status-success" strokeWidth={1.5} />,
+    "in-progress": <Clock className="w-4 h-4 text-primary-400" strokeWidth={1.5} />,
+    review: <Clock className="w-4 h-4 text-accent-400" strokeWidth={1.5} />,
+    backlog: <Circle className="w-4 h-4 text-slate-600" strokeWidth={1.5} />,
+  };
+
   return (
-    <div className="space-y-6 lg:space-y-8">
+    <div className="space-y-8 max-w-6xl">
       {/* Header */}
       <div>
-        <h1 className="text-2xl lg:text-3xl font-bold">Dashboard</h1>
-        <p className="text-gray-400 mt-1 text-sm lg:text-base">Welcome to Clawdbot Hub</p>
+        <h1 className="text-2xl font-semibold text-slate-100">Dashboard</h1>
+        <p className="text-slate-500 mt-1 text-sm">Welcome to Clawdbot Hub</p>
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((stat) => (
           <Link
             key={stat.label}
             href={stat.href}
-            className="bg-dark-800 rounded-xl p-4 lg:p-6 border border-dark-600 hover:border-accent-purple/50 transition-all active:scale-95"
+            className="bg-slate-850 rounded-xl p-5 border border-slate-800 hover:border-slate-700 transition-all group"
           >
-            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-2">
-              <div className="order-2 lg:order-1">
-                <p className="text-gray-400 text-xs lg:text-sm">{stat.label}</p>
-                <p className="text-2xl lg:text-3xl font-bold mt-1">{stat.value}</p>
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-slate-500 text-sm font-medium">{stat.label}</p>
+                <p className="text-3xl font-semibold text-slate-100 mt-2">{stat.value}</p>
+                <p className="text-slate-600 text-xs mt-1">{stat.subtext}</p>
               </div>
-              <div className={`${stat.color} p-2 lg:p-3 rounded-lg w-fit order-1 lg:order-2`}>
-                <stat.icon className="w-5 h-5 lg:w-6 lg:h-6 text-white" />
+              <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                stat.color === "primary" ? "bg-primary-600/20" : "bg-accent-600/20"
+              }`}>
+                <stat.icon className={`w-5 h-5 ${
+                  stat.color === "primary" ? "text-primary-400" : "text-accent-400"
+                }`} strokeWidth={1.5} />
               </div>
             </div>
           </Link>
@@ -91,83 +119,73 @@ export default function Dashboard() {
       </div>
 
       {/* Main Content */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Recent Tasks */}
-        <div className="bg-dark-800 rounded-xl border border-dark-600 p-4 lg:p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg lg:text-xl font-semibold">Recent Tasks</h2>
-            <Link href="/tasks" className="text-accent-purple text-sm hover:underline">
+        <div className="bg-slate-850 rounded-xl border border-slate-800 p-5">
+          <div className="flex items-center justify-between mb-5">
+            <h2 className="font-semibold text-slate-200">Recent Tasks</h2>
+            <Link href="/tasks" className="text-primary-400 text-sm hover:text-primary-300 flex items-center gap-1 group">
               View all
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" strokeWidth={1.5} />
             </Link>
           </div>
-          <div className="space-y-2 lg:space-y-3">
+          <div className="space-y-2">
             {recentTasks.map((task) => (
               <div
                 key={task.id}
-                className="flex items-center gap-3 p-3 bg-dark-700 rounded-lg"
+                className="flex items-center gap-3 p-3 bg-slate-800/50 rounded-lg hover:bg-slate-800 transition-colors"
               >
-                {task.status === "done" ? (
-                  <CheckCircle2 className="w-5 h-5 text-accent-green flex-shrink-0" />
-                ) : task.status === "in-progress" ? (
-                  <Clock className="w-5 h-5 text-accent-yellow flex-shrink-0" />
-                ) : (
-                  <AlertCircle className="w-5 h-5 text-gray-500 flex-shrink-0" />
-                )}
+                {statusIcon[task.status]}
                 <div className="flex-1 min-w-0">
-                  <p className="font-medium truncate text-sm lg:text-base">{task.title}</p>
-                  <p className="text-xs lg:text-sm text-gray-400 truncate">{task.description}</p>
+                  <p className="font-medium text-slate-300 text-sm truncate">{task.title}</p>
+                  {task.description && (
+                    <p className="text-xs text-slate-500 truncate mt-0.5">{task.description}</p>
+                  )}
                 </div>
-                <span
-                  className={`px-2 py-1 rounded text-xs font-medium hidden sm:block ${
-                    task.priority === "high"
-                      ? "bg-accent-red/20 text-accent-red"
-                      : task.priority === "medium"
-                      ? "bg-accent-yellow/20 text-accent-yellow"
-                      : "bg-gray-500/20 text-gray-400"
-                  }`}
-                >
+                <span className={`px-2 py-0.5 rounded text-xs font-medium ${priorityStyles[task.priority]}`}>
                   {task.priority}
                 </span>
               </div>
             ))}
             {recentTasks.length === 0 && (
-              <p className="text-gray-500 text-center py-4">No tasks yet</p>
+              <p className="text-slate-600 text-center py-8 text-sm">No tasks yet</p>
             )}
           </div>
         </div>
 
-        {/* Active Connections */}
-        <div className="bg-dark-800 rounded-xl border border-dark-600 p-4 lg:p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg lg:text-xl font-semibold">Connections</h2>
-            <Link href="/connections" className="text-accent-purple text-sm hover:underline">
+        {/* Connections */}
+        <div className="bg-slate-850 rounded-xl border border-slate-800 p-5">
+          <div className="flex items-center justify-between mb-5">
+            <h2 className="font-semibold text-slate-200">Connections</h2>
+            <Link href="/connections" className="text-primary-400 text-sm hover:text-primary-300 flex items-center gap-1 group">
               Manage
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" strokeWidth={1.5} />
             </Link>
           </div>
-          <div className="space-y-2 lg:space-y-3">
+          <div className="space-y-2">
             {connections.map((conn) => (
               <div
                 key={conn.id}
-                className="flex items-center gap-3 p-3 bg-dark-700 rounded-lg"
+                className="flex items-center gap-3 p-3 bg-slate-800/50 rounded-lg"
               >
-                <div
-                  className={`w-3 h-3 rounded-full flex-shrink-0 ${
-                    conn.status === "connected"
-                      ? "bg-accent-green"
-                      : conn.status === "error"
-                      ? "bg-accent-red"
-                      : "bg-gray-500"
-                  }`}
-                />
+                <div className={`w-2.5 h-2.5 rounded-full ${
+                  conn.status === "connected" ? "bg-status-success" :
+                  conn.status === "error" ? "bg-status-error" : "bg-slate-600"
+                }`} />
                 <div className="flex-1 min-w-0">
-                  <p className="font-medium text-sm lg:text-base">{conn.name}</p>
-                  <p className="text-xs lg:text-sm text-gray-400">{conn.type}</p>
+                  <p className="font-medium text-slate-300 text-sm">{conn.name}</p>
+                  <p className="text-xs text-slate-500 capitalize">{conn.type}</p>
                 </div>
-                <span className="text-xs lg:text-sm text-gray-400">
+                <span className={`text-xs font-medium ${
+                  conn.status === "connected" ? "text-status-success" : "text-slate-500"
+                }`}>
                   {conn.status === "connected" ? "Active" : conn.status}
                 </span>
               </div>
             ))}
+            {connections.length === 0 && (
+              <p className="text-slate-600 text-center py-8 text-sm">No connections</p>
+            )}
           </div>
         </div>
       </div>

@@ -8,22 +8,58 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ["Montserrat", "system-ui", "sans-serif"],
+      },
       colors: {
-        dark: {
-          900: "#0a0a0f",
-          800: "#12121a",
-          700: "#1a1a25",
-          600: "#252532",
-          500: "#32324a",
+        // Neutral - Slate scale
+        slate: {
+          950: "#020617",
+          900: "#0F172A",
+          850: "#131B2E",
+          800: "#1E293B",
+          700: "#334155",
+          600: "#475569",
+          500: "#64748B",
+          400: "#94A3B8",
+          300: "#CBD5E1",
+          200: "#E2E8F0",
+          100: "#F1F5F9",
         },
+        // Primary - Deep Blue
+        primary: {
+          900: "#1E3A8A",
+          800: "#1E40AF",
+          700: "#1D4ED8",
+          600: "#2563EB",
+          500: "#3B82F6",
+          400: "#60A5FA",
+          300: "#93C5FD",
+          200: "#BFDBFE",
+          100: "#DBEAFE",
+        },
+        // Accent - Teal
         accent: {
-          purple: "#8b5cf6",
-          blue: "#3b82f6",
-          cyan: "#06b6d4",
-          green: "#10b981",
-          yellow: "#f59e0b",
-          red: "#ef4444",
+          900: "#134E4A",
+          800: "#115E59",
+          700: "#0F766E",
+          600: "#0D9488",
+          500: "#14B8A6",
+          400: "#2DD4BF",
+          300: "#5EEAD4",
+          200: "#99F6E4",
+          100: "#CCFBF1",
         },
+        // Status colors (minimal use)
+        status: {
+          success: "#10B981",
+          warning: "#F59E0B",
+          error: "#EF4444",
+        },
+      },
+      boxShadow: {
+        card: "0 1px 3px 0 rgb(0 0 0 / 0.3), 0 1px 2px -1px rgb(0 0 0 / 0.3)",
+        "card-hover": "0 4px 6px -1px rgb(0 0 0 / 0.3), 0 2px 4px -2px rgb(0 0 0 / 0.3)",
       },
     },
   },

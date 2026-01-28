@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Clock, Play, Pause, Calendar, RefreshCw } from "lucide-react";
+import { Clock, Play, Pause, Calendar, RefreshCw, CheckCircle, AlertCircle } from "lucide-react";
 
 interface CronJob {
   id: string;
@@ -24,7 +24,6 @@ interface CronJob {
 }
 
 function formatCronExpression(expr: string): string {
-  // Simple cron expression to human-readable
   const parts = expr.split(" ");
   if (parts.length !== 5) return expr;
   
@@ -59,40 +58,17 @@ function formatDuration(ms: number): string {
 export default function SchedulesPage() {
   const [jobs, setJobs] = useState<CronJob[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   const fetchJobs = async () => {
     try {
       setLoading(true);
-      // Fetch from local file or API
       const response = await fetch("/api/schedules");
       if (response.ok) {
         const data = await response.json();
         setJobs(data.jobs || []);
-      } else {
-        // Fallback to hardcoded data for demo
-        setJobs([
-          {
-            id: "morning-brief",
-            name: "Morning Brief",
-            enabled: true,
-            schedule: { kind: "cron", expr: "0 6 * * *", tz: "America/Los_Angeles" },
-            payload: { message: "Morning brief for Joshua at 6am..." },
-            state: { nextRunAtMs: Date.now() + 86400000, lastStatus: "ok" },
-          },
-          {
-            id: "scriptbot-weekly",
-            name: "ScriptBot Weekly",
-            enabled: true,
-            schedule: { kind: "cron", expr: "0 9 * * 0", tz: "America/Los_Angeles" },
-            payload: { message: "ScriptBot Weekly Trigger..." },
-            state: { nextRunAtMs: Date.now() + 604800000 },
-          },
-        ]);
       }
     } catch (err) {
       console.error("Failed to fetch schedules:", err);
-      setError("Failed to load schedules");
     } finally {
       setLoading(false);
     }
@@ -103,99 +79,97 @@ export default function SchedulesPage() {
   }, []);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 max-w-4xl">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Schedules</h1>
-          <p className="text-gray-400 mt-1">Automated cron jobs and scheduled tasks</p>
+          <h1 className="text-2xl font-semibold text-slate-100 flex items-center gap-3">
+            <Clock className="w-6 h-6 text-accent-500" strokeWidth={1.5} />
+            Schedules
+          </h1>
+          <p className="text-slate-500 mt-1 text-sm">Automated cron jobs and scheduled tasks</p>
         </div>
         <button
           onClick={fetchJobs}
-          className="flex items-center gap-2 px-4 py-2 bg-dark-700 rounded-lg hover:bg-dark-600 transition-colors"
+          className="btn btn-ghost flex items-center gap-2"
         >
-          <RefreshCw className={`w-5 h-5 ${loading ? "animate-spin" : ""}`} />
+          <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} strokeWidth={1.5} />
           Refresh
         </button>
       </div>
-
-      {/* Error State */}
-      {error && (
-        <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4 text-red-400">
-          {error}
-        </div>
-      )}
 
       {/* Jobs List */}
       <div className="space-y-4">
         {jobs.map((job) => (
           <div
             key={job.id}
-            className={`bg-dark-800 rounded-xl border p-6 transition-all ${
-              job.enabled ? "border-dark-600" : "border-dark-700 opacity-60"
+            className={`bg-slate-850 rounded-xl border p-6 transition-all ${
+              job.enabled ? "border-slate-800" : "border-slate-800/50 opacity-60"
             }`}
           >
             <div className="flex items-start justify-between">
               <div className="flex items-start gap-4">
-                <div className={`p-3 rounded-lg ${
-                  job.enabled ? "bg-accent-purple/20" : "bg-dark-700"
+                <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                  job.enabled ? "bg-primary-600/20" : "bg-slate-800"
                 }`}>
-                  <Clock className={`w-6 h-6 ${
-                    job.enabled ? "text-accent-purple" : "text-gray-500"
-                  }`} />
+                  <Clock className={`w-5 h-5 ${
+                    job.enabled ? "text-primary-400" : "text-slate-600"
+                  }`} strokeWidth={1.5} />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-lg flex items-center gap-2">
+                  <h3 className="font-semibold text-slate-200 flex items-center gap-3">
                     {job.name}
                     {job.enabled ? (
-                      <span className="text-xs bg-accent-green/20 text-accent-green px-2 py-0.5 rounded">
+                      <span className="text-xs bg-accent-600/20 text-accent-400 px-2 py-0.5 rounded font-medium">
                         Active
                       </span>
                     ) : (
-                      <span className="text-xs bg-dark-600 text-gray-400 px-2 py-0.5 rounded">
+                      <span className="text-xs bg-slate-800 text-slate-500 px-2 py-0.5 rounded font-medium">
                         Paused
                       </span>
                     )}
                   </h3>
-                  <div className="flex items-center gap-2 mt-2 text-sm text-gray-400">
-                    <Calendar className="w-4 h-4" />
+                  <div className="flex items-center gap-2 mt-2 text-sm text-slate-500">
+                    <Calendar className="w-4 h-4" strokeWidth={1.5} />
                     <span>{formatCronExpression(job.schedule.expr)}</span>
-                    <span className="text-gray-600">•</span>
+                    <span className="text-slate-700">•</span>
                     <span>{job.schedule.tz}</span>
                   </div>
-                  <p className="text-gray-500 mt-2 text-sm line-clamp-2">
-                    {job.payload.message.substring(0, 150)}...
+                  <p className="text-slate-500 mt-3 text-sm leading-relaxed max-w-xl">
+                    {job.payload.message.substring(0, 120)}...
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
+              <button className="p-2 hover:bg-slate-800 rounded-lg transition-colors">
                 {job.enabled ? (
-                  <Pause className="w-5 h-5 text-gray-400 hover:text-white cursor-pointer" />
+                  <Pause className="w-5 h-5 text-slate-500 hover:text-slate-300" strokeWidth={1.5} />
                 ) : (
-                  <Play className="w-5 h-5 text-gray-400 hover:text-accent-green cursor-pointer" />
+                  <Play className="w-5 h-5 text-slate-500 hover:text-accent-400" strokeWidth={1.5} />
                 )}
-              </div>
+              </button>
             </div>
 
-            <div className="flex items-center gap-6 mt-4 pt-4 border-t border-dark-600 text-sm text-gray-400">
+            <div className="flex items-center gap-8 mt-5 pt-5 border-t border-slate-800 text-sm">
               {job.state.nextRunAtMs && (
-                <div className="flex items-center gap-2">
-                  <span className="text-gray-500">Next run:</span>
-                  <span className="text-white">{formatDate(job.state.nextRunAtMs)}</span>
+                <div className="flex items-center gap-2 text-slate-500">
+                  <span className="text-slate-600">Next:</span>
+                  <span className="text-slate-300">{formatDate(job.state.nextRunAtMs)}</span>
                 </div>
               )}
               {job.state.lastRunAtMs && (
-                <div className="flex items-center gap-2">
-                  <span className="text-gray-500">Last run:</span>
+                <div className="flex items-center gap-2 text-slate-500">
+                  <span className="text-slate-600">Last:</span>
                   <span>{formatDate(job.state.lastRunAtMs)}</span>
-                  {job.state.lastStatus === "ok" && (
-                    <span className="text-accent-green">✓</span>
+                  {job.state.lastStatus === "ok" ? (
+                    <CheckCircle className="w-4 h-4 text-accent-500" strokeWidth={1.5} />
+                  ) : (
+                    <AlertCircle className="w-4 h-4 text-status-error" strokeWidth={1.5} />
                   )}
                 </div>
               )}
               {job.state.lastDurationMs && (
-                <div className="flex items-center gap-2">
-                  <span className="text-gray-500">Duration:</span>
+                <div className="flex items-center gap-2 text-slate-500">
+                  <span className="text-slate-600">Duration:</span>
                   <span>{formatDuration(job.state.lastDurationMs)}</span>
                 </div>
               )}
@@ -204,9 +178,9 @@ export default function SchedulesPage() {
         ))}
 
         {!loading && jobs.length === 0 && (
-          <div className="text-center py-12 text-gray-400">
-            <Clock className="w-12 h-12 mx-auto mb-4 opacity-50" />
-            <p>No scheduled jobs yet.</p>
+          <div className="text-center py-16 text-slate-500">
+            <Clock className="w-12 h-12 mx-auto mb-4 text-slate-700" strokeWidth={1.5} />
+            <p>No scheduled jobs</p>
           </div>
         )}
       </div>

@@ -1,87 +1,75 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Sun, Cloud, Calendar, Mail, Newspaper, Cpu, RefreshCw, Clock } from "lucide-react";
+import { Sun, Cloud, Calendar, Mail, Newspaper, Cpu, RefreshCw, Clock, Globe, Flag } from "lucide-react";
 
-interface BriefSection {
-  title: string;
-  icon: React.ReactNode;
-  content: string[];
+interface BriefData {
+  date: string;
+  time: string;
+  sections: {
+    weather?: {
+      title: string;
+      items: string[];
+    };
+    calendar?: {
+      title: string;
+      items: string[];
+    };
+    email?: {
+      title: string;
+      items: string[];
+    };
+    news?: {
+      title: string;
+      subsections?: {
+        [key: string]: {
+          title: string;
+          items: string[];
+        };
+      };
+    };
+    ai?: {
+      title: string;
+      items: string[];
+    };
+  };
 }
 
 export default function MorningBriefPage() {
-  const [lastBrief, setLastBrief] = useState<string | null>(null);
-  const [sections, setSections] = useState<BriefSection[]>([]);
+  const [briefData, setBriefData] = useState<BriefData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [briefTime, setBriefTime] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchBrief = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch("/data/morning-brief.json");
+      if (response.ok) {
+        const data = await response.json();
+        setBriefData(data);
+      } else {
+        setError("No morning brief found");
+      }
+    } catch (err) {
+      setError("Failed to load morning brief");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    // Simulate loading the last morning brief
-    // In production, this would fetch from a storage/API
-    setLoading(true);
-    
-    // Demo data - would be replaced with actual brief content
-    setTimeout(() => {
-      setBriefTime("Today at 6:00 AM");
-      setSections([
-        {
-          title: "Weather",
-          icon: <Cloud className="w-5 h-5" />,
-          content: [
-            "☀️ Sunny, 72°F high / 58°F low",
-            "🌤️ Clear skies all day",
-            "💨 Light breeze 5-10 mph",
-          ],
-        },
-        {
-          title: "Calendar",
-          icon: <Calendar className="w-5 h-5" />,
-          content: [
-            "9:00 AM - Team standup",
-            "2:00 PM - Client call with Klippel",
-            "5:30 PM - Pick up Jones from soccer",
-          ],
-        },
-        {
-          title: "Email Highlights",
-          icon: <Mail className="w-5 h-5" />,
-          content: [
-            "📥 3 emails need attention",
-            "• Invoice #347 approved by client",
-            "• Sonance: Firmware review scheduled",
-            "• The Lyceum: Beta tester feedback",
-          ],
-        },
-        {
-          title: "World News",
-          icon: <Newspaper className="w-5 h-5" />,
-          content: [
-            "🇺🇸 Congress passes infrastructure bill",
-            "🇮🇱 Israel-UAE trade agreement expands",
-            "📈 Markets open higher on tech earnings",
-          ],
-        },
-        {
-          title: "AI Intelligence",
-          icon: <Cpu className="w-5 h-5" />,
-          content: [
-            "🤖 OpenAI releases Prism - new multimodal model",
-            "💡 Karpathy shares Claude coding tips",
-            "🚀 Google's AI Plus now $7.99/month",
-            "⚡ New: AI2 Open Coding Agents framework",
-          ],
-        },
-      ]);
-      setLoading(false);
-    }, 500);
+    fetchBrief();
   }, []);
 
-  const triggerNewBrief = async () => {
-    setLoading(true);
-    // In production, this would trigger the actual morning brief cron job
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    setBriefTime(`Today at ${new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}`);
-    setLoading(false);
+  const formatDate = (dateStr: string) => {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString("en-US", {
+      weekday: "long",
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    });
   };
 
   return (
@@ -96,19 +84,19 @@ export default function MorningBriefPage() {
           <p className="text-gray-400 mt-1">Your daily briefing from Theo</p>
         </div>
         <div className="flex items-center gap-3">
-          {briefTime && (
+          {briefData && (
             <div className="flex items-center gap-2 text-sm text-gray-400">
               <Clock className="w-4 h-4" />
-              {briefTime}
+              {formatDate(briefData.date)} at {briefData.time}
             </div>
           )}
           <button
-            onClick={triggerNewBrief}
+            onClick={fetchBrief}
             disabled={loading}
             className="flex items-center gap-2 px-4 py-2 bg-accent-purple rounded-lg hover:bg-accent-purple/80 transition-colors disabled:opacity-50"
           >
             <RefreshCw className={`w-5 h-5 ${loading ? "animate-spin" : ""}`} />
-            Generate New Brief
+            Refresh
           </button>
         </div>
       </div>
@@ -130,8 +118,16 @@ export default function MorningBriefPage() {
         </div>
       </div>
 
-      {/* Brief Content */}
-      {loading ? (
+      {/* Error State */}
+      {error && (
+        <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-6 text-center">
+          <p className="text-red-400">{error}</p>
+          <p className="text-gray-500 text-sm mt-2">The morning brief will appear here after it runs at 6 AM</p>
+        </div>
+      )}
+
+      {/* Loading State */}
+      {loading && (
         <div className="grid gap-4 md:grid-cols-2">
           {[1, 2, 3, 4, 5].map((i) => (
             <div key={i} className="bg-dark-800 rounded-xl border border-dark-600 p-6 animate-pulse">
@@ -143,30 +139,113 @@ export default function MorningBriefPage() {
             </div>
           ))}
         </div>
-      ) : (
-        <div className="grid gap-4 md:grid-cols-2">
-          {sections.map((section, index) => (
-            <div
-              key={index}
-              className={`bg-dark-800 rounded-xl border border-dark-600 p-6 ${
-                index === 4 ? "md:col-span-2" : ""
-              }`}
-            >
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-2 bg-accent-purple/20 rounded-lg text-accent-purple">
-                  {section.icon}
+      )}
+
+      {/* Brief Content */}
+      {!loading && !error && briefData && (
+        <div className="space-y-4">
+          {/* Top Row - Weather, Calendar, Email */}
+          <div className="grid gap-4 md:grid-cols-3">
+            {/* Weather */}
+            {briefData.sections.weather && (
+              <div className="bg-dark-800 rounded-xl border border-dark-600 p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="p-2 bg-blue-500/20 rounded-lg">
+                    <Cloud className="w-5 h-5 text-blue-400" />
+                  </div>
+                  <h2 className="font-semibold text-lg">{briefData.sections.weather.title}</h2>
                 </div>
-                <h2 className="font-semibold text-lg">{section.title}</h2>
+                <ul className="space-y-2">
+                  {briefData.sections.weather.items.map((item, i) => (
+                    <li key={i} className="text-gray-300 text-sm">{item}</li>
+                  ))}
+                </ul>
               </div>
-              <ul className="space-y-2">
-                {section.content.map((item, i) => (
-                  <li key={i} className="text-gray-300 text-sm">
-                    {item}
-                  </li>
-                ))}
-              </ul>
+            )}
+
+            {/* Calendar */}
+            {briefData.sections.calendar && (
+              <div className="bg-dark-800 rounded-xl border border-dark-600 p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="p-2 bg-green-500/20 rounded-lg">
+                    <Calendar className="w-5 h-5 text-green-400" />
+                  </div>
+                  <h2 className="font-semibold text-lg">{briefData.sections.calendar.title}</h2>
+                </div>
+                <ul className="space-y-2">
+                  {briefData.sections.calendar.items.map((item, i) => (
+                    <li key={i} className="text-gray-300 text-sm">{item}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Email */}
+            {briefData.sections.email && (
+              <div className="bg-dark-800 rounded-xl border border-dark-600 p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="p-2 bg-yellow-500/20 rounded-lg">
+                    <Mail className="w-5 h-5 text-yellow-400" />
+                  </div>
+                  <h2 className="font-semibold text-lg">{briefData.sections.email.title}</h2>
+                </div>
+                <ul className="space-y-2">
+                  {briefData.sections.email.items.map((item, i) => (
+                    <li key={i} className="text-gray-300 text-sm">{item}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+
+          {/* World News - Full Width with Subsections */}
+          {briefData.sections.news && (
+            <div className="bg-dark-800 rounded-xl border border-dark-600 p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-2 bg-red-500/20 rounded-lg">
+                  <Globe className="w-5 h-5 text-red-400" />
+                </div>
+                <h2 className="font-semibold text-lg">{briefData.sections.news.title}</h2>
+              </div>
+              
+              {briefData.sections.news.subsections && (
+                <div className="grid gap-6 md:grid-cols-3">
+                  {Object.entries(briefData.sections.news.subsections).map(([key, subsection]) => (
+                    <div key={key}>
+                      <h3 className="font-medium text-accent-purple mb-2 flex items-center gap-2">
+                        <Flag className="w-4 h-4" />
+                        {subsection.title}
+                      </h3>
+                      <ul className="space-y-2">
+                        {subsection.items.map((item, i) => (
+                          <li key={i} className="text-gray-300 text-sm">• {item}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
-          ))}
+          )}
+
+          {/* AI Intel - Full Width */}
+          {briefData.sections.ai && (
+            <div className="bg-dark-800 rounded-xl border border-dark-600 p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-2 bg-purple-500/20 rounded-lg">
+                  <Cpu className="w-5 h-5 text-purple-400" />
+                </div>
+                <h2 className="font-semibold text-lg">{briefData.sections.ai.title}</h2>
+              </div>
+              <div className="grid gap-3 md:grid-cols-2">
+                {briefData.sections.ai.items.map((item, i) => (
+                  <div key={i} className="text-gray-300 text-sm bg-dark-700 rounded-lg p-3">
+                    🤖 {item}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
 

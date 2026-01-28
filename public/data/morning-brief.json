@@ -1,0 +1,67 @@
+{
+  "date": "2026-01-26",
+  "time": "1:41 PM",
+  "sections": {
+    "weather": {
+      "title": "LA Weather",
+      "items": [
+        "Now: 73°F, Partly Cloudy",
+        "Today: High 73° / Low 48°",
+        "Week: Warming to 80° by Thu"
+      ]
+    },
+    "calendar": {
+      "title": "Calendar",
+      "items": [
+        "✅ Chris & Josh Sync — 9am (done)",
+        "📅 Tomorrow: Regalis Capital — 11am"
+      ]
+    },
+    "email": {
+      "title": "Important Emails",
+      "items": [
+        "🔐 Google Security Alert",
+        "📈 Technical Traders — 2nd target hit, close position; Feb mentoring sessions",
+        "💼 Schwab — beneficiary designation reminder"
+      ]
+    },
+    "news": {
+      "title": "World News",
+      "subsections": {
+        "israel": {
+          "title": "Israel",
+          "items": [
+            "Final hostage Ran Gvili returned — IDF covert op in northern Gaza. Netanyahu: \"We brought home a hero\"",
+            "Trump affirms Hamas disarmament as next step",
+            "Hezbollah warns won't \"stand idly by\" if Iran attacked"
+          ]
+        },
+        "iran": {
+          "title": "Iran",
+          "items": [
+            "Trump weighing limited strikes; US forces building up",
+            "EU MP: Military intervention may be unavoidable",
+            "Regime cracking — officials leaking to Western media"
+          ]
+        },
+        "us": {
+          "title": "US",
+          "items": [
+            "Ye apologizes for antisemitism — full-page WSJ ad: \"I lost touch with reality\"",
+            "Tim Walz invokes Anne Frank pressing Trump to end Minnesota ICE ops",
+            "Columbia appoints Jewish scholar Jennifer Mnookin as President"
+          ]
+        }
+      }
+    },
+    "ai": {
+      "title": "AI Intel",
+      "items": [
+        "ChatGPT Containers now run bash, pip/npm install, file downloads (Simon Willison)",
+        "Qwen3-Max-Thinking (Alibaba) — #1 on HN, 372 pts",
+        "\"RIP Low-Code 2014-2025\" — AI making low-code obsolete",
+        "Fedora Asahi works on M3 Macs — 320 pts on HN"
+      ]
+    }
+  }
+}

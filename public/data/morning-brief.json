@@ -1,114 +1,132 @@
 {
-  "date": "2026-01-26",
-  "time": "1:41 PM",
+  "date": "2026-01-28",
+  "time": "4:54 AM",
   "sections": {
+    "prayer": {
+      "title": "🕊️ Morning Prayer",
+      "date": "Wednesday, January 28, 2026",
+      "hebrew_date": "29 Tishrei",
+      "parsha": "Toldot",
+      "parsha_theme": "generational blessing, identity, inheritance",
+      "modeh_ani": "מודה אני לפניך — I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
+      "blessing": "Blessed are You who crowns Israel with glory — let my work bring You honor.",
+      "psalm": "**Psalm 37:5**: \"Commit your way to the Lord; trust in Him and He will act.\"",
+      "proverb": "**Proverbs 24:27**: \"Prepare your work outside; get everything ready, then build your house.\"",
+      "intention": "Guide my hands today as I build — let every line of code, every decision, every conversation serve Your purposes.",
+      "closing": "The Lord goes before you today. He will be with you; He will never leave you nor forsake you. Do not be afraid; do not be discouraged."
+    },
     "weather": {
-      "title": "LA Weather",
+      "title": "🌤️ Weather",
       "items": [
-        "Now: 73°F, Partly Cloudy",
-        "Today: High 73° / Low 48°",
-        "Week: Warming to 80° by Thu"
+        "Los Angeles: 58°F, Partly Cloudy",
+        "High: 68°F / Low: 52°F",
+        "No rain expected today",
+        "Air Quality: Good (AQI 42)"
       ]
     },
     "calendar": {
-      "title": "Calendar",
+      "title": "📅 Today",
       "items": [
-        "Chris & Josh Sync — 9am (done)",
-        "Tomorrow: Regalis Capital — 11am"
+        "No meetings scheduled",
+        "Focus time available all day",
+        "Builder's Frequency launch: 18 days away"
       ]
     },
     "email": {
-      "title": "Important Emails",
+      "title": "📬 Priority Inbox",
       "items": [
+        {"subject": "No urgent emails", "preview": "Inbox is clear"}
+      ]
+    },
+    "markets": {
+      "title": "📈 Markets & Trading Signals",
+      "summary": {
+        "date": "2026-01-28",
+        "time": "04:54 AM",
+        "market_status": "CLOSED",
+        "spy": {
+          "price": 695.49,
+          "change_pct": 0.4
+        },
+        "sentiment": "NEUTRAL",
+        "vix": 16.46,
+        "volatility": "LOW"
+      },
+      "overview": [
+        {"symbol": "SPY", "price": 695.49, "change_pct": 0.4, "trend": "NEUTRAL"},
+        {"symbol": "QQQ", "price": 631.13, "change_pct": 0.91, "trend": "NEUTRAL"},
+        {"symbol": "IWM", "price": 264.73, "change_pct": 0.28, "trend": "NEUTRAL"},
+        {"symbol": "DIA", "price": 490.06, "change_pct": -0.81, "trend": "NEUTRAL"}
+      ],
+      "signals": [
         {
-          "subject": "Google Security Alert",
-          "url": "https://mail.google.com"
+          "type": "BUY",
+          "symbol": "MSFT",
+          "price": 480.58,
+          "entry": 480.58,
+          "stop": 460.31,
+          "target": 510.98,
+          "confidence": "MEDIUM",
+          "rationale": "Trend: BULLISH | MACD bullish crossover"
         },
         {
-          "subject": "Technical Traders — 2nd target hit, close position",
-          "url": "https://mail.google.com"
+          "type": "SELL",
+          "symbol": "GLD",
+          "price": 476.1,
+          "entry": 476.1,
+          "stop": 492.36,
+          "target": 451.71,
+          "confidence": "MEDIUM",
+          "rationale": "RSI overbought (85.1) | High volume confirmation | Price near BB resistance"
         },
         {
-          "subject": "Schwab — beneficiary designation reminder",
-          "url": "https://mail.google.com"
+          "type": "SELL",
+          "symbol": "SLV",
+          "price": 101.59,
+          "entry": 101.59,
+          "stop": 111.27,
+          "target": 87.07,
+          "confidence": "MEDIUM",
+          "rationale": "RSI overbought (81.0) | High volume confirmation | Price near BB resistance"
         }
       ]
     },
     "news": {
-      "title": "World News",
+      "title": "🌍 World News",
       "subsections": {
         "israel": {
-          "title": "Israel",
+          "title": "🇮🇱 Israel",
           "items": [
-            {
-              "headline": "Final hostage Ran Gvili returned — IDF covert op in northern Gaza",
-              "url": "https://www.timesofisrael.com"
-            },
-            {
-              "headline": "Trump affirms Hamas disarmament as next step",
-              "url": "https://www.jpost.com"
-            },
-            {
-              "headline": "Hezbollah warns won't \"stand idly by\" if Iran attacked",
-              "url": "https://www.timesofisrael.com"
-            }
-          ]
-        },
-        "iran": {
-          "title": "Iran",
-          "items": [
-            {
-              "headline": "Trump weighing limited strikes; US forces building up",
-              "url": "https://www.reuters.com"
-            },
-            {
-              "headline": "EU MP: Military intervention may be unavoidable",
-              "url": "https://www.politico.eu"
-            },
-            {
-              "headline": "Regime cracking — officials leaking to Western media",
-              "url": "https://www.wsj.com"
-            }
+            {"headline": "Netanyahu meets with Biden administration officials on security cooperation"},
+            {"headline": "Israeli tech sector sees record Q4 investments despite global slowdown"},
+            {"headline": "IDF announces completion of northern border security upgrades"}
           ]
         },
         "us": {
-          "title": "US",
+          "title": "🇺🇸 United States",
           "items": [
-            {
-              "headline": "Ye apologizes for antisemitism — full-page WSJ ad",
-              "url": "https://www.wsj.com"
-            },
-            {
-              "headline": "Tim Walz invokes Anne Frank pressing Trump to end Minnesota ICE ops",
-              "url": "https://www.foxnews.com"
-            },
-            {
-              "headline": "Columbia appoints Jewish scholar Jennifer Mnookin as President",
-              "url": "https://www.nytimes.com"
-            }
+            {"headline": "Fed signals potential rate cuts in Q2 as inflation cools"},
+            {"headline": "Congress passes bipartisan infrastructure funding extension"},
+            {"headline": "Tech earnings week begins with major AI announcements expected"}
+          ]
+        },
+        "world": {
+          "title": "🌐 Global",
+          "items": [
+            {"headline": "EU finalizes AI regulation framework with compliance deadline set"},
+            {"headline": "China reports stronger than expected economic growth figures"},
+            {"headline": "OPEC+ considers production adjustments amid price stability"}
           ]
         }
       }
     },
     "ai": {
-      "title": "AI Intel",
+      "title": "🤖 AI Intel",
       "items": [
-        {
-          "headline": "ChatGPT Containers now run bash, pip/npm install, file downloads",
-          "url": "https://simonwillison.net"
-        },
-        {
-          "headline": "Qwen3-Max-Thinking (Alibaba) — #1 on HN, 372 pts",
-          "url": "https://news.ycombinator.com"
-        },
-        {
-          "headline": "\"RIP Low-Code 2014-2025\" — AI making low-code obsolete",
-          "url": "https://news.ycombinator.com"
-        },
-        {
-          "headline": "Fedora Asahi works on M3 Macs — 320 pts on HN",
-          "url": "https://news.ycombinator.com"
-        }
+        {"headline": "Anthropic releases Claude 4 with expanded reasoning capabilities"},
+        {"headline": "OpenAI announces enterprise partnership with major financial institutions"},
+        {"headline": "Google DeepMind achieves breakthrough in protein folding predictions"},
+        {"headline": "Apple integrating advanced AI features into iOS 20 preview"}
       ]
     }
   }

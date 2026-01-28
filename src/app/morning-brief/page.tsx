@@ -479,6 +479,7 @@ export default function MorningBriefPage() {
   const [isMobile, setIsMobile] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [audioEnabled, setAudioEnabled] = useState(true);
+  const [hasStarted, setHasStarted] = useState(false);
   const touchStartX = useRef(0);
   const touchEndX = useRef(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -622,6 +623,58 @@ export default function MorningBriefPage() {
       return dateStr;
     }
   };
+
+  // Mobile intro screen
+  if (isMobile && briefData && !loading && !error && !hasStarted) {
+    const formatIntroDate = () => {
+      try {
+        const date = new Date(briefData.date);
+        return {
+          weekday: date.toLocaleDateString("en-US", { weekday: "long" }),
+          month: date.toLocaleDateString("en-US", { month: "long" }),
+          day: date.getDate(),
+          year: date.getFullYear(),
+        };
+      } catch {
+        return { weekday: "Today", month: "", day: "", year: "" };
+      }
+    };
+    const introDate = formatIntroDate();
+    
+    return (
+      <div className="fixed inset-0 bg-gradient-to-b from-slate-950 via-slate-900 to-accent-950/30 flex flex-col items-center justify-center p-8">
+        <div className="text-center space-y-6">
+          {/* Sun icon */}
+          <div className="w-24 h-24 mx-auto bg-gradient-to-br from-amber-500 to-orange-600 rounded-full flex items-center justify-center shadow-lg shadow-amber-500/30">
+            <Sunrise className="w-12 h-12 text-white" strokeWidth={1.5} />
+          </div>
+          
+          {/* Date */}
+          <div className="space-y-1">
+            <p className="text-accent-400 text-lg font-medium">{introDate.weekday}</p>
+            <p className="text-5xl font-bold text-white">{introDate.month} {introDate.day}</p>
+            <p className="text-slate-500">{introDate.year}</p>
+          </div>
+          
+          {/* Brief time */}
+          <p className="text-slate-400 text-sm">Generated at {briefData.time}</p>
+          
+          {/* Start button */}
+          <button
+            onClick={() => setHasStarted(true)}
+            className="mt-8 px-12 py-4 bg-gradient-to-r from-accent-600 to-primary-600 text-white font-semibold text-lg rounded-2xl shadow-lg shadow-accent-600/30 hover:shadow-accent-600/50 transition-all active:scale-95"
+          >
+            ▶ Start Brief
+          </button>
+          
+          {/* History link */}
+          <a href="/morning-brief/history" className="block text-slate-500 text-sm hover:text-slate-300 mt-4">
+            View past briefs →
+          </a>
+        </div>
+      </div>
+    );
+  }
 
   // Mobile TikTok-style view
   if (isMobile && briefData && !loading && !error) {

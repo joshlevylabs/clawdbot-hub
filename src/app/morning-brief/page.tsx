@@ -17,13 +17,55 @@ import {
   BookOpen,
   TrendingUp,
   TrendingDown,
+  AlertTriangle,
+  CheckCircle,
+  Code,
 } from "lucide-react";
 
-interface EmailItem {
-  subject: string;
+// Flexible interfaces to handle multiple data formats
+interface PrayerSection {
+  title: string;
+  date?: string;
+  hebrew_date?: string;
+  parsha?: string;
+  parsha_theme?: string;
+  modeh_ani?: string;
+  blessing?: string;
+  psalm?: string;
+  proverb?: string;
+  intention?: string;
+  closing?: string;
+}
+
+interface WeatherSection {
+  title: string;
+  items?: string[];
+  temperature?: string;
+  condition?: string;
+  wind?: string;
+  summary?: string;
+}
+
+interface CalendarSection {
+  title: string;
+  items?: string[];
+}
+
+interface EmailEntry {
+  subject?: string;
+  from?: string;
+  note?: string;
   preview?: string;
   messageId?: string;
   url?: string;
+}
+
+interface EmailSection {
+  title: string;
+  items?: EmailEntry[];
+  needs_attention?: EmailEntry[];
+  dev_work?: EmailEntry[];
+  good_news?: EmailEntry[];
 }
 
 interface NewsItem {
@@ -34,28 +76,14 @@ interface NewsItem {
 
 interface NewsSubsection {
   title: string;
-  items: NewsItem[];
-}
-
-interface PrayerSection {
-  title: string;
-  date: string;
-  hebrew_date: string;
-  parsha: string;
-  parsha_theme: string;
-  modeh_ani: string;
-  blessing: string;
-  psalm: string;
-  proverb: string;
-  intention: string;
-  closing: string;
+  items: (NewsItem | string)[];
 }
 
 interface MarketOverview {
   symbol: string;
   price: number;
   change_pct: number;
-  trend: string;
+  trend?: string;
 }
 
 interface TradingSignal {
@@ -65,23 +93,28 @@ interface TradingSignal {
   entry: number;
   stop: number;
   target: number;
-  confidence: string;
-  rationale: string;
+  confidence?: string;
+  rationale?: string;
 }
 
 interface MarketsSection {
   title: string;
-  summary: {
-    date: string;
-    time: string;
-    market_status: string;
+  summary?: {
+    date?: string;
+    time?: string;
+    market_status?: string;
     spy?: { price: number; change_pct: number };
     sentiment?: string;
     vix?: number;
     volatility?: string;
   };
-  overview: MarketOverview[];
-  signals: TradingSignal[];
+  overview?: MarketOverview[];
+  signals?: TradingSignal[];
+}
+
+interface AISection {
+  title: string;
+  items?: (NewsItem | string)[];
 }
 
 interface BriefData {
@@ -89,13 +122,18 @@ interface BriefData {
   time: string;
   sections: {
     prayer?: PrayerSection;
-    weather?: { title: string; items: string[] };
-    calendar?: { title: string; items: string[] };
-    email?: { title: string; items: EmailItem[] };
+    weather?: WeatherSection;
+    calendar?: CalendarSection;
+    email?: EmailSection;
     markets?: MarketsSection;
     news?: { title: string; subsections?: { [key: string]: NewsSubsection } };
-    ai?: { title: string; items: NewsItem[] };
+    ai?: AISection;
   };
+}
+
+// Helper to normalize items
+function normalizeNewsItem(item: NewsItem | string): NewsItem {
+  return typeof item === "string" ? { headline: item } : item;
 }
 
 // Mobile Card Components
@@ -108,46 +146,71 @@ function PrayerCard({ data }: { data: PrayerSection }) {
         </div>
         <div>
           <h2 className="font-semibold text-xl text-slate-100">{data.title}</h2>
-          <p className="text-sm text-amber-400/80">{data.hebrew_date} • {data.parsha}</p>
+          {data.hebrew_date && data.parsha && (
+            <p className="text-sm text-amber-400/80">{data.hebrew_date} • {data.parsha}</p>
+          )}
         </div>
       </div>
       
       <div className="flex-1 space-y-4">
-        <div className="bg-slate-800/50 rounded-xl p-4 border-l-4 border-amber-500/50">
-          <p className="text-amber-200 text-2xl font-hebrew mb-2">מודה אני</p>
-          <p className="text-slate-300 text-sm leading-relaxed">{data.modeh_ani}</p>
-        </div>
+        {data.modeh_ani && (
+          <div className="bg-slate-800/50 rounded-xl p-4 border-l-4 border-amber-500/50">
+            <p className="text-amber-200 text-2xl font-hebrew mb-2">מודה אני</p>
+            <p className="text-slate-300 text-sm leading-relaxed">{data.modeh_ani}</p>
+          </div>
+        )}
         
-        <p className="text-slate-300 text-base leading-relaxed">{data.blessing}</p>
+        {data.blessing && <p className="text-slate-300 text-base leading-relaxed">{data.blessing}</p>}
         
-        <div className="bg-slate-800/30 rounded-xl p-4">
-          <p className="text-xs text-amber-400 uppercase tracking-wide mb-2">Torah Theme: {data.parsha}</p>
-          <p className="text-slate-300 italic">{data.parsha_theme}</p>
-        </div>
+        {data.parsha_theme && (
+          <div className="bg-slate-800/30 rounded-xl p-4">
+            <p className="text-xs text-amber-400 uppercase tracking-wide mb-2">Torah Theme: {data.parsha}</p>
+            <p className="text-slate-300 italic">{data.parsha_theme}</p>
+          </div>
+        )}
         
         <div className="space-y-3">
-          <div className="bg-slate-800/30 rounded-xl p-4">
-            <p className="text-slate-200 text-sm leading-relaxed">{data.psalm}</p>
-          </div>
-          <div className="bg-slate-800/30 rounded-xl p-4">
-            <p className="text-slate-200 text-sm leading-relaxed">{data.proverb}</p>
-          </div>
+          {data.psalm && (
+            <div className="bg-slate-800/30 rounded-xl p-4">
+              <p className="text-slate-200 text-sm leading-relaxed">{data.psalm}</p>
+            </div>
+          )}
+          {data.proverb && (
+            <div className="bg-slate-800/30 rounded-xl p-4">
+              <p className="text-slate-200 text-sm leading-relaxed">{data.proverb}</p>
+            </div>
+          )}
         </div>
         
-        <div className="border-t border-slate-700/50 pt-4">
-          <p className="text-xs text-slate-500 uppercase tracking-wide mb-2">Today's Intention</p>
-          <p className="text-slate-200 leading-relaxed">{data.intention}</p>
-        </div>
+        {data.intention && (
+          <div className="border-t border-slate-700/50 pt-4">
+            <p className="text-xs text-slate-500 uppercase tracking-wide mb-2">Today&apos;s Intention</p>
+            <p className="text-slate-200 leading-relaxed">{data.intention}</p>
+          </div>
+        )}
       </div>
       
-      <div className="mt-4 pt-4 border-t border-amber-900/30 text-center">
-        <p className="text-amber-300/80 italic">{data.closing}</p>
-      </div>
+      {data.closing && (
+        <div className="mt-4 pt-4 border-t border-amber-900/30 text-center">
+          <p className="text-amber-300/80 italic">{data.closing}</p>
+        </div>
+      )}
     </div>
   );
 }
 
-function WeatherCard({ data }: { data: { title: string; items: string[] } }) {
+function WeatherCard({ data }: { data: WeatherSection }) {
+  // Handle both formats: items array or structured object
+  const weatherItems: string[] = [];
+  if (data.items) {
+    weatherItems.push(...data.items);
+  } else {
+    if (data.temperature) weatherItems.push(`Temperature: ${data.temperature}`);
+    if (data.condition) weatherItems.push(`Condition: ${data.condition}`);
+    if (data.wind) weatherItems.push(`Wind: ${data.wind}`);
+    if (data.summary) weatherItems.push(data.summary);
+  }
+
   return (
     <div className="h-full flex flex-col bg-gradient-to-b from-slate-900 to-blue-950/30 p-6">
       <div className="flex items-center gap-3 mb-6">
@@ -158,8 +221,14 @@ function WeatherCard({ data }: { data: { title: string; items: string[] } }) {
       </div>
       
       <div className="flex-1 flex flex-col justify-center">
+        {data.temperature && !data.items && (
+          <div className="text-center mb-6">
+            <p className="text-5xl font-bold text-blue-400">{data.temperature}</p>
+            {data.condition && <p className="text-slate-300 text-lg mt-2">{data.condition}</p>}
+          </div>
+        )}
         <div className="space-y-4">
-          {data.items.map((item, i) => (
+          {weatherItems.map((item, i) => (
             <div key={i} className="bg-slate-800/50 rounded-xl p-4">
               <p className="text-slate-200 text-lg">{item}</p>
             </div>
@@ -170,7 +239,8 @@ function WeatherCard({ data }: { data: { title: string; items: string[] } }) {
   );
 }
 
-function CalendarCard({ data }: { data: { title: string; items: string[] } }) {
+function CalendarCard({ data }: { data: CalendarSection }) {
+  const items = data.items || [];
   return (
     <div className="h-full flex flex-col bg-gradient-to-b from-slate-900 to-purple-950/30 p-6">
       <div className="flex items-center gap-3 mb-6">
@@ -181,22 +251,46 @@ function CalendarCard({ data }: { data: { title: string; items: string[] } }) {
       </div>
       
       <div className="flex-1 flex flex-col justify-center">
-        <div className="space-y-4">
-          {data.items.map((item, i) => (
-            <div key={i} className="bg-slate-800/50 rounded-xl p-4 flex items-center gap-3">
-              <div className="w-2 h-2 bg-purple-400 rounded-full flex-shrink-0" />
-              <p className="text-slate-200 text-lg">{item}</p>
-            </div>
-          ))}
-        </div>
+        {items.length === 0 ? (
+          <div className="bg-slate-800/50 rounded-xl p-4 text-center">
+            <p className="text-slate-400 text-lg">No events today</p>
+            <p className="text-slate-500 text-sm mt-1">Enjoy your open schedule!</p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {items.map((item, i) => (
+              <div key={i} className="bg-slate-800/50 rounded-xl p-4 flex items-center gap-3">
+                <div className="w-2 h-2 bg-purple-400 rounded-full flex-shrink-0" />
+                <p className="text-slate-200 text-lg">{item}</p>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
 }
 
-function EmailCard({ data }: { data: { title: string; items: EmailItem[] } }) {
+function EmailCard({ data }: { data: EmailSection }) {
+  // Handle both formats
+  const sections: { title: string; items: EmailEntry[]; icon: React.ReactNode; color: string }[] = [];
+  
+  if (data.items) {
+    sections.push({ title: "Inbox", items: data.items, icon: <Mail className="w-4 h-4" />, color: "cyan" });
+  } else {
+    if (data.needs_attention?.length) {
+      sections.push({ title: "Needs Attention", items: data.needs_attention, icon: <AlertTriangle className="w-4 h-4" />, color: "amber" });
+    }
+    if (data.dev_work?.length) {
+      sections.push({ title: "Dev Work", items: data.dev_work, icon: <Code className="w-4 h-4" />, color: "red" });
+    }
+    if (data.good_news?.length) {
+      sections.push({ title: "Good News", items: data.good_news, icon: <CheckCircle className="w-4 h-4" />, color: "green" });
+    }
+  }
+
   return (
-    <div className="h-full flex flex-col bg-gradient-to-b from-slate-900 to-cyan-950/30 p-6">
+    <div className="h-full flex flex-col bg-gradient-to-b from-slate-900 to-cyan-950/30 p-6 overflow-auto">
       <div className="flex items-center gap-3 mb-6">
         <div className="w-12 h-12 bg-cyan-600/20 rounded-xl flex items-center justify-center">
           <Mail className="w-6 h-6 text-cyan-400" strokeWidth={1.5} />
@@ -204,20 +298,32 @@ function EmailCard({ data }: { data: { title: string; items: EmailItem[] } }) {
         <h2 className="font-semibold text-xl text-slate-100">{data.title}</h2>
       </div>
       
-      <div className="flex-1 flex flex-col justify-center">
-        <div className="space-y-3">
-          {data.items.map((item, i) => {
-            const emailItem = typeof item === "string" ? { subject: item } : item;
-            return (
-              <div key={i} className="bg-slate-800/50 rounded-xl p-4">
-                <p className="text-slate-200 text-lg font-medium">{emailItem.subject}</p>
-                {emailItem.preview && (
-                  <p className="text-slate-400 text-sm mt-1">{emailItem.preview}</p>
-                )}
-              </div>
-            );
-          })}
-        </div>
+      <div className="flex-1 space-y-4 overflow-auto">
+        {sections.map((section, si) => (
+          <div key={si}>
+            <p className={`text-xs uppercase tracking-wide mb-2 text-${section.color}-400 flex items-center gap-2`}>
+              {section.icon} {section.title}
+            </p>
+            <div className="space-y-2">
+              {section.items.map((item, i) => (
+                <div key={i} className="bg-slate-800/50 rounded-xl p-3">
+                  <p className="text-slate-200 font-medium">{item.subject || item.from}</p>
+                  {item.from && item.subject && (
+                    <p className="text-slate-500 text-sm">From: {item.from}</p>
+                  )}
+                  {item.note && (
+                    <p className="text-slate-400 text-sm mt-1">{item.note}</p>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+        {sections.length === 0 && (
+          <div className="bg-slate-800/50 rounded-xl p-4 text-center">
+            <p className="text-slate-400">No email highlights</p>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -233,33 +339,39 @@ function MarketsCard({ data }: { data: MarketsSection }) {
           </div>
           <div>
             <h2 className="font-semibold text-xl text-slate-100">Markets</h2>
-            <p className="text-xs text-slate-500">VIX: {data.summary.vix} • {data.summary.volatility}</p>
+            {data.summary && (
+              <p className="text-xs text-slate-500">VIX: {data.summary.vix} • {data.summary.volatility}</p>
+            )}
           </div>
         </div>
-        <div className={`px-3 py-1 rounded-full text-sm font-medium ${
-          data.summary.sentiment === "BULLISH" ? "bg-emerald-500/20 text-emerald-400" :
-          data.summary.sentiment === "BEARISH" ? "bg-red-500/20 text-red-400" :
-          "bg-slate-700 text-slate-400"
-        }`}>
-          {data.summary.sentiment}
-        </div>
-      </div>
-
-      <div className="grid grid-cols-2 gap-3 mb-4">
-        {data.overview.map((item) => (
-          <div key={item.symbol} className="bg-slate-800/50 rounded-xl p-3 text-center">
-            <p className="text-slate-500 text-xs font-medium">{item.symbol}</p>
-            <p className="text-slate-200 font-bold text-lg">${item.price.toFixed(0)}</p>
-            <p className={`text-sm font-medium flex items-center justify-center gap-1 ${
-              item.change_pct >= 0 ? "text-emerald-400" : "text-red-400"
-            }`}>
-              {item.change_pct >= 0 ? "+" : ""}{item.change_pct.toFixed(2)}%
-            </p>
+        {data.summary?.sentiment && (
+          <div className={`px-3 py-1 rounded-full text-sm font-medium ${
+            data.summary.sentiment === "BULLISH" ? "bg-emerald-500/20 text-emerald-400" :
+            data.summary.sentiment === "BEARISH" ? "bg-red-500/20 text-red-400" :
+            "bg-slate-700 text-slate-400"
+          }`}>
+            {data.summary.sentiment}
           </div>
-        ))}
+        )}
       </div>
 
-      {data.signals.length > 0 && (
+      {data.overview && data.overview.length > 0 && (
+        <div className="grid grid-cols-2 gap-3 mb-4">
+          {data.overview.map((item) => (
+            <div key={item.symbol} className="bg-slate-800/50 rounded-xl p-3 text-center">
+              <p className="text-slate-500 text-xs font-medium">{item.symbol}</p>
+              <p className="text-slate-200 font-bold text-lg">${item.price.toFixed(0)}</p>
+              <p className={`text-sm font-medium flex items-center justify-center gap-1 ${
+                item.change_pct >= 0 ? "text-emerald-400" : "text-red-400"
+              }`}>
+                {item.change_pct >= 0 ? "+" : ""}{item.change_pct.toFixed(2)}%
+              </p>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {data.signals && data.signals.length > 0 && (
         <div className="flex-1">
           <p className="text-xs text-slate-500 uppercase tracking-wide mb-3">CGS Signals</p>
           <div className="space-y-2">
@@ -308,7 +420,7 @@ function NewsCard({ data }: { data: { title: string; subsections?: { [key: strin
               </h3>
               <div className="space-y-2">
                 {subsection.items.slice(0, 3).map((item, i) => {
-                  const newsItem = typeof item === "string" ? { headline: item } : item;
+                  const newsItem = normalizeNewsItem(item);
                   return (
                     <div key={i} className="bg-slate-800/50 rounded-lg p-3 flex items-start gap-2">
                       <ChevronRight className="w-4 h-4 mt-0.5 text-slate-600 flex-shrink-0" strokeWidth={1.5} />
@@ -325,7 +437,8 @@ function NewsCard({ data }: { data: { title: string; subsections?: { [key: strin
   );
 }
 
-function AICard({ data }: { data: { title: string; items: NewsItem[] } }) {
+function AICard({ data }: { data: AISection }) {
+  const items = data.items || [];
   return (
     <div className="h-full flex flex-col bg-gradient-to-b from-slate-900 to-pink-950/30 p-6">
       <div className="flex items-center gap-3 mb-6">
@@ -337,8 +450,8 @@ function AICard({ data }: { data: { title: string; items: NewsItem[] } }) {
       
       <div className="flex-1 flex flex-col justify-center">
         <div className="space-y-3">
-          {data.items.map((item, i) => {
-            const aiItem = typeof item === "string" ? { headline: item } : item;
+          {items.map((item, i) => {
+            const aiItem = normalizeNewsItem(item);
             return (
               <div key={i} className="bg-slate-800/50 rounded-xl p-4">
                 <p className="text-slate-200">{aiItem.headline}</p>
@@ -440,22 +553,17 @@ export default function MorningBriefPage() {
   };
 
   const formatDate = (dateStr: string) => {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString("en-US", {
-      weekday: "long",
-      month: "long",
-      day: "numeric",
-      year: "numeric",
-    });
-  };
-
-  const openEmail = (email: EmailItem) => {
-    if (email.url) window.open(email.url, "_blank");
-    else if (email.messageId) window.open(`https://mail.google.com/mail/u/0/#inbox/${email.messageId}`, "_blank");
-  };
-
-  const openArticle = (item: NewsItem) => {
-    if (item.url) window.open(item.url, "_blank");
+    try {
+      const date = new Date(dateStr);
+      return date.toLocaleDateString("en-US", {
+        weekday: "long",
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      });
+    } catch {
+      return dateStr;
+    }
   };
 
   // Mobile TikTok-style view
@@ -520,7 +628,7 @@ export default function MorningBriefPage() {
     );
   }
 
-  // Desktop View (original)
+  // Desktop View
   return (
     <div className="space-y-8 max-w-6xl">
       {/* Header */}
@@ -604,40 +712,56 @@ export default function MorningBriefPage() {
                 </div>
                 <div>
                   <h2 className="font-semibold text-slate-100">{briefData.sections.prayer.title}</h2>
-                  <p className="text-xs text-amber-400/80">{briefData.sections.prayer.hebrew_date} • Parashat {briefData.sections.prayer.parsha}</p>
+                  {briefData.sections.prayer.hebrew_date && briefData.sections.prayer.parsha && (
+                    <p className="text-xs text-amber-400/80">{briefData.sections.prayer.hebrew_date} • Parashat {briefData.sections.prayer.parsha}</p>
+                  )}
                 </div>
               </div>
               
               <div className="space-y-4">
-                <div className="bg-slate-800/50 rounded-lg p-4 border-l-2 border-amber-500/50">
-                  <p className="text-amber-200/90 text-lg font-hebrew mb-1">מודה אני לפניך</p>
-                  <p className="text-slate-400 text-sm">{briefData.sections.prayer.modeh_ani}</p>
-                </div>
+                {briefData.sections.prayer.modeh_ani && (
+                  <div className="bg-slate-800/50 rounded-lg p-4 border-l-2 border-amber-500/50">
+                    <p className="text-amber-200/90 text-lg font-hebrew mb-1">מודה אני לפניך</p>
+                    <p className="text-slate-400 text-sm">{briefData.sections.prayer.modeh_ani}</p>
+                  </div>
+                )}
                 
-                <p className="text-slate-300 text-sm">{briefData.sections.prayer.blessing}</p>
+                {briefData.sections.prayer.blessing && (
+                  <p className="text-slate-300 text-sm">{briefData.sections.prayer.blessing}</p>
+                )}
                 
-                <div className="bg-slate-800/30 rounded-lg p-3">
-                  <p className="text-xs text-amber-400 uppercase tracking-wide mb-1">Torah Theme</p>
-                  <p className="text-slate-400 text-sm italic">{briefData.sections.prayer.parsha_theme}</p>
-                </div>
+                {briefData.sections.prayer.parsha_theme && (
+                  <div className="bg-slate-800/30 rounded-lg p-3">
+                    <p className="text-xs text-amber-400 uppercase tracking-wide mb-1">Torah Theme</p>
+                    <p className="text-slate-400 text-sm italic">{briefData.sections.prayer.parsha_theme}</p>
+                  </div>
+                )}
                 
                 <div className="grid md:grid-cols-2 gap-3">
-                  <div className="bg-slate-800/30 rounded-lg p-3">
-                    <p className="text-slate-300 text-sm">{briefData.sections.prayer.psalm}</p>
-                  </div>
-                  <div className="bg-slate-800/30 rounded-lg p-3">
-                    <p className="text-slate-300 text-sm">{briefData.sections.prayer.proverb}</p>
-                  </div>
+                  {briefData.sections.prayer.psalm && (
+                    <div className="bg-slate-800/30 rounded-lg p-3">
+                      <p className="text-slate-300 text-sm">{briefData.sections.prayer.psalm}</p>
+                    </div>
+                  )}
+                  {briefData.sections.prayer.proverb && (
+                    <div className="bg-slate-800/30 rounded-lg p-3">
+                      <p className="text-slate-300 text-sm">{briefData.sections.prayer.proverb}</p>
+                    </div>
+                  )}
                 </div>
                 
-                <div className="border-t border-slate-700/50 pt-4">
-                  <p className="text-xs text-slate-500 uppercase tracking-wide mb-2">Personal Intention</p>
-                  <p className="text-slate-300 text-sm">{briefData.sections.prayer.intention}</p>
-                </div>
+                {briefData.sections.prayer.intention && (
+                  <div className="border-t border-slate-700/50 pt-4">
+                    <p className="text-xs text-slate-500 uppercase tracking-wide mb-2">Personal Intention</p>
+                    <p className="text-slate-300 text-sm">{briefData.sections.prayer.intention}</p>
+                  </div>
+                )}
                 
-                <div className="text-center pt-2">
-                  <p className="text-amber-300/80 text-sm italic">{briefData.sections.prayer.closing}</p>
-                </div>
+                {briefData.sections.prayer.closing && (
+                  <div className="text-center pt-2">
+                    <p className="text-amber-300/80 text-sm italic">{briefData.sections.prayer.closing}</p>
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -652,11 +776,24 @@ export default function MorningBriefPage() {
                   </div>
                   <h2 className="font-semibold text-slate-200">{briefData.sections.weather.title}</h2>
                 </div>
-                <ul className="space-y-2">
-                  {briefData.sections.weather.items.map((item, i) => (
-                    <li key={i} className="text-slate-400 text-sm">{item}</li>
-                  ))}
-                </ul>
+                {briefData.sections.weather.temperature && !briefData.sections.weather.items && (
+                  <div className="text-center mb-4">
+                    <p className="text-4xl font-bold text-primary-400">{briefData.sections.weather.temperature}</p>
+                    {briefData.sections.weather.condition && (
+                      <p className="text-slate-300 mt-1">{briefData.sections.weather.condition}</p>
+                    )}
+                  </div>
+                )}
+                {briefData.sections.weather.items && (
+                  <ul className="space-y-2">
+                    {briefData.sections.weather.items.map((item, i) => (
+                      <li key={i} className="text-slate-400 text-sm">{item}</li>
+                    ))}
+                  </ul>
+                )}
+                {briefData.sections.weather.summary && !briefData.sections.weather.items && (
+                  <p className="text-slate-400 text-sm text-center">{briefData.sections.weather.summary}</p>
+                )}
               </div>
             )}
 
@@ -668,11 +805,15 @@ export default function MorningBriefPage() {
                   </div>
                   <h2 className="font-semibold text-slate-200">{briefData.sections.calendar.title}</h2>
                 </div>
-                <ul className="space-y-2">
-                  {briefData.sections.calendar.items.map((item, i) => (
-                    <li key={i} className="text-slate-400 text-sm">{item}</li>
-                  ))}
-                </ul>
+                {(!briefData.sections.calendar.items || briefData.sections.calendar.items.length === 0) ? (
+                  <p className="text-slate-500 text-sm">No events today</p>
+                ) : (
+                  <ul className="space-y-2">
+                    {briefData.sections.calendar.items.map((item, i) => (
+                      <li key={i} className="text-slate-400 text-sm">{item}</li>
+                    ))}
+                  </ul>
+                )}
               </div>
             )}
 
@@ -684,26 +825,19 @@ export default function MorningBriefPage() {
                   </div>
                   <h2 className="font-semibold text-slate-200">{briefData.sections.email.title}</h2>
                 </div>
-                <ul className="space-y-1">
-                  {briefData.sections.email.items.map((item, i) => {
-                    const emailItem = typeof item === "string" ? { subject: item } : item;
-                    const hasLink = emailItem.url || emailItem.messageId;
-                    return (
-                      <li 
-                        key={i} 
-                        onClick={() => hasLink && openEmail(emailItem)}
-                        className={`text-slate-400 text-sm py-2 px-2 -mx-2 rounded-lg flex items-center justify-between group ${
-                          hasLink ? "cursor-pointer hover:bg-slate-800 hover:text-slate-200" : ""
-                        }`}
-                      >
-                        <span>{emailItem.subject}</span>
-                        {hasLink && (
-                          <ExternalLink className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity text-accent-500" strokeWidth={1.5} />
-                        )}
-                      </li>
-                    );
-                  })}
-                </ul>
+                <div className="space-y-3 max-h-48 overflow-auto">
+                  {briefData.sections.email.needs_attention?.slice(0, 3).map((item, i) => (
+                    <div key={`att-${i}`} className="text-sm">
+                      <p className="text-slate-300 font-medium">{item.subject}</p>
+                      <p className="text-slate-500 text-xs">{item.from} • {item.note}</p>
+                    </div>
+                  ))}
+                  {briefData.sections.email.items?.slice(0, 3).map((item, i) => (
+                    <div key={`item-${i}`} className="text-sm">
+                      <p className="text-slate-300 font-medium">{item.subject}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
           </div>
@@ -718,36 +852,42 @@ export default function MorningBriefPage() {
                   </div>
                   <div>
                     <h2 className="font-semibold text-slate-200">{briefData.sections.markets.title}</h2>
-                    <p className="text-xs text-slate-500">
-                      {briefData.sections.markets.summary.market_status} • VIX: {briefData.sections.markets.summary.vix} ({briefData.sections.markets.summary.volatility})
-                    </p>
+                    {briefData.sections.markets.summary && (
+                      <p className="text-xs text-slate-500">
+                        {briefData.sections.markets.summary.market_status} • VIX: {briefData.sections.markets.summary.vix} ({briefData.sections.markets.summary.volatility})
+                      </p>
+                    )}
                   </div>
                 </div>
-                <div className={`px-3 py-1 rounded-full text-xs font-medium ${
-                  briefData.sections.markets.summary.sentiment === "BULLISH" ? "bg-emerald-500/20 text-emerald-400" :
-                  briefData.sections.markets.summary.sentiment === "BEARISH" ? "bg-red-500/20 text-red-400" :
-                  "bg-slate-700 text-slate-400"
-                }`}>
-                  {briefData.sections.markets.summary.sentiment}
-                </div>
-              </div>
-
-              <div className="grid grid-cols-4 gap-3 mb-5">
-                {briefData.sections.markets.overview.map((item) => (
-                  <div key={item.symbol} className="bg-slate-800/50 rounded-lg p-3 text-center">
-                    <p className="text-slate-500 text-xs font-medium">{item.symbol}</p>
-                    <p className="text-slate-200 font-semibold">${item.price.toFixed(2)}</p>
-                    <p className={`text-xs font-medium flex items-center justify-center gap-1 ${
-                      item.change_pct >= 0 ? "text-emerald-400" : "text-red-400"
-                    }`}>
-                      {item.change_pct >= 0 ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
-                      {item.change_pct >= 0 ? "+" : ""}{item.change_pct.toFixed(2)}%
-                    </p>
+                {briefData.sections.markets.summary?.sentiment && (
+                  <div className={`px-3 py-1 rounded-full text-xs font-medium ${
+                    briefData.sections.markets.summary.sentiment === "BULLISH" ? "bg-emerald-500/20 text-emerald-400" :
+                    briefData.sections.markets.summary.sentiment === "BEARISH" ? "bg-red-500/20 text-red-400" :
+                    "bg-slate-700 text-slate-400"
+                  }`}>
+                    {briefData.sections.markets.summary.sentiment}
                   </div>
-                ))}
+                )}
               </div>
 
-              {briefData.sections.markets.signals.length > 0 && (
+              {briefData.sections.markets.overview && briefData.sections.markets.overview.length > 0 && (
+                <div className="grid grid-cols-4 gap-3 mb-5">
+                  {briefData.sections.markets.overview.map((item) => (
+                    <div key={item.symbol} className="bg-slate-800/50 rounded-lg p-3 text-center">
+                      <p className="text-slate-500 text-xs font-medium">{item.symbol}</p>
+                      <p className="text-slate-200 font-semibold">${item.price.toFixed(2)}</p>
+                      <p className={`text-xs font-medium flex items-center justify-center gap-1 ${
+                        item.change_pct >= 0 ? "text-emerald-400" : "text-red-400"
+                      }`}>
+                        {item.change_pct >= 0 ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+                        {item.change_pct >= 0 ? "+" : ""}{item.change_pct.toFixed(2)}%
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {briefData.sections.markets.signals && briefData.sections.markets.signals.length > 0 && (
                 <div>
                   <p className="text-xs text-slate-500 uppercase tracking-wide mb-3">CGS Trading Signals</p>
                   <div className="space-y-2">
@@ -761,7 +901,7 @@ export default function MorningBriefPage() {
                           }`}>{signal.type}</span>
                           <div>
                             <p className="font-semibold text-slate-200">{signal.symbol} <span className="text-slate-500 font-normal">@ ${signal.price}</span></p>
-                            <p className="text-xs text-slate-500">{signal.rationale}</p>
+                            {signal.rationale && <p className="text-xs text-slate-500">{signal.rationale}</p>}
                           </div>
                         </div>
                         <div className="text-right text-xs">
@@ -781,7 +921,7 @@ export default function MorningBriefPage() {
           )}
 
           {/* News */}
-          {briefData.sections.news && (
+          {briefData.sections.news && briefData.sections.news.subsections && (
             <div className="bg-slate-850 rounded-xl border border-slate-800 p-5">
               <div className="flex items-center gap-3 mb-5">
                 <div className="w-9 h-9 bg-accent-600/20 rounded-lg flex items-center justify-center">
@@ -790,43 +930,31 @@ export default function MorningBriefPage() {
                 <h2 className="font-semibold text-slate-200">{briefData.sections.news.title}</h2>
               </div>
               
-              {briefData.sections.news.subsections && (
-                <div className="grid gap-6 md:grid-cols-3">
-                  {Object.entries(briefData.sections.news.subsections).map(([key, subsection]) => (
-                    <div key={key}>
-                      <h3 className="font-medium text-primary-400 mb-3 text-sm uppercase tracking-wide">
-                        {subsection.title}
-                      </h3>
-                      <ul className="space-y-2">
-                        {subsection.items.map((item, i) => {
-                          const newsItem = typeof item === "string" ? { headline: item } : item;
-                          const hasLink = newsItem.url;
-                          return (
-                            <li 
-                              key={i}
-                              onClick={() => hasLink && openArticle(newsItem)}
-                              className={`text-slate-400 text-sm py-2 px-2 -mx-2 rounded-lg flex items-start gap-2 group ${
-                                hasLink ? "cursor-pointer hover:bg-slate-800 hover:text-slate-200" : ""
-                              }`}
-                            >
-                              <ChevronRight className="w-4 h-4 mt-0.5 text-slate-600 flex-shrink-0" strokeWidth={1.5} />
-                              <span className="flex-1">{newsItem.headline}</span>
-                              {hasLink && (
-                                <ExternalLink className="w-3.5 h-3.5 mt-0.5 opacity-0 group-hover:opacity-100 transition-opacity text-accent-500 flex-shrink-0" strokeWidth={1.5} />
-                              )}
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    </div>
-                  ))}
-                </div>
-              )}
+              <div className="grid gap-6 md:grid-cols-3">
+                {Object.entries(briefData.sections.news.subsections).map(([key, subsection]) => (
+                  <div key={key}>
+                    <h3 className="font-medium text-primary-400 mb-3 text-sm uppercase tracking-wide">
+                      {subsection.title}
+                    </h3>
+                    <ul className="space-y-2">
+                      {subsection.items.map((item, i) => {
+                        const newsItem = normalizeNewsItem(item);
+                        return (
+                          <li key={i} className="text-slate-400 text-sm py-2 px-2 -mx-2 rounded-lg flex items-start gap-2">
+                            <ChevronRight className="w-4 h-4 mt-0.5 text-slate-600 flex-shrink-0" strokeWidth={1.5} />
+                            <span className="flex-1">{newsItem.headline}</span>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
 
           {/* AI */}
-          {briefData.sections.ai && (
+          {briefData.sections.ai && briefData.sections.ai.items && (
             <div className="bg-slate-850 rounded-xl border border-slate-800 p-5">
               <div className="flex items-center gap-3 mb-5">
                 <div className="w-9 h-9 bg-primary-600/20 rounded-lg flex items-center justify-center">
@@ -836,20 +964,10 @@ export default function MorningBriefPage() {
               </div>
               <div className="grid gap-3 md:grid-cols-2">
                 {briefData.sections.ai.items.map((item, i) => {
-                  const aiItem = typeof item === "string" ? { headline: item } : item;
-                  const hasLink = aiItem.url;
+                  const aiItem = normalizeNewsItem(item);
                   return (
-                    <div 
-                      key={i}
-                      onClick={() => hasLink && openArticle(aiItem)}
-                      className={`text-slate-400 text-sm bg-slate-800/50 rounded-lg p-3 flex items-center justify-between group ${
-                        hasLink ? "cursor-pointer hover:bg-slate-800 hover:text-slate-200" : ""
-                      }`}
-                    >
+                    <div key={i} className="text-slate-400 text-sm bg-slate-800/50 rounded-lg p-3">
                       <span>{aiItem.headline}</span>
-                      {hasLink && (
-                        <ExternalLink className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity text-accent-500 flex-shrink-0 ml-2" strokeWidth={1.5} />
-                      )}
                     </div>
                   );
                 })}

@@ -37,14 +37,14 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-dark-900 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <Lock className="w-8 h-8 text-white" />
+          <div className="w-16 h-16 bg-gradient-to-br from-primary-600 to-accent-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <Lock className="w-8 h-8 text-white" strokeWidth={1.5} />
           </div>
-          <h1 className="text-2xl font-bold text-white">Clawdbot Hub</h1>
-          <p className="text-gray-400 mt-2">Enter password to continue</p>
+          <h1 className="text-2xl font-semibold text-slate-100">Clawdbot Hub</h1>
+          <p className="text-slate-500 mt-2 text-sm">Enter password to continue</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -54,15 +54,15 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Password"
-              className="w-full px-4 py-3 bg-dark-800 border border-dark-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 transition-colors"
+              className="w-full px-4 py-3 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-600 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all"
               autoFocus
               disabled={loading}
             />
           </div>
 
           {error && (
-            <div className="flex items-center gap-2 text-red-400 text-sm">
-              <AlertCircle className="w-4 h-4" />
+            <div className="flex items-center gap-2 text-status-error text-sm">
+              <AlertCircle className="w-4 h-4" strokeWidth={1.5} />
               {error}
             </div>
           )}
@@ -70,11 +70,11 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading || !password}
-            className="w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="w-full py-3 bg-gradient-to-r from-primary-600 to-accent-600 text-white font-medium rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {loading ? (
               <>
-                <Loader2 className="w-4 h-4 animate-spin" />
+                <Loader2 className="w-4 h-4 animate-spin" strokeWidth={1.5} />
                 Authenticating...
               </>
             ) : (

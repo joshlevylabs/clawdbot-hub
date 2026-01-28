@@ -1,6 +1,6 @@
 {
   "date": "2026-01-28",
-  "time": "4:54 AM",
+  "time": "6:00 AM",
   "sections": {
     "prayer": {
       "title": "🕊️ Morning Prayer",
@@ -10,46 +10,47 @@
       "parsha_theme": "generational blessing, identity, inheritance",
       "modeh_ani": "מודה אני לפניך — I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
       "blessing": "Blessed are You who crowns Israel with glory — let my work bring You honor.",
-      "psalm": "**Psalm 37:5**: \"Commit your way to the Lord; trust in Him and He will act.\"",
-      "proverb": "**Proverbs 24:27**: \"Prepare your work outside; get everything ready, then build your house.\"",
+      "psalm": "Psalm 37:5: \"Commit your way to the Lord; trust in Him and He will act.\"",
+      "proverb": "Proverbs 24:27: \"Prepare your work outside; get everything ready, then build your house.\"",
       "intention": "Guide my hands today as I build — let every line of code, every decision, every conversation serve Your purposes.",
       "closing": "The Lord goes before you today. He will be with you; He will never leave you nor forsake you. Do not be afraid; do not be discouraged."
     },
     "weather": {
-      "title": "🌤️ Weather",
-      "items": [
-        "Los Angeles: 58°F, Partly Cloudy",
-        "High: 68°F / Low: 52°F",
-        "No rain expected today",
-        "Air Quality: Good (AQI 42)"
-      ]
+      "title": "☀️ Weather — Los Angeles",
+      "temperature": "53°F",
+      "condition": "Sunny",
+      "wind": "SE 2mph",
+      "summary": "Clear day ahead"
     },
     "calendar": {
-      "title": "📅 Today",
-      "items": [
-        "No meetings scheduled",
-        "Focus time available all day",
-        "Builder's Frequency launch: 18 days away"
-      ]
+      "title": "📅 Calendar",
+      "items": []
     },
     "email": {
-      "title": "📬 Priority Inbox",
-      "items": [
-        {"subject": "No urgent emails", "preview": "Inbox is clear"}
+      "title": "📧 Email Highlights",
+      "needs_attention": [
+        {"from": "Jillian Reesink", "subject": "Fwd: Welcome to Solar Billing Plan", "note": "marked important"},
+        {"from": "Google", "subject": "Security Alert (joshlevylabs)", "note": "review account activity"},
+        {"from": "Google", "subject": "Security Alert (thelyceum)", "note": "review account activity"},
+        {"from": "Tesla Energy", "subject": "Request received", "note": "refid:CI019C9D46"}
+      ],
+      "dev_work": [
+        {"from": "Sentry", "subject": "ProcessError in ELECTRON-6", "note": "exit code 1"},
+        {"from": "GitHub", "subject": "4 failed CI/Lint runs on auto-claude", "note": "main + develop branches"}
+      ],
+      "good_news": [
+        {"from": "Beehiiv", "subject": "Identity verified"},
+        {"from": "Riverside.fm", "subject": "Welcome aboard"},
+        {"from": "NAB Show 2026", "subject": "Registration confirmed"}
       ]
     },
     "markets": {
       "title": "📈 Markets & Trading Signals",
       "summary": {
         "date": "2026-01-28",
-        "time": "04:54 AM",
-        "market_status": "CLOSED",
-        "spy": {
-          "price": 695.49,
-          "change_pct": 0.4
-        },
+        "spy": {"price": 695.49, "change_pct": 0.4},
+        "vix": 16.49,
         "sentiment": "NEUTRAL",
-        "vix": 16.46,
         "volatility": "LOW"
       },
       "overview": [
@@ -59,74 +60,59 @@
         {"symbol": "DIA", "price": 490.06, "change_pct": -0.81, "trend": "NEUTRAL"}
       ],
       "signals": [
-        {
-          "type": "BUY",
-          "symbol": "MSFT",
-          "price": 480.58,
-          "entry": 480.58,
-          "stop": 460.31,
-          "target": 510.98,
-          "confidence": "MEDIUM",
-          "rationale": "Trend: BULLISH | MACD bullish crossover"
-        },
-        {
-          "type": "SELL",
-          "symbol": "GLD",
-          "price": 476.1,
-          "entry": 476.1,
-          "stop": 492.36,
-          "target": 451.71,
-          "confidence": "MEDIUM",
-          "rationale": "RSI overbought (85.1) | High volume confirmation | Price near BB resistance"
-        },
-        {
-          "type": "SELL",
-          "symbol": "SLV",
-          "price": 101.59,
-          "entry": 101.59,
-          "stop": 111.27,
-          "target": 87.07,
-          "confidence": "MEDIUM",
-          "rationale": "RSI overbought (81.0) | High volume confirmation | Price near BB resistance"
-        }
+        {"type": "BUY", "symbol": "MSFT", "price": 480.58, "entry": 480.58, "stop": 460.31, "target": 510.98, "rationale": "Bullish trend, MACD crossover"},
+        {"type": "SELL", "symbol": "GLD", "price": 476.10, "entry": 476.10, "stop": 492.36, "target": 451.71, "rationale": "RSI overbought (85.1), near BB resistance"},
+        {"type": "SELL", "symbol": "SLV", "price": 101.59, "entry": 101.59, "stop": 111.27, "target": 87.07, "rationale": "RSI overbought (81.0), near BB resistance"}
       ]
     },
     "news": {
       "title": "🌍 World News",
       "subsections": {
-        "israel": {
-          "title": "🇮🇱 Israel",
+        "iran": {
+          "title": "🇮🇷 Iran Standoff",
           "items": [
-            {"headline": "Netanyahu meets with Biden administration officials on security cooperation"},
-            {"headline": "Israeli tech sector sees record Q4 investments despite global slowdown"},
-            {"headline": "IDF announces completion of northern border security upgrades"}
+            "Trump warns Iran 'time is running out' — demands nuclear deal or face another U.S. strike",
+            "U.S. announces multi-day aerial military drill in Middle East",
+            "'Beautiful armada' sailing toward Iran, Trump says",
+            "Iranian president defiant: 'U.S. threats will achieve nothing'",
+            "Trump briefed that Iran regime at 'weakest point since 1979'"
+          ]
+        },
+        "israel": {
+          "title": "🇮🇱 Israel/Gaza",
+          "items": [
+            "Netanyahu: No Gaza rebuild before Hamas disarms; Israel will maintain security control",
+            "Hamas seeks role for its 'police officers' (Israel views them as terrorists)",
+            "Trump: Hamas 'worked hard' to return last hostage, now must disarm",
+            "All hostages now home — 843-day ordeal ends with Ran Gvili's return"
           ]
         },
         "us": {
-          "title": "🇺🇸 United States",
+          "title": "🇺🇸 Domestic",
           "items": [
-            {"headline": "Fed signals potential rate cuts in Q2 as inflation cools"},
-            {"headline": "Congress passes bipartisan infrastructure funding extension"},
-            {"headline": "Tech earnings week begins with major AI announcements expected"}
+            "Man rushes Ilhan Omar at town hall, sprays her with unknown liquid",
+            "Anti-ICE activists storm Minnesota Capitol to protest outside Walz's office",
+            "TikTok deal: How Trump's team saved the app"
           ]
         },
-        "world": {
-          "title": "🌐 Global",
-          "items": [
-            {"headline": "EU finalizes AI regulation framework with compliance deadline set"},
-            {"headline": "China reports stronger than expected economic growth figures"},
-            {"headline": "OPEC+ considers production adjustments amid price stability"}
-          ]
+        "antisemitism": {
+          "title": "📊 Antisemitism Report",
+          "items": ["815 severe antisemitic attacks in 2025, 20 Jews murdered"]
         }
       }
     },
     "ai": {
-      "title": "🤖 AI Intel",
+      "title": "🤖 AI Intelligence",
       "items": [
-        {"headline": "Anthropic releases Claude 4 with expanded reasoning capabilities"},
-        {"headline": "OpenAI announces enterprise partnership with major financial institutions"},
-        {"headline": "Google DeepMind achieves breakthrough in protein folding predictions"},
-        {"headline": "Apple integrating advanced AI features into iOS 20 preview"}
+        {"category": "Testing", "headline": "ADL tested chatbots with antisemitic tropes — Grok most likely to accept them"},
+        {"category": "Google", "headline": "AI Plus plan now available in US — $7.99/mo with Gemini 3 Pro access"},
+        {"category": "Acqui-hire", "headline": "DeepMind acqui-hired Hume AI's CEO + top engineers (voice AI)"},
+        {"category": "Government", "headline": "Trump's Transportation Dept using Google Gemini to write regulations"},
+        {"category": "Business", "headline": "Meta spending millions on ads convincing people data centers are good neighbors"},
+        {"category": "Policy", "headline": "Google exploring letting UK publishers opt out of AI in Search"},
+        {"category": "Research", "headline": "Nvidia debuted new AI weather models — outperforming traditional forecasting"},
+        {"category": "Legislation", "headline": "TRAIN Act would let creators see if their work trained AI models"},
+        {"category": "Safety", "headline": "AI toys study: 'emotional attachment by design,' inappropriate answers 25% of the time"}
       ]
     }
   }

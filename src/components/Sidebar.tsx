@@ -15,6 +15,8 @@ import {
   X,
   MessageCircle,
   LogOut,
+  Clock,
+  Sun,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -22,6 +24,8 @@ const navItems = [
   { href: "/", icon: LayoutDashboard, label: "Dashboard" },
   { href: "/chat", icon: MessageCircle, label: "Chat" },
   { href: "/tasks", icon: ListTodo, label: "Tasks" },
+  { href: "/morning-brief", icon: Sun, label: "Morning Brief" },
+  { href: "/schedules", icon: Clock, label: "Schedules" },
   { href: "/connections", icon: Plug, label: "Connections" },
   { href: "/skills", icon: Sparkles, label: "Skills" },
   { href: "/usage", icon: BarChart3, label: "Usage" },

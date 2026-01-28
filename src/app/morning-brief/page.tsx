@@ -12,7 +12,11 @@ import {
   Clock,
   ExternalLink,
   ChevronRight,
-  AlertCircle
+  AlertCircle,
+  BookOpen,
+  TrendingUp,
+  TrendingDown,
+  ArrowRight,
 } from "lucide-react";
 
 interface EmailItem {
@@ -33,10 +37,58 @@ interface NewsSubsection {
   items: NewsItem[];
 }
 
+interface PrayerSection {
+  title: string;
+  date: string;
+  hebrew_date: string;
+  parsha: string;
+  parsha_theme: string;
+  modeh_ani: string;
+  blessing: string;
+  psalm: string;
+  proverb: string;
+  intention: string;
+  closing: string;
+}
+
+interface MarketOverview {
+  symbol: string;
+  price: number;
+  change_pct: number;
+  trend: string;
+}
+
+interface TradingSignal {
+  type: "BUY" | "SELL";
+  symbol: string;
+  price: number;
+  entry: number;
+  stop: number;
+  target: number;
+  confidence: string;
+  rationale: string;
+}
+
+interface MarketsSection {
+  title: string;
+  summary: {
+    date: string;
+    time: string;
+    market_status: string;
+    spy?: { price: number; change_pct: number };
+    sentiment?: string;
+    vix?: number;
+    volatility?: string;
+  };
+  overview: MarketOverview[];
+  signals: TradingSignal[];
+}
+
 interface BriefData {
   date: string;
   time: string;
   sections: {
+    prayer?: PrayerSection;
     weather?: {
       title: string;
       items: string[];
@@ -49,6 +101,7 @@ interface BriefData {
       title: string;
       items: EmailItem[];
     };
+    markets?: MarketsSection;
     news?: {
       title: string;
       subsections?: {
@@ -186,7 +239,63 @@ export default function MorningBriefPage() {
       {/* Brief Content */}
       {!loading && !error && briefData && (
         <div className="space-y-6">
-          {/* Top Row */}
+          
+          {/* Prayer Section - Always First */}
+          {briefData.sections.prayer && (
+            <div className="bg-gradient-to-br from-slate-850 to-slate-900 rounded-xl border border-amber-900/30 p-6">
+              <div className="flex items-center gap-3 mb-5">
+                <div className="w-10 h-10 bg-amber-600/20 rounded-lg flex items-center justify-center">
+                  <BookOpen className="w-5 h-5 text-amber-400" strokeWidth={1.5} />
+                </div>
+                <div>
+                  <h2 className="font-semibold text-slate-100">{briefData.sections.prayer.title}</h2>
+                  <p className="text-xs text-amber-400/80">{briefData.sections.prayer.hebrew_date} • Parashat {briefData.sections.prayer.parsha}</p>
+                </div>
+              </div>
+              
+              <div className="space-y-4">
+                {/* Modeh Ani */}
+                <div className="bg-slate-800/50 rounded-lg p-4 border-l-2 border-amber-500/50">
+                  <p className="text-amber-200/90 text-lg font-hebrew mb-1">מודה אני לפניך</p>
+                  <p className="text-slate-400 text-sm">{briefData.sections.prayer.modeh_ani}</p>
+                </div>
+                
+                {/* Blessing */}
+                <div>
+                  <p className="text-slate-300 text-sm">{briefData.sections.prayer.blessing}</p>
+                </div>
+                
+                {/* Torah Theme */}
+                <div className="bg-slate-800/30 rounded-lg p-3">
+                  <p className="text-xs text-amber-400 uppercase tracking-wide mb-1">Torah Theme</p>
+                  <p className="text-slate-400 text-sm italic">{briefData.sections.prayer.parsha_theme}</p>
+                </div>
+                
+                {/* Scripture */}
+                <div className="grid md:grid-cols-2 gap-3">
+                  <div className="bg-slate-800/30 rounded-lg p-3">
+                    <p className="text-slate-300 text-sm">{briefData.sections.prayer.psalm}</p>
+                  </div>
+                  <div className="bg-slate-800/30 rounded-lg p-3">
+                    <p className="text-slate-300 text-sm">{briefData.sections.prayer.proverb}</p>
+                  </div>
+                </div>
+                
+                {/* Intention */}
+                <div className="border-t border-slate-700/50 pt-4">
+                  <p className="text-xs text-slate-500 uppercase tracking-wide mb-2">Personal Intention</p>
+                  <p className="text-slate-300 text-sm">{briefData.sections.prayer.intention}</p>
+                </div>
+                
+                {/* Closing */}
+                <div className="text-center pt-2">
+                  <p className="text-amber-300/80 text-sm italic">{briefData.sections.prayer.closing}</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Top Row - Weather, Calendar, Email */}
           <div className="grid gap-4 md:grid-cols-3">
             {/* Weather */}
             {briefData.sections.weather && (
@@ -254,6 +363,82 @@ export default function MorningBriefPage() {
               </div>
             )}
           </div>
+
+          {/* Markets & Trading Signals */}
+          {briefData.sections.markets && (
+            <div className="bg-slate-850 rounded-xl border border-slate-800 p-5">
+              <div className="flex items-center justify-between mb-5">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 bg-emerald-600/20 rounded-lg flex items-center justify-center">
+                    <TrendingUp className="w-5 h-5 text-emerald-400" strokeWidth={1.5} />
+                  </div>
+                  <div>
+                    <h2 className="font-semibold text-slate-200">{briefData.sections.markets.title}</h2>
+                    <p className="text-xs text-slate-500">
+                      {briefData.sections.markets.summary.market_status} • VIX: {briefData.sections.markets.summary.vix} ({briefData.sections.markets.summary.volatility})
+                    </p>
+                  </div>
+                </div>
+                <div className={`px-3 py-1 rounded-full text-xs font-medium ${
+                  briefData.sections.markets.summary.sentiment === "BULLISH" ? "bg-emerald-500/20 text-emerald-400" :
+                  briefData.sections.markets.summary.sentiment === "BEARISH" ? "bg-red-500/20 text-red-400" :
+                  "bg-slate-700 text-slate-400"
+                }`}>
+                  {briefData.sections.markets.summary.sentiment}
+                </div>
+              </div>
+
+              {/* Market Overview */}
+              <div className="grid grid-cols-4 gap-3 mb-5">
+                {briefData.sections.markets.overview.map((item) => (
+                  <div key={item.symbol} className="bg-slate-800/50 rounded-lg p-3 text-center">
+                    <p className="text-slate-500 text-xs font-medium">{item.symbol}</p>
+                    <p className="text-slate-200 font-semibold">${item.price.toFixed(2)}</p>
+                    <p className={`text-xs font-medium flex items-center justify-center gap-1 ${
+                      item.change_pct >= 0 ? "text-emerald-400" : "text-red-400"
+                    }`}>
+                      {item.change_pct >= 0 ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+                      {item.change_pct >= 0 ? "+" : ""}{item.change_pct.toFixed(2)}%
+                    </p>
+                  </div>
+                ))}
+              </div>
+
+              {/* Trading Signals */}
+              {briefData.sections.markets.signals.length > 0 && (
+                <div>
+                  <p className="text-xs text-slate-500 uppercase tracking-wide mb-3">CGS Trading Signals</p>
+                  <div className="space-y-2">
+                    {briefData.sections.markets.signals.map((signal, i) => (
+                      <div key={i} className={`rounded-lg p-3 flex items-center justify-between ${
+                        signal.type === "BUY" ? "bg-emerald-500/10 border border-emerald-500/20" : "bg-red-500/10 border border-red-500/20"
+                      }`}>
+                        <div className="flex items-center gap-3">
+                          <span className={`px-2 py-0.5 rounded text-xs font-bold ${
+                            signal.type === "BUY" ? "bg-emerald-500/30 text-emerald-300" : "bg-red-500/30 text-red-300"
+                          }`}>
+                            {signal.type}
+                          </span>
+                          <div>
+                            <p className="font-semibold text-slate-200">{signal.symbol} <span className="text-slate-500 font-normal">@ ${signal.price}</span></p>
+                            <p className="text-xs text-slate-500">{signal.rationale}</p>
+                          </div>
+                        </div>
+                        <div className="text-right text-xs">
+                          <p className="text-slate-400">Entry: <span className="text-slate-300">${signal.entry}</span></p>
+                          <p className="text-slate-400">Stop: <span className="text-red-400">${signal.stop}</span></p>
+                          <p className="text-slate-400">Target: <span className="text-emerald-400">${signal.target}</span></p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="text-xs text-slate-600 mt-3 text-center italic">
+                    Signals based on CGS strategy. Not financial advice. Do your own research.
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* World News */}
           {briefData.sections.news && (

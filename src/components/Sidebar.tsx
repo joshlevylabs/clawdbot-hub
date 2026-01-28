@@ -18,8 +18,8 @@ import {
 import { useRouter } from "next/navigation";
 
 const navItems = [
-  { href: "/tasks", icon: CheckSquare, label: "Tasks" },
   { href: "/morning-brief", icon: Sunrise, label: "Morning Brief" },
+  { href: "/tasks", icon: CheckSquare, label: "Tasks" },
   { href: "/schedules", icon: Clock, label: "Schedules" },
   { href: "/connections", icon: Link2, label: "Connections" },
   { href: "/skills", icon: Zap, label: "Skills" },

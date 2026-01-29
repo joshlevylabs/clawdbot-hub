@@ -88,19 +88,20 @@ const DEFAULT_SETTINGS: ChartSettings = {
   showFibExtensions: true,
 };
 
+// Note: label is the unique key used for selection matching
 const TIMEFRAMES = [
   { label: '30m', range: '5d', interval: '30m' },
   { label: '1H', range: '5d', interval: '1h' },
   { label: '4H', range: '1mo', interval: '4h' },
-  { label: '1D', range: '3mo', interval: '1d' },
-  { label: '1W', range: '1y', interval: '1w' },
+  { label: '1D', range: '1mo', interval: '1d' },  // 1 month of daily candles
+  { label: '1W', range: '3mo', interval: '1wk' }, // 3 months of weekly candles
   { label: '1M', range: '1mo', interval: '1d' },
   { label: '3M', range: '3mo', interval: '1d' },
   { label: '6M', range: '6mo', interval: '1d' },
   { label: '1Y', range: '1y', interval: '1d' },
-  { label: '3Y', range: '3y', interval: '1d' },
-  { label: '5Y', range: '5y', interval: '1w' },
-  { label: '10Y', range: '10y', interval: '1w' },
+  { label: '3Y', range: '3y', interval: '1wk' },
+  { label: '5Y', range: '5y', interval: '1wk' },
+  { label: '10Y', range: '10y', interval: '1wk' },
 ];
 
 const SYMBOL_CATEGORIES = {
@@ -127,20 +128,29 @@ function storeSettings(symbol: string, settings: ChartSettings) {
   } catch {}
 }
 
-function getStoredTimeframe(symbol: string): { range: string; interval: string } {
-  if (typeof window === 'undefined') return { range: '3mo', interval: '1d' };
+function getStoredTimeframe(symbol: string): string {
+  if (typeof window === 'undefined') return '3M';
   try {
     const stored = localStorage.getItem(`markets_timeframe_${symbol}`);
-    return stored ? JSON.parse(stored) : { range: '3mo', interval: '1d' };
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      // Handle old format { range, interval } by finding matching label
+      if (typeof parsed === 'object' && parsed.range) {
+        const match = TIMEFRAMES.find(tf => tf.range === parsed.range && tf.interval === parsed.interval);
+        return match?.label ?? '3M';
+      }
+      return parsed;
+    }
+    return '3M';
   } catch {
-    return { range: '3mo', interval: '1d' };
+    return '3M';
   }
 }
 
-function storeTimeframe(symbol: string, range: string, interval: string) {
+function storeTimeframe(symbol: string, label: string) {
   if (typeof window === 'undefined') return;
   try {
-    localStorage.setItem(`markets_timeframe_${symbol}`, JSON.stringify({ range, interval }));
+    localStorage.setItem(`markets_timeframe_${symbol}`, JSON.stringify(label));
   } catch {}
 }
 
@@ -900,7 +910,7 @@ function SettingsPanel({
       </button>
       
       {open && (
-        <div className="absolute right-0 top-10 z-20 bg-slate-850 border border-slate-700 rounded-xl p-4 shadow-xl min-w-[200px]">
+        <div className="absolute right-0 top-10 z-50 bg-slate-850 border border-slate-700 rounded-xl p-4 shadow-xl min-w-[200px]">
           <p className="text-xs text-slate-500 uppercase tracking-wide mb-3">Indicators</p>
           
           <div className="space-y-2">
@@ -1096,9 +1106,9 @@ function FibonacciPanel({ fibonacci, currentPrice }: { fibonacci: FibonacciData;
 }
 
 // Mobile Modal
-function DetailModal({ detail, onClose, range, interval, setTimeframe, settings, setSettings }: { 
-  detail: SymbolDetail; onClose: () => void; range: string; interval: string;
-  setTimeframe: (r: string, i: string) => void; settings: ChartSettings; setSettings: (s: ChartSettings) => void;
+function DetailModal({ detail, onClose, selectedTimeframe, setTimeframe, settings, setSettings }: { 
+  detail: SymbolDetail; onClose: () => void; selectedTimeframe: string;
+  setTimeframe: (label: string) => void; settings: ChartSettings; setSettings: (s: ChartSettings) => void;
 }) {
   const isPositive = detail.quote.change >= 0;
   
@@ -1126,8 +1136,8 @@ function DetailModal({ detail, onClose, range, interval, setTimeframe, settings,
       <div className="p-4 space-y-4">
         <div className="flex flex-wrap gap-1">
           {TIMEFRAMES.map(tf => (
-            <button key={tf.label} onClick={() => setTimeframe(tf.range, tf.interval)}
-              className={`px-2 py-1 rounded text-xs font-medium ${range === tf.range && interval === tf.interval ? 'bg-primary-600 text-white' : 'bg-slate-800 text-slate-400'}`}>
+            <button key={tf.label} onClick={() => setTimeframe(tf.label)}
+              className={`px-2 py-1 rounded text-xs font-medium ${selectedTimeframe === tf.label ? 'bg-primary-600 text-white' : 'bg-slate-800 text-slate-400'}`}>
               {tf.label}
             </button>
           ))}
@@ -1204,8 +1214,12 @@ export default function MarketsPage() {
   const [loading, setLoading] = useState(true);
   const [detailLoading, setDetailLoading] = useState(false);
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
-  const [range, setRange] = useState('3mo');
-  const [interval, setInterval] = useState('1d');
+  const [selectedTimeframe, setSelectedTimeframe] = useState('3M');
+  
+  // Derive range and interval from selected timeframe
+  const currentTf = TIMEFRAMES.find(tf => tf.label === selectedTimeframe) || TIMEFRAMES[6]; // Default to 3M
+  const range = currentTf.range;
+  const interval = currentTf.interval;
   const [isMobile, setIsMobile] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [settings, setSettings] = useState<ChartSettings>(DEFAULT_SETTINGS);
@@ -1229,9 +1243,8 @@ export default function MarketsPage() {
   useEffect(() => {
     if (selectedSymbol) {
       setSettings(getStoredSettings(selectedSymbol));
-      const tf = getStoredTimeframe(selectedSymbol);
-      setRange(tf.range);
-      setInterval(tf.interval);
+      const storedTf = getStoredTimeframe(selectedSymbol);
+      setSelectedTimeframe(storedTf);
       // Reset custom Fib points when symbol changes
       setCustomFibPoints({ a: null, b: null, c: null });
     }
@@ -1240,7 +1253,7 @@ export default function MarketsPage() {
   // Reset custom Fib points when timeframe changes
   useEffect(() => {
     setCustomFibPoints({ a: null, b: null, c: null });
-  }, [range, interval]);
+  }, [selectedTimeframe]);
 
   // Save settings when they change
   useEffect(() => {
@@ -1302,10 +1315,9 @@ export default function MarketsPage() {
     if (isMobile) setShowModal(true);
   };
 
-  const handleTimeframeChange = (r: string, i: string) => {
-    setRange(r);
-    setInterval(i);
-    if (selectedSymbol) storeTimeframe(selectedSymbol, r, i);
+  const handleTimeframeChange = (label: string) => {
+    setSelectedTimeframe(label);
+    if (selectedSymbol) storeTimeframe(selectedSymbol, label);
   };
 
   const handleRefresh = () => {
@@ -1315,7 +1327,7 @@ export default function MarketsPage() {
   };
 
   if (isMobile && showModal && symbolDetail) {
-    return <DetailModal detail={symbolDetail} onClose={() => setShowModal(false)} range={range} interval={interval}
+    return <DetailModal detail={symbolDetail} onClose={() => setShowModal(false)} selectedTimeframe={selectedTimeframe}
       setTimeframe={handleTimeframeChange} settings={settings} setSettings={setSettings} />;
   }
 
@@ -1376,8 +1388,8 @@ export default function MarketsPage() {
                   
                   <div className="flex flex-wrap gap-1 mb-4">
                     {TIMEFRAMES.map(tf => (
-                      <button key={tf.label} onClick={() => handleTimeframeChange(tf.range, tf.interval)}
-                        className={`px-2 py-1 rounded text-xs font-medium ${range === tf.range && interval === tf.interval ? 'bg-primary-600 text-white' : 'bg-slate-800 text-slate-400 hover:text-white'}`}>
+                      <button key={tf.label} onClick={() => handleTimeframeChange(tf.label)}
+                        className={`px-2 py-1 rounded text-xs font-medium ${selectedTimeframe === tf.label ? 'bg-primary-600 text-white' : 'bg-slate-800 text-slate-400 hover:text-white'}`}>
                         {tf.label}
                       </button>
                     ))}

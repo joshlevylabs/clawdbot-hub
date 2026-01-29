@@ -5,208 +5,127 @@
     "prayer": {
       "title": "🕊️ Morning Prayer",
       "date": "Thursday, January 29, 2026",
-      "hebrew_date": "10 Shevat 5786",
-      "parsha": "Beshalach",
-      "parsha_theme": "crossing the sea, faith in the impossible, songs of deliverance",
+      "hebrew_date": "30 Tishrei",
+      "parsha": "Toldot",
+      "parsha_theme": "generational blessing, identity, inheritance",
       "modeh_ani": "מודה אני לפניך — I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
-      "blessing": "Blessed are You who gives strength to the weary — renew my energy for the work ahead.",
-      "psalm": "Psalm 27:1: \"The Lord is my light and my salvation — whom shall I fear?\"",
-      "proverb": "Proverbs 3:5-6: \"Trust in the Lord with all your heart and lean not on your own understanding.\"",
-      "intention": "Guide my hands today as I build. Help me be fully present with Jillian, Jones, and Jett.",
-      "closing": "The Lord will fight for you; you need only to be still.",
-      "audio": "/audio/brief-2026-01-28-prayer.mp3"
+      "blessing": "Blessed are You who spreads the earth upon the waters — ground me in stability.",
+      "psalm": "Psalm 127:1: \"Unless the Lord builds the house, the builders labor in vain.\"",
+      "proverb": "Proverbs 27:23: \"Know well the condition of your flocks, and give attention to your herds.\"",
+      "intention": "Help me be present with my family. Let my work create margin, not distance.",
+      "closing": "May your work today be a pleasing offering. May your rest tonight be deep and restorative."
     },
     "weather": {
-      "title": "☀️ Weather — Los Angeles",
-      "temperature": "56°F",
-      "condition": "Partly Cloudy",
-      "wind": "W 8mph",
-      "summary": "Mild day, clearing by afternoon. Good day for a family walk.",
-      "audio": "/audio/brief-2026-01-28-weather.mp3"
+      "title": "☀️ Weather — Temecula",
+      "temperature": "55°F",
+      "feels_like": "52°F",
+      "condition": "Sunny",
+      "wind": "NW 5mph",
+      "summary": "Clear skies, cool morning warming to mid-60s. Great day for outdoor family time."
     },
     "calendar": {
       "title": "📅 Calendar",
-      "today": [
-        {
-          "time": "9:00 AM",
-          "title": "Morning standup",
-          "location": "Zoom"
-        },
-        {
-          "time": "2:00 PM",
-          "title": "Client sync",
-          "location": "Google Meet"
-        }
-      ],
-      "week": [
-        {
-          "date": "Thu Jan 30",
-          "time": "10:00 AM",
-          "title": "Dentist appointment"
-        },
-        {
-          "date": "Fri Jan 31",
-          "time": "3:00 PM",
-          "title": "Team retrospective"
-        },
-        {
-          "date": "Sat Feb 1",
-          "title": "Date night with Jillian 💑"
-        }
-      ],
-      "month": [
-        {
-          "date": "Feb 14",
-          "title": "Valentine's Day ❤️"
-        },
-        {
-          "date": "Mar 26",
-          "title": "Wedding Anniversary (4 years!)"
-        }
-      ],
-      "audio": "/audio/brief-2026-01-28-calendar.mp3"
-    },
-    "family": {
-      "title": "❤️ Family Focus",
-      "suggestion": "Jones loves Blaze — spend 15 minutes after dinner watching an episode together and talk about the monster trucks",
-      "conversationStarter": "Ask Jillian: What book are you reading right now? (Quality time = undivided attention when she answers)",
-      "weeklyGoal": "Monthly date night check: Have you scheduled February's date night yet? Lock it in this week.",
-      "upcomingDates": [
-        {
-          "date": "Feb 14",
-          "event": "Valentine's Day"
-        },
-        {
-          "date": "Mar 26",
-          "event": "Wedding Anniversary (4 years!)"
-        },
-        {
-          "date": "May 20",
-          "event": "Jones turns 3!"
-        }
-      ],
-      "reflection": "Jillian's love languages are quality time and acts of service. What's one thing you can take off her plate today?",
-      "potencyAction": "Handle bedtime with Jones and Jett solo tonight — give Jillian 30 minutes to herself with her book"
+      "today": [],
+      "upcoming": [
+        {"date": "Feb 2", "time": "9:00 AM", "title": "Chris @ Lyceum", "location": "Google Meet"}
+      ]
     },
     "email": {
       "title": "📧 Email Highlights",
       "needs_attention": [
-        {
-          "from": "Client",
-          "subject": "Project timeline question",
-          "note": "awaiting response"
-        },
-        {
-          "from": "Bank",
-          "subject": "Statement ready",
-          "note": "review when free"
-        }
+        {"from": "Supabase", "subject": "Project aitwin going to be paused", "note": "Action needed to prevent pause"},
+        {"from": "Google", "subject": "Security alert", "note": "Review account activity"}
       ],
       "dev_work": [
-        {
-          "from": "GitHub",
-          "subject": "PR ready for review",
-          "note": "clawdbot repo"
-        }
+        {"from": "Discord", "subject": "ancient_chaos mentioned you in Midjourney", "note": "Community engagement"},
+        {"from": "LinkedIn", "subject": "1 new message", "note": "Check DMs"},
+        {"from": "Upstash", "subject": "Redis Database Inactivity Notice", "note": "Consider cleanup"}
       ],
       "good_news": [
-        {
-          "from": "Stripe",
-          "subject": "Payment received",
-          "note": "$500 deposit"
-        }
-      ],
-      "audio": "/audio/brief-2026-01-28-email.mp3"
+        {"from": "Self", "subject": "TBF Episode 001 Script Ready", "note": "Builder's Frequency moving forward!"}
+      ]
     },
     "markets": {
       "title": "📈 Markets & Trading Signals",
       "summary": {
         "date": "2026-01-29",
-        "market_status": "PRE-MARKET",
-        "spy": {
-          "price": 602.50,
-          "change_pct": 0.3
-        },
-        "vix": 14.2,
+        "time": "06:00 AM",
+        "market_status": "OPEN",
+        "spy": {"price": 695.42, "change_pct": -0.01},
         "sentiment": "NEUTRAL",
+        "vix": 16.67,
         "volatility": "LOW"
       },
       "overview": [
-        {
-          "symbol": "SPY",
-          "price": 602.50,
-          "change_pct": 0.3,
-          "trend": "NEUTRAL"
-        },
-        {
-          "symbol": "QQQ",
-          "price": 518.20,
-          "change_pct": 0.5,
-          "trend": "BULLISH"
-        },
-        {
-          "symbol": "BTC",
-          "price": 104500,
-          "change_pct": 1.2,
-          "trend": "BULLISH"
-        }
+        {"symbol": "SPY", "price": 695.42, "change_pct": -0.01, "trend": "NEUTRAL"},
+        {"symbol": "QQQ", "price": 633.22, "change_pct": 0.33, "trend": "NEUTRAL"},
+        {"symbol": "IWM", "price": 263.30, "change_pct": -0.54, "trend": "NEUTRAL"},
+        {"symbol": "DIA", "price": 490.13, "change_pct": 0.01, "trend": "NEUTRAL"}
       ],
-      "signals": [],
-      "audio": "/audio/brief-2026-01-28-markets.mp3"
+      "signals": [
+        {
+          "type": "SELL",
+          "symbol": "GLD",
+          "price": 494.56,
+          "entry": 494.56,
+          "stop": 512.48,
+          "target": 467.67,
+          "confidence": "MEDIUM",
+          "rationale": "RSI overbought (88.1) | High volume confirmation | Price near BB resistance"
+        }
+      ]
+    },
+    "family": {
+      "title": "❤️ Family Focus",
+      "suggestion": "Jones loves Blaze and the Monster Machines — do a 'monster truck race' in the backyard together. Set up cushions as obstacles and race toy trucks. Jett can watch from his blanket nearby.",
+      "conversationStarter": "Ask Jillian: 'What's the best thing you've read recently? Any book keeping you up at night?'",
+      "weeklyGoal": "Sunday Sweet Breakfast tradition — make pancakes together as a family this Sunday. Get Jones involved mixing ingredients.",
+      "potencyAction": "Acknowledge what happened without defending: 'You're right, I shouldn't have...'",
+      "upcomingDates": [
+        {"date": "Feb 14", "event": "Valentine's Day", "daysAway": 16},
+        {"date": "Mar 26", "event": "Wedding Anniversary", "daysAway": 56}
+      ],
+      "reflection": "The relationship temperature is critical right now. Focus on repair, not defense. Create space for Jillian to express frustrations without trying to fix everything. Be present — not just physically, but emotionally."
     },
     "news": {
       "title": "🌍 World News",
       "subsections": {
         "israel": {
-          "title": "🇮🇱 Israel",
+          "title": "🇮🇱 Israel & Middle East",
           "items": [
-            {
-              "headline": "Netanyahu meets with coalition partners on judicial reform compromise"
-            },
-            {
-              "headline": "IDF reports successful interception of drone from Yemen"
-            }
+            {"headline": "Trump administration pushing for regime change conditions in Iran"},
+            {"headline": "EU set to list Iran's Revolutionary Guards as terrorist group"},
+            {"headline": "Russia, Turkey seeking US-Iran talks to prevent conflict"},
+            {"headline": "Iran threatens Tel Aviv response to any US attack"},
+            {"headline": "Final hostage returns — Ran Gvili home after 843 days"}
           ]
         },
         "us": {
           "title": "🇺🇸 United States",
           "items": [
-            {
-              "headline": "Fed signals patience on rate cuts, markets steady"
-            },
-            {
-              "headline": "Senate passes border security funding bill"
-            }
+            {"headline": "Tesla invests $2B in Musk's xAI for AI product development"},
+            {"headline": "Apple to take up to 30% cut from Patreon creators in iOS app"},
+            {"headline": "Columbia blocked student who said 'Zionists shouldn't live' — didn't expel"}
           ]
         },
-        "world": {
-          "title": "🌐 Global",
+        "tech": {
+          "title": "💻 Tech & Business",
           "items": [
-            {
-              "headline": "EU announces new AI regulation framework"
-            },
-            {
-              "headline": "China reports slower economic growth in Q4"
-            }
+            {"headline": "Google exploring publisher opt-out from AI Search features"},
+            {"headline": "TÜV Report: Tesla Model Y worst reliability among 2022-2023 cars"},
+            {"headline": "Europe's next-gen weather satellite sends back first images"}
           ]
         }
-      },
-      "audio": "/audio/brief-2026-01-28-news.mp3"
+      }
     },
     "ai": {
       "title": "🤖 AI Intel",
       "items": [
-        {
-          "headline": "Anthropic releases Claude 3.5 with improved coding capabilities"
-        },
-        {
-          "headline": "OpenAI reportedly in talks for $100B valuation round"
-        },
-        {
-          "headline": "Google DeepMind publishes new paper on AI safety benchmarks"
-        }
-      ],
-      "audio": "/audio/brief-2026-01-28-ai.mp3"
+        {"headline": "Moltbot (former Clawdbot) creator talks Anthropic rebrand, crypto scam fallout"},
+        {"headline": "Google Gemini in Chrome now handles complex requests like budget shopping"},
+        {"headline": "Claude Code gets user 'mostly there' on Home Assistant migration in one afternoon"},
+        {"headline": "Meta spending millions on data center PR campaign"}
+      ]
     }
   }
 }

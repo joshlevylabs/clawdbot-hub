@@ -255,20 +255,24 @@
     },
     "family": {
       "title": "❤️ Family Focus",
-      "suggestion": "After dinner, spend 15 minutes on the floor playing with Beau — let him lead the activity",
-      "conversationStarter": "Ask Jillian: What's one thing I could do this week to make your life easier?",
-      "weeklyGoal": "Plan a date night for this weekend — even 2 hours counts",
+      "suggestion": "Get down on the floor with Jones for 15 minutes tonight — let him lead the play",
+      "conversationStarter": "Ask Jillian: What book are you reading right now? What do you love about it?",
+      "weeklyGoal": "Plan a date night this weekend — even just after the boys go to sleep",
       "upcomingDates": [
         {
-          "date": "Feb 14",
-          "event": "Valentine's Day"
+          "date": "May 20",
+          "event": "Jones's Birthday (turns 3!)"
         },
         {
-          "date": "Feb 22",
-          "event": "Beau's 4th Birthday"
+          "date": "Jul 10",
+          "event": "Jett's Birthday (turns 1!)"
+        },
+        {
+          "date": "Oct 3",
+          "event": "Jillian's Birthday"
         }
       ],
-      "reflection": "Your kids won't remember the hours you worked, but they'll remember the moments you were fully present."
+      "reflection": "Jones is 2, Jett is 6 months — these years fly by. Be present today."
     }
   }
 }

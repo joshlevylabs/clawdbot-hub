@@ -20,6 +20,10 @@ import {
   AlertTriangle,
   CheckCircle,
   Code,
+  Heart,
+  Users,
+  Gift,
+  MessageCircle,
 } from "lucide-react";
 
 // Flexible interfaces to handle multiple data formats
@@ -48,10 +52,39 @@ interface WeatherSection {
   audio?: string;
 }
 
+interface CalendarEvent {
+  time?: string;
+  title: string;
+  location?: string;
+  date?: string;
+}
+
 interface CalendarSection {
   audio?: string;
   title: string;
   items?: string[];
+  today?: CalendarEvent[];
+  week?: CalendarEvent[];
+  month?: CalendarEvent[];
+}
+
+interface FamilyMember {
+  name: string;
+  relation: string;
+  birthday?: string;
+  lastQualityTime?: string;
+  interests?: string[];
+}
+
+interface FamilySection {
+  audio?: string;
+  title: string;
+  members?: FamilyMember[];
+  suggestion?: string;
+  conversationStarter?: string;
+  upcomingDates?: { date: string; event: string }[];
+  weeklyGoal?: string;
+  reflection?: string;
 }
 
 interface EmailEntry {
@@ -130,6 +163,7 @@ interface BriefData {
     prayer?: PrayerSection;
     weather?: WeatherSection;
     calendar?: CalendarSection;
+    family?: FamilySection;
     email?: EmailSection;
     markets?: MarketsSection;
     news?: { title: string; subsections?: { [key: string]: NewsSubsection } };
@@ -246,28 +280,73 @@ function WeatherCard({ data }: { data: WeatherSection }) {
 }
 
 function CalendarCard({ data }: { data: CalendarSection }) {
-  const items = data.items || [];
+  const [view, setView] = useState<'today' | 'week' | 'month'>('today');
+  
+  // Support both old format (items) and new format (today/week/month)
+  const todayItems: CalendarEvent[] = data.today || (data.items?.map(item => ({ title: item })) || []);
+  const weekItems: CalendarEvent[] = data.week || [];
+  const monthItems: CalendarEvent[] = data.month || [];
+  
+  const currentItems = view === 'today' ? todayItems : view === 'week' ? weekItems : monthItems;
+  const hasMultipleViews = weekItems.length > 0 || monthItems.length > 0;
+  
   return (
-    <div className="h-full flex flex-col bg-gradient-to-b from-slate-900 to-purple-950/30 p-6">
-      <div className="flex items-center gap-3 mb-6">
-        <div className="w-12 h-12 bg-purple-600/20 rounded-xl flex items-center justify-center">
-          <Calendar className="w-6 h-6 text-purple-400" strokeWidth={1.5} />
+    <div className="h-full flex flex-col bg-gradient-to-b from-slate-900 to-purple-950/30 p-6 overflow-auto">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 bg-purple-600/20 rounded-xl flex items-center justify-center">
+            <Calendar className="w-6 h-6 text-purple-400" strokeWidth={1.5} />
+          </div>
+          <h2 className="font-semibold text-xl text-slate-100">{data.title}</h2>
         </div>
-        <h2 className="font-semibold text-xl text-slate-100">{data.title}</h2>
       </div>
       
-      <div className="flex-1 flex flex-col justify-center">
-        {items.length === 0 ? (
+      {/* View tabs */}
+      {hasMultipleViews && (
+        <div className="flex gap-2 mb-4">
+          {['today', 'week', 'month'].map((v) => (
+            <button
+              key={v}
+              onClick={(e) => { e.stopPropagation(); setView(v as typeof view); }}
+              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                view === v 
+                  ? 'bg-purple-600 text-white' 
+                  : 'bg-slate-800/50 text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              {v === 'today' ? 'Today' : v === 'week' ? 'This Week' : 'This Month'}
+            </button>
+          ))}
+        </div>
+      )}
+      
+      <div className="flex-1 overflow-auto">
+        {currentItems.length === 0 ? (
           <div className="bg-slate-800/50 rounded-xl p-4 text-center">
-            <p className="text-slate-400 text-lg">No events today</p>
+            <p className="text-slate-400 text-lg">No events {view === 'today' ? 'today' : view === 'week' ? 'this week' : 'this month'}</p>
             <p className="text-slate-500 text-sm mt-1">Enjoy your open schedule!</p>
           </div>
         ) : (
-          <div className="space-y-4">
-            {items.map((item, i) => (
-              <div key={i} className="bg-slate-800/50 rounded-xl p-4 flex items-center gap-3">
-                <div className="w-2 h-2 bg-purple-400 rounded-full flex-shrink-0" />
-                <p className="text-slate-200 text-lg">{item}</p>
+          <div className="space-y-3">
+            {currentItems.map((event, i) => (
+              <div key={i} className="bg-slate-800/50 rounded-xl p-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-2 h-2 bg-purple-400 rounded-full flex-shrink-0 mt-2" />
+                  <div className="flex-1">
+                    <p className="text-slate-200 font-medium">{event.title}</p>
+                    <div className="flex flex-wrap gap-2 mt-1">
+                      {event.time && (
+                        <span className="text-purple-400 text-sm">{event.time}</span>
+                      )}
+                      {event.date && view !== 'today' && (
+                        <span className="text-slate-500 text-sm">{event.date}</span>
+                      )}
+                      {event.location && (
+                        <span className="text-slate-500 text-sm">📍 {event.location}</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
@@ -328,6 +407,73 @@ function EmailCard({ data }: { data: EmailSection }) {
         {sections.length === 0 && (
           <div className="bg-slate-800/50 rounded-xl p-4 text-center">
             <p className="text-slate-400">No email highlights</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function FamilyCard({ data }: { data: FamilySection }) {
+  return (
+    <div className="h-full flex flex-col bg-gradient-to-b from-slate-900 to-rose-950/30 p-6 overflow-auto">
+      <div className="flex items-center gap-3 mb-4">
+        <div className="w-12 h-12 bg-rose-600/20 rounded-xl flex items-center justify-center">
+          <Heart className="w-6 h-6 text-rose-400" strokeWidth={1.5} />
+        </div>
+        <h2 className="font-semibold text-xl text-slate-100">{data.title}</h2>
+      </div>
+      
+      <div className="flex-1 space-y-4 overflow-auto">
+        {/* Today's suggestion */}
+        {data.suggestion && (
+          <div className="bg-rose-500/10 border border-rose-500/30 rounded-xl p-4">
+            <p className="text-xs text-rose-400 uppercase tracking-wide mb-2 flex items-center gap-2">
+              <Users className="w-3 h-3" /> Today&apos;s Focus
+            </p>
+            <p className="text-slate-200">{data.suggestion}</p>
+          </div>
+        )}
+        
+        {/* Conversation starter */}
+        {data.conversationStarter && (
+          <div className="bg-slate-800/50 rounded-xl p-4">
+            <p className="text-xs text-slate-500 uppercase tracking-wide mb-2 flex items-center gap-2">
+              <MessageCircle className="w-3 h-3" /> Conversation Starter
+            </p>
+            <p className="text-slate-300 italic">&ldquo;{data.conversationStarter}&rdquo;</p>
+          </div>
+        )}
+        
+        {/* Weekly goal */}
+        {data.weeklyGoal && (
+          <div className="bg-slate-800/30 rounded-xl p-4">
+            <p className="text-xs text-purple-400 uppercase tracking-wide mb-2">Weekly Goal</p>
+            <p className="text-slate-300">{data.weeklyGoal}</p>
+          </div>
+        )}
+        
+        {/* Upcoming family dates */}
+        {data.upcomingDates && data.upcomingDates.length > 0 && (
+          <div className="bg-slate-800/30 rounded-xl p-4">
+            <p className="text-xs text-amber-400 uppercase tracking-wide mb-3 flex items-center gap-2">
+              <Gift className="w-3 h-3" /> Upcoming
+            </p>
+            <div className="space-y-2">
+              {data.upcomingDates.map((item, i) => (
+                <div key={i} className="flex justify-between items-center">
+                  <span className="text-slate-300">{item.event}</span>
+                  <span className="text-slate-500 text-sm">{item.date}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        
+        {/* Reflection */}
+        {data.reflection && (
+          <div className="border-t border-slate-700/50 pt-4 mt-4">
+            <p className="text-slate-400 text-sm italic">{data.reflection}</p>
           </div>
         )}
       </div>
@@ -521,6 +667,9 @@ export default function MorningBriefPage() {
     }
     if (briefData.sections.calendar) {
       slides.push({ key: "calendar", component: <CalendarCard data={briefData.sections.calendar} />, audio: briefData.sections.calendar.audio });
+    }
+    if (briefData.sections.family) {
+      slides.push({ key: "family", component: <FamilyCard data={briefData.sections.family} />, audio: briefData.sections.family.audio });
     }
     if (briefData.sections.email) {
       slides.push({ key: "email", component: <EmailCard data={briefData.sections.email} />, audio: briefData.sections.email.audio });

@@ -805,6 +805,31 @@ export default function MorningBriefPage() {
         <p className="text-center text-xs text-slate-600 pb-4">
           Tap sides or swipe to navigate
         </p>
+
+        {/* Floating Play Button - always visible when audio available */}
+        {slides[currentSlide]?.audio && (
+          <div className="absolute bottom-24 left-1/2 -translate-x-1/2 z-20">
+            <button
+              onClick={(e) => { e.stopPropagation(); toggleAudio(); }}
+              className={`w-16 h-16 rounded-full flex items-center justify-center shadow-lg transition-all ${
+                isPlaying 
+                  ? 'bg-accent-600 text-white shadow-accent-600/50' 
+                  : 'bg-white text-slate-900 shadow-white/20'
+              }`}
+            >
+              {isPlaying ? (
+                <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                  <rect x="6" y="4" width="4" height="16" rx="1" />
+                  <rect x="14" y="4" width="4" height="16" rx="1" />
+                </svg>
+              ) : (
+                <svg className="w-8 h-8 ml-1" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              )}
+            </button>
+          </div>
+        )}
       </div>
     );
   }

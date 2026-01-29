@@ -97,19 +97,22 @@ async function fetchQuote(symbol: string): Promise<QuoteData | null> {
     const meta = result.meta;
     const quote = result.indicators?.quote?.[0];
     
+    const price = meta.regularMarketPrice ?? 0;
+    const prevClose = meta.previousClose ?? price;
+    
     return {
       symbol,
       name: SYMBOL_NAMES[symbol] || symbol,
-      price: meta.regularMarketPrice,
-      change: meta.regularMarketPrice - meta.previousClose,
-      changePercent: ((meta.regularMarketPrice - meta.previousClose) / meta.previousClose) * 100,
-      high: meta.regularMarketDayHigh,
-      low: meta.regularMarketDayLow,
-      open: meta.regularMarketOpen || meta.previousClose,
-      prevClose: meta.previousClose,
-      volume: meta.regularMarketVolume,
-      fiftyTwoWeekHigh: meta.fiftyTwoWeekHigh,
-      fiftyTwoWeekLow: meta.fiftyTwoWeekLow,
+      price,
+      change: price - prevClose,
+      changePercent: prevClose ? ((price - prevClose) / prevClose) * 100 : 0,
+      high: meta.regularMarketDayHigh ?? price,
+      low: meta.regularMarketDayLow ?? price,
+      open: meta.regularMarketOpen ?? prevClose,
+      prevClose,
+      volume: meta.regularMarketVolume ?? 0,
+      fiftyTwoWeekHigh: meta.fiftyTwoWeekHigh ?? price,
+      fiftyTwoWeekLow: meta.fiftyTwoWeekLow ?? price,
     };
   } catch (error) {
     console.error(`Failed to fetch quote for ${symbol}:`, error);

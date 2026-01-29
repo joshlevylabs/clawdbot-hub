@@ -62,15 +62,22 @@ const SYMBOL_CATEGORIES = {
   metals: ['GLD', 'SLV'],
 };
 
-function formatVolume(vol: number): string {
+function formatVolume(vol: number | null | undefined): string {
+  if (vol == null) return '—';
   if (vol >= 1e9) return `${(vol / 1e9).toFixed(2)}B`;
   if (vol >= 1e6) return `${(vol / 1e6).toFixed(2)}M`;
   if (vol >= 1e3) return `${(vol / 1e3).toFixed(1)}K`;
   return vol.toString();
 }
 
-function formatPrice(price: number): string {
+function formatPrice(price: number | null | undefined): string {
+  if (price == null) return '—';
   return price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function safePercent(value: number | null | undefined): string {
+  if (value == null) return '—';
+  return value.toFixed(2);
 }
 
 // Simple price chart using canvas (no external dependencies)
@@ -238,7 +245,7 @@ function QuoteCard({
           isPositive ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'
         }`}>
           {isPositive ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
-          {isPositive ? '+' : ''}{quote.changePercent.toFixed(2)}%
+          {isPositive ? '+' : ''}{safePercent(quote.changePercent)}%
         </div>
       </div>
       
@@ -502,7 +509,7 @@ export default function MarketsPage() {
                           symbolDetail.quote.change >= 0 ? 'text-emerald-400' : 'text-red-400'
                         }`}>
                           {symbolDetail.quote.change >= 0 ? '+' : ''}
-                          {formatPrice(symbolDetail.quote.change)} ({symbolDetail.quote.changePercent.toFixed(2)}%)
+                          {formatPrice(symbolDetail.quote.change)} ({safePercent(symbolDetail.quote.changePercent)}%)
                         </span>
                       </div>
                     </div>

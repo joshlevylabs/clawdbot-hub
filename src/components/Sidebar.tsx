@@ -14,11 +14,13 @@ import {
   LogOut,
   Clock,
   Sunrise,
+  Heart,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 const navItems = [
   { href: "/morning-brief", icon: Sunrise, label: "Morning Brief" },
+  { href: "/marriage", icon: Heart, label: "Marriage" },
   { href: "/tasks", icon: CheckSquare, label: "Tasks" },
   { href: "/schedules", icon: Clock, label: "Schedules" },
   { href: "/connections", icon: Link2, label: "Connections" },

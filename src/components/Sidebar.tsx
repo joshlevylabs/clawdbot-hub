@@ -19,13 +19,11 @@ import {
 import { useRouter } from "next/navigation";
 
 const navItems = [
-  { href: "/morning-brief", icon: Sunrise, label: "Morning Brief" },
+  { href: "/dashboard", icon: Sunrise, label: "Dashboard" },
+  { href: "/morning-brief", icon: Clock, label: "Morning Brief" },
   { href: "/marriage", icon: Heart, label: "Marriage" },
   { href: "/tasks", icon: CheckSquare, label: "Tasks" },
-  { href: "/schedules", icon: Clock, label: "Schedules" },
-  { href: "/connections", icon: Link2, label: "Connections" },
   { href: "/skills", icon: Zap, label: "Skills" },
-  { href: "/usage", icon: BarChart2, label: "Usage" },
   { href: "/settings", icon: Settings, label: "Settings" },
 ];
 

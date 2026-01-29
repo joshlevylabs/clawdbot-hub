@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
+import dynamic from "next/dynamic";
 import {
   TrendingUp,
   TrendingDown,
@@ -11,7 +12,6 @@ import {
   Clock,
   BarChart3,
 } from "lucide-react";
-import { createChart, IChartApi, CandlestickData, Time, CandlestickSeries } from "lightweight-charts";
 
 interface QuoteData {
   symbol: string;
@@ -75,8 +75,8 @@ function formatPrice(price: number): string {
   return price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
-// Candlestick Chart Component
-function CandlestickChart({ 
+// Candlestick Chart Component - loaded dynamically to avoid SSR issues
+function CandlestickChartInner({ 
   candles, 
   fibonacci,
   symbol 
@@ -86,103 +86,128 @@ function CandlestickChart({
   symbol: string;
 }) {
   const chartContainerRef = useRef<HTMLDivElement>(null);
-  const chartRef = useRef<IChartApi | null>(null);
+  const chartRef = useRef<any>(null);
 
   useEffect(() => {
     if (!chartContainerRef.current || candles.length === 0) return;
 
-    // Clear existing chart
-    if (chartRef.current) {
-      chartRef.current.remove();
-    }
-
-    const chart = createChart(chartContainerRef.current, {
-      layout: {
-        background: { color: 'transparent' },
-        textColor: '#94a3b8',
-      },
-      grid: {
-        vertLines: { color: '#1e293b' },
-        horzLines: { color: '#1e293b' },
-      },
-      width: chartContainerRef.current.clientWidth,
-      height: 300,
-      timeScale: {
-        borderColor: '#334155',
-        timeVisible: true,
-      },
-      rightPriceScale: {
-        borderColor: '#334155',
-      },
-      crosshair: {
-        vertLine: { color: '#475569', labelBackgroundColor: '#334155' },
-        horzLine: { color: '#475569', labelBackgroundColor: '#334155' },
-      },
-    });
-
-    chartRef.current = chart;
-
-    const candlestickSeries = chart.addSeries(CandlestickSeries, {
-      upColor: '#10b981',
-      downColor: '#ef4444',
-      borderUpColor: '#10b981',
-      borderDownColor: '#ef4444',
-      wickUpColor: '#10b981',
-      wickDownColor: '#ef4444',
-    });
-
-    // Convert candles to TradingView format
-    const chartData: CandlestickData<Time>[] = candles.map(c => ({
-      time: c.time as Time,
-      open: c.open,
-      high: c.high,
-      low: c.low,
-      close: c.close,
-    }));
-
-    candlestickSeries.setData(chartData);
-
-    // Add Fibonacci lines
-    if (fibonacci.levels.length > 0) {
-      fibonacci.levels.forEach((fib, i) => {
-        const color = fib.percent === 0 || fib.percent === 100 
-          ? '#f59e0b' 
-          : fib.percent === 50 
-            ? '#8b5cf6' 
-            : '#3b82f6';
-        
-        candlestickSeries.createPriceLine({
-          price: fib.price,
-          color: color,
-          lineWidth: 1,
-          lineStyle: 2, // Dashed
-          axisLabelVisible: true,
-          title: fib.level,
-        });
-      });
-    }
-
-    chart.timeScale().fitContent();
-
-    // Handle resize
-    const handleResize = () => {
-      if (chartContainerRef.current && chartRef.current) {
-        chartRef.current.applyOptions({ width: chartContainerRef.current.clientWidth });
+    // Dynamically import lightweight-charts
+    import('lightweight-charts').then(({ createChart, CandlestickSeries }) => {
+      // Clear existing chart
+      if (chartRef.current) {
+        chartRef.current.remove();
       }
-    };
 
-    window.addEventListener('resize', handleResize);
+      const chart = createChart(chartContainerRef.current!, {
+        layout: {
+          background: { color: 'transparent' },
+          textColor: '#94a3b8',
+        },
+        grid: {
+          vertLines: { color: '#1e293b' },
+          horzLines: { color: '#1e293b' },
+        },
+        width: chartContainerRef.current!.clientWidth,
+        height: 300,
+        timeScale: {
+          borderColor: '#334155',
+          timeVisible: true,
+        },
+        rightPriceScale: {
+          borderColor: '#334155',
+        },
+        crosshair: {
+          vertLine: { color: '#475569', labelBackgroundColor: '#334155' },
+          horzLine: { color: '#475569', labelBackgroundColor: '#334155' },
+        },
+      });
+
+      chartRef.current = chart;
+
+      const candlestickSeries = chart.addSeries(CandlestickSeries, {
+        upColor: '#10b981',
+        downColor: '#ef4444',
+        borderUpColor: '#10b981',
+        borderDownColor: '#ef4444',
+        wickUpColor: '#10b981',
+        wickDownColor: '#ef4444',
+      });
+
+      // Convert candles to TradingView format
+      const chartData = candles.map(c => ({
+        time: c.time,
+        open: c.open,
+        high: c.high,
+        low: c.low,
+        close: c.close,
+      }));
+
+      candlestickSeries.setData(chartData as any);
+
+      // Add Fibonacci lines
+      if (fibonacci.levels.length > 0) {
+        fibonacci.levels.forEach((fib) => {
+          const color = fib.percent === 0 || fib.percent === 100 
+            ? '#f59e0b' 
+            : fib.percent === 50 
+              ? '#8b5cf6' 
+              : '#3b82f6';
+          
+          candlestickSeries.createPriceLine({
+            price: fib.price,
+            color: color,
+            lineWidth: 1,
+            lineStyle: 2, // Dashed
+            axisLabelVisible: true,
+            title: fib.level,
+          });
+        });
+      }
+
+      chart.timeScale().fitContent();
+
+      // Handle resize
+      const handleResize = () => {
+        if (chartContainerRef.current && chartRef.current) {
+          chartRef.current.applyOptions({ width: chartContainerRef.current.clientWidth });
+        }
+      };
+
+      window.addEventListener('resize', handleResize);
+
+      // Cleanup stored in ref for later use
+      (chartRef.current as any)._cleanup = () => {
+        window.removeEventListener('resize', handleResize);
+      };
+    });
 
     return () => {
-      window.removeEventListener('resize', handleResize);
       if (chartRef.current) {
+        if ((chartRef.current as any)._cleanup) {
+          (chartRef.current as any)._cleanup();
+        }
         chartRef.current.remove();
         chartRef.current = null;
       }
     };
   }, [candles, fibonacci, symbol]);
 
-  return <div ref={chartContainerRef} className="w-full" />;
+  return <div ref={chartContainerRef} className="w-full h-[300px]" />;
+}
+
+// Wrapper to ensure client-side only rendering
+function CandlestickChart(props: { candles: CandleData[]; fibonacci: QuoteData['fibonacci']; symbol: string }) {
+  const [mounted, setMounted] = useState(false);
+  
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+  
+  if (!mounted) {
+    return <div className="w-full h-[300px] bg-slate-800/50 rounded-lg animate-pulse" />;
+  }
+  
+  return <CandlestickChartInner {...props} />;
 }
 
 // Quote Card Component

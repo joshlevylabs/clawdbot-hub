@@ -9,6 +9,9 @@ import {
   Target,
   Clock,
   BarChart3,
+  ChevronDown,
+  ChevronUp,
+  X,
 } from "lucide-react";
 
 interface QuoteData {
@@ -47,15 +50,6 @@ interface SymbolDetail {
   fibonacci: QuoteData['fibonacci'];
 }
 
-const SYMBOL_COLORS: Record<string, string> = {
-  SPY: 'emerald',
-  QQQ: 'purple',
-  AAPL: 'slate',
-  MSFT: 'blue',
-  GLD: 'amber',
-  SLV: 'slate',
-};
-
 const SYMBOL_CATEGORIES = {
   indices: ['SPY', 'QQQ'],
   tech: ['AAPL', 'MSFT'],
@@ -80,15 +74,15 @@ function safePercent(value: number | null | undefined): string {
   return value.toFixed(2);
 }
 
-// Simple price chart using canvas (no external dependencies)
-function CandlestickChart({ 
+// Simple canvas chart
+function MiniChart({ 
   candles, 
   fibonacci,
-  symbol 
+  height = 200
 }: { 
   candles: CandleData[]; 
   fibonacci: QuoteData['fibonacci'];
-  symbol: string;
+  height?: number;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -99,23 +93,20 @@ function CandlestickChart({
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Set canvas size
     const rect = canvas.getBoundingClientRect();
     canvas.width = rect.width * 2;
     canvas.height = rect.height * 2;
     ctx.scale(2, 2);
 
     const width = rect.width;
-    const height = rect.height;
-    const padding = { top: 20, right: 60, bottom: 30, left: 10 };
+    const chartHeight = rect.height;
+    const padding = { top: 10, right: 50, bottom: 20, left: 5 };
     const chartWidth = width - padding.left - padding.right;
-    const chartHeight = height - padding.top - padding.bottom;
+    const drawHeight = chartHeight - padding.top - padding.bottom;
 
-    // Clear
     ctx.fillStyle = '#0f172a';
-    ctx.fillRect(0, 0, width, height);
+    ctx.fillRect(0, 0, width, chartHeight);
 
-    // Find price range
     const prices = candles.flatMap(c => [c.high, c.low]);
     const minPrice = Math.min(...prices);
     const maxPrice = Math.max(...prices);
@@ -123,54 +114,50 @@ function CandlestickChart({
     const pricePadding = priceRange * 0.05;
 
     const scaleY = (price: number) => {
-      return padding.top + chartHeight - ((price - minPrice + pricePadding) / (priceRange + pricePadding * 2)) * chartHeight;
+      return padding.top + drawHeight - ((price - minPrice + pricePadding) / (priceRange + pricePadding * 2)) * drawHeight;
     };
 
-    const candleWidth = Math.max(2, (chartWidth / candles.length) - 1);
+    const candleWidth = Math.max(1, (chartWidth / candles.length) - 0.5);
 
-    // Draw grid lines
+    // Grid
     ctx.strokeStyle = '#1e293b';
     ctx.lineWidth = 0.5;
-    for (let i = 0; i <= 4; i++) {
-      const y = padding.top + (chartHeight / 4) * i;
+    for (let i = 0; i <= 3; i++) {
+      const y = padding.top + (drawHeight / 3) * i;
       ctx.beginPath();
       ctx.moveTo(padding.left, y);
       ctx.lineTo(width - padding.right, y);
       ctx.stroke();
       
-      // Price labels
-      const price = maxPrice - (priceRange / 4) * i;
-      ctx.fillStyle = '#64748b';
-      ctx.font = '10px sans-serif';
+      const price = maxPrice - (priceRange / 3) * i;
+      ctx.fillStyle = '#475569';
+      ctx.font = '9px sans-serif';
       ctx.textAlign = 'left';
-      ctx.fillText(`$${price.toFixed(2)}`, width - padding.right + 5, y + 3);
+      ctx.fillText(`${price.toFixed(0)}`, width - padding.right + 3, y + 3);
     }
 
-    // Draw Fibonacci levels
-    fibonacci.levels.forEach(fib => {
-      const y = scaleY(fib.price);
-      if (y > padding.top && y < height - padding.bottom) {
-        ctx.strokeStyle = fib.percent === 50 ? '#8b5cf6' : '#3b82f6';
-        ctx.setLineDash([4, 4]);
-        ctx.beginPath();
-        ctx.moveTo(padding.left, y);
-        ctx.lineTo(width - padding.right, y);
-        ctx.stroke();
-        ctx.setLineDash([]);
-        
-        ctx.fillStyle = fib.percent === 50 ? '#8b5cf6' : '#3b82f6';
-        ctx.font = '9px sans-serif';
-        ctx.fillText(fib.level, padding.left + 2, y - 2);
-      }
-    });
+    // Fibonacci levels
+    if (fibonacci?.levels) {
+      fibonacci.levels.forEach(fib => {
+        const y = scaleY(fib.price);
+        if (y > padding.top && y < chartHeight - padding.bottom) {
+          ctx.strokeStyle = fib.percent === 50 ? '#8b5cf680' : '#3b82f650';
+          ctx.setLineDash([3, 3]);
+          ctx.beginPath();
+          ctx.moveTo(padding.left, y);
+          ctx.lineTo(width - padding.right, y);
+          ctx.stroke();
+          ctx.setLineDash([]);
+        }
+      });
+    }
 
-    // Draw candles
+    // Candles
     candles.forEach((candle, i) => {
       const x = padding.left + (i / candles.length) * chartWidth + candleWidth / 2;
       const isGreen = candle.close >= candle.open;
       const color = isGreen ? '#10b981' : '#ef4444';
 
-      // Wick
       ctx.strokeStyle = color;
       ctx.lineWidth = 1;
       ctx.beginPath();
@@ -178,7 +165,6 @@ function CandlestickChart({
       ctx.lineTo(x, scaleY(candle.low));
       ctx.stroke();
 
-      // Body
       const bodyTop = scaleY(Math.max(candle.open, candle.close));
       const bodyBottom = scaleY(Math.min(candle.open, candle.close));
       const bodyHeight = Math.max(1, bodyBottom - bodyTop);
@@ -187,23 +173,12 @@ function CandlestickChart({
       ctx.fillRect(x - candleWidth / 2, bodyTop, candleWidth, bodyHeight);
     });
 
-    // Current price line
-    const lastCandle = candles[candles.length - 1];
-    const currentY = scaleY(lastCandle.close);
-    ctx.strokeStyle = '#f59e0b';
-    ctx.setLineDash([2, 2]);
-    ctx.beginPath();
-    ctx.moveTo(padding.left, currentY);
-    ctx.lineTo(width - padding.right, currentY);
-    ctx.stroke();
-    ctx.setLineDash([]);
-
-  }, [candles, fibonacci, symbol]);
+  }, [candles, fibonacci]);
 
   if (candles.length === 0) {
     return (
-      <div className="w-full h-[300px] bg-slate-800/50 rounded-lg flex items-center justify-center text-slate-500">
-        Loading chart data...
+      <div className={`w-full bg-slate-800/30 rounded-lg flex items-center justify-center text-slate-600 text-sm`} style={{ height }}>
+        Loading...
       </div>
     );
   }
@@ -211,14 +186,14 @@ function CandlestickChart({
   return (
     <canvas 
       ref={canvasRef} 
-      className="w-full h-[300px] rounded-lg"
-      style={{ background: '#0f172a' }}
+      className="w-full rounded-lg"
+      style={{ height, background: '#0f172a' }}
     />
   );
 }
 
-// Quote Card Component
-function QuoteCard({ 
+// Compact Quote Row for mobile
+function QuoteRow({ 
   quote, 
   onClick,
   selected 
@@ -232,94 +207,209 @@ function QuoteCard({
   return (
     <button
       onClick={onClick}
-      className={`w-full text-left bg-slate-850 rounded-xl border p-4 transition-all hover:border-slate-600 ${
-        selected ? 'border-primary-500 ring-1 ring-primary-500/30' : 'border-slate-800'
+      className={`w-full flex items-center justify-between p-3 rounded-xl transition-all ${
+        selected 
+          ? 'bg-primary-600/20 border border-primary-500/50' 
+          : 'bg-slate-800/50 border border-transparent hover:bg-slate-800'
       }`}
     >
-      <div className="flex items-start justify-between mb-2">
-        <div>
-          <h3 className="font-semibold text-slate-200">{quote.symbol}</h3>
+      <div className="flex items-center gap-3">
+        <div className="text-left">
+          <p className="font-semibold text-slate-100">{quote.symbol}</p>
           <p className="text-xs text-slate-500">{quote.name}</p>
         </div>
-        <div className={`flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium ${
-          isPositive ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'
-        }`}>
-          {isPositive ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+      </div>
+      <div className="text-right">
+        <p className="font-bold text-slate-100">${formatPrice(quote.price)}</p>
+        <p className={`text-sm font-medium ${isPositive ? 'text-emerald-400' : 'text-red-400'}`}>
           {isPositive ? '+' : ''}{safePercent(quote.changePercent)}%
-        </div>
+        </p>
       </div>
-      
-      <p className="text-2xl font-bold text-slate-100">${formatPrice(quote.price)}</p>
-      
-      <div className="flex items-center justify-between mt-2 text-xs text-slate-500">
-        <span>H: ${formatPrice(quote.high)}</span>
-        <span>L: ${formatPrice(quote.low)}</span>
-      </div>
-      
-      {/* Fibonacci preview */}
-      {quote.fibonacci.levels.length > 0 && (
-        <div className="mt-3 pt-3 border-t border-slate-800">
-          <div className="flex items-center gap-1 text-xs text-slate-500 mb-1">
-            <Target className="w-3 h-3" />
-            <span>Fib Targets ({quote.fibonacci.trend === 'up' ? '↑' : '↓'})</span>
-          </div>
-          <div className="flex flex-wrap gap-1">
-            {quote.fibonacci.levels.filter(l => l.percent === 38.2 || l.percent === 50 || l.percent === 61.8).map(fib => (
-              <span key={fib.level} className="px-1.5 py-0.5 bg-slate-800 rounded text-xs text-slate-400">
-                {fib.level}: ${formatPrice(fib.price)}
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
     </button>
   );
 }
 
-// Fibonacci Detail Panel
+// Fibonacci Panel with explanation
 function FibonacciPanel({ fibonacci, currentPrice }: { fibonacci: QuoteData['fibonacci']; currentPrice: number }) {
+  const [expanded, setExpanded] = useState(false);
+  
   return (
-    <div className="bg-slate-800/50 rounded-lg p-4">
-      <div className="flex items-center gap-2 mb-3">
-        <Target className="w-4 h-4 text-amber-400" />
-        <h3 className="font-medium text-slate-200">Fibonacci Levels</h3>
-        <span className={`px-2 py-0.5 rounded text-xs ${
-          fibonacci.trend === 'up' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'
-        }`}>
-          {fibonacci.trend === 'up' ? 'Uptrend' : 'Downtrend'}
-        </span>
+    <div className="bg-slate-800/50 rounded-xl p-4">
+      <button 
+        onClick={() => setExpanded(!expanded)}
+        className="w-full flex items-center justify-between"
+      >
+        <div className="flex items-center gap-2">
+          <Target className="w-4 h-4 text-amber-400" />
+          <span className="font-medium text-slate-200">Fibonacci Levels</span>
+          <span className={`px-2 py-0.5 rounded text-xs ${
+            fibonacci.trend === 'up' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'
+          }`}>
+            {fibonacci.trend === 'up' ? '↑ Uptrend' : '↓ Downtrend'}
+          </span>
+        </div>
+        {expanded ? <ChevronUp className="w-4 h-4 text-slate-500" /> : <ChevronDown className="w-4 h-4 text-slate-500" />}
+      </button>
+      
+      {expanded && (
+        <div className="mt-4 space-y-3">
+          {/* Explanation */}
+          <div className="bg-slate-900/50 rounded-lg p-3 text-xs text-slate-400">
+            <p className="mb-2">
+              <strong className="text-slate-300">Based on:</strong> Swing Low at <span className="text-emerald-400">${formatPrice(fibonacci.low)}</span> → 
+              Swing High at <span className="text-red-400">${formatPrice(fibonacci.high)}</span>
+            </p>
+            <p>Retracement levels show potential support/resistance during pullbacks.</p>
+          </div>
+          
+          {/* Levels */}
+          <div className="space-y-1">
+            {fibonacci.levels.map(fib => {
+              const isNearPrice = Math.abs(fib.price - currentPrice) / currentPrice < 0.015;
+              const isKeyLevel = fib.percent === 38.2 || fib.percent === 50 || fib.percent === 61.8;
+              return (
+                <div 
+                  key={fib.level} 
+                  className={`flex items-center justify-between p-2 rounded-lg ${
+                    isNearPrice ? 'bg-amber-500/20 border border-amber-500/30' : 
+                    isKeyLevel ? 'bg-slate-700/50' : 'bg-slate-800/30'
+                  }`}
+                >
+                  <span className={`text-sm ${
+                    fib.percent === 0 ? 'text-emerald-400 font-medium' : 
+                    fib.percent === 100 ? 'text-red-400 font-medium' :
+                    fib.percent === 50 ? 'text-purple-400 font-medium' : 
+                    isKeyLevel ? 'text-blue-400' : 'text-slate-500'
+                  }`}>
+                    {fib.level}
+                    {fib.percent === 0 && ' (High)'}
+                    {fib.percent === 100 && ' (Low)'}
+                  </span>
+                  <span className={`text-sm font-mono ${isNearPrice ? 'text-amber-300 font-bold' : 'text-slate-300'}`}>
+                    ${formatPrice(fib.price)}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+      
+      {/* Collapsed preview */}
+      {!expanded && fibonacci.levels.length > 0 && (
+        <div className="mt-2 flex flex-wrap gap-1">
+          {fibonacci.levels
+            .filter(l => l.percent === 38.2 || l.percent === 50 || l.percent === 61.8)
+            .map(fib => (
+              <span key={fib.level} className="px-2 py-0.5 bg-slate-700/50 rounded text-xs text-slate-400">
+                {fib.level}: ${formatPrice(fib.price)}
+              </span>
+            ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Mobile Detail Modal
+function DetailModal({ 
+  detail, 
+  onClose,
+  range,
+  setRange 
+}: { 
+  detail: SymbolDetail; 
+  onClose: () => void;
+  range: string;
+  setRange: (r: string) => void;
+}) {
+  const isPositive = detail.quote.change >= 0;
+  
+  return (
+    <div className="fixed inset-0 z-50 bg-slate-950 overflow-auto">
+      {/* Header */}
+      <div className="sticky top-0 bg-slate-950/95 backdrop-blur-sm border-b border-slate-800 p-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-xl font-bold text-slate-100">{detail.quote.symbol}</h2>
+            <p className="text-sm text-slate-500">{detail.quote.name}</p>
+          </div>
+          <button 
+            onClick={onClose}
+            className="p-2 hover:bg-slate-800 rounded-lg"
+          >
+            <X className="w-5 h-5 text-slate-400" />
+          </button>
+        </div>
+        
+        <div className="flex items-baseline gap-3 mt-2">
+          <span className="text-3xl font-bold text-slate-100">${formatPrice(detail.quote.price)}</span>
+          <span className={`text-lg font-medium ${isPositive ? 'text-emerald-400' : 'text-red-400'}`}>
+            {isPositive ? '+' : ''}{formatPrice(detail.quote.change)} ({safePercent(detail.quote.changePercent)}%)
+          </span>
+        </div>
       </div>
       
-      <div className="space-y-1">
-        {fibonacci.levels.map(fib => {
-          const isNearPrice = Math.abs(fib.price - currentPrice) / currentPrice < 0.02;
-          return (
-            <div 
-              key={fib.level} 
-              className={`flex items-center justify-between p-2 rounded ${
-                isNearPrice ? 'bg-amber-500/10 border border-amber-500/30' : 'bg-slate-800/30'
+      {/* Content */}
+      <div className="p-4 space-y-4">
+        {/* Range Selector */}
+        <div className="flex gap-2">
+          {['1mo', '3mo', '6mo', '1y'].map(r => (
+            <button
+              key={r}
+              onClick={() => setRange(r)}
+              className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${
+                range === r
+                  ? 'bg-primary-600 text-white'
+                  : 'bg-slate-800 text-slate-400'
               }`}
             >
-              <span className={`text-sm ${
-                fib.percent === 0 || fib.percent === 100 
-                  ? 'text-amber-400 font-medium' 
-                  : fib.percent === 50 
-                    ? 'text-purple-400 font-medium' 
-                    : 'text-slate-400'
-              }`}>
-                {fib.level}
-              </span>
-              <span className={`text-sm font-mono ${isNearPrice ? 'text-amber-300' : 'text-slate-300'}`}>
-                ${formatPrice(fib.price)}
-              </span>
+              {r.toUpperCase()}
+            </button>
+          ))}
+        </div>
+        
+        {/* Chart */}
+        <MiniChart candles={detail.candles} fibonacci={detail.fibonacci} height={250} />
+        
+        {/* Fibonacci */}
+        <FibonacciPanel fibonacci={detail.fibonacci} currentPrice={detail.quote.price} />
+        
+        {/* Key Stats */}
+        <div className="bg-slate-800/50 rounded-xl p-4">
+          <h3 className="font-medium text-slate-200 mb-3">Key Statistics</h3>
+          <div className="grid grid-cols-2 gap-3 text-sm">
+            <div className="flex justify-between">
+              <span className="text-slate-500">Open</span>
+              <span className="text-slate-200 font-mono">${formatPrice(detail.quote.open)}</span>
             </div>
-          );
-        })}
+            <div className="flex justify-between">
+              <span className="text-slate-500">Close</span>
+              <span className="text-slate-200 font-mono">${formatPrice(detail.quote.prevClose)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-slate-500">High</span>
+              <span className="text-emerald-400 font-mono">${formatPrice(detail.quote.high)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-slate-500">Low</span>
+              <span className="text-red-400 font-mono">${formatPrice(detail.quote.low)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-slate-500">52W High</span>
+              <span className="text-slate-200 font-mono">${formatPrice(detail.quote.fiftyTwoWeekHigh)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-slate-500">52W Low</span>
+              <span className="text-slate-200 font-mono">${formatPrice(detail.quote.fiftyTwoWeekLow)}</span>
+            </div>
+            <div className="col-span-2 flex justify-between">
+              <span className="text-slate-500">Volume</span>
+              <span className="text-slate-200 font-mono">{formatVolume(detail.quote.volume)}</span>
+            </div>
+          </div>
+        </div>
       </div>
-      
-      <p className="text-xs text-slate-600 mt-3">
-        Range: ${formatPrice(fibonacci.low)} — ${formatPrice(fibonacci.high)}
-      </p>
     </div>
   );
 }
@@ -332,6 +422,15 @@ export default function MarketsPage() {
   const [detailLoading, setDetailLoading] = useState(false);
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
   const [range, setRange] = useState('3mo');
+  const [isMobile, setIsMobile] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 1024);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const fetchQuotes = useCallback(async () => {
     try {
@@ -365,7 +464,6 @@ export default function MarketsPage() {
 
   useEffect(() => {
     fetchQuotes();
-    // Refresh every minute
     const interval = setInterval(fetchQuotes, 60 * 1000);
     return () => clearInterval(interval);
   }, [fetchQuotes]);
@@ -376,12 +474,18 @@ export default function MarketsPage() {
     }
   }, [selectedSymbol, fetchSymbolDetail]);
 
-  // Auto-select first symbol
   useEffect(() => {
     if (quotes.length > 0 && !selectedSymbol) {
       setSelectedSymbol(quotes[0].symbol);
     }
   }, [quotes, selectedSymbol]);
+
+  const handleSelectSymbol = (symbol: string) => {
+    setSelectedSymbol(symbol);
+    if (isMobile) {
+      setShowModal(true);
+    }
+  };
 
   const handleRefresh = () => {
     setLoading(true);
@@ -391,43 +495,54 @@ export default function MarketsPage() {
     }
   };
 
+  // Mobile Detail Modal
+  if (isMobile && showModal && symbolDetail) {
+    return (
+      <DetailModal 
+        detail={symbolDetail} 
+        onClose={() => setShowModal(false)}
+        range={range}
+        setRange={(r) => {
+          setRange(r);
+          if (selectedSymbol) fetchSymbolDetail(selectedSymbol);
+        }}
+      />
+    );
+  }
+
   return (
-    <div className="space-y-6 max-w-7xl">
+    <div className="space-y-4 lg:space-y-6 max-w-7xl">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-slate-100 flex items-center gap-3">
-            <BarChart3 className="w-6 h-6 text-emerald-500" strokeWidth={1.5} />
+          <h1 className="text-xl lg:text-2xl font-semibold text-slate-100 flex items-center gap-2">
+            <BarChart3 className="w-5 h-5 lg:w-6 lg:h-6 text-emerald-500" strokeWidth={1.5} />
             Markets
           </h1>
-          <p className="text-slate-500 mt-1 text-sm">Real-time quotes with technical analysis</p>
-        </div>
-        <div className="flex items-center gap-4">
           {lastUpdate && (
-            <span className="text-xs text-slate-500 flex items-center gap-1">
+            <p className="text-xs text-slate-500 mt-1 flex items-center gap-1">
               <Clock className="w-3 h-3" />
-              {lastUpdate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
-            </span>
+              Updated {lastUpdate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
+            </p>
           )}
-          <button
-            onClick={handleRefresh}
-            disabled={loading}
-            className="btn btn-secondary flex items-center gap-2 text-sm"
-          >
-            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} strokeWidth={1.5} />
-            Refresh
-          </button>
         </div>
+        <button
+          onClick={handleRefresh}
+          disabled={loading}
+          className="p-2 lg:px-4 lg:py-2 bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors flex items-center gap-2"
+        >
+          <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} strokeWidth={1.5} />
+          <span className="hidden lg:inline text-sm">Refresh</span>
+        </button>
       </div>
 
       {/* Loading State */}
       {loading && quotes.length === 0 && (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="space-y-2">
           {[1, 2, 3, 4, 5, 6].map((i) => (
-            <div key={i} className="bg-slate-850 rounded-xl border border-slate-800 p-4 animate-pulse">
-              <div className="h-5 bg-slate-800 rounded w-1/3 mb-3" />
-              <div className="h-8 bg-slate-800 rounded w-1/2 mb-2" />
-              <div className="h-4 bg-slate-800 rounded w-full" />
+            <div key={i} className="bg-slate-800/50 rounded-xl p-4 animate-pulse">
+              <div className="h-5 bg-slate-700 rounded w-1/3 mb-2" />
+              <div className="h-4 bg-slate-700 rounded w-1/4" />
             </div>
           ))}
         </div>
@@ -435,20 +550,20 @@ export default function MarketsPage() {
 
       {/* Main Content */}
       {!loading || quotes.length > 0 ? (
-        <div className="grid lg:grid-cols-3 gap-6">
-          {/* Quote Cards - Left Column */}
-          <div className="space-y-4">
+        <div className="grid lg:grid-cols-3 gap-4 lg:gap-6">
+          {/* Quote List */}
+          <div className="space-y-4 lg:space-y-6">
             {/* Indices */}
             <div>
-              <h2 className="text-xs text-slate-500 uppercase tracking-wide mb-2 flex items-center gap-2">
+              <h2 className="text-xs text-slate-500 uppercase tracking-wide mb-2 flex items-center gap-2 px-1">
                 <Activity className="w-3 h-3" /> Indices
               </h2>
               <div className="space-y-2">
                 {quotes.filter(q => SYMBOL_CATEGORIES.indices.includes(q.symbol)).map(quote => (
-                  <QuoteCard
+                  <QuoteRow
                     key={quote.symbol}
                     quote={quote}
-                    onClick={() => setSelectedSymbol(quote.symbol)}
+                    onClick={() => handleSelectSymbol(quote.symbol)}
                     selected={selectedSymbol === quote.symbol}
                   />
                 ))}
@@ -457,32 +572,32 @@ export default function MarketsPage() {
 
             {/* Tech */}
             <div>
-              <h2 className="text-xs text-slate-500 uppercase tracking-wide mb-2 flex items-center gap-2">
+              <h2 className="text-xs text-slate-500 uppercase tracking-wide mb-2 flex items-center gap-2 px-1">
                 <TrendingUp className="w-3 h-3" /> Tech
               </h2>
               <div className="space-y-2">
                 {quotes.filter(q => SYMBOL_CATEGORIES.tech.includes(q.symbol)).map(quote => (
-                  <QuoteCard
+                  <QuoteRow
                     key={quote.symbol}
                     quote={quote}
-                    onClick={() => setSelectedSymbol(quote.symbol)}
+                    onClick={() => handleSelectSymbol(quote.symbol)}
                     selected={selectedSymbol === quote.symbol}
                   />
                 ))}
               </div>
             </div>
 
-            {/* Precious Metals */}
+            {/* Metals */}
             <div>
-              <h2 className="text-xs text-slate-500 uppercase tracking-wide mb-2 flex items-center gap-2">
+              <h2 className="text-xs text-slate-500 uppercase tracking-wide mb-2 flex items-center gap-2 px-1">
                 <span className="text-amber-400">◆</span> Precious Metals
               </h2>
               <div className="space-y-2">
                 {quotes.filter(q => SYMBOL_CATEGORIES.metals.includes(q.symbol)).map(quote => (
-                  <QuoteCard
+                  <QuoteRow
                     key={quote.symbol}
                     quote={quote}
-                    onClick={() => setSelectedSymbol(quote.symbol)}
+                    onClick={() => handleSelectSymbol(quote.symbol)}
                     selected={selectedSymbol === quote.symbol}
                   />
                 ))}
@@ -490,22 +605,22 @@ export default function MarketsPage() {
             </div>
           </div>
 
-          {/* Chart & Details - Right Column */}
-          <div className="lg:col-span-2 space-y-4">
+          {/* Desktop Detail Panel */}
+          <div className="hidden lg:block lg:col-span-2 space-y-4">
             {selectedSymbol && symbolDetail && (
               <>
                 {/* Chart Header */}
-                <div className="bg-slate-850 rounded-xl border border-slate-800 p-4">
+                <div className="bg-slate-850 rounded-xl border border-slate-800 p-5">
                   <div className="flex items-center justify-between mb-4">
                     <div>
                       <h2 className="text-lg font-semibold text-slate-100">
                         {symbolDetail.quote.symbol} — {symbolDetail.quote.name}
                       </h2>
-                      <div className="flex items-center gap-4 mt-1">
+                      <div className="flex items-center gap-3 mt-1">
                         <span className="text-2xl font-bold text-slate-100">
                           ${formatPrice(symbolDetail.quote.price)}
                         </span>
-                        <span className={`flex items-center gap-1 text-sm font-medium ${
+                        <span className={`text-sm font-medium ${
                           symbolDetail.quote.change >= 0 ? 'text-emerald-400' : 'text-red-400'
                         }`}>
                           {symbolDetail.quote.change >= 0 ? '+' : ''}
@@ -514,13 +629,12 @@ export default function MarketsPage() {
                       </div>
                     </div>
                     
-                    {/* Range Selector */}
                     <div className="flex gap-1">
                       {['1mo', '3mo', '6mo', '1y'].map(r => (
                         <button
                           key={r}
                           onClick={() => setRange(r)}
-                          className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
+                          className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${
                             range === r
                               ? 'bg-primary-600 text-white'
                               : 'bg-slate-800 text-slate-400 hover:text-slate-200'
@@ -532,22 +646,16 @@ export default function MarketsPage() {
                     </div>
                   </div>
 
-                  {/* Chart */}
                   {detailLoading ? (
                     <div className="h-[300px] bg-slate-800/50 rounded-lg animate-pulse" />
                   ) : (
-                    <CandlestickChart
-                      candles={symbolDetail.candles}
-                      fibonacci={symbolDetail.fibonacci}
-                      symbol={selectedSymbol}
-                    />
+                    <MiniChart candles={symbolDetail.candles} fibonacci={symbolDetail.fibonacci} height={300} />
                   )}
                 </div>
 
-                {/* Stats & Fibonacci */}
+                {/* Stats & Fib */}
                 <div className="grid md:grid-cols-2 gap-4">
-                  {/* Key Stats */}
-                  <div className="bg-slate-850 rounded-xl border border-slate-800 p-4">
+                  <div className="bg-slate-850 rounded-xl border border-slate-800 p-5">
                     <h3 className="font-medium text-slate-200 mb-3">Key Statistics</h3>
                     <div className="grid grid-cols-2 gap-3 text-sm">
                       <div>
@@ -581,11 +689,7 @@ export default function MarketsPage() {
                     </div>
                   </div>
 
-                  {/* Fibonacci */}
-                  <FibonacciPanel 
-                    fibonacci={symbolDetail.fibonacci} 
-                    currentPrice={symbolDetail.quote.price}
-                  />
+                  <FibonacciPanel fibonacci={symbolDetail.fibonacci} currentPrice={symbolDetail.quote.price} />
                 </div>
               </>
             )}
@@ -593,7 +697,7 @@ export default function MarketsPage() {
             {!selectedSymbol && (
               <div className="bg-slate-850 rounded-xl border border-slate-800 p-12 text-center">
                 <BarChart3 className="w-12 h-12 text-slate-700 mx-auto mb-4" />
-                <p className="text-slate-500">Select a symbol to view chart and analysis</p>
+                <p className="text-slate-500">Select a symbol to view details</p>
               </div>
             )}
           </div>

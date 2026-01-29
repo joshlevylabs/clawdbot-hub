@@ -33,6 +33,8 @@ interface FibonacciLevels {
   low: number;
   levels: { level: string; price: number; percent: number }[];
   trend: 'up' | 'down';
+  swingHighIdx?: number;
+  swingLowIdx?: number;
 }
 
 const SYMBOL_NAMES: Record<string, string> = {
@@ -44,39 +46,106 @@ const SYMBOL_NAMES: Record<string, string> = {
   SLV: 'Silver ETF',
 };
 
-// Calculate Fibonacci retracement levels
-function calculateFibonacci(candles: CandleData[]): FibonacciLevels {
-  if (candles.length < 20) {
-    return { high: 0, low: 0, levels: [], trend: 'up' };
+// Find swing points (local highs and lows)
+function findSwingPoints(candles: CandleData[], lookback: number = 5): { highs: number[]; lows: number[] } {
+  const highs: number[] = [];
+  const lows: number[] = [];
+  
+  for (let i = lookback; i < candles.length - lookback; i++) {
+    let isSwingHigh = true;
+    let isSwingLow = true;
+    
+    for (let j = 1; j <= lookback; j++) {
+      if (candles[i].high <= candles[i - j].high || candles[i].high <= candles[i + j].high) {
+        isSwingHigh = false;
+      }
+      if (candles[i].low >= candles[i - j].low || candles[i].low >= candles[i + j].low) {
+        isSwingLow = false;
+      }
+    }
+    
+    if (isSwingHigh) highs.push(i);
+    if (isSwingLow) lows.push(i);
   }
   
-  // Find swing high and low from recent data (last 50 candles)
-  const recentCandles = candles.slice(-50);
-  const high = Math.max(...recentCandles.map(c => c.high));
-  const low = Math.min(...recentCandles.map(c => c.low));
+  return { highs, lows };
+}
+
+// Calculate Fibonacci retracement levels using proper swing points
+function calculateFibonacci(candles: CandleData[]): FibonacciLevels {
+  if (candles.length < 30) {
+    return { high: 0, low: 0, levels: [], trend: 'up', swingHighIdx: 0, swingLowIdx: 0 };
+  }
   
-  // Determine trend by comparing first and last thirds
-  const firstThird = recentCandles.slice(0, 17);
-  const lastThird = recentCandles.slice(-17);
-  const firstAvg = firstThird.reduce((sum, c) => sum + c.close, 0) / firstThird.length;
-  const lastAvg = lastThird.reduce((sum, c) => sum + c.close, 0) / lastThird.length;
-  const trend = lastAvg > firstAvg ? 'up' : 'down';
+  const { highs, lows } = findSwingPoints(candles, 5);
   
+  if (highs.length === 0 || lows.length === 0) {
+    // Fallback to simple high/low
+    const recentCandles = candles.slice(-50);
+    const high = Math.max(...recentCandles.map(c => c.high));
+    const low = Math.min(...recentCandles.map(c => c.low));
+    return { 
+      high, low, 
+      levels: calculateFibLevels(high, low, 'up'), 
+      trend: 'up',
+      swingHighIdx: candles.length - 1,
+      swingLowIdx: 0
+    };
+  }
+  
+  // Find the most recent significant swing pattern:
+  // For uptrend: swing low → swing high → current retracement
+  // For downtrend: swing high → swing low → current retracement
+  
+  const lastSwingHigh = highs[highs.length - 1];
+  const lastSwingLow = lows[lows.length - 1];
+  
+  let swingLowIdx: number;
+  let swingHighIdx: number;
+  let trend: 'up' | 'down';
+  
+  if (lastSwingHigh > lastSwingLow) {
+    // Most recent is a high - we're in a potential retracement from high
+    // Find the swing low before this high
+    const lowsBeforeHigh = lows.filter(l => l < lastSwingHigh);
+    swingLowIdx = lowsBeforeHigh.length > 0 ? lowsBeforeHigh[lowsBeforeHigh.length - 1] : 0;
+    swingHighIdx = lastSwingHigh;
+    trend = 'up';
+  } else {
+    // Most recent is a low - we're in a potential bounce from low
+    // Find the swing high before this low
+    const highsBeforeLow = highs.filter(h => h < lastSwingLow);
+    swingHighIdx = highsBeforeLow.length > 0 ? highsBeforeLow[highsBeforeLow.length - 1] : 0;
+    swingLowIdx = lastSwingLow;
+    trend = 'down';
+  }
+  
+  const high = candles[swingHighIdx].high;
+  const low = candles[swingLowIdx].low;
+  
+  return { 
+    high, 
+    low, 
+    levels: calculateFibLevels(high, low, trend), 
+    trend,
+    swingHighIdx,
+    swingLowIdx
+  };
+}
+
+function calculateFibLevels(high: number, low: number, trend: 'up' | 'down') {
   const diff = high - low;
   const fibLevels = [0, 0.236, 0.382, 0.5, 0.618, 0.786, 1];
   
-  const levels = fibLevels.map(fib => {
-    const price = trend === 'up' 
-      ? high - (diff * fib)  // Retracement from high
-      : low + (diff * fib);  // Extension from low
+  return fibLevels.map(fib => {
+    // Fibonacci retracements measure from the high down
+    const price = high - (diff * fib);
     return {
       level: `${(fib * 100).toFixed(1)}%`,
       price: Math.round(price * 100) / 100,
       percent: fib * 100,
     };
   });
-  
-  return { high, low, levels, trend };
 }
 
 // Fetch quote data from Yahoo Finance

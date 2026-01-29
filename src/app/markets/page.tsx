@@ -169,6 +169,12 @@ interface CustomFibPoints {
   c: number | null; // pullback index
 }
 
+// View range for pan/zoom
+interface ViewRange {
+  start: number; // start index (0 = oldest)
+  end: number;   // end index (candles.length = newest)
+}
+
 // Chart with MAs and Fibonacci
 function ChartCanvas({ 
   candles, 
@@ -192,8 +198,25 @@ function ChartCanvas({
   const [selectMode, setSelectMode] = useState<'none' | 'a' | 'b' | 'c'>('none');
   const [localFibPoints, setLocalFibPoints] = useState<CustomFibPoints>({ a: null, b: null, c: null });
   
+  // Pan & Zoom state
+  const [viewRange, setViewRange] = useState<ViewRange>({ start: 0, end: candles.length });
+  const [isPanning, setIsPanning] = useState(false);
+  const panStartRef = useRef<{ x: number; viewStart: number; viewEnd: number } | null>(null);
+  const touchStartRef = useRef<{ touches: { x: number; y: number }[]; viewStart: number; viewEnd: number } | null>(null);
+  
   const fibPoints = customFibPoints || localFibPoints;
   const setFibPoints = onCustomFib || setLocalFibPoints;
+  
+  // Reset view when candles change
+  useEffect(() => {
+    setViewRange({ start: 0, end: candles.length });
+  }, [candles.length]);
+  
+  // Get visible candles based on view range
+  const visibleStart = Math.max(0, Math.floor(viewRange.start));
+  const visibleEnd = Math.min(candles.length, Math.ceil(viewRange.end));
+  const visibleCandles = candles.slice(visibleStart, visibleEnd);
+  const isZoomed = viewRange.start > 0 || viewRange.end < candles.length;
 
   // Chart dimensions and scaling (memoized for click handling)
   const chartDims = useRef<{
@@ -220,7 +243,7 @@ function ChartCanvas({
   };
 
   useEffect(() => {
-    if (!canvasRef.current || candles.length === 0) return;
+    if (!canvasRef.current || visibleCandles.length === 0) return;
 
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
@@ -240,8 +263,8 @@ function ChartCanvas({
     ctx.fillStyle = '#0f172a';
     ctx.fillRect(0, 0, width, canvasHeight);
 
-    // Calculate price range
-    let prices = candles.flatMap(c => [c.high, c.low]);
+    // Calculate price range from visible candles
+    let prices = visibleCandles.flatMap(c => [c.high, c.low]);
     if (settings.showFibExtensions && fibonacci?.extensions) {
       prices = prices.concat(fibonacci.extensions.map(e => e.price));
     }
@@ -250,7 +273,7 @@ function ChartCanvas({
     const maxPrice = Math.max(...prices);
     const priceRange = maxPrice - minPrice;
     const pricePadding = priceRange * 0.03;
-    const candleWidth = Math.max(1, (chartWidth / candles.length) - 0.5);
+    const candleWidth = Math.max(1, (chartWidth / visibleCandles.length) - 0.5);
 
     // Store dims for click handling
     chartDims.current = { padding, width, chartHeight: canvasHeight, chartWidth, drawHeight, minPrice, maxPrice, priceRange, pricePadding, candleWidth };
@@ -258,7 +281,7 @@ function ChartCanvas({
     const scaleY = (price: number) => {
       return padding.top + drawHeight - ((price - minPrice + pricePadding) / (priceRange + pricePadding * 2)) * drawHeight;
     };
-    const scaleX = (i: number) => padding.left + (i / candles.length) * chartWidth;
+    const scaleX = (i: number) => padding.left + (i / visibleCandles.length) * chartWidth;
 
     // Y-axis grid and labels
     ctx.strokeStyle = '#1e293b';
@@ -281,17 +304,17 @@ function ChartCanvas({
     ctx.fillStyle = '#475569';
     ctx.font = '9px sans-serif';
     ctx.textAlign = 'center';
-    const labelCount = Math.min(8, candles.length);
-    const labelStep = Math.floor(candles.length / labelCount);
-    for (let i = 0; i < candles.length; i += labelStep) {
+    const labelCount = Math.min(8, visibleCandles.length);
+    const labelStep = Math.max(1, Math.floor(visibleCandles.length / labelCount));
+    for (let i = 0; i < visibleCandles.length; i += labelStep) {
       const x = scaleX(i) + candleWidth / 2;
-      const date = formatDate(candles[i].time);
+      const date = formatDate(visibleCandles[i].time);
       ctx.fillText(date, x, canvasHeight - padding.bottom + 15);
     }
     // Last date
-    if (candles.length > 0) {
-      const lastX = scaleX(candles.length - 1) + candleWidth / 2;
-      ctx.fillText(formatDate(candles[candles.length - 1].time), lastX, canvasHeight - padding.bottom + 15);
+    if (visibleCandles.length > 0) {
+      const lastX = scaleX(visibleCandles.length - 1) + candleWidth / 2;
+      ctx.fillText(formatDate(visibleCandles[visibleCandles.length - 1].time), lastX, canvasHeight - padding.bottom + 15);
     }
 
     // Fibonacci Retracements
@@ -338,7 +361,7 @@ function ChartCanvas({
       });
     }
 
-    // Moving Averages
+    // Moving Averages (slice to visible range)
     const maConfigs = [
       { show: settings.showMA5, data: movingAverages?.ma5Data, color: '#f59e0b' },
       { show: settings.showMA20, data: movingAverages?.ma20Data, color: '#ec4899' },
@@ -348,11 +371,12 @@ function ChartCanvas({
     
     maConfigs.forEach(({ show, data, color }) => {
       if (!show || !data) return;
+      const visibleData = data.slice(visibleStart, visibleEnd);
       ctx.strokeStyle = color;
       ctx.lineWidth = 1.5;
       ctx.beginPath();
       let started = false;
-      data.forEach((val, i) => {
+      visibleData.forEach((val, i) => {
         if (val === null) return;
         const x = scaleX(i) + candleWidth / 2;
         const y = scaleY(val);
@@ -367,7 +391,7 @@ function ChartCanvas({
     });
 
     // Candles
-    candles.forEach((candle, i) => {
+    visibleCandles.forEach((candle, i) => {
       const x = scaleX(i) + candleWidth / 2;
       const isGreen = candle.close >= candle.open;
       const color = isGreen ? '#10b981' : '#ef4444';
@@ -387,10 +411,13 @@ function ChartCanvas({
       ctx.fillRect(x - candleWidth / 2, bodyTop, candleWidth, bodyHeight);
     });
 
-    // Draw custom Fib point markers
-    const drawMarker = (idx: number, label: string, color: string) => {
-      const x = scaleX(idx) + candleWidth / 2;
-      const candle = candles[idx];
+    // Draw custom Fib point markers (only if visible)
+    const drawMarker = (globalIdx: number, label: string, color: string) => {
+      const localIdx = globalIdx - visibleStart;
+      if (localIdx < 0 || localIdx >= visibleCandles.length) return;
+      
+      const x = scaleX(localIdx) + candleWidth / 2;
+      const candle = candles[globalIdx];
       const y = label === 'A' ? scaleY(candle.low) : label === 'B' ? scaleY(candle.high) : scaleY(candle.low);
       
       ctx.fillStyle = color;
@@ -407,24 +434,27 @@ function ChartCanvas({
     if (fibPoints.b !== null) drawMarker(fibPoints.b, 'B', '#ef4444');
     if (fibPoints.c !== null) drawMarker(fibPoints.c, 'C', '#f59e0b');
 
-  }, [candles, fibonacci, movingAverages, settings, fibPoints]);
+  }, [candles, visibleCandles, visibleStart, visibleEnd, viewRange, fibonacci, movingAverages, settings, fibPoints]);
 
   const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    if (!canvasRef.current || !chartDims.current || candles.length === 0) return;
+    if (isPanning) return; // Don't handle click if we were panning
+    if (!canvasRef.current || !chartDims.current || visibleCandles.length === 0) return;
     
     const rect = canvasRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
-    const { padding, chartWidth, candleWidth } = chartDims.current;
+    const { padding, chartWidth } = chartDims.current;
     
-    // Find which candle was clicked
-    const candleIndex = Math.floor(((x - padding.left) / chartWidth) * candles.length);
-    if (candleIndex < 0 || candleIndex >= candles.length) return;
+    // Find which visible candle was clicked
+    const localIndex = Math.floor(((x - padding.left) / chartWidth) * visibleCandles.length);
+    if (localIndex < 0 || localIndex >= visibleCandles.length) return;
     
-    const candle = candles[candleIndex];
+    // Convert to global index
+    const globalIndex = localIndex + visibleStart;
+    const candle = candles[globalIndex];
     
     if (selectMode !== 'none') {
-      // Set Fib point
-      const newPoints = { ...fibPoints, [selectMode]: candleIndex };
+      // Set Fib point (use global index)
+      const newPoints = { ...fibPoints, [selectMode]: globalIndex };
       setFibPoints(newPoints);
       
       // Advance to next point
@@ -437,7 +467,7 @@ function ChartCanvas({
         x: e.clientX - rect.left,
         y: e.clientY - rect.top,
         candle,
-        index: candleIndex,
+        index: globalIndex,
         date: formatDate(candle.time) + ' ' + formatTime(candle.time),
       });
     }
@@ -445,6 +475,159 @@ function ChartCanvas({
 
   const handleMouseLeave = () => {
     if (selectMode === 'none') setTooltip(null);
+    setIsPanning(false);
+    panStartRef.current = null;
+  };
+  
+  // Mouse wheel zoom
+  const handleWheel = (e: React.WheelEvent<HTMLCanvasElement>) => {
+    e.preventDefault();
+    if (candles.length === 0) return;
+    
+    const zoomFactor = e.deltaY > 0 ? 1.1 : 0.9; // Zoom out : Zoom in
+    const currentRange = viewRange.end - viewRange.start;
+    const newRange = Math.max(10, Math.min(candles.length, currentRange * zoomFactor)); // Min 10 candles visible
+    
+    // Get mouse position as ratio across chart
+    const rect = canvasRef.current?.getBoundingClientRect();
+    if (!rect || !chartDims.current) return;
+    const mouseX = e.clientX - rect.left;
+    const { padding, chartWidth } = chartDims.current;
+    const ratio = Math.max(0, Math.min(1, (mouseX - padding.left) / chartWidth));
+    
+    // Calculate new start/end centered on mouse position
+    const currentPos = viewRange.start + (viewRange.end - viewRange.start) * ratio;
+    let newStart = currentPos - newRange * ratio;
+    let newEnd = currentPos + newRange * (1 - ratio);
+    
+    // Clamp to valid range
+    if (newStart < 0) {
+      newStart = 0;
+      newEnd = Math.min(candles.length, newRange);
+    }
+    if (newEnd > candles.length) {
+      newEnd = candles.length;
+      newStart = Math.max(0, candles.length - newRange);
+    }
+    
+    setViewRange({ start: newStart, end: newEnd });
+    setTooltip(null);
+  };
+  
+  // Mouse drag pan
+  const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    if (selectMode !== 'none') return; // Don't pan when selecting Fib points
+    panStartRef.current = {
+      x: e.clientX,
+      viewStart: viewRange.start,
+      viewEnd: viewRange.end,
+    };
+  };
+  
+  const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    if (!panStartRef.current || !chartDims.current) return;
+    
+    const dx = e.clientX - panStartRef.current.x;
+    const { chartWidth } = chartDims.current;
+    const candlesInView = panStartRef.current.viewEnd - panStartRef.current.viewStart;
+    const candlesPanned = -(dx / chartWidth) * candlesInView;
+    
+    let newStart = panStartRef.current.viewStart + candlesPanned;
+    let newEnd = panStartRef.current.viewEnd + candlesPanned;
+    
+    // Clamp
+    if (newStart < 0) {
+      newEnd -= newStart;
+      newStart = 0;
+    }
+    if (newEnd > candles.length) {
+      newStart -= (newEnd - candles.length);
+      newEnd = candles.length;
+    }
+    
+    if (Math.abs(dx) > 5) setIsPanning(true);
+    setViewRange({ start: Math.max(0, newStart), end: Math.min(candles.length, newEnd) });
+    setTooltip(null);
+  };
+  
+  const handleMouseUp = () => {
+    panStartRef.current = null;
+    setTimeout(() => setIsPanning(false), 50); // Small delay to prevent click after drag
+  };
+  
+  // Touch handlers for mobile
+  const handleTouchStart = (e: React.TouchEvent<HTMLCanvasElement>) => {
+    if (selectMode !== 'none') return;
+    
+    const touches = Array.from(e.touches).map(t => ({ x: t.clientX, y: t.clientY }));
+    touchStartRef.current = {
+      touches,
+      viewStart: viewRange.start,
+      viewEnd: viewRange.end,
+    };
+  };
+  
+  const handleTouchMove = (e: React.TouchEvent<HTMLCanvasElement>) => {
+    if (!touchStartRef.current || !chartDims.current) return;
+    e.preventDefault();
+    
+    const currentTouches = Array.from(e.touches).map(t => ({ x: t.clientX, y: t.clientY }));
+    const { touches: startTouches, viewStart, viewEnd } = touchStartRef.current;
+    const { chartWidth } = chartDims.current;
+    const candlesInView = viewEnd - viewStart;
+    
+    if (currentTouches.length === 1 && startTouches.length === 1) {
+      // Single finger pan
+      const dx = currentTouches[0].x - startTouches[0].x;
+      const candlesPanned = -(dx / chartWidth) * candlesInView;
+      
+      let newStart = viewStart + candlesPanned;
+      let newEnd = viewEnd + candlesPanned;
+      
+      if (newStart < 0) {
+        newEnd -= newStart;
+        newStart = 0;
+      }
+      if (newEnd > candles.length) {
+        newStart -= (newEnd - candles.length);
+        newEnd = candles.length;
+      }
+      
+      setViewRange({ start: Math.max(0, newStart), end: Math.min(candles.length, newEnd) });
+    } else if (currentTouches.length === 2 && startTouches.length === 2) {
+      // Pinch zoom
+      const startDist = Math.abs(startTouches[1].x - startTouches[0].x);
+      const currentDist = Math.abs(currentTouches[1].x - currentTouches[0].x);
+      const scale = startDist / Math.max(1, currentDist);
+      
+      const newRange = Math.max(10, Math.min(candles.length, candlesInView * scale));
+      const centerRatio = 0.5;
+      const currentCenter = viewStart + candlesInView * centerRatio;
+      
+      let newStart = currentCenter - newRange * centerRatio;
+      let newEnd = currentCenter + newRange * (1 - centerRatio);
+      
+      if (newStart < 0) {
+        newStart = 0;
+        newEnd = Math.min(candles.length, newRange);
+      }
+      if (newEnd > candles.length) {
+        newEnd = candles.length;
+        newStart = Math.max(0, candles.length - newRange);
+      }
+      
+      setViewRange({ start: newStart, end: newEnd });
+    }
+    
+    setTooltip(null);
+  };
+  
+  const handleTouchEnd = () => {
+    touchStartRef.current = null;
+  };
+  
+  const resetView = () => {
+    setViewRange({ start: 0, end: candles.length });
   };
 
   const startFibSelection = () => {
@@ -473,9 +656,16 @@ function ChartCanvas({
       <canvas 
         ref={canvasRef} 
         className="w-full rounded-lg cursor-crosshair"
-        style={{ height, background: '#0f172a' }}
+        style={{ height, background: '#0f172a', touchAction: 'none' }}
         onClick={handleCanvasClick}
         onMouseLeave={handleMouseLeave}
+        onWheel={handleWheel}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
       />
       
       {/* Selection mode indicator */}
@@ -490,8 +680,16 @@ function ChartCanvas({
         </div>
       )}
       
-      {/* Custom Fib controls */}
+      {/* Chart controls */}
       <div className="absolute top-2 right-2 flex gap-1">
+        {isZoomed && (
+          <button 
+            onClick={resetView}
+            className="bg-slate-800/90 hover:bg-slate-700 text-xs text-slate-300 px-2 py-1 rounded flex items-center gap-1"
+          >
+            <span className="text-[10px]">⟲</span> Reset Zoom
+          </button>
+        )}
         {!hasCustomFib && selectMode === 'none' && (
           <button 
             onClick={startFibSelection}
@@ -505,10 +703,17 @@ function ChartCanvas({
             onClick={clearCustomFib}
             className="bg-red-900/50 hover:bg-red-900 text-xs text-red-300 px-2 py-1 rounded"
           >
-            Reset
+            Reset Fib
           </button>
         )}
       </div>
+      
+      {/* Zoom hint on mobile */}
+      {!isZoomed && (
+        <div className="absolute bottom-2 left-2 text-[10px] text-slate-500 pointer-events-none lg:hidden">
+          Scroll to pan • Pinch to zoom
+        </div>
+      )}
       
       {/* Tooltip */}
       {tooltip && selectMode === 'none' && (

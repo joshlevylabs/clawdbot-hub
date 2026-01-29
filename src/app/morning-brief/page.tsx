@@ -84,6 +84,7 @@ interface FamilySection {
   conversationStarter?: string;
   upcomingDates?: { date: string; event: string }[];
   weeklyGoal?: string;
+  potencyAction?: string;
   reflection?: string;
 }
 
@@ -442,6 +443,16 @@ function FamilyCard({ data }: { data: FamilySection }) {
               <MessageCircle className="w-3 h-3" /> Conversation Starter
             </p>
             <p className="text-slate-300 italic">&ldquo;{data.conversationStarter}&rdquo;</p>
+          </div>
+        )}
+        
+        {/* Potency Action - for Jillian */}
+        {data.potencyAction && (
+          <div className="bg-gradient-to-r from-rose-500/20 to-pink-500/20 border border-rose-500/40 rounded-xl p-4">
+            <p className="text-xs text-rose-300 uppercase tracking-wide mb-2 flex items-center gap-2">
+              💕 Potency Action for Jillian
+            </p>
+            <p className="text-white font-medium">{data.potencyAction}</p>
           </div>
         )}
         

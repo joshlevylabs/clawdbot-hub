@@ -27,17 +27,42 @@
     "calendar": {
       "title": "📅 Calendar",
       "today": [
-        {"time": "9:00 AM", "title": "Morning standup", "location": "Zoom"},
-        {"time": "2:00 PM", "title": "Client sync", "location": "Google Meet"}
+        {
+          "time": "9:00 AM",
+          "title": "Morning standup",
+          "location": "Zoom"
+        },
+        {
+          "time": "2:00 PM",
+          "title": "Client sync",
+          "location": "Google Meet"
+        }
       ],
       "week": [
-        {"date": "Thu Jan 30", "time": "10:00 AM", "title": "Dentist appointment"},
-        {"date": "Fri Jan 31", "time": "3:00 PM", "title": "Team retrospective"},
-        {"date": "Sat Feb 1", "title": "Date night with Jillian 💑"}
+        {
+          "date": "Thu Jan 30",
+          "time": "10:00 AM",
+          "title": "Dentist appointment"
+        },
+        {
+          "date": "Fri Jan 31",
+          "time": "3:00 PM",
+          "title": "Team retrospective"
+        },
+        {
+          "date": "Sat Feb 1",
+          "title": "Date night with Jillian 💑"
+        }
       ],
       "month": [
-        {"date": "Feb 14", "title": "Valentine's Day ❤️"},
-        {"date": "Mar 26", "title": "Wedding Anniversary (4 years!)"}
+        {
+          "date": "Feb 14",
+          "title": "Valentine's Day ❤️"
+        },
+        {
+          "date": "Mar 26",
+          "title": "Wedding Anniversary (4 years!)"
+        }
       ],
       "audio": "/audio/brief-2026-01-28-calendar.mp3"
     },
@@ -47,23 +72,49 @@
       "conversationStarter": "Ask Jillian: What book are you reading right now? (Quality time = undivided attention when she answers)",
       "weeklyGoal": "Monthly date night check: Have you scheduled February's date night yet? Lock it in this week.",
       "upcomingDates": [
-        {"date": "Feb 14", "event": "Valentine's Day"},
-        {"date": "Mar 26", "event": "Wedding Anniversary (4 years!)"},
-        {"date": "May 20", "event": "Jones turns 3!"}
+        {
+          "date": "Feb 14",
+          "event": "Valentine's Day"
+        },
+        {
+          "date": "Mar 26",
+          "event": "Wedding Anniversary (4 years!)"
+        },
+        {
+          "date": "May 20",
+          "event": "Jones turns 3!"
+        }
       ],
-      "reflection": "Jillian's love languages are quality time and acts of service. What's one thing you can take off her plate today?"
+      "reflection": "Jillian's love languages are quality time and acts of service. What's one thing you can take off her plate today?",
+      "potencyAction": "Handle bedtime with Jones and Jett solo tonight — give Jillian 30 minutes to herself with her book"
     },
     "email": {
       "title": "📧 Email Highlights",
       "needs_attention": [
-        {"from": "Client", "subject": "Project timeline question", "note": "awaiting response"},
-        {"from": "Bank", "subject": "Statement ready", "note": "review when free"}
+        {
+          "from": "Client",
+          "subject": "Project timeline question",
+          "note": "awaiting response"
+        },
+        {
+          "from": "Bank",
+          "subject": "Statement ready",
+          "note": "review when free"
+        }
       ],
       "dev_work": [
-        {"from": "GitHub", "subject": "PR ready for review", "note": "clawdbot repo"}
+        {
+          "from": "GitHub",
+          "subject": "PR ready for review",
+          "note": "clawdbot repo"
+        }
       ],
       "good_news": [
-        {"from": "Stripe", "subject": "Payment received", "note": "$500 deposit"}
+        {
+          "from": "Stripe",
+          "subject": "Payment received",
+          "note": "$500 deposit"
+        }
       ],
       "audio": "/audio/brief-2026-01-28-email.mp3"
     },
@@ -72,15 +123,33 @@
       "summary": {
         "date": "2026-01-29",
         "market_status": "PRE-MARKET",
-        "spy": {"price": 602.50, "change_pct": 0.3},
+        "spy": {
+          "price": 602.50,
+          "change_pct": 0.3
+        },
         "vix": 14.2,
         "sentiment": "NEUTRAL",
         "volatility": "LOW"
       },
       "overview": [
-        {"symbol": "SPY", "price": 602.50, "change_pct": 0.3, "trend": "NEUTRAL"},
-        {"symbol": "QQQ", "price": 518.20, "change_pct": 0.5, "trend": "BULLISH"},
-        {"symbol": "BTC", "price": 104500, "change_pct": 1.2, "trend": "BULLISH"}
+        {
+          "symbol": "SPY",
+          "price": 602.50,
+          "change_pct": 0.3,
+          "trend": "NEUTRAL"
+        },
+        {
+          "symbol": "QQQ",
+          "price": 518.20,
+          "change_pct": 0.5,
+          "trend": "BULLISH"
+        },
+        {
+          "symbol": "BTC",
+          "price": 104500,
+          "change_pct": 1.2,
+          "trend": "BULLISH"
+        }
       ],
       "signals": [],
       "audio": "/audio/brief-2026-01-28-markets.mp3"
@@ -91,22 +160,34 @@
         "israel": {
           "title": "🇮🇱 Israel",
           "items": [
-            {"headline": "Netanyahu meets with coalition partners on judicial reform compromise"},
-            {"headline": "IDF reports successful interception of drone from Yemen"}
+            {
+              "headline": "Netanyahu meets with coalition partners on judicial reform compromise"
+            },
+            {
+              "headline": "IDF reports successful interception of drone from Yemen"
+            }
           ]
         },
         "us": {
           "title": "🇺🇸 United States",
           "items": [
-            {"headline": "Fed signals patience on rate cuts, markets steady"},
-            {"headline": "Senate passes border security funding bill"}
+            {
+              "headline": "Fed signals patience on rate cuts, markets steady"
+            },
+            {
+              "headline": "Senate passes border security funding bill"
+            }
           ]
         },
         "world": {
           "title": "🌐 Global",
           "items": [
-            {"headline": "EU announces new AI regulation framework"},
-            {"headline": "China reports slower economic growth in Q4"}
+            {
+              "headline": "EU announces new AI regulation framework"
+            },
+            {
+              "headline": "China reports slower economic growth in Q4"
+            }
           ]
         }
       },
@@ -115,9 +196,15 @@
     "ai": {
       "title": "🤖 AI Intel",
       "items": [
-        {"headline": "Anthropic releases Claude 3.5 with improved coding capabilities"},
-        {"headline": "OpenAI reportedly in talks for $100B valuation round"},
-        {"headline": "Google DeepMind publishes new paper on AI safety benchmarks"}
+        {
+          "headline": "Anthropic releases Claude 3.5 with improved coding capabilities"
+        },
+        {
+          "headline": "OpenAI reportedly in talks for $100B valuation round"
+        },
+        {
+          "headline": "Google DeepMind publishes new paper on AI safety benchmarks"
+        }
       ],
       "audio": "/audio/brief-2026-01-28-ai.mp3"
     }

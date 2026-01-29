@@ -115,6 +115,75 @@ function normalizeNewsItem(item: NewsItem | string): NewsItem {
   return typeof item === "string" ? { headline: item } : item;
 }
 
+// Calendar Card with tabs
+function CalendarCard({ data }: { data: CalendarSection }) {
+  const [view, setView] = useState<'today' | 'upcoming'>('today');
+  
+  const todayItems: CalendarEvent[] = data.today || (data.items?.map(item => ({ title: item })) || []);
+  const upcomingItems: CalendarEvent[] = (data as any).upcoming || data.week || [];
+  
+  const currentItems = view === 'today' ? todayItems : upcomingItems;
+  const hasUpcoming = upcomingItems.length > 0;
+  
+  return (
+    <div className="bg-gradient-to-br from-slate-850 to-purple-950/20 rounded-xl border border-slate-800 p-5">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-purple-600/20 rounded-lg flex items-center justify-center">
+            <Calendar className="w-5 h-5 text-purple-400" strokeWidth={1.5} />
+          </div>
+          <h2 className="font-semibold text-slate-200">Calendar</h2>
+        </div>
+      </div>
+      
+      {/* View tabs */}
+      {hasUpcoming && (
+        <div className="flex gap-2 mb-4">
+          {['today', 'upcoming'].map((v) => (
+            <button
+              key={v}
+              onClick={() => setView(v as typeof view)}
+              className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors ${
+                view === v 
+                  ? 'bg-purple-600 text-white' 
+                  : 'bg-slate-800/50 text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              {v === 'today' ? 'Today' : 'Upcoming'}
+            </button>
+          ))}
+        </div>
+      )}
+      
+      {currentItems.length === 0 ? (
+        <div className="text-center py-6">
+          <p className="text-slate-500">No events {view === 'today' ? 'today' : 'upcoming'}</p>
+          <p className="text-slate-600 text-sm mt-1">Enjoy your open schedule!</p>
+        </div>
+      ) : (
+        <div className="space-y-2 max-h-48 overflow-auto">
+          {currentItems.map((event, i) => (
+            <div key={i} className="flex items-start gap-2 p-2 bg-slate-800/30 rounded-lg">
+              <div className="w-1.5 h-1.5 bg-purple-400 rounded-full flex-shrink-0 mt-2" />
+              <div className="flex-1 min-w-0">
+                <p className="text-slate-200 text-sm font-medium truncate">{event.title}</p>
+                <div className="flex items-center gap-2">
+                  {event.time && (
+                    <p className="text-purple-400 text-xs">{event.time}</p>
+                  )}
+                  {event.date && view === 'upcoming' && (
+                    <p className="text-slate-500 text-xs">{event.date}</p>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function DashboardPage() {
   const [briefData, setBriefData] = useState<BriefData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -153,14 +222,6 @@ export default function DashboardPage() {
     } catch {
       return dateStr;
     }
-  };
-
-  // Get today's events
-  const getTodayEvents = (calendar?: CalendarSection): CalendarEvent[] => {
-    if (!calendar) return [];
-    if (calendar.today) return calendar.today;
-    if (calendar.items) return calendar.items.map(item => ({ title: item }));
-    return [];
   };
 
   return (
@@ -252,35 +313,7 @@ export default function DashboardPage() {
 
           {/* Calendar Card */}
           {briefData.sections.calendar && (
-            <div className="bg-gradient-to-br from-slate-850 to-purple-950/20 rounded-xl border border-slate-800 p-5">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 bg-purple-600/20 rounded-lg flex items-center justify-center">
-                  <Calendar className="w-5 h-5 text-purple-400" strokeWidth={1.5} />
-                </div>
-                <h2 className="font-semibold text-slate-200">Today</h2>
-              </div>
-              
-              {getTodayEvents(briefData.sections.calendar).length === 0 ? (
-                <div className="text-center py-6">
-                  <p className="text-slate-500">No events today</p>
-                  <p className="text-slate-600 text-sm mt-1">Enjoy your free day!</p>
-                </div>
-              ) : (
-                <div className="space-y-2 max-h-48 overflow-auto">
-                  {getTodayEvents(briefData.sections.calendar).map((event, i) => (
-                    <div key={i} className="flex items-start gap-2 p-2 bg-slate-800/30 rounded-lg">
-                      <div className="w-1.5 h-1.5 bg-purple-400 rounded-full flex-shrink-0 mt-2" />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-slate-200 text-sm font-medium truncate">{event.title}</p>
-                        {event.time && (
-                          <p className="text-purple-400 text-xs">{event.time}</p>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+            <CalendarCard data={briefData.sections.calendar} />
           )}
 
           {/* Email Card */}

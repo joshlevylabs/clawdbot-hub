@@ -283,13 +283,17 @@ function WeatherCard({ data }: { data: WeatherSection }) {
 function CalendarCard({ data }: { data: CalendarSection }) {
   const [view, setView] = useState<'today' | 'week' | 'month'>('today');
   
-  // Support both old format (items) and new format (today/week/month)
+  // Support both old format (items) and new format (today/week/month/upcoming)
   const todayItems: CalendarEvent[] = data.today || (data.items?.map(item => ({ title: item })) || []);
   const weekItems: CalendarEvent[] = data.week || [];
   const monthItems: CalendarEvent[] = data.month || [];
+  const upcomingItems: CalendarEvent[] = (data as any).upcoming || [];
   
-  const currentItems = view === 'today' ? todayItems : view === 'week' ? weekItems : monthItems;
-  const hasMultipleViews = weekItems.length > 0 || monthItems.length > 0;
+  // Use upcoming as week if week is empty but upcoming exists
+  const effectiveWeekItems = weekItems.length > 0 ? weekItems : upcomingItems;
+  
+  const currentItems = view === 'today' ? todayItems : view === 'week' ? effectiveWeekItems : monthItems;
+  const hasMultipleViews = effectiveWeekItems.length > 0 || monthItems.length > 0;
   
   return (
     <div className="h-full flex flex-col bg-gradient-to-b from-slate-900 to-purple-950/30 p-6 overflow-auto">
@@ -310,27 +314,64 @@ function CalendarCard({ data }: { data: CalendarSection }) {
           onTouchStart={(e) => e.stopPropagation()}
           onTouchEnd={(e) => e.stopPropagation()}
         >
-          {['today', 'week', 'month'].map((v) => (
+          <button
+            onClick={(e) => { 
+              e.stopPropagation(); 
+              e.preventDefault();
+              setView('today'); 
+            }}
+            onTouchEnd={(e) => {
+              e.stopPropagation();
+              setView('today');
+            }}
+            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+              view === 'today' 
+                ? 'bg-purple-600 text-white' 
+                : 'bg-slate-800/50 text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            Today
+          </button>
+          {effectiveWeekItems.length > 0 && (
             <button
-              key={v}
               onClick={(e) => { 
                 e.stopPropagation(); 
                 e.preventDefault();
-                setView(v as typeof view); 
+                setView('week'); 
               }}
               onTouchEnd={(e) => {
                 e.stopPropagation();
-                setView(v as typeof view);
+                setView('week');
               }}
               className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                view === v 
+                view === 'week' 
                   ? 'bg-purple-600 text-white' 
                   : 'bg-slate-800/50 text-slate-400 hover:text-slate-200'
               }`}
             >
-              {v === 'today' ? 'Today' : v === 'week' ? 'This Week' : 'This Month'}
+              {upcomingItems.length > 0 && weekItems.length === 0 ? 'Upcoming' : 'This Week'}
             </button>
-          ))}
+          )}
+          {monthItems.length > 0 && (
+            <button
+              onClick={(e) => { 
+                e.stopPropagation(); 
+                e.preventDefault();
+                setView('month'); 
+              }}
+              onTouchEnd={(e) => {
+                e.stopPropagation();
+                setView('month');
+              }}
+              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                view === 'month' 
+                  ? 'bg-purple-600 text-white' 
+                  : 'bg-slate-800/50 text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              This Month
+            </button>
+          )}
         </div>
       )}
       

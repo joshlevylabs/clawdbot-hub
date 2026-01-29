@@ -162,21 +162,62 @@ function safePercent(value: number | null | undefined): string {
   return value.toFixed(2);
 }
 
+// Custom Fibonacci points
+interface CustomFibPoints {
+  a: number | null; // swing low index
+  b: number | null; // swing high index
+  c: number | null; // pullback index
+}
+
 // Chart with MAs and Fibonacci
 function ChartCanvas({ 
   candles, 
   fibonacci,
   movingAverages,
   settings,
-  height = 250
+  height = 250,
+  onCustomFib,
+  customFibPoints,
 }: { 
   candles: CandleData[]; 
   fibonacci: FibonacciData;
   movingAverages?: MovingAveragesData;
   settings: ChartSettings;
   height?: number;
+  onCustomFib?: (points: CustomFibPoints) => void;
+  customFibPoints?: CustomFibPoints;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [tooltip, setTooltip] = useState<{ x: number; y: number; candle: CandleData; index: number; date: string } | null>(null);
+  const [selectMode, setSelectMode] = useState<'none' | 'a' | 'b' | 'c'>('none');
+  const [localFibPoints, setLocalFibPoints] = useState<CustomFibPoints>({ a: null, b: null, c: null });
+  
+  const fibPoints = customFibPoints || localFibPoints;
+  const setFibPoints = onCustomFib || setLocalFibPoints;
+
+  // Chart dimensions and scaling (memoized for click handling)
+  const chartDims = useRef<{
+    padding: { top: number; right: number; bottom: number; left: number };
+    width: number;
+    chartHeight: number;
+    chartWidth: number;
+    drawHeight: number;
+    minPrice: number;
+    maxPrice: number;
+    priceRange: number;
+    pricePadding: number;
+    candleWidth: number;
+  } | null>(null);
+
+  const formatDate = (timestamp: number) => {
+    const d = new Date(timestamp * 1000);
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: '2-digit' });
+  };
+
+  const formatTime = (timestamp: number) => {
+    const d = new Date(timestamp * 1000);
+    return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+  };
 
   useEffect(() => {
     if (!canvasRef.current || candles.length === 0) return;
@@ -191,15 +232,15 @@ function ChartCanvas({
     ctx.scale(2, 2);
 
     const width = rect.width;
-    const chartHeight = rect.height;
-    const padding = { top: 10, right: 55, bottom: 20, left: 5 };
+    const canvasHeight = rect.height;
+    const padding = { top: 10, right: 55, bottom: 35, left: 5 };
     const chartWidth = width - padding.left - padding.right;
-    const drawHeight = chartHeight - padding.top - padding.bottom;
+    const drawHeight = canvasHeight - padding.top - padding.bottom;
 
     ctx.fillStyle = '#0f172a';
-    ctx.fillRect(0, 0, width, chartHeight);
+    ctx.fillRect(0, 0, width, canvasHeight);
 
-    // Calculate price range including Fib extensions if shown
+    // Calculate price range
     let prices = candles.flatMap(c => [c.high, c.low]);
     if (settings.showFibExtensions && fibonacci?.extensions) {
       prices = prices.concat(fibonacci.extensions.map(e => e.price));
@@ -209,15 +250,17 @@ function ChartCanvas({
     const maxPrice = Math.max(...prices);
     const priceRange = maxPrice - minPrice;
     const pricePadding = priceRange * 0.03;
+    const candleWidth = Math.max(1, (chartWidth / candles.length) - 0.5);
+
+    // Store dims for click handling
+    chartDims.current = { padding, width, chartHeight: canvasHeight, chartWidth, drawHeight, minPrice, maxPrice, priceRange, pricePadding, candleWidth };
 
     const scaleY = (price: number) => {
       return padding.top + drawHeight - ((price - minPrice + pricePadding) / (priceRange + pricePadding * 2)) * drawHeight;
     };
-
     const scaleX = (i: number) => padding.left + (i / candles.length) * chartWidth;
-    const candleWidth = Math.max(1, (chartWidth / candles.length) - 0.5);
 
-    // Grid
+    // Y-axis grid and labels
     ctx.strokeStyle = '#1e293b';
     ctx.lineWidth = 0.5;
     for (let i = 0; i <= 4; i++) {
@@ -234,11 +277,28 @@ function ChartCanvas({
       ctx.fillText(`${price.toFixed(price > 100 ? 0 : 2)}`, width - padding.right + 3, y + 3);
     }
 
+    // X-axis date labels
+    ctx.fillStyle = '#475569';
+    ctx.font = '9px sans-serif';
+    ctx.textAlign = 'center';
+    const labelCount = Math.min(8, candles.length);
+    const labelStep = Math.floor(candles.length / labelCount);
+    for (let i = 0; i < candles.length; i += labelStep) {
+      const x = scaleX(i) + candleWidth / 2;
+      const date = formatDate(candles[i].time);
+      ctx.fillText(date, x, canvasHeight - padding.bottom + 15);
+    }
+    // Last date
+    if (candles.length > 0) {
+      const lastX = scaleX(candles.length - 1) + candleWidth / 2;
+      ctx.fillText(formatDate(candles[candles.length - 1].time), lastX, canvasHeight - padding.bottom + 15);
+    }
+
     // Fibonacci Retracements
     if (settings.showFibRetracements && fibonacci?.retracements) {
       fibonacci.retracements.forEach(fib => {
         const y = scaleY(fib.price);
-        if (y > padding.top - 5 && y < chartHeight - padding.bottom + 5) {
+        if (y > padding.top - 5 && y < canvasHeight - padding.bottom + 5) {
           ctx.strokeStyle = fib.percent === 50 ? '#8b5cf680' : '#3b82f650';
           ctx.setLineDash([3, 3]);
           ctx.lineWidth = 1;
@@ -250,16 +310,17 @@ function ChartCanvas({
           
           ctx.fillStyle = fib.percent === 50 ? '#8b5cf6' : '#3b82f6';
           ctx.font = '8px sans-serif';
+          ctx.textAlign = 'left';
           ctx.fillText(fib.level, padding.left + 2, y - 2);
         }
       });
     }
     
-    // Fibonacci Extensions (projection targets)
+    // Fibonacci Extensions
     if (settings.showFibExtensions && fibonacci?.extensions) {
       fibonacci.extensions.forEach(ext => {
         const y = scaleY(ext.price);
-        if (y > padding.top - 5 && y < chartHeight - padding.bottom + 5) {
+        if (y > padding.top - 5 && y < canvasHeight - padding.bottom + 5) {
           ctx.strokeStyle = '#10b98160';
           ctx.setLineDash([5, 3]);
           ctx.lineWidth = 1;
@@ -271,6 +332,7 @@ function ChartCanvas({
           
           ctx.fillStyle = '#10b981';
           ctx.font = '8px sans-serif';
+          ctx.textAlign = 'left';
           ctx.fillText(`↑${ext.level}`, padding.left + 2, y - 2);
         }
       });
@@ -325,22 +387,149 @@ function ChartCanvas({
       ctx.fillRect(x - candleWidth / 2, bodyTop, candleWidth, bodyHeight);
     });
 
-  }, [candles, fibonacci, movingAverages, settings]);
+    // Draw custom Fib point markers
+    const drawMarker = (idx: number, label: string, color: string) => {
+      const x = scaleX(idx) + candleWidth / 2;
+      const candle = candles[idx];
+      const y = label === 'A' ? scaleY(candle.low) : label === 'B' ? scaleY(candle.high) : scaleY(candle.low);
+      
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.arc(x, y, 6, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 9px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(label, x, y + 3);
+    };
+
+    if (fibPoints.a !== null) drawMarker(fibPoints.a, 'A', '#10b981');
+    if (fibPoints.b !== null) drawMarker(fibPoints.b, 'B', '#ef4444');
+    if (fibPoints.c !== null) drawMarker(fibPoints.c, 'C', '#f59e0b');
+
+  }, [candles, fibonacci, movingAverages, settings, fibPoints]);
+
+  const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    if (!canvasRef.current || !chartDims.current || candles.length === 0) return;
+    
+    const rect = canvasRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const { padding, chartWidth, candleWidth } = chartDims.current;
+    
+    // Find which candle was clicked
+    const candleIndex = Math.floor(((x - padding.left) / chartWidth) * candles.length);
+    if (candleIndex < 0 || candleIndex >= candles.length) return;
+    
+    const candle = candles[candleIndex];
+    
+    if (selectMode !== 'none') {
+      // Set Fib point
+      const newPoints = { ...fibPoints, [selectMode]: candleIndex };
+      setFibPoints(newPoints);
+      
+      // Advance to next point
+      if (selectMode === 'a') setSelectMode('b');
+      else if (selectMode === 'b') setSelectMode('c');
+      else setSelectMode('none');
+    } else {
+      // Show tooltip
+      setTooltip({
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top,
+        candle,
+        index: candleIndex,
+        date: formatDate(candle.time) + ' ' + formatTime(candle.time),
+      });
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (selectMode === 'none') setTooltip(null);
+  };
+
+  const startFibSelection = () => {
+    setFibPoints({ a: null, b: null, c: null });
+    setSelectMode('a');
+    setTooltip(null);
+  };
+
+  const clearCustomFib = () => {
+    setFibPoints({ a: null, b: null, c: null });
+    setSelectMode('none');
+  };
 
   if (candles.length === 0) {
     return (
-      <div className={`w-full bg-slate-800/30 rounded-lg flex items-center justify-center text-slate-600 text-sm`} style={{ height }}>
+      <div className="w-full bg-slate-800/30 rounded-lg flex items-center justify-center text-slate-600 text-sm" style={{ height }}>
         Loading...
       </div>
     );
   }
 
+  const hasCustomFib = fibPoints.a !== null || fibPoints.b !== null || fibPoints.c !== null;
+
   return (
-    <canvas 
-      ref={canvasRef} 
-      className="w-full rounded-lg"
-      style={{ height, background: '#0f172a' }}
-    />
+    <div className="relative">
+      <canvas 
+        ref={canvasRef} 
+        className="w-full rounded-lg cursor-crosshair"
+        style={{ height, background: '#0f172a' }}
+        onClick={handleCanvasClick}
+        onMouseLeave={handleMouseLeave}
+      />
+      
+      {/* Selection mode indicator */}
+      {selectMode !== 'none' && (
+        <div className="absolute top-2 left-2 bg-slate-900/90 border border-amber-500/50 rounded-lg px-3 py-2 text-sm">
+          <span className="text-amber-400">Click to set point {selectMode.toUpperCase()}</span>
+          <span className="text-slate-500 ml-2">
+            {selectMode === 'a' && '(Swing Low)'}
+            {selectMode === 'b' && '(Swing High)'}
+            {selectMode === 'c' && '(Pullback)'}
+          </span>
+        </div>
+      )}
+      
+      {/* Custom Fib controls */}
+      <div className="absolute top-2 right-2 flex gap-1">
+        {!hasCustomFib && selectMode === 'none' && (
+          <button 
+            onClick={startFibSelection}
+            className="bg-slate-800/90 hover:bg-slate-700 text-xs text-slate-300 px-2 py-1 rounded"
+          >
+            Custom A-B-C
+          </button>
+        )}
+        {(hasCustomFib || selectMode !== 'none') && (
+          <button 
+            onClick={clearCustomFib}
+            className="bg-red-900/50 hover:bg-red-900 text-xs text-red-300 px-2 py-1 rounded"
+          >
+            Reset
+          </button>
+        )}
+      </div>
+      
+      {/* Tooltip */}
+      {tooltip && selectMode === 'none' && (
+        <div 
+          className="absolute bg-slate-900/95 border border-slate-700 rounded-lg p-3 text-sm pointer-events-none z-10 min-w-[150px]"
+          style={{ left: Math.min(tooltip.x + 10, 200), top: tooltip.y - 80 }}
+        >
+          <p className="text-slate-400 text-xs mb-1">{tooltip.date}</p>
+          <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-xs">
+            <span className="text-slate-500">Open</span>
+            <span className="text-slate-200 font-mono">${tooltip.candle.open.toFixed(2)}</span>
+            <span className="text-slate-500">High</span>
+            <span className="text-emerald-400 font-mono">${tooltip.candle.high.toFixed(2)}</span>
+            <span className="text-slate-500">Low</span>
+            <span className="text-red-400 font-mono">${tooltip.candle.low.toFixed(2)}</span>
+            <span className="text-slate-500">Close</span>
+            <span className="text-slate-200 font-mono">${tooltip.candle.close.toFixed(2)}</span>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -612,6 +801,50 @@ function DetailModal({ detail, onClose, range, interval, setTimeframe, settings,
   );
 }
 
+// Calculate custom Fibonacci from user-selected A-B-C points
+function calculateCustomFibonacci(candles: CandleData[], points: CustomFibPoints): FibonacciData | null {
+  if (points.a === null || points.b === null) return null;
+  
+  const swingLow = candles[points.a].low;
+  const swingHigh = candles[points.b].high;
+  const range = swingHigh - swingLow;
+  
+  // Retracements
+  const retracementLevels = [0, 0.236, 0.382, 0.5, 0.618, 0.786, 1];
+  const retracements = retracementLevels.map(fib => ({
+    level: `${(fib * 100).toFixed(1)}%`,
+    price: Math.round((swingHigh - range * fib) * 100) / 100,
+    percent: fib * 100,
+  }));
+  
+  // Extensions (only if we have point C)
+  let extensions: { level: string; price: number; percent: number }[] = [];
+  const pullback = points.c !== null ? candles[points.c].low : null;
+  
+  if (pullback !== null) {
+    const extLevels = [1.0, 1.272, 1.414, 1.618, 2.0, 2.618];
+    extensions = extLevels.map(ext => ({
+      level: `${(ext * 100).toFixed(1)}%`,
+      price: Math.round((pullback + range * ext) * 100) / 100,
+      percent: ext * 100,
+    }));
+  }
+  
+  const formatDate = (ts: number) => new Date(ts * 1000).toLocaleDateString();
+  
+  return {
+    high: swingHigh,
+    low: swingLow,
+    pullback,
+    retracements,
+    extensions,
+    trend: 'up' as const,
+    swingLowDate: formatDate(candles[points.a].time),
+    swingHighDate: formatDate(candles[points.b].time),
+    pullbackDate: points.c !== null ? formatDate(candles[points.c].time) : undefined,
+  };
+}
+
 export default function MarketsPage() {
   const [quotes, setQuotes] = useState<QuoteData[]>([]);
   const [selectedSymbol, setSelectedSymbol] = useState<string | null>(null);
@@ -624,6 +857,14 @@ export default function MarketsPage() {
   const [isMobile, setIsMobile] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [settings, setSettings] = useState<ChartSettings>(DEFAULT_SETTINGS);
+  const [customFibPoints, setCustomFibPoints] = useState<CustomFibPoints>({ a: null, b: null, c: null });
+  
+  // Calculate effective fibonacci (custom if set, otherwise API-provided)
+  const effectiveFibonacci = symbolDetail ? (
+    (customFibPoints.a !== null && customFibPoints.b !== null)
+      ? calculateCustomFibonacci(symbolDetail.candles, customFibPoints)
+      : symbolDetail.fibonacci
+  ) : null;
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 1024);
@@ -639,8 +880,15 @@ export default function MarketsPage() {
       const tf = getStoredTimeframe(selectedSymbol);
       setRange(tf.range);
       setInterval(tf.interval);
+      // Reset custom Fib points when symbol changes
+      setCustomFibPoints({ a: null, b: null, c: null });
     }
   }, [selectedSymbol]);
+  
+  // Reset custom Fib points when timeframe changes
+  useEffect(() => {
+    setCustomFibPoints({ a: null, b: null, c: null });
+  }, [range, interval]);
 
   // Save settings when they change
   useEffect(() => {
@@ -784,10 +1032,19 @@ export default function MarketsPage() {
                   </div>
 
                   {detailLoading ? <div className="h-[300px] bg-slate-800/50 rounded-lg animate-pulse" /> :
-                    <ChartCanvas candles={symbolDetail.candles} fibonacci={symbolDetail.fibonacci} movingAverages={symbolDetail.movingAverages} settings={settings} height={300} />}
+                    <ChartCanvas 
+                      candles={symbolDetail.candles} 
+                      fibonacci={effectiveFibonacci || symbolDetail.fibonacci} 
+                      movingAverages={symbolDetail.movingAverages} 
+                      settings={settings} 
+                      height={300}
+                      customFibPoints={customFibPoints}
+                      onCustomFib={setCustomFibPoints}
+                    />}
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-4">
+                  <FibonacciPanel fibonacci={effectiveFibonacci || symbolDetail.fibonacci} currentPrice={symbolDetail.quote.price} />
                   <div className="bg-slate-850 rounded-xl border border-slate-800 p-5">
                     <h3 className="font-medium text-slate-200 mb-3">Key Statistics</h3>
                     <div className="grid grid-cols-2 gap-3 text-sm">
@@ -800,7 +1057,6 @@ export default function MarketsPage() {
                       <div className="col-span-2"><p className="text-slate-500">Volume</p><p className="text-slate-200 font-mono">{formatVolume(symbolDetail.quote.volume)}</p></div>
                     </div>
                   </div>
-                  <FibonacciPanel fibonacci={symbolDetail.fibonacci} currentPrice={symbolDetail.quote.price} />
                 </div>
               </>
             )}

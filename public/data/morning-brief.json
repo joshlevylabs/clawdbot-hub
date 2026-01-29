@@ -3,34 +3,56 @@
   "time": "6:00 AM",
   "sections": {
     "prayer": {
-      "title": "\ud83d\udd4a\ufe0f Morning Prayer",
+      "title": "🕊️ Morning Prayer",
       "date": "Wednesday, January 28, 2026",
       "hebrew_date": "29 Tishrei",
       "parsha": "Toldot",
       "parsha_theme": "generational blessing, identity, inheritance",
-      "modeh_ani": "\u05de\u05d5\u05d3\u05d4 \u05d0\u05e0\u05d9 \u05dc\u05e4\u05e0\u05d9\u05da \u2014 I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
-      "blessing": "Blessed are You who crowns Israel with glory \u2014 let my work bring You honor.",
+      "modeh_ani": "מודה אני לפניך — I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
+      "blessing": "Blessed are You who crowns Israel with glory — let my work bring You honor.",
       "psalm": "Psalm 37:5: \"Commit your way to the Lord; trust in Him and He will act.\"",
       "proverb": "Proverbs 24:27: \"Prepare your work outside; get everything ready, then build your house.\"",
-      "intention": "Guide my hands today as I build \u2014 let every line of code, every decision, every conversation serve Your purposes.",
+      "intention": "Guide my hands today as I build — let every line of code, every decision, every conversation serve Your purposes.",
       "closing": "The Lord goes before you today. He will be with you; He will never leave you nor forsake you. Do not be afraid; do not be discouraged.",
       "audio": "/audio/brief-2026-01-28-prayer.mp3"
     },
     "weather": {
-      "title": "\u2600\ufe0f Weather \u2014 Los Angeles",
-      "temperature": "53\u00b0F",
+      "title": "☀️ Weather — Los Angeles",
+      "temperature": "53°F",
       "condition": "Sunny",
       "wind": "SE 2mph",
       "summary": "Clear day ahead",
       "audio": "/audio/brief-2026-01-28-weather.mp3"
     },
     "calendar": {
-      "title": "\ud83d\udcc5 Calendar",
+      "title": "📅 Calendar",
       "items": [],
-      "audio": "/audio/brief-2026-01-28-calendar.mp3"
+      "audio": "/audio/brief-2026-01-28-calendar.mp3",
+      "week": [
+        {
+          "date": "Thu Jan 30",
+          "time": "10:00 AM",
+          "title": "Team sync"
+        },
+        {
+          "date": "Fri Jan 31",
+          "time": "2:00 PM",
+          "title": "Project review"
+        }
+      ],
+      "month": [
+        {
+          "date": "Feb 14",
+          "title": "Valentine's Day"
+        },
+        {
+          "date": "Feb 22",
+          "title": "Beau's Birthday"
+        }
+      ]
     },
     "email": {
-      "title": "\ud83d\udce7 Email Highlights",
+      "title": "📧 Email Highlights",
       "needs_attention": [
         {
           "from": "Jillian Reesink",
@@ -82,7 +104,7 @@
       "audio": "/audio/brief-2026-01-28-email.mp3"
     },
     "markets": {
-      "title": "\ud83d\udcc8 Markets & Trading Signals",
+      "title": "📈 Markets & Trading Signals",
       "summary": {
         "date": "2026-01-28",
         "spy": {
@@ -151,12 +173,12 @@
       "audio": "/audio/brief-2026-01-28-markets.mp3"
     },
     "news": {
-      "title": "\ud83c\udf0d World News",
+      "title": "🌍 World News",
       "subsections": {
         "iran": {
-          "title": "\ud83c\uddee\ud83c\uddf7 Iran Standoff",
+          "title": "🇮🇷 Iran Standoff",
           "items": [
-            "Trump warns Iran 'time is running out' \u2014 demands nuclear deal or face another U.S. strike",
+            "Trump warns Iran 'time is running out' — demands nuclear deal or face another U.S. strike",
             "U.S. announces multi-day aerial military drill in Middle East",
             "'Beautiful armada' sailing toward Iran, Trump says",
             "Iranian president defiant: 'U.S. threats will achieve nothing'",
@@ -164,16 +186,16 @@
           ]
         },
         "israel": {
-          "title": "\ud83c\uddee\ud83c\uddf1 Israel/Gaza",
+          "title": "🇮🇱 Israel/Gaza",
           "items": [
             "Netanyahu: No Gaza rebuild before Hamas disarms; Israel will maintain security control",
             "Hamas seeks role for its 'police officers' (Israel views them as terrorists)",
             "Trump: Hamas 'worked hard' to return last hostage, now must disarm",
-            "All hostages now home \u2014 843-day ordeal ends with Ran Gvili's return"
+            "All hostages now home — 843-day ordeal ends with Ran Gvili's return"
           ]
         },
         "us": {
-          "title": "\ud83c\uddfa\ud83c\uddf8 Domestic",
+          "title": "🇺🇸 Domestic",
           "items": [
             "Man rushes Ilhan Omar at town hall, sprays her with unknown liquid",
             "Anti-ICE activists storm Minnesota Capitol to protest outside Walz's office",
@@ -181,7 +203,7 @@
           ]
         },
         "antisemitism": {
-          "title": "\ud83d\udcca Antisemitism Report",
+          "title": "📊 Antisemitism Report",
           "items": [
             "815 severe antisemitic attacks in 2025, 20 Jews murdered"
           ]
@@ -190,15 +212,15 @@
       "audio": "/audio/brief-2026-01-28-news.mp3"
     },
     "ai": {
-      "title": "\ud83e\udd16 AI Intelligence",
+      "title": "🤖 AI Intelligence",
       "items": [
         {
           "category": "Testing",
-          "headline": "ADL tested chatbots with antisemitic tropes \u2014 Grok most likely to accept them"
+          "headline": "ADL tested chatbots with antisemitic tropes — Grok most likely to accept them"
         },
         {
           "category": "Google",
-          "headline": "AI Plus plan now available in US \u2014 $7.99/mo with Gemini 3 Pro access"
+          "headline": "AI Plus plan now available in US — $7.99/mo with Gemini 3 Pro access"
         },
         {
           "category": "Acqui-hire",
@@ -218,7 +240,7 @@
         },
         {
           "category": "Research",
-          "headline": "Nvidia debuted new AI weather models \u2014 outperforming traditional forecasting"
+          "headline": "Nvidia debuted new AI weather models — outperforming traditional forecasting"
         },
         {
           "category": "Legislation",
@@ -230,6 +252,23 @@
         }
       ],
       "audio": "/audio/brief-2026-01-28-ai.mp3"
+    },
+    "family": {
+      "title": "❤️ Family Focus",
+      "suggestion": "After dinner, spend 15 minutes on the floor playing with Beau — let him lead the activity",
+      "conversationStarter": "Ask Jillian: What's one thing I could do this week to make your life easier?",
+      "weeklyGoal": "Plan a date night for this weekend — even 2 hours counts",
+      "upcomingDates": [
+        {
+          "date": "Feb 14",
+          "event": "Valentine's Day"
+        },
+        {
+          "date": "Feb 22",
+          "event": "Beau's 4th Birthday"
+        }
+      ],
+      "reflection": "Your kids won't remember the hours you worked, but they'll remember the moments you were fully present."
     }
   }
 }

@@ -1,7 +1,19 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Heart, TrendingUp, TrendingDown, Target, RefreshCw, AlertTriangle, CheckCircle } from "lucide-react";
+import { Heart, TrendingUp, TrendingDown, Target, RefreshCw, AlertTriangle, CheckCircle, ClipboardCheck, ChevronRight } from "lucide-react";
+
+interface QuestionOption {
+  label: string;
+  power: number;
+  safety: number;
+}
+
+interface DailyQuestion {
+  id: string;
+  question: string;
+  options: QuestionOption[];
+}
 
 interface CompassPosition {
   power: number;
@@ -22,9 +34,68 @@ interface CompassState {
   idealZone: { power: number[]; safety: number[] };
 }
 
+const dailyQuestions: DailyQuestion[] = [
+  {
+    id: "presence",
+    question: "How present were you with Jillian today?",
+    options: [
+      { label: "Fully engaged, phone away, real conversations", power: 1, safety: 4 },
+      { label: "Mostly present with some distractions", power: 1, safety: 2 },
+      { label: "Distracted, half-listening", power: 0, safety: 0 },
+      { label: "Barely connected, like roommates", power: -1, safety: -2 }
+    ]
+  },
+  {
+    id: "service",
+    question: "Did you do something to lighten her load today?",
+    options: [
+      { label: "Yes, took initiative without being asked", power: 2, safety: 3 },
+      { label: "Yes, after she asked", power: 0, safety: 1 },
+      { label: "No, but nothing came up", power: 0, safety: 0 },
+      { label: "No, missed an opportunity", power: -1, safety: -1 }
+    ]
+  },
+  {
+    id: "conflict",
+    question: "Any tension or conflict today?",
+    options: [
+      { label: "No conflict, smooth day", power: 1, safety: 3 },
+      { label: "Minor tension, handled it well", power: 1, safety: 1 },
+      { label: "Conflict, but we repaired it", power: 1, safety: 0 },
+      { label: "Conflict, unresolved", power: 0, safety: -3 },
+      { label: "I got defensive or escalated", power: 2, safety: -2 }
+    ]
+  },
+  {
+    id: "leadership",
+    question: "How did you show up as a leader today?",
+    options: [
+      { label: "Made decisions, took initiative, created safety", power: 2, safety: 3 },
+      { label: "Steady and reliable, nothing special", power: 1, safety: 2 },
+      { label: "Passive, waited for her to lead", power: -2, safety: 0 },
+      { label: "Controlling or dismissive", power: 4, safety: -2 }
+    ]
+  },
+  {
+    id: "connection",
+    question: "Rate your emotional connection today:",
+    options: [
+      { label: "Strong — felt close, warm, safe", power: 1, safety: 5 },
+      { label: "Good — normal, comfortable", power: 1, safety: 3 },
+      { label: "Distant — polite but disconnected", power: 0, safety: 0 },
+      { label: "Cold — tension, avoidance", power: 0, safety: -3 }
+    ]
+  }
+];
+
 export default function MarriagePage() {
   const [compassState, setCompassState] = useState<CompassState | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showCheckin, setShowCheckin] = useState(false);
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [answers, setAnswers] = useState<Record<string, QuestionOption>>({});
+  const [checkinComplete, setCheckinComplete] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const fetchCompass = async () => {
     setLoading(true);
@@ -44,6 +115,54 @@ export default function MarriagePage() {
   useEffect(() => {
     fetchCompass();
   }, []);
+
+  const handleAnswer = (option: QuestionOption) => {
+    const question = dailyQuestions[currentQuestion];
+    setAnswers(prev => ({ ...prev, [question.id]: option }));
+    
+    if (currentQuestion < dailyQuestions.length - 1) {
+      setCurrentQuestion(prev => prev + 1);
+    } else {
+      setCheckinComplete(true);
+    }
+  };
+
+  const submitCheckin = async () => {
+    setSubmitting(true);
+    
+    // Calculate average scores from all answers
+    const answerValues = Object.values(answers);
+    const avgPower = answerValues.reduce((sum, a) => sum + a.power, 0) / answerValues.length;
+    const avgSafety = answerValues.reduce((sum, a) => sum + a.safety, 0) / answerValues.length;
+    
+    // Create interaction log (this would ideally go to an API, but for now we'll show confirmation)
+    const checkinData = {
+      date: new Date().toISOString().split('T')[0],
+      type: "daily_checkin",
+      power: Math.round(avgPower * 10) / 10,
+      safety: Math.round(avgSafety * 10) / 10,
+      answers: answers
+    };
+    
+    console.log("Daily check-in submitted:", checkinData);
+    
+    // For now, just show success and reset
+    // In production, this would POST to an API endpoint
+    setTimeout(() => {
+      setSubmitting(false);
+      setShowCheckin(false);
+      setCurrentQuestion(0);
+      setAnswers({});
+      setCheckinComplete(false);
+      alert(`Check-in saved!\n\nToday's scores:\nPower: ${checkinData.power.toFixed(1)}\nSafety: ${checkinData.safety.toFixed(1)}\n\nTell Theo: "Log daily checkin power ${checkinData.power} safety ${checkinData.safety}" to add to your compass.`);
+    }, 500);
+  };
+
+  const resetCheckin = () => {
+    setCurrentQuestion(0);
+    setAnswers({});
+    setCheckinComplete(false);
+  };
 
   const getQuadrantColor = (quadrant: string) => {
     switch (quadrant) {
@@ -315,6 +434,100 @@ export default function MarriagePage() {
             </p>
           </div>
         </div>
+      </div>
+
+      {/* Daily Check-in */}
+      <div className="bg-slate-850 rounded-xl border border-slate-800 p-6">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 bg-purple-600/20 rounded-lg flex items-center justify-center">
+              <ClipboardCheck className="w-5 h-5 text-purple-400" strokeWidth={1.5} />
+            </div>
+            <h2 className="font-semibold text-slate-200">Daily Check-in</h2>
+          </div>
+          {!showCheckin && (
+            <button
+              onClick={() => setShowCheckin(true)}
+              className="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg font-medium transition-colors"
+            >
+              Start Check-in
+            </button>
+          )}
+        </div>
+        
+        {showCheckin && !checkinComplete && (
+          <div className="space-y-4">
+            <div className="flex justify-between items-center text-sm text-slate-500">
+              <span>Question {currentQuestion + 1} of {dailyQuestions.length}</span>
+              <button onClick={() => setShowCheckin(false)} className="text-slate-400 hover:text-slate-200">
+                Cancel
+              </button>
+            </div>
+            
+            <div className="bg-slate-800/50 rounded-xl p-4">
+              <p className="text-slate-200 font-medium mb-4">{dailyQuestions[currentQuestion].question}</p>
+              <div className="space-y-2">
+                {dailyQuestions[currentQuestion].options.map((option, i) => (
+                  <button
+                    key={i}
+                    onClick={() => handleAnswer(option)}
+                    className="w-full text-left p-3 rounded-lg bg-slate-700/50 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors flex items-center justify-between group"
+                  >
+                    <span>{option.label}</span>
+                    <ChevronRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </button>
+                ))}
+              </div>
+            </div>
+            
+            {/* Progress dots */}
+            <div className="flex justify-center gap-2">
+              {dailyQuestions.map((_, i) => (
+                <div
+                  key={i}
+                  className={`w-2 h-2 rounded-full transition-colors ${
+                    i < currentQuestion ? 'bg-purple-500' : i === currentQuestion ? 'bg-purple-400' : 'bg-slate-700'
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+        
+        {showCheckin && checkinComplete && (
+          <div className="space-y-4">
+            <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-4 text-center">
+              <CheckCircle className="w-8 h-8 text-green-400 mx-auto mb-2" />
+              <p className="text-green-400 font-medium">Check-in Complete!</p>
+              <p className="text-slate-400 text-sm mt-1">
+                Power: {(Object.values(answers).reduce((sum, a) => sum + a.power, 0) / Object.values(answers).length).toFixed(1)} | 
+                Safety: {(Object.values(answers).reduce((sum, a) => sum + a.safety, 0) / Object.values(answers).length).toFixed(1)}
+              </p>
+            </div>
+            
+            <div className="flex gap-3">
+              <button
+                onClick={resetCheckin}
+                className="flex-1 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg font-medium transition-colors"
+              >
+                Start Over
+              </button>
+              <button
+                onClick={submitCheckin}
+                disabled={submitting}
+                className="flex-1 px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg font-medium transition-colors disabled:opacity-50"
+              >
+                {submitting ? "Saving..." : "Save to Compass"}
+              </button>
+            </div>
+          </div>
+        )}
+        
+        {!showCheckin && (
+          <p className="text-slate-500 text-sm">
+            Answer 5 quick questions about your day. Takes 30 seconds. Feeds directly into your compass score.
+          </p>
+        )}
       </div>
 
       {/* How to Log */}

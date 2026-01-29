@@ -304,11 +304,24 @@ function CalendarCard({ data }: { data: CalendarSection }) {
       
       {/* View tabs */}
       {hasMultipleViews && (
-        <div className="flex gap-2 mb-4">
+        <div 
+          className="flex gap-2 mb-4 relative z-20"
+          onClick={(e) => e.stopPropagation()}
+          onTouchStart={(e) => e.stopPropagation()}
+          onTouchEnd={(e) => e.stopPropagation()}
+        >
           {['today', 'week', 'month'].map((v) => (
             <button
               key={v}
-              onClick={(e) => { e.stopPropagation(); setView(v as typeof view); }}
+              onClick={(e) => { 
+                e.stopPropagation(); 
+                e.preventDefault();
+                setView(v as typeof view); 
+              }}
+              onTouchEnd={(e) => {
+                e.stopPropagation();
+                setView(v as typeof view);
+              }}
               className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
                 view === v 
                   ? 'bg-purple-600 text-white' 

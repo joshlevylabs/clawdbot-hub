@@ -135,9 +135,12 @@ export default function MarriagePage() {
     const avgPower = answerValues.reduce((sum, a) => sum + a.power, 0) / answerValues.length;
     const avgSafety = answerValues.reduce((sum, a) => sum + a.safety, 0) / answerValues.length;
     
+    const power = Math.round(avgPower * 10) / 10;
+    const safety = Math.round(avgSafety * 10) / 10;
+    
     const checkinData = {
-      power: Math.round(avgPower * 10) / 10,
-      safety: Math.round(avgSafety * 10) / 10,
+      power,
+      safety,
       answers: answers
     };
     
@@ -150,8 +153,15 @@ export default function MarriagePage() {
       
       if (response.ok) {
         const result = await response.json();
-        // Refresh compass state
-        fetchCompass();
+        
+        // Store in localStorage
+        const storedCheckins = JSON.parse(localStorage.getItem('compass-checkins') || '[]');
+        storedCheckins.push(result.interaction);
+        localStorage.setItem('compass-checkins', JSON.stringify(storedCheckins));
+        
+        // Show success with sync command
+        alert(`✅ Check-in saved!\n\nPower: ${power}\nSafety: ${safety}\n\nTell Theo:\n"${result.syncCommand}"`);
+        
         // Reset check-in
         setShowCheckin(false);
         setCurrentQuestion(0);

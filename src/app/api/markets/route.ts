@@ -31,11 +31,13 @@ interface CandleData {
 interface FibonacciLevels {
   high: number;
   low: number;
+  pullback?: number | null;
   retracements: { level: string; price: number; percent: number }[];
   extensions: { level: string; price: number; percent: number }[];
   trend: 'up' | 'down';
   swingHighDate?: string;
   swingLowDate?: string;
+  pullbackDate?: string;
 }
 
 interface MovingAverages {
@@ -121,6 +123,8 @@ function findSwingPoints(candles: CandleData[], lookback: number = 5): { highs: 
 }
 
 // Calculate Fibonacci retracement AND extension levels
+// Retracements: 2 points (A: swing low, B: swing high) - levels between A and B
+// Extensions: 3 points (A: swing low, B: swing high, C: pullback low) - levels project from C
 function calculateFibonacci(candles: CandleData[]): FibonacciLevels {
   if (candles.length < 20) {
     return { high: 0, low: 0, retracements: [], extensions: [], trend: 'up' };
@@ -137,7 +141,7 @@ function calculateFibonacci(candles: CandleData[]): FibonacciLevels {
     return { 
       high, low, 
       retracements: calculateFibRetracements(high, low), 
-      extensions: calculateFibExtensions(high, low),
+      extensions: [],
       trend: 'up'
     };
   }
@@ -145,35 +149,53 @@ function calculateFibonacci(candles: CandleData[]): FibonacciLevels {
   const lastSwingHigh = highs[highs.length - 1];
   const lastSwingLow = lows[lows.length - 1];
   
-  let swingLowIdx: number;
-  let swingHighIdx: number;
+  let pointA: number; // Initial swing low
+  let pointB: number; // Swing high
+  let pointC: number | null = null; // Pullback low (for extensions)
   let trend: 'up' | 'down';
   
   if (lastSwingHigh > lastSwingLow) {
-    // Most recent is a high - retracement from high
+    // Pattern: Low → High → currently pulling back
+    // Find the swing low BEFORE the high (Point A)
     const lowsBeforeHigh = lows.filter(l => l < lastSwingHigh);
-    swingLowIdx = lowsBeforeHigh.length > 0 ? lowsBeforeHigh[lowsBeforeHigh.length - 1] : 0;
-    swingHighIdx = lastSwingHigh;
+    pointA = lowsBeforeHigh.length > 0 ? lowsBeforeHigh[lowsBeforeHigh.length - 1] : 0;
+    pointB = lastSwingHigh;
+    
+    // The lastSwingLow IS our pullback (Point C) - it came AFTER the high
+    pointC = lastSwingLow;
     trend = 'up';
   } else {
-    // Most recent is a low - bounce from low
+    // Pattern: High → Low → currently bouncing (downtrend)
+    // For downtrends, we'd flip the logic, but let's focus on uptrend projections
     const highsBeforeLow = highs.filter(h => h < lastSwingLow);
-    swingHighIdx = highsBeforeLow.length > 0 ? highsBeforeLow[highsBeforeLow.length - 1] : 0;
-    swingLowIdx = lastSwingLow;
+    pointB = highsBeforeLow.length > 0 ? highsBeforeLow[highsBeforeLow.length - 1] : 0;
+    pointA = lastSwingLow;
+    
+    // Look for a pullback high after the low for downtrend extensions
+    const highsAfterLow = highs.filter(h => h > lastSwingLow);
+    pointC = highsAfterLow.length > 0 ? highsAfterLow[0] : null;
     trend = 'down';
   }
   
-  const high = candles[swingHighIdx].high;
-  const low = candles[swingLowIdx].low;
+  const swingLow = candles[pointA].low;
+  const swingHigh = candles[pointB].high;
+  const pullbackPrice = pointC !== null ? (trend === 'up' ? candles[pointC].low : candles[pointC].high) : null;
+  
+  // Calculate extensions only if we have all 3 points
+  const extensions = (pointC !== null && pullbackPrice !== null) 
+    ? calculateFibExtensions(swingLow, swingHigh, pullbackPrice, trend)
+    : [];
   
   return { 
-    high, 
-    low, 
-    retracements: calculateFibRetracements(high, low), 
-    extensions: calculateFibExtensions(high, low),
+    high: swingHigh, 
+    low: swingLow, 
+    pullback: pullbackPrice,
+    retracements: calculateFibRetracements(swingHigh, swingLow), 
+    extensions,
     trend,
-    swingHighDate: new Date(candles[swingHighIdx].time * 1000).toLocaleDateString(),
-    swingLowDate: new Date(candles[swingLowIdx].time * 1000).toLocaleDateString(),
+    swingHighDate: new Date(candles[pointB].time * 1000).toLocaleDateString(),
+    swingLowDate: new Date(candles[pointA].time * 1000).toLocaleDateString(),
+    pullbackDate: pointC !== null ? new Date(candles[pointC].time * 1000).toLocaleDateString() : undefined,
   };
 }
 
@@ -188,16 +210,28 @@ function calculateFibRetracements(high: number, low: number) {
   }));
 }
 
-function calculateFibExtensions(high: number, low: number) {
-  const diff = high - low;
-  // Extension levels project ABOVE the high
-  const extLevels = [1.272, 1.414, 1.618, 2.0, 2.618];
+// Fibonacci Extensions (Projections) using 3 points:
+// A = swing low, B = swing high, C = pullback low
+// Extension = C + (B - A) * ratio
+function calculateFibExtensions(swingLow: number, swingHigh: number, pullback: number, trend: 'up' | 'down') {
+  const range = swingHigh - swingLow;
+  const extLevels = [1.0, 1.272, 1.414, 1.618, 2.0, 2.618];
   
-  return extLevels.map(ext => ({
-    level: `${(ext * 100).toFixed(1)}%`,
-    price: Math.round((low + diff * ext) * 100) / 100,
-    percent: ext * 100,
-  }));
+  if (trend === 'up') {
+    // Uptrend: project UP from pullback low
+    return extLevels.map(ext => ({
+      level: `${(ext * 100).toFixed(1)}%`,
+      price: Math.round((pullback + range * ext) * 100) / 100,
+      percent: ext * 100,
+    }));
+  } else {
+    // Downtrend: project DOWN from pullback high
+    return extLevels.map(ext => ({
+      level: `${(ext * 100).toFixed(1)}%`,
+      price: Math.round((pullback - range * ext) * 100) / 100,
+      percent: ext * 100,
+    }));
+  }
 }
 
 // Calculate moving averages

@@ -34,11 +34,13 @@ interface QuoteData {
 interface FibonacciData {
   high: number;
   low: number;
+  pullback?: number | null;
   trend: 'up' | 'down';
   retracements: { level: string; price: number; percent: number }[];
   extensions: { level: string; price: number; percent: number }[];
   swingHighDate?: string;
   swingLowDate?: string;
+  pullbackDate?: string;
 }
 
 interface MovingAveragesData {
@@ -494,9 +496,15 @@ function FibonacciPanel({ fibonacci, currentPrice }: { fibonacci: FibonacciData;
       
       {expanded && (
         <div className="mt-4 space-y-4">
-          <div className="bg-slate-900/50 rounded-lg p-3 text-xs text-slate-400">
-            <p><strong className="text-slate-300">Swing Low:</strong> ${formatPrice(fibonacci.low)} {fibonacci.swingLowDate && `(${fibonacci.swingLowDate})`}</p>
-            <p><strong className="text-slate-300">Swing High:</strong> ${formatPrice(fibonacci.high)} {fibonacci.swingHighDate && `(${fibonacci.swingHighDate})`}</p>
+          <div className="bg-slate-900/50 rounded-lg p-3 text-xs text-slate-400 space-y-1">
+            <p><strong className="text-emerald-400">A) Swing Low:</strong> ${formatPrice(fibonacci.low)} {fibonacci.swingLowDate && `(${fibonacci.swingLowDate})`}</p>
+            <p><strong className="text-red-400">B) Swing High:</strong> ${formatPrice(fibonacci.high)} {fibonacci.swingHighDate && `(${fibonacci.swingHighDate})`}</p>
+            {fibonacci.pullback && (
+              <p><strong className="text-amber-400">C) Pullback:</strong> ${formatPrice(fibonacci.pullback)} {fibonacci.pullbackDate && `(${fibonacci.pullbackDate})`}</p>
+            )}
+            <p className="text-slate-500 mt-2 pt-2 border-t border-slate-800">
+              Retracements: levels between A↔B • Extensions: project from C using A→B range
+            </p>
           </div>
           
           {/* Retracements */}

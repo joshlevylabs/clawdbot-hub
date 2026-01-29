@@ -1,0 +1,87 @@
+{
+  "current": {
+    "power": 0,
+    "safety": 0,
+    "quadrant": "unknown",
+    "count": 0
+  },
+  "trend": {
+    "power": 0,
+    "safety": 0
+  },
+  "recentCount": 0,
+  "totalCount": 0,
+  "quadrants": {
+    "topRight": {
+      "name": "Secure Leadership Partnership",
+      "subtitle": "Ideal Marriage",
+      "powerRange": [
+        0,
+        5
+      ],
+      "safetyRange": [
+        0,
+        5
+      ],
+      "description": "Strong husband, strong wife, clear roles, deep affection, spiritual unity, sexual safety, emotional truth.",
+      "biblicalFrame": "Mutual submission under God, different roles, same worth.",
+      "color": "#22c55e"
+    },
+    "topLeft": {
+      "name": "Codependent / Enmeshed",
+      "subtitle": "High Closeness, Low Differentiation",
+      "powerRange": [
+        -5,
+        0
+      ],
+      "safetyRange": [
+        0,
+        5
+      ],
+      "description": "I need you to need me. Fear of conflict, loss of polarity, often low attraction.",
+      "warning": "Feels safe but erodes identity and desire.",
+      "color": "#eab308"
+    },
+    "bottomRight": {
+      "name": "Authoritarian / Abusive",
+      "subtitle": "Control Without Intimacy",
+      "powerRange": [
+        0,
+        5
+      ],
+      "safetyRange": [
+        -5,
+        0
+      ],
+      "description": "Control, fear, compliance without intimacy, spiritual or emotional coercion.",
+      "warning": "Dangerous territory. Seek help.",
+      "color": "#ef4444"
+    },
+    "bottomLeft": {
+      "name": "Detached / Avoidant",
+      "subtitle": "Roommates",
+      "powerRange": [
+        -5,
+        0
+      ],
+      "safetyRange": [
+        -5,
+        0
+      ],
+      "description": "No pursuit, no polarity, no emotional risk, dead bedroom energy.",
+      "warning": "Marriage is dying. Urgent intervention needed.",
+      "color": "#6b7280"
+    }
+  },
+  "idealZone": {
+    "power": [
+      0,
+      2
+    ],
+    "safety": [
+      3,
+      5
+    ],
+    "description": "Confident leadership with high emotional safety"
+  }
+}

@@ -12,6 +12,7 @@ import {
   ChevronDown,
   ChevronUp,
   X,
+  Settings2,
 } from "lucide-react";
 
 interface QuoteData {
@@ -27,12 +28,28 @@ interface QuoteData {
   volume: number;
   fiftyTwoWeekHigh: number;
   fiftyTwoWeekLow: number;
-  fibonacci: {
-    high: number;
-    low: number;
-    trend: 'up' | 'down';
-    levels: { level: string; price: number; percent: number }[];
-  };
+  fibonacci: FibonacciData;
+}
+
+interface FibonacciData {
+  high: number;
+  low: number;
+  trend: 'up' | 'down';
+  retracements: { level: string; price: number; percent: number }[];
+  extensions: { level: string; price: number; percent: number }[];
+  swingHighDate?: string;
+  swingLowDate?: string;
+}
+
+interface MovingAveragesData {
+  ma5: number | null;
+  ma20: number | null;
+  ma50: number | null;
+  ma100: number | null;
+  ma5Data: (number | null)[];
+  ma20Data: (number | null)[];
+  ma50Data: (number | null)[];
+  ma100Data: (number | null)[];
 }
 
 interface CandleData {
@@ -47,14 +64,83 @@ interface CandleData {
 interface SymbolDetail {
   quote: QuoteData;
   candles: CandleData[];
-  fibonacci: QuoteData['fibonacci'];
+  fibonacci: FibonacciData;
+  movingAverages: MovingAveragesData;
 }
+
+interface ChartSettings {
+  showMA5: boolean;
+  showMA20: boolean;
+  showMA50: boolean;
+  showMA100: boolean;
+  showFibRetracements: boolean;
+  showFibExtensions: boolean;
+}
+
+const DEFAULT_SETTINGS: ChartSettings = {
+  showMA5: false,
+  showMA20: false,
+  showMA50: false,
+  showMA100: false,
+  showFibRetracements: true,
+  showFibExtensions: true,
+};
+
+const TIMEFRAMES = [
+  { label: '30m', range: '5d', interval: '30m' },
+  { label: '1H', range: '5d', interval: '1h' },
+  { label: '4H', range: '1mo', interval: '4h' },
+  { label: '1D', range: '3mo', interval: '1d' },
+  { label: '1W', range: '1y', interval: '1w' },
+  { label: '1M', range: '1mo', interval: '1d' },
+  { label: '3M', range: '3mo', interval: '1d' },
+  { label: '6M', range: '6mo', interval: '1d' },
+  { label: '1Y', range: '1y', interval: '1d' },
+  { label: '3Y', range: '3y', interval: '1d' },
+  { label: '5Y', range: '5y', interval: '1w' },
+  { label: '10Y', range: '10y', interval: '1w' },
+];
 
 const SYMBOL_CATEGORIES = {
   indices: ['SPY', 'QQQ'],
   tech: ['AAPL', 'MSFT'],
   metals: ['GLD', 'SLV'],
 };
+
+// Persistence helpers
+function getStoredSettings(symbol: string): ChartSettings {
+  if (typeof window === 'undefined') return DEFAULT_SETTINGS;
+  try {
+    const stored = localStorage.getItem(`markets_settings_${symbol}`);
+    return stored ? { ...DEFAULT_SETTINGS, ...JSON.parse(stored) } : DEFAULT_SETTINGS;
+  } catch {
+    return DEFAULT_SETTINGS;
+  }
+}
+
+function storeSettings(symbol: string, settings: ChartSettings) {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(`markets_settings_${symbol}`, JSON.stringify(settings));
+  } catch {}
+}
+
+function getStoredTimeframe(symbol: string): { range: string; interval: string } {
+  if (typeof window === 'undefined') return { range: '3mo', interval: '1d' };
+  try {
+    const stored = localStorage.getItem(`markets_timeframe_${symbol}`);
+    return stored ? JSON.parse(stored) : { range: '3mo', interval: '1d' };
+  } catch {
+    return { range: '3mo', interval: '1d' };
+  }
+}
+
+function storeTimeframe(symbol: string, range: string, interval: string) {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(`markets_timeframe_${symbol}`, JSON.stringify({ range, interval }));
+  } catch {}
+}
 
 function formatVolume(vol: number | null | undefined): string {
   if (vol == null) return '—';
@@ -74,14 +160,18 @@ function safePercent(value: number | null | undefined): string {
   return value.toFixed(2);
 }
 
-// Simple canvas chart
-function MiniChart({ 
+// Chart with MAs and Fibonacci
+function ChartCanvas({ 
   candles, 
   fibonacci,
-  height = 200
+  movingAverages,
+  settings,
+  height = 250
 }: { 
   candles: CandleData[]; 
-  fibonacci: QuoteData['fibonacci'];
+  fibonacci: FibonacciData;
+  movingAverages?: MovingAveragesData;
+  settings: ChartSettings;
   height?: number;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -100,61 +190,121 @@ function MiniChart({
 
     const width = rect.width;
     const chartHeight = rect.height;
-    const padding = { top: 10, right: 50, bottom: 20, left: 5 };
+    const padding = { top: 10, right: 55, bottom: 20, left: 5 };
     const chartWidth = width - padding.left - padding.right;
     const drawHeight = chartHeight - padding.top - padding.bottom;
 
     ctx.fillStyle = '#0f172a';
     ctx.fillRect(0, 0, width, chartHeight);
 
-    const prices = candles.flatMap(c => [c.high, c.low]);
+    // Calculate price range including Fib extensions if shown
+    let prices = candles.flatMap(c => [c.high, c.low]);
+    if (settings.showFibExtensions && fibonacci?.extensions) {
+      prices = prices.concat(fibonacci.extensions.map(e => e.price));
+    }
+    
     const minPrice = Math.min(...prices);
     const maxPrice = Math.max(...prices);
     const priceRange = maxPrice - minPrice;
-    const pricePadding = priceRange * 0.05;
+    const pricePadding = priceRange * 0.03;
 
     const scaleY = (price: number) => {
       return padding.top + drawHeight - ((price - minPrice + pricePadding) / (priceRange + pricePadding * 2)) * drawHeight;
     };
 
+    const scaleX = (i: number) => padding.left + (i / candles.length) * chartWidth;
     const candleWidth = Math.max(1, (chartWidth / candles.length) - 0.5);
 
     // Grid
     ctx.strokeStyle = '#1e293b';
     ctx.lineWidth = 0.5;
-    for (let i = 0; i <= 3; i++) {
-      const y = padding.top + (drawHeight / 3) * i;
+    for (let i = 0; i <= 4; i++) {
+      const y = padding.top + (drawHeight / 4) * i;
       ctx.beginPath();
       ctx.moveTo(padding.left, y);
       ctx.lineTo(width - padding.right, y);
       ctx.stroke();
       
-      const price = maxPrice - (priceRange / 3) * i;
+      const price = maxPrice + pricePadding - ((priceRange + pricePadding * 2) / 4) * i;
       ctx.fillStyle = '#475569';
       ctx.font = '9px sans-serif';
       ctx.textAlign = 'left';
-      ctx.fillText(`${price.toFixed(0)}`, width - padding.right + 3, y + 3);
+      ctx.fillText(`${price.toFixed(price > 100 ? 0 : 2)}`, width - padding.right + 3, y + 3);
     }
 
-    // Fibonacci levels
-    if (fibonacci?.levels) {
-      fibonacci.levels.forEach(fib => {
+    // Fibonacci Retracements
+    if (settings.showFibRetracements && fibonacci?.retracements) {
+      fibonacci.retracements.forEach(fib => {
         const y = scaleY(fib.price);
-        if (y > padding.top && y < chartHeight - padding.bottom) {
+        if (y > padding.top - 5 && y < chartHeight - padding.bottom + 5) {
           ctx.strokeStyle = fib.percent === 50 ? '#8b5cf680' : '#3b82f650';
           ctx.setLineDash([3, 3]);
+          ctx.lineWidth = 1;
           ctx.beginPath();
           ctx.moveTo(padding.left, y);
           ctx.lineTo(width - padding.right, y);
           ctx.stroke();
           ctx.setLineDash([]);
+          
+          ctx.fillStyle = fib.percent === 50 ? '#8b5cf6' : '#3b82f6';
+          ctx.font = '8px sans-serif';
+          ctx.fillText(fib.level, padding.left + 2, y - 2);
+        }
+      });
+    }
+    
+    // Fibonacci Extensions (projection targets)
+    if (settings.showFibExtensions && fibonacci?.extensions) {
+      fibonacci.extensions.forEach(ext => {
+        const y = scaleY(ext.price);
+        if (y > padding.top - 5 && y < chartHeight - padding.bottom + 5) {
+          ctx.strokeStyle = '#10b98160';
+          ctx.setLineDash([5, 3]);
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(padding.left, y);
+          ctx.lineTo(width - padding.right, y);
+          ctx.stroke();
+          ctx.setLineDash([]);
+          
+          ctx.fillStyle = '#10b981';
+          ctx.font = '8px sans-serif';
+          ctx.fillText(`↑${ext.level}`, padding.left + 2, y - 2);
         }
       });
     }
 
+    // Moving Averages
+    const maConfigs = [
+      { show: settings.showMA5, data: movingAverages?.ma5Data, color: '#f59e0b' },
+      { show: settings.showMA20, data: movingAverages?.ma20Data, color: '#ec4899' },
+      { show: settings.showMA50, data: movingAverages?.ma50Data, color: '#06b6d4' },
+      { show: settings.showMA100, data: movingAverages?.ma100Data, color: '#8b5cf6' },
+    ];
+    
+    maConfigs.forEach(({ show, data, color }) => {
+      if (!show || !data) return;
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      let started = false;
+      data.forEach((val, i) => {
+        if (val === null) return;
+        const x = scaleX(i) + candleWidth / 2;
+        const y = scaleY(val);
+        if (!started) {
+          ctx.moveTo(x, y);
+          started = true;
+        } else {
+          ctx.lineTo(x, y);
+        }
+      });
+      ctx.stroke();
+    });
+
     // Candles
     candles.forEach((candle, i) => {
-      const x = padding.left + (i / candles.length) * chartWidth + candleWidth / 2;
+      const x = scaleX(i) + candleWidth / 2;
       const isGreen = candle.close >= candle.open;
       const color = isGreen ? '#10b981' : '#ef4444';
 
@@ -173,7 +323,7 @@ function MiniChart({
       ctx.fillRect(x - candleWidth / 2, bodyTop, candleWidth, bodyHeight);
     });
 
-  }, [candles, fibonacci]);
+  }, [candles, fibonacci, movingAverages, settings]);
 
   if (candles.length === 0) {
     return (
@@ -192,32 +342,126 @@ function MiniChart({
   );
 }
 
-// Compact Quote Row for mobile
-function QuoteRow({ 
-  quote, 
-  onClick,
-  selected 
+// Settings Panel
+function SettingsPanel({ 
+  settings, 
+  onChange,
+  movingAverages 
 }: { 
-  quote: QuoteData; 
-  onClick: () => void;
-  selected: boolean;
+  settings: ChartSettings; 
+  onChange: (s: ChartSettings) => void;
+  movingAverages?: MovingAveragesData;
 }) {
+  const [open, setOpen] = useState(false);
+  
+  const toggle = (key: keyof ChartSettings) => {
+    onChange({ ...settings, [key]: !settings[key] });
+  };
+  
+  return (
+    <div className="relative">
+      <button 
+        onClick={() => setOpen(!open)}
+        className={`p-2 rounded-lg transition-colors ${open ? 'bg-primary-600 text-white' : 'bg-slate-800 text-slate-400 hover:text-white'}`}
+      >
+        <Settings2 className="w-4 h-4" />
+      </button>
+      
+      {open && (
+        <div className="absolute right-0 top-10 z-20 bg-slate-850 border border-slate-700 rounded-xl p-4 shadow-xl min-w-[200px]">
+          <p className="text-xs text-slate-500 uppercase tracking-wide mb-3">Indicators</p>
+          
+          <div className="space-y-2">
+            <label className="flex items-center justify-between cursor-pointer">
+              <span className="text-sm text-slate-300">MA 5</span>
+              <div className="flex items-center gap-2">
+                {movingAverages?.ma5 && <span className="text-xs text-amber-400">${movingAverages.ma5.toFixed(2)}</span>}
+                <input 
+                  type="checkbox" 
+                  checked={settings.showMA5} 
+                  onChange={() => toggle('showMA5')}
+                  className="w-4 h-4 rounded accent-amber-500"
+                />
+              </div>
+            </label>
+            <label className="flex items-center justify-between cursor-pointer">
+              <span className="text-sm text-slate-300">MA 20</span>
+              <div className="flex items-center gap-2">
+                {movingAverages?.ma20 && <span className="text-xs text-pink-400">${movingAverages.ma20.toFixed(2)}</span>}
+                <input 
+                  type="checkbox" 
+                  checked={settings.showMA20} 
+                  onChange={() => toggle('showMA20')}
+                  className="w-4 h-4 rounded accent-pink-500"
+                />
+              </div>
+            </label>
+            <label className="flex items-center justify-between cursor-pointer">
+              <span className="text-sm text-slate-300">MA 50</span>
+              <div className="flex items-center gap-2">
+                {movingAverages?.ma50 && <span className="text-xs text-cyan-400">${movingAverages.ma50.toFixed(2)}</span>}
+                <input 
+                  type="checkbox" 
+                  checked={settings.showMA50} 
+                  onChange={() => toggle('showMA50')}
+                  className="w-4 h-4 rounded accent-cyan-500"
+                />
+              </div>
+            </label>
+            <label className="flex items-center justify-between cursor-pointer">
+              <span className="text-sm text-slate-300">MA 100</span>
+              <div className="flex items-center gap-2">
+                {movingAverages?.ma100 && <span className="text-xs text-purple-400">${movingAverages.ma100.toFixed(2)}</span>}
+                <input 
+                  type="checkbox" 
+                  checked={settings.showMA100} 
+                  onChange={() => toggle('showMA100')}
+                  className="w-4 h-4 rounded accent-purple-500"
+                />
+              </div>
+            </label>
+          </div>
+          
+          <div className="border-t border-slate-700 mt-3 pt-3 space-y-2">
+            <label className="flex items-center justify-between cursor-pointer">
+              <span className="text-sm text-slate-300">Fib Retracements</span>
+              <input 
+                type="checkbox" 
+                checked={settings.showFibRetracements} 
+                onChange={() => toggle('showFibRetracements')}
+                className="w-4 h-4 rounded accent-blue-500"
+              />
+            </label>
+            <label className="flex items-center justify-between cursor-pointer">
+              <span className="text-sm text-slate-300">Fib Extensions</span>
+              <input 
+                type="checkbox" 
+                checked={settings.showFibExtensions} 
+                onChange={() => toggle('showFibExtensions')}
+                className="w-4 h-4 rounded accent-emerald-500"
+              />
+            </label>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Quote Row
+function QuoteRow({ quote, onClick, selected }: { quote: QuoteData; onClick: () => void; selected: boolean }) {
   const isPositive = quote.change >= 0;
   
   return (
     <button
       onClick={onClick}
       className={`w-full flex items-center justify-between p-3 rounded-xl transition-all ${
-        selected 
-          ? 'bg-primary-600/20 border border-primary-500/50' 
-          : 'bg-slate-800/50 border border-transparent hover:bg-slate-800'
+        selected ? 'bg-primary-600/20 border border-primary-500/50' : 'bg-slate-800/50 border border-transparent hover:bg-slate-800'
       }`}
     >
-      <div className="flex items-center gap-3">
-        <div className="text-left">
-          <p className="font-semibold text-slate-100">{quote.symbol}</p>
-          <p className="text-xs text-slate-500">{quote.name}</p>
-        </div>
+      <div className="text-left">
+        <p className="font-semibold text-slate-100">{quote.symbol}</p>
+        <p className="text-xs text-slate-500">{quote.name}</p>
       </div>
       <div className="text-right">
         <p className="font-bold text-slate-100">${formatPrice(quote.price)}</p>
@@ -229,119 +473,99 @@ function QuoteRow({
   );
 }
 
-// Fibonacci Panel with explanation
-function FibonacciPanel({ fibonacci, currentPrice }: { fibonacci: QuoteData['fibonacci']; currentPrice: number }) {
+// Fibonacci Panel
+function FibonacciPanel({ fibonacci, currentPrice }: { fibonacci: FibonacciData; currentPrice: number }) {
   const [expanded, setExpanded] = useState(false);
+  
+  if (!fibonacci) return null;
   
   return (
     <div className="bg-slate-800/50 rounded-xl p-4">
-      <button 
-        onClick={() => setExpanded(!expanded)}
-        className="w-full flex items-center justify-between"
-      >
+      <button onClick={() => setExpanded(!expanded)} className="w-full flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Target className="w-4 h-4 text-amber-400" />
           <span className="font-medium text-slate-200">Fibonacci Levels</span>
-          <span className={`px-2 py-0.5 rounded text-xs ${
-            fibonacci.trend === 'up' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'
-          }`}>
-            {fibonacci.trend === 'up' ? '↑ Uptrend' : '↓ Downtrend'}
+          <span className={`px-2 py-0.5 rounded text-xs ${fibonacci.trend === 'up' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'}`}>
+            {fibonacci.trend === 'up' ? '↑' : '↓'}
           </span>
         </div>
         {expanded ? <ChevronUp className="w-4 h-4 text-slate-500" /> : <ChevronDown className="w-4 h-4 text-slate-500" />}
       </button>
       
       {expanded && (
-        <div className="mt-4 space-y-3">
-          {/* Explanation */}
+        <div className="mt-4 space-y-4">
           <div className="bg-slate-900/50 rounded-lg p-3 text-xs text-slate-400">
-            <p className="mb-2">
-              <strong className="text-slate-300">Based on:</strong> Swing Low at <span className="text-emerald-400">${formatPrice(fibonacci.low)}</span> → 
-              Swing High at <span className="text-red-400">${formatPrice(fibonacci.high)}</span>
-            </p>
-            <p>Retracement levels show potential support/resistance during pullbacks.</p>
+            <p><strong className="text-slate-300">Swing Low:</strong> ${formatPrice(fibonacci.low)} {fibonacci.swingLowDate && `(${fibonacci.swingLowDate})`}</p>
+            <p><strong className="text-slate-300">Swing High:</strong> ${formatPrice(fibonacci.high)} {fibonacci.swingHighDate && `(${fibonacci.swingHighDate})`}</p>
           </div>
           
-          {/* Levels */}
-          <div className="space-y-1">
-            {fibonacci.levels.map(fib => {
-              const isNearPrice = Math.abs(fib.price - currentPrice) / currentPrice < 0.015;
-              const isKeyLevel = fib.percent === 38.2 || fib.percent === 50 || fib.percent === 61.8;
-              return (
-                <div 
-                  key={fib.level} 
-                  className={`flex items-center justify-between p-2 rounded-lg ${
-                    isNearPrice ? 'bg-amber-500/20 border border-amber-500/30' : 
-                    isKeyLevel ? 'bg-slate-700/50' : 'bg-slate-800/30'
-                  }`}
-                >
-                  <span className={`text-sm ${
-                    fib.percent === 0 ? 'text-emerald-400 font-medium' : 
-                    fib.percent === 100 ? 'text-red-400 font-medium' :
-                    fib.percent === 50 ? 'text-purple-400 font-medium' : 
-                    isKeyLevel ? 'text-blue-400' : 'text-slate-500'
-                  }`}>
-                    {fib.level}
-                    {fib.percent === 0 && ' (High)'}
-                    {fib.percent === 100 && ' (Low)'}
-                  </span>
-                  <span className={`text-sm font-mono ${isNearPrice ? 'text-amber-300 font-bold' : 'text-slate-300'}`}>
-                    ${formatPrice(fib.price)}
-                  </span>
+          {/* Retracements */}
+          <div>
+            <p className="text-xs text-blue-400 uppercase tracking-wide mb-2">Retracements (Support)</p>
+            <div className="space-y-1">
+              {fibonacci.retracements?.filter(r => [0, 38.2, 50, 61.8, 100].includes(r.percent)).map(fib => {
+                const isNear = Math.abs(fib.price - currentPrice) / currentPrice < 0.015;
+                return (
+                  <div key={fib.level} className={`flex justify-between p-2 rounded ${isNear ? 'bg-amber-500/20' : 'bg-slate-800/30'}`}>
+                    <span className={`text-sm ${fib.percent === 0 ? 'text-emerald-400' : fib.percent === 100 ? 'text-red-400' : 'text-blue-400'}`}>
+                      {fib.level} {fib.percent === 0 && '(High)'}{fib.percent === 100 && '(Low)'}
+                    </span>
+                    <span className={`text-sm font-mono ${isNear ? 'text-amber-300' : 'text-slate-300'}`}>${formatPrice(fib.price)}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+          
+          {/* Extensions */}
+          <div>
+            <p className="text-xs text-emerald-400 uppercase tracking-wide mb-2">Extensions (Targets)</p>
+            <div className="space-y-1">
+              {fibonacci.extensions?.map(ext => (
+                <div key={ext.level} className="flex justify-between p-2 rounded bg-emerald-500/10">
+                  <span className="text-sm text-emerald-400">↑ {ext.level}</span>
+                  <span className="text-sm font-mono text-emerald-300">${formatPrice(ext.price)}</span>
                 </div>
-              );
-            })}
+              ))}
+            </div>
           </div>
         </div>
       )}
       
-      {/* Collapsed preview */}
-      {!expanded && fibonacci.levels.length > 0 && (
+      {!expanded && fibonacci.retracements && (
         <div className="mt-2 flex flex-wrap gap-1">
-          {fibonacci.levels
-            .filter(l => l.percent === 38.2 || l.percent === 50 || l.percent === 61.8)
-            .map(fib => (
-              <span key={fib.level} className="px-2 py-0.5 bg-slate-700/50 rounded text-xs text-slate-400">
-                {fib.level}: ${formatPrice(fib.price)}
-              </span>
-            ))}
+          {fibonacci.retracements.filter(l => [38.2, 50, 61.8].includes(l.percent)).map(fib => (
+            <span key={fib.level} className="px-2 py-0.5 bg-blue-500/20 rounded text-xs text-blue-400">{fib.level}: ${formatPrice(fib.price)}</span>
+          ))}
+          {fibonacci.extensions?.slice(0, 2).map(ext => (
+            <span key={ext.level} className="px-2 py-0.5 bg-emerald-500/20 rounded text-xs text-emerald-400">↑{ext.level}: ${formatPrice(ext.price)}</span>
+          ))}
         </div>
       )}
     </div>
   );
 }
 
-// Mobile Detail Modal
-function DetailModal({ 
-  detail, 
-  onClose,
-  range,
-  setRange 
-}: { 
-  detail: SymbolDetail; 
-  onClose: () => void;
-  range: string;
-  setRange: (r: string) => void;
+// Mobile Modal
+function DetailModal({ detail, onClose, range, interval, setTimeframe, settings, setSettings }: { 
+  detail: SymbolDetail; onClose: () => void; range: string; interval: string;
+  setTimeframe: (r: string, i: string) => void; settings: ChartSettings; setSettings: (s: ChartSettings) => void;
 }) {
   const isPositive = detail.quote.change >= 0;
   
   return (
     <div className="fixed inset-0 z-50 bg-slate-950 overflow-auto">
-      {/* Header */}
       <div className="sticky top-0 bg-slate-950/95 backdrop-blur-sm border-b border-slate-800 p-4">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-xl font-bold text-slate-100">{detail.quote.symbol}</h2>
             <p className="text-sm text-slate-500">{detail.quote.name}</p>
           </div>
-          <button 
-            onClick={onClose}
-            className="p-2 hover:bg-slate-800 rounded-lg"
-          >
-            <X className="w-5 h-5 text-slate-400" />
-          </button>
+          <div className="flex items-center gap-2">
+            <SettingsPanel settings={settings} onChange={setSettings} movingAverages={detail.movingAverages} />
+            <button onClick={onClose} className="p-2 hover:bg-slate-800 rounded-lg"><X className="w-5 h-5 text-slate-400" /></button>
+          </div>
         </div>
-        
         <div className="flex items-baseline gap-3 mt-2">
           <span className="text-3xl font-bold text-slate-100">${formatPrice(detail.quote.price)}</span>
           <span className={`text-lg font-medium ${isPositive ? 'text-emerald-400' : 'text-red-400'}`}>
@@ -350,63 +574,29 @@ function DetailModal({
         </div>
       </div>
       
-      {/* Content */}
       <div className="p-4 space-y-4">
-        {/* Range Selector */}
-        <div className="flex gap-2">
-          {['1mo', '3mo', '6mo', '1y'].map(r => (
-            <button
-              key={r}
-              onClick={() => setRange(r)}
-              className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${
-                range === r
-                  ? 'bg-primary-600 text-white'
-                  : 'bg-slate-800 text-slate-400'
-              }`}
-            >
-              {r.toUpperCase()}
+        <div className="flex flex-wrap gap-1">
+          {TIMEFRAMES.map(tf => (
+            <button key={tf.label} onClick={() => setTimeframe(tf.range, tf.interval)}
+              className={`px-2 py-1 rounded text-xs font-medium ${range === tf.range && interval === tf.interval ? 'bg-primary-600 text-white' : 'bg-slate-800 text-slate-400'}`}>
+              {tf.label}
             </button>
           ))}
         </div>
         
-        {/* Chart */}
-        <MiniChart candles={detail.candles} fibonacci={detail.fibonacci} height={250} />
-        
-        {/* Fibonacci */}
+        <ChartCanvas candles={detail.candles} fibonacci={detail.fibonacci} movingAverages={detail.movingAverages} settings={settings} height={280} />
         <FibonacciPanel fibonacci={detail.fibonacci} currentPrice={detail.quote.price} />
         
-        {/* Key Stats */}
         <div className="bg-slate-800/50 rounded-xl p-4">
-          <h3 className="font-medium text-slate-200 mb-3">Key Statistics</h3>
-          <div className="grid grid-cols-2 gap-3 text-sm">
-            <div className="flex justify-between">
-              <span className="text-slate-500">Open</span>
-              <span className="text-slate-200 font-mono">${formatPrice(detail.quote.open)}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-slate-500">Close</span>
-              <span className="text-slate-200 font-mono">${formatPrice(detail.quote.prevClose)}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-slate-500">High</span>
-              <span className="text-emerald-400 font-mono">${formatPrice(detail.quote.high)}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-slate-500">Low</span>
-              <span className="text-red-400 font-mono">${formatPrice(detail.quote.low)}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-slate-500">52W High</span>
-              <span className="text-slate-200 font-mono">${formatPrice(detail.quote.fiftyTwoWeekHigh)}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-slate-500">52W Low</span>
-              <span className="text-slate-200 font-mono">${formatPrice(detail.quote.fiftyTwoWeekLow)}</span>
-            </div>
-            <div className="col-span-2 flex justify-between">
-              <span className="text-slate-500">Volume</span>
-              <span className="text-slate-200 font-mono">{formatVolume(detail.quote.volume)}</span>
-            </div>
+          <h3 className="font-medium text-slate-200 mb-3">Statistics</h3>
+          <div className="grid grid-cols-2 gap-2 text-sm">
+            <div className="flex justify-between"><span className="text-slate-500">Open</span><span className="text-slate-200">${formatPrice(detail.quote.open)}</span></div>
+            <div className="flex justify-between"><span className="text-slate-500">Close</span><span className="text-slate-200">${formatPrice(detail.quote.prevClose)}</span></div>
+            <div className="flex justify-between"><span className="text-slate-500">High</span><span className="text-emerald-400">${formatPrice(detail.quote.high)}</span></div>
+            <div className="flex justify-between"><span className="text-slate-500">Low</span><span className="text-red-400">${formatPrice(detail.quote.low)}</span></div>
+            <div className="flex justify-between"><span className="text-slate-500">52W H</span><span className="text-slate-200">${formatPrice(detail.quote.fiftyTwoWeekHigh)}</span></div>
+            <div className="flex justify-between"><span className="text-slate-500">52W L</span><span className="text-slate-200">${formatPrice(detail.quote.fiftyTwoWeekLow)}</span></div>
+            <div className="col-span-2 flex justify-between"><span className="text-slate-500">Volume</span><span className="text-slate-200">{formatVolume(detail.quote.volume)}</span></div>
           </div>
         </div>
       </div>
@@ -422,8 +612,10 @@ export default function MarketsPage() {
   const [detailLoading, setDetailLoading] = useState(false);
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
   const [range, setRange] = useState('3mo');
+  const [interval, setInterval] = useState('1d');
   const [isMobile, setIsMobile] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [settings, setSettings] = useState<ChartSettings>(DEFAULT_SETTINGS);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 1024);
@@ -431,6 +623,23 @@ export default function MarketsPage() {
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
+
+  // Load stored settings when symbol changes
+  useEffect(() => {
+    if (selectedSymbol) {
+      setSettings(getStoredSettings(selectedSymbol));
+      const tf = getStoredTimeframe(selectedSymbol);
+      setRange(tf.range);
+      setInterval(tf.interval);
+    }
+  }, [selectedSymbol]);
+
+  // Save settings when they change
+  useEffect(() => {
+    if (selectedSymbol) {
+      storeSettings(selectedSymbol, settings);
+    }
+  }, [settings, selectedSymbol]);
 
   const fetchQuotes = useCallback(async () => {
     try {
@@ -447,10 +656,10 @@ export default function MarketsPage() {
     }
   }, []);
 
-  const fetchSymbolDetail = useCallback(async (symbol: string) => {
+  const fetchSymbolDetail = useCallback(async (symbol: string, r: string, i: string) => {
     setDetailLoading(true);
     try {
-      const response = await fetch(`/api/markets?symbol=${symbol}&range=${range}`);
+      const response = await fetch(`/api/markets?symbol=${symbol}&range=${r}&interval=${i}`);
       if (response.ok) {
         const data = await response.json();
         setSymbolDetail(data);
@@ -460,19 +669,19 @@ export default function MarketsPage() {
     } finally {
       setDetailLoading(false);
     }
-  }, [range]);
+  }, []);
 
   useEffect(() => {
     fetchQuotes();
-    const interval = setInterval(fetchQuotes, 60 * 1000);
-    return () => clearInterval(interval);
+    const timer = window.setInterval(fetchQuotes, 60 * 1000);
+    return () => clearInterval(timer);
   }, [fetchQuotes]);
 
   useEffect(() => {
     if (selectedSymbol) {
-      fetchSymbolDetail(selectedSymbol);
+      fetchSymbolDetail(selectedSymbol, range, interval);
     }
-  }, [selectedSymbol, fetchSymbolDetail]);
+  }, [selectedSymbol, range, interval, fetchSymbolDetail]);
 
   useEffect(() => {
     if (quotes.length > 0 && !selectedSymbol) {
@@ -482,227 +691,115 @@ export default function MarketsPage() {
 
   const handleSelectSymbol = (symbol: string) => {
     setSelectedSymbol(symbol);
-    if (isMobile) {
-      setShowModal(true);
-    }
+    if (isMobile) setShowModal(true);
+  };
+
+  const handleTimeframeChange = (r: string, i: string) => {
+    setRange(r);
+    setInterval(i);
+    if (selectedSymbol) storeTimeframe(selectedSymbol, r, i);
   };
 
   const handleRefresh = () => {
     setLoading(true);
     fetchQuotes();
-    if (selectedSymbol) {
-      fetchSymbolDetail(selectedSymbol);
-    }
+    if (selectedSymbol) fetchSymbolDetail(selectedSymbol, range, interval);
   };
 
-  // Mobile Detail Modal
   if (isMobile && showModal && symbolDetail) {
-    return (
-      <DetailModal 
-        detail={symbolDetail} 
-        onClose={() => setShowModal(false)}
-        range={range}
-        setRange={(r) => {
-          setRange(r);
-          if (selectedSymbol) fetchSymbolDetail(selectedSymbol);
-        }}
-      />
-    );
+    return <DetailModal detail={symbolDetail} onClose={() => setShowModal(false)} range={range} interval={interval}
+      setTimeframe={handleTimeframeChange} settings={settings} setSettings={setSettings} />;
   }
 
   return (
     <div className="space-y-4 lg:space-y-6 max-w-7xl">
-      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl lg:text-2xl font-semibold text-slate-100 flex items-center gap-2">
-            <BarChart3 className="w-5 h-5 lg:w-6 lg:h-6 text-emerald-500" strokeWidth={1.5} />
-            Markets
+            <BarChart3 className="w-5 h-5 lg:w-6 lg:h-6 text-emerald-500" />Markets
           </h1>
-          {lastUpdate && (
-            <p className="text-xs text-slate-500 mt-1 flex items-center gap-1">
-              <Clock className="w-3 h-3" />
-              Updated {lastUpdate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
-            </p>
-          )}
+          {lastUpdate && <p className="text-xs text-slate-500 mt-1"><Clock className="w-3 h-3 inline" /> {lastUpdate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}</p>}
         </div>
-        <button
-          onClick={handleRefresh}
-          disabled={loading}
-          className="p-2 lg:px-4 lg:py-2 bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors flex items-center gap-2"
-        >
-          <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} strokeWidth={1.5} />
-          <span className="hidden lg:inline text-sm">Refresh</span>
+        <button onClick={handleRefresh} disabled={loading} className="p-2 lg:px-4 lg:py-2 bg-slate-800 hover:bg-slate-700 rounded-lg flex items-center gap-2">
+          <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} /><span className="hidden lg:inline text-sm">Refresh</span>
         </button>
       </div>
 
-      {/* Loading State */}
       {loading && quotes.length === 0 && (
-        <div className="space-y-2">
-          {[1, 2, 3, 4, 5, 6].map((i) => (
-            <div key={i} className="bg-slate-800/50 rounded-xl p-4 animate-pulse">
-              <div className="h-5 bg-slate-700 rounded w-1/3 mb-2" />
-              <div className="h-4 bg-slate-700 rounded w-1/4" />
-            </div>
-          ))}
-        </div>
+        <div className="space-y-2">{[1,2,3,4,5,6].map(i => <div key={i} className="bg-slate-800/50 rounded-xl p-4 animate-pulse"><div className="h-5 bg-slate-700 rounded w-1/3 mb-2" /></div>)}</div>
       )}
 
-      {/* Main Content */}
-      {!loading || quotes.length > 0 ? (
+      {(!loading || quotes.length > 0) && (
         <div className="grid lg:grid-cols-3 gap-4 lg:gap-6">
-          {/* Quote List */}
-          <div className="space-y-4 lg:space-y-6">
-            {/* Indices */}
-            <div>
-              <h2 className="text-xs text-slate-500 uppercase tracking-wide mb-2 flex items-center gap-2 px-1">
-                <Activity className="w-3 h-3" /> Indices
-              </h2>
-              <div className="space-y-2">
-                {quotes.filter(q => SYMBOL_CATEGORIES.indices.includes(q.symbol)).map(quote => (
-                  <QuoteRow
-                    key={quote.symbol}
-                    quote={quote}
-                    onClick={() => handleSelectSymbol(quote.symbol)}
-                    selected={selectedSymbol === quote.symbol}
-                  />
-                ))}
+          <div className="space-y-4">
+            {Object.entries(SYMBOL_CATEGORIES).map(([cat, syms]) => (
+              <div key={cat}>
+                <h2 className="text-xs text-slate-500 uppercase tracking-wide mb-2 px-1 flex items-center gap-2">
+                  {cat === 'indices' && <Activity className="w-3 h-3" />}
+                  {cat === 'tech' && <TrendingUp className="w-3 h-3" />}
+                  {cat === 'metals' && <span className="text-amber-400">◆</span>}
+                  {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                </h2>
+                <div className="space-y-2">
+                  {quotes.filter(q => syms.includes(q.symbol)).map(quote => (
+                    <QuoteRow key={quote.symbol} quote={quote} onClick={() => handleSelectSymbol(quote.symbol)} selected={selectedSymbol === quote.symbol} />
+                  ))}
+                </div>
               </div>
-            </div>
-
-            {/* Tech */}
-            <div>
-              <h2 className="text-xs text-slate-500 uppercase tracking-wide mb-2 flex items-center gap-2 px-1">
-                <TrendingUp className="w-3 h-3" /> Tech
-              </h2>
-              <div className="space-y-2">
-                {quotes.filter(q => SYMBOL_CATEGORIES.tech.includes(q.symbol)).map(quote => (
-                  <QuoteRow
-                    key={quote.symbol}
-                    quote={quote}
-                    onClick={() => handleSelectSymbol(quote.symbol)}
-                    selected={selectedSymbol === quote.symbol}
-                  />
-                ))}
-              </div>
-            </div>
-
-            {/* Metals */}
-            <div>
-              <h2 className="text-xs text-slate-500 uppercase tracking-wide mb-2 flex items-center gap-2 px-1">
-                <span className="text-amber-400">◆</span> Precious Metals
-              </h2>
-              <div className="space-y-2">
-                {quotes.filter(q => SYMBOL_CATEGORIES.metals.includes(q.symbol)).map(quote => (
-                  <QuoteRow
-                    key={quote.symbol}
-                    quote={quote}
-                    onClick={() => handleSelectSymbol(quote.symbol)}
-                    selected={selectedSymbol === quote.symbol}
-                  />
-                ))}
-              </div>
-            </div>
+            ))}
           </div>
 
-          {/* Desktop Detail Panel */}
           <div className="hidden lg:block lg:col-span-2 space-y-4">
             {selectedSymbol && symbolDetail && (
               <>
-                {/* Chart Header */}
                 <div className="bg-slate-850 rounded-xl border border-slate-800 p-5">
                   <div className="flex items-center justify-between mb-4">
                     <div>
-                      <h2 className="text-lg font-semibold text-slate-100">
-                        {symbolDetail.quote.symbol} — {symbolDetail.quote.name}
-                      </h2>
+                      <h2 className="text-lg font-semibold text-slate-100">{symbolDetail.quote.symbol} — {symbolDetail.quote.name}</h2>
                       <div className="flex items-center gap-3 mt-1">
-                        <span className="text-2xl font-bold text-slate-100">
-                          ${formatPrice(symbolDetail.quote.price)}
-                        </span>
-                        <span className={`text-sm font-medium ${
-                          symbolDetail.quote.change >= 0 ? 'text-emerald-400' : 'text-red-400'
-                        }`}>
-                          {symbolDetail.quote.change >= 0 ? '+' : ''}
-                          {formatPrice(symbolDetail.quote.change)} ({safePercent(symbolDetail.quote.changePercent)}%)
+                        <span className="text-2xl font-bold text-slate-100">${formatPrice(symbolDetail.quote.price)}</span>
+                        <span className={`text-sm font-medium ${symbolDetail.quote.change >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                          {symbolDetail.quote.change >= 0 ? '+' : ''}{formatPrice(symbolDetail.quote.change)} ({safePercent(symbolDetail.quote.changePercent)}%)
                         </span>
                       </div>
                     </div>
-                    
-                    <div className="flex gap-1">
-                      {['1mo', '3mo', '6mo', '1y'].map(r => (
-                        <button
-                          key={r}
-                          onClick={() => setRange(r)}
-                          className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${
-                            range === r
-                              ? 'bg-primary-600 text-white'
-                              : 'bg-slate-800 text-slate-400 hover:text-slate-200'
-                          }`}
-                        >
-                          {r.toUpperCase()}
-                        </button>
-                      ))}
-                    </div>
+                    <SettingsPanel settings={settings} onChange={setSettings} movingAverages={symbolDetail.movingAverages} />
+                  </div>
+                  
+                  <div className="flex flex-wrap gap-1 mb-4">
+                    {TIMEFRAMES.map(tf => (
+                      <button key={tf.label} onClick={() => handleTimeframeChange(tf.range, tf.interval)}
+                        className={`px-2 py-1 rounded text-xs font-medium ${range === tf.range && interval === tf.interval ? 'bg-primary-600 text-white' : 'bg-slate-800 text-slate-400 hover:text-white'}`}>
+                        {tf.label}
+                      </button>
+                    ))}
                   </div>
 
-                  {detailLoading ? (
-                    <div className="h-[300px] bg-slate-800/50 rounded-lg animate-pulse" />
-                  ) : (
-                    <MiniChart candles={symbolDetail.candles} fibonacci={symbolDetail.fibonacci} height={300} />
-                  )}
+                  {detailLoading ? <div className="h-[300px] bg-slate-800/50 rounded-lg animate-pulse" /> :
+                    <ChartCanvas candles={symbolDetail.candles} fibonacci={symbolDetail.fibonacci} movingAverages={symbolDetail.movingAverages} settings={settings} height={300} />}
                 </div>
 
-                {/* Stats & Fib */}
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="bg-slate-850 rounded-xl border border-slate-800 p-5">
                     <h3 className="font-medium text-slate-200 mb-3">Key Statistics</h3>
                     <div className="grid grid-cols-2 gap-3 text-sm">
-                      <div>
-                        <p className="text-slate-500">Open</p>
-                        <p className="text-slate-200 font-mono">${formatPrice(symbolDetail.quote.open)}</p>
-                      </div>
-                      <div>
-                        <p className="text-slate-500">Prev Close</p>
-                        <p className="text-slate-200 font-mono">${formatPrice(symbolDetail.quote.prevClose)}</p>
-                      </div>
-                      <div>
-                        <p className="text-slate-500">Day High</p>
-                        <p className="text-emerald-400 font-mono">${formatPrice(symbolDetail.quote.high)}</p>
-                      </div>
-                      <div>
-                        <p className="text-slate-500">Day Low</p>
-                        <p className="text-red-400 font-mono">${formatPrice(symbolDetail.quote.low)}</p>
-                      </div>
-                      <div>
-                        <p className="text-slate-500">52W High</p>
-                        <p className="text-slate-200 font-mono">${formatPrice(symbolDetail.quote.fiftyTwoWeekHigh)}</p>
-                      </div>
-                      <div>
-                        <p className="text-slate-500">52W Low</p>
-                        <p className="text-slate-200 font-mono">${formatPrice(symbolDetail.quote.fiftyTwoWeekLow)}</p>
-                      </div>
-                      <div className="col-span-2">
-                        <p className="text-slate-500">Volume</p>
-                        <p className="text-slate-200 font-mono">{formatVolume(symbolDetail.quote.volume)}</p>
-                      </div>
+                      <div><p className="text-slate-500">Open</p><p className="text-slate-200 font-mono">${formatPrice(symbolDetail.quote.open)}</p></div>
+                      <div><p className="text-slate-500">Prev Close</p><p className="text-slate-200 font-mono">${formatPrice(symbolDetail.quote.prevClose)}</p></div>
+                      <div><p className="text-slate-500">Day High</p><p className="text-emerald-400 font-mono">${formatPrice(symbolDetail.quote.high)}</p></div>
+                      <div><p className="text-slate-500">Day Low</p><p className="text-red-400 font-mono">${formatPrice(symbolDetail.quote.low)}</p></div>
+                      <div><p className="text-slate-500">52W High</p><p className="text-slate-200 font-mono">${formatPrice(symbolDetail.quote.fiftyTwoWeekHigh)}</p></div>
+                      <div><p className="text-slate-500">52W Low</p><p className="text-slate-200 font-mono">${formatPrice(symbolDetail.quote.fiftyTwoWeekLow)}</p></div>
+                      <div className="col-span-2"><p className="text-slate-500">Volume</p><p className="text-slate-200 font-mono">{formatVolume(symbolDetail.quote.volume)}</p></div>
                     </div>
                   </div>
-
                   <FibonacciPanel fibonacci={symbolDetail.fibonacci} currentPrice={symbolDetail.quote.price} />
                 </div>
               </>
             )}
-
-            {!selectedSymbol && (
-              <div className="bg-slate-850 rounded-xl border border-slate-800 p-12 text-center">
-                <BarChart3 className="w-12 h-12 text-slate-700 mx-auto mb-4" />
-                <p className="text-slate-500">Select a symbol to view details</p>
-              </div>
-            )}
+            {!selectedSymbol && <div className="bg-slate-850 rounded-xl border border-slate-800 p-12 text-center"><BarChart3 className="w-12 h-12 text-slate-700 mx-auto mb-4" /><p className="text-slate-500">Select a symbol</p></div>}
           </div>
         </div>
-      ) : null}
+      )}
     </div>
   );
 }

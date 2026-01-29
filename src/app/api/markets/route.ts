@@ -155,7 +155,7 @@ function calculateFibonacci(candles: CandleData[]): FibonacciLevels {
   let trend: 'up' | 'down';
   
   if (lastSwingHigh > lastSwingLow) {
-    // Pattern: Low → High → currently pulling back
+    // Pattern: Low → High → currently pulling back (uptrend)
     // Find the swing low BEFORE the high (Point A)
     const lowsBeforeHigh = lows.filter(l => l < lastSwingHigh);
     pointA = lowsBeforeHigh.length > 0 ? lowsBeforeHigh[lowsBeforeHigh.length - 1] : 0;
@@ -165,16 +165,39 @@ function calculateFibonacci(candles: CandleData[]): FibonacciLevels {
     pointC = lastSwingLow;
     trend = 'up';
   } else {
-    // Pattern: High → Low → currently bouncing (downtrend)
-    // For downtrends, we'd flip the logic, but let's focus on uptrend projections
+    // Pattern: High → Low → currently bouncing (could be downtrend or uptrend forming)
+    // We'll treat this as an UPTREND setup: A=low, B=previous high, C=current pullback
+    
+    // Find the swing high BEFORE the low (this becomes Point B - the top)
     const highsBeforeLow = highs.filter(h => h < lastSwingLow);
     pointB = highsBeforeLow.length > 0 ? highsBeforeLow[highsBeforeLow.length - 1] : 0;
-    pointA = lastSwingLow;
     
-    // Look for a pullback high after the low for downtrend extensions
-    const highsAfterLow = highs.filter(h => h > lastSwingLow);
-    pointC = highsAfterLow.length > 0 ? highsAfterLow[0] : null;
-    trend = 'down';
+    // Find the swing low BEFORE that high (this is Point A - the start of the move up)
+    const lowsBeforeHigh = lows.filter(l => l < pointB);
+    pointA = lowsBeforeHigh.length > 0 ? lowsBeforeHigh[lowsBeforeHigh.length - 1] : 0;
+    
+    // The current swing low IS our pullback (Point C) - it's the retracement
+    pointC = lastSwingLow;
+    trend = 'up';
+    
+    // Validate: C should be between A and B price-wise for a valid uptrend extension
+    const aPrice = candles[pointA]?.low ?? 0;
+    const bPrice = candles[pointB]?.high ?? 0;
+    const cPrice = candles[pointC]?.low ?? 0;
+    
+    // If C is below A (deeper than the original low), the pattern is broken
+    // In this case, A becomes the new low and we need to find a new setup
+    if (cPrice < aPrice) {
+      // The pullback went too deep - this is now a new A, look for structure before
+      pointA = pointC;
+      // Look for a high before this new low
+      const highsBeforeNewLow = highs.filter(h => h < pointA);
+      if (highsBeforeNewLow.length > 0) {
+        pointB = highsBeforeNewLow[highsBeforeNewLow.length - 1];
+      }
+      // No valid C in this case
+      pointC = null;
+    }
   }
   
   const swingLow = candles[pointA].low;

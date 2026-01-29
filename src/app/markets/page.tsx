@@ -555,6 +555,30 @@ function ChartCanvas({
     const candle = candles[globalIndex];
     
     if (selectMode !== 'none') {
+      // Validate chronological order: B must be after A, C must be after B
+      if (selectMode === 'b' && fibPoints.a !== null && globalIndex <= fibPoints.a) {
+        // B must be after A - don't set, show feedback
+        setTooltip({
+          x: e.clientX - rect.left,
+          y: e.clientY - rect.top,
+          candle,
+          index: globalIndex,
+          date: '⚠️ Point B must be AFTER point A',
+        });
+        return;
+      }
+      if (selectMode === 'c' && fibPoints.b !== null && globalIndex <= fibPoints.b) {
+        // C must be after B - don't set, show feedback
+        setTooltip({
+          x: e.clientX - rect.left,
+          y: e.clientY - rect.top,
+          candle,
+          index: globalIndex,
+          date: '⚠️ Point C must be AFTER point B',
+        });
+        return;
+      }
+      
       // Set Fib point (use global index)
       const newPoints = { ...fibPoints, [selectMode]: globalIndex };
       setFibPoints(newPoints);
@@ -793,93 +817,110 @@ function ChartCanvas({
   const hasCustomFib = fibPoints.a !== null || fibPoints.b !== null || fibPoints.c !== null;
 
   return (
-    <div className="relative">
-      <canvas 
-        ref={canvasRef} 
-        className="w-full rounded-lg"
-        style={{ 
-          height, 
-          background: '#0f172a', 
-          touchAction: 'none',
-          cursor: isOverYAxis ? 'ns-resize' : 'crosshair'
-        }}
-        onClick={handleCanvasClick}
-        onMouseLeave={handleMouseLeave}
-        onWheel={handleWheel}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-      />
-      
-      {/* Selection mode indicator */}
-      {selectMode !== 'none' && (
-        <div className="absolute top-2 left-2 bg-slate-900/90 border border-amber-500/50 rounded-lg px-3 py-2 text-sm">
-          <span className="text-amber-400">Click to set point {selectMode.toUpperCase()}</span>
-          <span className="text-slate-500 ml-2">
-            {selectMode === 'a' && '(Swing Low)'}
-            {selectMode === 'b' && '(Swing High)'}
-            {selectMode === 'c' && '(Pullback)'}
-          </span>
+    <div className="space-y-2">
+      {/* Chart controls - OUTSIDE the chart */}
+      <div className="flex items-center justify-between">
+        {/* Selection mode indicator */}
+        {selectMode !== 'none' ? (
+          <div className="bg-slate-900/90 border border-amber-500/50 rounded-lg px-3 py-1.5 text-sm">
+            <span className="text-amber-400">Click to set point {selectMode.toUpperCase()}</span>
+            <span className="text-slate-500 ml-2">
+              {selectMode === 'a' && '(Swing Low)'}
+              {selectMode === 'b' && '(after A, Swing High)'}
+              {selectMode === 'c' && '(after B, Pullback)'}
+            </span>
+          </div>
+        ) : (
+          <div className="text-[10px] text-slate-500 lg:hidden">
+            Scroll to pan • Pinch to zoom
+          </div>
+        )}
+        
+        {/* Controls */}
+        <div className="flex gap-1 ml-auto">
+          {isZoomed && (
+            <button 
+              onClick={resetView}
+              className="bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 px-2 py-1 rounded flex items-center gap-1"
+            >
+              <span className="text-[10px]">⟲</span> Reset
+            </button>
+          )}
+          {!hasCustomFib && selectMode === 'none' && (
+            <button 
+              onClick={startFibSelection}
+              className="bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 px-2 py-1 rounded"
+            >
+              Custom A-B-C
+            </button>
+          )}
+          {(hasCustomFib || selectMode !== 'none') && (
+            <button 
+              onClick={clearCustomFib}
+              className="bg-red-900/50 hover:bg-red-900 text-xs text-red-300 px-2 py-1 rounded"
+            >
+              Reset Fib
+            </button>
+          )}
         </div>
-      )}
-      
-      {/* Chart controls */}
-      <div className="absolute top-2 right-2 flex gap-1">
-        {isZoomed && (
-          <button 
-            onClick={resetView}
-            className="bg-slate-800/90 hover:bg-slate-700 text-xs text-slate-300 px-2 py-1 rounded flex items-center gap-1"
-          >
-            <span className="text-[10px]">⟲</span> Reset Zoom
-          </button>
-        )}
-        {!hasCustomFib && selectMode === 'none' && (
-          <button 
-            onClick={startFibSelection}
-            className="bg-slate-800/90 hover:bg-slate-700 text-xs text-slate-300 px-2 py-1 rounded"
-          >
-            Custom A-B-C
-          </button>
-        )}
-        {(hasCustomFib || selectMode !== 'none') && (
-          <button 
-            onClick={clearCustomFib}
-            className="bg-red-900/50 hover:bg-red-900 text-xs text-red-300 px-2 py-1 rounded"
-          >
-            Reset Fib
-          </button>
-        )}
       </div>
       
-      {/* Zoom hint on mobile */}
-      {!isZoomed && (
-        <div className="absolute bottom-2 left-2 text-[10px] text-slate-500 pointer-events-none lg:hidden">
-          Scroll to pan • Pinch to zoom
-        </div>
-      )}
+      {/* Chart canvas */}
+      <div className="relative">
+        <canvas 
+          ref={canvasRef} 
+          className="w-full rounded-lg"
+          style={{ 
+            height, 
+            background: '#0f172a', 
+            touchAction: 'none',
+            cursor: isOverYAxis ? 'ns-resize' : 'crosshair'
+          }}
+          onClick={handleCanvasClick}
+          onMouseLeave={handleMouseLeave}
+          onWheel={handleWheel}
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+        />
       
-      {/* Tooltip */}
-      {tooltip && selectMode === 'none' && (
-        <div 
-          className="absolute bg-slate-900/95 border border-slate-700 rounded-lg p-3 text-sm pointer-events-none z-10 min-w-[150px]"
-          style={{ left: Math.min(tooltip.x + 10, 200), top: tooltip.y - 80 }}
-        >
-          <p className="text-slate-400 text-xs mb-1">{tooltip.date}</p>
-          <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-xs">
-            <span className="text-slate-500">Open</span>
-            <span className="text-slate-200 font-mono">${tooltip.candle.open.toFixed(2)}</span>
-            <span className="text-slate-500">High</span>
-            <span className="text-emerald-400 font-mono">${tooltip.candle.high.toFixed(2)}</span>
-            <span className="text-slate-500">Low</span>
-            <span className="text-red-400 font-mono">${tooltip.candle.low.toFixed(2)}</span>
-            <span className="text-slate-500">Close</span>
-            <span className="text-slate-200 font-mono">${tooltip.candle.close.toFixed(2)}</span>
+        {/* Vertical crosshair line when tooltip visible */}
+        {tooltip && selectMode === 'none' && chartDims.current && (
+          <div 
+            className="absolute pointer-events-none"
+            style={{ 
+              left: tooltip.x,
+              top: chartDims.current.padding.top,
+              width: 1,
+              height: chartDims.current.drawHeight,
+              background: 'rgba(148, 163, 184, 0.4)',
+            }}
+          />
+        )}
+        
+        {/* Tooltip */}
+        {tooltip && selectMode === 'none' && (
+          <div 
+            className="absolute bg-slate-900/95 border border-slate-700 rounded-lg p-3 text-sm pointer-events-none z-10 min-w-[150px]"
+            style={{ left: Math.min(tooltip.x + 10, 200), top: tooltip.y - 80 }}
+          >
+            <p className="text-slate-400 text-xs mb-1">{tooltip.date}</p>
+            <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-xs">
+              <span className="text-slate-500">Open</span>
+              <span className="text-slate-200 font-mono">${tooltip.candle.open.toFixed(2)}</span>
+              <span className="text-slate-500">High</span>
+              <span className="text-emerald-400 font-mono">${tooltip.candle.high.toFixed(2)}</span>
+              <span className="text-slate-500">Low</span>
+              <span className="text-red-400 font-mono">${tooltip.candle.low.toFixed(2)}</span>
+              <span className="text-slate-500">Close</span>
+              <span className="text-slate-200 font-mono">${tooltip.candle.close.toFixed(2)}</span>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }
@@ -901,7 +942,7 @@ function SettingsPanel({
   };
   
   return (
-    <div className="relative">
+    <div className="relative" style={{ zIndex: open ? 100 : 'auto' }}>
       <button 
         onClick={() => setOpen(!open)}
         className={`p-2 rounded-lg transition-colors ${open ? 'bg-primary-600 text-white' : 'bg-slate-800 text-slate-400 hover:text-white'}`}
@@ -910,7 +951,7 @@ function SettingsPanel({
       </button>
       
       {open && (
-        <div className="absolute right-0 top-10 z-50 bg-slate-850 border border-slate-700 rounded-xl p-4 shadow-xl min-w-[200px]">
+        <div className="absolute right-0 top-10 z-[100] bg-slate-900 border border-slate-700 rounded-xl p-4 shadow-2xl min-w-[200px]">
           <p className="text-xs text-slate-500 uppercase tracking-wide mb-3">Indicators</p>
           
           <div className="space-y-2">

@@ -1,12 +1,10 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import dynamic from "next/dynamic";
 import {
   TrendingUp,
   TrendingDown,
   RefreshCw,
-  ChevronRight,
   Activity,
   Target,
   Clock,
@@ -75,8 +73,8 @@ function formatPrice(price: number): string {
   return price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
-// Candlestick Chart Component - loaded dynamically to avoid SSR issues
-function CandlestickChartInner({ 
+// Simple price chart using canvas (no external dependencies)
+function CandlestickChart({ 
   candles, 
   fibonacci,
   symbol 
@@ -85,129 +83,131 @@ function CandlestickChartInner({
   fibonacci: QuoteData['fibonacci'];
   symbol: string;
 }) {
-  const chartContainerRef = useRef<HTMLDivElement>(null);
-  const chartRef = useRef<any>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    if (!chartContainerRef.current || candles.length === 0) return;
+    if (!canvasRef.current || candles.length === 0) return;
 
-    // Dynamically import lightweight-charts
-    import('lightweight-charts').then(({ createChart, CandlestickSeries }) => {
-      // Clear existing chart
-      if (chartRef.current) {
-        chartRef.current.remove();
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // Set canvas size
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width * 2;
+    canvas.height = rect.height * 2;
+    ctx.scale(2, 2);
+
+    const width = rect.width;
+    const height = rect.height;
+    const padding = { top: 20, right: 60, bottom: 30, left: 10 };
+    const chartWidth = width - padding.left - padding.right;
+    const chartHeight = height - padding.top - padding.bottom;
+
+    // Clear
+    ctx.fillStyle = '#0f172a';
+    ctx.fillRect(0, 0, width, height);
+
+    // Find price range
+    const prices = candles.flatMap(c => [c.high, c.low]);
+    const minPrice = Math.min(...prices);
+    const maxPrice = Math.max(...prices);
+    const priceRange = maxPrice - minPrice;
+    const pricePadding = priceRange * 0.05;
+
+    const scaleY = (price: number) => {
+      return padding.top + chartHeight - ((price - minPrice + pricePadding) / (priceRange + pricePadding * 2)) * chartHeight;
+    };
+
+    const candleWidth = Math.max(2, (chartWidth / candles.length) - 1);
+
+    // Draw grid lines
+    ctx.strokeStyle = '#1e293b';
+    ctx.lineWidth = 0.5;
+    for (let i = 0; i <= 4; i++) {
+      const y = padding.top + (chartHeight / 4) * i;
+      ctx.beginPath();
+      ctx.moveTo(padding.left, y);
+      ctx.lineTo(width - padding.right, y);
+      ctx.stroke();
+      
+      // Price labels
+      const price = maxPrice - (priceRange / 4) * i;
+      ctx.fillStyle = '#64748b';
+      ctx.font = '10px sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText(`$${price.toFixed(2)}`, width - padding.right + 5, y + 3);
+    }
+
+    // Draw Fibonacci levels
+    fibonacci.levels.forEach(fib => {
+      const y = scaleY(fib.price);
+      if (y > padding.top && y < height - padding.bottom) {
+        ctx.strokeStyle = fib.percent === 50 ? '#8b5cf6' : '#3b82f6';
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        ctx.moveTo(padding.left, y);
+        ctx.lineTo(width - padding.right, y);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        
+        ctx.fillStyle = fib.percent === 50 ? '#8b5cf6' : '#3b82f6';
+        ctx.font = '9px sans-serif';
+        ctx.fillText(fib.level, padding.left + 2, y - 2);
       }
-
-      const chart = createChart(chartContainerRef.current!, {
-        layout: {
-          background: { color: 'transparent' },
-          textColor: '#94a3b8',
-        },
-        grid: {
-          vertLines: { color: '#1e293b' },
-          horzLines: { color: '#1e293b' },
-        },
-        width: chartContainerRef.current!.clientWidth,
-        height: 300,
-        timeScale: {
-          borderColor: '#334155',
-          timeVisible: true,
-        },
-        rightPriceScale: {
-          borderColor: '#334155',
-        },
-        crosshair: {
-          vertLine: { color: '#475569', labelBackgroundColor: '#334155' },
-          horzLine: { color: '#475569', labelBackgroundColor: '#334155' },
-        },
-      });
-
-      chartRef.current = chart;
-
-      const candlestickSeries = chart.addSeries(CandlestickSeries, {
-        upColor: '#10b981',
-        downColor: '#ef4444',
-        borderUpColor: '#10b981',
-        borderDownColor: '#ef4444',
-        wickUpColor: '#10b981',
-        wickDownColor: '#ef4444',
-      });
-
-      // Convert candles to TradingView format
-      const chartData = candles.map(c => ({
-        time: c.time,
-        open: c.open,
-        high: c.high,
-        low: c.low,
-        close: c.close,
-      }));
-
-      candlestickSeries.setData(chartData as any);
-
-      // Add Fibonacci lines
-      if (fibonacci.levels.length > 0) {
-        fibonacci.levels.forEach((fib) => {
-          const color = fib.percent === 0 || fib.percent === 100 
-            ? '#f59e0b' 
-            : fib.percent === 50 
-              ? '#8b5cf6' 
-              : '#3b82f6';
-          
-          candlestickSeries.createPriceLine({
-            price: fib.price,
-            color: color,
-            lineWidth: 1,
-            lineStyle: 2, // Dashed
-            axisLabelVisible: true,
-            title: fib.level,
-          });
-        });
-      }
-
-      chart.timeScale().fitContent();
-
-      // Handle resize
-      const handleResize = () => {
-        if (chartContainerRef.current && chartRef.current) {
-          chartRef.current.applyOptions({ width: chartContainerRef.current.clientWidth });
-        }
-      };
-
-      window.addEventListener('resize', handleResize);
-
-      // Cleanup stored in ref for later use
-      (chartRef.current as any)._cleanup = () => {
-        window.removeEventListener('resize', handleResize);
-      };
     });
 
-    return () => {
-      if (chartRef.current) {
-        if ((chartRef.current as any)._cleanup) {
-          (chartRef.current as any)._cleanup();
-        }
-        chartRef.current.remove();
-        chartRef.current = null;
-      }
-    };
+    // Draw candles
+    candles.forEach((candle, i) => {
+      const x = padding.left + (i / candles.length) * chartWidth + candleWidth / 2;
+      const isGreen = candle.close >= candle.open;
+      const color = isGreen ? '#10b981' : '#ef4444';
+
+      // Wick
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(x, scaleY(candle.high));
+      ctx.lineTo(x, scaleY(candle.low));
+      ctx.stroke();
+
+      // Body
+      const bodyTop = scaleY(Math.max(candle.open, candle.close));
+      const bodyBottom = scaleY(Math.min(candle.open, candle.close));
+      const bodyHeight = Math.max(1, bodyBottom - bodyTop);
+      
+      ctx.fillStyle = color;
+      ctx.fillRect(x - candleWidth / 2, bodyTop, candleWidth, bodyHeight);
+    });
+
+    // Current price line
+    const lastCandle = candles[candles.length - 1];
+    const currentY = scaleY(lastCandle.close);
+    ctx.strokeStyle = '#f59e0b';
+    ctx.setLineDash([2, 2]);
+    ctx.beginPath();
+    ctx.moveTo(padding.left, currentY);
+    ctx.lineTo(width - padding.right, currentY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
   }, [candles, fibonacci, symbol]);
 
-  return <div ref={chartContainerRef} className="w-full h-[300px]" />;
-}
-
-// Wrapper to ensure client-side only rendering
-function CandlestickChart(props: { candles: CandleData[]; fibonacci: QuoteData['fibonacci']; symbol: string }) {
-  const [mounted, setMounted] = useState(false);
-  
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-  
-  if (!mounted) {
-    return <div className="w-full h-[300px] bg-slate-800/50 rounded-lg animate-pulse" />;
+  if (candles.length === 0) {
+    return (
+      <div className="w-full h-[300px] bg-slate-800/50 rounded-lg flex items-center justify-center text-slate-500">
+        Loading chart data...
+      </div>
+    );
   }
-  
-  return <CandlestickChartInner {...props} />;
+
+  return (
+    <canvas 
+      ref={canvasRef} 
+      className="w-full h-[300px] rounded-lg"
+      style={{ background: '#0f172a' }}
+    />
+  );
 }
 
 // Quote Card Component

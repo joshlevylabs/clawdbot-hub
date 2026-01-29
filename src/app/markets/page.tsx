@@ -175,6 +175,50 @@ interface ViewRange {
   end: number;   // end index (candles.length = newest)
 }
 
+// Helper to find candle index by date string
+function findCandleIndexByDate(candles: CandleData[], dateStr: string | undefined): number | null {
+  if (!dateStr || candles.length === 0) return null;
+  
+  // Parse the date string (format like "Jan 15, 2025" or "1/15/25")
+  const targetDate = new Date(dateStr);
+  if (isNaN(targetDate.getTime())) return null;
+  
+  const targetTime = targetDate.getTime();
+  
+  // Find the candle with the closest date
+  let closestIndex = -1;
+  let closestDiff = Infinity;
+  
+  for (let i = 0; i < candles.length; i++) {
+    const candleTime = candles[i].time * 1000; // Convert to ms
+    const diff = Math.abs(candleTime - targetTime);
+    if (diff < closestDiff) {
+      closestDiff = diff;
+      closestIndex = i;
+    }
+  }
+  
+  // Only return if within reasonable range (1 day for daily candles, etc)
+  if (closestIndex >= 0 && closestDiff < 7 * 24 * 60 * 60 * 1000) { // 7 days tolerance
+    return closestIndex;
+  }
+  
+  return null;
+}
+
+// Helper to find candle index by price (swing high/low)
+function findCandleIndexByPrice(candles: CandleData[], price: number, type: 'high' | 'low'): number | null {
+  if (!price || candles.length === 0) return null;
+  
+  for (let i = 0; i < candles.length; i++) {
+    const candlePrice = type === 'high' ? candles[i].high : candles[i].low;
+    if (Math.abs(candlePrice - price) < 0.01) {
+      return i;
+    }
+  }
+  return null;
+}
+
 // Chart with MAs and Fibonacci
 function ChartCanvas({ 
   candles, 
@@ -411,14 +455,19 @@ function ChartCanvas({
       ctx.fillRect(x - candleWidth / 2, bodyTop, candleWidth, bodyHeight);
     });
 
-    // Draw custom Fib point markers (only if visible)
-    const drawMarker = (globalIdx: number, label: string, color: string) => {
+    // Draw Fib point markers (A/B/C) - for both custom and default
+    const drawMarker = (globalIdx: number, label: string, color: string, priceOverride?: number) => {
       const localIdx = globalIdx - visibleStart;
       if (localIdx < 0 || localIdx >= visibleCandles.length) return;
       
       const x = scaleX(localIdx) + candleWidth / 2;
       const candle = candles[globalIdx];
-      const y = label === 'A' ? scaleY(candle.low) : label === 'B' ? scaleY(candle.high) : scaleY(candle.low);
+      let y: number;
+      if (priceOverride !== undefined) {
+        y = scaleY(priceOverride);
+      } else {
+        y = label === 'A' ? scaleY(candle.low) : label === 'B' ? scaleY(candle.high) : scaleY(candle.low);
+      }
       
       ctx.fillStyle = color;
       ctx.beginPath();
@@ -430,9 +479,34 @@ function ChartCanvas({
       ctx.fillText(label, x, y + 3);
     };
 
-    if (fibPoints.a !== null) drawMarker(fibPoints.a, 'A', '#10b981');
-    if (fibPoints.b !== null) drawMarker(fibPoints.b, 'B', '#ef4444');
-    if (fibPoints.c !== null) drawMarker(fibPoints.c, 'C', '#f59e0b');
+    // Show markers when Fib is enabled (retracements OR extensions)
+    const showFibMarkers = settings.showFibRetracements || settings.showFibExtensions;
+    
+    if (showFibMarkers && fibonacci) {
+      // Use custom points if set, otherwise find from API data
+      let aIdx = fibPoints.a;
+      let bIdx = fibPoints.b;
+      let cIdx = fibPoints.c;
+      
+      // If no custom points, find indices from API fibonacci data
+      if (aIdx === null && fibonacci.low) {
+        aIdx = findCandleIndexByDate(candles, fibonacci.swingLowDate) 
+          ?? findCandleIndexByPrice(candles, fibonacci.low, 'low');
+      }
+      if (bIdx === null && fibonacci.high) {
+        bIdx = findCandleIndexByDate(candles, fibonacci.swingHighDate)
+          ?? findCandleIndexByPrice(candles, fibonacci.high, 'high');
+      }
+      if (cIdx === null && fibonacci.pullback) {
+        cIdx = findCandleIndexByDate(candles, fibonacci.pullbackDate)
+          ?? findCandleIndexByPrice(candles, fibonacci.pullback, 'low');
+      }
+      
+      // Draw the markers
+      if (aIdx !== null) drawMarker(aIdx, 'A', '#10b981', fibonacci.low);
+      if (bIdx !== null) drawMarker(bIdx, 'B', '#ef4444', fibonacci.high);
+      if (cIdx !== null && fibonacci.pullback) drawMarker(cIdx, 'C', '#f59e0b', fibonacci.pullback);
+    }
 
   }, [candles, visibleCandles, visibleStart, visibleEnd, viewRange, fibonacci, movingAverages, settings, fibPoints]);
 
@@ -934,14 +1008,25 @@ function FibonacciPanel({ fibonacci, currentPrice }: { fibonacci: FibonacciData;
         </div>
       )}
       
-      {!expanded && fibonacci.retracements && (
-        <div className="mt-2 flex flex-wrap gap-1">
-          {fibonacci.retracements.filter(l => [38.2, 50, 61.8].includes(l.percent)).map(fib => (
-            <span key={fib.level} className="px-2 py-0.5 bg-blue-500/20 rounded text-xs text-blue-400">{fib.level}: ${formatPrice(fib.price)}</span>
-          ))}
-          {fibonacci.extensions?.slice(0, 2).map(ext => (
-            <span key={ext.level} className="px-2 py-0.5 bg-emerald-500/20 rounded text-xs text-emerald-400">↑{ext.level}: ${formatPrice(ext.price)}</span>
-          ))}
+      {!expanded && (
+        <div className="mt-2 space-y-2">
+          {/* A/B/C points summary */}
+          <div className="flex flex-wrap gap-2 text-xs">
+            <span className="text-emerald-400">A: ${formatPrice(fibonacci.low)}</span>
+            <span className="text-red-400">B: ${formatPrice(fibonacci.high)}</span>
+            {fibonacci.pullback && <span className="text-amber-400">C: ${formatPrice(fibonacci.pullback)}</span>}
+          </div>
+          {/* Key levels */}
+          {fibonacci.retracements && (
+            <div className="flex flex-wrap gap-1">
+              {fibonacci.retracements.filter(l => [38.2, 50, 61.8].includes(l.percent)).map(fib => (
+                <span key={fib.level} className="px-2 py-0.5 bg-blue-500/20 rounded text-xs text-blue-400">{fib.level}: ${formatPrice(fib.price)}</span>
+              ))}
+              {fibonacci.extensions?.slice(0, 2).map(ext => (
+                <span key={ext.level} className="px-2 py-0.5 bg-emerald-500/20 rounded text-xs text-emerald-400">↑{ext.level}: ${formatPrice(ext.price)}</span>
+              ))}
+            </div>
+          )}
         </div>
       )}
     </div>

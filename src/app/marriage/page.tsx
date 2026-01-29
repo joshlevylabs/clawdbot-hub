@@ -135,27 +135,37 @@ export default function MarriagePage() {
     const avgPower = answerValues.reduce((sum, a) => sum + a.power, 0) / answerValues.length;
     const avgSafety = answerValues.reduce((sum, a) => sum + a.safety, 0) / answerValues.length;
     
-    // Create interaction log (this would ideally go to an API, but for now we'll show confirmation)
     const checkinData = {
-      date: new Date().toISOString().split('T')[0],
-      type: "daily_checkin",
       power: Math.round(avgPower * 10) / 10,
       safety: Math.round(avgSafety * 10) / 10,
       answers: answers
     };
     
-    console.log("Daily check-in submitted:", checkinData);
-    
-    // For now, just show success and reset
-    // In production, this would POST to an API endpoint
-    setTimeout(() => {
+    try {
+      const response = await fetch('/api/compass/checkin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(checkinData)
+      });
+      
+      if (response.ok) {
+        const result = await response.json();
+        // Refresh compass state
+        fetchCompass();
+        // Reset check-in
+        setShowCheckin(false);
+        setCurrentQuestion(0);
+        setAnswers({});
+        setCheckinComplete(false);
+      } else {
+        alert('Failed to save check-in. Please try again.');
+      }
+    } catch (error) {
+      console.error('Check-in error:', error);
+      alert('Failed to save check-in. Please try again.');
+    } finally {
       setSubmitting(false);
-      setShowCheckin(false);
-      setCurrentQuestion(0);
-      setAnswers({});
-      setCheckinComplete(false);
-      alert(`Check-in saved!\n\nToday's scores:\nPower: ${checkinData.power.toFixed(1)}\nSafety: ${checkinData.safety.toFixed(1)}\n\nTell Theo: "Log daily checkin power ${checkinData.power} safety ${checkinData.safety}" to add to your compass.`);
-    }, 500);
+    }
   };
 
   const resetCheckin = () => {

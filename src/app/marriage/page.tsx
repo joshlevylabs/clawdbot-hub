@@ -100,13 +100,33 @@ export default function MarriagePage() {
   const fetchCompass = async () => {
     setLoading(true);
     try {
-      const response = await fetch("/data/compass-state.json");
+      // Try API first (Supabase), fall back to static file
+      const response = await fetch("/api/compass/checkin");
       if (response.ok) {
         const data = await response.json();
-        setCompassState(data);
+        if (!data.error) {
+          setCompassState(data);
+        } else {
+          // Fall back to static file
+          const staticResponse = await fetch("/data/compass-state.json");
+          if (staticResponse.ok) {
+            const staticData = await staticResponse.json();
+            setCompassState(staticData);
+          }
+        }
       }
     } catch (err) {
       console.error("Failed to load compass state:", err);
+      // Try static file as fallback
+      try {
+        const staticResponse = await fetch("/data/compass-state.json");
+        if (staticResponse.ok) {
+          const staticData = await staticResponse.json();
+          setCompassState(staticData);
+        }
+      } catch {
+        // Ignore
+      }
     } finally {
       setLoading(false);
     }
@@ -154,21 +174,20 @@ export default function MarriagePage() {
       if (response.ok) {
         const result = await response.json();
         
-        // Store in localStorage
-        const storedCheckins = JSON.parse(localStorage.getItem('compass-checkins') || '[]');
-        storedCheckins.push(result.interaction);
-        localStorage.setItem('compass-checkins', JSON.stringify(storedCheckins));
-        
-        // Show success with sync command
-        alert(`✅ Check-in saved!\n\nPower: ${power}\nSafety: ${safety}\n\nTell Theo:\n"${result.syncCommand}"`);
-        
-        // Reset check-in
-        setShowCheckin(false);
-        setCurrentQuestion(0);
-        setAnswers({});
-        setCheckinComplete(false);
+        if (result.success) {
+          // Refresh compass state from API
+          fetchCompass();
+          // Reset check-in
+          setShowCheckin(false);
+          setCurrentQuestion(0);
+          setAnswers({});
+          setCheckinComplete(false);
+        } else {
+          alert('Failed to save check-in: ' + (result.error || 'Unknown error'));
+        }
       } else {
-        alert('Failed to save check-in. Please try again.');
+        const errorData = await response.json().catch(() => ({}));
+        alert('Failed to save check-in: ' + (errorData.error || 'Please try again.'));
       }
     } catch (error) {
       console.error('Check-in error:', error);

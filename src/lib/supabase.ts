@@ -50,3 +50,15 @@ export interface DbUsage {
   model: string | null;
   created_at: string;
 }
+
+export interface DbCompassInteraction {
+  id: string;
+  timestamp: string;
+  date: string;
+  type: 'positive' | 'negative' | 'daily_checkin';
+  description: string | null;
+  power: number;
+  safety: number;
+  answers: Record<string, unknown> | null;
+  created_at: string;
+}

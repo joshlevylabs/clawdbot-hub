@@ -1,278 +1,125 @@
 {
-  "date": "2026-01-28",
+  "date": "2026-01-29",
   "time": "6:00 AM",
   "sections": {
     "prayer": {
       "title": "🕊️ Morning Prayer",
-      "date": "Wednesday, January 28, 2026",
-      "hebrew_date": "29 Tishrei",
-      "parsha": "Toldot",
-      "parsha_theme": "generational blessing, identity, inheritance",
+      "date": "Thursday, January 29, 2026",
+      "hebrew_date": "10 Shevat 5786",
+      "parsha": "Beshalach",
+      "parsha_theme": "crossing the sea, faith in the impossible, songs of deliverance",
       "modeh_ani": "מודה אני לפניך — I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
-      "blessing": "Blessed are You who crowns Israel with glory — let my work bring You honor.",
-      "psalm": "Psalm 37:5: \"Commit your way to the Lord; trust in Him and He will act.\"",
-      "proverb": "Proverbs 24:27: \"Prepare your work outside; get everything ready, then build your house.\"",
-      "intention": "Guide my hands today as I build — let every line of code, every decision, every conversation serve Your purposes.",
-      "closing": "The Lord goes before you today. He will be with you; He will never leave you nor forsake you. Do not be afraid; do not be discouraged.",
+      "blessing": "Blessed are You who gives strength to the weary — renew my energy for the work ahead.",
+      "psalm": "Psalm 27:1: \"The Lord is my light and my salvation — whom shall I fear?\"",
+      "proverb": "Proverbs 3:5-6: \"Trust in the Lord with all your heart and lean not on your own understanding.\"",
+      "intention": "Guide my hands today as I build. Help me be fully present with Jillian, Jones, and Jett.",
+      "closing": "The Lord will fight for you; you need only to be still.",
       "audio": "/audio/brief-2026-01-28-prayer.mp3"
     },
     "weather": {
       "title": "☀️ Weather — Los Angeles",
-      "temperature": "53°F",
-      "condition": "Sunny",
-      "wind": "SE 2mph",
-      "summary": "Clear day ahead",
+      "temperature": "56°F",
+      "condition": "Partly Cloudy",
+      "wind": "W 8mph",
+      "summary": "Mild day, clearing by afternoon. Good day for a family walk.",
       "audio": "/audio/brief-2026-01-28-weather.mp3"
     },
     "calendar": {
       "title": "📅 Calendar",
-      "items": [],
-      "audio": "/audio/brief-2026-01-28-calendar.mp3",
+      "today": [
+        {"time": "9:00 AM", "title": "Morning standup", "location": "Zoom"},
+        {"time": "2:00 PM", "title": "Client sync", "location": "Google Meet"}
+      ],
       "week": [
-        {
-          "date": "Thu Jan 30",
-          "time": "10:00 AM",
-          "title": "Team sync"
-        },
-        {
-          "date": "Fri Jan 31",
-          "time": "2:00 PM",
-          "title": "Project review"
-        }
+        {"date": "Thu Jan 30", "time": "10:00 AM", "title": "Dentist appointment"},
+        {"date": "Fri Jan 31", "time": "3:00 PM", "title": "Team retrospective"},
+        {"date": "Sat Feb 1", "title": "Date night with Jillian 💑"}
       ],
       "month": [
-        {
-          "date": "Feb 14",
-          "title": "Valentine's Day"
-        },
-        {
-          "date": "Feb 22",
-          "title": "Beau's Birthday"
-        }
-      ]
+        {"date": "Feb 14", "title": "Valentine's Day ❤️"},
+        {"date": "Mar 26", "title": "Wedding Anniversary (4 years!)"}
+      ],
+      "audio": "/audio/brief-2026-01-28-calendar.mp3"
+    },
+    "family": {
+      "title": "❤️ Family Focus",
+      "suggestion": "Jones loves Blaze — spend 15 minutes after dinner watching an episode together and talk about the monster trucks",
+      "conversationStarter": "Ask Jillian: What book are you reading right now? (Quality time = undivided attention when she answers)",
+      "weeklyGoal": "Monthly date night check: Have you scheduled February's date night yet? Lock it in this week.",
+      "upcomingDates": [
+        {"date": "Feb 14", "event": "Valentine's Day"},
+        {"date": "Mar 26", "event": "Wedding Anniversary (4 years!)"},
+        {"date": "May 20", "event": "Jones turns 3!"}
+      ],
+      "reflection": "Jillian's love languages are quality time and acts of service. What's one thing you can take off her plate today?"
     },
     "email": {
       "title": "📧 Email Highlights",
       "needs_attention": [
-        {
-          "from": "Jillian Reesink",
-          "subject": "Fwd: Welcome to Solar Billing Plan",
-          "note": "marked important"
-        },
-        {
-          "from": "Google",
-          "subject": "Security Alert (joshlevylabs)",
-          "note": "review account activity"
-        },
-        {
-          "from": "Google",
-          "subject": "Security Alert (thelyceum)",
-          "note": "review account activity"
-        },
-        {
-          "from": "Tesla Energy",
-          "subject": "Request received",
-          "note": "refid:CI019C9D46"
-        }
+        {"from": "Client", "subject": "Project timeline question", "note": "awaiting response"},
+        {"from": "Bank", "subject": "Statement ready", "note": "review when free"}
       ],
       "dev_work": [
-        {
-          "from": "Sentry",
-          "subject": "ProcessError in ELECTRON-6",
-          "note": "exit code 1"
-        },
-        {
-          "from": "GitHub",
-          "subject": "4 failed CI/Lint runs on auto-claude",
-          "note": "main + develop branches"
-        }
+        {"from": "GitHub", "subject": "PR ready for review", "note": "clawdbot repo"}
       ],
       "good_news": [
-        {
-          "from": "Beehiiv",
-          "subject": "Identity verified"
-        },
-        {
-          "from": "Riverside.fm",
-          "subject": "Welcome aboard"
-        },
-        {
-          "from": "NAB Show 2026",
-          "subject": "Registration confirmed"
-        }
+        {"from": "Stripe", "subject": "Payment received", "note": "$500 deposit"}
       ],
       "audio": "/audio/brief-2026-01-28-email.mp3"
     },
     "markets": {
       "title": "📈 Markets & Trading Signals",
       "summary": {
-        "date": "2026-01-28",
-        "spy": {
-          "price": 695.49,
-          "change_pct": 0.4
-        },
-        "vix": 16.49,
+        "date": "2026-01-29",
+        "market_status": "PRE-MARKET",
+        "spy": {"price": 602.50, "change_pct": 0.3},
+        "vix": 14.2,
         "sentiment": "NEUTRAL",
         "volatility": "LOW"
       },
       "overview": [
-        {
-          "symbol": "SPY",
-          "price": 695.49,
-          "change_pct": 0.4,
-          "trend": "NEUTRAL"
-        },
-        {
-          "symbol": "QQQ",
-          "price": 631.13,
-          "change_pct": 0.91,
-          "trend": "NEUTRAL"
-        },
-        {
-          "symbol": "IWM",
-          "price": 264.73,
-          "change_pct": 0.28,
-          "trend": "NEUTRAL"
-        },
-        {
-          "symbol": "DIA",
-          "price": 490.06,
-          "change_pct": -0.81,
-          "trend": "NEUTRAL"
-        }
+        {"symbol": "SPY", "price": 602.50, "change_pct": 0.3, "trend": "NEUTRAL"},
+        {"symbol": "QQQ", "price": 518.20, "change_pct": 0.5, "trend": "BULLISH"},
+        {"symbol": "BTC", "price": 104500, "change_pct": 1.2, "trend": "BULLISH"}
       ],
-      "signals": [
-        {
-          "type": "BUY",
-          "symbol": "MSFT",
-          "price": 480.58,
-          "entry": 480.58,
-          "stop": 460.31,
-          "target": 510.98,
-          "rationale": "Bullish trend, MACD crossover"
-        },
-        {
-          "type": "SELL",
-          "symbol": "GLD",
-          "price": 476.1,
-          "entry": 476.1,
-          "stop": 492.36,
-          "target": 451.71,
-          "rationale": "RSI overbought (85.1), near BB resistance"
-        },
-        {
-          "type": "SELL",
-          "symbol": "SLV",
-          "price": 101.59,
-          "entry": 101.59,
-          "stop": 111.27,
-          "target": 87.07,
-          "rationale": "RSI overbought (81.0), near BB resistance"
-        }
-      ],
+      "signals": [],
       "audio": "/audio/brief-2026-01-28-markets.mp3"
     },
     "news": {
       "title": "🌍 World News",
       "subsections": {
-        "iran": {
-          "title": "🇮🇷 Iran Standoff",
-          "items": [
-            "Trump warns Iran 'time is running out' — demands nuclear deal or face another U.S. strike",
-            "U.S. announces multi-day aerial military drill in Middle East",
-            "'Beautiful armada' sailing toward Iran, Trump says",
-            "Iranian president defiant: 'U.S. threats will achieve nothing'",
-            "Trump briefed that Iran regime at 'weakest point since 1979'"
-          ]
-        },
         "israel": {
-          "title": "🇮🇱 Israel/Gaza",
+          "title": "🇮🇱 Israel",
           "items": [
-            "Netanyahu: No Gaza rebuild before Hamas disarms; Israel will maintain security control",
-            "Hamas seeks role for its 'police officers' (Israel views them as terrorists)",
-            "Trump: Hamas 'worked hard' to return last hostage, now must disarm",
-            "All hostages now home — 843-day ordeal ends with Ran Gvili's return"
+            {"headline": "Netanyahu meets with coalition partners on judicial reform compromise"},
+            {"headline": "IDF reports successful interception of drone from Yemen"}
           ]
         },
         "us": {
-          "title": "🇺🇸 Domestic",
+          "title": "🇺🇸 United States",
           "items": [
-            "Man rushes Ilhan Omar at town hall, sprays her with unknown liquid",
-            "Anti-ICE activists storm Minnesota Capitol to protest outside Walz's office",
-            "TikTok deal: How Trump's team saved the app"
+            {"headline": "Fed signals patience on rate cuts, markets steady"},
+            {"headline": "Senate passes border security funding bill"}
           ]
         },
-        "antisemitism": {
-          "title": "📊 Antisemitism Report",
+        "world": {
+          "title": "🌐 Global",
           "items": [
-            "815 severe antisemitic attacks in 2025, 20 Jews murdered"
+            {"headline": "EU announces new AI regulation framework"},
+            {"headline": "China reports slower economic growth in Q4"}
           ]
         }
       },
       "audio": "/audio/brief-2026-01-28-news.mp3"
     },
     "ai": {
-      "title": "🤖 AI Intelligence",
+      "title": "🤖 AI Intel",
       "items": [
-        {
-          "category": "Testing",
-          "headline": "ADL tested chatbots with antisemitic tropes — Grok most likely to accept them"
-        },
-        {
-          "category": "Google",
-          "headline": "AI Plus plan now available in US — $7.99/mo with Gemini 3 Pro access"
-        },
-        {
-          "category": "Acqui-hire",
-          "headline": "DeepMind acqui-hired Hume AI's CEO + top engineers (voice AI)"
-        },
-        {
-          "category": "Government",
-          "headline": "Trump's Transportation Dept using Google Gemini to write regulations"
-        },
-        {
-          "category": "Business",
-          "headline": "Meta spending millions on ads convincing people data centers are good neighbors"
-        },
-        {
-          "category": "Policy",
-          "headline": "Google exploring letting UK publishers opt out of AI in Search"
-        },
-        {
-          "category": "Research",
-          "headline": "Nvidia debuted new AI weather models — outperforming traditional forecasting"
-        },
-        {
-          "category": "Legislation",
-          "headline": "TRAIN Act would let creators see if their work trained AI models"
-        },
-        {
-          "category": "Safety",
-          "headline": "AI toys study: 'emotional attachment by design,' inappropriate answers 25% of the time"
-        }
+        {"headline": "Anthropic releases Claude 3.5 with improved coding capabilities"},
+        {"headline": "OpenAI reportedly in talks for $100B valuation round"},
+        {"headline": "Google DeepMind publishes new paper on AI safety benchmarks"}
       ],
       "audio": "/audio/brief-2026-01-28-ai.mp3"
-    },
-    "family": {
-      "title": "❤️ Family Focus",
-      "suggestion": "Get down on the floor with Jones for 15 minutes tonight — let him lead the play",
-      "conversationStarter": "Ask Jillian: What book are you reading right now? What do you love about it?",
-      "weeklyGoal": "Plan a date night this weekend — even just after the boys go to sleep",
-      "upcomingDates": [
-        {
-          "date": "May 20",
-          "event": "Jones's Birthday (turns 3!)"
-        },
-        {
-          "date": "Jul 10",
-          "event": "Jett's Birthday (turns 1!)"
-        },
-        {
-          "date": "Oct 3",
-          "event": "Jillian's Birthday"
-        }
-      ],
-      "reflection": "Jones is 2, Jett is 6 months — these years fly by. Be present today."
     }
   }
 }

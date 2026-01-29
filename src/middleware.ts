@@ -12,7 +12,7 @@ const AUTH_COOKIE = 'clawdbot-auth';
 const publicPaths = ['/login', '/api/auth/login', '/api/auth/logout'];
 
 // Static assets that should always be accessible
-const staticPaths = ['/_next', '/favicon.ico', '/data/'];
+const staticPaths = ['/_next', '/favicon.ico', '/data/', '/audio/'];
 
 async function verifyToken(token: string): Promise<boolean> {
   try {

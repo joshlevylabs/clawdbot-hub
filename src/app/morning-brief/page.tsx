@@ -483,7 +483,6 @@ export default function MorningBriefPage() {
   const touchStartX = useRef(0);
   const touchEndX = useRef(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [audioReady, setAudioReady] = useState(false);
 
   const fetchBrief = async () => {
     setLoading(true);
@@ -537,76 +536,66 @@ export default function MorningBriefPage() {
     }
   }
 
-  // Initialize persistent audio element for mobile Safari compatibility
+  // Track current slide for audio (avoid re-renders from slides array)
+  const currentSlideRef = useRef(currentSlide);
+  currentSlideRef.current = currentSlide;
+
+  // Initialize audio element once
   useEffect(() => {
-    if (!isMobile) return;
+    if (typeof window === 'undefined') return;
     
-    // Create a single persistent audio element (mobile Safari requirement)
-    if (!audioRef.current) {
-      const audio = document.createElement('audio');
-      audio.setAttribute('playsinline', 'true');
-      audio.setAttribute('webkit-playsinline', 'true');
-      audio.preload = 'auto';
-      audioRef.current = audio;
-      
-      audio.addEventListener('ended', () => setIsPlaying(false));
-      audio.addEventListener('pause', () => setIsPlaying(false));
-      audio.addEventListener('play', () => setIsPlaying(true));
-      audio.addEventListener('canplaythrough', () => setAudioReady(true));
-      audio.addEventListener('loadstart', () => setAudioReady(false));
-      audio.addEventListener('error', () => {
-        setIsPlaying(false);
-        setAudioReady(false);
-      });
-    }
+    const audio = new Audio();
+    audio.preload = 'auto';
+    audioRef.current = audio;
+    
+    const handleEnded = () => setIsPlaying(false);
+    const handleError = (e: Event) => {
+      console.error('Audio error:', e);
+      setIsPlaying(false);
+    };
+    
+    audio.addEventListener('ended', handleEnded);
+    audio.addEventListener('error', handleError);
     
     return () => {
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current.src = '';
-      }
+      audio.removeEventListener('ended', handleEnded);
+      audio.removeEventListener('error', handleError);
+      audio.pause();
+      audio.src = '';
     };
-  }, [isMobile]);
+  }, []);
 
-  // Update audio source when slide changes (but don't auto-play)
+  // Stop audio when slide changes
   useEffect(() => {
-    if (!isMobile || !audioRef.current) return;
-    
-    const currentAudio = slides[currentSlide]?.audio;
-    
-    // Stop current playback
-    audioRef.current.pause();
-    setIsPlaying(false);
-    setAudioReady(false);
-    
-    // Load new audio source if available
-    if (currentAudio && audioEnabled) {
-      audioRef.current.src = currentAudio;
-      audioRef.current.load();
+    if (audioRef.current && isPlaying) {
+      audioRef.current.pause();
+      setIsPlaying(false);
     }
-  }, [currentSlide, isMobile, audioEnabled, slides]);
+  }, [currentSlide]);
 
   const toggleAudio = () => {
-    if (!audioRef.current) return;
+    const currentAudio = slides[currentSlideRef.current]?.audio;
+    if (!currentAudio) return;
     
-    const currentAudio = slides[currentSlide]?.audio;
-    
-    if (isPlaying) {
+    if (isPlaying && audioRef.current) {
       audioRef.current.pause();
-    } else if (currentAudio) {
-      // Ensure source is set (in case it wasn't loaded)
-      if (audioRef.current.src !== currentAudio && !audioRef.current.src.endsWith(currentAudio)) {
-        audioRef.current.src = currentAudio;
-        audioRef.current.load();
+      setIsPlaying(false);
+    } else {
+      // Create fresh audio element for each play (most reliable on mobile)
+      if (audioRef.current) {
+        audioRef.current.pause();
       }
-      // Play with user gesture (this is the key for mobile Safari)
-      const playPromise = audioRef.current.play();
-      if (playPromise !== undefined) {
-        playPromise.catch((error) => {
-          console.warn('Audio play failed:', error);
-          setIsPlaying(false);
-        });
-      }
+      const audio = new Audio(currentAudio);
+      audioRef.current = audio;
+      
+      audio.onended = () => setIsPlaying(false);
+      audio.onerror = () => setIsPlaying(false);
+      
+      setIsPlaying(true);
+      audio.play().catch((err) => {
+        console.error('Play failed:', err);
+        setIsPlaying(false);
+      });
     }
   };
 
@@ -720,19 +709,13 @@ export default function MorningBriefPage() {
                 className={`p-2 rounded-lg transition-colors ${
                   isPlaying 
                     ? 'bg-accent-600 text-white' 
-                    : audioReady 
-                      ? 'bg-slate-700 text-accent-400 hover:bg-slate-600' 
-                      : 'bg-slate-800 text-slate-500'
+                    : 'bg-slate-700 text-accent-400'
                 }`}
               >
                 {isPlaying ? (
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                     <rect x="6" y="4" width="4" height="16" rx="1" />
                     <rect x="14" y="4" width="4" height="16" rx="1" />
-                  </svg>
-                ) : !audioReady && audioEnabled ? (
-                  <svg className="w-5 h-5 animate-pulse" fill="currentColor" viewBox="0 0 24 24">
-                    <circle cx="12" cy="12" r="3" />
                   </svg>
                 ) : (
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">

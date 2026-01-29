@@ -244,9 +244,11 @@ function ChartCanvas({
   
   // Pan & Zoom state
   const [viewRange, setViewRange] = useState<ViewRange>({ start: 0, end: candles.length });
+  const [yScale, setYScale] = useState(1); // 1 = auto-fit, <1 = zoom in (less range), >1 = zoom out (more range)
   const [isPanning, setIsPanning] = useState(false);
+  const [isOverYAxis, setIsOverYAxis] = useState(false);
   const panStartRef = useRef<{ x: number; viewStart: number; viewEnd: number } | null>(null);
-  const touchStartRef = useRef<{ touches: { x: number; y: number }[]; viewStart: number; viewEnd: number } | null>(null);
+  const touchStartRef = useRef<{ touches: { x: number; y: number }[]; viewStart: number; viewEnd: number; yScale: number } | null>(null);
   
   const fibPoints = customFibPoints || localFibPoints;
   const setFibPoints = onCustomFib || setLocalFibPoints;
@@ -254,13 +256,16 @@ function ChartCanvas({
   // Reset view when candles change
   useEffect(() => {
     setViewRange({ start: 0, end: candles.length });
+    setYScale(1);
   }, [candles.length]);
   
   // Get visible candles based on view range
   const visibleStart = Math.max(0, Math.floor(viewRange.start));
   const visibleEnd = Math.min(candles.length, Math.ceil(viewRange.end));
   const visibleCandles = candles.slice(visibleStart, visibleEnd);
-  const isZoomed = viewRange.start > 0 || viewRange.end < candles.length;
+  const isXZoomed = viewRange.start > 0 || viewRange.end < candles.length;
+  const isYZoomed = yScale !== 1;
+  const isZoomed = isXZoomed || isYZoomed;
 
   // Chart dimensions and scaling (memoized for click handling)
   const chartDims = useRef<{
@@ -313,9 +318,16 @@ function ChartCanvas({
       prices = prices.concat(fibonacci.extensions.map(e => e.price));
     }
     
-    const minPrice = Math.min(...prices);
-    const maxPrice = Math.max(...prices);
-    const priceRange = maxPrice - minPrice;
+    const rawMinPrice = Math.min(...prices);
+    const rawMaxPrice = Math.max(...prices);
+    const rawPriceRange = rawMaxPrice - rawMinPrice;
+    const priceCenter = (rawMaxPrice + rawMinPrice) / 2;
+    
+    // Apply Y scale factor (1 = auto-fit, <1 = zoom in, >1 = zoom out)
+    const scaledPriceRange = rawPriceRange * yScale;
+    const minPrice = priceCenter - scaledPriceRange / 2;
+    const maxPrice = priceCenter + scaledPriceRange / 2;
+    const priceRange = scaledPriceRange;
     const pricePadding = priceRange * 0.03;
     const candleWidth = Math.max(1, (chartWidth / visibleCandles.length) - 0.5);
 
@@ -327,6 +339,12 @@ function ChartCanvas({
     };
     const scaleX = (i: number) => padding.left + (i / visibleCandles.length) * chartWidth;
 
+    // Y-axis highlight when hovered (interactive zoom area)
+    if (isOverYAxis) {
+      ctx.fillStyle = 'rgba(59, 130, 246, 0.1)'; // Subtle blue highlight
+      ctx.fillRect(width - padding.right, padding.top, padding.right, drawHeight);
+    }
+    
     // Y-axis grid and labels
     ctx.strokeStyle = '#1e293b';
     ctx.lineWidth = 0.5;
@@ -338,7 +356,7 @@ function ChartCanvas({
       ctx.stroke();
       
       const price = maxPrice + pricePadding - ((priceRange + pricePadding * 2) / 4) * i;
-      ctx.fillStyle = '#475569';
+      ctx.fillStyle = isOverYAxis ? '#60a5fa' : '#475569'; // Highlight labels when hovered
       ctx.font = '9px sans-serif';
       ctx.textAlign = 'left';
       ctx.fillText(`${price.toFixed(price > 100 ? 0 : 2)}`, width - padding.right + 3, y + 3);
@@ -508,7 +526,7 @@ function ChartCanvas({
       if (cIdx !== null && fibonacci.pullback) drawMarker(cIdx, 'C', '#f59e0b', fibonacci.pullback);
     }
 
-  }, [candles, visibleCandles, visibleStart, visibleEnd, viewRange, fibonacci, movingAverages, settings, fibPoints]);
+  }, [candles, visibleCandles, visibleStart, visibleEnd, viewRange, yScale, isOverYAxis, fibonacci, movingAverages, settings, fibPoints]);
 
   const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
     if (isPanning) return; // Don't handle click if we were panning
@@ -550,6 +568,7 @@ function ChartCanvas({
   const handleMouseLeave = () => {
     if (selectMode === 'none') setTooltip(null);
     setIsPanning(false);
+    setIsOverYAxis(false);
     panStartRef.current = null;
   };
   
@@ -558,15 +577,28 @@ function ChartCanvas({
     e.preventDefault();
     if (candles.length === 0) return;
     
+    const rect = canvasRef.current?.getBoundingClientRect();
+    if (!rect || !chartDims.current) return;
+    
+    const mouseX = e.clientX - rect.left;
+    const { padding, chartWidth, width } = chartDims.current;
+    
+    // Check if mouse is on Y-axis area (right side)
+    const isOnYAxis = mouseX > width - padding.right;
+    
+    if (isOnYAxis) {
+      // Y-axis zoom: scroll up = zoom in (smaller scale), scroll down = zoom out (larger scale)
+      const zoomFactor = e.deltaY > 0 ? 1.15 : 0.87;
+      const newYScale = Math.max(0.2, Math.min(5, yScale * zoomFactor)); // Limit range 0.2x to 5x
+      setYScale(newYScale);
+      return;
+    }
+    
+    // X-axis zoom (chart area)
     const zoomFactor = e.deltaY > 0 ? 1.1 : 0.9; // Zoom out : Zoom in
     const currentRange = viewRange.end - viewRange.start;
     const newRange = Math.max(10, Math.min(candles.length, currentRange * zoomFactor)); // Min 10 candles visible
     
-    // Get mouse position as ratio across chart
-    const rect = canvasRef.current?.getBoundingClientRect();
-    if (!rect || !chartDims.current) return;
-    const mouseX = e.clientX - rect.left;
-    const { padding, chartWidth } = chartDims.current;
     const ratio = Math.max(0, Math.min(1, (mouseX - padding.left) / chartWidth));
     
     // Calculate new start/end centered on mouse position
@@ -599,6 +631,16 @@ function ChartCanvas({
   };
   
   const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    // Check if over Y-axis for visual feedback
+    if (chartDims.current) {
+      const rect = canvasRef.current?.getBoundingClientRect();
+      if (rect) {
+        const mouseX = e.clientX - rect.left;
+        const { width, padding } = chartDims.current;
+        setIsOverYAxis(mouseX > width - padding.right);
+      }
+    }
+    
     if (!panStartRef.current || !chartDims.current) return;
     
     const dx = e.clientX - panStartRef.current.x;
@@ -638,6 +680,7 @@ function ChartCanvas({
       touches,
       viewStart: viewRange.start,
       viewEnd: viewRange.end,
+      yScale,
     };
   };
   
@@ -669,28 +712,41 @@ function ChartCanvas({
       
       setViewRange({ start: Math.max(0, newStart), end: Math.min(candles.length, newEnd) });
     } else if (currentTouches.length === 2 && startTouches.length === 2) {
-      // Pinch zoom
-      const startDist = Math.abs(startTouches[1].x - startTouches[0].x);
-      const currentDist = Math.abs(currentTouches[1].x - currentTouches[0].x);
-      const scale = startDist / Math.max(1, currentDist);
+      // Pinch zoom - horizontal for X, vertical for Y
+      const startDistX = Math.abs(startTouches[1].x - startTouches[0].x);
+      const currentDistX = Math.abs(currentTouches[1].x - currentTouches[0].x);
+      const startDistY = Math.abs(startTouches[1].y - startTouches[0].y);
+      const currentDistY = Math.abs(currentTouches[1].y - currentTouches[0].y);
       
-      const newRange = Math.max(10, Math.min(candles.length, candlesInView * scale));
-      const centerRatio = 0.5;
-      const currentCenter = viewStart + candlesInView * centerRatio;
-      
-      let newStart = currentCenter - newRange * centerRatio;
-      let newEnd = currentCenter + newRange * (1 - centerRatio);
-      
-      if (newStart < 0) {
-        newStart = 0;
-        newEnd = Math.min(candles.length, newRange);
+      // Horizontal pinch - X axis zoom
+      if (startDistX > 20) {
+        const scaleX = startDistX / Math.max(1, currentDistX);
+        const newRange = Math.max(10, Math.min(candles.length, candlesInView * scaleX));
+        const centerRatio = 0.5;
+        const currentCenter = viewStart + candlesInView * centerRatio;
+        
+        let newStart = currentCenter - newRange * centerRatio;
+        let newEnd = currentCenter + newRange * (1 - centerRatio);
+        
+        if (newStart < 0) {
+          newStart = 0;
+          newEnd = Math.min(candles.length, newRange);
+        }
+        if (newEnd > candles.length) {
+          newEnd = candles.length;
+          newStart = Math.max(0, candles.length - newRange);
+        }
+        
+        setViewRange({ start: newStart, end: newEnd });
       }
-      if (newEnd > candles.length) {
-        newEnd = candles.length;
-        newStart = Math.max(0, candles.length - newRange);
-      }
       
-      setViewRange({ start: newStart, end: newEnd });
+      // Vertical pinch - Y axis zoom
+      if (startDistY > 20) {
+        const scaleY = startDistY / Math.max(1, currentDistY);
+        const startYScale = touchStartRef.current?.yScale ?? 1;
+        const newYScale = Math.max(0.2, Math.min(5, startYScale * scaleY));
+        setYScale(newYScale);
+      }
     }
     
     setTooltip(null);
@@ -702,6 +758,7 @@ function ChartCanvas({
   
   const resetView = () => {
     setViewRange({ start: 0, end: candles.length });
+    setYScale(1);
   };
 
   const startFibSelection = () => {
@@ -729,8 +786,13 @@ function ChartCanvas({
     <div className="relative">
       <canvas 
         ref={canvasRef} 
-        className="w-full rounded-lg cursor-crosshair"
-        style={{ height, background: '#0f172a', touchAction: 'none' }}
+        className="w-full rounded-lg"
+        style={{ 
+          height, 
+          background: '#0f172a', 
+          touchAction: 'none',
+          cursor: isOverYAxis ? 'ns-resize' : 'crosshair'
+        }}
         onClick={handleCanvasClick}
         onMouseLeave={handleMouseLeave}
         onWheel={handleWheel}

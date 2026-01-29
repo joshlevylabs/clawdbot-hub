@@ -16,7 +16,39 @@ import {
   TrendingUp,
   TrendingDown,
   ExternalLink,
+  Droplets,
+  Wind,
+  Thermometer,
 } from "lucide-react";
+
+// Live Weather types
+interface LiveWeatherData {
+  current: {
+    temp: number;
+    feelsLike: number;
+    humidity: number;
+    wind: number;
+    description: string;
+    icon: string;
+    location: string;
+    updatedAt: string;
+  };
+  hourly: Array<{
+    time: string;
+    temp: number;
+    humidity: number;
+    description: string;
+    icon: string;
+  }>;
+  daily: Array<{
+    date: string;
+    high: number;
+    low: number;
+    precipChance: number;
+    description: string;
+    icon: string;
+  }>;
+}
 
 // Flexible interfaces to handle multiple data formats
 interface WeatherSection {
@@ -113,6 +145,147 @@ interface BriefData {
 // Helper to normalize items
 function normalizeNewsItem(item: NewsItem | string): NewsItem {
   return typeof item === "string" ? { headline: item } : item;
+}
+
+// Live Weather Card with tabs
+function LiveWeatherCard() {
+  const [weather, setWeather] = useState<LiveWeatherData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [view, setView] = useState<'now' | 'today' | 'week'>('now');
+
+  useEffect(() => {
+    const fetchWeather = async () => {
+      try {
+        const response = await fetch('/api/weather');
+        if (response.ok) {
+          const data = await response.json();
+          setWeather(data);
+        }
+      } catch (err) {
+        console.error('Weather fetch error:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchWeather();
+    // Refresh every 15 minutes
+    const interval = setInterval(fetchWeather, 15 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="bg-gradient-to-br from-slate-850 to-blue-950/20 rounded-xl border border-slate-800 p-5">
+        <div className="animate-pulse">
+          <div className="h-5 bg-slate-800 rounded w-1/3 mb-4" />
+          <div className="h-16 bg-slate-800 rounded mb-4" />
+          <div className="h-4 bg-slate-800 rounded w-2/3" />
+        </div>
+      </div>
+    );
+  }
+
+  if (!weather) {
+    return (
+      <div className="bg-gradient-to-br from-slate-850 to-blue-950/20 rounded-xl border border-slate-800 p-5">
+        <div className="text-center py-6 text-slate-500">
+          <Cloud className="w-8 h-8 mx-auto mb-2 opacity-50" />
+          <p>Weather unavailable</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-gradient-to-br from-slate-850 to-blue-950/20 rounded-xl border border-slate-800 p-5">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-blue-600/20 rounded-lg flex items-center justify-center">
+            <Cloud className="w-5 h-5 text-blue-400" strokeWidth={1.5} />
+          </div>
+          <h2 className="font-semibold text-slate-200">Weather</h2>
+        </div>
+      </div>
+      
+      {/* View tabs */}
+      <div className="flex gap-2 mb-4">
+        {(['now', 'today', 'week'] as const).map((v) => (
+          <button
+            key={v}
+            onClick={() => setView(v)}
+            className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors ${
+              view === v 
+                ? 'bg-blue-600 text-white' 
+                : 'bg-slate-800/50 text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            {v === 'now' ? 'Now' : v === 'today' ? 'Today' : 'Week'}
+          </button>
+        ))}
+      </div>
+      
+      {/* Current View */}
+      {view === 'now' && (
+        <div className="text-center py-2">
+          <div className="text-4xl mb-2">{weather.current.icon}</div>
+          <p className="text-4xl font-bold text-blue-400">{weather.current.temp}°F</p>
+          <p className="text-slate-300 mt-1">{weather.current.description}</p>
+          <div className="flex items-center justify-center gap-4 mt-3 text-sm text-slate-500">
+            <span className="flex items-center gap-1">
+              <Thermometer className="w-3 h-3" /> Feels {weather.current.feelsLike}°
+            </span>
+            <span className="flex items-center gap-1">
+              <Droplets className="w-3 h-3" /> {weather.current.humidity}%
+            </span>
+            <span className="flex items-center gap-1">
+              <Wind className="w-3 h-3" /> {weather.current.wind}mph
+            </span>
+          </div>
+        </div>
+      )}
+      
+      {/* Hourly View */}
+      {view === 'today' && (
+        <div className="space-y-1 max-h-52 overflow-auto">
+          {weather.hourly.slice(0, 12).map((hour, i) => (
+            <div key={i} className="flex items-center justify-between p-2 bg-slate-800/30 rounded-lg">
+              <span className="text-slate-400 text-sm w-14">{hour.time}</span>
+              <span className="text-lg">{hour.icon}</span>
+              <span className="text-slate-200 font-medium w-12 text-right">{hour.temp}°</span>
+              <span className="text-blue-400 text-sm w-10 text-right flex items-center justify-end gap-0.5">
+                <Droplets className="w-3 h-3" />{hour.humidity}%
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+      
+      {/* Weekly View */}
+      {view === 'week' && (
+        <div className="space-y-1 max-h-52 overflow-auto">
+          {weather.daily.map((day, i) => (
+            <div key={i} className="flex items-center justify-between p-2 bg-slate-800/30 rounded-lg">
+              <span className="text-slate-400 text-sm flex-1">{day.date}</span>
+              <span className="text-lg">{day.icon}</span>
+              <div className="flex items-center gap-2 w-24 justify-end">
+                <span className="text-slate-200 font-medium">{day.high}°</span>
+                <span className="text-slate-500">{day.low}°</span>
+              </div>
+              {day.precipChance > 0 && (
+                <span className="text-blue-400 text-xs w-10 text-right">{day.precipChance}%</span>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+      
+      {/* Last updated */}
+      <p className="text-xs text-slate-600 text-center mt-3">
+        Updated {new Date(weather.current.updatedAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
+      </p>
+    </div>
+  );
 }
 
 // Calendar Card with tabs
@@ -279,37 +452,8 @@ export default function DashboardPage() {
       {!loading && !error && briefData && (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           
-          {/* Weather Card */}
-          {briefData.sections.weather && (
-            <div className="bg-gradient-to-br from-slate-850 to-blue-950/20 rounded-xl border border-slate-800 p-5">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 bg-blue-600/20 rounded-lg flex items-center justify-center">
-                  <Cloud className="w-5 h-5 text-blue-400" strokeWidth={1.5} />
-                </div>
-                <h2 className="font-semibold text-slate-200">Weather</h2>
-              </div>
-              
-              {briefData.sections.weather.temperature ? (
-                <div className="text-center py-4">
-                  <p className="text-4xl font-bold text-blue-400">{briefData.sections.weather.temperature}</p>
-                  {briefData.sections.weather.condition && (
-                    <p className="text-slate-300 mt-2">{briefData.sections.weather.condition}</p>
-                  )}
-                  {briefData.sections.weather.wind && (
-                    <p className="text-slate-500 text-sm mt-1">{briefData.sections.weather.wind}</p>
-                  )}
-                </div>
-              ) : briefData.sections.weather.items ? (
-                <ul className="space-y-2">
-                  {briefData.sections.weather.items.map((item, i) => (
-                    <li key={i} className="text-slate-300 text-sm">{item}</li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="text-slate-500 text-sm">No weather data</p>
-              )}
-            </div>
-          )}
+          {/* Live Weather Card */}
+          <LiveWeatherCard />
 
           {/* Calendar Card */}
           {briefData.sections.calendar && (

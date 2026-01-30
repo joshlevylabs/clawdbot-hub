@@ -122,6 +122,13 @@ export default function MarriagePage() {
   const [showLogModal, setShowLogModal] = useState(false);
   const [logInput, setLogInput] = useState("");
   const [logSubmitting, setLogSubmitting] = useState(false);
+  const [logResult, setLogResult] = useState<{
+    type: 'positive' | 'negative';
+    description: string;
+    power: number;
+    safety: number;
+    advice: string;
+  } | null>(null);
 
   // Check if today's check-in is done
   const todayDate = new Date().toISOString().split('T')[0];
@@ -236,10 +243,17 @@ export default function MarriagePage() {
       if (response.ok) {
         const result = await response.json();
         if (result.success) {
+          // Show the result
+          setLogResult({
+            type: result.interaction?.type || 'positive',
+            description: result.interaction?.description || logInput,
+            power: result.interaction?.power || 0,
+            safety: result.interaction?.safety || 0,
+            advice: result.advice || ''
+          });
           // Refresh interactions
           fetchInteractions();
           setLogInput("");
-          setShowLogModal(false);
         } else {
           alert('Failed to save log: ' + (result.error || 'Unknown error'));
         }
@@ -252,6 +266,12 @@ export default function MarriagePage() {
     } finally {
       setLogSubmitting(false);
     }
+  };
+
+  const closeLogModal = () => {
+    setShowLogModal(false);
+    setLogInput("");
+    setLogResult(null);
   };
 
   // Group interactions by day
@@ -613,49 +633,124 @@ export default function MarriagePage() {
       {showLogModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-slate-850 border border-slate-700 rounded-xl max-w-lg w-full p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-slate-200">Log an Interaction</h2>
-              <button
-                onClick={() => setShowLogModal(false)}
-                className="text-slate-400 hover:text-slate-200 transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-            <p className="text-slate-400 text-sm mb-4">
-              Describe what happened. AI will analyze it and extract the type, scores, and give you advice.
-            </p>
-            <textarea
-              value={logInput}
-              onChange={(e) => setLogInput(e.target.value)}
-              placeholder="e.g., Got defensive when Jillian mentioned the coffee stain on the table..."
-              className="w-full h-32 bg-slate-900 border border-slate-700 rounded-lg p-3 text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 resize-none"
-            />
-            <div className="flex justify-end gap-3 mt-4">
-              <button
-                onClick={() => setShowLogModal(false)}
-                className="px-4 py-2 text-slate-400 hover:text-slate-200 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={submitLog}
-                disabled={logSubmitting || !logInput.trim()}
-                className="px-4 py-2 bg-green-600 hover:bg-green-500 disabled:bg-slate-700 disabled:text-slate-500 text-white rounded-lg font-medium transition-colors flex items-center gap-2"
-              >
-                {logSubmitting ? (
-                  <>
-                    <RefreshCw className="w-4 h-4 animate-spin" />
-                    Processing...
-                  </>
-                ) : (
-                  <>
-                    <Plus className="w-4 h-4" />
-                    Save Log
-                  </>
-                )}
-              </button>
-            </div>
+            {!logResult ? (
+              <>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-semibold text-slate-200">Log an Interaction</h2>
+                  <button
+                    onClick={closeLogModal}
+                    className="text-slate-400 hover:text-slate-200 transition-colors"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+                <p className="text-slate-400 text-sm mb-4">
+                  Describe what happened. AI will analyze it and extract the type, scores, and give you advice.
+                </p>
+                <textarea
+                  value={logInput}
+                  onChange={(e) => setLogInput(e.target.value)}
+                  placeholder="e.g., Got defensive when Jillian mentioned the coffee stain on the table..."
+                  className="w-full h-32 bg-slate-900 border border-slate-700 rounded-lg p-3 text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 resize-none"
+                />
+                <div className="flex justify-end gap-3 mt-4">
+                  <button
+                    onClick={closeLogModal}
+                    className="px-4 py-2 text-slate-400 hover:text-slate-200 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={submitLog}
+                    disabled={logSubmitting || !logInput.trim()}
+                    className="px-4 py-2 bg-green-600 hover:bg-green-500 disabled:bg-slate-700 disabled:text-slate-500 text-white rounded-lg font-medium transition-colors flex items-center gap-2"
+                  >
+                    {logSubmitting ? (
+                      <>
+                        <RefreshCw className="w-4 h-4 animate-spin" />
+                        Analyzing...
+                      </>
+                    ) : (
+                      <>
+                        <Plus className="w-4 h-4" />
+                        Analyze & Save
+                      </>
+                    )}
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-semibold text-slate-200">Log Saved ✓</h2>
+                  <button
+                    onClick={closeLogModal}
+                    className="text-slate-400 hover:text-slate-200 transition-colors"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+
+                {/* Type Badge */}
+                <div className="flex items-center gap-2 mb-4">
+                  <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                    logResult.type === 'positive' 
+                      ? 'bg-green-500/20 text-green-400' 
+                      : 'bg-red-500/20 text-red-400'
+                  }`}>
+                    {logResult.type === 'positive' ? '✓ Positive' : '✗ Negative'}
+                  </span>
+                </div>
+
+                {/* Summary */}
+                <div className="bg-slate-900/50 rounded-lg p-4 mb-4">
+                  <p className="text-slate-300 text-sm">{logResult.description}</p>
+                </div>
+
+                {/* Scores */}
+                <div className="grid grid-cols-2 gap-4 mb-4">
+                  <div className="bg-slate-900/50 rounded-lg p-3 text-center">
+                    <p className="text-slate-500 text-xs mb-1">Power</p>
+                    <p className={`text-2xl font-bold ${logResult.power >= 0 ? 'text-blue-400' : 'text-yellow-400'}`}>
+                      {logResult.power > 0 ? '+' : ''}{logResult.power}
+                    </p>
+                  </div>
+                  <div className="bg-slate-900/50 rounded-lg p-3 text-center">
+                    <p className="text-slate-500 text-xs mb-1">Safety</p>
+                    <p className={`text-2xl font-bold ${logResult.safety >= 0 ? 'text-purple-400' : 'text-red-400'}`}>
+                      {logResult.safety > 0 ? '+' : ''}{logResult.safety}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Advice */}
+                <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-4 mb-4">
+                  <div className="flex items-start gap-3">
+                    <Lightbulb className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-amber-200 text-sm font-medium mb-1">Advice</p>
+                      <p className="text-amber-100/80 text-sm">{logResult.advice}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Actions */}
+                <div className="flex justify-end gap-3">
+                  <button
+                    onClick={() => setLogResult(null)}
+                    className="px-4 py-2 text-slate-400 hover:text-slate-200 transition-colors"
+                  >
+                    Log Another
+                  </button>
+                  <button
+                    onClick={closeLogModal}
+                    className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg font-medium transition-colors"
+                  >
+                    Done
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}

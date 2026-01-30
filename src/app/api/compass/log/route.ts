@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { promises as fs } from 'fs';
-import path from 'path';
+import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 
 interface LogRequest {
   text: string;
@@ -134,73 +133,43 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid data: text is required' }, { status: 400 });
     }
 
+    // Check if Supabase is configured
+    if (!isSupabaseConfigured()) {
+      return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
+    }
+
     // Process with AI
     const processed = await processLogWithAI(body.text);
 
-    // Generate ID and timestamps
+    // Generate timestamps
     const now = new Date();
-    const id = `${processed.type.slice(0, 3)}-${Date.now()}`;
     const timestamp = now.toISOString();
     const date = timestamp.split('T')[0];
-    const time = now.toLocaleTimeString('en-US', { 
-      hour: '2-digit', 
-      minute: '2-digit',
-      hour12: false,
-      timeZone: 'America/Los_Angeles'
-    });
 
-    const interaction = {
-      id,
-      timestamp,
-      date,
-      time,
-      type: processed.type,
-      description: processed.description,
-      compass: {
+    // Insert into Supabase
+    const { data, error } = await supabase
+      .from('compass_interactions')
+      .insert({
+        type: processed.type,
+        description: processed.description,
         power: processed.power,
-        safety: processed.safety
-      },
-      tags: processed.tags,
-      advice: processed.advice
-    };
+        safety: processed.safety,
+        tags: processed.tags,
+        advice: processed.advice,
+        timestamp: timestamp,
+        date: date
+      })
+      .select()
+      .single();
 
-    // Define interaction type
-    interface StoredInteraction {
-      id: string;
-      timestamp: string;
-      date: string;
-      time: string;
-      type: 'positive' | 'negative';
-      description: string;
-      compass: { power: number; safety: number };
-      tags: string[];
-      advice: string;
+    if (error) {
+      console.error('Supabase error:', error);
+      return NextResponse.json({ error: 'Failed to save log', details: error.message }, { status: 500 });
     }
-
-    // Read existing interactions
-    const filePath = path.join(process.cwd(), 'public', 'data', 'interactions.json');
-    let data: { version: string; interactions: StoredInteraction[]; compassHistory: unknown[] } = { 
-      version: '2.0', 
-      interactions: [], 
-      compassHistory: [] 
-    };
-    
-    try {
-      const fileContent = await fs.readFile(filePath, 'utf-8');
-      data = JSON.parse(fileContent);
-    } catch {
-      // File doesn't exist, use default
-    }
-
-    // Add new interaction
-    data.interactions.push(interaction);
-
-    // Save back
-    await fs.writeFile(filePath, JSON.stringify(data, null, 2));
 
     return NextResponse.json({ 
       success: true, 
-      interaction,
+      interaction: data,
       advice: processed.advice
     });
   } catch (error) {

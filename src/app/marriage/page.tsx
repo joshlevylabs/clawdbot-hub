@@ -164,17 +164,39 @@ export default function MarriagePage() {
 
   const fetchInteractions = async () => {
     try {
-      const response = await fetch("/data/interactions.json");
-      if (response.ok) {
-        const data = await response.json();
-        if (data.interactions) {
-          // Sort by timestamp descending (newest first)
-          const sorted = [...data.interactions].sort((a, b) => 
-            new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-          );
-          setInteractions(sorted);
+      // Fetch from both API (Supabase) and static file, merge them
+      const [apiResponse, staticResponse] = await Promise.all([
+        fetch("/api/compass/interactions").catch(() => null),
+        fetch("/data/interactions.json").catch(() => null)
+      ]);
+
+      let allInteractions: Interaction[] = [];
+
+      // Get API interactions (Supabase)
+      if (apiResponse?.ok) {
+        const apiData = await apiResponse.json();
+        if (apiData.interactions) {
+          allInteractions = [...apiData.interactions];
         }
       }
+
+      // Get static file interactions and merge (avoiding duplicates by id)
+      if (staticResponse?.ok) {
+        const staticData = await staticResponse.json();
+        if (staticData.interactions) {
+          const existingIds = new Set(allInteractions.map(i => i.id));
+          const newFromStatic = staticData.interactions.filter(
+            (i: Interaction) => !existingIds.has(i.id)
+          );
+          allInteractions = [...allInteractions, ...newFromStatic];
+        }
+      }
+
+      // Sort by timestamp descending (newest first)
+      const sorted = allInteractions.sort((a, b) => 
+        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+      );
+      setInteractions(sorted);
     } catch (err) {
       console.error("Failed to load interactions:", err);
     }

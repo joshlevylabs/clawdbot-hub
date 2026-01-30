@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Heart, TrendingUp, TrendingDown, Target, RefreshCw, AlertTriangle, CheckCircle, ClipboardCheck, ChevronRight } from "lucide-react";
+import { Heart, TrendingUp, TrendingDown, Target, RefreshCw, AlertTriangle, CheckCircle, ClipboardCheck, ChevronRight, Calendar, List, BarChart3 } from "lucide-react";
 
 interface QuestionOption {
   label: string;
@@ -32,6 +32,17 @@ interface CompassState {
   totalCount: number;
   quadrants: Record<string, { name: string; subtitle: string; description: string; color: string }>;
   idealZone: { power: number[]; safety: number[] };
+}
+
+interface Interaction {
+  id: string;
+  timestamp: string;
+  date: string;
+  time: string;
+  type: "positive" | "negative";
+  description: string;
+  compass: { power: number; safety: number };
+  tags: string[];
 }
 
 const dailyQuestions: DailyQuestion[] = [
@@ -90,12 +101,14 @@ const dailyQuestions: DailyQuestion[] = [
 
 export default function MarriagePage() {
   const [compassState, setCompassState] = useState<CompassState | null>(null);
+  const [interactions, setInteractions] = useState<Interaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCheckin, setShowCheckin] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<Record<string, QuestionOption>>({});
   const [checkinComplete, setCheckinComplete] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [logView, setLogView] = useState<"all" | "week" | "month">("all");
 
   const fetchCompass = async () => {
     setLoading(true);
@@ -132,8 +145,52 @@ export default function MarriagePage() {
     }
   };
 
+  const fetchInteractions = async () => {
+    try {
+      const response = await fetch("/data/interactions.json");
+      if (response.ok) {
+        const data = await response.json();
+        if (data.interactions) {
+          // Sort by timestamp descending (newest first)
+          const sorted = [...data.interactions].sort((a, b) => 
+            new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+          );
+          setInteractions(sorted);
+        }
+      }
+    } catch (err) {
+      console.error("Failed to load interactions:", err);
+    }
+  };
+
+  const getFilteredInteractions = () => {
+    const now = new Date();
+    if (logView === "week") {
+      const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      return interactions.filter(i => new Date(i.timestamp) >= weekAgo);
+    } else if (logView === "month") {
+      const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+      return interactions.filter(i => new Date(i.timestamp) >= monthAgo);
+    }
+    return interactions;
+  };
+
+  const getStats = (filtered: Interaction[]) => {
+    const positive = filtered.filter(i => i.type === "positive").length;
+    const negative = filtered.filter(i => i.type === "negative").length;
+    const ratio = negative > 0 ? (positive / negative).toFixed(1) : positive > 0 ? "∞" : "0";
+    const avgPower = filtered.length > 0 
+      ? (filtered.reduce((sum, i) => sum + i.compass.power, 0) / filtered.length).toFixed(1)
+      : "0";
+    const avgSafety = filtered.length > 0 
+      ? (filtered.reduce((sum, i) => sum + i.compass.safety, 0) / filtered.length).toFixed(1)
+      : "0";
+    return { positive, negative, ratio, avgPower, avgSafety };
+  };
+
   useEffect(() => {
     fetchCompass();
+    fetchInteractions();
   }, []);
 
   const handleAnswer = (option: QuestionOption) => {
@@ -437,6 +494,137 @@ export default function MarriagePage() {
           <p className="text-slate-600 text-xs mt-3">
             Based on {compassState?.totalCount || 0} total interactions
           </p>
+        </div>
+      </div>
+
+      {/* Interaction Log */}
+      <div className="bg-slate-850 rounded-xl border border-slate-800 p-6">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 bg-indigo-600/20 rounded-lg flex items-center justify-center">
+              <List className="w-5 h-5 text-indigo-400" strokeWidth={1.5} />
+            </div>
+            <h2 className="font-semibold text-slate-200">Interaction Log</h2>
+          </div>
+          <div className="flex gap-1 bg-slate-800 rounded-lg p-1">
+            <button
+              onClick={() => setLogView("all")}
+              className={`px-3 py-1.5 text-sm rounded-md transition-colors ${
+                logView === "all" ? "bg-indigo-600 text-white" : "text-slate-400 hover:text-slate-200"
+              }`}
+            >
+              All
+            </button>
+            <button
+              onClick={() => setLogView("week")}
+              className={`px-3 py-1.5 text-sm rounded-md transition-colors ${
+                logView === "week" ? "bg-indigo-600 text-white" : "text-slate-400 hover:text-slate-200"
+              }`}
+            >
+              Week
+            </button>
+            <button
+              onClick={() => setLogView("month")}
+              className={`px-3 py-1.5 text-sm rounded-md transition-colors ${
+                logView === "month" ? "bg-indigo-600 text-white" : "text-slate-400 hover:text-slate-200"
+              }`}
+            >
+              Month
+            </button>
+          </div>
+        </div>
+
+        {/* Stats Summary */}
+        {(() => {
+          const filtered = getFilteredInteractions();
+          const stats = getStats(filtered);
+          return (
+            <div className="grid grid-cols-5 gap-3 mb-4 p-3 bg-slate-800/50 rounded-lg">
+              <div className="text-center">
+                <p className="text-green-400 text-lg font-semibold">{stats.positive}</p>
+                <p className="text-slate-500 text-xs">Positive</p>
+              </div>
+              <div className="text-center">
+                <p className="text-red-400 text-lg font-semibold">{stats.negative}</p>
+                <p className="text-slate-500 text-xs">Negative</p>
+              </div>
+              <div className="text-center">
+                <p className={`text-lg font-semibold ${parseFloat(stats.ratio) >= 5 ? "text-green-400" : parseFloat(stats.ratio) >= 3 ? "text-yellow-400" : "text-red-400"}`}>
+                  {stats.ratio}:1
+                </p>
+                <p className="text-slate-500 text-xs">Ratio</p>
+              </div>
+              <div className="text-center">
+                <p className="text-blue-400 text-lg font-semibold">{stats.avgPower}</p>
+                <p className="text-slate-500 text-xs">Avg Power</p>
+              </div>
+              <div className="text-center">
+                <p className="text-purple-400 text-lg font-semibold">{stats.avgSafety}</p>
+                <p className="text-slate-500 text-xs">Avg Safety</p>
+              </div>
+            </div>
+          );
+        })()}
+
+        {/* Interaction List */}
+        <div className="space-y-3 max-h-96 overflow-y-auto">
+          {getFilteredInteractions().length === 0 ? (
+            <p className="text-slate-500 text-sm text-center py-4">No interactions logged yet.</p>
+          ) : (
+            getFilteredInteractions().map((interaction) => (
+              <div
+                key={interaction.id}
+                className={`p-4 rounded-lg border ${
+                  interaction.type === "positive"
+                    ? "bg-green-500/5 border-green-500/20"
+                    : "bg-red-500/5 border-red-500/20"
+                }`}
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className={`text-xs font-medium px-2 py-0.5 rounded ${
+                        interaction.type === "positive" 
+                          ? "bg-green-500/20 text-green-400" 
+                          : "bg-red-500/20 text-red-400"
+                      }`}>
+                        {interaction.type === "positive" ? "+" : "−"}
+                      </span>
+                      <span className="text-slate-500 text-xs">
+                        {new Date(interaction.timestamp).toLocaleDateString("en-US", {
+                          weekday: "short",
+                          month: "short",
+                          day: "numeric"
+                        })} at {interaction.time}
+                      </span>
+                    </div>
+                    <p className="text-slate-300 text-sm">{interaction.description}</p>
+                    {interaction.tags && interaction.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mt-2">
+                        {interaction.tags.map((tag, i) => (
+                          <span key={i} className="text-xs px-1.5 py-0.5 bg-slate-700/50 text-slate-400 rounded">
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  <div className="text-right text-xs space-y-1">
+                    <div className="text-slate-500">
+                      P: <span className={interaction.compass.power >= 0 ? "text-blue-400" : "text-yellow-400"}>
+                        {interaction.compass.power > 0 ? "+" : ""}{interaction.compass.power}
+                      </span>
+                    </div>
+                    <div className="text-slate-500">
+                      S: <span className={interaction.compass.safety >= 0 ? "text-purple-400" : "text-red-400"}>
+                        {interaction.compass.safety > 0 ? "+" : ""}{interaction.compass.safety}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </div>
 

@@ -1,0 +1,92 @@
+{
+  "version": "2.0",
+  "interactions": [
+    {
+      "id": "neg-1769691715",
+      "timestamp": "2026-01-29T13:01:55Z",
+      "date": "2026-01-29",
+      "time": "04:00",
+      "type": "negative",
+      "description": "4 AM - Jett crying. Jillian got up twice to soothe him. I laid there for 5 min while baby cried. She said thanks for the help sarcastically.",
+      "compass": {
+        "power": -1,
+        "safety": -2
+      },
+      "tags": [
+        "night",
+        "baby",
+        "missed-opportunity",
+        "acts-of-service"
+      ]
+    },
+    {
+      "id": "pos-1769698963",
+      "timestamp": "2026-01-29T15:02:43Z",
+      "date": "2026-01-29",
+      "time": "06:15",
+      "type": "positive",
+      "description": "Came home from gym, found her reading. Apologized for not helping with Jett at 4am. Offered to take tomorrow morning shift. Took Jones to school. Made breakfast for family.",
+      "compass": {
+        "power": 2,
+        "safety": 3
+      },
+      "tags": [
+        "morning",
+        "repair",
+        "acts-of-service",
+        "apology",
+        "initiative"
+      ]
+    },
+    {
+      "id": "neg-1769704299",
+      "timestamp": "2026-01-29T16:31:39Z",
+      "date": "2026-01-29",
+      "time": "08:15",
+      "type": "negative",
+      "description": "Morning school rush. Light situation - set healthy boundary about always language (good). Coffee spill left ring on wood table - got defensive with logic instead of just owning it and cleaning up.",
+      "compass": {
+        "power": 1,
+        "safety": -1
+      },
+      "tags": [
+        "morning",
+        "defensive",
+        "logic-vs-emotion",
+        "mixed"
+      ]
+    },
+    {
+      "id": "pos-1769705154",
+      "timestamp": "2026-01-29T16:45:54Z",
+      "date": "2026-01-29",
+      "time": "08:45",
+      "type": "positive",
+      "description": "Took initiative to apologize for getting defensive about the coffee. She explained the table is a sore spot. Apologized for that too. Quick repair, no drama.",
+      "compass": {
+        "power": 2,
+        "safety": 2
+      },
+      "tags": [
+        "repair",
+        "initiative",
+        "apology",
+        "quick-recovery"
+      ]
+    },
+    {
+      "id": "C89D8253-54DB-4238-9AE3-BA1A187CFEFF",
+      "timestamp": "2026-01-30T00:13:42Z",
+      "date": "2026-01-29",
+      "time": "16:13",
+      "type": "positive",
+      "description": "Jillian made Joshua a sandwich for lunch. Later she shared a story about her job - Joshua was fully engaged, helped her out, made her laugh. She asked him to put Jett down for a nap and he enthusiastically agreed and did it. She looked very happy.",
+      "compass": {
+        "power": 1,
+        "safety": 3
+      },
+      "tags": []
+    }
+  ],
+  "compassHistory": []
+}

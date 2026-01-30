@@ -164,9 +164,26 @@ export async function POST(request: NextRequest) {
       advice: processed.advice
     };
 
+    // Define interaction type
+    interface StoredInteraction {
+      id: string;
+      timestamp: string;
+      date: string;
+      time: string;
+      type: 'positive' | 'negative';
+      description: string;
+      compass: { power: number; safety: number };
+      tags: string[];
+      advice: string;
+    }
+
     // Read existing interactions
     const filePath = path.join(process.cwd(), 'public', 'data', 'interactions.json');
-    let data = { version: '2.0', interactions: [], compassHistory: [] };
+    let data: { version: string; interactions: StoredInteraction[]; compassHistory: unknown[] } = { 
+      version: '2.0', 
+      interactions: [], 
+      compassHistory: [] 
+    };
     
     try {
       const fileContent = await fs.readFile(filePath, 'utf-8');

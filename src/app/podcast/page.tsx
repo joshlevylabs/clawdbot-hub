@@ -131,9 +131,15 @@ function Teleprompter({
   const [isListening, setIsListening] = useState(false);
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
+  const [audioLevel, setAudioLevel] = useState(0);
+  const [isUserScrolling, setIsUserScrolling] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const scrollIntervalRef = useRef<number | null>(null);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const analyserRef = useRef<AnalyserNode | null>(null);
+  const animationFrameRef = useRef<number | null>(null);
+  const userScrollTimeoutRef = useRef<number | null>(null);
   const wordsRef = useRef<string[]>([]);
 
   // Check if mobile
@@ -149,9 +155,9 @@ function Teleprompter({
     wordsRef.current = script.toLowerCase().replace(/[^\w\s]/g, '').split(/\s+/).filter(w => w.length > 0);
   }, [script]);
 
-  // Manual scroll mode
+  // Manual scroll mode - pause when user is scrolling
   useEffect(() => {
-    if (isScrolling && !voiceSync && containerRef.current) {
+    if (isScrolling && !voiceSync && !isUserScrolling && containerRef.current) {
       scrollIntervalRef.current = window.setInterval(() => {
         if (containerRef.current) {
           containerRef.current.scrollTop += 1;
@@ -163,7 +169,65 @@ function Teleprompter({
     return () => {
       if (scrollIntervalRef.current) clearInterval(scrollIntervalRef.current);
     };
-  }, [isScrolling, scrollSpeed, voiceSync]);
+  }, [isScrolling, scrollSpeed, voiceSync, isUserScrolling]);
+
+  // Handle user scroll - pause auto-scroll temporarily
+  const handleUserScroll = () => {
+    setIsUserScrolling(true);
+    if (userScrollTimeoutRef.current) {
+      clearTimeout(userScrollTimeoutRef.current);
+    }
+    // Resume auto-scroll after 2 seconds of no scrolling
+    userScrollTimeoutRef.current = window.setTimeout(() => {
+      setIsUserScrolling(false);
+    }, 2000);
+  };
+
+  // Audio level visualization for voice sync
+  useEffect(() => {
+    if (!voiceSync || !isListening) {
+      if (audioContextRef.current) {
+        audioContextRef.current.close();
+        audioContextRef.current = null;
+      }
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+      setAudioLevel(0);
+      return;
+    }
+
+    // Set up audio context for level visualization
+    navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+      const audioContext = new AudioContext();
+      const analyser = audioContext.createAnalyser();
+      const source = audioContext.createMediaStreamSource(stream);
+      source.connect(analyser);
+      analyser.fftSize = 256;
+      
+      audioContextRef.current = audioContext;
+      analyserRef.current = analyser;
+
+      const dataArray = new Uint8Array(analyser.frequencyBinCount);
+      
+      const updateLevel = () => {
+        if (!analyserRef.current) return;
+        analyserRef.current.getByteFrequencyData(dataArray);
+        const avg = dataArray.reduce((a, b) => a + b, 0) / dataArray.length;
+        setAudioLevel(avg / 255); // Normalize to 0-1
+        animationFrameRef.current = requestAnimationFrame(updateLevel);
+      };
+      updateLevel();
+    }).catch(err => {
+      console.error('Failed to get audio stream:', err);
+    });
+
+    return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+    };
+  }, [voiceSync, isListening]);
 
   // Voice sync using Web Speech API
   useEffect(() => {
@@ -452,11 +516,38 @@ function Teleprompter({
         </div>
       )}
       
+      {/* Voice level indicator - iPhone style */}
+      {voiceSync && isListening && (
+        <div className="absolute top-0 left-0 right-0 flex justify-center pt-2 z-20 pointer-events-none">
+          <div className="flex items-center gap-1 bg-black/80 rounded-full px-4 py-2">
+            <div className="flex items-end gap-0.5 h-4">
+              {[0.2, 0.4, 0.6, 0.8, 1.0, 0.8, 0.6, 0.4, 0.2].map((threshold, i) => (
+                <div 
+                  key={i}
+                  className="w-1 rounded-full transition-all duration-75"
+                  style={{
+                    height: `${Math.max(4, audioLevel > threshold * 0.5 ? (audioLevel * 16) : 4)}px`,
+                    backgroundColor: audioLevel > 0.1 ? '#10b981' : '#475569',
+                    opacity: audioLevel > threshold * 0.3 ? 1 : 0.3,
+                  }}
+                />
+              ))}
+            </div>
+            <span className="text-xs text-emerald-400 ml-2">Listening</span>
+          </div>
+        </div>
+      )}
+      
       {/* Script content */}
       <div 
         ref={containerRef}
-        className="flex-1 overflow-auto p-8 pt-24"
-        style={{ transform: transformStyle }}
+        className="flex-1 overflow-auto p-8"
+        style={{ 
+          transform: transformStyle,
+          paddingTop: showControls ? (isMobile ? '180px' : '100px') : '40px',
+        }}
+        onScroll={handleUserScroll}
+        onTouchMove={handleUserScroll}
       >
         <div 
           className="max-w-4xl mx-auto text-white leading-relaxed whitespace-pre-wrap"
@@ -476,6 +567,13 @@ function Teleprompter({
         >
           <Settings2 className="w-5 h-5" />
         </button>
+      )}
+      
+      {/* User scrolling indicator */}
+      {isUserScrolling && isScrolling && !voiceSync && (
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-amber-600/90 text-white text-sm px-4 py-2 rounded-full">
+          Auto-scroll paused — will resume when you stop scrolling
+        </div>
       )}
     </div>
   );

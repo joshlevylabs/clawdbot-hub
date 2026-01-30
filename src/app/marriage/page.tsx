@@ -602,6 +602,96 @@ export default function MarriagePage() {
         </div>
       )}
 
+      {/* Check-in Modal */}
+      {showCheckin && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-slate-850 border border-slate-700 rounded-xl max-w-lg w-full p-6">
+            {!checkinComplete ? (
+              <>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-semibold text-slate-200">Daily Check-in</h2>
+                  <button
+                    onClick={() => setShowCheckin(false)}
+                    className="text-slate-400 hover:text-slate-200 transition-colors"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+                
+                <div className="flex justify-between items-center text-sm text-slate-500 mb-4">
+                  <span>Question {currentQuestion + 1} of {dailyQuestions.length}</span>
+                </div>
+                
+                <div className="bg-slate-800/50 rounded-xl p-4 mb-4">
+                  <p className="text-slate-200 font-medium mb-4">{dailyQuestions[currentQuestion].question}</p>
+                  <div className="space-y-2">
+                    {dailyQuestions[currentQuestion].options.map((option, i) => (
+                      <button
+                        key={i}
+                        onClick={() => handleAnswer(option)}
+                        className="w-full text-left p-3 rounded-lg bg-slate-700/50 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors flex items-center justify-between group"
+                      >
+                        <span>{option.label}</span>
+                        <ChevronRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                
+                {/* Progress dots */}
+                <div className="flex justify-center gap-2">
+                  {dailyQuestions.map((_, i) => (
+                    <div
+                      key={i}
+                      className={`w-2 h-2 rounded-full transition-colors ${
+                        i < currentQuestion ? 'bg-purple-500' : i === currentQuestion ? 'bg-purple-400' : 'bg-slate-700'
+                      }`}
+                    />
+                  ))}
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-semibold text-slate-200">Check-in Complete!</h2>
+                  <button
+                    onClick={() => { setShowCheckin(false); resetCheckin(); }}
+                    className="text-slate-400 hover:text-slate-200 transition-colors"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+                
+                <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-4 text-center mb-4">
+                  <CheckCircle className="w-8 h-8 text-green-400 mx-auto mb-2" />
+                  <p className="text-green-400 font-medium">Nice work!</p>
+                  <p className="text-slate-400 text-sm mt-1">
+                    Power: {(Object.values(answers).reduce((sum, a) => sum + a.power, 0) / Object.values(answers).length).toFixed(1)} | 
+                    Safety: {(Object.values(answers).reduce((sum, a) => sum + a.safety, 0) / Object.values(answers).length).toFixed(1)}
+                  </p>
+                </div>
+                
+                <div className="flex gap-3">
+                  <button
+                    onClick={resetCheckin}
+                    className="flex-1 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg font-medium transition-colors"
+                  >
+                    Start Over
+                  </button>
+                  <button
+                    onClick={submitCheckin}
+                    disabled={submitting}
+                    className="flex-1 px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg font-medium transition-colors disabled:opacity-50"
+                  >
+                    {submitting ? "Saving..." : "Save to Compass"}
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -614,7 +704,7 @@ export default function MarriagePage() {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setShowLogModal(true)}
-            className="px-4 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg font-medium transition-colors flex items-center gap-2"
+            className="px-3 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg font-medium transition-colors flex items-center gap-2"
           >
             <Plus className="w-4 h-4" strokeWidth={2} />
             Log
@@ -622,7 +712,7 @@ export default function MarriagePage() {
           <button
             onClick={() => { fetchCompass(); fetchInteractions(); fetchCheckins(); }}
             disabled={loading}
-            className="btn btn-primary flex items-center gap-2"
+            className="px-3 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg font-medium transition-colors flex items-center justify-center"
           >
             <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} strokeWidth={1.5} />
           </button>
@@ -1474,100 +1564,6 @@ export default function MarriagePage() {
             </p>
           </div>
         </div>
-      </div>
-
-      {/* Daily Check-in */}
-      <div className="bg-slate-850 rounded-xl border border-slate-800 p-6">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 bg-purple-600/20 rounded-lg flex items-center justify-center">
-              <ClipboardCheck className="w-5 h-5 text-purple-400" strokeWidth={1.5} />
-            </div>
-            <h2 className="font-semibold text-slate-200">Daily Check-in</h2>
-          </div>
-          {!showCheckin && (
-            <button
-              onClick={() => setShowCheckin(true)}
-              className="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg font-medium transition-colors"
-            >
-              Start Check-in
-            </button>
-          )}
-        </div>
-        
-        {showCheckin && !checkinComplete && (
-          <div className="space-y-4">
-            <div className="flex justify-between items-center text-sm text-slate-500">
-              <span>Question {currentQuestion + 1} of {dailyQuestions.length}</span>
-              <button onClick={() => setShowCheckin(false)} className="text-slate-400 hover:text-slate-200">
-                Cancel
-              </button>
-            </div>
-            
-            <div className="bg-slate-800/50 rounded-xl p-4">
-              <p className="text-slate-200 font-medium mb-4">{dailyQuestions[currentQuestion].question}</p>
-              <div className="space-y-2">
-                {dailyQuestions[currentQuestion].options.map((option, i) => (
-                  <button
-                    key={i}
-                    onClick={() => handleAnswer(option)}
-                    className="w-full text-left p-3 rounded-lg bg-slate-700/50 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors flex items-center justify-between group"
-                  >
-                    <span>{option.label}</span>
-                    <ChevronRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </button>
-                ))}
-              </div>
-            </div>
-            
-            {/* Progress dots */}
-            <div className="flex justify-center gap-2">
-              {dailyQuestions.map((_, i) => (
-                <div
-                  key={i}
-                  className={`w-2 h-2 rounded-full transition-colors ${
-                    i < currentQuestion ? 'bg-purple-500' : i === currentQuestion ? 'bg-purple-400' : 'bg-slate-700'
-                  }`}
-                />
-              ))}
-            </div>
-          </div>
-        )}
-        
-        {showCheckin && checkinComplete && (
-          <div className="space-y-4">
-            <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-4 text-center">
-              <CheckCircle className="w-8 h-8 text-green-400 mx-auto mb-2" />
-              <p className="text-green-400 font-medium">Check-in Complete!</p>
-              <p className="text-slate-400 text-sm mt-1">
-                Power: {(Object.values(answers).reduce((sum, a) => sum + a.power, 0) / Object.values(answers).length).toFixed(1)} | 
-                Safety: {(Object.values(answers).reduce((sum, a) => sum + a.safety, 0) / Object.values(answers).length).toFixed(1)}
-              </p>
-            </div>
-            
-            <div className="flex gap-3">
-              <button
-                onClick={resetCheckin}
-                className="flex-1 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg font-medium transition-colors"
-              >
-                Start Over
-              </button>
-              <button
-                onClick={submitCheckin}
-                disabled={submitting}
-                className="flex-1 px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg font-medium transition-colors disabled:opacity-50"
-              >
-                {submitting ? "Saving..." : "Save to Compass"}
-              </button>
-            </div>
-          </div>
-        )}
-        
-        {!showCheckin && (
-          <p className="text-slate-500 text-sm">
-            Answer 5 quick questions about your day. Takes 30 seconds. Feeds directly into your compass score.
-          </p>
-        )}
       </div>
 
       {/* How to Log */}

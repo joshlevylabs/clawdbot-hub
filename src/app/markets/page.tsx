@@ -90,7 +90,6 @@ const DEFAULT_SETTINGS: ChartSettings = {
 
 // Note: label is the unique key used for selection matching
 // Timeframes: label = candle interval, range = default data to fetch
-// Grouped by candle size for clarity
 const TIMEFRAMES = [
   // Intraday candles
   { label: '5m', range: '1d', interval: '5m' },
@@ -98,8 +97,12 @@ const TIMEFRAMES = [
   { label: '30m', range: '5d', interval: '30m' },
   { label: '1H', range: '5d', interval: '1h' },
   { label: '4H', range: '1mo', interval: '4h' },
-  // Daily candles  
-  { label: '1D', range: '3mo', interval: '1d' },
+  // Daily candles with different ranges
+  { label: '1D', range: '1mo', interval: '1d' },
+  { label: '1M', range: '1mo', interval: '1d' },
+  { label: '3M', range: '3mo', interval: '1d' },
+  { label: '6M', range: '6mo', interval: '1d' },
+  { label: '1Y', range: '1y', interval: '1d' },
   // Weekly candles
   { label: '1W', range: '1y', interval: '1wk' },
 ];
@@ -1353,10 +1356,10 @@ export default function MarketsPage() {
   const [loadingMoreData, setLoadingMoreData] = useState(false);
   const [currentDataRange, setCurrentDataRange] = useState<string>('3mo'); // Will be set by initial fetch
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
-  const [selectedTimeframe, setSelectedTimeframe] = useState('1D');
+  const [selectedTimeframe, setSelectedTimeframe] = useState('3M');
   
   // Derive range and interval from selected timeframe
-  const currentTf = TIMEFRAMES.find(tf => tf.label === selectedTimeframe) || TIMEFRAMES[5]; // Default to 1D
+  const currentTf = TIMEFRAMES.find(tf => tf.label === selectedTimeframe) || TIMEFRAMES[7]; // Default to 3M
   const range = currentTf.range;
   const interval = currentTf.interval;
   const [isMobile, setIsMobile] = useState(false);

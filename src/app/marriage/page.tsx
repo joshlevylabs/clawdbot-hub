@@ -45,6 +45,14 @@ interface Interaction {
   tags: string[];
 }
 
+interface DailyCheckin {
+  id: string;
+  date: string;
+  power: number;
+  safety: number;
+  timestamp: string;
+}
+
 const dailyQuestions: DailyQuestion[] = [
   {
     id: "presence",
@@ -102,6 +110,7 @@ const dailyQuestions: DailyQuestion[] = [
 export default function MarriagePage() {
   const [compassState, setCompassState] = useState<CompassState | null>(null);
   const [interactions, setInteractions] = useState<Interaction[]>([]);
+  const [checkins, setCheckins] = useState<DailyCheckin[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCheckin, setShowCheckin] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -163,6 +172,25 @@ export default function MarriagePage() {
     }
   };
 
+  const fetchCheckins = async () => {
+    try {
+      const response = await fetch("/api/compass/checkins");
+      if (response.ok) {
+        const data = await response.json();
+        if (data.checkins) {
+          setCheckins(data.checkins);
+        }
+      }
+    } catch (err) {
+      console.error("Failed to load check-ins:", err);
+    }
+  };
+
+  // Get check-in for a specific date
+  const getCheckinForDate = (date: string): DailyCheckin | undefined => {
+    return checkins.find(c => c.date === date);
+  };
+
   // Group interactions by day
   const getDailyHistory = () => {
     const byDay: Record<string, Interaction[]> = {};
@@ -172,15 +200,32 @@ export default function MarriagePage() {
       byDay[date].push(i);
     });
     
+    // Also include days that only have check-ins
+    checkins.forEach(c => {
+      if (!byDay[c.date]) byDay[c.date] = [];
+    });
+    
     const dates = Object.keys(byDay).sort();
     
     return dates.map((date, idx) => {
       const dayInteractions = byDay[date];
-      const dayPower = dayInteractions.reduce((sum, i) => sum + i.compass.power, 0);
-      const daySafety = dayInteractions.reduce((sum, i) => sum + i.compass.safety, 0);
-      const dayCount = dayInteractions.length;
+      const checkin = getCheckinForDate(date);
+      
+      // Calculate interaction stats
+      const interactionPower = dayInteractions.reduce((sum, i) => sum + i.compass.power, 0);
+      const interactionSafety = dayInteractions.reduce((sum, i) => sum + i.compass.safety, 0);
+      const interactionCount = dayInteractions.length;
       const positive = dayInteractions.filter(i => i.type === "positive").length;
       const negative = dayInteractions.filter(i => i.type === "negative").length;
+      
+      // Calculate combined day score (interactions + check-in weighted equally)
+      // If check-in exists, it counts as one "entry" alongside all interactions
+      const totalEntries = interactionCount + (checkin ? 1 : 0);
+      const totalPower = interactionPower + (checkin ? checkin.power : 0);
+      const totalSafety = interactionSafety + (checkin ? checkin.safety : 0);
+      
+      const avgPower = totalEntries > 0 ? totalPower / totalEntries : 0;
+      const avgSafety = totalEntries > 0 ? totalSafety / totalEntries : 0;
       
       // Previous day stats for change calculation
       let prevPower = 0;
@@ -188,26 +233,32 @@ export default function MarriagePage() {
       if (idx > 0) {
         const prevDate = dates[idx - 1];
         const prevInteractions = byDay[prevDate];
-        const prevCount = prevInteractions.length;
-        if (prevCount > 0) {
-          prevPower = prevInteractions.reduce((sum, i) => sum + i.compass.power, 0) / prevCount;
-          prevSafety = prevInteractions.reduce((sum, i) => sum + i.compass.safety, 0) / prevCount;
+        const prevCheckin = getCheckinForDate(prevDate);
+        const prevInteractionCount = prevInteractions.length;
+        const prevTotalEntries = prevInteractionCount + (prevCheckin ? 1 : 0);
+        if (prevTotalEntries > 0) {
+          const prevTotalPower = prevInteractions.reduce((sum, i) => sum + i.compass.power, 0) + (prevCheckin ? prevCheckin.power : 0);
+          const prevTotalSafety = prevInteractions.reduce((sum, i) => sum + i.compass.safety, 0) + (prevCheckin ? prevCheckin.safety : 0);
+          prevPower = prevTotalPower / prevTotalEntries;
+          prevSafety = prevTotalSafety / prevTotalEntries;
         }
       }
-      
-      const avgPower = dayCount > 0 ? dayPower / dayCount : 0;
-      const avgSafety = dayCount > 0 ? daySafety / dayCount : 0;
       
       return {
         date,
         interactions: dayInteractions,
+        checkin,
         stats: {
-          count: dayCount,
+          interactionCount,
+          totalEntries,
           positive,
           negative,
           ratio: negative > 0 ? positive / negative : positive > 0 ? Infinity : 0,
           avgPower,
           avgSafety,
+          // Separate averages for breakdown
+          interactionAvgPower: interactionCount > 0 ? interactionPower / interactionCount : null,
+          interactionAvgSafety: interactionCount > 0 ? interactionSafety / interactionCount : null,
         },
         change: {
           power: avgPower - prevPower,
@@ -353,6 +404,7 @@ export default function MarriagePage() {
   useEffect(() => {
     fetchCompass();
     fetchInteractions();
+    fetchCheckins();
   }, []);
 
   const handleAnswer = (option: QuestionOption) => {
@@ -614,6 +666,70 @@ export default function MarriagePage() {
         </div>
       </div>
 
+      {/* How It's Calculated */}
+      <details className="bg-slate-850 rounded-xl border border-slate-800">
+        <summary className="p-5 cursor-pointer hover:bg-slate-800/50 transition-colors rounded-xl">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 bg-cyan-600/20 rounded-lg flex items-center justify-center">
+              <Target className="w-5 h-5 text-cyan-400" strokeWidth={1.5} />
+            </div>
+            <div>
+              <h2 className="font-semibold text-slate-200 inline">How the Compass Score is Calculated</h2>
+              <p className="text-slate-500 text-sm mt-0.5">Click to expand</p>
+            </div>
+          </div>
+        </summary>
+        <div className="px-5 pb-5 space-y-4 border-t border-slate-700/50 pt-4">
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className="bg-slate-900/50 rounded-lg p-4">
+              <h3 className="text-slate-200 font-medium mb-2">📊 Daily Score</h3>
+              <p className="text-slate-400 text-sm">
+                Each day&apos;s score is the <span className="text-slate-200">average</span> of all entries that day:
+              </p>
+              <ul className="text-slate-400 text-sm mt-2 space-y-1 list-disc list-inside">
+                <li><span className="text-green-400">Interaction logs</span> — each +/- log you record</li>
+                <li><span className="text-purple-400">Daily check-in</span> — the 5-question quiz (counts as 1 entry)</li>
+              </ul>
+              <p className="text-slate-500 text-xs mt-2">
+                Example: 3 logs averaging (+2, +3) plus check-in (+1, +2) = 4 entries → Day score: +1.75, +2.75
+              </p>
+            </div>
+            <div className="bg-slate-900/50 rounded-lg p-4">
+              <h3 className="text-slate-200 font-medium mb-2">🧭 Compass Position</h3>
+              <p className="text-slate-400 text-sm">
+                The compass uses a <span className="text-slate-200">weighted average with 30-day decay</span>:
+              </p>
+              <ul className="text-slate-400 text-sm mt-2 space-y-1 list-disc list-inside">
+                <li>Recent entries weighted more heavily</li>
+                <li>30-day half-life (entries from 30 days ago count ~50%)</li>
+                <li>Older entries still matter, just less</li>
+              </ul>
+              <p className="text-slate-500 text-xs mt-2">
+                This means consistent behavior matters more than one-off events.
+              </p>
+            </div>
+          </div>
+          <div className="bg-slate-900/50 rounded-lg p-4">
+            <h3 className="text-slate-200 font-medium mb-2">🎯 Ideal Zone</h3>
+            <div className="grid md:grid-cols-2 gap-4 text-sm">
+              <div>
+                <p className="text-slate-400">
+                  <span className="text-blue-400">Power (0 to +2)</span> — Confident leadership without domination
+                </p>
+                <p className="text-slate-400 mt-1">
+                  <span className="text-purple-400">Safety (+3 to +5)</span> — High emotional safety and trust
+                </p>
+              </div>
+              <div className="text-slate-500 text-xs space-y-1">
+                <p>Power &lt; 0 = Too passive/self-sacrificing</p>
+                <p>Power &gt; 2 = Too controlling/dominating</p>
+                <p>Safety &lt; 3 = Not enough emotional safety</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </details>
+
       {/* Interaction Log - Unified View */}
       <div className="bg-slate-850 rounded-xl border border-slate-800 p-6">
         <div className="flex items-center justify-between mb-4">
@@ -664,6 +780,11 @@ export default function MarriagePage() {
                     <div className="flex items-center gap-3">
                       <Calendar className="w-4 h-4 text-slate-500" />
                       <span className="font-medium text-slate-200">{formatDate(day.date)}</span>
+                      {day.checkin && (
+                        <span className="text-xs px-2 py-0.5 bg-purple-500/20 text-purple-400 rounded">
+                          ✓ Check-in
+                        </span>
+                      )}
                     </div>
                     <div className="flex items-center gap-3 text-sm">
                       <span className="text-green-400">+{day.stats.positive}</span>
@@ -671,10 +792,10 @@ export default function MarriagePage() {
                     </div>
                   </div>
                   
-                  {/* Stats row */}
+                  {/* Day Score Summary */}
                   <div className="grid grid-cols-4 gap-3 mb-3 p-3 bg-slate-900/50 rounded-lg">
                     <div className="text-center">
-                      <p className="text-slate-200 font-medium">{day.stats.count}</p>
+                      <p className="text-slate-200 font-medium">{day.stats.interactionCount}</p>
                       <p className="text-slate-500 text-xs">Logs</p>
                     </div>
                     <div className="text-center">
@@ -694,7 +815,7 @@ export default function MarriagePage() {
                           </span>
                         )}
                       </div>
-                      <p className="text-slate-500 text-xs">Power</p>
+                      <p className="text-slate-500 text-xs">Day Power</p>
                     </div>
                     <div className="text-center">
                       <div className="flex items-center justify-center gap-1">
@@ -707,7 +828,46 @@ export default function MarriagePage() {
                           </span>
                         )}
                       </div>
-                      <p className="text-slate-500 text-xs">Safety</p>
+                      <p className="text-slate-500 text-xs">Day Safety</p>
+                    </div>
+                  </div>
+
+                  {/* Score Breakdown */}
+                  <div className="mb-3 p-3 bg-slate-900/30 rounded-lg border border-slate-700/50">
+                    <p className="text-slate-400 text-xs mb-2 font-medium">Score Breakdown:</p>
+                    <div className="space-y-1 text-xs">
+                      {day.stats.interactionCount > 0 && (
+                        <div className="flex justify-between">
+                          <span className="text-slate-500">
+                            {day.stats.interactionCount} log{day.stats.interactionCount !== 1 ? "s" : ""} avg:
+                          </span>
+                          <span className="text-slate-300">
+                            P: {day.stats.interactionAvgPower !== null ? (day.stats.interactionAvgPower > 0 ? "+" : "") + day.stats.interactionAvgPower.toFixed(1) : "—"}, 
+                            S: {day.stats.interactionAvgSafety !== null ? (day.stats.interactionAvgSafety > 0 ? "+" : "") + day.stats.interactionAvgSafety.toFixed(1) : "—"}
+                          </span>
+                        </div>
+                      )}
+                      {day.checkin ? (
+                        <div className="flex justify-between">
+                          <span className="text-purple-400">Daily check-in:</span>
+                          <span className="text-purple-300">
+                            P: {day.checkin.power > 0 ? "+" : ""}{day.checkin.power.toFixed(1)}, 
+                            S: {day.checkin.safety > 0 ? "+" : ""}{day.checkin.safety.toFixed(1)}
+                          </span>
+                        </div>
+                      ) : (
+                        <div className="flex justify-between">
+                          <span className="text-slate-600">Daily check-in:</span>
+                          <span className="text-slate-600 italic">Not completed</span>
+                        </div>
+                      )}
+                      <div className="flex justify-between pt-1 border-t border-slate-700/50 mt-1">
+                        <span className="text-slate-400 font-medium">Day total ({day.stats.totalEntries} entries):</span>
+                        <span className="text-slate-200 font-medium">
+                          P: {day.stats.avgPower > 0 ? "+" : ""}{day.stats.avgPower.toFixed(1)}, 
+                          S: {day.stats.avgSafety > 0 ? "+" : ""}{day.stats.avgSafety.toFixed(1)}
+                        </span>
+                      </div>
                     </div>
                   </div>
 

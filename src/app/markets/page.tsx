@@ -241,6 +241,8 @@ function ChartCanvas({
   height = 250,
   onCustomFib,
   customFibPoints,
+  onRequestMoreData,
+  isLoadingMore,
 }: { 
   candles: CandleData[]; 
   fibonacci: FibonacciData;
@@ -249,6 +251,8 @@ function ChartCanvas({
   height?: number;
   onCustomFib?: (points: CustomFibPoints) => void;
   customFibPoints?: CustomFibPoints;
+  onRequestMoreData?: () => void; // Called when user scrolls near the start
+  isLoadingMore?: boolean;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [tooltip, setTooltip] = useState<{ x: number; y: number; candle: CandleData; index: number; date: string } | null>(null);
@@ -279,6 +283,19 @@ function ChartCanvas({
   const isXZoomed = viewRange.start !== 0 || viewRange.end !== candles.length;
   const isYZoomed = yScale !== 1;
   const isZoomed = isXZoomed || isYZoomed;
+  
+  // Request more historical data when scrolling near the start
+  const loadMoreThreshold = useRef(false);
+  useEffect(() => {
+    // Trigger when visible start is within 10% of the beginning
+    const threshold = Math.max(5, candles.length * 0.1);
+    if (visibleStart < threshold && !loadMoreThreshold.current && !isLoadingMore && onRequestMoreData) {
+      loadMoreThreshold.current = true;
+      onRequestMoreData();
+    } else if (visibleStart >= threshold) {
+      loadMoreThreshold.current = false;
+    }
+  }, [visibleStart, candles.length, isLoadingMore, onRequestMoreData]);
 
   // Chart dimensions and scaling (memoized for click handling)
   const chartDims = useRef<{
@@ -916,6 +933,12 @@ function ChartCanvas({
       
       {/* Chart canvas */}
       <div className="relative">
+        {isLoadingMore && (
+          <div className="absolute top-2 left-2 z-10 flex items-center gap-2 bg-slate-900/90 px-3 py-1.5 rounded-lg border border-slate-700">
+            <RefreshCw className="w-3 h-3 text-primary-400 animate-spin" />
+            <span className="text-xs text-slate-300">Loading more data...</span>
+          </div>
+        )}
         <canvas 
           ref={canvasRef} 
           className="w-full rounded-lg"
@@ -1196,9 +1219,10 @@ function FibonacciPanel({ fibonacci, currentPrice }: { fibonacci: FibonacciData;
 }
 
 // Mobile Modal
-function DetailModal({ detail, onClose, selectedTimeframe, setTimeframe, settings, setSettings }: { 
+function DetailModal({ detail, onClose, selectedTimeframe, setTimeframe, settings, setSettings, onRequestMoreData, isLoadingMore }: { 
   detail: SymbolDetail; onClose: () => void; selectedTimeframe: string;
   setTimeframe: (label: string) => void; settings: ChartSettings; setSettings: (s: ChartSettings) => void;
+  onRequestMoreData?: () => void; isLoadingMore?: boolean;
 }) {
   const isPositive = detail.quote.change >= 0;
   
@@ -1233,7 +1257,7 @@ function DetailModal({ detail, onClose, selectedTimeframe, setTimeframe, setting
           ))}
         </div>
         
-        <ChartCanvas candles={detail.candles} fibonacci={detail.fibonacci} movingAverages={detail.movingAverages} settings={settings} height={280} />
+        <ChartCanvas candles={detail.candles} fibonacci={detail.fibonacci} movingAverages={detail.movingAverages} settings={settings} height={280} onRequestMoreData={onRequestMoreData} isLoadingMore={isLoadingMore} />
         <FibonacciPanel fibonacci={detail.fibonacci} currentPrice={detail.quote.price} />
         
         <div className="bg-slate-800/50 rounded-xl p-4">
@@ -1297,12 +1321,26 @@ function calculateCustomFibonacci(candles: CandleData[], points: CustomFibPoints
   };
 }
 
+// Map ranges to extended ranges for loading more historical data
+const EXTENDED_RANGES: Record<string, string> = {
+  '5d': '1mo',
+  '1mo': '3mo',
+  '3mo': '6mo',
+  '6mo': '1y',
+  '1y': '3y',
+  '3y': '5y',
+  '5y': '10y',
+  '10y': '10y', // Max
+};
+
 export default function MarketsPage() {
   const [quotes, setQuotes] = useState<QuoteData[]>([]);
   const [selectedSymbol, setSelectedSymbol] = useState<string | null>(null);
   const [symbolDetail, setSymbolDetail] = useState<SymbolDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [detailLoading, setDetailLoading] = useState(false);
+  const [loadingMoreData, setLoadingMoreData] = useState(false);
+  const [currentDataRange, setCurrentDataRange] = useState<string>('3mo');
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
   const [selectedTimeframe, setSelectedTimeframe] = useState('3M');
   
@@ -1367,20 +1405,40 @@ export default function MarketsPage() {
     }
   }, []);
 
-  const fetchSymbolDetail = useCallback(async (symbol: string, r: string, i: string) => {
-    setDetailLoading(true);
+  const fetchSymbolDetail = useCallback(async (symbol: string, r: string, i: string, isExtending = false) => {
+    if (!isExtending) {
+      setDetailLoading(true);
+      setCurrentDataRange(r);
+    }
     try {
       const response = await fetch(`/api/markets?symbol=${symbol}&range=${r}&interval=${i}`);
       if (response.ok) {
         const data = await response.json();
         setSymbolDetail(data);
+        setCurrentDataRange(r);
       }
     } catch (error) {
       console.error('Failed to fetch symbol detail:', error);
     } finally {
       setDetailLoading(false);
+      setLoadingMoreData(false);
     }
   }, []);
+
+  // Load more historical data when user scrolls to the start
+  const loadMoreHistoricalData = useCallback(() => {
+    if (!selectedSymbol || loadingMoreData) return;
+    
+    const extendedRange = EXTENDED_RANGES[currentDataRange];
+    if (extendedRange === currentDataRange) {
+      console.log('Already at maximum data range');
+      return;
+    }
+    
+    console.log(`Loading more data: ${currentDataRange} → ${extendedRange}`);
+    setLoadingMoreData(true);
+    fetchSymbolDetail(selectedSymbol, extendedRange, interval, true);
+  }, [selectedSymbol, loadingMoreData, currentDataRange, interval, fetchSymbolDetail]);
 
   useEffect(() => {
     fetchQuotes();
@@ -1390,6 +1448,7 @@ export default function MarketsPage() {
 
   useEffect(() => {
     if (selectedSymbol) {
+      setCurrentDataRange(range); // Reset to default range
       fetchSymbolDetail(selectedSymbol, range, interval);
     }
   }, [selectedSymbol, range, interval, fetchSymbolDetail]);
@@ -1418,7 +1477,8 @@ export default function MarketsPage() {
 
   if (isMobile && showModal && symbolDetail) {
     return <DetailModal detail={symbolDetail} onClose={() => setShowModal(false)} selectedTimeframe={selectedTimeframe}
-      setTimeframe={handleTimeframeChange} settings={settings} setSettings={setSettings} />;
+      setTimeframe={handleTimeframeChange} settings={settings} setSettings={setSettings} 
+      onRequestMoreData={loadMoreHistoricalData} isLoadingMore={loadingMoreData} />;
   }
 
   return (
@@ -1494,6 +1554,8 @@ export default function MarketsPage() {
                       height={300}
                       customFibPoints={customFibPoints}
                       onCustomFib={setCustomFibPoints}
+                      onRequestMoreData={loadMoreHistoricalData}
+                      isLoadingMore={loadingMoreData}
                     />}
                 </div>
 

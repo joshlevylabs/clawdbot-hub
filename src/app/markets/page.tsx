@@ -261,6 +261,8 @@ function ChartCanvas({
   const [tooltip, setTooltip] = useState<{ x: number; y: number; candle: CandleData; index: number; date: string } | null>(null);
   const [selectMode, setSelectMode] = useState<'none' | 'a' | 'b' | 'c'>('none');
   const [localFibPoints, setLocalFibPoints] = useState<CustomFibPoints>({ a: null, b: null, c: null });
+  const [dragPreview, setDragPreview] = useState<{ globalIndex: number; x: number; isValid: boolean } | null>(null);
+  const isDraggingFib = useRef(false);
   
   // Pan & Zoom state
   const [viewRange, setViewRange] = useState<ViewRange>({ start: 0, end: candles.length });
@@ -595,68 +597,169 @@ function ChartCanvas({
       if (bIdx !== null) drawMarker(bIdx, 'B', '#ef4444', fibonacci.high);
       if (cIdx !== null && fibonacci.pullback) drawMarker(cIdx, 'C', '#f59e0b', fibonacci.pullback);
     }
-
-  }, [candles, visibleCandles, visibleStart, visibleEnd, viewRange, yScale, isOverYAxis, fibonacci, movingAverages, settings, fibPoints]);
-
-  const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    if (isPanning) return; // Don't handle click if we were panning
-    if (!canvasRef.current || !chartDims.current || visibleCandles.length === 0) return;
     
-    const rect = canvasRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const { padding, chartWidth } = chartDims.current;
-    
-    // Find which visible candle was clicked
-    const localIndex = Math.floor(((x - padding.left) / chartWidth) * visibleCandles.length);
-    if (localIndex < 0 || localIndex >= visibleCandles.length) return;
-    
-    // Convert to global index
-    const globalIndex = localIndex + visibleStart;
-    const candle = candles[globalIndex];
-    
-    if (selectMode !== 'none') {
-      // Validate chronological order: B must be after A, C must be after B
-      if (selectMode === 'b' && fibPoints.a !== null && globalIndex <= fibPoints.a) {
-        // B must be after A - don't set, show feedback
-        setTooltip({
-          x: e.clientX - rect.left,
-          y: e.clientY - rect.top,
-          candle,
-          index: globalIndex,
-          date: '⚠️ Point B must be AFTER point A',
-        });
-        return;
+    // Draw drag preview line
+    if (dragPreview && selectMode !== 'none') {
+      const previewLocalIdx = dragPreview.globalIndex - visibleStart;
+      if (previewLocalIdx >= 0 && previewLocalIdx < visibleCandles.length) {
+        const x = scaleX(previewLocalIdx) + candleWidth / 2;
+        
+        // Vertical line
+        ctx.strokeStyle = dragPreview.isValid ? '#f59e0b' : '#ef4444';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([5, 5]);
+        ctx.beginPath();
+        ctx.moveTo(x, padding.top);
+        ctx.lineTo(x, canvasHeight - padding.bottom);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        
+        // Label at top
+        const label = selectMode.toUpperCase();
+        const candle = visibleCandles[previewLocalIdx];
+        ctx.fillStyle = dragPreview.isValid ? '#f59e0b' : '#ef4444';
+        ctx.font = 'bold 12px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(label, x, padding.top - 5);
+        
+        // Price indicator
+        const price = selectMode === 'b' ? candle.high : candle.low;
+        const priceY = scaleY(price);
+        ctx.beginPath();
+        ctx.arc(x, priceY, 6, 0, Math.PI * 2);
+        ctx.fillStyle = dragPreview.isValid ? '#f59e0b' : '#ef4444';
+        ctx.fill();
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 2;
+        ctx.stroke();
       }
-      if (selectMode === 'c' && fibPoints.b !== null && globalIndex <= fibPoints.b) {
-        // C must be after B - don't set, show feedback
+    }
+
+  }, [candles, visibleCandles, visibleStart, visibleEnd, viewRange, yScale, isOverYAxis, fibonacci, movingAverages, settings, fibPoints, dragPreview, selectMode]);
+
+  // Calculate candle index from mouse position
+  const getCandleIndexFromPosition = (clientX: number): { localIndex: number; globalIndex: number; x: number } | null => {
+    if (!canvasRef.current || !chartDims.current || visibleCandles.length === 0) return null;
+    const rect = canvasRef.current.getBoundingClientRect();
+    const x = clientX - rect.left;
+    const { padding, chartWidth, candleWidth } = chartDims.current;
+    
+    const viewRangeSize = viewRange.end - viewRange.start;
+    const startOffset = visibleStart - viewRange.start;
+    
+    // Reverse the scaleX calculation
+    const posInChart = (x - padding.left) / chartWidth * viewRangeSize;
+    const localIndex = Math.floor(posInChart - startOffset);
+    
+    if (localIndex < 0 || localIndex >= visibleCandles.length) return null;
+    const globalIndex = localIndex + visibleStart;
+    
+    // Calculate exact x position of this candle
+    const candleX = padding.left + ((localIndex + startOffset) / viewRangeSize) * chartWidth + candleWidth / 2;
+    
+    return { localIndex, globalIndex, x: candleX };
+  };
+  
+  // Validate if a Fib point can be placed at this index
+  const isFibPointValid = (globalIndex: number): boolean => {
+    if (selectMode === 'b' && fibPoints.a !== null && globalIndex <= fibPoints.a) return false;
+    if (selectMode === 'c' && fibPoints.b !== null && globalIndex <= fibPoints.b) return false;
+    return true;
+  };
+  
+  const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    if (isPanning) return;
+    
+    // If in select mode and not dragging, treat click as instant place
+    if (selectMode !== 'none' && !isDraggingFib.current) {
+      const pos = getCandleIndexFromPosition(e.clientX);
+      if (!pos) return;
+      
+      if (!isFibPointValid(pos.globalIndex)) {
+        // Show error feedback
+        const rect = canvasRef.current!.getBoundingClientRect();
+        const candle = candles[pos.globalIndex];
         setTooltip({
           x: e.clientX - rect.left,
           y: e.clientY - rect.top,
           candle,
-          index: globalIndex,
-          date: '⚠️ Point C must be AFTER point B',
+          index: pos.globalIndex,
+          date: selectMode === 'b' ? '⚠️ Point B must be AFTER point A' : '⚠️ Point C must be AFTER point B',
         });
         return;
       }
       
-      // Set Fib point (use global index)
-      const newPoints = { ...fibPoints, [selectMode]: globalIndex };
+      // Set the point
+      const newPoints = { ...fibPoints, [selectMode]: pos.globalIndex };
+      setFibPoints(newPoints);
+      setDragPreview(null);
+      
+      // Advance to next point
+      if (selectMode === 'a') setSelectMode('b');
+      else if (selectMode === 'b') setSelectMode('c');
+      else setSelectMode('none');
+      return;
+    }
+    
+    // Normal click - show tooltip
+    const pos = getCandleIndexFromPosition(e.clientX);
+    if (!pos) return;
+    
+    const rect = canvasRef.current!.getBoundingClientRect();
+    const candle = candles[pos.globalIndex];
+    setTooltip({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+      candle,
+      index: pos.globalIndex,
+      date: formatDate(candle.time) + ' ' + formatTime(candle.time),
+    });
+  };
+  
+  // Handle Fib drag start
+  const handleFibDragStart = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+    if (selectMode === 'none') return;
+    
+    isDraggingFib.current = true;
+    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+    const pos = getCandleIndexFromPosition(clientX);
+    if (pos) {
+      setDragPreview({ globalIndex: pos.globalIndex, x: pos.x, isValid: isFibPointValid(pos.globalIndex) });
+    }
+  };
+  
+  // Handle Fib drag move
+  const handleFibDragMove = (clientX: number) => {
+    if (selectMode === 'none' || !isDraggingFib.current) return;
+    
+    const pos = getCandleIndexFromPosition(clientX);
+    if (pos) {
+      setDragPreview({ globalIndex: pos.globalIndex, x: pos.x, isValid: isFibPointValid(pos.globalIndex) });
+    }
+  };
+  
+  // Handle Fib drag end
+  const handleFibDragEnd = () => {
+    if (selectMode === 'none' || !isDraggingFib.current || !dragPreview) {
+      isDraggingFib.current = false;
+      setDragPreview(null);
+      return;
+    }
+    
+    isDraggingFib.current = false;
+    
+    if (dragPreview.isValid) {
+      // Set the point
+      const newPoints = { ...fibPoints, [selectMode]: dragPreview.globalIndex };
       setFibPoints(newPoints);
       
       // Advance to next point
       if (selectMode === 'a') setSelectMode('b');
       else if (selectMode === 'b') setSelectMode('c');
       else setSelectMode('none');
-    } else {
-      // Show tooltip
-      setTooltip({
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top,
-        candle,
-        index: globalIndex,
-        date: formatDate(candle.time) + ' ' + formatTime(candle.time),
-      });
     }
+    
+    setDragPreview(null);
   };
 
   const handleMouseLeave = () => {
@@ -721,7 +824,10 @@ function ChartCanvas({
   
   // Mouse drag pan
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    if (selectMode !== 'none') return; // Don't pan when selecting Fib points
+    if (selectMode !== 'none') {
+      handleFibDragStart(e);
+      return;
+    }
     panStartRef.current = {
       x: e.clientX,
       viewStart: viewRange.start,
@@ -730,6 +836,11 @@ function ChartCanvas({
   };
   
   const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    // Handle Fib drag preview
+    if (selectMode !== 'none') {
+      handleFibDragMove(e.clientX);
+    }
+    
     // Check if over Y-axis for visual feedback
     if (chartDims.current) {
       const rect = canvasRef.current?.getBoundingClientRect();
@@ -770,13 +881,19 @@ function ChartCanvas({
   };
   
   const handleMouseUp = () => {
+    if (selectMode !== 'none') {
+      handleFibDragEnd();
+    }
     panStartRef.current = null;
-    setTimeout(() => setIsPanning(false), 50); // Small delay to prevent click after drag
+    setTimeout(() => setIsPanning(false), 50);
   };
   
   // Touch handlers for mobile
   const handleTouchStart = (e: React.TouchEvent<HTMLCanvasElement>) => {
-    if (selectMode !== 'none') return;
+    if (selectMode !== 'none') {
+      handleFibDragStart(e);
+      return;
+    }
     
     const touches = Array.from(e.touches).map(t => ({ x: t.clientX, y: t.clientY }));
     touchStartRef.current = {
@@ -788,6 +905,13 @@ function ChartCanvas({
   };
   
   const handleTouchMove = (e: React.TouchEvent<HTMLCanvasElement>) => {
+    // Handle Fib drag on mobile
+    if (selectMode !== 'none' && e.touches.length === 1) {
+      e.preventDefault();
+      handleFibDragMove(e.touches[0].clientX);
+      return;
+    }
+    
     if (!touchStartRef.current || !chartDims.current) return;
     e.preventDefault();
     
@@ -866,6 +990,9 @@ function ChartCanvas({
   };
   
   const handleTouchEnd = () => {
+    if (selectMode !== 'none') {
+      handleFibDragEnd();
+    }
     touchStartRef.current = null;
   };
   

@@ -181,9 +181,12 @@ interface CustomFibPoints {
 
 // View range for pan/zoom
 interface ViewRange {
-  start: number; // start index (0 = oldest)
-  end: number;   // end index (candles.length = newest)
+  start: number; // start index (0 = oldest, can be negative for "past" buffer)
+  end: number;   // end index (candles.length = newest, can exceed for "future" buffer)
 }
+
+// Allow scrolling beyond data boundaries (as ratio of visible candles)
+const SCROLL_BUFFER_RATIO = 0.3; // Can scroll 30% beyond data in either direction
 
 // Helper to find candle index by date string
 function findCandleIndexByDate(candles: CandleData[], dateStr: string | undefined): number | null {
@@ -273,7 +276,7 @@ function ChartCanvas({
   const visibleStart = Math.max(0, Math.floor(viewRange.start));
   const visibleEnd = Math.min(candles.length, Math.ceil(viewRange.end));
   const visibleCandles = candles.slice(visibleStart, visibleEnd);
-  const isXZoomed = viewRange.start > 0 || viewRange.end < candles.length;
+  const isXZoomed = viewRange.start !== 0 || viewRange.end !== candles.length;
   const isYZoomed = yScale !== 1;
   const isZoomed = isXZoomed || isYZoomed;
 
@@ -339,7 +342,12 @@ function ChartCanvas({
     const maxPrice = priceCenter + scaledPriceRange / 2;
     const priceRange = scaledPriceRange;
     const pricePadding = priceRange * 0.03;
-    const candleWidth = Math.max(1, (chartWidth / visibleCandles.length) - 0.5);
+    // Calculate candle width based on the full view range (including empty space)
+    const viewRangeSize = viewRange.end - viewRange.start;
+    const candleWidth = Math.max(1, (chartWidth / viewRangeSize) - 0.5);
+    
+    // Offset for when we've scrolled into empty space (viewRange.start < visibleStart)
+    const startOffset = visibleStart - viewRange.start;
 
     // Store dims for click handling
     chartDims.current = { padding, width, chartHeight: canvasHeight, chartWidth, drawHeight, minPrice, maxPrice, priceRange, pricePadding, candleWidth };
@@ -347,7 +355,9 @@ function ChartCanvas({
     const scaleY = (price: number) => {
       return padding.top + drawHeight - ((price - minPrice + pricePadding) / (priceRange + pricePadding * 2)) * drawHeight;
     };
-    const scaleX = (i: number) => padding.left + (i / visibleCandles.length) * chartWidth;
+    // scaleX maps visible candle index (0-based within visibleCandles) to X position
+    // Account for offset when scrolled into empty past space
+    const scaleX = (i: number) => padding.left + ((i + startOffset) / viewRangeSize) * chartWidth;
 
     // Y-axis highlight when hovered (interactive zoom area)
     if (isOverYAxis) {
@@ -651,7 +661,8 @@ function ChartCanvas({
     // X-axis zoom (chart area)
     const zoomFactor = e.deltaY > 0 ? 1.1 : 0.9; // Zoom out : Zoom in
     const currentRange = viewRange.end - viewRange.start;
-    const newRange = Math.max(10, Math.min(candles.length, currentRange * zoomFactor)); // Min 10 candles visible
+    const maxRange = candles.length * (1 + SCROLL_BUFFER_RATIO * 2);
+    const newRange = Math.max(10, Math.min(maxRange, currentRange * zoomFactor)); // Min 10 candles visible
     
     const ratio = Math.max(0, Math.min(1, (mouseX - padding.left) / chartWidth));
     
@@ -660,14 +671,18 @@ function ChartCanvas({
     let newStart = currentPos - newRange * ratio;
     let newEnd = currentPos + newRange * (1 - ratio);
     
-    // Clamp to valid range
-    if (newStart < 0) {
-      newStart = 0;
-      newEnd = Math.min(candles.length, newRange);
+    // Clamp with buffer
+    const buffer = newRange * SCROLL_BUFFER_RATIO;
+    const minStart = -buffer;
+    const maxEnd = candles.length + buffer;
+    
+    if (newStart < minStart) {
+      newStart = minStart;
+      newEnd = Math.min(maxEnd, newStart + newRange);
     }
-    if (newEnd > candles.length) {
-      newEnd = candles.length;
-      newStart = Math.max(0, candles.length - newRange);
+    if (newEnd > maxEnd) {
+      newEnd = maxEnd;
+      newStart = Math.max(minStart, maxEnd - newRange);
     }
     
     setViewRange({ start: newStart, end: newEnd });
@@ -705,18 +720,22 @@ function ChartCanvas({
     let newStart = panStartRef.current.viewStart + candlesPanned;
     let newEnd = panStartRef.current.viewEnd + candlesPanned;
     
-    // Clamp
-    if (newStart < 0) {
-      newEnd -= newStart;
-      newStart = 0;
+    // Allow scrolling beyond boundaries by buffer amount
+    const buffer = candlesInView * SCROLL_BUFFER_RATIO;
+    const minStart = -buffer;
+    const maxEnd = candles.length + buffer;
+    
+    if (newStart < minStart) {
+      newEnd -= (newStart - minStart);
+      newStart = minStart;
     }
-    if (newEnd > candles.length) {
-      newStart -= (newEnd - candles.length);
-      newEnd = candles.length;
+    if (newEnd > maxEnd) {
+      newStart -= (newEnd - maxEnd);
+      newEnd = maxEnd;
     }
     
     if (Math.abs(dx) > 5) setIsPanning(true);
-    setViewRange({ start: Math.max(0, newStart), end: Math.min(candles.length, newEnd) });
+    setViewRange({ start: Math.max(minStart, newStart), end: Math.min(maxEnd, newEnd) });
     setTooltip(null);
   };
   
@@ -755,16 +774,21 @@ function ChartCanvas({
       let newStart = viewStart + candlesPanned;
       let newEnd = viewEnd + candlesPanned;
       
-      if (newStart < 0) {
-        newEnd -= newStart;
-        newStart = 0;
+      // Allow scrolling beyond boundaries by buffer amount
+      const buffer = candlesInView * SCROLL_BUFFER_RATIO;
+      const minStart = -buffer;
+      const maxEnd = candles.length + buffer;
+      
+      if (newStart < minStart) {
+        newEnd -= (newStart - minStart);
+        newStart = minStart;
       }
-      if (newEnd > candles.length) {
-        newStart -= (newEnd - candles.length);
-        newEnd = candles.length;
+      if (newEnd > maxEnd) {
+        newStart -= (newEnd - maxEnd);
+        newEnd = maxEnd;
       }
       
-      setViewRange({ start: Math.max(0, newStart), end: Math.min(candles.length, newEnd) });
+      setViewRange({ start: Math.max(minStart, newStart), end: Math.min(maxEnd, newEnd) });
     } else if (currentTouches.length === 2 && startTouches.length === 2) {
       // Pinch zoom - horizontal for X, vertical for Y
       const startDistX = Math.abs(startTouches[1].x - startTouches[0].x);
@@ -775,20 +799,25 @@ function ChartCanvas({
       // Horizontal pinch - X axis zoom
       if (startDistX > 20) {
         const scaleX = startDistX / Math.max(1, currentDistX);
-        const newRange = Math.max(10, Math.min(candles.length, candlesInView * scaleX));
+        const maxRange = candles.length * (1 + SCROLL_BUFFER_RATIO * 2);
+        const newRange = Math.max(10, Math.min(maxRange, candlesInView * scaleX));
         const centerRatio = 0.5;
         const currentCenter = viewStart + candlesInView * centerRatio;
         
         let newStart = currentCenter - newRange * centerRatio;
         let newEnd = currentCenter + newRange * (1 - centerRatio);
         
-        if (newStart < 0) {
-          newStart = 0;
-          newEnd = Math.min(candles.length, newRange);
+        const buffer = newRange * SCROLL_BUFFER_RATIO;
+        const minStart = -buffer;
+        const maxEnd = candles.length + buffer;
+        
+        if (newStart < minStart) {
+          newStart = minStart;
+          newEnd = Math.min(maxEnd, newStart + newRange);
         }
-        if (newEnd > candles.length) {
-          newEnd = candles.length;
-          newStart = Math.max(0, candles.length - newRange);
+        if (newEnd > maxEnd) {
+          newEnd = maxEnd;
+          newStart = Math.max(minStart, maxEnd - newRange);
         }
         
         setViewRange({ start: newStart, end: newEnd });

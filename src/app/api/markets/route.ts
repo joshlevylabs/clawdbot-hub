@@ -61,14 +61,19 @@ const SYMBOL_NAMES: Record<string, string> = {
 };
 
 // Map our range/interval to Yahoo Finance parameters
-function getYahooParams(range: string, interval: string): { yahooRange: string; yahooInterval: string } {
-  // Interval mapping
-  const intervalMap: Record<string, string> = {
-    '30m': '30m',
-    '1h': '1h',
-    '4h': '1h', // Yahoo doesn't have 4h, we'll aggregate
-    '1d': '1d',
-    '1w': '1wk',
+function getYahooParams(range: string, interval: string): { yahooRange: string; yahooInterval: string; aggregate?: number } {
+  // Interval mapping - Yahoo doesn't support all intervals, we aggregate some
+  const intervalMap: Record<string, { yahoo: string; aggregate?: number }> = {
+    '5m': { yahoo: '5m' },
+    '15m': { yahoo: '15m' },
+    '30m': { yahoo: '30m' },
+    '1h': { yahoo: '1h' },
+    '4h': { yahoo: '1h', aggregate: 4 }, // Aggregate 4 hourly candles
+    '1d': { yahoo: '1d' },
+    '1wk': { yahoo: '1wk' },
+    '1mo': { yahoo: '1mo' },
+    '6mo': { yahoo: '1mo', aggregate: 6 }, // Aggregate 6 monthly candles
+    '12mo': { yahoo: '1mo', aggregate: 12 }, // Aggregate 12 monthly candles
   };
   
   // Range mapping
@@ -76,6 +81,7 @@ function getYahooParams(range: string, interval: string): { yahooRange: string; 
     '1d': '1d',
     '5d': '5d',
     '1mo': '1mo',
+    '2y': '2y',
     '3mo': '3mo',
     '6mo': '6mo',
     '1y': '1y',
@@ -84,11 +90,12 @@ function getYahooParams(range: string, interval: string): { yahooRange: string; 
     '10y': '10y',
   };
   
-  const yahooInterval = intervalMap[interval] || '1d';
+  const intervalConfig = intervalMap[interval] || { yahoo: '1d' };
+  const yahooInterval = intervalConfig.yahoo;
   const yahooRange = rangeMap[range] || '3mo';
   
   // For intraday intervals, limit range
-  if (['30m', '1h'].includes(interval)) {
+  if (['5m', '15m', '30m', '1h'].includes(interval)) {
     if (['3y', '5y', '10y', '1y', '6mo'].includes(range)) {
       return { yahooRange: '60d', yahooInterval };
     }
@@ -385,11 +392,30 @@ async function fetchQuote(symbol: string): Promise<QuoteData | null> {
   }
 }
 
+// Aggregate candles by a factor
+function aggregateCandles(candles: CandleData[], factor: number): CandleData[] {
+  const aggregated: CandleData[] = [];
+  for (let i = 0; i < candles.length; i += factor) {
+    const chunk = candles.slice(i, Math.min(i + factor, candles.length));
+    if (chunk.length > 0) {
+      aggregated.push({
+        time: chunk[0].time,
+        open: chunk[0].open,
+        high: Math.max(...chunk.map(c => c.high)),
+        low: Math.min(...chunk.map(c => c.low)),
+        close: chunk[chunk.length - 1].close,
+        volume: chunk.reduce((sum, c) => sum + c.volume, 0),
+      });
+    }
+  }
+  return aggregated;
+}
+
 // Fetch historical candle data
 async function fetchCandles(symbol: string, range: string, interval: string): Promise<CandleData[]> {
   try {
-    const { yahooRange, yahooInterval } = getYahooParams(range, interval);
-    const url = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=${yahooInterval}&range=${yahooRange}`;
+    const params = getYahooParams(range, interval);
+    const url = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=${params.yahooInterval}&range=${params.yahooRange}`;
     
     const response = await fetch(url, {
       headers: { 'User-Agent': 'Mozilla/5.0' },
@@ -419,24 +445,10 @@ async function fetchCandles(symbol: string, range: string, interval: string): Pr
       }
     }
     
-    // Aggregate to 4h if needed
-    if (interval === '4h' && candles.length > 0) {
-      const aggregated: CandleData[] = [];
-      for (let i = 0; i < candles.length; i += 4) {
-        const chunk = candles.slice(i, Math.min(i + 4, candles.length));
-        if (chunk.length > 0) {
-          aggregated.push({
-            time: chunk[0].time,
-            open: chunk[0].open,
-            high: Math.max(...chunk.map(c => c.high)),
-            low: Math.min(...chunk.map(c => c.low)),
-            close: chunk[chunk.length - 1].close,
-            volume: chunk.reduce((sum, c) => sum + c.volume, 0),
-          });
-        }
-      }
-      return aggregated;
-    }
+    // Aggregate if needed (4h from 1h, 6mo/12mo from monthly)
+    if (interval === '4h') return aggregateCandles(candles, 4);
+    if (interval === '6mo') return aggregateCandles(candles, 6);
+    if (interval === '12mo') return aggregateCandles(candles, 12);
     
     return candles;
   } catch (error) {

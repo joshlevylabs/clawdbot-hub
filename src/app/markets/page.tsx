@@ -89,21 +89,24 @@ const DEFAULT_SETTINGS: ChartSettings = {
 };
 
 // Note: label is the unique key used for selection matching
-// Timeframes: label = display name, range = data to fetch, interval = candle size
+// Timeframes: label = candle size, range = default data to fetch, interval = Yahoo interval
 const TIMEFRAMES = [
-  // Intraday candles (label = candle size)
+  // Intraday candles
   { label: '5m', range: '1d', interval: '5m' },
   { label: '15m', range: '5d', interval: '15m' },
   { label: '30m', range: '5d', interval: '30m' },
-  { label: '1H', range: '5d', interval: '1h' },
-  { label: '4H', range: '1mo', interval: '4h' },
-  // Daily candles with different ranges (label = data range)
-  { label: '1M', range: '1mo', interval: '1d' },
-  { label: '3M', range: '3mo', interval: '1d' },
-  { label: '6M', range: '6mo', interval: '1d' },
-  { label: '1Y', range: '1y', interval: '1d' },
+  { label: '1H', range: '1mo', interval: '1h' },
+  { label: '4H', range: '3mo', interval: '4h' },
+  // Daily candles
+  { label: '1D', range: '6mo', interval: '1d' },
   // Weekly candles
-  { label: '1W', range: '1y', interval: '1wk' },
+  { label: '1W', range: '2y', interval: '1wk' },
+  // Monthly candles
+  { label: '1M', range: '5y', interval: '1mo' },
+  // 6-month candles (custom aggregation from monthly)
+  { label: '6M', range: '10y', interval: '6mo' },
+  // Yearly candles (custom aggregation from monthly)
+  { label: '1Y', range: '10y', interval: '12mo' },
 ];
 
 const SYMBOL_CATEGORIES = {

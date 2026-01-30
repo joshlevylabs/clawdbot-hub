@@ -942,7 +942,7 @@ function SettingsPanel({
   };
   
   return (
-    <div className="relative" style={{ zIndex: open ? 100 : 'auto' }}>
+    <div className="relative" style={{ zIndex: open ? 200 : 'auto' }}>
       <button 
         onClick={() => setOpen(!open)}
         className={`p-2 rounded-lg transition-colors ${open ? 'bg-primary-600 text-white' : 'bg-slate-800 text-slate-400 hover:text-white'}`}
@@ -951,7 +951,7 @@ function SettingsPanel({
       </button>
       
       {open && (
-        <div className="absolute right-0 top-10 z-[100] bg-slate-900 border border-slate-700 rounded-xl p-4 shadow-2xl min-w-[200px]">
+        <div className="absolute right-0 top-10 z-[200] bg-slate-900 border border-slate-700 rounded-xl p-4 shadow-2xl min-w-[200px]">
           <p className="text-xs text-slate-500 uppercase tracking-wide mb-3">Indicators</p>
           
           <div className="space-y-2">
@@ -1155,7 +1155,7 @@ function DetailModal({ detail, onClose, selectedTimeframe, setTimeframe, setting
   
   return (
     <div className="fixed inset-0 z-50 bg-slate-950 overflow-auto">
-      <div className="sticky top-0 bg-slate-950/95 backdrop-blur-sm border-b border-slate-800 p-4">
+      <div className="sticky top-0 z-[60] bg-slate-950/95 backdrop-blur-sm border-b border-slate-800 p-4">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-xl font-bold text-slate-100">{detail.quote.symbol}</h2>

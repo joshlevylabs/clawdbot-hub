@@ -468,46 +468,73 @@ function ChartCanvas({
       }
     }
 
-    // Fibonacci Retracements
+    // Get current price for % calculations
+    const currentPrice = visibleCandles.length > 0 ? visibleCandles[visibleCandles.length - 1].close : 0;
+    
+    // Fibonacci Retracements - brighter, larger text with price and %
     if (settings.showFibRetracements && fibonacci?.retracements) {
       fibonacci.retracements.forEach(fib => {
         const y = scaleY(fib.price);
         if (y > padding.top - 5 && y < canvasHeight - padding.bottom + 5) {
-          ctx.strokeStyle = fib.percent === 50 ? '#8b5cf680' : '#3b82f650';
-          ctx.setLineDash([3, 3]);
-          ctx.lineWidth = 1;
+          // Brighter, thicker lines
+          ctx.strokeStyle = fib.percent === 50 ? '#a78bfacc' : '#60a5facc';
+          ctx.setLineDash([4, 4]);
+          ctx.lineWidth = 1.5;
           ctx.beginPath();
           ctx.moveTo(padding.left, y);
           ctx.lineTo(width - padding.right, y);
           ctx.stroke();
           ctx.setLineDash([]);
           
-          ctx.fillStyle = fib.percent === 50 ? '#8b5cf6' : '#3b82f6';
-          ctx.font = '8px sans-serif';
+          // Calculate % from current price
+          const pctFromCurrent = currentPrice > 0 ? ((fib.price - currentPrice) / currentPrice * 100) : 0;
+          const pctSign = pctFromCurrent >= 0 ? '+' : '';
+          
+          // Left side: level label
+          ctx.fillStyle = fib.percent === 50 ? '#a78bfa' : '#60a5fa';
+          ctx.font = 'bold 11px sans-serif';
           ctx.textAlign = 'left';
-          ctx.fillText(fib.level, padding.left + 2, y - 2);
+          ctx.fillText(fib.level, padding.left + 4, y - 4);
+          
+          // Right side: price and % from current
+          ctx.font = '10px sans-serif';
+          ctx.textAlign = 'right';
+          const priceText = `$${fib.price.toFixed(2)} (${pctSign}${pctFromCurrent.toFixed(1)}%)`;
+          ctx.fillText(priceText, width - padding.right - 4, y - 4);
         }
       });
     }
     
-    // Fibonacci Extensions
+    // Fibonacci Extensions - brighter, larger text with price and %
     if (settings.showFibExtensions && fibonacci?.extensions) {
       fibonacci.extensions.forEach(ext => {
         const y = scaleY(ext.price);
         if (y > padding.top - 5 && y < canvasHeight - padding.bottom + 5) {
-          ctx.strokeStyle = '#10b98160';
-          ctx.setLineDash([5, 3]);
-          ctx.lineWidth = 1;
+          // Brighter, thicker lines
+          ctx.strokeStyle = '#34d399cc';
+          ctx.setLineDash([6, 4]);
+          ctx.lineWidth = 1.5;
           ctx.beginPath();
           ctx.moveTo(padding.left, y);
           ctx.lineTo(width - padding.right, y);
           ctx.stroke();
           ctx.setLineDash([]);
           
-          ctx.fillStyle = '#10b981';
-          ctx.font = '8px sans-serif';
+          // Calculate % from current price
+          const pctFromCurrent = currentPrice > 0 ? ((ext.price - currentPrice) / currentPrice * 100) : 0;
+          const pctSign = pctFromCurrent >= 0 ? '+' : '';
+          
+          // Left side: level label
+          ctx.fillStyle = '#34d399';
+          ctx.font = 'bold 11px sans-serif';
           ctx.textAlign = 'left';
-          ctx.fillText(`↑${ext.level}`, padding.left + 2, y - 2);
+          ctx.fillText(`↑${ext.level}`, padding.left + 4, y - 4);
+          
+          // Right side: price and % from current
+          ctx.font = '10px sans-serif';
+          ctx.textAlign = 'right';
+          const priceText = `$${ext.price.toFixed(2)} (${pctSign}${pctFromCurrent.toFixed(1)}%)`;
+          ctx.fillText(priceText, width - padding.right - 4, y - 4);
         }
       });
     }

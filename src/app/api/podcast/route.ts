@@ -2,9 +2,15 @@ import { NextResponse } from 'next/server';
 import { promises as fs } from 'fs';
 import path from 'path';
 
-const PODCAST_DIR = process.env.PODCAST_DIR || path.join(process.env.HOME || '', 'clawd/builders-frequency');
-const HISTORY_DIR = path.join(PODCAST_DIR, 'history');
-const TODOS_FILE = path.join(PODCAST_DIR, 'todos.json');
+// Use public/data/podcast for deployed version, local path for dev
+const isVercel = process.env.VERCEL === '1';
+const LOCAL_PODCAST_DIR = path.join(process.env.HOME || '', 'clawd/builders-frequency');
+const DEPLOYED_PODCAST_DIR = path.join(process.cwd(), 'public/data/podcast');
+
+const HISTORY_DIR = isVercel ? DEPLOYED_PODCAST_DIR : path.join(LOCAL_PODCAST_DIR, 'history');
+const TODOS_FILE = isVercel 
+  ? path.join(DEPLOYED_PODCAST_DIR, 'todos.json')
+  : path.join(LOCAL_PODCAST_DIR, 'todos.json');
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);

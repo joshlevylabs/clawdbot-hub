@@ -1,0 +1,23 @@
+{
+  "episodes": [
+    {
+      "number": 1,
+      "title": "Why I Started The Builder's Frequency",
+      "pillar": "all",
+      "filename": "episode-001-2026-01-27-why-i-started.md",
+      "created": "2026-01-27",
+      "finalized": "2026-01-27",
+      "status": "finalized"
+    }
+  ],
+  "lastEpisodeNumber": 1,
+  "pillarCounts": {
+    "ai": 0,
+    "side-business": 0,
+    "engineering": 0,
+    "faith": 0,
+    "legacy": 0,
+    "all": 1
+  },
+  "lastUpdated": "2026-01-27"
+}

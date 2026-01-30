@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import {
   Mic,
   Play,
+  Pause,
   Edit3,
   ExternalLink,
   CheckSquare,
@@ -20,6 +21,10 @@ import {
   ChevronUp,
   Maximize2,
   Settings2,
+  Volume2,
+  SkipBack,
+  SkipForward,
+  Headphones,
 } from "lucide-react";
 
 // Web Speech API types
@@ -476,17 +481,150 @@ function Teleprompter({
   );
 }
 
+// Audio Player Component
+function AudioPlayer({ src, title }: { src: string; title: string }) {
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [playbackRate, setPlaybackRate] = useState(1);
+
+  const formatTime = (time: number) => {
+    const mins = Math.floor(time / 60);
+    const secs = Math.floor(time % 60);
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  const togglePlay = () => {
+    if (!audioRef.current) return;
+    if (isPlaying) {
+      audioRef.current.pause();
+    } else {
+      audioRef.current.play();
+    }
+    setIsPlaying(!isPlaying);
+  };
+
+  const handleTimeUpdate = () => {
+    if (audioRef.current) {
+      setCurrentTime(audioRef.current.currentTime);
+    }
+  };
+
+  const handleLoadedMetadata = () => {
+    if (audioRef.current) {
+      setDuration(audioRef.current.duration);
+    }
+  };
+
+  const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const time = Number(e.target.value);
+    if (audioRef.current) {
+      audioRef.current.currentTime = time;
+      setCurrentTime(time);
+    }
+  };
+
+  const skip = (seconds: number) => {
+    if (audioRef.current) {
+      audioRef.current.currentTime = Math.max(0, Math.min(duration, audioRef.current.currentTime + seconds));
+    }
+  };
+
+  const changePlaybackRate = () => {
+    const rates = [1, 1.25, 1.5, 1.75, 2];
+    const currentIndex = rates.indexOf(playbackRate);
+    const nextRate = rates[(currentIndex + 1) % rates.length];
+    setPlaybackRate(nextRate);
+    if (audioRef.current) {
+      audioRef.current.playbackRate = nextRate;
+    }
+  };
+
+  return (
+    <div className="bg-slate-900 rounded-xl p-4 border border-slate-800">
+      <audio 
+        ref={audioRef}
+        src={src}
+        onTimeUpdate={handleTimeUpdate}
+        onLoadedMetadata={handleLoadedMetadata}
+        onEnded={() => setIsPlaying(false)}
+      />
+      
+      <div className="flex items-center gap-3 mb-3">
+        <Headphones className="w-5 h-5 text-primary-400" />
+        <span className="text-sm text-slate-300 font-medium">{title}</span>
+        <span className="text-xs text-slate-500 ml-auto">{formatTime(duration)}</span>
+      </div>
+      
+      {/* Progress bar */}
+      <div className="mb-3">
+        <input 
+          type="range"
+          min="0"
+          max={duration || 100}
+          value={currentTime}
+          onChange={handleSeek}
+          className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-primary-500"
+        />
+        <div className="flex justify-between text-xs text-slate-500 mt-1">
+          <span>{formatTime(currentTime)}</span>
+          <span>-{formatTime(duration - currentTime)}</span>
+        </div>
+      </div>
+      
+      {/* Controls */}
+      <div className="flex items-center justify-center gap-4">
+        <button 
+          onClick={() => skip(-15)}
+          className="p-2 text-slate-400 hover:text-white transition-colors"
+          title="Back 15s"
+        >
+          <SkipBack className="w-5 h-5" />
+        </button>
+        
+        <button 
+          onClick={togglePlay}
+          className="p-4 bg-primary-600 hover:bg-primary-700 rounded-full text-white transition-colors"
+        >
+          {isPlaying ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6 ml-0.5" />}
+        </button>
+        
+        <button 
+          onClick={() => skip(30)}
+          className="p-2 text-slate-400 hover:text-white transition-colors"
+          title="Forward 30s"
+        >
+          <SkipForward className="w-5 h-5" />
+        </button>
+        
+        <button 
+          onClick={changePlaybackRate}
+          className="px-2 py-1 text-xs text-slate-400 hover:text-white bg-slate-800 rounded transition-colors ml-4"
+          title="Playback Speed"
+        >
+          {playbackRate}x
+        </button>
+      </div>
+    </div>
+  );
+}
+
 // Episode Card
 function EpisodeCard({ 
   episode, 
   onView, 
   onTeleprompter,
+  onPlayAudio,
+  hasAudio,
   expanded,
   onToggle,
 }: { 
   episode: Episode; 
   onView: () => void;
   onTeleprompter: () => void;
+  onPlayAudio: () => void;
+  hasAudio: boolean;
   expanded: boolean;
   onToggle: () => void;
 }) {
@@ -510,7 +648,16 @@ function EpisodeCard({
       </button>
       
       {expanded && (
-        <div className="px-4 pb-4 pt-2 border-t border-slate-800 flex gap-2">
+        <div className="px-4 pb-4 pt-2 border-t border-slate-800 flex flex-wrap gap-2">
+          {hasAudio && (
+            <button 
+              onClick={onPlayAudio}
+              className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 rounded-lg text-sm text-white"
+            >
+              <Headphones className="w-4 h-4" />
+              Listen
+            </button>
+          )}
           <button 
             onClick={onView}
             className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-sm text-slate-300"
@@ -599,6 +746,11 @@ function ScriptEditor({
   );
 }
 
+// Episode audio mapping
+const EPISODE_AUDIO: Record<number, string> = {
+  1: '/audio/podcast/episode-001.mp3',
+};
+
 // Main Page
 export default function PodcastPage() {
   const [index, setIndex] = useState<PodcastIndex | null>(null);
@@ -607,6 +759,7 @@ export default function PodcastPage() {
   const [editingEpisode, setEditingEpisode] = useState<Episode | null>(null);
   const [editingScript, setEditingScript] = useState<string>('');
   const [teleprompterScript, setTeleprompterScript] = useState<string | null>(null);
+  const [playingAudio, setPlayingAudio] = useState<{ episode: Episode; src: string } | null>(null);
   const [todos, setTodos] = useState<Todo[]>([]);
   const [newTodo, setNewTodo] = useState('');
   
@@ -785,14 +938,35 @@ export default function PodcastPage() {
             </div>
           ) : (
             <div className="space-y-3">
+              {/* Audio Player */}
+              {playingAudio && (
+                <div className="relative">
+                  <button 
+                    onClick={() => setPlayingAudio(null)}
+                    className="absolute -top-2 -right-2 p-1 bg-slate-800 rounded-full text-slate-400 hover:text-white z-10"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                  <AudioPlayer 
+                    src={playingAudio.src} 
+                    title={`Episode ${playingAudio.episode.number}: ${playingAudio.episode.title}`} 
+                  />
+                </div>
+              )}
+              
               {index?.episodes.slice().reverse().map(episode => (
                 <EpisodeCard 
                   key={episode.number}
                   episode={episode}
                   expanded={expandedEpisode === episode.number}
+                  hasAudio={!!EPISODE_AUDIO[episode.number]}
                   onToggle={() => setExpandedEpisode(expandedEpisode === episode.number ? null : episode.number)}
                   onView={() => loadScript(episode)}
                   onTeleprompter={() => openTeleprompter(episode)}
+                  onPlayAudio={() => {
+                    const src = EPISODE_AUDIO[episode.number];
+                    if (src) setPlayingAudio({ episode, src });
+                  }}
                 />
               ))}
             </div>

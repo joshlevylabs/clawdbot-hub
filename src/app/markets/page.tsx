@@ -408,15 +408,15 @@ function ChartCanvas({
       ctx.stroke();
       
       const price = maxPrice + pricePadding - ((priceRange + pricePadding * 2) / 4) * i;
-      ctx.fillStyle = isOverYAxis ? '#60a5fa' : '#475569'; // Highlight labels when hovered
-      ctx.font = '9px sans-serif';
+      ctx.fillStyle = isOverYAxis ? '#60a5fa' : '#94a3b8'; // Brighter labels
+      ctx.font = '11px sans-serif';
       ctx.textAlign = 'left';
       ctx.fillText(`${price.toFixed(price > 100 ? 0 : 2)}`, width - padding.right + 3, y + 3);
     }
 
     // X-axis date labels - adaptive count based on chart width
-    ctx.fillStyle = '#475569';
-    ctx.font = '9px sans-serif';
+    ctx.fillStyle = '#94a3b8'; // Brighter labels
+    ctx.font = '11px sans-serif';
     ctx.textAlign = 'center';
     
     // Calculate how many labels can fit (estimate ~50px per label on mobile, ~60px on desktop)

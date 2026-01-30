@@ -89,16 +89,15 @@ const DEFAULT_SETTINGS: ChartSettings = {
 };
 
 // Note: label is the unique key used for selection matching
-// Timeframes: label = candle interval, range = default data to fetch
+// Timeframes: label = display name, range = data to fetch, interval = candle size
 const TIMEFRAMES = [
-  // Intraday candles
+  // Intraday candles (label = candle size)
   { label: '5m', range: '1d', interval: '5m' },
   { label: '15m', range: '5d', interval: '15m' },
   { label: '30m', range: '5d', interval: '30m' },
   { label: '1H', range: '5d', interval: '1h' },
   { label: '4H', range: '1mo', interval: '4h' },
-  // Daily candles with different ranges
-  { label: '1D', range: '1mo', interval: '1d' },
+  // Daily candles with different ranges (label = data range)
   { label: '1M', range: '1mo', interval: '1d' },
   { label: '3M', range: '3mo', interval: '1d' },
   { label: '6M', range: '6mo', interval: '1d' },
@@ -1538,7 +1537,7 @@ export default function MarketsPage() {
   const [selectedTimeframe, setSelectedTimeframe] = useState('3M');
   
   // Derive range and interval from selected timeframe
-  const currentTf = TIMEFRAMES.find(tf => tf.label === selectedTimeframe) || TIMEFRAMES[7]; // Default to 3M
+  const currentTf = TIMEFRAMES.find(tf => tf.label === selectedTimeframe) || TIMEFRAMES[6]; // Default to 3M
   const range = currentTf.range;
   const interval = currentTf.interval;
   const [isMobile, setIsMobile] = useState(false);

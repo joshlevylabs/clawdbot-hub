@@ -146,7 +146,8 @@ export async function POST(request: NextRequest) {
     const timestamp = now.toISOString();
     const date = timestamp.split('T')[0];
 
-    // Insert into Supabase
+    // Insert into Supabase (using only columns that exist in the schema)
+    // Store advice and tags in the answers JSONB field for now
     const { data, error } = await supabase
       .from('compass_interactions')
       .insert({
@@ -154,10 +155,11 @@ export async function POST(request: NextRequest) {
         description: processed.description,
         power: processed.power,
         safety: processed.safety,
-        tags: processed.tags,
-        advice: processed.advice,
-        timestamp: timestamp,
-        date: date
+        answers: {
+          advice: processed.advice,
+          tags: processed.tags,
+          original_text: body.text
+        }
       })
       .select()
       .single();

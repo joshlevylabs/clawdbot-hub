@@ -13,25 +13,29 @@ export async function GET() {
 
       if (!error && data) {
         // Transform to match expected format
-        const interactions = data.map(row => ({
-          id: row.id,
-          timestamp: row.timestamp || row.created_at,
-          date: row.date || new Date(row.timestamp || row.created_at).toISOString().split('T')[0],
-          time: new Date(row.timestamp || row.created_at).toLocaleTimeString('en-US', {
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false,
-            timeZone: 'America/Los_Angeles'
-          }),
-          type: row.type,
-          description: row.description || '',
-          compass: {
-            power: row.power,
-            safety: row.safety
-          },
-          tags: row.tags || [],
-          advice: row.advice || null
-        }));
+        const interactions = data.map(row => {
+          // Extract advice and tags from answers JSONB if present
+          const answers = row.answers as { advice?: string; tags?: string[] } | null;
+          return {
+            id: row.id,
+            timestamp: row.timestamp || row.created_at,
+            date: row.date || new Date(row.timestamp || row.created_at).toISOString().split('T')[0],
+            time: new Date(row.timestamp || row.created_at).toLocaleTimeString('en-US', {
+              hour: '2-digit',
+              minute: '2-digit',
+              hour12: false,
+              timeZone: 'America/Los_Angeles'
+            }),
+            type: row.type,
+            description: row.description || '',
+            compass: {
+              power: row.power,
+              safety: row.safety
+            },
+            tags: answers?.tags || [],
+            advice: answers?.advice || null
+          };
+        });
 
         return NextResponse.json({ interactions });
       }

@@ -285,15 +285,25 @@ function ChartCanvas({
   const isZoomed = isXZoomed || isYZoomed;
   
   // Request more historical data when scrolling near the start
-  const loadMoreThreshold = useRef(false);
+  const lastCandleCount = useRef(candles.length);
   useEffect(() => {
-    // Trigger when visible start is within 10% of the beginning
-    const threshold = Math.max(5, candles.length * 0.1);
-    if (visibleStart < threshold && !loadMoreThreshold.current && !isLoadingMore && onRequestMoreData) {
-      loadMoreThreshold.current = true;
+    // Reset when candle count changes (new data loaded)
+    if (candles.length !== lastCandleCount.current) {
+      lastCandleCount.current = candles.length;
+    }
+  }, [candles.length]);
+  
+  useEffect(() => {
+    // Trigger when visible start is within 15% of the beginning
+    const threshold = Math.max(10, candles.length * 0.15);
+    const shouldLoad = visibleStart < threshold && 
+                       !isLoadingMore && 
+                       onRequestMoreData &&
+                       candles.length === lastCandleCount.current; // Only if we haven't just loaded
+    
+    if (shouldLoad) {
+      console.log(`Requesting more data: visibleStart=${visibleStart}, threshold=${threshold}, candles=${candles.length}`);
       onRequestMoreData();
-    } else if (visibleStart >= threshold) {
-      loadMoreThreshold.current = false;
     }
   }, [visibleStart, candles.length, isLoadingMore, onRequestMoreData]);
 
@@ -1341,7 +1351,7 @@ export default function MarketsPage() {
   const [loading, setLoading] = useState(true);
   const [detailLoading, setDetailLoading] = useState(false);
   const [loadingMoreData, setLoadingMoreData] = useState(false);
-  const [currentDataRange, setCurrentDataRange] = useState<string>('3mo');
+  const [currentDataRange, setCurrentDataRange] = useState<string>('3mo'); // Will be set by initial fetch
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
   const [selectedTimeframe, setSelectedTimeframe] = useState('1D');
   
@@ -1428,15 +1438,22 @@ export default function MarketsPage() {
 
   // Load more historical data when user scrolls to the start
   const loadMoreHistoricalData = useCallback(() => {
-    if (!selectedSymbol || loadingMoreData) return;
-    
-    const extendedRange = EXTENDED_RANGES[currentDataRange];
-    if (extendedRange === currentDataRange) {
-      console.log('Already at maximum data range');
+    if (!selectedSymbol) {
+      console.log('No symbol selected');
+      return;
+    }
+    if (loadingMoreData) {
+      console.log('Already loading more data');
       return;
     }
     
-    console.log(`Loading more data: ${currentDataRange} → ${extendedRange}`);
+    const extendedRange = EXTENDED_RANGES[currentDataRange];
+    if (!extendedRange || extendedRange === currentDataRange) {
+      console.log(`Already at maximum data range: ${currentDataRange}`);
+      return;
+    }
+    
+    console.log(`Loading more historical data: ${currentDataRange} → ${extendedRange} (interval: ${interval})`);
     setLoadingMoreData(true);
     fetchSymbolDetail(selectedSymbol, extendedRange, interval, true);
   }, [selectedSymbol, loadingMoreData, currentDataRange, interval, fetchSymbolDetail]);

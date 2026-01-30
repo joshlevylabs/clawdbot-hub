@@ -98,7 +98,7 @@ function MemberCard({ member }: { member: FamilyMember }) {
   };
 
   return (
-    <div className="bg-slate-850 rounded-xl border border-slate-800 overflow-hidden">
+    <div className="bg-slate-900 rounded-xl border border-slate-800 overflow-hidden">
       <button
         onClick={() => setExpanded(!expanded)}
         className="w-full p-4 flex items-center gap-4 hover:bg-slate-800/50 transition-colors"
@@ -291,7 +291,7 @@ export default function FamilyPage() {
           </h2>
           <div className="grid sm:grid-cols-2 gap-3">
             {data.traditions.map((tradition, i) => (
-              <div key={i} className="bg-slate-850 rounded-xl border border-slate-800 p-4">
+              <div key={i} className="bg-slate-900 rounded-xl border border-slate-800 p-4">
                 <div className="flex items-center gap-2 mb-2">
                   <Sparkles className="w-4 h-4 text-amber-400" />
                   <h3 className="font-medium text-slate-200">{tradition.name}</h3>
@@ -306,7 +306,7 @@ export default function FamilyPage() {
         {/* Sidebar */}
         <div className="space-y-6">
           {/* Upcoming Events */}
-          <div className="bg-slate-850 rounded-xl border border-slate-800 p-4">
+          <div className="bg-slate-900 rounded-xl border border-slate-800 p-4">
             <h3 className="font-medium text-slate-200 mb-3 flex items-center gap-2">
               <Calendar className="w-4 h-4 text-primary-400" />
               Upcoming Events
@@ -329,7 +329,7 @@ export default function FamilyPage() {
           </div>
 
           {/* Conversation Starter */}
-          <div className="bg-slate-850 rounded-xl border border-slate-800 p-4">
+          <div className="bg-slate-900 rounded-xl border border-slate-800 p-4">
             <h3 className="font-medium text-slate-200 mb-3 flex items-center gap-2">
               <MessageCircle className="w-4 h-4 text-emerald-400" />
               Conversation Starter
@@ -344,7 +344,7 @@ export default function FamilyPage() {
           </div>
 
           {/* Activity Idea */}
-          <div className="bg-slate-850 rounded-xl border border-slate-800 p-4">
+          <div className="bg-slate-900 rounded-xl border border-slate-800 p-4">
             <h3 className="font-medium text-slate-200 mb-3 flex items-center gap-2">
               <Sparkles className="w-4 h-4 text-blue-400" />
               Family Activity Idea
@@ -359,7 +359,7 @@ export default function FamilyPage() {
           </div>
 
           {/* Date Night Idea */}
-          <div className="bg-slate-850 rounded-xl border border-slate-800 p-4">
+          <div className="bg-slate-900 rounded-xl border border-slate-800 p-4">
             <h3 className="font-medium text-slate-200 mb-3 flex items-center gap-2">
               <Heart className="w-4 h-4 text-pink-400" />
               Date Night Idea

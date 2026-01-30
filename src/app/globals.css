@@ -33,7 +33,8 @@ body {
 
 /* Card hover effects */
 .card {
-  @apply bg-slate-850 border border-slate-800 rounded-xl transition-all duration-150;
+  @apply border border-slate-800 rounded-xl transition-all duration-150;
+  background-color: #131B2E;
 }
 
 .card:hover {

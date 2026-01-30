@@ -113,6 +113,20 @@ const PLATFORM_LINKS = [
   { name: "Buffer", url: "https://buffer.com/", icon: "📱" },
 ];
 
+// WPS speed utilities - logarithmic scale for fine control
+// Slider value 0-100 maps to 0.5-6 WPS logarithmically
+const MIN_WPS = 0.5;
+const MAX_WPS = 6;
+const sliderToWps = (slider: number): number => {
+  // Logarithmic mapping: more precision at lower speeds
+  const normalized = slider / 100; // 0-1
+  return MIN_WPS * Math.pow(MAX_WPS / MIN_WPS, normalized);
+};
+const wpsToSlider = (wps: number): number => {
+  // Inverse of above
+  return 100 * Math.log(wps / MIN_WPS) / Math.log(MAX_WPS / MIN_WPS);
+};
+
 // Teleprompter Component with Voice Sync
 function Teleprompter({ 
   script, 
@@ -122,7 +136,7 @@ function Teleprompter({
   onClose: () => void;
 }) {
   const [fontSize, setFontSize] = useState(32);
-  const [scrollSpeed, setScrollSpeed] = useState(50);
+  const [speedSlider, setSpeedSlider] = useState(50); // 0-100 slider value
   const [isScrolling, setIsScrolling] = useState(false);
   const [mirrorH, setMirrorH] = useState(false);
   const [mirrorV, setMirrorV] = useState(false);
@@ -133,7 +147,9 @@ function Teleprompter({
   const [isMobile, setIsMobile] = useState(false);
   const [audioLevel, setAudioLevel] = useState(0);
   const [isUserScrolling, setIsUserScrolling] = useState(false);
+  const [scrollHeight, setScrollHeight] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
   const scrollIntervalRef = useRef<number | null>(null);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
@@ -142,6 +158,9 @@ function Teleprompter({
   const userScrollTimeoutRef = useRef<number | null>(null);
   const isProgrammaticScrollRef = useRef(false);
   const wordsRef = useRef<string[]>([]);
+  
+  // Calculate current WPS from slider
+  const currentWps = sliderToWps(speedSlider);
 
   // Check if mobile
   useEffect(() => {
@@ -155,27 +174,51 @@ function Teleprompter({
   useEffect(() => {
     wordsRef.current = script.toLowerCase().replace(/[^\w\s]/g, '').split(/\s+/).filter(w => w.length > 0);
   }, [script]);
-
-  // Manual scroll mode - pause when user is scrolling
+  
+  // Track scroll height for WPS calculation
   useEffect(() => {
-    if (isScrolling && !voiceSync && !isUserScrolling && containerRef.current) {
+    const updateScrollHeight = () => {
+      if (contentRef.current && containerRef.current) {
+        // Total scrollable distance (content height minus visible viewport)
+        const totalHeight = contentRef.current.scrollHeight - containerRef.current.clientHeight;
+        setScrollHeight(Math.max(1, totalHeight));
+      }
+    };
+    updateScrollHeight();
+    window.addEventListener('resize', updateScrollHeight);
+    return () => window.removeEventListener('resize', updateScrollHeight);
+  }, [script, fontSize]);
+
+  // Manual scroll mode - WPS-based scrolling
+  useEffect(() => {
+    if (isScrolling && !voiceSync && !isUserScrolling && containerRef.current && wordsRef.current.length > 0) {
+      // Calculate pixels per second based on WPS
+      // Total scroll distance / total words = pixels per word
+      // pixels per word * WPS = pixels per second
+      const pixelsPerWord = scrollHeight / wordsRef.current.length;
+      const pixelsPerSecond = pixelsPerWord * currentWps;
+      
+      // Update at 60fps for smooth scrolling
+      const intervalMs = 1000 / 60;
+      const pixelsPerFrame = pixelsPerSecond / 60;
+      
       scrollIntervalRef.current = window.setInterval(() => {
         if (containerRef.current) {
           isProgrammaticScrollRef.current = true;
-          containerRef.current.scrollTop += 1;
+          containerRef.current.scrollTop += pixelsPerFrame;
           // Reset flag after scroll event fires
           requestAnimationFrame(() => {
             isProgrammaticScrollRef.current = false;
           });
         }
-      }, 100 - scrollSpeed);
+      }, intervalMs);
     } else if (scrollIntervalRef.current) {
       clearInterval(scrollIntervalRef.current);
     }
     return () => {
       if (scrollIntervalRef.current) clearInterval(scrollIntervalRef.current);
     };
-  }, [isScrolling, scrollSpeed, voiceSync, isUserScrolling]);
+  }, [isScrolling, currentWps, voiceSync, isUserScrolling, scrollHeight]);
 
   // Handle user scroll - pause auto-scroll temporarily
   // Only triggers on actual user interaction, not programmatic scrolling
@@ -403,13 +446,13 @@ function Teleprompter({
               <div className="flex items-center gap-3">
                 {!voiceSync && (
                   <div className="flex items-center gap-2 flex-1">
-                    <span className="text-slate-500 text-sm">Speed</span>
+                    <span className="text-emerald-400 text-sm font-mono w-16">{currentWps.toFixed(1)} wps</span>
                     <input 
                       type="range" 
-                      min="10" 
-                      max="90" 
-                      value={scrollSpeed}
-                      onChange={(e) => setScrollSpeed(Number(e.target.value))}
+                      min="0" 
+                      max="100" 
+                      value={speedSlider}
+                      onChange={(e) => setSpeedSlider(Number(e.target.value))}
                       className="flex-1 accent-primary-500 h-8"
                     />
                   </div>
@@ -473,14 +516,14 @@ function Teleprompter({
                 {/* Scroll speed - only show when not in voice sync */}
                 {!voiceSync && (
                   <div className="flex items-center gap-2">
-                    <span className="text-slate-500 text-sm">Speed:</span>
+                    <span className="text-emerald-400 text-sm font-mono">{currentWps.toFixed(1)} wps</span>
                     <input 
                       type="range" 
-                      min="10" 
-                      max="90" 
-                      value={scrollSpeed}
-                      onChange={(e) => setScrollSpeed(Number(e.target.value))}
-                      className="w-24 accent-primary-500"
+                      min="0" 
+                      max="100" 
+                      value={speedSlider}
+                      onChange={(e) => setSpeedSlider(Number(e.target.value))}
+                      className="w-28 accent-primary-500"
                     />
                   </div>
                 )}
@@ -560,14 +603,16 @@ function Teleprompter({
         onWheel={handleUserScroll}
         onTouchMove={handleUserScroll}
       >
-        <div 
-          className="max-w-4xl mx-auto text-white leading-relaxed whitespace-pre-wrap"
-          style={{ fontSize: `${fontSize}px`, lineHeight: 1.6 }}
-        >
-          {script}
+        <div ref={contentRef}>
+          <div 
+            className="max-w-4xl mx-auto text-white leading-relaxed whitespace-pre-wrap"
+            style={{ fontSize: `${fontSize}px`, lineHeight: 1.6 }}
+          >
+            {script}
+          </div>
+          {/* Extra padding at bottom for scroll */}
+          <div className="h-[80vh]" />
         </div>
-        {/* Extra padding at bottom for scroll */}
-        <div className="h-[80vh]" />
       </div>
       
       {/* Click to toggle controls */}

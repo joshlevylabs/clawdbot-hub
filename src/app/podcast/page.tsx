@@ -114,9 +114,9 @@ const PLATFORM_LINKS = [
 ];
 
 // WPS speed utilities - logarithmic scale for fine control
-// Slider value 0-100 maps to 0.5-6 WPS logarithmically
+// Slider value 0-100 maps to 0.5-12 WPS logarithmically
 const MIN_WPS = 0.5;
-const MAX_WPS = 6;
+const MAX_WPS = 12;
 const sliderToWps = (slider: number): number => {
   // Logarithmic mapping: more precision at lower speeds
   const normalized = slider / 100; // 0-1

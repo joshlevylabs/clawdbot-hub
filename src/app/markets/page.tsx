@@ -263,6 +263,7 @@ function ChartCanvas({
   const [localFibPoints, setLocalFibPoints] = useState<CustomFibPoints>({ a: null, b: null, c: null });
   const [dragPreview, setDragPreview] = useState<{ globalIndex: number; x: number; isValid: boolean } | null>(null);
   const isDraggingFib = useRef(false);
+  const dragPreviewRef = useRef<{ globalIndex: number; x: number; isValid: boolean } | null>(null);
   
   // Pan & Zoom state
   const [viewRange, setViewRange] = useState<ViewRange>({ start: 0, end: candles.length });
@@ -724,7 +725,9 @@ function ChartCanvas({
     const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
     const pos = getCandleIndexFromPosition(clientX);
     if (pos) {
-      setDragPreview({ globalIndex: pos.globalIndex, x: pos.x, isValid: isFibPointValid(pos.globalIndex) });
+      const preview = { globalIndex: pos.globalIndex, x: pos.x, isValid: isFibPointValid(pos.globalIndex) };
+      dragPreviewRef.current = preview;
+      setDragPreview(preview);
     }
   };
   
@@ -734,23 +737,28 @@ function ChartCanvas({
     
     const pos = getCandleIndexFromPosition(clientX);
     if (pos) {
-      setDragPreview({ globalIndex: pos.globalIndex, x: pos.x, isValid: isFibPointValid(pos.globalIndex) });
+      const preview = { globalIndex: pos.globalIndex, x: pos.x, isValid: isFibPointValid(pos.globalIndex) };
+      dragPreviewRef.current = preview;
+      setDragPreview(preview);
     }
   };
   
   // Handle Fib drag end
   const handleFibDragEnd = () => {
-    if (selectMode === 'none' || !isDraggingFib.current || !dragPreview) {
+    const preview = dragPreviewRef.current;
+    
+    if (selectMode === 'none' || !isDraggingFib.current || !preview) {
       isDraggingFib.current = false;
+      dragPreviewRef.current = null;
       setDragPreview(null);
       return;
     }
     
     isDraggingFib.current = false;
     
-    if (dragPreview.isValid) {
+    if (preview.isValid) {
       // Set the point
-      const newPoints = { ...fibPoints, [selectMode]: dragPreview.globalIndex };
+      const newPoints = { ...fibPoints, [selectMode]: preview.globalIndex };
       setFibPoints(newPoints);
       
       // Advance to next point
@@ -759,6 +767,7 @@ function ChartCanvas({
       else setSelectMode('none');
     }
     
+    dragPreviewRef.current = null;
     setDragPreview(null);
   };
 

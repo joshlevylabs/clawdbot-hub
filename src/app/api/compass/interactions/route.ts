@@ -1,6 +1,10 @@
 import { NextResponse } from 'next/server';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 
+// Disable caching for this route
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export async function GET() {
   try {
     // Try Supabase first
@@ -9,7 +13,7 @@ export async function GET() {
         .from('compass_interactions')
         .select('*')
         .in('type', ['positive', 'negative'])
-        .order('timestamp', { ascending: false });
+        .order('created_at', { ascending: false });
 
       if (!error && data) {
         // Transform to match expected format
@@ -37,7 +41,9 @@ export async function GET() {
           };
         });
 
-        return NextResponse.json({ interactions });
+        const response = NextResponse.json({ interactions });
+        response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate');
+        return response;
       }
     }
 

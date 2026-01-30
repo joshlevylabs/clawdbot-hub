@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Heart, TrendingUp, TrendingDown, Target, RefreshCw, AlertTriangle, CheckCircle, ClipboardCheck, ChevronRight, Calendar, List, BarChart3 } from "lucide-react";
+import { Heart, TrendingUp, TrendingDown, Target, RefreshCw, AlertTriangle, CheckCircle, ClipboardCheck, ChevronRight, Calendar, BarChart3 } from "lucide-react";
 
 interface QuestionOption {
   label: string;
@@ -108,8 +108,7 @@ export default function MarriagePage() {
   const [answers, setAnswers] = useState<Record<string, QuestionOption>>({});
   const [checkinComplete, setCheckinComplete] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [logView, setLogView] = useState<"all" | "week" | "month">("all");
-  const [historyView, setHistoryView] = useState<"daily" | "weekly">("daily");
+  const [logView, setLogView] = useState<"day" | "week" | "month">("day");
 
   const fetchCompass = async () => {
     setLoading(true);
@@ -164,31 +163,6 @@ export default function MarriagePage() {
     }
   };
 
-  const getFilteredInteractions = () => {
-    const now = new Date();
-    if (logView === "week") {
-      const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-      return interactions.filter(i => new Date(i.timestamp) >= weekAgo);
-    } else if (logView === "month") {
-      const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-      return interactions.filter(i => new Date(i.timestamp) >= monthAgo);
-    }
-    return interactions;
-  };
-
-  const getStats = (filtered: Interaction[]) => {
-    const positive = filtered.filter(i => i.type === "positive").length;
-    const negative = filtered.filter(i => i.type === "negative").length;
-    const ratio = negative > 0 ? (positive / negative).toFixed(1) : positive > 0 ? "∞" : "0";
-    const avgPower = filtered.length > 0 
-      ? (filtered.reduce((sum, i) => sum + i.compass.power, 0) / filtered.length).toFixed(1)
-      : "0";
-    const avgSafety = filtered.length > 0 
-      ? (filtered.reduce((sum, i) => sum + i.compass.safety, 0) / filtered.length).toFixed(1)
-      : "0";
-    return { positive, negative, ratio, avgPower, avgSafety };
-  };
-
   // Group interactions by day
   const getDailyHistory = () => {
     const byDay: Record<string, Interaction[]> = {};
@@ -198,48 +172,49 @@ export default function MarriagePage() {
       byDay[date].push(i);
     });
     
-    // Sort dates and calculate cumulative scores
     const dates = Object.keys(byDay).sort();
-    let runningPower = 0;
-    let runningPowerCount = 0;
-    let runningSafety = 0;
-    let runningSafetyCount = 0;
     
-    return dates.map(date => {
+    return dates.map((date, idx) => {
       const dayInteractions = byDay[date];
       const dayPower = dayInteractions.reduce((sum, i) => sum + i.compass.power, 0);
       const daySafety = dayInteractions.reduce((sum, i) => sum + i.compass.safety, 0);
       const dayCount = dayInteractions.length;
+      const positive = dayInteractions.filter(i => i.type === "positive").length;
+      const negative = dayInteractions.filter(i => i.type === "negative").length;
       
-      const prevPower = runningPowerCount > 0 ? runningPower / runningPowerCount : 0;
-      const prevSafety = runningSafetyCount > 0 ? runningSafety / runningSafetyCount : 0;
+      // Previous day stats for change calculation
+      let prevPower = 0;
+      let prevSafety = 0;
+      if (idx > 0) {
+        const prevDate = dates[idx - 1];
+        const prevInteractions = byDay[prevDate];
+        const prevCount = prevInteractions.length;
+        if (prevCount > 0) {
+          prevPower = prevInteractions.reduce((sum, i) => sum + i.compass.power, 0) / prevCount;
+          prevSafety = prevInteractions.reduce((sum, i) => sum + i.compass.safety, 0) / prevCount;
+        }
+      }
       
-      runningPower += dayPower;
-      runningPowerCount += dayCount;
-      runningSafety += daySafety;
-      runningSafetyCount += dayCount;
-      
-      const newPower = runningPower / runningPowerCount;
-      const newSafety = runningSafety / runningSafetyCount;
+      const avgPower = dayCount > 0 ? dayPower / dayCount : 0;
+      const avgSafety = dayCount > 0 ? daySafety / dayCount : 0;
       
       return {
         date,
         interactions: dayInteractions,
-        dayStats: {
+        stats: {
           count: dayCount,
-          positive: dayInteractions.filter(i => i.type === "positive").length,
-          negative: dayInteractions.filter(i => i.type === "negative").length,
-          avgPower: dayCount > 0 ? dayPower / dayCount : 0,
-          avgSafety: dayCount > 0 ? daySafety / dayCount : 0,
+          positive,
+          negative,
+          ratio: negative > 0 ? positive / negative : positive > 0 ? Infinity : 0,
+          avgPower,
+          avgSafety,
         },
-        cumulative: {
-          power: newPower,
-          safety: newSafety,
-          powerChange: newPower - prevPower,
-          safetyChange: newSafety - prevSafety,
+        change: {
+          power: avgPower - prevPower,
+          safety: avgSafety - prevSafety,
         }
       };
-    }).reverse(); // Most recent first
+    }).reverse();
   };
 
   // Group interactions by week
@@ -248,57 +223,114 @@ export default function MarriagePage() {
     interactions.forEach(i => {
       const date = new Date(i.timestamp);
       const weekStart = new Date(date);
-      weekStart.setDate(date.getDate() - date.getDay()); // Start of week (Sunday)
+      weekStart.setDate(date.getDate() - date.getDay());
       const weekKey = weekStart.toISOString().split('T')[0];
       if (!byWeek[weekKey]) byWeek[weekKey] = [];
       byWeek[weekKey].push(i);
     });
     
     const weeks = Object.keys(byWeek).sort();
-    let runningPower = 0;
-    let runningPowerCount = 0;
-    let runningSafety = 0;
-    let runningSafetyCount = 0;
     
-    return weeks.map(weekStart => {
+    return weeks.map((weekStart, idx) => {
       const weekInteractions = byWeek[weekStart];
       const weekPower = weekInteractions.reduce((sum, i) => sum + i.compass.power, 0);
       const weekSafety = weekInteractions.reduce((sum, i) => sum + i.compass.safety, 0);
       const weekCount = weekInteractions.length;
+      const positive = weekInteractions.filter(i => i.type === "positive").length;
+      const negative = weekInteractions.filter(i => i.type === "negative").length;
       
-      const prevPower = runningPowerCount > 0 ? runningPower / runningPowerCount : 0;
-      const prevSafety = runningSafetyCount > 0 ? runningSafety / runningSafetyCount : 0;
-      
-      runningPower += weekPower;
-      runningPowerCount += weekCount;
-      runningSafety += weekSafety;
-      runningSafetyCount += weekCount;
-      
-      const newPower = runningPower / runningPowerCount;
-      const newSafety = runningSafety / runningSafetyCount;
+      // Previous week stats
+      let prevPower = 0;
+      let prevSafety = 0;
+      if (idx > 0) {
+        const prevWeekKey = weeks[idx - 1];
+        const prevInteractions = byWeek[prevWeekKey];
+        const prevCount = prevInteractions.length;
+        if (prevCount > 0) {
+          prevPower = prevInteractions.reduce((sum, i) => sum + i.compass.power, 0) / prevCount;
+          prevSafety = prevInteractions.reduce((sum, i) => sum + i.compass.safety, 0) / prevCount;
+        }
+      }
       
       const weekEnd = new Date(weekStart);
       weekEnd.setDate(weekEnd.getDate() + 6);
+      
+      const avgPower = weekCount > 0 ? weekPower / weekCount : 0;
+      const avgSafety = weekCount > 0 ? weekSafety / weekCount : 0;
       
       return {
         weekStart,
         weekEnd: weekEnd.toISOString().split('T')[0],
         interactions: weekInteractions,
-        weekStats: {
+        stats: {
           count: weekCount,
-          positive: weekInteractions.filter(i => i.type === "positive").length,
-          negative: weekInteractions.filter(i => i.type === "negative").length,
-          avgPower: weekCount > 0 ? weekPower / weekCount : 0,
-          avgSafety: weekCount > 0 ? weekSafety / weekCount : 0,
+          positive,
+          negative,
+          ratio: negative > 0 ? positive / negative : positive > 0 ? Infinity : 0,
+          avgPower,
+          avgSafety,
         },
-        cumulative: {
-          power: newPower,
-          safety: newSafety,
-          powerChange: newPower - prevPower,
-          safetyChange: newSafety - prevSafety,
+        change: {
+          power: avgPower - prevPower,
+          safety: avgSafety - prevSafety,
         }
       };
-    }).reverse(); // Most recent first
+    }).reverse();
+  };
+
+  // Group interactions by month
+  const getMonthlyHistory = () => {
+    const byMonth: Record<string, Interaction[]> = {};
+    interactions.forEach(i => {
+      const date = new Date(i.timestamp);
+      const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+      if (!byMonth[monthKey]) byMonth[monthKey] = [];
+      byMonth[monthKey].push(i);
+    });
+    
+    const months = Object.keys(byMonth).sort();
+    
+    return months.map((monthKey, idx) => {
+      const monthInteractions = byMonth[monthKey];
+      const monthPower = monthInteractions.reduce((sum, i) => sum + i.compass.power, 0);
+      const monthSafety = monthInteractions.reduce((sum, i) => sum + i.compass.safety, 0);
+      const monthCount = monthInteractions.length;
+      const positive = monthInteractions.filter(i => i.type === "positive").length;
+      const negative = monthInteractions.filter(i => i.type === "negative").length;
+      
+      // Previous month stats
+      let prevPower = 0;
+      let prevSafety = 0;
+      if (idx > 0) {
+        const prevMonthKey = months[idx - 1];
+        const prevInteractions = byMonth[prevMonthKey];
+        const prevCount = prevInteractions.length;
+        if (prevCount > 0) {
+          prevPower = prevInteractions.reduce((sum, i) => sum + i.compass.power, 0) / prevCount;
+          prevSafety = prevInteractions.reduce((sum, i) => sum + i.compass.safety, 0) / prevCount;
+        }
+      }
+      
+      const avgPower = monthCount > 0 ? monthPower / monthCount : 0;
+      const avgSafety = monthCount > 0 ? monthSafety / monthCount : 0;
+      
+      return {
+        monthKey,
+        interactions: monthInteractions,
+        stats: {
+          count: monthCount,
+          positive,
+          negative,
+          ratio: negative > 0 ? positive / negative : positive > 0 ? Infinity : 0,
+          avgPower,
+          avgSafety,
+        },
+        change: {
+          power: avgPower - prevPower,
+          safety: avgSafety - prevSafety,
+        }
+      };
+    }).reverse();
   };
 
   const formatDate = (dateStr: string) => {
@@ -310,6 +342,12 @@ export default function MarriagePage() {
     const startDate = new Date(start + 'T12:00:00');
     const endDate = new Date(end + 'T12:00:00');
     return `${startDate.toLocaleDateString("en-US", { month: "short", day: "numeric" })} - ${endDate.toLocaleDateString("en-US", { month: "short", day: "numeric" })}`;
+  };
+
+  const formatMonth = (monthKey: string) => {
+    const [year, month] = monthKey.split('-');
+    const date = new Date(parseInt(year), parseInt(month) - 1, 1);
+    return date.toLocaleDateString("en-US", { month: "long", year: "numeric" });
   };
 
   useEffect(() => {
@@ -508,7 +546,7 @@ export default function MarriagePage() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2">
         {/* Current Position */}
         <div className="bg-slate-850 rounded-xl border border-slate-800 p-5">
           <div className="flex items-center gap-3 mb-4">
@@ -574,287 +612,25 @@ export default function MarriagePage() {
             <p className="text-slate-500 text-sm">Log interactions to track status.</p>
           )}
         </div>
-
-        {/* Trend */}
-        <div className="bg-slate-850 rounded-xl border border-slate-800 p-5">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-9 h-9 bg-blue-600/20 rounded-lg flex items-center justify-center">
-              <TrendingUp className="w-5 h-5 text-blue-400" strokeWidth={1.5} />
-            </div>
-            <h2 className="font-semibold text-slate-200">7-Day Trend</h2>
-          </div>
-          {compassState?.trend && (compassState.trend.power !== 0 || compassState.trend.safety !== 0) ? (
-            <div className="space-y-2">
-              {compassState.trend.power !== 0 && (
-                <div className="flex items-center gap-2">
-                  <span className="text-slate-500">Power:</span>
-                  <span className={compassState.trend.power > 0 ? "text-green-400" : "text-yellow-400"}>
-                    {compassState.trend.power > 0 ? "+" : ""}{compassState.trend.power.toFixed(1)}
-                  </span>
-                  {compassState.trend.power > 0 ? (
-                    <TrendingUp className="w-4 h-4 text-green-400" />
-                  ) : (
-                    <TrendingDown className="w-4 h-4 text-yellow-400" />
-                  )}
-                </div>
-              )}
-              {compassState.trend.safety !== 0 && (
-                <div className="flex items-center gap-2">
-                  <span className="text-slate-500">Safety:</span>
-                  <span className={compassState.trend.safety > 0 ? "text-green-400" : "text-red-400"}>
-                    {compassState.trend.safety > 0 ? "+" : ""}{compassState.trend.safety.toFixed(1)}
-                  </span>
-                  {compassState.trend.safety > 0 ? (
-                    <TrendingUp className="w-4 h-4 text-green-400" />
-                  ) : (
-                    <TrendingDown className="w-4 h-4 text-red-400" />
-                  )}
-                </div>
-              )}
-            </div>
-          ) : (
-            <p className="text-slate-500 text-sm">Need more data to show trends.</p>
-          )}
-          <p className="text-slate-600 text-xs mt-3">
-            Based on {compassState?.totalCount || 0} total interactions
-          </p>
-        </div>
       </div>
 
-      {/* Score History Timeline */}
-      <div className="bg-slate-850 rounded-xl border border-slate-800 p-6">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 bg-amber-600/20 rounded-lg flex items-center justify-center">
-              <BarChart3 className="w-5 h-5 text-amber-400" strokeWidth={1.5} />
-            </div>
-            <h2 className="font-semibold text-slate-200">Score History</h2>
-          </div>
-          <div className="flex gap-1 bg-slate-800 rounded-lg p-1">
-            <button
-              onClick={() => setHistoryView("daily")}
-              className={`px-3 py-1.5 text-sm rounded-md transition-colors ${
-                historyView === "daily" ? "bg-amber-600 text-white" : "text-slate-400 hover:text-slate-200"
-              }`}
-            >
-              Daily
-            </button>
-            <button
-              onClick={() => setHistoryView("weekly")}
-              className={`px-3 py-1.5 text-sm rounded-md transition-colors ${
-                historyView === "weekly" ? "bg-amber-600 text-white" : "text-slate-400 hover:text-slate-200"
-              }`}
-            >
-              Weekly
-            </button>
-          </div>
-        </div>
-
-        <div className="space-y-3 max-h-[500px] overflow-y-auto">
-          {historyView === "daily" ? (
-            getDailyHistory().length === 0 ? (
-              <p className="text-slate-500 text-sm text-center py-4">No data yet.</p>
-            ) : (
-              getDailyHistory().map((day, idx) => (
-                <div key={day.date} className="bg-slate-800/50 rounded-lg p-4">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-3">
-                      <Calendar className="w-4 h-4 text-slate-500" />
-                      <span className="font-medium text-slate-200">{formatDate(day.date)}</span>
-                      <span className="text-xs text-slate-500">
-                        {day.dayStats.count} interaction{day.dayStats.count !== 1 ? "s" : ""}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-3 text-sm">
-                      <span className="text-green-400">+{day.dayStats.positive}</span>
-                      <span className="text-red-400">-{day.dayStats.negative}</span>
-                    </div>
-                  </div>
-                  
-                  {/* Day's score contribution */}
-                  <div className="grid grid-cols-2 gap-4 mb-3">
-                    <div className="bg-slate-900/50 rounded-lg p-3">
-                      <p className="text-slate-500 text-xs mb-1">Day&apos;s Average</p>
-                      <div className="flex justify-between">
-                        <span className="text-slate-400 text-sm">Power:</span>
-                        <span className={`font-medium ${day.dayStats.avgPower >= 0 ? "text-blue-400" : "text-yellow-400"}`}>
-                          {day.dayStats.avgPower > 0 ? "+" : ""}{day.dayStats.avgPower.toFixed(1)}
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-slate-400 text-sm">Safety:</span>
-                        <span className={`font-medium ${day.dayStats.avgSafety >= 0 ? "text-purple-400" : "text-red-400"}`}>
-                          {day.dayStats.avgSafety > 0 ? "+" : ""}{day.dayStats.avgSafety.toFixed(1)}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="bg-slate-900/50 rounded-lg p-3">
-                      <p className="text-slate-500 text-xs mb-1">Running Score</p>
-                      <div className="flex justify-between items-center">
-                        <span className="text-slate-400 text-sm">Power:</span>
-                        <div className="flex items-center gap-1">
-                          <span className={`font-medium ${day.cumulative.power >= 0 ? "text-blue-400" : "text-yellow-400"}`}>
-                            {day.cumulative.power.toFixed(1)}
-                          </span>
-                          {idx < getDailyHistory().length - 1 && day.cumulative.powerChange !== 0 && (
-                            <span className={`text-xs ${day.cumulative.powerChange > 0 ? "text-green-400" : "text-red-400"}`}>
-                              ({day.cumulative.powerChange > 0 ? "+" : ""}{day.cumulative.powerChange.toFixed(1)})
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-slate-400 text-sm">Safety:</span>
-                        <div className="flex items-center gap-1">
-                          <span className={`font-medium ${day.cumulative.safety >= 0 ? "text-purple-400" : "text-red-400"}`}>
-                            {day.cumulative.safety.toFixed(1)}
-                          </span>
-                          {idx < getDailyHistory().length - 1 && day.cumulative.safetyChange !== 0 && (
-                            <span className={`text-xs ${day.cumulative.safetyChange > 0 ? "text-green-400" : "text-red-400"}`}>
-                              ({day.cumulative.safetyChange > 0 ? "+" : ""}{day.cumulative.safetyChange.toFixed(1)})
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Expandable interaction list */}
-                  <details className="group">
-                    <summary className="text-xs text-slate-500 cursor-pointer hover:text-slate-300 transition-colors">
-                      View {day.interactions.length} interaction{day.interactions.length !== 1 ? "s" : ""}
-                    </summary>
-                    <div className="mt-2 space-y-2 pl-2 border-l-2 border-slate-700">
-                      {day.interactions.map(interaction => (
-                        <div key={interaction.id} className="text-sm">
-                          <div className="flex items-start gap-2">
-                            <span className={`text-xs mt-0.5 ${interaction.type === "positive" ? "text-green-400" : "text-red-400"}`}>
-                              {interaction.type === "positive" ? "+" : "−"}
-                            </span>
-                            <div>
-                              <span className="text-slate-400 text-xs">{interaction.time}</span>
-                              <p className="text-slate-300">{interaction.description}</p>
-                              <p className="text-slate-500 text-xs">
-                                P: {interaction.compass.power > 0 ? "+" : ""}{interaction.compass.power}, 
-                                S: {interaction.compass.safety > 0 ? "+" : ""}{interaction.compass.safety}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </details>
-                </div>
-              ))
-            )
-          ) : (
-            getWeeklyHistory().length === 0 ? (
-              <p className="text-slate-500 text-sm text-center py-4">No data yet.</p>
-            ) : (
-              getWeeklyHistory().map((week, idx) => (
-                <div key={week.weekStart} className="bg-slate-800/50 rounded-lg p-4">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-3">
-                      <Calendar className="w-4 h-4 text-slate-500" />
-                      <span className="font-medium text-slate-200">{formatWeekRange(week.weekStart, week.weekEnd)}</span>
-                      <span className="text-xs text-slate-500">
-                        {week.weekStats.count} interaction{week.weekStats.count !== 1 ? "s" : ""}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-3 text-sm">
-                      <span className="text-green-400">+{week.weekStats.positive}</span>
-                      <span className="text-red-400">-{week.weekStats.negative}</span>
-                    </div>
-                  </div>
-                  
-                  {/* Week's score contribution */}
-                  <div className="grid grid-cols-2 gap-4 mb-3">
-                    <div className="bg-slate-900/50 rounded-lg p-3">
-                      <p className="text-slate-500 text-xs mb-1">Week&apos;s Average</p>
-                      <div className="flex justify-between">
-                        <span className="text-slate-400 text-sm">Power:</span>
-                        <span className={`font-medium ${week.weekStats.avgPower >= 0 ? "text-blue-400" : "text-yellow-400"}`}>
-                          {week.weekStats.avgPower > 0 ? "+" : ""}{week.weekStats.avgPower.toFixed(1)}
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-slate-400 text-sm">Safety:</span>
-                        <span className={`font-medium ${week.weekStats.avgSafety >= 0 ? "text-purple-400" : "text-red-400"}`}>
-                          {week.weekStats.avgSafety > 0 ? "+" : ""}{week.weekStats.avgSafety.toFixed(1)}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="bg-slate-900/50 rounded-lg p-3">
-                      <p className="text-slate-500 text-xs mb-1">Running Score</p>
-                      <div className="flex justify-between items-center">
-                        <span className="text-slate-400 text-sm">Power:</span>
-                        <div className="flex items-center gap-1">
-                          <span className={`font-medium ${week.cumulative.power >= 0 ? "text-blue-400" : "text-yellow-400"}`}>
-                            {week.cumulative.power.toFixed(1)}
-                          </span>
-                          {idx < getWeeklyHistory().length - 1 && week.cumulative.powerChange !== 0 && (
-                            <span className={`text-xs ${week.cumulative.powerChange > 0 ? "text-green-400" : "text-red-400"}`}>
-                              ({week.cumulative.powerChange > 0 ? "+" : ""}{week.cumulative.powerChange.toFixed(1)})
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-slate-400 text-sm">Safety:</span>
-                        <div className="flex items-center gap-1">
-                          <span className={`font-medium ${week.cumulative.safety >= 0 ? "text-purple-400" : "text-red-400"}`}>
-                            {week.cumulative.safety.toFixed(1)}
-                          </span>
-                          {idx < getWeeklyHistory().length - 1 && week.cumulative.safetyChange !== 0 && (
-                            <span className={`text-xs ${week.cumulative.safetyChange > 0 ? "text-green-400" : "text-red-400"}`}>
-                              ({week.cumulative.safetyChange > 0 ? "+" : ""}{week.cumulative.safetyChange.toFixed(1)})
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Week ratio indicator */}
-                  <div className="flex items-center gap-2 text-sm">
-                    <span className="text-slate-500">Ratio:</span>
-                    <span className={`font-medium ${
-                      week.weekStats.negative === 0 ? "text-green-400" :
-                      week.weekStats.positive / week.weekStats.negative >= 5 ? "text-green-400" :
-                      week.weekStats.positive / week.weekStats.negative >= 3 ? "text-yellow-400" :
-                      "text-red-400"
-                    }`}>
-                      {week.weekStats.negative > 0 
-                        ? `${(week.weekStats.positive / week.weekStats.negative).toFixed(1)}:1`
-                        : week.weekStats.positive > 0 ? "∞:1" : "0:0"
-                      }
-                    </span>
-                    <span className="text-slate-600 text-xs">(goal: 5:1+)</span>
-                  </div>
-                </div>
-              ))
-            )
-          )}
-        </div>
-      </div>
-
-      {/* Interaction Log */}
+      {/* Interaction Log - Unified View */}
       <div className="bg-slate-850 rounded-xl border border-slate-800 p-6">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 bg-indigo-600/20 rounded-lg flex items-center justify-center">
-              <List className="w-5 h-5 text-indigo-400" strokeWidth={1.5} />
+              <BarChart3 className="w-5 h-5 text-indigo-400" strokeWidth={1.5} />
             </div>
             <h2 className="font-semibold text-slate-200">Interaction Log</h2>
           </div>
           <div className="flex gap-1 bg-slate-800 rounded-lg p-1">
             <button
-              onClick={() => setLogView("all")}
+              onClick={() => setLogView("day")}
               className={`px-3 py-1.5 text-sm rounded-md transition-colors ${
-                logView === "all" ? "bg-indigo-600 text-white" : "text-slate-400 hover:text-slate-200"
+                logView === "day" ? "bg-indigo-600 text-white" : "text-slate-400 hover:text-slate-200"
               }`}
             >
-              All
+              Day
             </button>
             <button
               onClick={() => setLogView("week")}
@@ -875,96 +651,386 @@ export default function MarriagePage() {
           </div>
         </div>
 
-        {/* Stats Summary */}
-        {(() => {
-          const filtered = getFilteredInteractions();
-          const stats = getStats(filtered);
-          return (
-            <div className="grid grid-cols-5 gap-3 mb-4 p-3 bg-slate-800/50 rounded-lg">
-              <div className="text-center">
-                <p className="text-green-400 text-lg font-semibold">{stats.positive}</p>
-                <p className="text-slate-500 text-xs">Positive</p>
-              </div>
-              <div className="text-center">
-                <p className="text-red-400 text-lg font-semibold">{stats.negative}</p>
-                <p className="text-slate-500 text-xs">Negative</p>
-              </div>
-              <div className="text-center">
-                <p className={`text-lg font-semibold ${parseFloat(stats.ratio) >= 5 ? "text-green-400" : parseFloat(stats.ratio) >= 3 ? "text-yellow-400" : "text-red-400"}`}>
-                  {stats.ratio}:1
-                </p>
-                <p className="text-slate-500 text-xs">Ratio</p>
-              </div>
-              <div className="text-center">
-                <p className="text-blue-400 text-lg font-semibold">{stats.avgPower}</p>
-                <p className="text-slate-500 text-xs">Avg Power</p>
-              </div>
-              <div className="text-center">
-                <p className="text-purple-400 text-lg font-semibold">{stats.avgSafety}</p>
-                <p className="text-slate-500 text-xs">Avg Safety</p>
-              </div>
-            </div>
-          );
-        })()}
-
-        {/* Interaction List */}
-        <div className="space-y-3 max-h-96 overflow-y-auto">
-          {getFilteredInteractions().length === 0 ? (
-            <p className="text-slate-500 text-sm text-center py-4">No interactions logged yet.</p>
-          ) : (
-            getFilteredInteractions().map((interaction) => (
-              <div
-                key={interaction.id}
-                className={`p-4 rounded-lg border ${
-                  interaction.type === "positive"
-                    ? "bg-green-500/5 border-green-500/20"
-                    : "bg-red-500/5 border-red-500/20"
-                }`}
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className={`text-xs font-medium px-2 py-0.5 rounded ${
-                        interaction.type === "positive" 
-                          ? "bg-green-500/20 text-green-400" 
-                          : "bg-red-500/20 text-red-400"
-                      }`}>
-                        {interaction.type === "positive" ? "+" : "−"}
-                      </span>
-                      <span className="text-slate-500 text-xs">
-                        {new Date(interaction.timestamp).toLocaleDateString("en-US", {
-                          weekday: "short",
-                          month: "short",
-                          day: "numeric"
-                        })} at {interaction.time}
-                      </span>
+        <div className="space-y-3 max-h-[600px] overflow-y-auto">
+          {/* Day View */}
+          {logView === "day" && (
+            getDailyHistory().length === 0 ? (
+              <p className="text-slate-500 text-sm text-center py-4">No data yet.</p>
+            ) : (
+              getDailyHistory().map((day, idx) => (
+                <div key={day.date} className="bg-slate-800/50 rounded-lg p-4">
+                  {/* Header with date and counts */}
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-3">
+                      <Calendar className="w-4 h-4 text-slate-500" />
+                      <span className="font-medium text-slate-200">{formatDate(day.date)}</span>
                     </div>
-                    <p className="text-slate-300 text-sm">{interaction.description}</p>
-                    {interaction.tags && interaction.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-1 mt-2">
-                        {interaction.tags.map((tag, i) => (
-                          <span key={i} className="text-xs px-1.5 py-0.5 bg-slate-700/50 text-slate-400 rounded">
-                            {tag}
+                    <div className="flex items-center gap-3 text-sm">
+                      <span className="text-green-400">+{day.stats.positive}</span>
+                      <span className="text-red-400">−{day.stats.negative}</span>
+                    </div>
+                  </div>
+                  
+                  {/* Stats row */}
+                  <div className="grid grid-cols-4 gap-3 mb-3 p-3 bg-slate-900/50 rounded-lg">
+                    <div className="text-center">
+                      <p className="text-slate-200 font-medium">{day.stats.count}</p>
+                      <p className="text-slate-500 text-xs">Logs</p>
+                    </div>
+                    <div className="text-center">
+                      <p className={`font-medium ${day.stats.ratio >= 5 ? "text-green-400" : day.stats.ratio >= 3 ? "text-yellow-400" : "text-red-400"}`}>
+                        {day.stats.ratio === Infinity ? "∞" : day.stats.ratio.toFixed(1)}:1
+                      </p>
+                      <p className="text-slate-500 text-xs">Ratio</p>
+                    </div>
+                    <div className="text-center">
+                      <div className="flex items-center justify-center gap-1">
+                        <span className={`font-medium ${day.stats.avgPower >= 0 ? "text-blue-400" : "text-yellow-400"}`}>
+                          {day.stats.avgPower > 0 ? "+" : ""}{day.stats.avgPower.toFixed(1)}
+                        </span>
+                        {idx < getDailyHistory().length - 1 && day.change.power !== 0 && (
+                          <span className={`text-xs ${day.change.power > 0 ? "text-green-400" : "text-red-400"}`}>
+                            {day.change.power > 0 ? "↑" : "↓"}
                           </span>
-                        ))}
+                        )}
                       </div>
-                    )}
-                  </div>
-                  <div className="text-right text-xs space-y-1">
-                    <div className="text-slate-500">
-                      P: <span className={interaction.compass.power >= 0 ? "text-blue-400" : "text-yellow-400"}>
-                        {interaction.compass.power > 0 ? "+" : ""}{interaction.compass.power}
-                      </span>
+                      <p className="text-slate-500 text-xs">Power</p>
                     </div>
-                    <div className="text-slate-500">
-                      S: <span className={interaction.compass.safety >= 0 ? "text-purple-400" : "text-red-400"}>
-                        {interaction.compass.safety > 0 ? "+" : ""}{interaction.compass.safety}
-                      </span>
+                    <div className="text-center">
+                      <div className="flex items-center justify-center gap-1">
+                        <span className={`font-medium ${day.stats.avgSafety >= 0 ? "text-purple-400" : "text-red-400"}`}>
+                          {day.stats.avgSafety > 0 ? "+" : ""}{day.stats.avgSafety.toFixed(1)}
+                        </span>
+                        {idx < getDailyHistory().length - 1 && day.change.safety !== 0 && (
+                          <span className={`text-xs ${day.change.safety > 0 ? "text-green-400" : "text-red-400"}`}>
+                            {day.change.safety > 0 ? "↑" : "↓"}
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-slate-500 text-xs">Safety</p>
                     </div>
                   </div>
+
+                  {/* Change from previous day */}
+                  {idx < getDailyHistory().length - 1 && (day.change.power !== 0 || day.change.safety !== 0) && (
+                    <div className="text-xs text-slate-500 mb-2">
+                      vs previous day: 
+                      {day.change.power !== 0 && (
+                        <span className={`ml-2 ${day.change.power > 0 ? "text-green-400" : "text-red-400"}`}>
+                          Power {day.change.power > 0 ? "+" : ""}{day.change.power.toFixed(1)}
+                        </span>
+                      )}
+                      {day.change.safety !== 0 && (
+                        <span className={`ml-2 ${day.change.safety > 0 ? "text-green-400" : "text-red-400"}`}>
+                          Safety {day.change.safety > 0 ? "+" : ""}{day.change.safety.toFixed(1)}
+                        </span>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Expandable interaction list */}
+                  <details className="group">
+                    <summary className="text-xs text-slate-500 cursor-pointer hover:text-slate-300 transition-colors flex items-center gap-1">
+                      <ChevronRight className="w-3 h-3 group-open:rotate-90 transition-transform" />
+                      View {day.interactions.length} log{day.interactions.length !== 1 ? "s" : ""}
+                    </summary>
+                    <div className="mt-3 space-y-2">
+                      {day.interactions.map(interaction => (
+                        <div 
+                          key={interaction.id} 
+                          className={`p-3 rounded-lg border ${
+                            interaction.type === "positive"
+                              ? "bg-green-500/5 border-green-500/20"
+                              : "bg-red-500/5 border-red-500/20"
+                          }`}
+                        >
+                          <div className="flex items-start justify-between gap-3">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 mb-1">
+                                <span className={`text-xs font-medium ${interaction.type === "positive" ? "text-green-400" : "text-red-400"}`}>
+                                  {interaction.type === "positive" ? "+" : "−"}
+                                </span>
+                                <span className="text-slate-500 text-xs">{interaction.time}</span>
+                              </div>
+                              <p className="text-slate-300 text-sm">{interaction.description}</p>
+                              {interaction.tags && interaction.tags.length > 0 && (
+                                <div className="flex flex-wrap gap-1 mt-2">
+                                  {interaction.tags.map((tag, i) => (
+                                    <span key={i} className="text-xs px-1.5 py-0.5 bg-slate-700/50 text-slate-400 rounded">
+                                      {tag}
+                                    </span>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                            <div className="text-right text-xs space-y-1">
+                              <div className="text-slate-500">
+                                P: <span className={interaction.compass.power >= 0 ? "text-blue-400" : "text-yellow-400"}>
+                                  {interaction.compass.power > 0 ? "+" : ""}{interaction.compass.power}
+                                </span>
+                              </div>
+                              <div className="text-slate-500">
+                                S: <span className={interaction.compass.safety >= 0 ? "text-purple-400" : "text-red-400"}>
+                                  {interaction.compass.safety > 0 ? "+" : ""}{interaction.compass.safety}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </details>
                 </div>
-              </div>
-            ))
+              ))
+            )
+          )}
+
+          {/* Week View */}
+          {logView === "week" && (
+            getWeeklyHistory().length === 0 ? (
+              <p className="text-slate-500 text-sm text-center py-4">No data yet.</p>
+            ) : (
+              getWeeklyHistory().map((week, idx) => (
+                <div key={week.weekStart} className="bg-slate-800/50 rounded-lg p-4">
+                  {/* Header with date range and counts */}
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-3">
+                      <Calendar className="w-4 h-4 text-slate-500" />
+                      <span className="font-medium text-slate-200">{formatWeekRange(week.weekStart, week.weekEnd)}</span>
+                    </div>
+                    <div className="flex items-center gap-3 text-sm">
+                      <span className="text-green-400">+{week.stats.positive}</span>
+                      <span className="text-red-400">−{week.stats.negative}</span>
+                    </div>
+                  </div>
+                  
+                  {/* Stats row */}
+                  <div className="grid grid-cols-4 gap-3 mb-3 p-3 bg-slate-900/50 rounded-lg">
+                    <div className="text-center">
+                      <p className="text-slate-200 font-medium">{week.stats.count}</p>
+                      <p className="text-slate-500 text-xs">Logs</p>
+                    </div>
+                    <div className="text-center">
+                      <p className={`font-medium ${week.stats.ratio >= 5 ? "text-green-400" : week.stats.ratio >= 3 ? "text-yellow-400" : "text-red-400"}`}>
+                        {week.stats.ratio === Infinity ? "∞" : week.stats.ratio.toFixed(1)}:1
+                      </p>
+                      <p className="text-slate-500 text-xs">Ratio</p>
+                    </div>
+                    <div className="text-center">
+                      <div className="flex items-center justify-center gap-1">
+                        <span className={`font-medium ${week.stats.avgPower >= 0 ? "text-blue-400" : "text-yellow-400"}`}>
+                          {week.stats.avgPower > 0 ? "+" : ""}{week.stats.avgPower.toFixed(1)}
+                        </span>
+                        {idx < getWeeklyHistory().length - 1 && week.change.power !== 0 && (
+                          <span className={`text-xs ${week.change.power > 0 ? "text-green-400" : "text-red-400"}`}>
+                            {week.change.power > 0 ? "↑" : "↓"}
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-slate-500 text-xs">Power</p>
+                    </div>
+                    <div className="text-center">
+                      <div className="flex items-center justify-center gap-1">
+                        <span className={`font-medium ${week.stats.avgSafety >= 0 ? "text-purple-400" : "text-red-400"}`}>
+                          {week.stats.avgSafety > 0 ? "+" : ""}{week.stats.avgSafety.toFixed(1)}
+                        </span>
+                        {idx < getWeeklyHistory().length - 1 && week.change.safety !== 0 && (
+                          <span className={`text-xs ${week.change.safety > 0 ? "text-green-400" : "text-red-400"}`}>
+                            {week.change.safety > 0 ? "↑" : "↓"}
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-slate-500 text-xs">Safety</p>
+                    </div>
+                  </div>
+
+                  {/* Change from previous week */}
+                  {idx < getWeeklyHistory().length - 1 && (week.change.power !== 0 || week.change.safety !== 0) && (
+                    <div className="text-xs text-slate-500 mb-2">
+                      vs previous week: 
+                      {week.change.power !== 0 && (
+                        <span className={`ml-2 ${week.change.power > 0 ? "text-green-400" : "text-red-400"}`}>
+                          Power {week.change.power > 0 ? "+" : ""}{week.change.power.toFixed(1)}
+                        </span>
+                      )}
+                      {week.change.safety !== 0 && (
+                        <span className={`ml-2 ${week.change.safety > 0 ? "text-green-400" : "text-red-400"}`}>
+                          Safety {week.change.safety > 0 ? "+" : ""}{week.change.safety.toFixed(1)}
+                        </span>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Expandable interaction list */}
+                  <details className="group">
+                    <summary className="text-xs text-slate-500 cursor-pointer hover:text-slate-300 transition-colors flex items-center gap-1">
+                      <ChevronRight className="w-3 h-3 group-open:rotate-90 transition-transform" />
+                      View {week.interactions.length} log{week.interactions.length !== 1 ? "s" : ""}
+                    </summary>
+                    <div className="mt-3 space-y-2">
+                      {week.interactions.map(interaction => (
+                        <div 
+                          key={interaction.id} 
+                          className={`p-3 rounded-lg border ${
+                            interaction.type === "positive"
+                              ? "bg-green-500/5 border-green-500/20"
+                              : "bg-red-500/5 border-red-500/20"
+                          }`}
+                        >
+                          <div className="flex items-start justify-between gap-3">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 mb-1">
+                                <span className={`text-xs font-medium ${interaction.type === "positive" ? "text-green-400" : "text-red-400"}`}>
+                                  {interaction.type === "positive" ? "+" : "−"}
+                                </span>
+                                <span className="text-slate-500 text-xs">{formatDate(interaction.date)} {interaction.time}</span>
+                              </div>
+                              <p className="text-slate-300 text-sm">{interaction.description}</p>
+                            </div>
+                            <div className="text-right text-xs space-y-1">
+                              <div className="text-slate-500">
+                                P: <span className={interaction.compass.power >= 0 ? "text-blue-400" : "text-yellow-400"}>
+                                  {interaction.compass.power > 0 ? "+" : ""}{interaction.compass.power}
+                                </span>
+                              </div>
+                              <div className="text-slate-500">
+                                S: <span className={interaction.compass.safety >= 0 ? "text-purple-400" : "text-red-400"}>
+                                  {interaction.compass.safety > 0 ? "+" : ""}{interaction.compass.safety}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </details>
+                </div>
+              ))
+            )
+          )}
+
+          {/* Month View */}
+          {logView === "month" && (
+            getMonthlyHistory().length === 0 ? (
+              <p className="text-slate-500 text-sm text-center py-4">No data yet.</p>
+            ) : (
+              getMonthlyHistory().map((month, idx) => (
+                <div key={month.monthKey} className="bg-slate-800/50 rounded-lg p-4">
+                  {/* Header with month and counts */}
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-3">
+                      <Calendar className="w-4 h-4 text-slate-500" />
+                      <span className="font-medium text-slate-200">{formatMonth(month.monthKey)}</span>
+                    </div>
+                    <div className="flex items-center gap-3 text-sm">
+                      <span className="text-green-400">+{month.stats.positive}</span>
+                      <span className="text-red-400">−{month.stats.negative}</span>
+                    </div>
+                  </div>
+                  
+                  {/* Stats row */}
+                  <div className="grid grid-cols-4 gap-3 mb-3 p-3 bg-slate-900/50 rounded-lg">
+                    <div className="text-center">
+                      <p className="text-slate-200 font-medium">{month.stats.count}</p>
+                      <p className="text-slate-500 text-xs">Logs</p>
+                    </div>
+                    <div className="text-center">
+                      <p className={`font-medium ${month.stats.ratio >= 5 ? "text-green-400" : month.stats.ratio >= 3 ? "text-yellow-400" : "text-red-400"}`}>
+                        {month.stats.ratio === Infinity ? "∞" : month.stats.ratio.toFixed(1)}:1
+                      </p>
+                      <p className="text-slate-500 text-xs">Ratio</p>
+                    </div>
+                    <div className="text-center">
+                      <div className="flex items-center justify-center gap-1">
+                        <span className={`font-medium ${month.stats.avgPower >= 0 ? "text-blue-400" : "text-yellow-400"}`}>
+                          {month.stats.avgPower > 0 ? "+" : ""}{month.stats.avgPower.toFixed(1)}
+                        </span>
+                        {idx < getMonthlyHistory().length - 1 && month.change.power !== 0 && (
+                          <span className={`text-xs ${month.change.power > 0 ? "text-green-400" : "text-red-400"}`}>
+                            {month.change.power > 0 ? "↑" : "↓"}
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-slate-500 text-xs">Power</p>
+                    </div>
+                    <div className="text-center">
+                      <div className="flex items-center justify-center gap-1">
+                        <span className={`font-medium ${month.stats.avgSafety >= 0 ? "text-purple-400" : "text-red-400"}`}>
+                          {month.stats.avgSafety > 0 ? "+" : ""}{month.stats.avgSafety.toFixed(1)}
+                        </span>
+                        {idx < getMonthlyHistory().length - 1 && month.change.safety !== 0 && (
+                          <span className={`text-xs ${month.change.safety > 0 ? "text-green-400" : "text-red-400"}`}>
+                            {month.change.safety > 0 ? "↑" : "↓"}
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-slate-500 text-xs">Safety</p>
+                    </div>
+                  </div>
+
+                  {/* Change from previous month */}
+                  {idx < getMonthlyHistory().length - 1 && (month.change.power !== 0 || month.change.safety !== 0) && (
+                    <div className="text-xs text-slate-500 mb-2">
+                      vs previous month: 
+                      {month.change.power !== 0 && (
+                        <span className={`ml-2 ${month.change.power > 0 ? "text-green-400" : "text-red-400"}`}>
+                          Power {month.change.power > 0 ? "+" : ""}{month.change.power.toFixed(1)}
+                        </span>
+                      )}
+                      {month.change.safety !== 0 && (
+                        <span className={`ml-2 ${month.change.safety > 0 ? "text-green-400" : "text-red-400"}`}>
+                          Safety {month.change.safety > 0 ? "+" : ""}{month.change.safety.toFixed(1)}
+                        </span>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Expandable interaction list */}
+                  <details className="group">
+                    <summary className="text-xs text-slate-500 cursor-pointer hover:text-slate-300 transition-colors flex items-center gap-1">
+                      <ChevronRight className="w-3 h-3 group-open:rotate-90 transition-transform" />
+                      View {month.interactions.length} log{month.interactions.length !== 1 ? "s" : ""}
+                    </summary>
+                    <div className="mt-3 space-y-2">
+                      {month.interactions.map(interaction => (
+                        <div 
+                          key={interaction.id} 
+                          className={`p-3 rounded-lg border ${
+                            interaction.type === "positive"
+                              ? "bg-green-500/5 border-green-500/20"
+                              : "bg-red-500/5 border-red-500/20"
+                          }`}
+                        >
+                          <div className="flex items-start justify-between gap-3">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 mb-1">
+                                <span className={`text-xs font-medium ${interaction.type === "positive" ? "text-green-400" : "text-red-400"}`}>
+                                  {interaction.type === "positive" ? "+" : "−"}
+                                </span>
+                                <span className="text-slate-500 text-xs">{formatDate(interaction.date)} {interaction.time}</span>
+                              </div>
+                              <p className="text-slate-300 text-sm">{interaction.description}</p>
+                            </div>
+                            <div className="text-right text-xs space-y-1">
+                              <div className="text-slate-500">
+                                P: <span className={interaction.compass.power >= 0 ? "text-blue-400" : "text-yellow-400"}>
+                                  {interaction.compass.power > 0 ? "+" : ""}{interaction.compass.power}
+                                </span>
+                              </div>
+                              <div className="text-slate-500">
+                                S: <span className={interaction.compass.safety >= 0 ? "text-purple-400" : "text-red-400"}>
+                                  {interaction.compass.safety > 0 ? "+" : ""}{interaction.compass.safety}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </details>
+                </div>
+              ))
+            )
           )}
         </div>
       </div>

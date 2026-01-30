@@ -140,6 +140,7 @@ function Teleprompter({
   const analyserRef = useRef<AnalyserNode | null>(null);
   const animationFrameRef = useRef<number | null>(null);
   const userScrollTimeoutRef = useRef<number | null>(null);
+  const isProgrammaticScrollRef = useRef(false);
   const wordsRef = useRef<string[]>([]);
 
   // Check if mobile
@@ -160,7 +161,12 @@ function Teleprompter({
     if (isScrolling && !voiceSync && !isUserScrolling && containerRef.current) {
       scrollIntervalRef.current = window.setInterval(() => {
         if (containerRef.current) {
+          isProgrammaticScrollRef.current = true;
           containerRef.current.scrollTop += 1;
+          // Reset flag after scroll event fires
+          requestAnimationFrame(() => {
+            isProgrammaticScrollRef.current = false;
+          });
         }
       }, 100 - scrollSpeed);
     } else if (scrollIntervalRef.current) {
@@ -172,7 +178,11 @@ function Teleprompter({
   }, [isScrolling, scrollSpeed, voiceSync, isUserScrolling]);
 
   // Handle user scroll - pause auto-scroll temporarily
+  // Only triggers on actual user interaction, not programmatic scrolling
   const handleUserScroll = () => {
+    // Ignore programmatic scrolls from auto-scroll
+    if (isProgrammaticScrollRef.current) return;
+    
     setIsUserScrolling(true);
     if (userScrollTimeoutRef.current) {
       clearTimeout(userScrollTimeoutRef.current);
@@ -547,6 +557,7 @@ function Teleprompter({
           paddingTop: showControls ? (isMobile ? '180px' : '100px') : '40px',
         }}
         onScroll={handleUserScroll}
+        onWheel={handleUserScroll}
         onTouchMove={handleUserScroll}
       >
         <div 

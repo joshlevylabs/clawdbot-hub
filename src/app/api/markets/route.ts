@@ -123,8 +123,8 @@ function findSwingPoints(candles: CandleData[], lookback: number = 5): { highs: 
 }
 
 // Calculate Fibonacci retracement AND extension levels
-// Retracements: 2 points (A: swing low, B: swing high) - levels between A and B
-// Extensions: 3 points (A: swing low, B: swing high, C: pullback low) - levels project from C
+// For uptrend: A=swing low, B=swing high (after A), C=pullback low (after B)
+// Constraints: A < B < C (chronologically) and A.price < C.price < B.price
 function calculateFibonacci(candles: CandleData[]): FibonacciLevels {
   if (candles.length < 20) {
     return { high: 0, low: 0, retracements: [], extensions: [], trend: 'up' };
@@ -146,65 +146,123 @@ function calculateFibonacci(candles: CandleData[]): FibonacciLevels {
     };
   }
   
-  const lastSwingHigh = highs[highs.length - 1];
-  const lastSwingLow = lows[lows.length - 1];
+  // Find the best A-B-C pattern working backwards from recent data
+  // We want: A (swing low) → B (swing high after A) → C (pullback low after B, optional)
   
-  let pointA: number; // Initial swing low
-  let pointB: number; // Swing high
-  let pointC: number | null = null; // Pullback low (for extensions)
-  let trend: 'up' | 'down';
+  let pointA: number = 0;
+  let pointB: number = 0;
+  let pointC: number | null = null;
+  let trend: 'up' | 'down' = 'up';
   
-  if (lastSwingHigh > lastSwingLow) {
-    // Pattern: Low → High → currently pulling back (uptrend)
-    // Find the swing low BEFORE the high (Point A)
-    const lowsBeforeHigh = lows.filter(l => l < lastSwingHigh);
-    pointA = lowsBeforeHigh.length > 0 ? lowsBeforeHigh[lowsBeforeHigh.length - 1] : 0;
-    pointB = lastSwingHigh;
+  // Strategy: Find the most recent significant swing high, then find the swing low before it
+  // Then check if there's a valid pullback after the high
+  
+  // Start from most recent swing high
+  for (let i = highs.length - 1; i >= 0; i--) {
+    const candidateB = highs[i];
     
-    // The lastSwingLow IS our pullback (Point C) - it came AFTER the high
-    pointC = lastSwingLow;
-    trend = 'up';
-  } else {
-    // Pattern: High → Low → currently bouncing (could be downtrend or uptrend forming)
-    // We'll treat this as an UPTREND setup: A=low, B=previous high, C=current pullback
+    // Find swing lows BEFORE this high
+    const lowsBeforeB = lows.filter(l => l < candidateB);
+    if (lowsBeforeB.length === 0) continue;
     
-    // Find the swing high BEFORE the low (this becomes Point B - the top)
-    const highsBeforeLow = highs.filter(h => h < lastSwingLow);
-    pointB = highsBeforeLow.length > 0 ? highsBeforeLow[highsBeforeLow.length - 1] : 0;
+    // Take the most recent low before B as candidate A
+    const candidateA = lowsBeforeB[lowsBeforeB.length - 1];
     
-    // Find the swing low BEFORE that high (this is Point A - the start of the move up)
-    const lowsBeforeHigh = lows.filter(l => l < pointB);
-    pointA = lowsBeforeHigh.length > 0 ? lowsBeforeHigh[lowsBeforeHigh.length - 1] : 0;
+    // Validate: A must be lower price than B
+    if (candles[candidateA].low >= candles[candidateB].high) continue;
     
-    // The current swing low IS our pullback (Point C) - it's the retracement
-    pointC = lastSwingLow;
-    trend = 'up';
+    // We have a valid A-B pair
+    pointA = candidateA;
+    pointB = candidateB;
     
-    // Validate: C should be between A and B price-wise for a valid uptrend extension
-    const aPrice = candles[pointA]?.low ?? 0;
-    const bPrice = candles[pointB]?.high ?? 0;
-    const cPrice = candles[pointC]?.low ?? 0;
+    // Now look for C: a swing low AFTER B
+    const lowsAfterB = lows.filter(l => l > candidateB);
     
-    // If C is below A (deeper than the original low), the pattern is broken
-    // In this case, A becomes the new low and we need to find a new setup
-    if (cPrice < aPrice) {
-      // The pullback went too deep - this is now a new A, look for structure before
-      pointA = pointC;
-      // Look for a high before this new low
-      const highsBeforeNewLow = highs.filter(h => h < pointA);
-      if (highsBeforeNewLow.length > 0) {
-        pointB = highsBeforeNewLow[highsBeforeNewLow.length - 1];
+    for (const candidateC of lowsAfterB) {
+      const aPrice = candles[pointA].low;
+      const bPrice = candles[pointB].high;
+      const cPrice = candles[candidateC].low;
+      
+      // C must be: after B (already filtered), price between A and B
+      if (cPrice > aPrice && cPrice < bPrice) {
+        pointC = candidateC;
+        break; // Take the first valid C after B
       }
-      // No valid C in this case
-      pointC = null;
+    }
+    
+    // If we found a valid A-B (with or without C), we're done
+    break;
+  }
+  
+  // Fallback if no valid pattern found
+  if (pointA === 0 && pointB === 0) {
+    // Just use overall high/low
+    let maxIdx = 0, minIdx = 0;
+    for (let i = 1; i < candles.length; i++) {
+      if (candles[i].high > candles[maxIdx].high) maxIdx = i;
+      if (candles[i].low < candles[minIdx].low) minIdx = i;
+    }
+    
+    // Ensure A before B chronologically
+    if (minIdx < maxIdx) {
+      pointA = minIdx;
+      pointB = maxIdx;
+    } else {
+      pointA = maxIdx; // Use high as A in downtrend
+      pointB = minIdx;
+      trend = 'down';
     }
   }
   
-  const swingLow = candles[pointA].low;
-  const swingHigh = candles[pointB].high;
-  const pullbackPrice = pointC !== null ? (trend === 'up' ? candles[pointC].low : candles[pointC].high) : null;
+  // For uptrend: A is low, B is high (A < B chronologically and A.price < B.price)
+  // Verify we have proper chronological order and price relationship
+  const aCandle = candles[pointA];
+  const bCandle = candles[pointB];
   
-  // Calculate extensions only if we have all 3 points
+  // Determine actual high and low values
+  let swingLow: number;
+  let swingHigh: number;
+  let swingLowIdx: number;
+  let swingHighIdx: number;
+  
+  if (pointA < pointB && aCandle.low < bCandle.high) {
+    // Standard uptrend: A (low) → B (high)
+    swingLow = aCandle.low;
+    swingHigh = bCandle.high;
+    swingLowIdx = pointA;
+    swingHighIdx = pointB;
+    trend = 'up';
+  } else if (pointA < pointB && aCandle.high > bCandle.low) {
+    // Downtrend: A (high) → B (low) - but we still want to show as uptrend from the low
+    swingHigh = aCandle.high;
+    swingLow = bCandle.low;
+    swingHighIdx = pointA;
+    swingLowIdx = pointB;
+    trend = 'down';
+    // Clear C since it's a downtrend pattern
+    pointC = null;
+  } else {
+    // Fallback: use the values as-is
+    swingLow = Math.min(aCandle.low, bCandle.low);
+    swingHigh = Math.max(aCandle.high, bCandle.high);
+    swingLowIdx = aCandle.low < bCandle.low ? pointA : pointB;
+    swingHighIdx = aCandle.high > bCandle.high ? pointA : pointB;
+    trend = swingLowIdx < swingHighIdx ? 'up' : 'down';
+  }
+  
+  // Validate C is after B and between A and B price-wise
+  let pullbackPrice: number | null = null;
+  if (pointC !== null && trend === 'up') {
+    const cCandle = candles[pointC];
+    // C must be after the swing high
+    if (pointC > swingHighIdx && cCandle.low > swingLow && cCandle.low < swingHigh) {
+      pullbackPrice = cCandle.low;
+    } else {
+      pointC = null; // Invalid C, clear it
+    }
+  }
+  
+  // Calculate extensions only if we have valid C
   const extensions = (pointC !== null && pullbackPrice !== null) 
     ? calculateFibExtensions(swingLow, swingHigh, pullbackPrice, trend)
     : [];
@@ -216,8 +274,8 @@ function calculateFibonacci(candles: CandleData[]): FibonacciLevels {
     retracements: calculateFibRetracements(swingHigh, swingLow), 
     extensions,
     trend,
-    swingHighDate: new Date(candles[pointB].time * 1000).toLocaleDateString(),
-    swingLowDate: new Date(candles[pointA].time * 1000).toLocaleDateString(),
+    swingHighDate: new Date(candles[swingHighIdx].time * 1000).toLocaleDateString(),
+    swingLowDate: new Date(candles[swingLowIdx].time * 1000).toLocaleDateString(),
     pullbackDate: pointC !== null ? new Date(candles[pointC].time * 1000).toLocaleDateString() : undefined,
   };
 }

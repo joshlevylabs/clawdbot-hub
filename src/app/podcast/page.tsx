@@ -148,6 +148,8 @@ function Teleprompter({
   const [audioLevel, setAudioLevel] = useState(0);
   const [isUserScrolling, setIsUserScrolling] = useState(false);
   const [scrollHeight, setScrollHeight] = useState(0);
+  const [recognitionStatus, setRecognitionStatus] = useState<'idle' | 'listening' | 'error'>('idle');
+  const [lastHeardWord, setLastHeardWord] = useState('');
   const containerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const scrollIntervalRef = useRef<number | null>(null);
@@ -315,9 +317,15 @@ function Teleprompter({
     recognition.lang = 'en-US';
 
     recognition.onresult = (event: SpeechRecognitionEvent) => {
+      setRecognitionStatus('listening');
       const result = event.results[event.results.length - 1];
       const transcript = result[0].transcript.toLowerCase().replace(/[^\w\s]/g, '');
       const spokenWords = transcript.split(/\s+/).filter(w => w.length > 0);
+      
+      // Show what was heard
+      if (spokenWords.length > 0) {
+        setLastHeardWord(spokenWords.slice(-2).join(' '));
+      }
       
       // Find matches in script and advance position
       if (spokenWords.length > 0) {
@@ -356,22 +364,37 @@ function Teleprompter({
 
     recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
       console.error('Speech recognition error:', event.error);
+      setRecognitionStatus('error');
       if (event.error === 'not-allowed') {
         alert('Microphone access denied. Please allow microphone access for voice sync.');
         setVoiceSync(false);
         setIsListening(false);
+      } else if (event.error === 'no-speech') {
+        // This is normal, just restart
+        setRecognitionStatus('listening');
       }
     };
 
     recognition.onend = () => {
       // Restart if still supposed to be listening
       if (voiceSync && isListening) {
-        try { recognition.start(); } catch {}
+        try { 
+          recognition.start(); 
+          setRecognitionStatus('listening');
+        } catch {
+          setRecognitionStatus('error');
+        }
       }
     };
 
     recognitionRef.current = recognition;
-    try { recognition.start(); } catch {}
+    try { 
+      recognition.start(); 
+      setRecognitionStatus('listening');
+    } catch {
+      setRecognitionStatus('error');
+      alert('Failed to start speech recognition. Try using Chrome browser.');
+    }
 
     return () => {
       recognition.stop();
@@ -397,6 +420,19 @@ function Teleprompter({
 
   const toggleVoiceSync = () => {
     if (!voiceSync) {
+      // Check browser support
+      const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      
+      if (!SpeechRecognition) {
+        alert('Voice sync requires Chrome, Edge, or Brave browser. Safari does not support speech recognition.');
+        return;
+      }
+      
+      if (isSafari) {
+        alert('Safari has limited voice sync support. For best results, use Chrome or Brave.');
+      }
+      
       setVoiceSync(true);
       setIsListening(true);
       setIsScrolling(false);
@@ -596,7 +632,7 @@ function Teleprompter({
       {/* Voice level indicator - bottom center, always visible */}
       {voiceSync && isListening && (
         <div className="absolute bottom-6 left-0 right-0 flex justify-center z-20 pointer-events-none">
-          <div className="flex items-center gap-2 bg-black/90 rounded-full px-5 py-3 border border-emerald-500/30">
+          <div className="flex items-center gap-3 bg-black/90 rounded-2xl px-5 py-3 border border-emerald-500/30">
             <div className="flex items-end gap-1 h-8">
               {[0.15, 0.3, 0.5, 0.7, 0.85, 1.0, 0.85, 0.7, 0.5, 0.3, 0.15].map((threshold, i) => (
                 <div 
@@ -610,8 +646,13 @@ function Teleprompter({
                 />
               ))}
             </div>
-            <div className="ml-2 text-left">
-              <div className="text-sm text-emerald-400 font-medium">Listening</div>
+            <div className="text-left min-w-[120px]">
+              <div className={`text-sm font-medium ${recognitionStatus === 'error' ? 'text-red-400' : 'text-emerald-400'}`}>
+                {recognitionStatus === 'error' ? '⚠️ Error' : recognitionStatus === 'listening' ? '🎤 Listening' : 'Starting...'}
+              </div>
+              {lastHeardWord && (
+                <div className="text-xs text-amber-400 truncate max-w-[120px]">"{lastHeardWord}"</div>
+              )}
               <div className="text-xs text-slate-500">Word {currentWordIndex + 1} / {wordsRef.current.length}</div>
             </div>
           </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Heart, TrendingUp, TrendingDown, Target, RefreshCw, AlertTriangle, CheckCircle, ClipboardCheck, ChevronRight, Calendar, BarChart3 } from "lucide-react";
+import { Heart, TrendingUp, TrendingDown, Target, RefreshCw, AlertTriangle, CheckCircle, ClipboardCheck, ChevronRight, Calendar, BarChart3, Plus, X, Lightbulb } from "lucide-react";
 
 interface QuestionOption {
   label: string;
@@ -43,6 +43,7 @@ interface Interaction {
   description: string;
   compass: { power: number; safety: number };
   tags: string[];
+  advice?: string;
 }
 
 interface DailyCheckin {
@@ -118,6 +119,13 @@ export default function MarriagePage() {
   const [checkinComplete, setCheckinComplete] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [logView, setLogView] = useState<"day" | "week" | "month">("day");
+  const [showLogModal, setShowLogModal] = useState(false);
+  const [logInput, setLogInput] = useState("");
+  const [logSubmitting, setLogSubmitting] = useState(false);
+
+  // Check if today's check-in is done
+  const todayDate = new Date().toISOString().split('T')[0];
+  const hasCheckedInToday = checkins.some(c => c.date === todayDate);
 
   const fetchCompass = async () => {
     setLoading(true);
@@ -189,6 +197,39 @@ export default function MarriagePage() {
   // Get check-in for a specific date
   const getCheckinForDate = (date: string): DailyCheckin | undefined => {
     return checkins.find(c => c.date === date);
+  };
+
+  // Submit a new log via AI processing
+  const submitLog = async () => {
+    if (!logInput.trim()) return;
+    
+    setLogSubmitting(true);
+    try {
+      const response = await fetch('/api/compass/log', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: logInput })
+      });
+      
+      if (response.ok) {
+        const result = await response.json();
+        if (result.success) {
+          // Refresh interactions
+          fetchInteractions();
+          setLogInput("");
+          setShowLogModal(false);
+        } else {
+          alert('Failed to save log: ' + (result.error || 'Unknown error'));
+        }
+      } else {
+        alert('Failed to save log. Please try again.');
+      }
+    } catch (error) {
+      console.error('Log submission error:', error);
+      alert('Failed to save log. Please try again.');
+    } finally {
+      setLogSubmitting(false);
+    }
   };
 
   // Group interactions by day
@@ -446,8 +487,9 @@ export default function MarriagePage() {
         const result = await response.json();
         
         if (result.success) {
-          // Refresh compass state from API
+          // Refresh compass state and check-ins from API
           fetchCompass();
+          fetchCheckins();
           // Reset check-in
           setShowCheckin(false);
           setCurrentQuestion(0);
@@ -499,6 +541,25 @@ export default function MarriagePage() {
 
   return (
     <div className="space-y-8 max-w-4xl">
+      {/* Daily Check-in Banner (only if not checked in today) */}
+      {!hasCheckedInToday && !showCheckin && (
+        <div className="bg-gradient-to-r from-purple-600/20 to-indigo-600/20 border border-purple-500/30 rounded-xl p-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <ClipboardCheck className="w-5 h-5 text-purple-400" />
+            <div>
+              <p className="text-slate-200 font-medium">Daily Check-in Available</p>
+              <p className="text-slate-400 text-sm">Take 30 seconds to reflect on your day</p>
+            </div>
+          </div>
+          <button
+            onClick={() => setShowCheckin(true)}
+            className="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg font-medium transition-colors"
+          >
+            Start Check-in
+          </button>
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -508,15 +569,74 @@ export default function MarriagePage() {
           </h1>
           <p className="text-slate-500 mt-1 text-sm">Track your relationship health over time</p>
         </div>
-        <button
-          onClick={fetchCompass}
-          disabled={loading}
-          className="btn btn-primary flex items-center gap-2"
-        >
-          <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} strokeWidth={1.5} />
-          Refresh
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowLogModal(true)}
+            className="px-4 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg font-medium transition-colors flex items-center gap-2"
+          >
+            <Plus className="w-4 h-4" strokeWidth={2} />
+            Log
+          </button>
+          <button
+            onClick={() => { fetchCompass(); fetchInteractions(); fetchCheckins(); }}
+            disabled={loading}
+            className="btn btn-primary flex items-center gap-2"
+          >
+            <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} strokeWidth={1.5} />
+          </button>
+        </div>
       </div>
+
+      {/* Log Modal */}
+      {showLogModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-slate-850 border border-slate-700 rounded-xl max-w-lg w-full p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold text-slate-200">Log an Interaction</h2>
+              <button
+                onClick={() => setShowLogModal(false)}
+                className="text-slate-400 hover:text-slate-200 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <p className="text-slate-400 text-sm mb-4">
+              Describe what happened. AI will analyze it and extract the type, scores, and give you advice.
+            </p>
+            <textarea
+              value={logInput}
+              onChange={(e) => setLogInput(e.target.value)}
+              placeholder="e.g., Got defensive when Jillian mentioned the coffee stain on the table..."
+              className="w-full h-32 bg-slate-900 border border-slate-700 rounded-lg p-3 text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 resize-none"
+            />
+            <div className="flex justify-end gap-3 mt-4">
+              <button
+                onClick={() => setShowLogModal(false)}
+                className="px-4 py-2 text-slate-400 hover:text-slate-200 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={submitLog}
+                disabled={logSubmitting || !logInput.trim()}
+                className="px-4 py-2 bg-green-600 hover:bg-green-500 disabled:bg-slate-700 disabled:text-slate-500 text-white rounded-lg font-medium transition-colors flex items-center gap-2"
+              >
+                {logSubmitting ? (
+                  <>
+                    <RefreshCw className="w-4 h-4 animate-spin" />
+                    Processing...
+                  </>
+                ) : (
+                  <>
+                    <Plus className="w-4 h-4" />
+                    Save Log
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Main Compass Visualization */}
       <div className="bg-slate-850 rounded-xl border border-slate-800 p-6">
@@ -920,6 +1040,15 @@ export default function MarriagePage() {
                                       {tag}
                                     </span>
                                   ))}
+                                </div>
+                              )}
+                              {/* Advice */}
+                              {interaction.advice && (
+                                <div className="mt-2 p-2 bg-amber-500/10 border border-amber-500/20 rounded-lg">
+                                  <div className="flex items-start gap-2">
+                                    <Lightbulb className="w-3 h-3 text-amber-400 mt-0.5 flex-shrink-0" />
+                                    <p className="text-amber-200/80 text-xs">{interaction.advice}</p>
+                                  </div>
                                 </div>
                               )}
                             </div>

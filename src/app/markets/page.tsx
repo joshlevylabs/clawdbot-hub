@@ -292,20 +292,36 @@ function ChartCanvas({
   
   // Request more historical data when scrolling near the start
   const lastCandleCount = useRef(candles.length);
+  const hasUserScrolled = useRef(false);
+  
   useEffect(() => {
-    // Reset when candle count changes (new data loaded)
+    // Reset when candle count changes (new data loaded or new symbol/timeframe)
     if (candles.length !== lastCandleCount.current) {
       lastCandleCount.current = candles.length;
+      hasUserScrolled.current = false; // Reset scroll tracking
     }
   }, [candles.length]);
   
+  // Track when user has scrolled away from initial position
   useEffect(() => {
-    // Trigger when visible start is within 15% of the beginning
+    // User has scrolled if view is not at the default end position
+    if (viewRange.end < candles.length - 1) {
+      hasUserScrolled.current = true;
+    }
+  }, [viewRange.end, candles.length]);
+  
+  useEffect(() => {
+    // Only trigger when:
+    // 1. User has actually scrolled (not initial load)
+    // 2. Visible start is within 15% of beginning
+    // 3. Not already loading
+    // 4. Haven't just loaded new data
     const threshold = Math.max(10, candles.length * 0.15);
-    const shouldLoad = visibleStart < threshold && 
+    const shouldLoad = hasUserScrolled.current &&
+                       visibleStart < threshold && 
                        !isLoadingMore && 
                        onRequestMoreData &&
-                       candles.length === lastCandleCount.current; // Only if we haven't just loaded
+                       candles.length === lastCandleCount.current;
     
     if (shouldLoad) {
       console.log(`Requesting more data: visibleStart=${visibleStart}, threshold=${threshold}, candles=${candles.length}`);

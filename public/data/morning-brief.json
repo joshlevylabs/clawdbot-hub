@@ -1,119 +1,117 @@
 {
-  "date": "2026-01-29",
+  "date": "2026-01-30",
   "time": "6:00 AM",
   "sections": {
     "prayer": {
       "title": "🕊️ Morning Prayer",
-      "date": "Thursday, January 29, 2026",
-      "hebrew_date": "30 Tishrei",
+      "date": "Friday, January 30, 2026",
+      "hebrew_date": "1 Cheshvan",
       "parsha": "Toldot",
       "parsha_theme": "generational blessing, identity, inheritance",
       "modeh_ani": "מודה אני לפניך — I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
-      "blessing": "Blessed are You who spreads the earth upon the waters — ground me in stability.",
-      "psalm": "Psalm 127:1: \"Unless the Lord builds the house, the builders labor in vain.\"",
-      "proverb": "Proverbs 27:23: \"Know well the condition of your flocks, and give attention to your herds.\"",
-      "intention": "Help me be present with my family. Let my work create margin, not distance.",
-      "closing": "May your work today be a pleasing offering. May your rest tonight be deep and restorative."
+      "blessing": "Blessed are You who raises the lowly — lift me to accomplish Your purposes.",
+      "psalm": "Psalm 1:3: \"He is like a tree planted by streams of water, yielding fruit in season.\"",
+      "proverb": "Proverbs 16:3: \"Commit your work to the Lord, and your plans will be established.\"",
+      "intention": "Let my work today compound into something that outlasts me.",
+      "closing": "Baruch atah Adonai — Blessed are You, Lord, who renews creation daily with goodness."
     },
     "weather": {
       "title": "☀️ Weather — Temecula",
-      "temperature": "55°F",
-      "feels_like": "52°F",
-      "condition": "Sunny",
-      "wind": "NW 5mph",
-      "summary": "Clear skies, cool morning warming to mid-60s. Great day for outdoor family time."
+      "temperature": "45°F",
+      "condition": "Clear",
+      "wind": "W 1 mph",
+      "summary": "Clear and cool this morning, warming up later"
     },
     "calendar": {
       "title": "📅 Calendar",
       "today": [],
-      "upcoming": [
-        {"date": "Feb 2", "time": "9:00 AM", "title": "Chris @ Lyceum", "location": "Google Meet"}
+      "week": [
+        {"date": "2026-02-02", "time": "9:00 AM", "title": "Chris and Josh Weekly Sync"}
+      ],
+      "month": [
+        {"date": "2026-02-02", "title": "Chris and Josh Weekly Sync"},
+        {"date": "2026-02-14", "title": "Valentine's Day"},
+        {"date": "2026-03-26", "title": "Wedding Anniversary"}
       ]
     },
     "email": {
       "title": "📧 Email Highlights",
       "needs_attention": [
-        {"from": "Supabase", "subject": "Project aitwin going to be paused", "note": "Action needed to prevent pause"},
-        {"from": "Google", "subject": "Security alert", "note": "Review account activity"}
+        {"from": "Atelier School", "subject": "Invoice - Payment Reminder Due", "note": "Payment due notification"},
+        {"from": "Jillian Reesink", "subject": "Fwd: Welcome to Solar Billing Plan", "note": "Solar billing info forwarded"}
       ],
-      "dev_work": [
-        {"from": "Discord", "subject": "ancient_chaos mentioned you in Midjourney", "note": "Community engagement"},
-        {"from": "LinkedIn", "subject": "1 new message", "note": "Check DMs"},
-        {"from": "Upstash", "subject": "Redis Database Inactivity Notice", "note": "Consider cleanup"}
+      "opportunities": [
+        {"from": "Bobby Jackson", "subject": "Audio-Visual Services Business For Sale", "note": "Potential acquisition opportunity"}
       ],
-      "good_news": [
-        {"from": "Self", "subject": "TBF Episode 001 Script Ready", "note": "Builder's Frequency moving forward!"}
+      "informational": [
+        {"from": "Venmo", "subject": "You paid David Knell $150.00", "note": "Payment confirmation"},
+        {"from": "Apple", "subject": "Your Subscription is Confirmed", "note": "Subscription active"}
       ]
     },
     "markets": {
       "title": "📈 Markets & Trading Signals",
       "summary": {
-        "date": "2026-01-29",
+        "date": "2026-01-30",
         "time": "06:00 AM",
-        "market_status": "OPEN",
-        "spy": {"price": 695.42, "change_pct": -0.01},
+        "market_status": "PRE-MARKET",
+        "spy": {"price": 694.04, "change_pct": -0.2},
+        "vix": 17.93,
         "sentiment": "NEUTRAL",
-        "vix": 16.67,
         "volatility": "LOW"
       },
       "overview": [
-        {"symbol": "SPY", "price": 695.42, "change_pct": -0.01, "trend": "NEUTRAL"},
-        {"symbol": "QQQ", "price": 633.22, "change_pct": 0.33, "trend": "NEUTRAL"},
-        {"symbol": "IWM", "price": 263.30, "change_pct": -0.54, "trend": "NEUTRAL"},
-        {"symbol": "DIA", "price": 490.13, "change_pct": 0.01, "trend": "NEUTRAL"}
+        {"symbol": "SPY", "price": 694.04, "change_pct": -0.2, "trend": "NEUTRAL"},
+        {"symbol": "QQQ", "price": 629.43, "change_pct": -0.6, "trend": "NEUTRAL"},
+        {"symbol": "IWM", "price": 263.37, "change_pct": 0.03, "trend": "NEUTRAL"},
+        {"symbol": "DIA", "price": 490.21, "change_pct": 0.02, "trend": "NEUTRAL"}
       ],
       "signals": [
-        {
-          "type": "SELL",
-          "symbol": "GLD",
-          "price": 494.56,
-          "entry": 494.56,
-          "stop": 512.48,
-          "target": 467.67,
-          "confidence": "MEDIUM",
-          "rationale": "RSI overbought (88.1) | High volume confirmation | Price near BB resistance"
-        }
+        {"type": "SELL", "symbol": "SLV", "price": 105.57, "entry": 105.57, "stop": 116.64, "target": 88.97, "rationale": "RSI overbought (82.7)"},
+        {"type": "SELL", "symbol": "GLD", "price": 495.90, "entry": 495.90, "stop": 518.43, "target": 462.11, "rationale": "RSI overbought (88.3)"},
+        {"type": "SELL", "symbol": "META", "price": 738.31, "entry": 738.31, "stop": 780.49, "target": 675.04, "rationale": "RSI overbought (73.8), +10.4% recent move"}
+      ],
+      "watchlist": [
+        {"symbol": "MSFT", "price": 433.50, "note": "Near BB support, RSI 33.6, down 10% — potential bounce candidate"}
       ]
     },
     "family": {
       "title": "❤️ Family Focus",
-      "suggestion": "Jones loves Blaze and the Monster Machines — do a 'monster truck race' in the backyard together. Set up cushions as obstacles and race toy trucks. Jett can watch from his blanket nearby.",
-      "conversationStarter": "Ask Jillian: 'What's the best thing you've read recently? Any book keeping you up at night?'",
-      "weeklyGoal": "Sunday Sweet Breakfast tradition — make pancakes together as a family this Sunday. Get Jones involved mixing ingredients.",
-      "potencyAction": "Acknowledge what happened without defending: 'You're right, I shouldn't have...'",
+      "suggestion": "It's Friday — perfect for a living room dance party with Jones after work. Put on some Super Wings music and let him lead!",
+      "conversationStarter": "Ask Jillian: What book are you reading right now? Have you started anything new this week?",
+      "weeklyGoal": "Sunday Sweet Breakfast coming up! Plan to make pancakes or waffles together as a family.",
+      "potencyAction": "⚠️ Acknowledge what happened without defending: 'You're right, I shouldn't have...'",
       "upcomingDates": [
-        {"date": "Feb 14", "event": "Valentine's Day", "daysAway": 16},
-        {"date": "Mar 26", "event": "Wedding Anniversary", "daysAway": 56}
+        {"date": "02-14", "event": "Valentine's Day", "daysAway": 15},
+        {"date": "03-26", "event": "Wedding Anniversary", "daysAway": 55},
+        {"date": "05-20", "event": "Jones's Birthday", "daysAway": 110}
       ],
-      "reflection": "The relationship temperature is critical right now. Focus on repair, not defense. Create space for Jillian to express frustrations without trying to fix everything. Be present — not just physically, but emotionally."
+      "reflection": "Your relationship temperature is running critical (1.5:1 ratio). Focus on repair today. Prioritize presence over productivity this evening."
     },
     "news": {
       "title": "🌍 World News",
       "subsections": {
         "israel": {
-          "title": "🇮🇱 Israel & Middle East",
+          "title": "🇮🇱 Israel",
           "items": [
-            {"headline": "Trump administration pushing for regime change conditions in Iran"},
-            {"headline": "EU set to list Iran's Revolutionary Guards as terrorist group"},
-            {"headline": "Russia, Turkey seeking US-Iran talks to prevent conflict"},
-            {"headline": "Iran threatens Tel Aviv response to any US attack"},
-            {"headline": "Final hostage returns — Ran Gvili home after 843 days"}
+            {"headline": "Trump confirms talks with Tehran, reportedly mulling raids on Iranian nuclear facilities"},
+            {"headline": "Netanyahu holds classified briefing as Trump decision on Iran strike expected in days"},
+            {"headline": "EU lists Iran's IRGC as terror group over protest crackdown"},
+            {"headline": "Apple acquires Israeli startup (reportedly $2B) that reads facial micro-movements"},
+            {"headline": "IDF believes 70,000 Gazans killed in war — aligns with Hamas figures"}
           ]
         },
         "us": {
           "title": "🇺🇸 United States",
           "items": [
-            {"headline": "Tesla invests $2B in Musk's xAI for AI product development"},
-            {"headline": "Apple to take up to 30% cut from Patreon creators in iOS app"},
-            {"headline": "Columbia blocked student who said 'Zionists shouldn't live' — didn't expel"}
+            {"headline": "Trump pushing for conditions to enable regime change in Iran"},
+            {"headline": "Suspect in Chabad headquarters ramming charged with hate crimes"}
           ]
         },
-        "tech": {
-          "title": "💻 Tech & Business",
+        "world": {
+          "title": "🌐 Global",
           "items": [
-            {"headline": "Google exploring publisher opt-out from AI Search features"},
-            {"headline": "TÜV Report: Tesla Model Y worst reliability among 2022-2023 cars"},
-            {"headline": "Europe's next-gen weather satellite sends back first images"}
+            {"headline": "TikTok deal with pro-Israel Larry Ellison spurs exodus to Palestinian-founded app"},
+            {"headline": "Trump claims Hamas will disarm — Senior Hamas official denies any such agreement"}
           ]
         }
       }
@@ -121,10 +119,12 @@
     "ai": {
       "title": "🤖 AI Intel",
       "items": [
-        {"headline": "Moltbot (former Clawdbot) creator talks Anthropic rebrand, crypto scam fallout"},
-        {"headline": "Google Gemini in Chrome now handles complex requests like budget shopping"},
-        {"headline": "Claude Code gets user 'mostly there' on Home Assistant migration in one afternoon"},
-        {"headline": "Meta spending millions on data center PR campaign"}
+        {"headline": "OpenAI retiring GPT-4o, GPT-4.1, GPT-4.1 mini, and o4-mini from ChatGPT on Feb 13 — only 0.1% of users still choosing 4o daily"},
+        {"headline": "Tesla discloses $2B investment in xAI to 'deploy AI products into the physical world at scale'"},
+        {"headline": "Google Gemini now serves as walking tour guide in Maps navigation — rolling out on iOS and Android"},
+        {"headline": "AI data centers driving surge in new gas power projects"},
+        {"headline": "Google 'exploring' letting publishers opt out of AI in Search (UK regulatory pressure)"},
+        {"headline": "Moltbot (formerly Clawdbot) creator talks Anthropic rebrand request, crypto scam fallout"}
       ]
     }
   }

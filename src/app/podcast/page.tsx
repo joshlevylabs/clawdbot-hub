@@ -252,11 +252,17 @@ function Teleprompter({
 
     // Set up audio context for level visualization
     navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+      // AudioContext may need to be resumed after user gesture
       const audioContext = new AudioContext();
+      if (audioContext.state === 'suspended') {
+        audioContext.resume();
+      }
+      
       const analyser = audioContext.createAnalyser();
       const source = audioContext.createMediaStreamSource(stream);
       source.connect(analyser);
-      analyser.fftSize = 256;
+      analyser.fftSize = 512; // Higher resolution
+      analyser.smoothingTimeConstant = 0.3; // Faster response
       
       audioContextRef.current = audioContext;
       analyserRef.current = analyser;
@@ -266,13 +272,18 @@ function Teleprompter({
       const updateLevel = () => {
         if (!analyserRef.current) return;
         analyserRef.current.getByteFrequencyData(dataArray);
-        const avg = dataArray.reduce((a, b) => a + b, 0) / dataArray.length;
-        setAudioLevel(avg / 255); // Normalize to 0-1
+        // Focus on voice frequencies (85-255 Hz range, indices ~2-15)
+        const voiceRange = dataArray.slice(2, 30);
+        const avg = voiceRange.reduce((a, b) => a + b, 0) / voiceRange.length;
+        setAudioLevel(Math.min(1, avg / 128)); // More sensitive
         animationFrameRef.current = requestAnimationFrame(updateLevel);
       };
       updateLevel();
     }).catch(err => {
       console.error('Failed to get audio stream:', err);
+      alert('Could not access microphone. Please allow microphone access and try again.');
+      setVoiceSync(false);
+      setIsListening(false);
     });
 
     return () => {
@@ -310,21 +321,34 @@ function Teleprompter({
       
       // Find matches in script and advance position
       if (spokenWords.length > 0) {
-        const lastSpoken = spokenWords[spokenWords.length - 1];
-        const searchStart = Math.max(0, currentWordIndex - 5);
-        const searchEnd = Math.min(wordsRef.current.length, currentWordIndex + 20);
+        // Check last few spoken words for better matching
+        const wordsToCheck = spokenWords.slice(-3);
+        const searchStart = Math.max(0, currentWordIndex - 10);
+        const searchEnd = Math.min(wordsRef.current.length, currentWordIndex + 50);
         
-        for (let i = searchStart; i < searchEnd; i++) {
-          if (wordsRef.current[i] === lastSpoken || wordsRef.current[i].startsWith(lastSpoken)) {
-            if (i > currentWordIndex) {
-              setCurrentWordIndex(i);
-              // Scroll to keep up
-              if (containerRef.current) {
-                const scrollPerWord = containerRef.current.scrollHeight / wordsRef.current.length;
-                containerRef.current.scrollTop = i * scrollPerWord * 0.8;
+        for (const spokenWord of wordsToCheck) {
+          if (spokenWord.length < 3) continue; // Skip short words
+          
+          for (let i = searchStart; i < searchEnd; i++) {
+            const scriptWord = wordsRef.current[i];
+            // Match if words are equal or one starts with the other (for partial recognition)
+            if (scriptWord === spokenWord || 
+                (scriptWord.length > 3 && scriptWord.startsWith(spokenWord)) ||
+                (spokenWord.length > 3 && spokenWord.startsWith(scriptWord))) {
+              if (i > currentWordIndex) {
+                setCurrentWordIndex(i);
+                // Scroll to keep current position at ~30% from top
+                if (containerRef.current && contentRef.current) {
+                  const contentHeight = contentRef.current.scrollHeight - containerRef.current.clientHeight;
+                  const scrollPosition = (i / wordsRef.current.length) * contentHeight;
+                  containerRef.current.scrollTo({
+                    top: Math.max(0, scrollPosition - containerRef.current.clientHeight * 0.3),
+                    behavior: 'smooth'
+                  });
+                }
+                return; // Found a match, stop searching
               }
             }
-            break;
           }
         }
       }
@@ -569,24 +593,27 @@ function Teleprompter({
         </div>
       )}
       
-      {/* Voice level indicator - iPhone style */}
+      {/* Voice level indicator - bottom center, always visible */}
       {voiceSync && isListening && (
-        <div className="absolute top-0 left-0 right-0 flex justify-center pt-2 z-20 pointer-events-none">
-          <div className="flex items-center gap-1 bg-black/80 rounded-full px-4 py-2">
-            <div className="flex items-end gap-0.5 h-4">
-              {[0.2, 0.4, 0.6, 0.8, 1.0, 0.8, 0.6, 0.4, 0.2].map((threshold, i) => (
+        <div className="absolute bottom-6 left-0 right-0 flex justify-center z-20 pointer-events-none">
+          <div className="flex items-center gap-2 bg-black/90 rounded-full px-5 py-3 border border-emerald-500/30">
+            <div className="flex items-end gap-1 h-8">
+              {[0.15, 0.3, 0.5, 0.7, 0.85, 1.0, 0.85, 0.7, 0.5, 0.3, 0.15].map((threshold, i) => (
                 <div 
                   key={i}
-                  className="w-1 rounded-full transition-all duration-75"
+                  className="w-1.5 rounded-full transition-all duration-50"
                   style={{
-                    height: `${Math.max(4, audioLevel > threshold * 0.5 ? (audioLevel * 16) : 4)}px`,
-                    backgroundColor: audioLevel > 0.1 ? '#10b981' : '#475569',
-                    opacity: audioLevel > threshold * 0.3 ? 1 : 0.3,
+                    height: `${Math.max(6, audioLevel > threshold * 0.4 ? (8 + audioLevel * 24) : 6)}px`,
+                    backgroundColor: audioLevel > 0.05 ? '#10b981' : '#475569',
+                    opacity: audioLevel > threshold * 0.25 ? 1 : 0.4,
                   }}
                 />
               ))}
             </div>
-            <span className="text-xs text-emerald-400 ml-2">Listening</span>
+            <div className="ml-2 text-left">
+              <div className="text-sm text-emerald-400 font-medium">Listening</div>
+              <div className="text-xs text-slate-500">Word {currentWordIndex + 1} / {wordsRef.current.length}</div>
+            </div>
           </div>
         </div>
       )}

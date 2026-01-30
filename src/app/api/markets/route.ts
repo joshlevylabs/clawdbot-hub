@@ -347,7 +347,8 @@ function calculateMovingAverages(candles: CandleData[]): MovingAverages {
 // Fetch quote data from Yahoo Finance
 async function fetchQuote(symbol: string): Promise<QuoteData | null> {
   try {
-    const url = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1d&range=1d`;
+    // Use range=5d to ensure we get chartPreviousClose data
+    const url = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1d&range=5d`;
     const response = await fetch(url, {
       headers: { 'User-Agent': 'Mozilla/5.0' },
       next: { revalidate: 60 },
@@ -361,7 +362,8 @@ async function fetchQuote(symbol: string): Promise<QuoteData | null> {
     
     const meta = result.meta;
     const price = meta.regularMarketPrice ?? 0;
-    const prevClose = meta.previousClose ?? price;
+    // Use chartPreviousClose (more reliable) or fallback to previousClose
+    const prevClose = meta.chartPreviousClose ?? meta.previousClose ?? price;
     
     return {
       symbol,

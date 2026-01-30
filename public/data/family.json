@@ -1,0 +1,137 @@
+{
+  "lastUpdated": "2026-01-28",
+  "location": "Temecula, CA",
+  "members": [
+    {
+      "name": "Jillian",
+      "relation": "wife",
+      "birthday": "1992-10-03",
+      "age": 33,
+      "interests": [
+        "reading",
+        "shopping",
+        "following influencers",
+        "concerts"
+      ],
+      "loveLanguage": [
+        "quality time",
+        "acts of service"
+      ],
+      "notes": []
+    },
+    {
+      "name": "Jones",
+      "relation": "son",
+      "birthday": "2023-05-20",
+      "age": 2,
+      "interests": [],
+      "favorites": {
+        "toys": [],
+        "shows": [
+          "Super Wings",
+          "Blaze and the Monster Machines"
+        ],
+        "foods": [],
+        "activities": []
+      },
+      "notes": []
+    },
+    {
+      "name": "Jett",
+      "relation": "son",
+      "birthday": "2025-07-10",
+      "age": 0,
+      "interests": [],
+      "favorites": {
+        "toys": [],
+        "shows": [],
+        "foods": [],
+        "activities": []
+      },
+      "notes": [
+        "~6 months old"
+      ]
+    }
+  ],
+  "importantDates": [
+    {
+      "date": "10-03",
+      "event": "Jillian's Birthday",
+      "type": "birthday"
+    },
+    {
+      "date": "05-20",
+      "event": "Jones's Birthday",
+      "type": "birthday"
+    },
+    {
+      "date": "07-10",
+      "event": "Jett's Birthday",
+      "type": "birthday"
+    },
+    {
+      "date": "02-14",
+      "event": "Valentine's Day",
+      "type": "holiday"
+    },
+    {
+      "date": "03-26",
+      "event": "Wedding Anniversary",
+      "type": "anniversary"
+    }
+  ],
+  "anniversary": "2022-03-26",
+  "traditions": [
+    {
+      "name": "Monthly Date Night",
+      "frequency": "monthly",
+      "description": "Dedicated couple time — dinner out, movie, or activity together"
+    },
+    {
+      "name": "Birthday Breakfast in Bed",
+      "frequency": "yearly",
+      "description": "Special breakfast served in bed for each family member on their birthday"
+    },
+    {
+      "name": "Sunday Sweet Breakfast",
+      "frequency": "weekly",
+      "description": "Pancakes, waffles, or something sweet together as a family every Sunday morning"
+    }
+  ],
+  "traditionIdeas": [
+    "Weekly family movie night (Friday or Saturday)",
+    "Sunday morning pancakes",
+    "Monthly date night",
+    "Annual family photo shoot",
+    "Birthday breakfast in bed",
+    "Holiday cookie baking",
+    "Weekly Shabbat dinner"
+  ],
+  "dateNightIdeas": [
+    "Dinner at a new restaurant",
+    "Concert or live music",
+    "Movie night at home after kids sleep",
+    "Shopping trip together",
+    "Walk around the neighborhood",
+    "Cook a nice meal together",
+    "Book a babysitter — go out somewhere new"
+  ],
+  "familyActivityIdeas": [
+    "Park day",
+    "Backyard play",
+    "Reading books together",
+    "Dance party in the living room",
+    "Sensory play for the boys",
+    "Baby-friendly outings (zoo, aquarium)",
+    "Splash pad or pool time"
+  ],
+  "conversationTopics": [
+    "What book are you reading right now?",
+    "Any influencers doing something interesting lately?",
+    "What concert would you want to see next?",
+    "What's been on your mind this week?",
+    "How can I support you better with the boys?",
+    "What's something you're looking forward to?",
+    "Dream vacation — where would you go?"
+  ]
+}

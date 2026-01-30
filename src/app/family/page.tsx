@@ -180,9 +180,16 @@ export default function FamilyPage() {
   const [randomDateIdea, setRandomDateIdea] = useState('');
 
   useEffect(() => {
-    fetch('/api/family')
-      .then(res => res.json())
+    // Fetch from public data file (works on Vercel)
+    fetch('/data/family.json')
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to fetch');
+        return res.json();
+      })
       .then(d => {
+        if (!d || !d.members) {
+          throw new Error('Invalid data');
+        }
         setData(d);
         if (d.conversationTopics?.length) {
           setRandomTopic(d.conversationTopics[Math.floor(Math.random() * d.conversationTopics.length)]);

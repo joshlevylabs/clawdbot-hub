@@ -89,19 +89,19 @@ const DEFAULT_SETTINGS: ChartSettings = {
 };
 
 // Note: label is the unique key used for selection matching
+// Timeframes: label = candle interval, range = default data to fetch
+// Grouped by candle size for clarity
 const TIMEFRAMES = [
+  // Intraday candles
+  { label: '5m', range: '1d', interval: '5m' },
+  { label: '15m', range: '5d', interval: '15m' },
   { label: '30m', range: '5d', interval: '30m' },
   { label: '1H', range: '5d', interval: '1h' },
   { label: '4H', range: '1mo', interval: '4h' },
-  { label: '1D', range: '1mo', interval: '1d' },  // 1 month of daily candles
-  { label: '1W', range: '3mo', interval: '1wk' }, // 3 months of weekly candles
-  { label: '1M', range: '1mo', interval: '1d' },
-  { label: '3M', range: '3mo', interval: '1d' },
-  { label: '6M', range: '6mo', interval: '1d' },
-  { label: '1Y', range: '1y', interval: '1d' },
-  { label: '3Y', range: '3y', interval: '1wk' },
-  { label: '5Y', range: '5y', interval: '1wk' },
-  { label: '10Y', range: '10y', interval: '1wk' },
+  // Daily candles  
+  { label: '1D', range: '3mo', interval: '1d' },
+  // Weekly candles
+  { label: '1W', range: '1y', interval: '1wk' },
 ];
 
 const SYMBOL_CATEGORIES = {
@@ -1323,6 +1323,7 @@ function calculateCustomFibonacci(candles: CandleData[], points: CustomFibPoints
 
 // Map ranges to extended ranges for loading more historical data
 const EXTENDED_RANGES: Record<string, string> = {
+  '1d': '5d',
   '5d': '1mo',
   '1mo': '3mo',
   '3mo': '6mo',
@@ -1342,10 +1343,10 @@ export default function MarketsPage() {
   const [loadingMoreData, setLoadingMoreData] = useState(false);
   const [currentDataRange, setCurrentDataRange] = useState<string>('3mo');
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
-  const [selectedTimeframe, setSelectedTimeframe] = useState('3M');
+  const [selectedTimeframe, setSelectedTimeframe] = useState('1D');
   
   // Derive range and interval from selected timeframe
-  const currentTf = TIMEFRAMES.find(tf => tf.label === selectedTimeframe) || TIMEFRAMES[6]; // Default to 3M
+  const currentTf = TIMEFRAMES.find(tf => tf.label === selectedTimeframe) || TIMEFRAMES[5]; // Default to 1D
   const range = currentTf.range;
   const interval = currentTf.interval;
   const [isMobile, setIsMobile] = useState(false);

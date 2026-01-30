@@ -22,6 +22,58 @@ import {
   Settings2,
 } from "lucide-react";
 
+// Web Speech API types
+interface SpeechRecognitionResult {
+  readonly isFinal: boolean;
+  readonly length: number;
+  item(index: number): SpeechRecognitionAlternative;
+  [index: number]: SpeechRecognitionAlternative;
+}
+
+interface SpeechRecognitionAlternative {
+  readonly transcript: string;
+  readonly confidence: number;
+}
+
+interface SpeechRecognitionResultList {
+  readonly length: number;
+  item(index: number): SpeechRecognitionResult;
+  [index: number]: SpeechRecognitionResult;
+}
+
+interface SpeechRecognitionEventMap {
+  result: SpeechRecognitionEvent;
+  error: SpeechRecognitionErrorEvent;
+  end: Event;
+}
+
+interface SpeechRecognition extends EventTarget {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  onresult: ((event: SpeechRecognitionEvent) => void) | null;
+  onerror: ((event: SpeechRecognitionErrorEvent) => void) | null;
+  onend: (() => void) | null;
+  start(): void;
+  stop(): void;
+  abort(): void;
+}
+
+interface SpeechRecognitionEvent extends Event {
+  readonly results: SpeechRecognitionResultList;
+}
+
+interface SpeechRecognitionErrorEvent extends Event {
+  readonly error: string;
+}
+
+declare global {
+  interface Window {
+    SpeechRecognition: new () => SpeechRecognition;
+    webkitSpeechRecognition: new () => SpeechRecognition;
+  }
+}
+
 interface Episode {
   number: number;
   title: string;
@@ -56,7 +108,7 @@ const PLATFORM_LINKS = [
   { name: "Buffer", url: "https://buffer.com/", icon: "📱" },
 ];
 
-// Teleprompter Component
+// Teleprompter Component with Voice Sync
 function Teleprompter({ 
   script, 
   onClose 
@@ -64,17 +116,37 @@ function Teleprompter({
   script: string; 
   onClose: () => void;
 }) {
-  const [fontSize, setFontSize] = useState(42);
+  const [fontSize, setFontSize] = useState(32);
   const [scrollSpeed, setScrollSpeed] = useState(50);
   const [isScrolling, setIsScrolling] = useState(false);
   const [mirrorH, setMirrorH] = useState(false);
   const [mirrorV, setMirrorV] = useState(false);
   const [showControls, setShowControls] = useState(true);
+  const [voiceSync, setVoiceSync] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+  const [currentWordIndex, setCurrentWordIndex] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const scrollIntervalRef = useRef<number | null>(null);
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const wordsRef = useRef<string[]>([]);
 
+  // Check if mobile
   useEffect(() => {
-    if (isScrolling && containerRef.current) {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Parse script into words for voice sync
+  useEffect(() => {
+    wordsRef.current = script.toLowerCase().replace(/[^\w\s]/g, '').split(/\s+/).filter(w => w.length > 0);
+  }, [script]);
+
+  // Manual scroll mode
+  useEffect(() => {
+    if (isScrolling && !voiceSync && containerRef.current) {
       scrollIntervalRef.current = window.setInterval(() => {
         if (containerRef.current) {
           containerRef.current.scrollTop += 1;
@@ -86,15 +158,87 @@ function Teleprompter({
     return () => {
       if (scrollIntervalRef.current) clearInterval(scrollIntervalRef.current);
     };
-  }, [isScrolling, scrollSpeed]);
+  }, [isScrolling, scrollSpeed, voiceSync]);
+
+  // Voice sync using Web Speech API
+  useEffect(() => {
+    if (!voiceSync || !isListening) {
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
+      return;
+    }
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert('Voice sync not supported in this browser. Try Chrome.');
+      setVoiceSync(false);
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = 'en-US';
+
+    recognition.onresult = (event: SpeechRecognitionEvent) => {
+      const result = event.results[event.results.length - 1];
+      const transcript = result[0].transcript.toLowerCase().replace(/[^\w\s]/g, '');
+      const spokenWords = transcript.split(/\s+/).filter(w => w.length > 0);
+      
+      // Find matches in script and advance position
+      if (spokenWords.length > 0) {
+        const lastSpoken = spokenWords[spokenWords.length - 1];
+        const searchStart = Math.max(0, currentWordIndex - 5);
+        const searchEnd = Math.min(wordsRef.current.length, currentWordIndex + 20);
+        
+        for (let i = searchStart; i < searchEnd; i++) {
+          if (wordsRef.current[i] === lastSpoken || wordsRef.current[i].startsWith(lastSpoken)) {
+            if (i > currentWordIndex) {
+              setCurrentWordIndex(i);
+              // Scroll to keep up
+              if (containerRef.current) {
+                const scrollPerWord = containerRef.current.scrollHeight / wordsRef.current.length;
+                containerRef.current.scrollTop = i * scrollPerWord * 0.8;
+              }
+            }
+            break;
+          }
+        }
+      }
+    };
+
+    recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
+      console.error('Speech recognition error:', event.error);
+      if (event.error === 'not-allowed') {
+        alert('Microphone access denied. Please allow microphone access for voice sync.');
+        setVoiceSync(false);
+        setIsListening(false);
+      }
+    };
+
+    recognition.onend = () => {
+      // Restart if still supposed to be listening
+      if (voiceSync && isListening) {
+        try { recognition.start(); } catch {}
+      }
+    };
+
+    recognitionRef.current = recognition;
+    try { recognition.start(); } catch {}
+
+    return () => {
+      recognition.stop();
+    };
+  }, [voiceSync, isListening, currentWordIndex]);
 
   // Keyboard controls
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
       if (e.key === ' ') { e.preventDefault(); setIsScrolling(s => !s); }
-      if (e.key === 'ArrowUp') setFontSize(s => Math.min(80, s + 2));
-      if (e.key === 'ArrowDown') setFontSize(s => Math.max(20, s - 2));
+      if (e.key === 'ArrowUp') setFontSize(s => Math.min(80, s + 4));
+      if (e.key === 'ArrowDown') setFontSize(s => Math.max(16, s - 4));
       if (e.key === 'h') setMirrorH(m => !m);
       if (e.key === 'v') setMirrorV(m => !m);
       if (e.key === 'c') setShowControls(c => !c);
@@ -105,81 +249,201 @@ function Teleprompter({
 
   const transformStyle = `${mirrorH ? 'scaleX(-1)' : ''} ${mirrorV ? 'scaleY(-1)' : ''}`.trim() || 'none';
 
+  const toggleVoiceSync = () => {
+    if (!voiceSync) {
+      setVoiceSync(true);
+      setIsListening(true);
+      setIsScrolling(false);
+      setCurrentWordIndex(0);
+    } else {
+      setVoiceSync(false);
+      setIsListening(false);
+    }
+  };
+
   return (
     <div className="fixed inset-0 z-[200] bg-black flex flex-col">
-      {/* Controls bar */}
+      {/* Controls bar - responsive */}
       {showControls && (
-        <div className="absolute top-0 left-0 right-0 z-10 bg-black/80 backdrop-blur-sm p-4 flex items-center justify-between border-b border-slate-800">
-          <button 
-            onClick={onClose}
-            className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors"
-          >
-            <ArrowLeft className="w-5 h-5" />
-            <span>Exit Teleprompter</span>
-          </button>
-          
-          <div className="flex items-center gap-6">
-            {/* Font size */}
-            <div className="flex items-center gap-2">
-              <span className="text-slate-500 text-sm">Size:</span>
-              <input 
-                type="range" 
-                min="20" 
-                max="80" 
-                value={fontSize}
-                onChange={(e) => setFontSize(Number(e.target.value))}
-                className="w-24 accent-primary-500"
-              />
-              <span className="text-slate-400 text-sm w-8">{fontSize}</span>
+        <div className="absolute top-0 left-0 right-0 z-10 bg-black/90 backdrop-blur-sm p-3 md:p-4 border-b border-slate-800">
+          {/* Mobile layout */}
+          {isMobile ? (
+            <div className="space-y-3">
+              {/* Top row: Exit + Voice Sync */}
+              <div className="flex items-center justify-between">
+                <button 
+                  onClick={onClose}
+                  className="flex items-center gap-2 text-slate-400 active:text-white p-2 -ml-2"
+                >
+                  <ArrowLeft className="w-6 h-6" />
+                  <span>Exit</span>
+                </button>
+                
+                <button 
+                  onClick={toggleVoiceSync}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium ${
+                    voiceSync 
+                      ? 'bg-amber-600 text-white animate-pulse' 
+                      : 'bg-slate-800 text-slate-300'
+                  }`}
+                >
+                  <Mic className="w-5 h-5" />
+                  {voiceSync ? 'Listening...' : 'Voice Sync'}
+                </button>
+              </div>
+              
+              {/* Middle row: Size + Play/Pause */}
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 flex-1">
+                  <span className="text-slate-500 text-sm">Size</span>
+                  <input 
+                    type="range" 
+                    min="20" 
+                    max="60" 
+                    value={fontSize}
+                    onChange={(e) => setFontSize(Number(e.target.value))}
+                    className="flex-1 accent-primary-500 h-8"
+                  />
+                </div>
+                
+                {!voiceSync && (
+                  <button 
+                    onClick={() => setIsScrolling(s => !s)}
+                    className={`px-6 py-3 rounded-lg font-medium text-lg ${
+                      isScrolling 
+                        ? 'bg-red-600 text-white' 
+                        : 'bg-emerald-600 text-white'
+                    }`}
+                  >
+                    {isScrolling ? '⏸' : '▶'}
+                  </button>
+                )}
+              </div>
+              
+              {/* Bottom row: Speed + Mirror */}
+              <div className="flex items-center gap-3">
+                {!voiceSync && (
+                  <div className="flex items-center gap-2 flex-1">
+                    <span className="text-slate-500 text-sm">Speed</span>
+                    <input 
+                      type="range" 
+                      min="10" 
+                      max="90" 
+                      value={scrollSpeed}
+                      onChange={(e) => setScrollSpeed(Number(e.target.value))}
+                      className="flex-1 accent-primary-500 h-8"
+                    />
+                  </div>
+                )}
+                
+                <div className="flex items-center gap-2">
+                  <button 
+                    onClick={() => setMirrorH(m => !m)}
+                    className={`p-3 rounded-lg ${mirrorH ? 'bg-primary-600 text-white' : 'bg-slate-800 text-slate-400'}`}
+                  >
+                    <FlipHorizontal className="w-5 h-5" />
+                  </button>
+                  <button 
+                    onClick={() => setMirrorV(m => !m)}
+                    className={`p-3 rounded-lg ${mirrorV ? 'bg-primary-600 text-white' : 'bg-slate-800 text-slate-400'}`}
+                  >
+                    <FlipVertical className="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
             </div>
-            
-            {/* Scroll speed */}
-            <div className="flex items-center gap-2">
-              <span className="text-slate-500 text-sm">Speed:</span>
-              <input 
-                type="range" 
-                min="10" 
-                max="90" 
-                value={scrollSpeed}
-                onChange={(e) => setScrollSpeed(Number(e.target.value))}
-                className="w-24 accent-primary-500"
-              />
-            </div>
-            
-            {/* Play/Pause */}
-            <button 
-              onClick={() => setIsScrolling(s => !s)}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                isScrolling 
-                  ? 'bg-red-600 hover:bg-red-700 text-white' 
-                  : 'bg-emerald-600 hover:bg-emerald-700 text-white'
-              }`}
-            >
-              {isScrolling ? 'Pause' : 'Play'}
-            </button>
-            
-            {/* Mirror controls */}
-            <div className="flex items-center gap-1">
+          ) : (
+            /* Desktop layout */
+            <div className="flex items-center justify-between">
               <button 
-                onClick={() => setMirrorH(m => !m)}
-                className={`p-2 rounded-lg transition-colors ${mirrorH ? 'bg-primary-600 text-white' : 'bg-slate-800 text-slate-400 hover:text-white'}`}
-                title="Mirror Horizontal (H)"
+                onClick={onClose}
+                className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors"
               >
-                <FlipHorizontal className="w-5 h-5" />
+                <ArrowLeft className="w-5 h-5" />
+                <span>Exit Teleprompter</span>
               </button>
-              <button 
-                onClick={() => setMirrorV(m => !m)}
-                className={`p-2 rounded-lg transition-colors ${mirrorV ? 'bg-primary-600 text-white' : 'bg-slate-800 text-slate-400 hover:text-white'}`}
-                title="Mirror Vertical (V)"
-              >
-                <FlipVertical className="w-5 h-5" />
-              </button>
+              
+              <div className="flex items-center gap-6">
+                {/* Voice Sync */}
+                <button 
+                  onClick={toggleVoiceSync}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
+                    voiceSync 
+                      ? 'bg-amber-600 hover:bg-amber-700 text-white animate-pulse' 
+                      : 'bg-slate-800 hover:bg-slate-700 text-slate-300'
+                  }`}
+                >
+                  <Mic className="w-4 h-4" />
+                  {voiceSync ? 'Listening...' : 'Voice Sync'}
+                </button>
+                
+                {/* Font size */}
+                <div className="flex items-center gap-2">
+                  <span className="text-slate-500 text-sm">Size:</span>
+                  <input 
+                    type="range" 
+                    min="20" 
+                    max="80" 
+                    value={fontSize}
+                    onChange={(e) => setFontSize(Number(e.target.value))}
+                    className="w-24 accent-primary-500"
+                  />
+                  <span className="text-slate-400 text-sm w-8">{fontSize}</span>
+                </div>
+                
+                {/* Scroll speed - only show when not in voice sync */}
+                {!voiceSync && (
+                  <div className="flex items-center gap-2">
+                    <span className="text-slate-500 text-sm">Speed:</span>
+                    <input 
+                      type="range" 
+                      min="10" 
+                      max="90" 
+                      value={scrollSpeed}
+                      onChange={(e) => setScrollSpeed(Number(e.target.value))}
+                      className="w-24 accent-primary-500"
+                    />
+                  </div>
+                )}
+                
+                {/* Play/Pause - only for manual mode */}
+                {!voiceSync && (
+                  <button 
+                    onClick={() => setIsScrolling(s => !s)}
+                    className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                      isScrolling 
+                        ? 'bg-red-600 hover:bg-red-700 text-white' 
+                        : 'bg-emerald-600 hover:bg-emerald-700 text-white'
+                    }`}
+                  >
+                    {isScrolling ? 'Pause' : 'Play'}
+                  </button>
+                )}
+                
+                {/* Mirror controls */}
+                <div className="flex items-center gap-1">
+                  <button 
+                    onClick={() => setMirrorH(m => !m)}
+                    className={`p-2 rounded-lg transition-colors ${mirrorH ? 'bg-primary-600 text-white' : 'bg-slate-800 text-slate-400 hover:text-white'}`}
+                    title="Mirror Horizontal (H)"
+                  >
+                    <FlipHorizontal className="w-5 h-5" />
+                  </button>
+                  <button 
+                    onClick={() => setMirrorV(m => !m)}
+                    className={`p-2 rounded-lg transition-colors ${mirrorV ? 'bg-primary-600 text-white' : 'bg-slate-800 text-slate-400 hover:text-white'}`}
+                    title="Mirror Vertical (V)"
+                  >
+                    <FlipVertical className="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+              
+              <div className="text-slate-500 text-xs">
+                Space: Play/Pause • ↑↓: Size • H/V: Mirror • C: Toggle Controls • Esc: Exit
+              </div>
             </div>
-          </div>
-          
-          <div className="text-slate-500 text-xs">
-            Space: Play/Pause • ↑↓: Size • H/V: Mirror • C: Toggle Controls • Esc: Exit
-          </div>
+          )}
         </div>
       )}
       

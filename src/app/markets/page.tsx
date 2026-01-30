@@ -372,21 +372,41 @@ function ChartCanvas({
       ctx.fillText(`${price.toFixed(price > 100 ? 0 : 2)}`, width - padding.right + 3, y + 3);
     }
 
-    // X-axis date labels
+    // X-axis date labels - adaptive count based on chart width
     ctx.fillStyle = '#475569';
     ctx.font = '9px sans-serif';
     ctx.textAlign = 'center';
-    const labelCount = Math.min(8, visibleCandles.length);
+    
+    // Calculate how many labels can fit (estimate ~50px per label on mobile, ~60px on desktop)
+    const labelWidth = width < 500 ? 45 : 55;
+    const maxLabels = Math.floor(chartWidth / labelWidth);
+    const labelCount = Math.min(maxLabels, Math.min(6, visibleCandles.length));
     const labelStep = Math.max(1, Math.floor(visibleCandles.length / labelCount));
+    
+    // Shorter format for mobile
+    const formatLabel = (timestamp: number) => {
+      const d = new Date(timestamp * 1000);
+      if (width < 500) {
+        return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      }
+      return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: '2-digit' });
+    };
+    
+    let lastLabelX = -100; // Track last label position to avoid overlap
     for (let i = 0; i < visibleCandles.length; i += labelStep) {
       const x = scaleX(i) + candleWidth / 2;
-      const date = formatDate(visibleCandles[i].time);
+      // Skip if too close to last label
+      if (x - lastLabelX < labelWidth) continue;
+      const date = formatLabel(visibleCandles[i].time);
       ctx.fillText(date, x, canvasHeight - padding.bottom + 15);
+      lastLabelX = x;
     }
-    // Last date
+    // Last date (only if not overlapping)
     if (visibleCandles.length > 0) {
       const lastX = scaleX(visibleCandles.length - 1) + candleWidth / 2;
-      ctx.fillText(formatDate(visibleCandles[visibleCandles.length - 1].time), lastX, canvasHeight - padding.bottom + 15);
+      if (lastX - lastLabelX >= labelWidth) {
+        ctx.fillText(formatLabel(visibleCandles[visibleCandles.length - 1].time), lastX, canvasHeight - padding.bottom + 15);
+      }
     }
 
     // Fibonacci Retracements

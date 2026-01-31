@@ -29,24 +29,28 @@ export async function GET() {
 
     const activity = data as DbMoltbookActivity;
 
+    // Return in the format the page component expects
     return NextResponse.json({
       configured: true,
+      status: 'claimed',
       agent: {
+        id: activity.id,
         name: activity.agent_name,
-        profile_url: activity.profile_url,
-        claimed_at: activity.claimed_at,
+        karma: activity.karma,
+        created_at: activity.claimed_at,
+      },
+      activity: {
+        posts: activity.posts || [],
+        comments: activity.comments || [],
+        upvotes: activity.upvotes || [],
+        following: activity.following || [],
       },
       stats: {
-        karma: activity.karma,
-        posts: activity.post_count,
-        comments: activity.comment_count,
-        subscriptions: activity.subscription_count,
-        following: activity.following_count,
+        postCount: activity.post_count,
+        commentCount: activity.comment_count,
+        upvoteCount: activity.subscription_count, // using subscription as proxy for upvotes given
+        followingCount: activity.following_count,
       },
-      posts: activity.posts,
-      comments: activity.comments,
-      upvotes: activity.upvotes,
-      following: activity.following,
       updated_at: activity.updated_at,
     });
   } catch (error) {

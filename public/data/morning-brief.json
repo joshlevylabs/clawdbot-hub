@@ -1,192 +1,71 @@
 {
-  "date": "2026-01-30",
+  "date": "2026-01-31",
   "time": "6:00 AM",
   "sections": {
     "prayer": {
       "title": "🕊️ Morning Prayer",
-      "date": "Friday, January 30, 2026",
-      "hebrew_date": "1 Cheshvan",
+      "date": "Saturday, January 31, 2026",
+      "hebrew_date": "2 Cheshvan",
       "parsha": "Toldot",
       "parsha_theme": "generational blessing, identity, inheritance",
       "modeh_ani": "מודה אני לפניך — I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
       "blessing": "Blessed are You who raises the lowly — lift me to accomplish Your purposes.",
-      "psalm": "Psalm 1:3: \"He is like a tree planted by streams of water, yielding fruit in season.\"",
-      "proverb": "Proverbs 16:3: \"Commit your work to the Lord, and your plans will be established.\"",
+      "psalm": "Psalm 118:25: \"Lord, save us! Lord, grant us success!\"",
+      "proverb": "Proverbs 16:9: \"The heart of man plans his way, but the Lord establishes his steps.\"",
       "intention": "Let my work today compound into something that outlasts me.",
-      "closing": "Baruch atah Adonai — Blessed are You, Lord, who renews creation daily with goodness.",
-      "audio": "/audio/brief-2026-01-30-prayer.ogg"
+      "closing": "Go in peace. Build with purpose. Return with gratitude."
     },
     "weather": {
-      "title": "☀️ Weather — Temecula",
-      "temperature": "45°F",
+      "title": "☀️ Weather — Temecula, CA",
+      "temperature": "52°F",
       "condition": "Clear",
-      "wind": "W 1 mph",
-      "summary": "Clear and cool this morning, warming up later",
-      "audio": "/audio/brief-2026-01-30-weather.ogg"
+      "wind": "NW 3mph",
+      "summary": "Cool, clear morning. Great day for outdoor family time."
     },
     "calendar": {
       "title": "📅 Calendar",
       "today": [],
-      "week": [
-        {
-          "date": "2026-02-02",
-          "time": "9:00 AM",
-          "title": "Chris and Josh Weekly Sync"
-        }
-      ],
-      "month": [
-        {
-          "date": "2026-02-02",
-          "title": "Chris and Josh Weekly Sync"
-        },
-        {
-          "date": "2026-02-14",
-          "title": "Valentine's Day"
-        },
-        {
-          "date": "2026-03-26",
-          "title": "Wedding Anniversary"
-        }
-      ],
-      "audio": "/audio/brief-2026-01-30-calendar.ogg"
+      "week": [],
+      "month": [],
+      "note": "Clear calendar today — Saturday is family day."
     },
     "email": {
       "title": "📧 Email Highlights",
-      "needs_attention": [
-        {
-          "from": "Atelier School",
-          "subject": "Invoice - Payment Reminder Due",
-          "note": "Payment due notification"
-        },
-        {
-          "from": "Jillian Reesink",
-          "subject": "Fwd: Welcome to Solar Billing Plan",
-          "note": "Solar billing info forwarded"
-        }
-      ],
-      "opportunities": [
-        {
-          "from": "Bobby Jackson",
-          "subject": "Audio-Visual Services Business For Sale",
-          "note": "Potential acquisition opportunity"
-        }
-      ],
-      "informational": [
-        {
-          "from": "Venmo",
-          "subject": "You paid David Knell $150.00",
-          "note": "Payment confirmation"
-        },
-        {
-          "from": "Apple",
-          "subject": "Your Subscription is Confirmed",
-          "note": "Subscription active"
-        }
-      ],
-      "audio": "/audio/brief-2026-01-30-email.ogg"
+      "needs_attention": [],
+      "dev_work": [],
+      "good_news": [],
+      "note": "Inbox clear. Nothing urgent across all accounts."
     },
     "markets": {
       "title": "📈 Markets & Trading Signals",
       "summary": {
-        "date": "2026-01-30",
+        "date": "2026-01-31",
         "time": "06:00 AM",
-        "market_status": "PRE-MARKET",
-        "spy": {
-          "price": 694.04,
-          "change_pct": -0.2
-        },
-        "vix": 17.93,
+        "market_status": "OPEN",
+        "spy": {"price": 691.97, "change_pct": -0.3},
         "sentiment": "NEUTRAL",
+        "vix": 17.44,
         "volatility": "LOW"
       },
       "overview": [
-        {
-          "symbol": "SPY",
-          "price": 694.04,
-          "change_pct": -0.2,
-          "trend": "NEUTRAL"
-        },
-        {
-          "symbol": "QQQ",
-          "price": 629.43,
-          "change_pct": -0.6,
-          "trend": "NEUTRAL"
-        },
-        {
-          "symbol": "IWM",
-          "price": 263.37,
-          "change_pct": 0.03,
-          "trend": "NEUTRAL"
-        },
-        {
-          "symbol": "DIA",
-          "price": 490.21,
-          "change_pct": 0.02,
-          "trend": "NEUTRAL"
-        }
+        {"symbol": "SPY", "price": 691.97, "change_pct": -0.3, "trend": "NEUTRAL"},
+        {"symbol": "QQQ", "price": 621.87, "change_pct": -1.2, "trend": "NEUTRAL"},
+        {"symbol": "IWM", "price": 259.65, "change_pct": -1.41, "trend": "NEUTRAL"},
+        {"symbol": "DIA", "price": 489.03, "change_pct": -0.24, "trend": "NEUTRAL"}
       ],
       "signals": [
         {
           "type": "SELL",
-          "symbol": "SLV",
-          "price": 105.57,
-          "entry": 105.57,
-          "stop": 116.64,
-          "target": 88.97,
-          "rationale": "RSI overbought (82.7)"
-        },
-        {
-          "type": "SELL",
-          "symbol": "GLD",
-          "price": 495.90,
-          "entry": 495.90,
-          "stop": 518.43,
-          "target": 462.11,
-          "rationale": "RSI overbought (88.3)"
-        },
-        {
-          "type": "SELL",
-          "symbol": "META",
-          "price": 738.31,
-          "entry": 738.31,
-          "stop": 780.49,
-          "target": 675.04,
-          "rationale": "RSI overbought (73.8), +10.4% recent move"
+          "symbol": "USO",
+          "price": 79.52,
+          "entry": 79.52,
+          "stop": 83.23,
+          "target": 73.96,
+          "confidence": "MEDIUM",
+          "rationale": "RSI overbought (71.8) | High volume confirmation | Price near BB resistance"
         }
       ],
-      "watchlist": [
-        {
-          "symbol": "MSFT",
-          "price": 433.50,
-          "note": "Near BB support, RSI 33.6, down 10% — potential bounce candidate"
-        }
-      ],
-      "audio": "/audio/brief-2026-01-30-markets.ogg"
-    },
-    "family": {
-      "title": "❤️ Family Focus",
-      "suggestion": "It's Friday — perfect for a living room dance party with Jones after work. Put on some Super Wings music and let him lead!",
-      "conversationStarter": "Ask Jillian: What book are you reading right now? Have you started anything new this week?",
-      "weeklyGoal": "Sunday Sweet Breakfast coming up! Plan to make pancakes or waffles together as a family.",
-      "potencyAction": "⚠️ Acknowledge what happened without defending: 'You're right, I shouldn't have...'",
-      "upcomingDates": [
-        {
-          "date": "02-14",
-          "event": "Valentine's Day",
-          "daysAway": 15
-        },
-        {
-          "date": "03-26",
-          "event": "Wedding Anniversary",
-          "daysAway": 55
-        },
-        {
-          "date": "05-20",
-          "event": "Jones's Birthday",
-          "daysAway": 110
-        }
-      ],
-      "reflection": "Your relationship temperature is running critical (1.5:1 ratio). Focus on repair today. Prioritize presence over productivity this evening."
+      "watchlist": ["XLE (RSI 77.2)", "UNG (+12.2%)", "MSFT near support", "GOOGL near resistance", "META near resistance"]
     },
     "news": {
       "title": "🌍 World News",
@@ -194,71 +73,54 @@
         "israel": {
           "title": "🇮🇱 Israel",
           "items": [
-            {
-              "headline": "Trump confirms talks with Tehran, reportedly mulling raids on Iranian nuclear facilities"
-            },
-            {
-              "headline": "Netanyahu holds classified briefing as Trump decision on Iran strike expected in days"
-            },
-            {
-              "headline": "EU lists Iran's IRGC as terror group over protest crackdown"
-            },
-            {
-              "headline": "Apple acquires Israeli startup (reportedly $2B) that reads facial micro-movements"
-            },
-            {
-              "headline": "IDF believes 70,000 Gazans killed in war — aligns with Hamas figures"
-            }
+            {"headline": "IDF responds to truce violation with strikes in Gaza; Rafah crossing to reopen Sunday"},
+            {"headline": "US approves $6.7B arms sale to Israel, $9B Patriot deal for Saudis"},
+            {"headline": "Trump claims Hamas will disarm; senior Hamas official denies any such agreement"},
+            {"headline": "Satellite images show Iran salvaging nuclear materials from damaged sites"},
+            {"headline": "Netanyahu holds briefing on classified topic as Trump decision on Iran strike expected"}
           ]
         },
         "us": {
           "title": "🇺🇸 United States",
           "items": [
-            {
-              "headline": "Trump pushing for conditions to enable regime change in Iran"
-            },
-            {
-              "headline": "Suspect in Chabad headquarters ramming charged with hate crimes"
-            }
+            {"headline": "Top USAID-linked agency official to plead guilty to taking bribes"},
+            {"headline": "Trump reportedly mulling raids by troops on Iranian facilities"},
+            {"headline": "DOJ says latest Epstein files contain 'sensationalist' claims from 2020 election"},
+            {"headline": "Nurses union holds training sessions to 'fight against ICE'"}
           ]
         },
         "world": {
           "title": "🌐 Global",
           "items": [
-            {
-              "headline": "TikTok deal with pro-Israel Larry Ellison spurs exodus to Palestinian-founded app"
-            },
-            {
-              "headline": "Trump claims Hamas will disarm — Senior Hamas official denies any such agreement"
-            }
+            {"headline": "Khamenei makes first public appearance in weeks; Iran makes new threats against US & Israel"},
+            {"headline": "Iran says defense capabilities never up for negotiation; US missile destroyer in Eilat"},
+            {"headline": "What to know about Strait of Hormuz as Iran plans military drill amid US tensions"}
           ]
         }
-      },
-      "audio": "/audio/brief-2026-01-30-news.ogg"
+      }
     },
     "ai": {
       "title": "🤖 AI Intel",
       "items": [
-        {
-          "headline": "OpenAI retiring GPT-4o, GPT-4.1, GPT-4.1 mini, and o4-mini from ChatGPT on Feb 13 — only 0.1% of users still choosing 4o daily"
-        },
-        {
-          "headline": "Tesla discloses $2B investment in xAI to 'deploy AI products into the physical world at scale'"
-        },
-        {
-          "headline": "Google Gemini now serves as walking tour guide in Maps navigation — rolling out on iOS and Android"
-        },
-        {
-          "headline": "AI data centers driving surge in new gas power projects"
-        },
-        {
-          "headline": "Google 'exploring' letting publishers opt out of AI in Search (UK regulatory pressure)"
-        },
-        {
-          "headline": "Moltbot (formerly Clawdbot) creator talks Anthropic rebrand request, crypto scam fallout"
-        }
+        {"headline": "Nvidia's $100B OpenAI investment 'on ice' — renegotiating to tens of billions"},
+        {"headline": "Anthropic expands Cowork with 'plugins' for domain-expert agentic AI (sales, legal, finance, etc.)"},
+        {"headline": "GPT-4o being retired from ChatGPT on Feb 13 — only 0.1% of users still choosing it over GPT-5"},
+        {"headline": "Rabbit announces 'project cyberdeck' — portable device for vibe-coding"},
+        {"headline": "Google's Project Genie generates interactive virtual worlds from prompts"},
+        {"headline": "Gemini integrates as walking tour guide in Google Maps navigation"}
+      ]
+    },
+    "family": {
+      "title": "❤️ Family Focus",
+      "suggestion": "Saturday morning: Make pancakes together with Jones (he can help pour batter!), then backyard play while it's cool. Jett can watch from his bouncer — he loves watching his big brother.",
+      "conversationStarter": "Ask Jillian: 'What's been the best thing you've read lately?' — she loves talking about books and you showing genuine interest in her world.",
+      "weeklyGoal": "Tomorrow is Sunday Sweet Breakfast! Plan something special together tonight. Also check: when's the next monthly date night?",
+      "potencyAction": "Ask: 'What do you need from me right now?' and do it. (Relationship temp is critical — ratio 1.5:1. Focus on repair. Listen without defending.)",
+      "upcomingDates": [
+        {"date": "02-14", "event": "Valentine's Day", "daysAway": 14},
+        {"date": "03-26", "event": "Wedding Anniversary", "daysAway": 54}
       ],
-      "audio": "/audio/brief-2026-01-30-ai.ogg"
+      "reflection": "Parashat Toldot is about generational blessing and inheritance. Today, be present with your boys — they're watching how you love their mother. That's the inheritance that matters."
     }
   }
 }

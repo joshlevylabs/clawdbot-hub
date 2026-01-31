@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Heart, TrendingUp, TrendingDown, Target, RefreshCw, AlertTriangle, CheckCircle, ClipboardCheck, ChevronRight, Calendar, BarChart3, Plus, X, Lightbulb } from "lucide-react";
+import { Heart, TrendingUp, TrendingDown, Target, RefreshCw, AlertTriangle, CheckCircle, ClipboardCheck, ChevronRight, Calendar, BarChart3, Plus, X, Lightbulb, Pencil } from "lucide-react";
 
 interface QuestionOption {
   label: string;
@@ -123,6 +123,18 @@ export default function MarriagePage() {
   const [logInput, setLogInput] = useState("");
   const [logSubmitting, setLogSubmitting] = useState(false);
   const [logResult, setLogResult] = useState<{
+    type: 'positive' | 'negative';
+    description: string;
+    power: number;
+    safety: number;
+    advice: string;
+  } | null>(null);
+
+  // Edit state
+  const [editingInteraction, setEditingInteraction] = useState<Interaction | null>(null);
+  const [editInput, setEditInput] = useState("");
+  const [editSubmitting, setEditSubmitting] = useState(false);
+  const [editResult, setEditResult] = useState<{
     type: 'positive' | 'negative';
     description: string;
     power: number;
@@ -272,6 +284,62 @@ export default function MarriagePage() {
     setShowLogModal(false);
     setLogInput("");
     setLogResult(null);
+  };
+
+  // Open edit modal for an interaction
+  const openEditModal = (interaction: Interaction) => {
+    // Get the original text from the answers field if available
+    const originalText = (interaction as unknown as { answers?: { original_text?: string } }).answers?.original_text || interaction.description;
+    setEditingInteraction(interaction);
+    setEditInput(originalText);
+    setEditResult(null);
+  };
+
+  // Close edit modal
+  const closeEditModal = () => {
+    setEditingInteraction(null);
+    setEditInput("");
+    setEditResult(null);
+  };
+
+  // Submit edited log
+  const submitEdit = async () => {
+    if (!editInput.trim() || !editingInteraction) return;
+    
+    setEditSubmitting(true);
+    try {
+      const response = await fetch(`/api/compass/log/${editingInteraction.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: editInput })
+      });
+      
+      if (response.ok) {
+        const result = await response.json();
+        if (result.success) {
+          // Show the result
+          setEditResult({
+            type: result.interaction?.type || 'positive',
+            description: result.interaction?.description || editInput,
+            power: result.interaction?.power || 0,
+            safety: result.interaction?.safety || 0,
+            advice: result.advice || ''
+          });
+          // Refresh interactions and compass
+          fetchInteractions();
+          fetchCompass();
+        } else {
+          alert('Failed to update log: ' + (result.error || 'Unknown error'));
+        }
+      } else {
+        alert('Failed to update log. Please try again.');
+      }
+    } catch (error) {
+      console.error('Edit submission error:', error);
+      alert('Failed to update log. Please try again.');
+    } finally {
+      setEditSubmitting(false);
+    }
   };
 
   // Group interactions by day
@@ -845,6 +913,126 @@ export default function MarriagePage() {
         </div>
       )}
 
+      {/* Edit Modal */}
+      {editingInteraction && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-slate-850 border border-slate-700 rounded-xl max-w-lg w-full p-6">
+            {!editResult ? (
+              <>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-semibold text-slate-200">Edit Interaction</h2>
+                  <button
+                    onClick={closeEditModal}
+                    className="text-slate-400 hover:text-slate-200 transition-colors"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+                <p className="text-slate-400 text-sm mb-4">
+                  Edit your log. AI will re-analyze and update the type, scores, and advice.
+                </p>
+                <textarea
+                  value={editInput}
+                  onChange={(e) => setEditInput(e.target.value)}
+                  placeholder="Describe what happened..."
+                  className="w-full h-32 bg-slate-900 border border-slate-700 rounded-lg p-3 text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 resize-none"
+                />
+                <div className="flex justify-end gap-3 mt-4">
+                  <button
+                    onClick={closeEditModal}
+                    className="px-4 py-2 text-slate-400 hover:text-slate-200 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={submitEdit}
+                    disabled={editSubmitting || !editInput.trim()}
+                    className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-700 disabled:text-slate-500 text-white rounded-lg font-medium transition-colors flex items-center gap-2"
+                  >
+                    {editSubmitting ? (
+                      <>
+                        <RefreshCw className="w-4 h-4 animate-spin" />
+                        Re-analyzing...
+                      </>
+                    ) : (
+                      <>
+                        <Pencil className="w-4 h-4" />
+                        Update & Re-analyze
+                      </>
+                    )}
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-semibold text-slate-200">Updated ✓</h2>
+                  <button
+                    onClick={closeEditModal}
+                    className="text-slate-400 hover:text-slate-200 transition-colors"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+
+                {/* Type Badge */}
+                <div className="flex items-center gap-2 mb-4">
+                  <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                    editResult.type === 'positive' 
+                      ? 'bg-green-500/20 text-green-400' 
+                      : 'bg-red-500/20 text-red-400'
+                  }`}>
+                    {editResult.type === 'positive' ? '✓ Positive' : '✗ Negative'}
+                  </span>
+                </div>
+
+                {/* Summary */}
+                <div className="bg-slate-900/50 rounded-lg p-4 mb-4">
+                  <p className="text-slate-300 text-sm">{editResult.description}</p>
+                </div>
+
+                {/* Scores */}
+                <div className="grid grid-cols-2 gap-4 mb-4">
+                  <div className="bg-slate-900/50 rounded-lg p-3 text-center">
+                    <p className="text-slate-500 text-xs mb-1">Power</p>
+                    <p className={`text-2xl font-bold ${editResult.power >= 0 ? 'text-blue-400' : 'text-yellow-400'}`}>
+                      {editResult.power > 0 ? '+' : ''}{editResult.power}
+                    </p>
+                  </div>
+                  <div className="bg-slate-900/50 rounded-lg p-3 text-center">
+                    <p className="text-slate-500 text-xs mb-1">Safety</p>
+                    <p className={`text-2xl font-bold ${editResult.safety >= 0 ? 'text-purple-400' : 'text-red-400'}`}>
+                      {editResult.safety > 0 ? '+' : ''}{editResult.safety}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Advice */}
+                <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-4 mb-4">
+                  <div className="flex items-start gap-3">
+                    <Lightbulb className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-amber-200 text-sm font-medium mb-1">Updated Advice</p>
+                      <p className="text-amber-100/80 text-sm">{editResult.advice}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Actions */}
+                <div className="flex justify-end">
+                  <button
+                    onClick={closeEditModal}
+                    className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg font-medium transition-colors"
+                  >
+                    Done
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Main Compass Visualization */}
       <div className="bg-slate-850 rounded-xl border border-slate-800 p-6">
         <div className="relative w-full aspect-square max-w-md mx-auto">
@@ -1238,6 +1426,13 @@ export default function MarriagePage() {
                                   {interaction.type === "positive" ? "+" : "−"}
                                 </span>
                                 <span className="text-slate-500 text-xs">{interaction.time}</span>
+                                <button
+                                  onClick={() => openEditModal(interaction)}
+                                  className="text-slate-500 hover:text-slate-300 transition-colors p-0.5"
+                                  title="Edit this log"
+                                >
+                                  <Pencil className="w-3 h-3" />
+                                </button>
                               </div>
                               <p className="text-slate-300 text-sm">{interaction.description}</p>
                               {interaction.tags && interaction.tags.length > 0 && (
@@ -1380,6 +1575,13 @@ export default function MarriagePage() {
                                   {interaction.type === "positive" ? "+" : "−"}
                                 </span>
                                 <span className="text-slate-500 text-xs">{formatDate(interaction.date)} {interaction.time}</span>
+                                <button
+                                  onClick={() => openEditModal(interaction)}
+                                  className="text-slate-500 hover:text-slate-300 transition-colors p-0.5"
+                                  title="Edit this log"
+                                >
+                                  <Pencil className="w-3 h-3" />
+                                </button>
                               </div>
                               <p className="text-slate-300 text-sm">{interaction.description}</p>
                             </div>
@@ -1504,6 +1706,13 @@ export default function MarriagePage() {
                                   {interaction.type === "positive" ? "+" : "−"}
                                 </span>
                                 <span className="text-slate-500 text-xs">{formatDate(interaction.date)} {interaction.time}</span>
+                                <button
+                                  onClick={() => openEditModal(interaction)}
+                                  className="text-slate-500 hover:text-slate-300 transition-colors p-0.5"
+                                  title="Edit this log"
+                                >
+                                  <Pencil className="w-3 h-3" />
+                                </button>
                               </div>
                               <p className="text-slate-300 text-sm">{interaction.description}</p>
                             </div>

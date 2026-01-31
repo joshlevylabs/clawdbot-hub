@@ -120,10 +120,10 @@ function fallbackProcessing(text: string): ProcessedLog {
 // PUT - Update an existing interaction
 export async function PUT(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
   try {
-    const { id } = await params;
+    const { id } = params;
     const body = await request.json();
     
     if (!body.text || typeof body.text !== 'string') {
@@ -178,10 +178,10 @@ export async function PUT(
 // DELETE - Delete an interaction
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
   try {
-    const { id } = await params;
+    const { id } = params;
 
     if (!isSupabaseConfigured()) {
       return NextResponse.json({ error: 'Database not configured' }, { status: 500 });

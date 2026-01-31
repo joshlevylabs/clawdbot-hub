@@ -155,6 +155,7 @@ export async function POST(request: NextRequest) {
         description: processed.description,
         power: processed.power,
         safety: processed.safety,
+        date: date,
         answers: {
           advice: processed.advice,
           tags: processed.tags,

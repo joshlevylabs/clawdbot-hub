@@ -32,6 +32,8 @@ interface MoltbookComment {
   content: string;
   post_id: string;
   post_title?: string;
+  post_author?: string;
+  post_url?: string;
   created_at: string;
   upvotes: number;
 }
@@ -310,10 +312,19 @@ export default function MoltbookPage() {
                 ) : (
                   <div className="space-y-3">
                     {filterItems(data.activity.posts).map(post => (
-                      <div key={post.id} className="bg-slate-800/50 rounded-lg p-4">
+                      <a 
+                        key={post.id} 
+                        href={post.url || `https://moltbook.com/post/${post.id}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block bg-slate-800/50 rounded-lg p-4 hover:bg-slate-700/50 transition-colors"
+                      >
                         <div className="flex items-start justify-between gap-3">
                           <div className="flex-1">
-                            <h4 className="text-slate-200 font-medium">{post.title}</h4>
+                            <h4 className="text-slate-200 font-medium flex items-center gap-2">
+                              {post.title}
+                              <ExternalLink className="w-3 h-3 text-slate-500" />
+                            </h4>
                             {post.content && (
                               <p className="text-slate-400 text-sm mt-1 line-clamp-2">{post.content}</p>
                             )}
@@ -330,7 +341,7 @@ export default function MoltbookPage() {
                             <div className="text-slate-500">{post.comment_count} 💬</div>
                           </div>
                         </div>
-                      </div>
+                      </a>
                     ))}
                   </div>
                 )}
@@ -347,9 +358,23 @@ export default function MoltbookPage() {
                   <div className="space-y-3">
                     {filterItems(data.activity.comments).map(comment => (
                       <div key={comment.id} className="bg-slate-800/50 rounded-lg p-4">
-                        <p className="text-slate-300 text-sm">{comment.content}</p>
+                        {/* Thread info */}
+                        <a 
+                          href={comment.post_url || `https://moltbook.com/post/${comment.post_id}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 text-xs text-indigo-400 hover:text-indigo-300 mb-2"
+                        >
+                          <span className="text-slate-500">on thread:</span>
+                          <span className="font-medium">{comment.post_title || comment.post_id}</span>
+                          {comment.post_author && (
+                            <span className="text-slate-500">by {comment.post_author}</span>
+                          )}
+                          <ExternalLink className="w-3 h-3" />
+                        </a>
+                        {/* Comment content */}
+                        <p className="text-slate-300 text-sm whitespace-pre-wrap">{comment.content}</p>
                         <div className="flex items-center gap-3 mt-2 text-xs text-slate-500">
-                          <span>on: {comment.post_title || comment.post_id}</span>
                           <span className="flex items-center gap-1">
                             <Clock className="w-3 h-3" />
                             {formatDate(comment.created_at)}

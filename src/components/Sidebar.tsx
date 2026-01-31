@@ -17,6 +17,7 @@ import {
   Heart,
   Mic,
   Users,
+  MessageSquare,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -27,6 +28,7 @@ const navItems = [
   { href: "/podcast", icon: Mic, label: "Podcast" },
   { href: "/family", icon: Users, label: "Family" },
   { href: "/marriage", icon: Heart, label: "Marriage" },
+  { href: "/moltbook", icon: MessageSquare, label: "Moltbook 🦞" },
   { href: "/tasks", icon: CheckSquare, label: "Tasks" },
   { href: "/skills", icon: Zap, label: "Skills" },
   { href: "/settings", icon: Settings, label: "Settings" },

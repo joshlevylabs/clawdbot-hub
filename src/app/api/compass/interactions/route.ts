@@ -18,8 +18,8 @@ export async function GET() {
       if (!error && data) {
         // Transform to match expected format
         const interactions = data.map(row => {
-          // Extract advice and tags from answers JSONB if present
-          const answers = row.answers as { advice?: string; tags?: string[] } | null;
+          // Extract advice, tags, and original_text from answers JSONB if present
+          const answers = row.answers as { advice?: string; tags?: string[]; original_text?: string } | null;
           return {
             id: row.id,
             timestamp: row.timestamp || row.created_at,
@@ -32,6 +32,7 @@ export async function GET() {
             }),
             type: row.type,
             description: row.description || '',
+            originalText: answers?.original_text || null,
             compass: {
               power: row.power,
               safety: row.safety

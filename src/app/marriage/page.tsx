@@ -41,6 +41,7 @@ interface Interaction {
   time: string;
   type: "positive" | "negative";
   description: string;
+  originalText?: string;
   compass: { power: number; safety: number };
   tags: string[];
   advice?: string;
@@ -288,10 +289,10 @@ export default function MarriagePage() {
 
   // Open edit modal for an interaction
   const openEditModal = (interaction: Interaction) => {
-    // Get the original text from the answers field if available
-    const originalText = (interaction as unknown as { answers?: { original_text?: string } }).answers?.original_text || interaction.description;
+    // Use originalText if available, otherwise fall back to description
+    const textToEdit = interaction.originalText || interaction.description;
     setEditingInteraction(interaction);
-    setEditInput(originalText);
+    setEditInput(textToEdit);
     setEditResult(null);
   };
 
@@ -1434,7 +1435,7 @@ export default function MarriagePage() {
                                   <Pencil className="w-3 h-3" />
                                 </button>
                               </div>
-                              <p className="text-slate-300 text-sm">{interaction.description}</p>
+                              <p className="text-slate-300 text-sm">{interaction.originalText || interaction.description}</p>
                               {interaction.tags && interaction.tags.length > 0 && (
                                 <div className="flex flex-wrap gap-1 mt-2">
                                   {interaction.tags.map((tag, i) => (
@@ -1583,7 +1584,7 @@ export default function MarriagePage() {
                                   <Pencil className="w-3 h-3" />
                                 </button>
                               </div>
-                              <p className="text-slate-300 text-sm">{interaction.description}</p>
+                              <p className="text-slate-300 text-sm">{interaction.originalText || interaction.description}</p>
                             </div>
                             <div className="text-right text-xs space-y-1">
                               <div className="text-slate-500">
@@ -1714,7 +1715,7 @@ export default function MarriagePage() {
                                   <Pencil className="w-3 h-3" />
                                 </button>
                               </div>
-                              <p className="text-slate-300 text-sm">{interaction.description}</p>
+                              <p className="text-slate-300 text-sm">{interaction.originalText || interaction.description}</p>
                             </div>
                             <div className="text-right text-xs space-y-1">
                               <div className="text-slate-500">

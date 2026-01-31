@@ -1,4 +1,6 @@
 import { NextResponse } from 'next/server';
+import { promises as fs } from 'fs';
+import path from 'path';
 
 const MOLTBOOK_API = 'https://www.moltbook.com/api/v1';
 const API_KEY = process.env.MOLTBOOK_API_KEY || '';
@@ -26,47 +28,24 @@ export async function GET() {
   }
 
   try {
-    // Fetch agent status
+    // Fetch agent status from API
     const status = await moltbookFetch('/agents/status');
-    
-    // Fetch agent profile/activity
     const me = await moltbookFetch('/agents/me');
-    
-    // Fetch my posts
-    let posts: unknown[] = [];
+
+    // Try to read local activity file for posts/comments
+    let localActivity = null;
     try {
-      const postsResponse = await moltbookFetch('/agents/me/posts');
-      posts = postsResponse.posts || [];
+      const filePath = path.join(process.cwd(), 'public', 'data', 'moltbook-activity.json');
+      const fileContent = await fs.readFile(filePath, 'utf-8');
+      localActivity = JSON.parse(fileContent);
     } catch {
-      // Agent might not have posts yet
-    }
-    
-    // Fetch my comments
-    let comments: unknown[] = [];
-    try {
-      const commentsResponse = await moltbookFetch('/agents/me/comments');
-      comments = commentsResponse.comments || [];
-    } catch {
-      // Agent might not have comments yet
+      // File doesn't exist yet, that's ok
     }
 
-    // Fetch my upvotes
-    let upvotes: unknown[] = [];
-    try {
-      const upvotesResponse = await moltbookFetch('/agents/me/upvotes');
-      upvotes = upvotesResponse.upvotes || [];
-    } catch {
-      // Agent might not have upvotes yet
-    }
-
-    // Fetch who I'm following
-    let following: unknown[] = [];
-    try {
-      const followingResponse = await moltbookFetch('/agents/me/following');
-      following = followingResponse.following || [];
-    } catch {
-      // Agent might not be following anyone yet
-    }
+    const posts = localActivity?.posts || [];
+    const comments = localActivity?.comments || [];
+    const upvotes = localActivity?.upvotes || [];
+    const following = localActivity?.following || [];
 
     return NextResponse.json({
       configured: true,
@@ -83,7 +62,8 @@ export async function GET() {
         commentCount: comments.length,
         upvoteCount: upvotes.length,
         followingCount: following.length,
-      }
+      },
+      lastUpdated: localActivity?.last_updated || null
     });
   } catch (error) {
     console.error('Moltbook API error:', error);

@@ -141,10 +141,10 @@ export async function POST(request: NextRequest) {
     // Process with AI
     const processed = await processLogWithAI(body.text);
 
-    // Generate timestamps
+    // Generate timestamps (use Pacific timezone for date)
     const now = new Date();
     const timestamp = now.toISOString();
-    const date = timestamp.split('T')[0];
+    const date = now.toLocaleDateString('en-CA', { timeZone: 'America/Los_Angeles' });
 
     // Insert into Supabase (using only columns that exist in the schema)
     // Store advice and tags in the answers JSONB field for now

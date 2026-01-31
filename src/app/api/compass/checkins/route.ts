@@ -23,10 +23,10 @@ export async function GET() {
       return NextResponse.json({ error: 'Failed to fetch check-ins' }, { status: 500 });
     }
 
-    // Transform to include date
+    // Transform to include date (use Pacific timezone)
     const checkins = (data || []).map(row => ({
       id: row.id,
-      date: new Date(row.timestamp || row.created_at).toISOString().split('T')[0],
+      date: new Date(row.timestamp || row.created_at).toLocaleDateString('en-CA', { timeZone: 'America/Los_Angeles' }),
       power: row.power,
       safety: row.safety,
       timestamp: row.timestamp || row.created_at,

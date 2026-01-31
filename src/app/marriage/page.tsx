@@ -143,8 +143,8 @@ export default function MarriagePage() {
     advice: string;
   } | null>(null);
 
-  // Check if today's check-in is done
-  const todayDate = new Date().toISOString().split('T')[0];
+  // Check if today's check-in is done (use Pacific timezone)
+  const todayDate = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Los_Angeles' });
   const hasCheckedInToday = checkins.some(c => c.date === todayDate);
 
   const fetchCompass = async () => {

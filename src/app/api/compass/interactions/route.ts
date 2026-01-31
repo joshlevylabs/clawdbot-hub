@@ -23,7 +23,7 @@ export async function GET() {
           return {
             id: row.id,
             timestamp: row.timestamp || row.created_at,
-            date: row.date || new Date(row.timestamp || row.created_at).toISOString().split('T')[0],
+            date: row.date || new Date(row.timestamp || row.created_at).toLocaleDateString('en-CA', { timeZone: 'America/Los_Angeles' }),
             time: new Date(row.timestamp || row.created_at).toLocaleTimeString('en-US', {
               hour: '2-digit',
               minute: '2-digit',

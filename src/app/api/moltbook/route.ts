@@ -1,69 +1,53 @@
 import { NextResponse } from 'next/server';
-import { promises as fs } from 'fs';
-import path from 'path';
-
-const MOLTBOOK_API = 'https://www.moltbook.com/api/v1';
-const API_KEY = process.env.MOLTBOOK_API_KEY || '';
+import { supabase, isSupabaseConfigured, DbMoltbookActivity } from '@/lib/supabase';
 
 export const dynamic = 'force-dynamic';
 
-async function moltbookFetch(endpoint: string) {
-  const response = await fetch(`${MOLTBOOK_API}${endpoint}`, {
-    headers: {
-      'Authorization': `Bearer ${API_KEY}`,
-    },
-  });
-  if (!response.ok) {
-    throw new Error(`Moltbook API error: ${response.status}`);
-  }
-  return response.json();
-}
-
 export async function GET() {
-  if (!API_KEY) {
+  if (!isSupabaseConfigured()) {
     return NextResponse.json({ 
-      error: 'Moltbook API key not configured',
+      error: 'Supabase not configured',
       configured: false 
     }, { status: 500 });
   }
 
   try {
-    // Fetch agent status from API
-    const status = await moltbookFetch('/agents/status');
-    const me = await moltbookFetch('/agents/me');
+    const { data, error } = await supabase
+      .from('moltbook_activity')
+      .select('*')
+      .eq('agent_name', 'TheoLevy')
+      .single();
 
-    // Try to read local activity file for posts/comments
-    let localActivity = null;
-    try {
-      const filePath = path.join(process.cwd(), 'public', 'data', 'moltbook-activity.json');
-      const fileContent = await fs.readFile(filePath, 'utf-8');
-      localActivity = JSON.parse(fileContent);
-    } catch {
-      // File doesn't exist yet, that's ok
+    if (error) {
+      console.error('Supabase error:', error);
+      return NextResponse.json({ 
+        error: 'Failed to fetch Moltbook data',
+        details: error.message,
+        configured: true
+      }, { status: 500 });
     }
 
-    const posts = localActivity?.posts || [];
-    const comments = localActivity?.comments || [];
-    const upvotes = localActivity?.upvotes || [];
-    const following = localActivity?.following || [];
+    const activity = data as DbMoltbookActivity;
 
     return NextResponse.json({
       configured: true,
-      status: status.status,
-      agent: me.agent || me,
-      activity: {
-        posts,
-        comments,
-        upvotes,
-        following,
+      agent: {
+        name: activity.agent_name,
+        profile_url: activity.profile_url,
+        claimed_at: activity.claimed_at,
       },
       stats: {
-        postCount: posts.length,
-        commentCount: comments.length,
-        upvoteCount: upvotes.length,
-        followingCount: following.length,
+        karma: activity.karma,
+        posts: activity.post_count,
+        comments: activity.comment_count,
+        subscriptions: activity.subscription_count,
+        following: activity.following_count,
       },
-      lastUpdated: localActivity?.last_updated || null
+      posts: activity.posts,
+      comments: activity.comments,
+      upvotes: activity.upvotes,
+      following: activity.following,
+      updated_at: activity.updated_at,
     });
   } catch (error) {
     console.error('Moltbook API error:', error);
@@ -71,6 +55,45 @@ export async function GET() {
       error: 'Failed to fetch Moltbook data',
       details: error instanceof Error ? error.message : 'Unknown error',
       configured: true
+    }, { status: 500 });
+  }
+}
+
+// POST endpoint for Theo to update stats during heartbeat
+export async function POST(request: Request) {
+  if (!isSupabaseConfigured()) {
+    return NextResponse.json({ error: 'Supabase not configured' }, { status: 500 });
+  }
+
+  try {
+    const body = await request.json();
+    
+    const { error } = await supabase
+      .from('moltbook_activity')
+      .update({
+        karma: body.karma,
+        post_count: body.post_count,
+        comment_count: body.comment_count,
+        subscription_count: body.subscription_count,
+        following_count: body.following_count,
+        posts: body.posts,
+        comments: body.comments,
+        upvotes: body.upvotes,
+        following: body.following,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('agent_name', 'TheoLevy');
+
+    if (error) {
+      console.error('Supabase update error:', error);
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    return NextResponse.json({ success: true, updated_at: new Date().toISOString() });
+  } catch (error) {
+    console.error('Moltbook POST error:', error);
+    return NextResponse.json({ 
+      error: error instanceof Error ? error.message : 'Unknown error' 
     }, { status: 500 });
   }
 }

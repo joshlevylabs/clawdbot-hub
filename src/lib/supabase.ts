@@ -62,3 +62,34 @@ export interface DbCompassInteraction {
   answers: Record<string, unknown> | null;
   created_at: string;
 }
+
+export interface DbMoltbookActivity {
+  id: string;
+  agent_name: string;
+  profile_url: string | null;
+  claimed_at: string | null;
+  karma: number;
+  post_count: number;
+  comment_count: number;
+  subscription_count: number;
+  following_count: number;
+  posts: Array<{
+    id: string;
+    title: string;
+    submolt: string;
+    url: string;
+    created_at: string;
+    upvotes?: number;
+    comment_count?: number;
+  }>;
+  comments: Array<{
+    id: string;
+    post_id: string;
+    content: string;
+    created_at: string;
+  }>;
+  upvotes: Array<{ post_id: string; created_at: string }>;
+  following: Array<{ agent_name: string; followed_at: string }>;
+  updated_at: string;
+  created_at: string;
+}

@@ -3,112 +3,199 @@
   "time": "6:00 AM",
   "sections": {
     "prayer": {
-      "title": "🕊️ Morning Prayer",
+      "title": "\ud83d\udd4a\ufe0f Morning Prayer",
       "date": "Sunday, February 01, 2026",
       "hebrew_date": "3 Cheshvan",
       "parsha": "Toldot",
       "parsha_theme": "generational blessing, identity, inheritance",
-      "modeh_ani": "מודה אני לפניך — I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
-      "blessing": "Blessed are You who spreads the earth upon the waters — ground me in stability.",
+      "modeh_ani": "\u05de\u05d5\u05d3\u05d4 \u05d0\u05e0\u05d9 \u05dc\u05e4\u05e0\u05d9\u05da \u2014 I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
+      "blessing": "Blessed are You who spreads the earth upon the waters \u2014 ground me in stability.",
       "psalm": "Psalm 118:25: \"Lord, save us! Lord, grant us success!\"",
       "proverb": "Proverbs 13:11: \"Wealth gained hastily will dwindle, but whoever gathers little by little will increase it.\"",
       "intention": "Let my work today compound into something that outlasts me.",
-      "closing": "Baruch atah Adonai — Blessed are You, Lord, who renews creation daily with goodness."
+      "closing": "Baruch atah Adonai \u2014 Blessed are You, Lord, who renews creation daily with goodness.",
+      "audio": "/audio/brief-2026-02-01-prayer.ogg"
     },
     "weather": {
-      "title": "☀️ Weather — Temecula",
-      "temperature": "51°F",
+      "title": "\u2600\ufe0f Weather \u2014 Temecula",
+      "temperature": "51\u00b0F",
       "condition": "Clear",
       "wind": "NW 3mph",
-      "summary": "Cool, clear morning. Perfect for Sunday sweet breakfast on the patio."
+      "summary": "Cool, clear morning. Perfect for Sunday sweet breakfast on the patio.",
+      "audio": "/audio/brief-2026-02-01-weather.ogg"
     },
     "calendar": {
-      "title": "📅 Calendar",
-      "status": "⚠️ Google OAuth needs reconfiguration",
-      "items": ["Unable to fetch — OAuth client was deleted. Run `gog auth` to re-authenticate."]
+      "title": "\ud83d\udcc5 Calendar",
+      "status": "\u26a0\ufe0f Google OAuth needs reconfiguration",
+      "items": [
+        "Unable to fetch \u2014 OAuth client was deleted. Run `gog auth` to re-authenticate."
+      ],
+      "audio": "/audio/brief-2026-02-01-calendar.ogg"
     },
     "email": {
-      "title": "📧 Email Highlights",
-      "status": "⚠️ Google OAuth needs reconfiguration",
+      "title": "\ud83d\udce7 Email Highlights",
+      "status": "\u26a0\ufe0f Google OAuth needs reconfiguration",
       "needs_attention": [],
       "dev_work": [],
-      "good_news": []
+      "good_news": [],
+      "audio": "/audio/brief-2026-02-01-email.ogg"
     },
     "family": {
-      "title": "❤️ Family Focus",
-      "suggestion": "It's Sunday Sweet Breakfast day! Make pancakes shaped like Super Wings planes with Jones — he'll love helping pour the batter while Jett watches from his high chair.",
+      "title": "\u2764\ufe0f Family Focus",
+      "suggestion": "It's Sunday Sweet Breakfast day! Make pancakes shaped like Super Wings planes with Jones \u2014 he'll love helping pour the batter while Jett watches from his high chair.",
       "conversationStarter": "Ask Jillian: 'What book are you reading right now? I'd love to hear about it.'",
-      "weeklyGoal": "Plan your February date night — Valentine's Day is in 13 days. Book a sitter and pick a spot.",
+      "weeklyGoal": "Plan your February date night \u2014 Valentine's Day is in 13 days. Book a sitter and pick a spot.",
       "potencyAction": "Ask: 'What do you need from me right now?' and do it",
       "upcomingDates": [
-        {"date": "02-14", "event": "Valentine's Day", "daysAway": 13},
-        {"date": "03-26", "event": "Wedding Anniversary", "daysAway": 53}
+        {
+          "date": "02-14",
+          "event": "Valentine's Day",
+          "daysAway": 13
+        },
+        {
+          "date": "03-26",
+          "event": "Wedding Anniversary",
+          "daysAway": 53
+        }
       ],
-      "reflection": "⚠️ Relationship temperature is CRITICAL (ratio: 1.5). Priority today: repair, not productivity. Acknowledge recent conflicts without defending. Create space for Jillian to express frustrations. Presence > projects."
+      "reflection": "\u26a0\ufe0f Relationship temperature is CRITICAL (ratio: 1.5). Priority today: repair, not productivity. Acknowledge recent conflicts without defending. Create space for Jillian to express frustrations. Presence > projects."
     },
     "markets": {
-      "title": "📈 Markets & Trading Signals",
+      "title": "\ud83d\udcc8 Markets & Trading Signals",
       "summary": {
         "date": "2026-02-01",
         "market_status": "Weekend (Markets Closed)",
-        "spy": {"price": 691.97, "change_pct": -0.3},
+        "spy": {
+          "price": 691.97,
+          "change_pct": -0.3
+        },
         "vix": 17.44,
         "sentiment": "NEUTRAL",
         "volatility": "LOW"
       },
       "overview": [
-        {"symbol": "SPY", "price": 691.97, "change_pct": -0.3, "trend": "NEUTRAL"},
-        {"symbol": "QQQ", "price": 621.87, "change_pct": -1.2, "trend": "NEUTRAL"},
-        {"symbol": "IWM", "price": 259.65, "change_pct": -1.41, "trend": "NEUTRAL"},
-        {"symbol": "DIA", "price": 489.03, "change_pct": -0.24, "trend": "NEUTRAL"}
+        {
+          "symbol": "SPY",
+          "price": 691.97,
+          "change_pct": -0.3,
+          "trend": "NEUTRAL"
+        },
+        {
+          "symbol": "QQQ",
+          "price": 621.87,
+          "change_pct": -1.2,
+          "trend": "NEUTRAL"
+        },
+        {
+          "symbol": "IWM",
+          "price": 259.65,
+          "change_pct": -1.41,
+          "trend": "NEUTRAL"
+        },
+        {
+          "symbol": "DIA",
+          "price": 489.03,
+          "change_pct": -0.24,
+          "trend": "NEUTRAL"
+        }
       ],
       "signals": [
-        {"type": "SELL", "symbol": "USO", "price": 79.52, "entry": 79.52, "stop": 83.23, "target": 73.96, "confidence": "MEDIUM", "rationale": "RSI overbought (71.8), high volume, near BB resistance"}
-      ]
+        {
+          "type": "SELL",
+          "symbol": "USO",
+          "price": 79.52,
+          "entry": 79.52,
+          "stop": 83.23,
+          "target": 73.96,
+          "confidence": "MEDIUM",
+          "rationale": "RSI overbought (71.8), high volume, near BB resistance"
+        }
+      ],
+      "audio": "/audio/brief-2026-02-01-markets.ogg"
     },
     "news": {
-      "title": "🌍 World News",
+      "title": "\ud83c\udf0d World News",
       "subsections": {
         "israel": {
-          "title": "🇮🇱 Israel",
+          "title": "\ud83c\uddee\ud83c\uddf1 Israel",
           "items": [
-            {"headline": "Khamenei warns of regional war if US attacks Iran — first public appearance in weeks"},
-            {"headline": "Rafah Crossing reopens after over a year — pedestrian passage to start Monday"},
-            {"headline": "Iran-US confirm progress toward negotiations as Trump's threat still lingers"},
-            {"headline": "Moody's boosts Israel's credit outlook to 'stable' as Gaza/Lebanon ceasefires hold"},
-            {"headline": "IDF responds to truce violation — at least 28 Gazans killed in wave of strikes"},
-            {"headline": "Photo surfaces showing detained Gaza hospital director wearing Hamas uniform"}
+            {
+              "headline": "Khamenei warns of regional war if US attacks Iran \u2014 first public appearance in weeks"
+            },
+            {
+              "headline": "Rafah Crossing reopens after over a year \u2014 pedestrian passage to start Monday"
+            },
+            {
+              "headline": "Iran-US confirm progress toward negotiations as Trump's threat still lingers"
+            },
+            {
+              "headline": "Moody's boosts Israel's credit outlook to 'stable' as Gaza/Lebanon ceasefires hold"
+            },
+            {
+              "headline": "IDF responds to truce violation \u2014 at least 28 Gazans killed in wave of strikes"
+            },
+            {
+              "headline": "Photo surfaces showing detained Gaza hospital director wearing Hamas uniform"
+            }
           ]
         },
         "us": {
-          "title": "🇺🇸 United States",
+          "title": "\ud83c\uddfa\ud83c\uddf8 United States",
           "items": [
-            {"headline": "Trump declares himself Venezuela's 'acting president' — diplomatic tensions rise"},
-            {"headline": "US Ambassador to Israel says Trump 'not making empty threats' toward Iran"},
-            {"headline": "AOC accuses Vance of believing 'American people should be assassinated'"},
-            {"headline": "Jeffries slams DHS Sec Noem over Minneapolis shooting response"}
+            {
+              "headline": "Trump declares himself Venezuela's 'acting president' \u2014 diplomatic tensions rise"
+            },
+            {
+              "headline": "US Ambassador to Israel says Trump 'not making empty threats' toward Iran"
+            },
+            {
+              "headline": "AOC accuses Vance of believing 'American people should be assassinated'"
+            },
+            {
+              "headline": "Jeffries slams DHS Sec Noem over Minneapolis shooting response"
+            }
           ]
         },
         "world": {
-          "title": "🌐 Global",
+          "title": "\ud83c\udf10 Global",
           "items": [
-            {"headline": "Saudi Defense Minister tells US: Not striking Iran would embolden regime"},
-            {"headline": "Strait of Hormuz tensions — Iran plans military drill amid US standoff"},
-            {"headline": "Two blasts rock Iran killing at least 5 — Israel denies involvement"}
+            {
+              "headline": "Saudi Defense Minister tells US: Not striking Iran would embolden regime"
+            },
+            {
+              "headline": "Strait of Hormuz tensions \u2014 Iran plans military drill amid US standoff"
+            },
+            {
+              "headline": "Two blasts rock Iran killing at least 5 \u2014 Israel denies involvement"
+            }
           ]
         }
-      }
+      },
+      "audio": "/audio/brief-2026-02-01-news.ogg"
     },
     "ai": {
-      "title": "🤖 AI Intel",
+      "title": "\ud83e\udd16 AI Intel",
       "items": [
-        {"headline": "Nvidia's $100B OpenAI deal 'on ice' — WSJ reports talks continue at lower amounts"},
-        {"headline": "Anthropic expands Cowork with 'plugins' for domain expertise (sales, legal, finance, etc.)"},
-        {"headline": "Rabbit announces 'project cyberdeck' — portable device for vibe-coding"},
-        {"headline": "GPT-4o being retired from ChatGPT on Feb 13 — only 0.1% of users still choosing it"},
-        {"headline": "Tesla discloses $2B investment in xAI to 'deploy AI into the physical world'"},
-        {"headline": "Google Maps integrates Gemini as walking tour guide — rolling out now on iOS/Android"}
-      ]
+        {
+          "headline": "Nvidia's $100B OpenAI deal 'on ice' \u2014 WSJ reports talks continue at lower amounts"
+        },
+        {
+          "headline": "Anthropic expands Cowork with 'plugins' for domain expertise (sales, legal, finance, etc.)"
+        },
+        {
+          "headline": "Rabbit announces 'project cyberdeck' \u2014 portable device for vibe-coding"
+        },
+        {
+          "headline": "GPT-4o being retired from ChatGPT on Feb 13 \u2014 only 0.1% of users still choosing it"
+        },
+        {
+          "headline": "Tesla discloses $2B investment in xAI to 'deploy AI into the physical world'"
+        },
+        {
+          "headline": "Google Maps integrates Gemini as walking tour guide \u2014 rolling out now on iOS/Android"
+        }
+      ],
+      "audio": "/audio/brief-2026-02-01-ai.ogg"
     }
   }
 }

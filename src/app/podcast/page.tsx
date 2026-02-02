@@ -112,13 +112,14 @@ interface Todo {
 }
 
 const PLATFORM_LINKS = [
-  { name: "Spotify", url: "https://podcasters.spotify.com/", icon: "🎧" },
-  { name: "Apple Podcasts", url: "https://podcastsconnect.apple.com/", icon: "🍎" },
-  { name: "YouTube", url: "https://studio.youtube.com/", icon: "▶️" },
-  { name: "Beehiiv Newsletter", url: "https://app.beehiiv.com/", icon: "📧" },
-  { name: "Medium", url: "https://medium.com/", icon: "✍️" },
+  { name: "YouTube", url: "https://www.youtube.com/@joshualevy6759", icon: "▶️" },
+  { name: "LinkedIn", url: "https://www.linkedin.com/in/joshuasethlevy/", icon: "💼" },
+  { name: "TikTok", url: "https://www.tiktok.com/@joshlevylabs", icon: "🎵" },
+  { name: "Medium", url: "https://medium.com/@joshualevy_38678", icon: "✍️" },
+  { name: "Beehiiv Newsletter", url: "https://the-builders-frequency.beehiiv.com/", icon: "📧" },
+  { name: "Spotify Podcasters", url: "https://podcasters.spotify.com/", icon: "🎧" },
+  { name: "Opus Pro", url: "https://app.opus.pro/", icon: "✂️" },
   { name: "Riverside.fm", url: "https://riverside.fm/", icon: "🎬" },
-  { name: "Buffer", url: "https://buffer.com/", icon: "📱" },
 ];
 
 // WPS speed utilities - logarithmic scale for fine control

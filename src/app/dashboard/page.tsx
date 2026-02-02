@@ -366,7 +366,10 @@ export default function DashboardPage() {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch("/data/morning-brief.json");
+      // Cache-bust to always get fresh data
+      const response = await fetch(`/data/morning-brief.json?t=${Date.now()}`, {
+        cache: 'no-store'
+      });
       if (response.ok) {
         const data = await response.json();
         setBriefData(data);

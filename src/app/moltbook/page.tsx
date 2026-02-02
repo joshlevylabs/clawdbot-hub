@@ -308,7 +308,18 @@ export default function MoltbookPage() {
               <div className="space-y-4">
                 <h3 className="text-lg font-medium text-slate-200">My Posts</h3>
                 {!data?.activity?.posts?.length ? (
-                  <p className="text-slate-500 text-center py-8">No posts yet. Theo will start posting once claimed!</p>
+                  <div className="text-center py-8">
+                    <p className="text-slate-400 mb-4">{data?.stats?.postCount || 0} posts on Moltbook</p>
+                    <a 
+                      href="https://www.moltbook.com/u/TheoLevy" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg transition-colors"
+                    >
+                      View Posts on Moltbook
+                      <ExternalLink className="w-4 h-4" />
+                    </a>
+                  </div>
                 ) : (
                   <div className="space-y-3">
                     {filterItems(data.activity.posts).map(post => (
@@ -353,7 +364,18 @@ export default function MoltbookPage() {
               <div className="space-y-4">
                 <h3 className="text-lg font-medium text-slate-200">My Comments</h3>
                 {!data?.activity?.comments?.length ? (
-                  <p className="text-slate-500 text-center py-8">No comments yet.</p>
+                  <div className="text-center py-8">
+                    <p className="text-slate-400 mb-4">{data?.stats?.commentCount || 0} comments on Moltbook</p>
+                    <a 
+                      href="https://www.moltbook.com/u/TheoLevy" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg transition-colors"
+                    >
+                      View Activity on Moltbook
+                      <ExternalLink className="w-4 h-4" />
+                    </a>
+                  </div>
                 ) : (
                   <div className="space-y-3">
                     {filterItems(data.activity.comments).map(comment => (
@@ -393,7 +415,18 @@ export default function MoltbookPage() {
               <div className="space-y-4">
                 <h3 className="text-lg font-medium text-slate-200">Posts I&apos;ve Upvoted</h3>
                 {!data?.activity?.upvotes?.length ? (
-                  <p className="text-slate-500 text-center py-8">No upvotes yet.</p>
+                  <div className="text-center py-8">
+                    <p className="text-slate-400 mb-4">{data?.stats?.upvoteCount || 0} subscriptions on Moltbook</p>
+                    <a 
+                      href="https://www.moltbook.com/u/TheoLevy" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors"
+                    >
+                      View Profile on Moltbook
+                      <ExternalLink className="w-4 h-4" />
+                    </a>
+                  </div>
                 ) : (
                   <div className="space-y-3">
                     {data.activity.upvotes.map(upvote => (
@@ -415,7 +448,18 @@ export default function MoltbookPage() {
               <div className="space-y-4">
                 <h3 className="text-lg font-medium text-slate-200">Agents I Follow</h3>
                 {!data?.activity?.following?.length ? (
-                  <p className="text-slate-500 text-center py-8">Not following anyone yet.</p>
+                  <div className="text-center py-8">
+                    <p className="text-slate-400 mb-4">{data?.stats?.followingCount || 0} agents followed</p>
+                    <a 
+                      href="https://www.moltbook.com/u/TheoLevy" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors"
+                    >
+                      View Profile on Moltbook
+                      <ExternalLink className="w-4 h-4" />
+                    </a>
+                  </div>
                 ) : (
                   <div className="grid gap-3 md:grid-cols-2">
                     {data.activity.following.map(agent => (

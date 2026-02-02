@@ -844,7 +844,9 @@ export default function MorningBriefPage() {
 
   const formatDate = (dateStr: string) => {
     try {
-      const date = new Date(dateStr);
+      // Parse as local time to avoid timezone issues (YYYY-MM-DD interpreted as UTC)
+      const [year, month, day] = dateStr.split('-').map(Number);
+      const date = new Date(year, month - 1, day);
       return date.toLocaleDateString("en-US", {
         weekday: "long",
         month: "long",
@@ -860,7 +862,9 @@ export default function MorningBriefPage() {
   if (isMobile && briefData && !loading && !error && !hasStarted) {
     const formatIntroDate = () => {
       try {
-        const date = new Date(briefData.date);
+        // Parse as local time to avoid timezone issues (YYYY-MM-DD interpreted as UTC)
+        const [year, month, day] = briefData.date.split('-').map(Number);
+        const date = new Date(year, month - 1, day);
         return {
           weekday: date.toLocaleDateString("en-US", { weekday: "long" }),
           month: date.toLocaleDateString("en-US", { month: "long" }),

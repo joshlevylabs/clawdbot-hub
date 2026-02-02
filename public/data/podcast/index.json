@@ -7,7 +7,16 @@
       "filename": "episode-001-2026-01-27-why-i-started.md",
       "created": "2026-01-27",
       "finalized": "2026-01-27",
-      "status": "finalized"
+      "status": "finalized",
+      "links": {
+        "youtube": "",
+        "spotify": "",
+        "apple": "",
+        "linkedin": "",
+        "tiktok": "",
+        "medium": "",
+        "beehiiv": ""
+      }
     }
   ],
   "lastEpisodeNumber": 1,
@@ -19,5 +28,5 @@
     "legacy": 0,
     "all": 1
   },
-  "lastUpdated": "2026-01-27"
+  "lastUpdated": "2026-02-02"
 }

@@ -87,6 +87,16 @@ declare global {
   }
 }
 
+interface EpisodeLinks {
+  youtube?: string;
+  spotify?: string;
+  apple?: string;
+  linkedin?: string;
+  tiktok?: string;
+  medium?: string;
+  beehiiv?: string;
+}
+
 interface Episode {
   number: number;
   title: string;
@@ -95,6 +105,7 @@ interface Episode {
   created: string;
   finalized?: string;
   status: string;
+  links?: EpisodeLinks;
 }
 
 interface PodcastIndex {
@@ -1171,30 +1182,81 @@ function EpisodeCard({
       </button>
       
       {expanded && (
-        <div className="px-4 pb-4 pt-2 border-t border-slate-800 flex flex-wrap gap-2">
-          {hasAudio && (
-            <button 
-              onClick={onPlayAudio}
-              className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 rounded-lg text-sm text-white"
-            >
-              <Headphones className="w-4 h-4" />
-              Listen
-            </button>
+        <div className="px-4 pb-4 pt-2 border-t border-slate-800 space-y-3">
+          {/* Platform Links */}
+          {episode.links && Object.keys(episode.links).length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {episode.links.youtube && (
+                <a href={episode.links.youtube} target="_blank" rel="noopener noreferrer"
+                   className="flex items-center gap-1.5 px-3 py-1.5 bg-red-600/20 hover:bg-red-600/30 border border-red-600/30 rounded-lg text-sm text-red-400 transition-colors">
+                  <span>▶️</span> YouTube
+                </a>
+              )}
+              {episode.links.spotify && (
+                <a href={episode.links.spotify} target="_blank" rel="noopener noreferrer"
+                   className="flex items-center gap-1.5 px-3 py-1.5 bg-green-600/20 hover:bg-green-600/30 border border-green-600/30 rounded-lg text-sm text-green-400 transition-colors">
+                  <span>🎧</span> Spotify
+                </a>
+              )}
+              {episode.links.apple && (
+                <a href={episode.links.apple} target="_blank" rel="noopener noreferrer"
+                   className="flex items-center gap-1.5 px-3 py-1.5 bg-purple-600/20 hover:bg-purple-600/30 border border-purple-600/30 rounded-lg text-sm text-purple-400 transition-colors">
+                  <span>🍎</span> Apple
+                </a>
+              )}
+              {episode.links.linkedin && (
+                <a href={episode.links.linkedin} target="_blank" rel="noopener noreferrer"
+                   className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-600/30 rounded-lg text-sm text-blue-400 transition-colors">
+                  <span>💼</span> LinkedIn
+                </a>
+              )}
+              {episode.links.tiktok && (
+                <a href={episode.links.tiktok} target="_blank" rel="noopener noreferrer"
+                   className="flex items-center gap-1.5 px-3 py-1.5 bg-pink-600/20 hover:bg-pink-600/30 border border-pink-600/30 rounded-lg text-sm text-pink-400 transition-colors">
+                  <span>🎵</span> TikTok
+                </a>
+              )}
+              {episode.links.medium && (
+                <a href={episode.links.medium} target="_blank" rel="noopener noreferrer"
+                   className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-600/20 hover:bg-slate-600/30 border border-slate-600/30 rounded-lg text-sm text-slate-300 transition-colors">
+                  <span>✍️</span> Medium
+                </a>
+              )}
+              {episode.links.beehiiv && (
+                <a href={episode.links.beehiiv} target="_blank" rel="noopener noreferrer"
+                   className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-600/20 hover:bg-amber-600/30 border border-amber-600/30 rounded-lg text-sm text-amber-400 transition-colors">
+                  <span>📧</span> Newsletter
+                </a>
+              )}
+            </div>
           )}
-          <button 
-            onClick={onView}
-            className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-sm text-slate-300"
-          >
-            <Edit3 className="w-4 h-4" />
-            View/Edit Script
-          </button>
-          <button 
-            onClick={onTeleprompter}
-            className="flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 rounded-lg text-sm text-white"
-          >
-            <Monitor className="w-4 h-4" />
-            Teleprompter
-          </button>
+          
+          {/* Action Buttons */}
+          <div className="flex flex-wrap gap-2">
+            {hasAudio && (
+              <button 
+                onClick={onPlayAudio}
+                className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 rounded-lg text-sm text-white"
+              >
+                <Headphones className="w-4 h-4" />
+                Listen
+              </button>
+            )}
+            <button 
+              onClick={onView}
+              className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-sm text-slate-300"
+            >
+              <Edit3 className="w-4 h-4" />
+              View/Edit Script
+            </button>
+            <button 
+              onClick={onTeleprompter}
+              className="flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 rounded-lg text-sm text-white"
+            >
+              <Monitor className="w-4 h-4" />
+              Teleprompter
+            </button>
+          </div>
         </div>
       )}
     </div>

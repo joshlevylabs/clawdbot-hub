@@ -136,6 +136,298 @@ const wpsToSlider = (wps: number): number => {
   return 100 * Math.log(wps / MIN_WPS) / Math.log(MAX_WPS / MIN_WPS);
 };
 
+// Analytics interfaces
+interface PlatformMetrics {
+  platform: string;
+  followers?: number;
+  views?: number;
+  likes?: number;
+  comments?: number;
+  shares?: number;
+  subscribers?: number;
+  openRate?: number;
+  clickRate?: number;
+  posts?: number;
+  lastUpdated: string;
+  error?: string;
+}
+
+interface VideoMetric {
+  id: string;
+  title: string;
+  views: number;
+  likes: number;
+  comments: number;
+  publishedAt: string;
+  thumbnail?: string;
+}
+
+interface AnalyticsData {
+  youtube?: { channel: PlatformMetrics; videos: VideoMetric[] };
+  beehiiv?: PlatformMetrics;
+  manual?: PlatformMetrics[];
+}
+
+// Analytics Dashboard Component
+function AnalyticsDashboard() {
+  const [data, setData] = useState<AnalyticsData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [expanded, setExpanded] = useState(false);
+  const [editingManual, setEditingManual] = useState(false);
+  const [manualMetrics, setManualMetrics] = useState<PlatformMetrics[]>([
+    { platform: 'linkedin', followers: 0, views: 0, likes: 0, lastUpdated: new Date().toISOString() },
+    { platform: 'tiktok', followers: 0, views: 0, likes: 0, lastUpdated: new Date().toISOString() },
+    { platform: 'medium', followers: 0, views: 0, lastUpdated: new Date().toISOString() },
+  ]);
+
+  useEffect(() => {
+    fetchAnalytics();
+  }, []);
+
+  const fetchAnalytics = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch('/api/podcast/analytics');
+      const result = await res.json();
+      setData(result);
+      if (result.manual?.length) {
+        setManualMetrics(result.manual);
+      }
+    } catch (error) {
+      console.error('Failed to fetch analytics:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const saveManualMetrics = async () => {
+    try {
+      await fetch('/api/podcast/analytics', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ platforms: manualMetrics }),
+      });
+      setEditingManual(false);
+      fetchAnalytics();
+    } catch (error) {
+      console.error('Failed to save metrics:', error);
+    }
+  };
+
+  const updateManualMetric = (platform: string, field: string, value: number) => {
+    setManualMetrics(prev => prev.map(m => 
+      m.platform === platform 
+        ? { ...m, [field]: value, lastUpdated: new Date().toISOString() }
+        : m
+    ));
+  };
+
+  const formatNumber = (num: number | undefined) => {
+    if (!num) return '0';
+    if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+    if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+    return num.toString();
+  };
+
+  const getPlatformIcon = (platform: string) => {
+    switch (platform) {
+      case 'youtube': return '▶️';
+      case 'linkedin': return '💼';
+      case 'tiktok': return '🎵';
+      case 'medium': return '✍️';
+      case 'beehiiv': return '📧';
+      default: return '📊';
+    }
+  };
+
+  return (
+    <div className="bg-slate-850 rounded-xl border border-slate-800 overflow-hidden">
+      {/* Header - always visible */}
+      <button 
+        onClick={() => setExpanded(!expanded)}
+        className="w-full p-4 flex items-center justify-between hover:bg-slate-800/50 transition-colors"
+      >
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-gradient-to-br from-emerald-500/20 to-cyan-500/20 rounded-lg">
+            <MessageSquare className="w-5 h-5 text-emerald-400" />
+          </div>
+          <div className="text-left">
+            <h3 className="font-medium text-slate-100">Content Analytics</h3>
+            <p className="text-xs text-slate-500">Track engagement across all platforms</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-4">
+          {!loading && data?.youtube?.channel && !data.youtube.channel.error && (
+            <div className="hidden sm:flex items-center gap-4 text-sm">
+              <span className="text-slate-400">
+                <span className="text-emerald-400 font-medium">{formatNumber(data.youtube.channel.subscribers)}</span> subs
+              </span>
+              <span className="text-slate-400">
+                <span className="text-cyan-400 font-medium">{formatNumber(data.youtube.channel.views)}</span> views
+              </span>
+            </div>
+          )}
+          {expanded ? <ChevronUp className="w-5 h-5 text-slate-500" /> : <ChevronDown className="w-5 h-5 text-slate-500" />}
+        </div>
+      </button>
+
+      {/* Expanded content */}
+      {expanded && (
+        <div className="border-t border-slate-800 p-4 space-y-6">
+          {loading ? (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="w-6 h-6 text-slate-500 animate-spin" />
+            </div>
+          ) : (
+            <>
+              {/* Platform Stats Grid */}
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                {/* YouTube */}
+                <div className="bg-slate-800/50 rounded-lg p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span>▶️</span>
+                    <span className="text-sm text-slate-300">YouTube</span>
+                  </div>
+                  {data?.youtube?.channel?.error ? (
+                    <p className="text-xs text-amber-400">{data.youtube.channel.error}</p>
+                  ) : (
+                    <div className="space-y-1">
+                      <p className="text-lg font-semibold text-slate-100">{formatNumber(data?.youtube?.channel?.subscribers)}</p>
+                      <p className="text-xs text-slate-500">subscribers</p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Beehiiv */}
+                <div className="bg-slate-800/50 rounded-lg p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span>📧</span>
+                    <span className="text-sm text-slate-300">Newsletter</span>
+                  </div>
+                  {data?.beehiiv?.error ? (
+                    <p className="text-xs text-amber-400">{data.beehiiv.error}</p>
+                  ) : (
+                    <div className="space-y-1">
+                      <p className="text-lg font-semibold text-slate-100">{formatNumber(data?.beehiiv?.subscribers)}</p>
+                      <p className="text-xs text-slate-500">subscribers</p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Manual platforms */}
+                {manualMetrics.map(platform => (
+                  <div key={platform.platform} className="bg-slate-800/50 rounded-lg p-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span>{getPlatformIcon(platform.platform)}</span>
+                      <span className="text-sm text-slate-300 capitalize">{platform.platform}</span>
+                    </div>
+                    {editingManual ? (
+                      <input
+                        type="number"
+                        value={platform.followers || 0}
+                        onChange={(e) => updateManualMetric(platform.platform, 'followers', parseInt(e.target.value) || 0)}
+                        className="w-full bg-slate-700 rounded px-2 py-1 text-sm text-slate-200"
+                      />
+                    ) : (
+                      <div className="space-y-1">
+                        <p className="text-lg font-semibold text-slate-100">{formatNumber(platform.followers)}</p>
+                        <p className="text-xs text-slate-500">followers</p>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              {/* Edit/Save buttons for manual metrics */}
+              <div className="flex justify-end gap-2">
+                {editingManual ? (
+                  <>
+                    <button
+                      onClick={() => setEditingManual(false)}
+                      className="px-3 py-1.5 text-sm text-slate-400 hover:text-white"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={saveManualMetrics}
+                      className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 rounded-lg text-sm text-white"
+                    >
+                      Save
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    onClick={() => setEditingManual(true)}
+                    className="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 rounded-lg text-sm text-slate-300"
+                  >
+                    Edit Manual Stats
+                  </button>
+                )}
+              </div>
+
+              {/* Recent YouTube Videos */}
+              {data?.youtube?.videos && data.youtube.videos.length > 0 && (
+                <div>
+                  <h4 className="text-sm font-medium text-slate-300 mb-3">Recent Videos</h4>
+                  <div className="space-y-2">
+                    {data.youtube.videos.slice(0, 5).map(video => (
+                      <a
+                        key={video.id}
+                        href={`https://youtube.com/watch?v=${video.id}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-3 p-2 bg-slate-800/50 rounded-lg hover:bg-slate-700/50 transition-colors"
+                      >
+                        {video.thumbnail && (
+                          <img 
+                            src={video.thumbnail} 
+                            alt="" 
+                            className="w-20 h-12 object-cover rounded"
+                          />
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm text-slate-200 truncate">{video.title}</p>
+                          <div className="flex items-center gap-3 text-xs text-slate-500">
+                            <span>{formatNumber(video.views)} views</span>
+                            <span>{formatNumber(video.likes)} likes</span>
+                          </div>
+                        </div>
+                        <ExternalLink className="w-4 h-4 text-slate-600" />
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Setup instructions if APIs not configured */}
+              {(data?.youtube?.channel?.error || data?.beehiiv?.error) && (
+                <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-4">
+                  <h4 className="text-sm font-medium text-amber-400 mb-2">Setup Required</h4>
+                  <p className="text-xs text-slate-400 mb-2">Add these to your Vercel environment variables:</p>
+                  <ul className="text-xs text-slate-500 space-y-1">
+                    {data?.youtube?.channel?.error && (
+                      <>
+                        <li>• <code className="text-amber-400">YOUTUBE_API_KEY</code> - Get from Google Cloud Console</li>
+                        <li>• <code className="text-amber-400">YOUTUBE_CHANNEL_ID</code> - Your channel ID</li>
+                      </>
+                    )}
+                    {data?.beehiiv?.error && (
+                      <>
+                        <li>• <code className="text-amber-400">BEEHIIV_API_KEY</code> - Get from Beehiiv settings</li>
+                        <li>• <code className="text-amber-400">BEEHIIV_PUBLICATION_ID</code> - Your publication ID</li>
+                      </>
+                    )}
+                  </ul>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // Episode Generator Chat Component
 interface ChatMessage {
   role: 'user' | 'assistant';
@@ -1452,6 +1744,9 @@ export default function PodcastPage() {
           onClose={() => setShowGenerator(false)}
         />
       )}
+
+      {/* Content Analytics */}
+      <AnalyticsDashboard />
       
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Episodes */}

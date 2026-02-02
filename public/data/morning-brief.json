@@ -3,66 +3,101 @@
   "time": "6:00 AM",
   "sections": {
     "prayer": {
-      "title": "🕊️ Morning Prayer",
+      "title": "\ud83d\udd4a\ufe0f Morning Prayer",
       "date": "Monday, February 02, 2026",
       "hebrew_date": "4 Cheshvan",
       "parsha": "Vayetzei",
       "parsha_theme": "dreams, building from nothing, divine protection",
-      "modeh_ani": "מודה אני לפניך — I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
-      "blessing": "Blessed are You who spreads the earth upon the waters — ground me in stability.",
+      "modeh_ani": "\u05de\u05d5\u05d3\u05d4 \u05d0\u05e0\u05d9 \u05dc\u05e4\u05e0\u05d9\u05da \u2014 I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
+      "blessing": "Blessed are You who spreads the earth upon the waters \u2014 ground me in stability.",
       "psalm": "Psalm 127:1: \"Unless the Lord builds the house, the builders labor in vain.\"",
       "proverb": "Proverbs 3:5-6: \"Trust in the Lord with all your heart; lean not on your own understanding.\"",
       "intention": "Let today's small faithfulness lead to tomorrow's greater stewardship.",
-      "closing": "May your work today be a pleasing offering. May your rest tonight be deep and restorative."
+      "closing": "May your work today be a pleasing offering. May your rest tonight be deep and restorative.",
+      "audio": "/audio/brief-2026-02-02-prayer.ogg"
     },
     "weather": {
-      "title": "☀️ Weather — Temecula",
-      "temperature": "47°F",
+      "title": "\u2600\ufe0f Weather \u2014 Temecula",
+      "temperature": "47\u00b0F",
       "condition": "Mainly Clear",
       "wind": "W 2mph",
-      "summary": "Cool, clear morning. Light jacket weather."
+      "summary": "Cool, clear morning. Light jacket weather.",
+      "audio": "/audio/brief-2026-02-02-weather.ogg"
     },
     "calendar": {
-      "title": "📅 Calendar",
+      "title": "\ud83d\udcc5 Calendar",
       "today": [],
       "week": [],
       "month": [],
-      "summary": "Clear calendar today. Wide open for deep work."
+      "summary": "Clear calendar today. Wide open for deep work.",
+      "audio": "/audio/brief-2026-02-02-calendar.ogg"
     },
     "email": {
-      "title": "📧 Email Highlights",
+      "title": "\ud83d\udce7 Email Highlights",
       "needs_attention": [],
       "dev_work": [],
       "good_news": [],
-      "summary": "Inbox clear — no urgent items across all accounts."
+      "summary": "Inbox clear \u2014 no urgent items across all accounts.",
+      "audio": "/audio/brief-2026-02-02-email.ogg"
     },
     "family": {
-      "title": "❤️ Family Focus",
-      "suggestion": "Build a Super Wings runway with Jones using pillows and blankets — he can be Jett, you can be Paul calling out missions. Jett (6mo) can watch and practice tummy time nearby.",
+      "title": "\u2764\ufe0f Family Focus",
+      "suggestion": "Build a Super Wings runway with Jones using pillows and blankets \u2014 he can be Jett, you can be Paul calling out missions. Jett (6mo) can watch and practice tummy time nearby.",
       "conversationStarter": "Ask Jillian: What book are you reading right now? Is it grabbing you?",
-      "weeklyGoal": "Monthly date night is coming up — start thinking about what she'd enjoy. Dinner somewhere new, or a concert?",
-      "potencyAction": "⚡ PRIORITY: Acknowledge what happened without defending: 'You're right, I shouldn't have...' (Relationship temp is critical — 1.5 ratio, needs repair)",
+      "weeklyGoal": "Monthly date night is coming up \u2014 start thinking about what she'd enjoy. Dinner somewhere new, or a concert?",
+      "potencyAction": "\u26a1 PRIORITY: Acknowledge what happened without defending: 'You're right, I shouldn't have...' (Relationship temp is critical \u2014 1.5 ratio, needs repair)",
       "upcomingDates": [
-        {"date": "02-14", "event": "Valentine's Day", "daysAway": 12},
-        {"date": "03-26", "event": "Wedding Anniversary", "daysAway": 52}
+        {
+          "date": "02-14",
+          "event": "Valentine's Day",
+          "daysAway": 12
+        },
+        {
+          "date": "03-26",
+          "event": "Wedding Anniversary",
+          "daysAway": 52
+        }
       ],
-      "reflection": "The relationship analysis shows you're in repair mode. Today isn't about being right — it's about being present. Acknowledge, don't defend. Quality time with her matters more than productivity today."
+      "reflection": "The relationship analysis shows you're in repair mode. Today isn't about being right \u2014 it's about being present. Acknowledge, don't defend. Quality time with her matters more than productivity today."
     },
     "markets": {
-      "title": "📈 Markets & Trading Signals",
+      "title": "\ud83d\udcc8 Markets & Trading Signals",
       "summary": {
         "date": "2026-02-02",
         "market_status": "OPEN",
-        "spy": {"price": 691.97, "change_pct": -0.3},
+        "spy": {
+          "price": 691.97,
+          "change_pct": -0.3
+        },
         "vix": 18.7,
         "sentiment": "NEUTRAL",
         "volatility": "ELEVATED"
       },
       "overview": [
-        {"symbol": "SPY", "price": 691.97, "change_pct": -0.3, "trend": "NEUTRAL"},
-        {"symbol": "QQQ", "price": 621.87, "change_pct": -1.2, "trend": "NEUTRAL"},
-        {"symbol": "IWM", "price": 259.65, "change_pct": -1.41, "trend": "NEUTRAL"},
-        {"symbol": "DIA", "price": 489.03, "change_pct": -0.24, "trend": "NEUTRAL"}
+        {
+          "symbol": "SPY",
+          "price": 691.97,
+          "change_pct": -0.3,
+          "trend": "NEUTRAL"
+        },
+        {
+          "symbol": "QQQ",
+          "price": 621.87,
+          "change_pct": -1.2,
+          "trend": "NEUTRAL"
+        },
+        {
+          "symbol": "IWM",
+          "price": 259.65,
+          "change_pct": -1.41,
+          "trend": "NEUTRAL"
+        },
+        {
+          "symbol": "DIA",
+          "price": 489.03,
+          "change_pct": -0.24,
+          "trend": "NEUTRAL"
+        }
       ],
       "signals": [
         {
@@ -75,21 +110,33 @@
           "confidence": "MEDIUM",
           "rationale": "RSI overbought (71.8) | High volume confirmation | Price near BB resistance"
         }
-      ]
+      ],
+      "audio": "/audio/brief-2026-02-02-markets.ogg"
     },
     "news": {
-      "title": "🌍 World News",
-      "note": "Web search unavailable — Brave API key not configured",
+      "title": "\ud83c\udf0d World News",
+      "note": "Web search unavailable \u2014 Brave API key not configured",
       "subsections": {
-        "israel": {"title": "🇮🇱 Israel", "items": []},
-        "us": {"title": "🇺🇸 United States", "items": []},
-        "world": {"title": "🌐 Global", "items": []}
-      }
+        "israel": {
+          "title": "\ud83c\uddee\ud83c\uddf1 Israel",
+          "items": []
+        },
+        "us": {
+          "title": "\ud83c\uddfa\ud83c\uddf8 United States",
+          "items": []
+        },
+        "world": {
+          "title": "\ud83c\udf10 Global",
+          "items": []
+        }
+      },
+      "audio": "/audio/brief-2026-02-02-news.ogg"
     },
     "ai": {
-      "title": "🤖 AI Intel",
-      "note": "Web search unavailable — Brave API key not configured",
-      "items": []
+      "title": "\ud83e\udd16 AI Intel",
+      "note": "Web search unavailable \u2014 Brave API key not configured",
+      "items": [],
+      "audio": "/audio/brief-2026-02-02-ai.ogg"
     }
   }
 }

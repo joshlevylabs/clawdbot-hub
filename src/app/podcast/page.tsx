@@ -25,6 +25,14 @@ import {
   SkipBack,
   SkipForward,
   Headphones,
+  Send,
+  Loader2,
+  Sparkles,
+  Download,
+  Copy,
+  Check,
+  MessageSquare,
+  Wand2,
 } from "lucide-react";
 
 // Web Speech API types
@@ -126,6 +134,288 @@ const wpsToSlider = (wps: number): number => {
   // Inverse of above
   return 100 * Math.log(wps / MIN_WPS) / Math.log(MAX_WPS / MIN_WPS);
 };
+
+// Episode Generator Chat Component
+interface ChatMessage {
+  role: 'user' | 'assistant';
+  content: string;
+  timestamp: Date;
+}
+
+function EpisodeGenerator({ 
+  onScriptReady,
+  onClose,
+}: { 
+  onScriptReady: (script: string) => void;
+  onClose: () => void;
+}) {
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [input, setInput] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [isGeneratingAudio, setIsGeneratingAudio] = useState(false);
+  const [currentScript, setCurrentScript] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+
+  // Auto-scroll to bottom
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
+  // Start conversation on mount
+  useEffect(() => {
+    startConversation();
+  }, []);
+
+  const startConversation = async () => {
+    setIsLoading(true);
+    try {
+      const res = await fetch('/api/podcast/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: [], action: 'start' }),
+      });
+      const data = await res.json();
+      if (data.message) {
+        setMessages([{ 
+          role: 'assistant', 
+          content: data.message,
+          timestamp: new Date(),
+        }]);
+      }
+    } catch (error) {
+      console.error('Failed to start conversation:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const sendMessage = async () => {
+    if (!input.trim() || isLoading) return;
+
+    const userMessage: ChatMessage = {
+      role: 'user',
+      content: input.trim(),
+      timestamp: new Date(),
+    };
+
+    const newMessages = [...messages, userMessage];
+    setMessages(newMessages);
+    setInput('');
+    setIsLoading(true);
+
+    try {
+      const res = await fetch('/api/podcast/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          messages: newMessages.map(m => ({ role: m.role, content: m.content })),
+        }),
+      });
+      const data = await res.json();
+      
+      if (data.message) {
+        const assistantMessage: ChatMessage = {
+          role: 'assistant',
+          content: data.message,
+          timestamp: new Date(),
+        };
+        setMessages([...newMessages, assistantMessage]);
+        
+        // Check if this looks like a full script (has > lines)
+        if (data.message.includes('>') && data.message.split('>').length > 5) {
+          setCurrentScript(data.message);
+        }
+      }
+    } catch (error) {
+      console.error('Failed to send message:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const generateAudio = async () => {
+    if (!currentScript) return;
+    
+    setIsGeneratingAudio(true);
+    try {
+      const res = await fetch('/api/podcast/tts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ script: currentScript }),
+      });
+      
+      const data = await res.json();
+      
+      if (data.audio) {
+        // Create blob URL from base64
+        const audioBlob = new Blob(
+          [Uint8Array.from(atob(data.audio), c => c.charCodeAt(0))],
+          { type: 'audio/mpeg' }
+        );
+        const url = URL.createObjectURL(audioBlob);
+        setAudioUrl(url);
+      } else if (data.error) {
+        alert(`Audio generation failed: ${data.error}`);
+      }
+    } catch (error) {
+      console.error('Failed to generate audio:', error);
+      alert('Failed to generate audio. Check console for details.');
+    } finally {
+      setIsGeneratingAudio(false);
+    }
+  };
+
+  const copyScript = async () => {
+    if (!currentScript) return;
+    await navigator.clipboard.writeText(currentScript);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const downloadAudio = () => {
+    if (!audioUrl) return;
+    const a = document.createElement('a');
+    a.href = audioUrl;
+    a.download = `episode-draft-${Date.now()}.mp3`;
+    a.click();
+  };
+
+  return (
+    <div className="bg-slate-850 rounded-xl border border-slate-800 overflow-hidden">
+      {/* Header */}
+      <div className="p-4 border-b border-slate-800 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-lg">
+            <Wand2 className="w-5 h-5 text-purple-400" />
+          </div>
+          <div>
+            <h3 className="font-medium text-slate-100">Episode Generator</h3>
+            <p className="text-xs text-slate-500">Chat with ScriptBot to create your next episode</p>
+          </div>
+        </div>
+        <button 
+          onClick={onClose}
+          className="p-2 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white transition-colors"
+        >
+          <X className="w-5 h-5" />
+        </button>
+      </div>
+
+      {/* Chat Messages */}
+      <div className="h-80 overflow-y-auto p-4 space-y-4">
+        {messages.map((msg, i) => (
+          <div 
+            key={i} 
+            className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+          >
+            <div 
+              className={`max-w-[85%] rounded-xl px-4 py-3 ${
+                msg.role === 'user' 
+                  ? 'bg-primary-600 text-white' 
+                  : 'bg-slate-800 text-slate-200'
+              }`}
+            >
+              <div className="text-sm whitespace-pre-wrap">{msg.content}</div>
+              <div className={`text-xs mt-1 ${msg.role === 'user' ? 'text-primary-200' : 'text-slate-500'}`}>
+                {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              </div>
+            </div>
+          </div>
+        ))}
+        {isLoading && (
+          <div className="flex justify-start">
+            <div className="bg-slate-800 rounded-xl px-4 py-3">
+              <Loader2 className="w-5 h-5 text-slate-400 animate-spin" />
+            </div>
+          </div>
+        )}
+        <div ref={messagesEndRef} />
+      </div>
+
+      {/* Script Actions (if script detected) */}
+      {currentScript && (
+        <div className="px-4 py-3 border-t border-slate-800 bg-slate-900/50">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-xs text-emerald-400 flex items-center gap-1">
+              <Sparkles className="w-3 h-3" />
+              Script detected
+            </span>
+            <div className="flex-1" />
+            <button
+              onClick={copyScript}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 rounded-lg text-xs text-slate-300"
+            >
+              {copied ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+              {copied ? 'Copied' : 'Copy'}
+            </button>
+            <button
+              onClick={() => onScriptReady(currentScript)}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 rounded-lg text-xs text-slate-300"
+            >
+              <Monitor className="w-3 h-3" />
+              Teleprompter
+            </button>
+            <button
+              onClick={generateAudio}
+              disabled={isGeneratingAudio}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-700 rounded-lg text-xs text-white"
+            >
+              {isGeneratingAudio ? (
+                <Loader2 className="w-3 h-3 animate-spin" />
+              ) : (
+                <Volume2 className="w-3 h-3" />
+              )}
+              {isGeneratingAudio ? 'Generating...' : 'Generate Audio'}
+            </button>
+          </div>
+          
+          {/* Audio Player */}
+          {audioUrl && (
+            <div className="mt-3 flex items-center gap-3 bg-slate-800 rounded-lg p-3">
+              <audio src={audioUrl} controls className="flex-1 h-8" />
+              <button
+                onClick={downloadAudio}
+                className="p-2 bg-slate-700 hover:bg-slate-600 rounded-lg text-slate-300"
+              >
+                <Download className="w-4 h-4" />
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Input */}
+      <div className="p-4 border-t border-slate-800">
+        <div className="flex gap-2">
+          <textarea
+            ref={inputRef}
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+              }
+            }}
+            placeholder="Type your message... (Enter to send, Shift+Enter for newline)"
+            className="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-primary-500 resize-none"
+            rows={2}
+          />
+          <button
+            onClick={sendMessage}
+            disabled={!input.trim() || isLoading}
+            className="px-4 bg-primary-600 hover:bg-primary-700 disabled:bg-slate-700 disabled:text-slate-500 rounded-lg text-white transition-colors"
+          >
+            <Send className="w-5 h-5" />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 // Teleprompter Component with Voice Sync
 function Teleprompter({ 
@@ -984,6 +1274,7 @@ export default function PodcastPage() {
   const [playingAudio, setPlayingAudio] = useState<{ episode: Episode; src: string } | null>(null);
   const [todos, setTodos] = useState<Todo[]>([]);
   const [newTodo, setNewTodo] = useState('');
+  const [showGenerator, setShowGenerator] = useState(false);
   
   // Load index
   const loadIndex = useCallback(async () => {
@@ -1137,7 +1428,29 @@ export default function PodcastPage() {
           </h1>
           <p className="text-slate-500 mt-1">Podcast dashboard • Scripts • Teleprompter</p>
         </div>
+        <button
+          onClick={() => setShowGenerator(!showGenerator)}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all ${
+            showGenerator 
+              ? 'bg-purple-600 text-white' 
+              : 'bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:from-purple-700 hover:to-pink-700'
+          }`}
+        >
+          <Wand2 className="w-5 h-5" />
+          {showGenerator ? 'Close Generator' : 'Generate Next Episode'}
+        </button>
       </div>
+
+      {/* Episode Generator */}
+      {showGenerator && (
+        <EpisodeGenerator
+          onScriptReady={(script) => {
+            setTeleprompterScript(script);
+            setShowGenerator(false);
+          }}
+          onClose={() => setShowGenerator(false)}
+        />
+      )}
       
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Episodes */}

@@ -13,12 +13,22 @@
         "spotify": "https://open.spotify.com/episode/4u6SCrXUmvc3WNYi1jpBTq?si=Dlnfj5U5Qdyzq2y-maVaGQ",
         "apple": "https://podcasts.apple.com/us/podcast/why-i-started-the-builders-frequency/id1874100721?i=1000747767489"
       }
+    },
+    {
+      "number": 2,
+      "title": "The Invisible Entrepreneur",
+      "pillar": "side-business",
+      "filename": "episode-002-2026-02-02-invisible-entrepreneur.md",
+      "created": "2026-02-02",
+      "finalized": null,
+      "status": "ready_to_record",
+      "links": {}
     }
   ],
-  "lastEpisodeNumber": 1,
+  "lastEpisodeNumber": 2,
   "pillarCounts": {
     "ai": 0,
-    "side-business": 0,
+    "side-business": 1,
     "engineering": 0,
     "faith": 0,
     "legacy": 0,

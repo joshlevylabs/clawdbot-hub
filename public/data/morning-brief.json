@@ -3,108 +3,196 @@
   "time": "6:00 AM",
   "sections": {
     "prayer": {
-      "title": "🕊️ Morning Prayer",
+      "title": "\ud83d\udd4a\ufe0f Morning Prayer",
       "date": "Tuesday, February 03, 2026",
       "hebrew_date": "5 Cheshvan",
       "parsha": "Vayetzei",
       "parsha_theme": "dreams, building from nothing, divine protection",
-      "modeh_ani": "מודה אני לפניך — I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
-      "blessing": "Blessed are You who crowns Israel with glory — let my work bring You honor.",
+      "modeh_ani": "\u05de\u05d5\u05d3\u05d4 \u05d0\u05e0\u05d9 \u05dc\u05e4\u05e0\u05d9\u05da \u2014 I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
+      "blessing": "Blessed are You who crowns Israel with glory \u2014 let my work bring You honor.",
       "psalm": "Psalm 118:25: \"Lord, save us! Lord, grant us success!\"",
       "proverb": "Proverbs 22:29: \"Do you see a man skilled in his work? He will stand before kings.\"",
       "intention": "Let my work today compound into something that outlasts me.",
-      "closing": "May your work today be a pleasing offering. May your rest tonight be deep and restorative."
+      "closing": "May your work today be a pleasing offering. May your rest tonight be deep and restorative.",
+      "audio": "/audio/brief-2026-02-03-prayer.ogg"
     },
     "weather": {
-      "title": "☀️ Weather — Temecula",
-      "temperature": "47°F",
-      "feelsLike": "44°F",
+      "title": "\u2600\ufe0f Weather \u2014 Temecula",
+      "temperature": "47\u00b0F",
+      "feelsLike": "44\u00b0F",
       "condition": "Overcast",
       "wind": "NE 6mph",
       "humidity": "100%",
-      "summary": "Cool and cloudy morning. Bundle up the boys if heading outside."
+      "summary": "Cool and cloudy morning. Bundle up the boys if heading outside.",
+      "audio": "/audio/brief-2026-02-03-weather.ogg"
     },
     "calendar": {
-      "title": "📅 Calendar",
-      "items": ["Calendar integration needs re-authentication — run `gog auth` to reconnect"],
-      "note": "Check Google Calendar directly for today's events"
+      "title": "\ud83d\udcc5 Calendar",
+      "items": [
+        "Calendar integration needs re-authentication \u2014 run `gog auth` to reconnect"
+      ],
+      "note": "Check Google Calendar directly for today's events",
+      "audio": "/audio/brief-2026-02-03-calendar.ogg"
     },
     "email": {
-      "title": "📧 Email Highlights",
-      "note": "Email integration needs re-authentication — run `gog auth` to reconnect",
+      "title": "\ud83d\udce7 Email Highlights",
+      "note": "Email integration needs re-authentication \u2014 run `gog auth` to reconnect",
       "needs_attention": [],
       "dev_work": [],
-      "good_news": []
+      "good_news": [],
+      "audio": "/audio/brief-2026-02-03-email.ogg"
     },
     "markets": {
-      "title": "📈 Markets & Trading Signals",
+      "title": "\ud83d\udcc8 Markets & Trading Signals",
       "summary": {
         "date": "2026-02-03",
         "time": "06:00 AM",
         "market_status": "OPEN",
-        "spy": {"price": 695.41, "change_pct": 0.5},
+        "spy": {
+          "price": 695.41,
+          "change_pct": 0.5
+        },
         "vix": 16.18,
         "sentiment": "NEUTRAL",
         "volatility": "LOW"
       },
       "overview": [
-        {"symbol": "SPY", "price": 695.41, "change_pct": 0.5, "trend": "NEUTRAL"},
-        {"symbol": "QQQ", "price": 626.14, "change_pct": 0.69, "trend": "NEUTRAL"},
-        {"symbol": "IWM", "price": 262.18, "change_pct": 0.97, "trend": "NEUTRAL"},
-        {"symbol": "DIA", "price": 494.03, "change_pct": 1.02, "trend": "NEUTRAL"}
+        {
+          "symbol": "SPY",
+          "price": 695.41,
+          "change_pct": 0.5,
+          "trend": "NEUTRAL"
+        },
+        {
+          "symbol": "QQQ",
+          "price": 626.14,
+          "change_pct": 0.69,
+          "trend": "NEUTRAL"
+        },
+        {
+          "symbol": "IWM",
+          "price": 262.18,
+          "change_pct": 0.97,
+          "trend": "NEUTRAL"
+        },
+        {
+          "symbol": "DIA",
+          "price": 494.03,
+          "change_pct": 1.02,
+          "trend": "NEUTRAL"
+        }
       ],
       "signals": [],
       "watchlist": [
-        {"symbol": "MSFT", "price": 423.37, "note": "Near BB support, RSI 30.6 — watching for bounce"},
-        {"symbol": "GOOGL", "price": 343.69, "note": "RSI overbought (70.1), near resistance"},
-        {"symbol": "XLE", "price": 50.05, "note": "Energy sector holding, neutral"}
-      ]
+        {
+          "symbol": "MSFT",
+          "price": 423.37,
+          "note": "Near BB support, RSI 30.6 \u2014 watching for bounce"
+        },
+        {
+          "symbol": "GOOGL",
+          "price": 343.69,
+          "note": "RSI overbought (70.1), near resistance"
+        },
+        {
+          "symbol": "XLE",
+          "price": 50.05,
+          "note": "Energy sector holding, neutral"
+        }
+      ],
+      "audio": "/audio/brief-2026-02-03-markets.ogg"
     },
     "family": {
-      "title": "❤️ Family Focus",
+      "title": "\u2764\ufe0f Family Focus",
       "relationshipStatus": {
         "temperature": "critical",
         "ratio": 1.5,
         "note": "Need to focus on repair. The 5:1 ratio is way off."
       },
-      "potencyAction": "Give her space if she needs it, then come back with a genuine apology. No defending, no explaining — just acknowledging.",
-      "suggestion": "If weather clears up, take Jones to the backyard for some Super Wings pretend play — he can 'fly' around while you supervise Jett on a blanket.",
+      "potencyAction": "Give her space if she needs it, then come back with a genuine apology. No defending, no explaining \u2014 just acknowledging.",
+      "suggestion": "If weather clears up, take Jones to the backyard for some Super Wings pretend play \u2014 he can 'fly' around while you supervise Jett on a blanket.",
       "conversationStarter": "Ask Jillian: 'What's been on your mind this week? I want to understand, not fix.'",
       "weeklyGoal": "Focus on repair this week. Increase acts of service. Create space for her to express frustrations without jumping to solutions.",
       "upcomingDates": [
-        {"date": "02-14", "event": "Valentine's Day", "daysAway": 11},
-        {"date": "03-26", "event": "Wedding Anniversary", "daysAway": 51}
+        {
+          "date": "02-14",
+          "event": "Valentine's Day",
+          "daysAway": 11
+        },
+        {
+          "date": "03-26",
+          "event": "Wedding Anniversary",
+          "daysAway": 51
+        }
       ],
       "reflection": "With Valentine's Day 11 days away, this week is critical for repair. The ratio needs attention before planning anything romantic. Present first, grand gestures later."
     },
     "news": {
-      "title": "🌍 World News",
+      "title": "\ud83c\udf0d World News",
       "subsections": {
         "israel": {
-          "title": "🇮🇱 Israel",
+          "title": "\ud83c\uddee\ud83c\uddf1 Israel",
           "items": [
-            {"headline": "Trump sets deadline for Iran: Deal or strike", "source": "ILTV", "note": "US and Israel signaling readiness for possible action"},
-            {"headline": "Netanyahu addresses Knesset on 77th anniversary", "source": "Times of Israel", "note": "Says democracy protects resilience amid regional threats"},
-            {"headline": "Rafah crossing limited reopening", "source": "Guardian", "note": "Small number of wounded Palestinians crossing to Egypt for medical treatment"}
+            {
+              "headline": "Trump sets deadline for Iran: Deal or strike",
+              "source": "ILTV",
+              "note": "US and Israel signaling readiness for possible action"
+            },
+            {
+              "headline": "Netanyahu addresses Knesset on 77th anniversary",
+              "source": "Times of Israel",
+              "note": "Says democracy protects resilience amid regional threats"
+            },
+            {
+              "headline": "Rafah crossing limited reopening",
+              "source": "Guardian",
+              "note": "Small number of wounded Palestinians crossing to Egypt for medical treatment"
+            }
           ]
         },
         "us": {
-          "title": "🇺🇸 United States",
+          "title": "\ud83c\uddfa\ud83c\uddf8 United States",
           "items": [
-            {"headline": "Trump and Johnson push House spending bill", "source": "NYT", "note": "Brett Matsumoto nominated to lead Bureau of Labor Statistics"},
-            {"headline": "Karl Rove criticizes Trump economy claims", "source": "The Hill", "note": "Says administration 'making same mistake Biden made'"},
-            {"headline": "Tariff concerns persist", "source": "Brookings", "note": "75% of Americans believe tariffs are raising prices"}
+            {
+              "headline": "Trump and Johnson push House spending bill",
+              "source": "NYT",
+              "note": "Brett Matsumoto nominated to lead Bureau of Labor Statistics"
+            },
+            {
+              "headline": "Karl Rove criticizes Trump economy claims",
+              "source": "The Hill",
+              "note": "Says administration 'making same mistake Biden made'"
+            },
+            {
+              "headline": "Tariff concerns persist",
+              "source": "Brookings",
+              "note": "75% of Americans believe tariffs are raising prices"
+            }
           ]
         }
-      }
+      },
+      "audio": "/audio/brief-2026-02-03-news.ogg"
     },
     "ai": {
-      "title": "🤖 AI Intel",
+      "title": "\ud83e\udd16 AI Intel",
       "items": [
-        {"headline": "Claude Sonnet 5 reportedly launching today (Feb 3)", "source": "CometAPI", "note": "Google Vertex AI logs reference Feb 3 activation window"},
-        {"headline": "Anthropic expands healthcare offerings", "source": "NBC/Business Insider", "note": "New Claude integrations connect to medical databases and health records"},
-        {"headline": "Anthropic opens Bengaluru office", "source": "Anthropic", "note": "Irina Ghose appointed as Managing Director of India"}
-      ]
+        {
+          "headline": "Claude Sonnet 5 reportedly launching today (Feb 3)",
+          "source": "CometAPI",
+          "note": "Google Vertex AI logs reference Feb 3 activation window"
+        },
+        {
+          "headline": "Anthropic expands healthcare offerings",
+          "source": "NBC/Business Insider",
+          "note": "New Claude integrations connect to medical databases and health records"
+        },
+        {
+          "headline": "Anthropic opens Bengaluru office",
+          "source": "Anthropic",
+          "note": "Irina Ghose appointed as Managing Director of India"
+        }
+      ],
+      "audio": "/audio/brief-2026-02-03-ai.ogg"
     }
   }
 }

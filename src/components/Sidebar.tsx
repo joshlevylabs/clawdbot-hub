@@ -18,6 +18,7 @@ import {
   Mic,
   Users,
   MessageSquare,
+  TrendingUp,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -25,6 +26,7 @@ const navItems = [
   { href: "/dashboard", icon: Sunrise, label: "Dashboard" },
   { href: "/morning-brief", icon: Clock, label: "Morning Brief" },
   { href: "/markets", icon: BarChart2, label: "Markets" },
+  { href: "/trading", icon: TrendingUp, label: "Paper Trading" },
   { href: "/podcast", icon: Mic, label: "Podcast" },
   { href: "/family", icon: Users, label: "Family" },
   { href: "/marriage", icon: Heart, label: "Marriage" },

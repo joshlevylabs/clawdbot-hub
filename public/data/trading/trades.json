@@ -1,0 +1,26 @@
+[
+  {
+    "id": "T000001",
+    "symbol": "BTC/USD",
+    "side": "buy",
+    "quantity": 0.012704957840960528,
+    "price": 78630.8,
+    "timestamp": "2026-02-02T23:22:00.285699",
+    "strategy": "buy_the_dip",
+    "pnl": 0.0,
+    "fees": 0.9990009990009991,
+    "notes": ""
+  },
+  {
+    "id": "T000002",
+    "symbol": "ETH/USD",
+    "side": "buy",
+    "quantity": 0.43045139326697024,
+    "price": 2320.59,
+    "timestamp": "2026-02-02T23:22:01.436286",
+    "strategy": "buy_the_dip",
+    "pnl": 0.0,
+    "fees": 0.9989011987013986,
+    "notes": ""
+  }
+]

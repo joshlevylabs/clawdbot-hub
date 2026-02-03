@@ -2,6 +2,10 @@ import { NextResponse } from 'next/server';
 import { promises as fs } from 'fs';
 import path from 'path';
 
+// Force dynamic rendering (no caching)
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 // Use public/data/podcast for deployed version, local path for dev
 const isVercel = process.env.VERCEL === '1';
 const LOCAL_PODCAST_DIR = path.join(process.env.HOME || '', 'clawd/builders-frequency');
@@ -43,7 +47,11 @@ export async function GET(request: Request) {
       // Todos file doesn't exist yet
     }
 
-    return NextResponse.json({ index, todos });
+    return NextResponse.json({ index, todos }, {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate',
+      },
+    });
   } catch (error) {
     console.error('Podcast API error:', error);
     return NextResponse.json({ error: 'Failed to read podcast data' }, { status: 500 });

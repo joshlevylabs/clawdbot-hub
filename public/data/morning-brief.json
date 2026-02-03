@@ -3,13 +3,13 @@
   "time": "6:00 AM",
   "sections": {
     "prayer": {
-      "title": "\ud83d\udd4a\ufe0f Morning Prayer",
+      "title": "🕊️ Morning Prayer",
       "date": "Tuesday, February 03, 2026",
       "hebrew_date": "5 Cheshvan",
       "parsha": "Vayetzei",
       "parsha_theme": "dreams, building from nothing, divine protection",
-      "modeh_ani": "\u05de\u05d5\u05d3\u05d4 \u05d0\u05e0\u05d9 \u05dc\u05e4\u05e0\u05d9\u05da \u2014 I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
-      "blessing": "Blessed are You who crowns Israel with glory \u2014 let my work bring You honor.",
+      "modeh_ani": "מודה אני לפניך — I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
+      "blessing": "Blessed are You who crowns Israel with glory — let my work bring You honor.",
       "psalm": "Psalm 118:25: \"Lord, save us! Lord, grant us success!\"",
       "proverb": "Proverbs 22:29: \"Do you see a man skilled in his work? He will stand before kings.\"",
       "intention": "Let my work today compound into something that outlasts me.",
@@ -17,9 +17,9 @@
       "audio": "/audio/brief-2026-02-03-prayer.ogg"
     },
     "weather": {
-      "title": "\u2600\ufe0f Weather \u2014 Temecula",
-      "temperature": "47\u00b0F",
-      "feelsLike": "44\u00b0F",
+      "title": "☀️ Weather — Temecula",
+      "temperature": "47°F",
+      "feelsLike": "44°F",
       "condition": "Overcast",
       "wind": "NE 6mph",
       "humidity": "100%",
@@ -27,23 +27,50 @@
       "audio": "/audio/brief-2026-02-03-weather.ogg"
     },
     "calendar": {
-      "title": "\ud83d\udcc5 Calendar",
+      "title": "📅 Calendar",
       "items": [
-        "Calendar integration needs re-authentication \u2014 run `gog auth` to reconnect"
+        "Calendar integration needs re-authentication — run `gog auth` to reconnect"
       ],
       "note": "Check Google Calendar directly for today's events",
       "audio": "/audio/brief-2026-02-03-calendar.ogg"
     },
     "email": {
-      "title": "\ud83d\udce7 Email Highlights",
-      "note": "Email integration needs re-authentication \u2014 run `gog auth` to reconnect",
-      "needs_attention": [],
-      "dev_work": [],
-      "good_news": [],
-      "audio": "/audio/brief-2026-02-03-email.ogg"
+      "title": "📧 Email Highlights",
+      "needs_attention": [
+        {
+          "from": "Google",
+          "subject": "Security alert",
+          "note": "Yesterday 4:12pm - check this"
+        }
+      ],
+      "good_news": [
+        {
+          "from": "Gusto",
+          "subject": "Josh Levy Labs January 2026 invoice paid"
+        },
+        {
+          "from": "OpusClip",
+          "subject": "Video Successfully Published"
+        }
+      ],
+      "business": [
+        {
+          "from": "YC Co-Founder Matching",
+          "subject": "Top co-founder profile picks for the week"
+        },
+        {
+          "from": "Beehiiv",
+          "subject": "Metrics Report - New Post"
+        },
+        {
+          "from": "BlackBox",
+          "subject": "New stock footage royalties!"
+        }
+      ],
+      "total_unread": 15
     },
     "markets": {
-      "title": "\ud83d\udcc8 Markets & Trading Signals",
+      "title": "📈 Markets & Trading Signals",
       "summary": {
         "date": "2026-02-03",
         "time": "06:00 AM",
@@ -87,7 +114,7 @@
         {
           "symbol": "MSFT",
           "price": 423.37,
-          "note": "Near BB support, RSI 30.6 \u2014 watching for bounce"
+          "note": "Near BB support, RSI 30.6 — watching for bounce"
         },
         {
           "symbol": "GOOGL",
@@ -103,14 +130,14 @@
       "audio": "/audio/brief-2026-02-03-markets.ogg"
     },
     "family": {
-      "title": "\u2764\ufe0f Family Focus",
+      "title": "❤️ Family Focus",
       "relationshipStatus": {
         "temperature": "critical",
         "ratio": 1.5,
         "note": "Need to focus on repair. The 5:1 ratio is way off."
       },
-      "potencyAction": "Give her space if she needs it, then come back with a genuine apology. No defending, no explaining \u2014 just acknowledging.",
-      "suggestion": "If weather clears up, take Jones to the backyard for some Super Wings pretend play \u2014 he can 'fly' around while you supervise Jett on a blanket.",
+      "potencyAction": "Give her space if she needs it, then come back with a genuine apology. No defending, no explaining — just acknowledging.",
+      "suggestion": "If weather clears up, take Jones to the backyard for some Super Wings pretend play — he can 'fly' around while you supervise Jett on a blanket.",
       "conversationStarter": "Ask Jillian: 'What's been on your mind this week? I want to understand, not fix.'",
       "weeklyGoal": "Focus on repair this week. Increase acts of service. Create space for her to express frustrations without jumping to solutions.",
       "upcomingDates": [
@@ -128,10 +155,10 @@
       "reflection": "With Valentine's Day 11 days away, this week is critical for repair. The ratio needs attention before planning anything romantic. Present first, grand gestures later."
     },
     "news": {
-      "title": "\ud83c\udf0d World News",
+      "title": "🌍 World News",
       "subsections": {
         "israel": {
-          "title": "\ud83c\uddee\ud83c\uddf1 Israel",
+          "title": "🇮🇱 Israel",
           "items": [
             {
               "headline": "Trump sets deadline for Iran: Deal or strike",
@@ -151,7 +178,7 @@
           ]
         },
         "us": {
-          "title": "\ud83c\uddfa\ud83c\uddf8 United States",
+          "title": "🇺🇸 United States",
           "items": [
             {
               "headline": "Trump and Johnson push House spending bill",
@@ -174,7 +201,7 @@
       "audio": "/audio/brief-2026-02-03-news.ogg"
     },
     "ai": {
-      "title": "\ud83e\udd16 AI Intel",
+      "title": "🤖 AI Intel",
       "items": [
         {
           "headline": "Claude Sonnet 5 reportedly launching today (Feb 3)",

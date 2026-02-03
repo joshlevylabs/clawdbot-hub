@@ -1334,6 +1334,7 @@ function ScriptEditor({
 // Episode audio mapping
 const EPISODE_AUDIO: Record<number, string> = {
   1: '/audio/podcast/episode-001.mp3',
+  2: '/audio/podcast/episode-002.mp3',
 };
 
 // Main Page

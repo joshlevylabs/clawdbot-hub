@@ -22,11 +22,11 @@
 
 > I turned 30 at a rave on Koh Phi Phi.
 >
-> I was 18 months into my dream life — travel photographer, drone footage, stock sites, beaches, freedom. I'd quit Amazon two years into a backloaded four-year vesting contract. My parents thought I was crazy. *(beat)* They weren't wrong.
+> I was 18 months into my dream life — a travel photographer, drone footage, selling media on stock footage sites, while sipping margs on beaches. It was freedom. I'd quit Amazon two years into a backloaded four-year vesting contract. My parents thought I was crazy. *(beat)* They weren't wrong.
 >
 > And standing there on that beach, surrounded by people I'd never see again, I had this thought: *This is completely empty.*
 >
-> I was broke. I was alone. My girlfriend — now my wife — was back home, and I didn't want to tell her mother I couldn't afford a flight back.
+> I was broke. I was alone. My girlfriend — now my wife — was back home, and I didn't want to tell her mother I couldn't afford the flight back.
 >
 > That was my first lesson in entrepreneurship. Not how to build a business. How to build the *wrong* one.
 >
@@ -46,11 +46,11 @@
 
 > So let me tell you what I got wrong.
 >
-> I left Amazon to be a travel photographer. Expensive camera, drone, beautiful b-roll footage, selling clips on stock sites. Sounds amazing, right?
+> I left Amazon to be a travel photographer. Expensive camera, drone, creating beautiful b-roll footage, selling clips on stock sites. Sounds amazing, right?
 >
 > *(beat)*
 >
-> It was — for about three months. Then it was lonely hotel rooms, inconsistent income, and trying to convince myself that "freedom" was worth not having a place to call home.
+> It was — for about six months. Then it turned into lonely hotel rooms, inconsistent income, and trying to convince myself that "freedom" was worth not having a place to call home.
 >
 > Here's what nobody tells you about quitting your job to chase a dream: if you pick the wrong dream, you just traded a 9-to-5 for a 24/7 problem.
 >
@@ -64,7 +64,7 @@
 >
 > I went back to engineering. Got a job at Meta. And for the first time, I started building on the side *correctly*.
 >
-> **Here's the lesson:** Don't start a business just to escape your job. A job you tolerate will always beat a business you resent. The goal isn't freedom from work. The goal is work worth doing.
+> Here's the lesson: Don't start a business just to escape your job. A job you tolerate will always beat a business you resent. The goal isn't freedom from work. The goal is work worth doing.
 
 ---
 
@@ -80,15 +80,15 @@
 >
 > *(beat)*
 >
-> **Apple?** Started in a garage while Steve Wozniak worked full-time at HP. He didn't quit until Apple was already making money.
+> Apple? Started in a garage while Steve Wozniak worked full-time at HP. He didn't quit until Apple was already making money.
 >
-> **Dell?** Michael Dell started selling computers from his dorm room while still a student. He only dropped out when the business was doing $80,000 a month.
+> Dell? Michael Dell started selling computers from his dorm room while still a student. He only dropped out when the business was doing $80,000 a month.
 >
-> **Spanx?** Sara Blakely sold fax machines door-to-door for two years while building her company on the side. Two years of cold calls while prototyping underwear in her apartment.
+> Spanx? Sara Blakely sold fax machines door-to-door for two years while building her company on the side. Two years of cold calls while prototyping underwear in her apartment.
 >
 > These aren't overnight success stories. They're invisible entrepreneur stories.
 >
-> **The lesson:** The "quit your job and bet everything" narrative is survivorship bias dressed up as wisdom. Most successful founders started on the side. You're not playing it safe — you're playing it smart.
+> The lesson: The "quit your job and bet everything" narrative is survivorship bias dressed up as wisdom. Most successful founders started on the side. You're not playing it safe — you're playing it smart.
 
 ---
 
@@ -110,7 +110,7 @@
 >
 > *(beat)*
 >
-> That's the first advantage of stealth mode: **you can fail quietly.**
+> That's the first advantage of stealth mode: you can fail quietly.
 >
 > Then I started The Lyceum — building software to manage audio production data for manufacturing teams. Niche, technical, something I actually cared about. I kept talking to people at different companies who had the same problem. That gave me enough confidence to keep going — even when I second-guessed myself constantly.
 >
@@ -118,13 +118,13 @@
 >
 > *(beat)*
 >
-> **Advantage two: Financial runway without the fundraising.**
+> Advantage two: Financial runway without the fundraising.
 >
 > When you have a salary, you have infinite runway. You're not burning cash. You're not taking meetings with VCs who want 20% of your company for enough money to survive six months.
 >
 > You can say no to bad deals. You can wait for the right customer. You can build the thing right instead of the thing fast.
 >
-> **Advantage three: Constraints force focus.**
+> Advantage three: Constraints force focus.
 >
 > You know what I don't have? Eight hours a day to work on my projects. I have two. Maybe three on a good day.
 >
@@ -162,27 +162,27 @@
 >
 > *(beat)*
 >
-> **Here's the real lesson:** The constraint isn't time. It's trust. You can find two hours a day. The question is whether the people you love still feel like you're present.
+> Here's the real lesson: The constraint isn't time. It's trust. You can find two hours a day. The question is whether the people you love still feel like you're present.
 
 ---
 
 ## SECTION 5: The Playbook (3 min)
 
-> So if you're building in the margins, here's the playbook. Four rules.
+> So if you're interested in how I successfully building the margins, here's my playbook. Four rules.
 >
-> **Rule one: Protect the asset.**
+> Rule one: Protect the asset.
 >
 > Your job pays the bills. Don't blow it up by building your side project on company time with company resources. The security of that paycheck is what gives you the freedom to build correctly. Protect it.
 >
-> **Rule two: Time-box ruthlessly.**
+> Rule two: Time-box ruthlessly.
 >
 > Find your window. Guard it like your business depends on it — because it does. Put it on your calendar like a meeting with your most important client.
 >
-> **Rule three: Shrink the scope until it's embarrassing.**
+> Rule three: Shrink the scope until it's embarrassing.
 >
 > What's the smallest possible version of your idea that could work? Not the vision. Not the platform. The smallest thing you can ship this month. If you're building in the margins, you can't afford scope creep.
 >
-> **Rule four: Tell almost nobody.**
+> Rule four: Don't share too early.
 >
 > When you announce too early, you get pressure from people watching, and the dopamine hit of public commitment that tricks your brain into thinking you've already accomplished something. Both are toxic for actually finishing.
 >
@@ -218,13 +218,13 @@
 
 > Let's bring it home. Four things to take with you:
 >
-> **One:** Don't build a business to escape your job. A job you tolerate beats a business you resent. Make sure you're building something you actually care about.
+> One: Don't build a business to escape your job. A job you tolerate beats a business you resent. Make sure you're building something you actually care about.
 >
-> **Two:** You're in good company. Apple, Dell, Spanx — all started on the side. The "all in" mythology is survivorship bias. You're not playing it safe, you're playing it smart.
+> Two: You're in good company. Apple, Dell, Spanx — all started on the side. The "all in" mythology is survivorship bias. You're not playing it safe, you're playing it smart.
 >
-> **Three:** Stealth mode has real advantages. Quiet failures, financial runway, forced focus. That's not a handicap — it's a strategy.
+> Three: Stealth mode has real advantages. Quiet failures, financial runway, forced focus. That's not a handicap — it's a strategy.
 >
-> **Four:** The real constraint isn't time. It's trust. Protect your relationships while you build. Find your window, but stay present.
+> Four: The real constraint isn't time. It's trust. Protect your relationships while you build. Find your window, but stay present.
 >
 > *(beat)*
 >

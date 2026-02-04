@@ -3,37 +3,40 @@
   "time": "6:00 AM",
   "sections": {
     "prayer": {
-      "title": "🕊️ Morning Prayer",
+      "title": "\ud83d\udd4a\ufe0f Morning Prayer",
       "date": "Wednesday, February 04, 2026",
       "hebrew_date": "6 Cheshvan",
       "parsha": "Vayetzei",
       "parsha_theme": "dreams, building from nothing, divine protection",
-      "modeh_ani": "מודה אני לפניך — I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
-      "blessing": "Blessed are You who girds Israel with strength — fortify me for the work ahead.",
+      "modeh_ani": "\u05de\u05d5\u05d3\u05d4 \u05d0\u05e0\u05d9 \u05dc\u05e4\u05e0\u05d9\u05da \u2014 I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
+      "blessing": "Blessed are You who girds Israel with strength \u2014 fortify me for the work ahead.",
       "psalm": "Psalm 90:17: \"May the favor of the Lord our God rest on us; establish the work of our hands.\"",
       "proverb": "Proverbs 21:5: \"The plans of the diligent lead surely to abundance.\"",
-      "intention": "Guide my hands today as I build — let every line of code, every decision, every conversation serve Your purposes.",
-      "closing": "May your work today be a pleasing offering. May your rest tonight be deep and restorative."
+      "intention": "Guide my hands today as I build \u2014 let every line of code, every decision, every conversation serve Your purposes.",
+      "closing": "May your work today be a pleasing offering. May your rest tonight be deep and restorative.",
+      "audio": "/audio/brief-2026-02-04-prayer.ogg"
     },
     "weather": {
-      "title": "☀️ Weather — Temecula",
-      "temperature": "48°F",
-      "feels_like": "45°F",
+      "title": "\u2600\ufe0f Weather \u2014 Temecula",
+      "temperature": "48\u00b0F",
+      "feels_like": "45\u00b0F",
       "condition": "Clear",
       "wind": "NE 7mph",
       "humidity": "93%",
-      "high": "66°F",
+      "high": "66\u00b0F",
       "sunrise": "6:42 AM",
       "sunset": "5:23 PM",
-      "summary": "Clear morning, warming to mid-60s. Beautiful day ahead."
+      "summary": "Clear morning, warming to mid-60s. Beautiful day ahead.",
+      "audio": "/audio/brief-2026-02-04-weather.ogg"
     },
     "calendar": {
-      "title": "📅 Calendar",
-      "note": "Calendar sync unavailable — check Google Calendar directly",
-      "items": []
+      "title": "\ud83d\udcc5 Calendar",
+      "note": "Calendar sync unavailable \u2014 check Google Calendar directly",
+      "items": [],
+      "audio": "/audio/brief-2026-02-04-calendar.ogg"
     },
     "email": {
-      "title": "📧 Email Highlights",
+      "title": "\ud83d\udce7 Email Highlights",
       "needs_attention": [
         {
           "from": "Sonance AP",
@@ -61,10 +64,11 @@
           "subject": "Deploy fraud detection on AWS with this IaC template"
         }
       ],
-      "total_unread": 8
+      "total_unread": 8,
+      "audio": "/audio/brief-2026-02-04-email.ogg"
     },
     "markets": {
-      "title": "📈 Markets & Trading Signals",
+      "title": "\ud83d\udcc8 Markets & Trading Signals",
       "summary": {
         "date": "2026-02-04",
         "market_status": "PRE-MARKET",
@@ -77,10 +81,30 @@
         "volatility": "LOW"
       },
       "overview": [
-        {"symbol": "SPY", "price": 689.53, "change_pct": -0.85, "trend": "NEUTRAL"},
-        {"symbol": "QQQ", "price": 616.52, "change_pct": -1.54, "trend": "BEARISH"},
-        {"symbol": "IWM", "price": 262.78, "change_pct": 0.23, "trend": "NEUTRAL"},
-        {"symbol": "DIA", "price": 492.31, "change_pct": -0.35, "trend": "NEUTRAL"}
+        {
+          "symbol": "SPY",
+          "price": 689.53,
+          "change_pct": -0.85,
+          "trend": "NEUTRAL"
+        },
+        {
+          "symbol": "QQQ",
+          "price": 616.52,
+          "change_pct": -1.54,
+          "trend": "BEARISH"
+        },
+        {
+          "symbol": "IWM",
+          "price": 262.78,
+          "change_pct": 0.23,
+          "trend": "NEUTRAL"
+        },
+        {
+          "symbol": "DIA",
+          "price": 492.31,
+          "change_pct": -0.35,
+          "trend": "NEUTRAL"
+        }
       ],
       "signals": [
         {
@@ -108,21 +132,30 @@
           "symbol": "XLE",
           "price": 51.67,
           "entry": 51.67,
-          "stop": 53.70,
+          "stop": 53.7,
           "target": 48.63,
           "confidence": "MEDIUM",
           "rationale": "RSI overbought (73.0) | Near BB resistance"
         }
-      ]
+      ],
+      "audio": "/audio/brief-2026-02-04-markets.ogg"
     },
     "family": {
-      "title": "👨‍👩‍👧‍👦 Family Focus",
+      "title": "\ud83d\udc68\u200d\ud83d\udc69\u200d\ud83d\udc67\u200d\ud83d\udc66 Family Focus",
       "suggestion": "Jones is at that age where he'll remember building things with dad. Set up a simple block tower challenge or play 'rescue mission' with his Super Wings toys.",
       "conversationStarter": "Ask Jillian: What book are you reading right now? (Or: Any concerts you've been wanting to see?)",
-      "weeklyGoal": "Plan your February date night this week — Valentine's Day is in 10 days!",
+      "weeklyGoal": "Plan your February date night this week \u2014 Valentine's Day is in 10 days!",
       "upcomingDates": [
-        {"date": "Feb 14", "event": "Valentine's Day", "daysAway": 10},
-        {"date": "Mar 26", "event": "Wedding Anniversary", "daysAway": 50}
+        {
+          "date": "Feb 14",
+          "event": "Valentine's Day",
+          "daysAway": 10
+        },
+        {
+          "date": "Mar 26",
+          "event": "Wedding Anniversary",
+          "daysAway": 50
+        }
       ],
       "potencyAction": "Give her space if she needs it, then come back with a genuine apology",
       "relationshipTemperature": {
@@ -130,40 +163,68 @@
         "ratio": 1.5,
         "note": "Ratio is below 5:1. Focus on repair and acts of service this week."
       },
-      "reflection": "The relationship temperature is flagging critical. Today isn't about grand gestures — it's about genuine presence and acknowledging recent friction without defending yourself."
+      "reflection": "The relationship temperature is flagging critical. Today isn't about grand gestures \u2014 it's about genuine presence and acknowledging recent friction without defending yourself."
     },
     "news": {
-      "title": "🌍 World News",
+      "title": "\ud83c\udf0d World News",
       "subsections": {
         "israel": {
-          "title": "🇮🇱 Israel",
+          "title": "\ud83c\uddee\ud83c\uddf1 Israel",
           "items": [
-            {"headline": "12 suspects indicted in Gaza smuggling case — charges include aiding enemy in wartime"},
-            {"headline": "Bennett adds Trump pollster to campaign team as elections approach"},
-            {"headline": "Katz: Israel to 'dismantle' Hamas if it doesn't disarm by ceasefire deadline"},
-            {"headline": "Trump sets deadline for Iran — US and Israel signal readiness for possible strike"}
+            {
+              "headline": "12 suspects indicted in Gaza smuggling case \u2014 charges include aiding enemy in wartime"
+            },
+            {
+              "headline": "Bennett adds Trump pollster to campaign team as elections approach"
+            },
+            {
+              "headline": "Katz: Israel to 'dismantle' Hamas if it doesn't disarm by ceasefire deadline"
+            },
+            {
+              "headline": "Trump sets deadline for Iran \u2014 US and Israel signal readiness for possible strike"
+            }
           ]
         },
         "us": {
-          "title": "🇺🇸 United States",
+          "title": "\ud83c\uddfa\ud83c\uddf8 United States",
           "items": [
-            {"headline": "Trump signs funding bill as immigration crackdown talks loom"},
-            {"headline": "Administration seeks $1B in damages from Harvard over antisemitism allegations"},
-            {"headline": "Trump has signed 235 executive orders, 57 memoranda, 124 proclamations since inauguration"},
-            {"headline": "2026 National Defense Strategy identifies China as pacing threat, demands NATO allies increase spending"}
+            {
+              "headline": "Trump signs funding bill as immigration crackdown talks loom"
+            },
+            {
+              "headline": "Administration seeks $1B in damages from Harvard over antisemitism allegations"
+            },
+            {
+              "headline": "Trump has signed 235 executive orders, 57 memoranda, 124 proclamations since inauguration"
+            },
+            {
+              "headline": "2026 National Defense Strategy identifies China as pacing threat, demands NATO allies increase spending"
+            }
           ]
         }
-      }
+      },
+      "audio": "/audio/brief-2026-02-04-news.ogg"
     },
     "ai": {
-      "title": "🤖 AI Intel",
+      "title": "\ud83e\udd16 AI Intel",
       "items": [
-        {"headline": "CES 2026: AMD announces Ryzen AI 400 series processors for laptops"},
-        {"headline": "MIT Tech Review: Expect more apps shipping on Chinese open models — lag shrinking to weeks"},
-        {"headline": "IBM: Quantum-AI convergence accelerating — Qiskit Code Assistant now generating quantum code automatically"},
-        {"headline": "MIT Sloan: Agentic AI will require 'all tools in the AI toolbox' — survey shows progress in enterprise adoption"},
-        {"headline": "Johnson Controls lifts 2026 profit forecast on AI-driven demand for cooling equipment"}
-      ]
+        {
+          "headline": "CES 2026: AMD announces Ryzen AI 400 series processors for laptops"
+        },
+        {
+          "headline": "MIT Tech Review: Expect more apps shipping on Chinese open models \u2014 lag shrinking to weeks"
+        },
+        {
+          "headline": "IBM: Quantum-AI convergence accelerating \u2014 Qiskit Code Assistant now generating quantum code automatically"
+        },
+        {
+          "headline": "MIT Sloan: Agentic AI will require 'all tools in the AI toolbox' \u2014 survey shows progress in enterprise adoption"
+        },
+        {
+          "headline": "Johnson Controls lifts 2026 profit forecast on AI-driven demand for cooling equipment"
+        }
+      ],
+      "audio": "/audio/brief-2026-02-04-ai.ogg"
     }
   }
 }

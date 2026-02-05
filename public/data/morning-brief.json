@@ -1,230 +1,128 @@
 {
-  "date": "2026-02-04",
+  "date": "2026-02-05",
   "time": "6:00 AM",
   "sections": {
     "prayer": {
-      "title": "\ud83d\udd4a\ufe0f Morning Prayer",
-      "date": "Wednesday, February 04, 2026",
-      "hebrew_date": "6 Cheshvan",
+      "title": "🕊️ Morning Prayer",
+      "date": "Thursday, February 05, 2026",
+      "hebrew_date": "7 Cheshvan",
       "parsha": "Vayetzei",
       "parsha_theme": "dreams, building from nothing, divine protection",
-      "modeh_ani": "\u05de\u05d5\u05d3\u05d4 \u05d0\u05e0\u05d9 \u05dc\u05e4\u05e0\u05d9\u05da \u2014 I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
-      "blessing": "Blessed are You who girds Israel with strength \u2014 fortify me for the work ahead.",
-      "psalm": "Psalm 90:17: \"May the favor of the Lord our God rest on us; establish the work of our hands.\"",
-      "proverb": "Proverbs 21:5: \"The plans of the diligent lead surely to abundance.\"",
-      "intention": "Guide my hands today as I build \u2014 let every line of code, every decision, every conversation serve Your purposes.",
-      "closing": "May your work today be a pleasing offering. May your rest tonight be deep and restorative.",
-      "audio": "/audio/brief-2026-02-04-prayer.ogg"
+      "modeh_ani": "מודה אני לפניך — I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
+      "blessing": "Blessed are You who spreads the earth upon the waters — ground me in stability.",
+      "psalm": "Psalm 16:8: \"I have set the Lord always before me; He is at my right hand, I will not be shaken.\"",
+      "proverb": "Proverbs 24:27: \"Prepare your work outside; get everything ready, then build your house.\"",
+      "intention": "Guide my hands today as I build — let every line of code, every decision, every conversation serve Your purposes.",
+      "closing": "Baruch atah Adonai — Blessed are You, Lord, who renews creation daily with goodness."
     },
     "weather": {
-      "title": "\u2600\ufe0f Weather \u2014 Temecula",
-      "temperature": "48\u00b0F",
-      "feels_like": "45\u00b0F",
+      "title": "☀️ Weather — Temecula",
+      "temperature": "65°F",
       "condition": "Clear",
       "wind": "NE 7mph",
-      "humidity": "93%",
-      "high": "66\u00b0F",
-      "sunrise": "6:42 AM",
-      "sunset": "5:23 PM",
-      "summary": "Clear morning, warming to mid-60s. Beautiful day ahead.",
-      "audio": "/audio/brief-2026-02-04-weather.ogg"
+      "sunrise": "6:41 AM",
+      "sunset": "5:24 PM",
+      "summary": "Beautiful day ahead. Clear skies, mild temperatures."
     },
     "calendar": {
-      "title": "\ud83d\udcc5 Calendar",
-      "note": "Calendar sync unavailable \u2014 check Google Calendar directly",
-      "items": [],
-      "audio": "/audio/brief-2026-02-04-calendar.ogg"
+      "title": "📅 Calendar",
+      "items": ["Calendar sync unavailable — check manually"],
+      "week": [],
+      "month": []
     },
     "email": {
-      "title": "\ud83d\udce7 Email Highlights",
+      "title": "📧 Email Highlights",
       "needs_attention": [
-        {
-          "from": "Sonance AP",
-          "subject": "Invoice - Reminder: Your payment to Josh Levy Labs, Inc. is due",
-          "note": "IMPORTANT - follow up on payment"
-        }
+        {"from": "Supabase Support", "subject": "Re: I cannot downgrade to free despite having only 2 projects!", "note": "Marked important — billing issue response"}
       ],
       "good_news": [
-        {
-          "from": "Microsoft",
-          "subject": "Your Microsoft order #7460651708 has been processed"
-        }
+        {"from": "Fly.io", "subject": "Congrats on deploying!", "note": "New deployment successful"},
+        {"from": "Fly.io", "subject": "Your trial just started!", "note": "30 days free support"}
       ],
       "business": [
-        {
-          "from": "AWS Marketplace",
-          "subject": "Important Notification Regarding Your AWS Marketplace Subscription"
-        },
-        {
-          "from": "OpusClip",
-          "subject": "Automate your OpusClip workflow"
-        },
-        {
-          "from": "AWS",
-          "subject": "Deploy fraud detection on AWS with this IaC template"
-        }
+        {"from": "Discord (davidh)", "subject": "Mentioned you in Midjourney", "note": "Check notification"},
+        {"from": "LinkedIn", "subject": "You have 1 new message", "note": "DM waiting"},
+        {"from": "Railway", "subject": "Trial Plan Alert", "note": "Trial status update"},
+        {"from": "Upstash", "subject": "Inactive Redis Database archived", "note": "Database archived"},
+        {"from": "Microsoft", "subject": "Get resources to build AI solutions", "note": "Promo"}
       ],
-      "total_unread": 8,
-      "audio": "/audio/brief-2026-02-04-email.ogg"
+      "total_unread": 15
     },
     "markets": {
-      "title": "\ud83d\udcc8 Markets & Trading Signals",
+      "title": "📈 Markets & Trading Signals",
       "summary": {
-        "date": "2026-02-04",
+        "date": "2026-02-05",
         "market_status": "PRE-MARKET",
-        "spy": {
-          "price": 689.53,
-          "change_pct": -0.85
-        },
-        "vix": 17.76,
+        "spy": {"price": 686.19, "change_pct": -0.48},
+        "vix": 20.88,
         "sentiment": "NEUTRAL",
-        "volatility": "LOW"
+        "volatility": "ELEVATED"
       },
       "overview": [
-        {
-          "symbol": "SPY",
-          "price": 689.53,
-          "change_pct": -0.85,
-          "trend": "NEUTRAL"
-        },
-        {
-          "symbol": "QQQ",
-          "price": 616.52,
-          "change_pct": -1.54,
-          "trend": "BEARISH"
-        },
-        {
-          "symbol": "IWM",
-          "price": 262.78,
-          "change_pct": 0.23,
-          "trend": "NEUTRAL"
-        },
-        {
-          "symbol": "DIA",
-          "price": 492.31,
-          "change_pct": -0.35,
-          "trend": "NEUTRAL"
-        }
+        {"symbol": "SPY", "price": 686.19, "change_pct": -0.48, "trend": "NEUTRAL"},
+        {"symbol": "QQQ", "price": 605.75, "change_pct": -1.75, "trend": "BEARISH"},
+        {"symbol": "IWM", "price": 260.52, "change_pct": -0.86, "trend": "NEUTRAL"},
+        {"symbol": "DIA", "price": 494.75, "change_pct": 0.5, "trend": "NEUTRAL"}
       ],
-      "signals": [
-        {
-          "type": "BUY",
-          "symbol": "MSFT",
-          "price": 411.21,
-          "entry": 411.21,
-          "stop": 384.81,
-          "target": 450.81,
-          "confidence": "MEDIUM",
-          "rationale": "RSI oversold (27.5) | High volume | Near BB support"
-        },
-        {
-          "type": "SELL",
-          "symbol": "NVDA",
-          "price": 180.34,
-          "entry": 180.34,
-          "stop": 191.54,
-          "target": 163.55,
-          "confidence": "MEDIUM",
-          "rationale": "BEARISH trend | MACD bearish crossover"
-        },
-        {
-          "type": "SELL",
-          "symbol": "XLE",
-          "price": 51.67,
-          "entry": 51.67,
-          "stop": 53.7,
-          "target": 48.63,
-          "confidence": "MEDIUM",
-          "rationale": "RSI overbought (73.0) | Near BB resistance"
-        }
-      ],
-      "audio": "/audio/brief-2026-02-04-markets.ogg"
+      "signals": [],
+      "watch": [
+        {"symbol": "MSFT", "price": 414.19, "note": "RSI oversold (29.4) — potential bounce"},
+        {"symbol": "AAPL", "price": 276.49, "note": "Bullish trend, near resistance"},
+        {"symbol": "XLE", "price": 52.83, "note": "RSI overbought (76.6) — caution"}
+      ]
     },
     "family": {
-      "title": "\ud83d\udc68\u200d\ud83d\udc69\u200d\ud83d\udc67\u200d\ud83d\udc66 Family Focus",
-      "suggestion": "Jones is at that age where he'll remember building things with dad. Set up a simple block tower challenge or play 'rescue mission' with his Super Wings toys.",
-      "conversationStarter": "Ask Jillian: What book are you reading right now? (Or: Any concerts you've been wanting to see?)",
-      "weeklyGoal": "Plan your February date night this week \u2014 Valentine's Day is in 10 days!",
+      "title": "👨‍👩‍👧‍👦 Family Focus",
+      "suggestion": "Build a Super Wings airport with Jones using blocks or cardboard boxes — he'll love being Jett the delivery plane!",
+      "conversationStarter": "What book are you reading right now? Any good ones you'd recommend?",
+      "weeklyGoal": "Monthly date night is due soon — start planning something special with Jillian",
       "upcomingDates": [
-        {
-          "date": "Feb 14",
-          "event": "Valentine's Day",
-          "daysAway": 10
-        },
-        {
-          "date": "Mar 26",
-          "event": "Wedding Anniversary",
-          "daysAway": 50
-        }
+        {"date": "Feb 14", "event": "Valentine's Day", "days_away": 9},
+        {"date": "Mar 26", "event": "Wedding Anniversary", "days_away": 49}
       ],
       "potencyAction": "Give her space if she needs it, then come back with a genuine apology",
-      "relationshipTemperature": {
-        "status": "critical",
-        "ratio": 1.5,
-        "note": "Ratio is below 5:1. Focus on repair and acts of service this week."
+      "relationshipStatus": {
+        "temperature": "critical",
+        "ratio": 0.75,
+        "note": "Below 5:1 threshold. Focus on repair — acknowledge recent conflicts without defending. Increase acts of service."
       },
-      "reflection": "The relationship temperature is flagging critical. Today isn't about grand gestures \u2014 it's about genuine presence and acknowledging recent friction without defending yourself."
+      "reflection": "The ratio is off. Today's priority: listen without fixing, acknowledge without defending. Quality > quantity."
     },
     "news": {
-      "title": "\ud83c\udf0d World News",
+      "title": "🌍 World News",
       "subsections": {
         "israel": {
-          "title": "\ud83c\uddee\ud83c\uddf1 Israel",
+          "title": "🇮🇱 Israel",
           "items": [
-            {
-              "headline": "12 suspects indicted in Gaza smuggling case \u2014 charges include aiding enemy in wartime"
-            },
-            {
-              "headline": "Bennett adds Trump pollster to campaign team as elections approach"
-            },
-            {
-              "headline": "Katz: Israel to 'dismantle' Hamas if it doesn't disarm by ceasefire deadline"
-            },
-            {
-              "headline": "Trump sets deadline for Iran \u2014 US and Israel signal readiness for possible strike"
-            }
+            {"headline": "Brother of Shin Bet chief indicted for assisting enemy during wartime over Gaza smuggling ring"},
+            {"headline": "IDF continues operations in northern Gaza; 24 Palestinians killed in strikes amid ceasefire tensions"},
+            {"headline": "Iran signals talks with US will only address nuclear program — regional issues off table"}
           ]
         },
         "us": {
-          "title": "\ud83c\uddfa\ud83c\uddf8 United States",
+          "title": "🇺🇸 United States",
           "items": [
-            {
-              "headline": "Trump signs funding bill as immigration crackdown talks loom"
-            },
-            {
-              "headline": "Administration seeks $1B in damages from Harvard over antisemitism allegations"
-            },
-            {
-              "headline": "Trump has signed 235 executive orders, 57 memoranda, 124 proclamations since inauguration"
-            },
-            {
-              "headline": "2026 National Defense Strategy identifies China as pacing threat, demands NATO allies increase spending"
-            }
+            {"headline": "Trump suggests Republicans 'nationalize' elections in 15 states to protect party"},
+            {"headline": "Trump signs funding bill as immigration crackdown talks loom"},
+            {"headline": "Chicago mayor orders police to document alleged illegal activity by federal immigration agents"}
+          ]
+        },
+        "world": {
+          "title": "🌐 Global",
+          "items": [
+            {"headline": "Islamic regime in Iran appears to be crumbling after 47 years, analysts say"}
           ]
         }
-      },
-      "audio": "/audio/brief-2026-02-04-news.ogg"
+      }
     },
     "ai": {
-      "title": "\ud83e\udd16 AI Intel",
+      "title": "🤖 AI Intel",
       "items": [
-        {
-          "headline": "CES 2026: AMD announces Ryzen AI 400 series processors for laptops"
-        },
-        {
-          "headline": "MIT Tech Review: Expect more apps shipping on Chinese open models \u2014 lag shrinking to weeks"
-        },
-        {
-          "headline": "IBM: Quantum-AI convergence accelerating \u2014 Qiskit Code Assistant now generating quantum code automatically"
-        },
-        {
-          "headline": "MIT Sloan: Agentic AI will require 'all tools in the AI toolbox' \u2014 survey shows progress in enterprise adoption"
-        },
-        {
-          "headline": "Johnson Controls lifts 2026 profit forecast on AI-driven demand for cooling equipment"
-        }
-      ],
-      "audio": "/audio/brief-2026-02-04-ai.ogg"
+        {"headline": "SpaceX acquiring xAI ahead of potential IPO — Nvidia, Fidelity among investors"},
+        {"headline": "AI stocks battered again as Anthropic tools reignite fears of software subscription decline"},
+        {"headline": "TechCrunch: 2026 is the year agentic workflows move from demos to day-to-day practice"},
+        {"headline": "Bayer and Google partner on AI clinical tools with mid-three-digit million euro investment"}
+      ]
     }
   }
 }

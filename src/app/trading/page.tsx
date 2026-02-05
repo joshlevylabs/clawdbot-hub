@@ -7,56 +7,62 @@ import {
   RefreshCw,
   Wallet,
   BarChart3,
-  Target,
   Activity,
   Clock,
   DollarSign,
   Percent,
   AlertCircle,
+  ShieldAlert,
 } from "lucide-react";
 
 interface Position {
   symbol: string;
-  quantity: number;
+  qty: number;
   entry_price: number;
-  entry_time: string;
-  strategy: string;
   current_price: number;
+  market_value: number;
+  cost_basis: number;
   unrealized_pnl: number;
+  unrealized_pnl_pct: number;
+  side: string;
+  is_inverse?: boolean;
+  hedging?: string;
 }
 
 interface Trade {
-  id: string;
   symbol: string;
-  side: "buy" | "sell";
-  quantity: number;
+  side: string;
+  qty: number;
   price: number;
-  timestamp: string;
-  strategy: string;
-  pnl: number;
-  fees: number;
-  notes: string;
+  filled_at: string;
+  status: string;
 }
 
-interface PortfolioState {
+interface AccountInfo {
+  equity: number;
   cash: number;
-  positions: Record<string, Position>;
-  trade_counter: number;
-  last_updated: string;
+  buying_power: number;
+  portfolio_value: number;
+  pnl_today: number;
+  pnl_today_pct: number;
 }
 
-interface TradingStats {
-  totalTrades: number;
-  winningTrades: number;
-  losingTrades: number;
-  winRate: number;
-  totalPnl: number;
-  avgPnl: number;
-  bestTrade: number;
-  worstTrade: number;
+interface PortfolioData {
+  updated_at: string;
+  account: AccountInfo;
+  positions: Position[];
+  recent_trades: Trade[];
+  strategy: string;
+  summary: {
+    total_positions: number;
+    total_invested: number;
+    total_unrealized_pnl: number;
+    total_unrealized_pnl_pct: number;
+    cash_remaining: number;
+  };
 }
 
-const INITIAL_CAPITAL = 10000;
+const INITIAL_CAPITAL = 100000;
 
 function formatCurrency(value: number): string {
   return value.toLocaleString("en-US", {
@@ -114,11 +120,7 @@ function StatCard({
 }
 
 function PositionCard({ position }: { position: Position }) {
-  const pnl = (position.current_price - position.entry_price) * position.quantity;
-  const pnlPercent =
-    ((position.current_price - position.entry_price) / position.entry_price) *
-    100;
-  const isProfit = pnl >= 0;
+  const isProfit = position.unrealized_pnl >= 0;
 
   return (
     <div
@@ -130,21 +132,32 @@ function PositionCard({ position }: { position: Position }) {
     >
       <div className="flex justify-between items-start mb-3">
         <div>
-          <h3 className="font-bold text-lg text-slate-100">{position.symbol}</h3>
-          <p className="text-xs text-slate-500">{position.strategy}</p>
+          <h3 className="font-bold text-lg text-slate-100 flex items-center gap-2">
+            {position.symbol}
+            {position.is_inverse && (
+              <span className="text-xs bg-amber-600/30 text-amber-400 px-2 py-0.5 rounded">
+                INVERSE
+              </span>
+            )}
+          </h3>
+          {position.hedging && (
+            <p className="text-xs text-slate-500">Hedging {position.hedging}</p>
+          )}
         </div>
         <div className={`text-right ${isProfit ? "text-emerald-400" : "text-red-400"}`}>
-          <p className="font-bold">{isProfit ? "+" : ""}${formatCurrency(pnl)}</p>
-          <p className="text-sm">{formatPercent(pnlPercent)}</p>
+          <p className="font-bold">
+            {isProfit ? "+" : ""}${formatCurrency(position.unrealized_pnl)}
+          </p>
+          <p className="text-sm">{formatPercent(position.unrealized_pnl_pct)}</p>
         </div>
       </div>
       <div className="grid grid-cols-2 gap-2 text-sm">
         <div>
-          <p className="text-slate-500">Quantity</p>
-          <p className="text-slate-200 font-mono">{position.quantity.toFixed(6)}</p>
+          <p className="text-slate-500">Shares</p>
+          <p className="text-slate-200 font-mono">{position.qty.toLocaleString()}</p>
         </div>
         <div>
-          <p className="text-slate-500">Entry</p>
+          <p className="text-slate-500">Avg Entry</p>
           <p className="text-slate-200 font-mono">${formatCurrency(position.entry_price)}</p>
         </div>
         <div>
@@ -152,8 +165,8 @@ function PositionCard({ position }: { position: Position }) {
           <p className="text-slate-200 font-mono">${formatCurrency(position.current_price)}</p>
         </div>
         <div>
-          <p className="text-slate-500">Entered</p>
-          <p className="text-slate-400 text-xs">{formatTime(position.entry_time)}</p>
+          <p className="text-slate-500">Market Value</p>
+          <p className="text-slate-200 font-mono">${formatCurrency(position.market_value)}</p>
         </div>
       </div>
     </div>
@@ -162,13 +175,11 @@ function PositionCard({ position }: { position: Position }) {
 
 function TradeRow({ trade }: { trade: Trade }) {
   const isBuy = trade.side === "buy";
-  const hasPnl = trade.pnl !== 0;
-  const isProfit = trade.pnl > 0;
 
   return (
     <tr className="border-b border-slate-800 hover:bg-slate-800/50">
       <td className="py-3 px-2 text-sm text-slate-400">
-        {formatTime(trade.timestamp)}
+        {formatTime(trade.filled_at)}
       </td>
       <td className="py-3 px-2 font-medium text-slate-200">{trade.symbol}</td>
       <td className="py-3 px-2">
@@ -183,32 +194,26 @@ function TradeRow({ trade }: { trade: Trade }) {
         </span>
       </td>
       <td className="py-3 px-2 text-right font-mono text-slate-300">
-        {trade.quantity.toFixed(6)}
+        {trade.qty.toLocaleString()}
       </td>
       <td className="py-3 px-2 text-right font-mono text-slate-300">
         ${formatCurrency(trade.price)}
       </td>
-      <td
-        className={`py-3 px-2 text-right font-mono ${
-          hasPnl
-            ? isProfit
-              ? "text-emerald-400"
-              : "text-red-400"
-            : "text-slate-600"
-        }`}
-      >
-        {hasPnl
-          ? `${isProfit ? "+" : ""}$${formatCurrency(trade.pnl)}`
-          : "—"}
+      <td className="py-3 px-2">
+        <span className={`text-xs px-2 py-1 rounded ${
+          trade.status === 'filled' 
+            ? 'bg-emerald-900/50 text-emerald-400' 
+            : 'bg-slate-700 text-slate-400'
+        }`}>
+          {trade.status}
+        </span>
       </td>
-      <td className="py-3 px-2 text-sm text-slate-500">{trade.strategy}</td>
     </tr>
   );
 }
 
 export default function TradingPage() {
-  const [portfolio, setPortfolio] = useState<PortfolioState | null>(null);
-  const [trades, setTrades] = useState<Trade[]>([]);
+  const [portfolio, setPortfolio] = useState<PortfolioData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
@@ -218,34 +223,18 @@ export default function TradingPage() {
       setLoading(true);
       setError(null);
 
-      const [portfolioRes, tradesRes] = await Promise.all([
-        fetch("/data/trading/portfolio.json"),
-        fetch("/data/trading/trades.json"),
-      ]);
+      const res = await fetch("/data/portfolio.json");
 
-      if (portfolioRes.ok) {
-        const portfolioData = await portfolioRes.json();
-        setPortfolio(portfolioData);
+      if (res.ok) {
+        const data = await res.json();
+        setPortfolio(data);
       } else {
-        // Default state if no data
-        setPortfolio({
-          cash: INITIAL_CAPITAL,
-          positions: {},
-          trade_counter: 0,
-          last_updated: new Date().toISOString(),
-        });
-      }
-
-      if (tradesRes.ok) {
-        const tradesData = await tradesRes.json();
-        setTrades(tradesData);
-      } else {
-        setTrades([]);
+        setError("Portfolio data not found");
       }
 
       setLastRefresh(new Date());
     } catch (err) {
-      setError("Failed to load trading data");
+      setError("Failed to load portfolio data");
       console.error(err);
     } finally {
       setLoading(false);
@@ -259,40 +248,6 @@ export default function TradingPage() {
     return () => clearInterval(interval);
   }, []);
 
-  // Calculate stats
-  const calculateStats = (): TradingStats => {
-    const closedTrades = trades.filter((t) => t.side === "sell" && t.pnl !== 0);
-    const winningTrades = closedTrades.filter((t) => t.pnl > 0);
-    const losingTrades = closedTrades.filter((t) => t.pnl < 0);
-    const totalPnl = closedTrades.reduce((sum, t) => sum + t.pnl, 0);
-
-    return {
-      totalTrades: trades.length,
-      winningTrades: winningTrades.length,
-      losingTrades: losingTrades.length,
-      winRate:
-        closedTrades.length > 0
-          ? (winningTrades.length / closedTrades.length) * 100
-          : 0,
-      totalPnl,
-      avgPnl: closedTrades.length > 0 ? totalPnl / closedTrades.length : 0,
-      bestTrade:
-        closedTrades.length > 0 ? Math.max(...closedTrades.map((t) => t.pnl)) : 0,
-      worstTrade:
-        closedTrades.length > 0 ? Math.min(...closedTrades.map((t) => t.pnl)) : 0,
-    };
-  };
-
-  const stats = calculateStats();
-  const positions = portfolio ? Object.values(portfolio.positions) : [];
-  const positionsValue = positions.reduce(
-    (sum, p) => sum + p.current_price * p.quantity,
-    0
-  );
-  const totalEquity = (portfolio?.cash || INITIAL_CAPITAL) + positionsValue;
-  const totalPnl = totalEquity - INITIAL_CAPITAL;
-  const totalPnlPercent = (totalPnl / INITIAL_CAPITAL) * 100;
-
   if (loading && !portfolio) {
     return (
       <div className="min-h-screen bg-slate-900 flex items-center justify-center">
@@ -300,6 +255,14 @@ export default function TradingPage() {
       </div>
     );
   }
+
+  const account = portfolio?.account;
+  const positions = portfolio?.positions || [];
+  const trades = portfolio?.recent_trades || [];
+  const summary = portfolio?.summary;
+
+  const totalPnl = account ? account.equity - INITIAL_CAPITAL : 0;
+  const totalPnlPercent = (totalPnl / INITIAL_CAPITAL) * 100;
 
   return (
     <div className="min-h-screen bg-slate-900 p-4 lg:p-6">
@@ -309,15 +272,16 @@ export default function TradingPage() {
           <div>
             <h1 className="text-2xl font-bold text-slate-100 flex items-center gap-2">
               <BarChart3 className="w-6 h-6 text-primary-400" />
-              Paper Trading
+              Paper Trading Portfolio
             </h1>
-            <p className="text-sm text-slate-500 mt-1">
-              MoonDev Strategies • Simulated Trading
+            <p className="text-sm text-slate-500 mt-1 flex items-center gap-2">
+              <ShieldAlert className="w-4 h-4 text-amber-400" />
+              {portfolio?.strategy || "Alpaca Paper Trading"}
             </p>
           </div>
           <div className="flex items-center gap-3">
             <span className="text-xs text-slate-500">
-              Updated {lastRefresh.toLocaleTimeString()}
+              Updated {portfolio?.updated_at ? formatTime(portfolio.updated_at) : lastRefresh.toLocaleTimeString()}
             </span>
             <button
               onClick={loadData}
@@ -342,7 +306,7 @@ export default function TradingPage() {
           <StatCard
             icon={Wallet}
             label="Total Equity"
-            value={`$${formatCurrency(totalEquity)}`}
+            value={`$${formatCurrency(account?.equity || 0)}`}
             subValue={`Started: $${formatCurrency(INITIAL_CAPITAL)}`}
             trend={totalPnl >= 0 ? "up" : "down"}
           />
@@ -355,91 +319,93 @@ export default function TradingPage() {
           />
           <StatCard
             icon={DollarSign}
-            label="Cash Available"
-            value={`$${formatCurrency(portfolio?.cash || 0)}`}
-            trend="neutral"
+            label="Today's P/L"
+            value={`${(account?.pnl_today || 0) >= 0 ? "+" : ""}$${formatCurrency(account?.pnl_today || 0)}`}
+            subValue={formatPercent(account?.pnl_today_pct || 0)}
+            trend={(account?.pnl_today || 0) >= 0 ? "up" : "down"}
           />
           <StatCard
-            icon={Target}
-            label="Win Rate"
-            value={`${stats.winRate.toFixed(1)}%`}
-            subValue={`${stats.winningTrades}W / ${stats.losingTrades}L`}
-            trend={stats.winRate >= 50 ? "up" : "down"}
+            icon={Percent}
+            label="Buying Power"
+            value={`$${formatCurrency(account?.buying_power || 0)}`}
+            subValue={`Cash: $${formatCurrency(account?.cash || 0)}`}
+            trend="neutral"
           />
         </div>
 
-        {/* Positions and Stats Grid */}
-        <div className="grid lg:grid-cols-3 gap-6">
-          {/* Open Positions */}
-          <div className="lg:col-span-2 bg-slate-800/30 rounded-xl p-4 border border-slate-700/50">
-            <h2 className="text-lg font-semibold text-slate-100 mb-4 flex items-center gap-2">
-              <Activity className="w-5 h-5 text-primary-400" />
-              Open Positions ({positions.length})
-            </h2>
-            {positions.length === 0 ? (
-              <p className="text-slate-500 text-center py-8">No open positions</p>
-            ) : (
-              <div className="grid md:grid-cols-2 gap-4">
-                {positions.map((position) => (
-                  <PositionCard key={position.symbol} position={position} />
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Quick Stats */}
-          <div className="bg-slate-800/30 rounded-xl p-4 border border-slate-700/50">
-            <h2 className="text-lg font-semibold text-slate-100 mb-4 flex items-center gap-2">
-              <Percent className="w-5 h-5 text-amber-400" />
-              Performance
-            </h2>
-            <div className="space-y-4">
-              <div className="flex justify-between items-center py-2 border-b border-slate-700/50">
-                <span className="text-slate-400">Total Trades</span>
-                <span className="font-semibold text-slate-200">
-                  {stats.totalTrades}
-                </span>
-              </div>
-              <div className="flex justify-between items-center py-2 border-b border-slate-700/50">
-                <span className="text-slate-400">Avg Trade P/L</span>
-                <span
-                  className={`font-semibold ${
-                    stats.avgPnl >= 0 ? "text-emerald-400" : "text-red-400"
-                  }`}
-                >
-                  ${formatCurrency(stats.avgPnl)}
-                </span>
-              </div>
-              <div className="flex justify-between items-center py-2 border-b border-slate-700/50">
-                <span className="text-slate-400">Best Trade</span>
-                <span className="font-semibold text-emerald-400">
-                  +${formatCurrency(stats.bestTrade)}
-                </span>
-              </div>
-              <div className="flex justify-between items-center py-2 border-b border-slate-700/50">
-                <span className="text-slate-400">Worst Trade</span>
-                <span className="font-semibold text-red-400">
-                  ${formatCurrency(stats.worstTrade)}
-                </span>
-              </div>
-              <div className="flex justify-between items-center py-2">
-                <span className="text-slate-400">Positions Value</span>
-                <span className="font-semibold text-slate-200">
-                  ${formatCurrency(positionsValue)}
-                </span>
-              </div>
+        {/* Strategy Banner */}
+        <div className="bg-amber-900/20 border border-amber-500/30 rounded-xl p-4">
+          <div className="flex items-start gap-3">
+            <ShieldAlert className="w-5 h-5 text-amber-400 mt-0.5" />
+            <div>
+              <h3 className="font-semibold text-amber-300">Inverse ETF Hedge Strategy</h3>
+              <p className="text-sm text-amber-200/70 mt-1">
+                Positions in inverse ETFs (GLL, SH, SQQQ) to hedge against market downturns. 
+                These profit when their underlying indices decline.
+              </p>
             </div>
           </div>
         </div>
 
-        {/* Trade History */}
+        {/* Positions Grid */}
+        <div className="bg-slate-800/30 rounded-xl p-4 border border-slate-700/50">
+          <h2 className="text-lg font-semibold text-slate-100 mb-4 flex items-center gap-2">
+            <Activity className="w-5 h-5 text-primary-400" />
+            Open Positions ({positions.length})
+          </h2>
+          {positions.length === 0 ? (
+            <p className="text-slate-500 text-center py-8">No open positions</p>
+          ) : (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {positions.map((position) => (
+                <PositionCard key={position.symbol} position={position} />
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Summary Stats */}
+        {summary && (
+          <div className="bg-slate-800/30 rounded-xl p-4 border border-slate-700/50">
+            <h2 className="text-lg font-semibold text-slate-100 mb-4 flex items-center gap-2">
+              <Percent className="w-5 h-5 text-cyan-400" />
+              Position Summary
+            </h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="bg-slate-900/50 rounded-lg p-3">
+                <p className="text-xs text-slate-500 uppercase">Total Invested</p>
+                <p className="text-lg font-bold text-slate-200">${formatCurrency(summary.total_invested)}</p>
+              </div>
+              <div className="bg-slate-900/50 rounded-lg p-3">
+                <p className="text-xs text-slate-500 uppercase">Unrealized P/L</p>
+                <p className={`text-lg font-bold ${summary.total_unrealized_pnl >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                  {summary.total_unrealized_pnl >= 0 ? '+' : ''}${formatCurrency(summary.total_unrealized_pnl)}
+                </p>
+              </div>
+              <div className="bg-slate-900/50 rounded-lg p-3">
+                <p className="text-xs text-slate-500 uppercase">Unrealized %</p>
+                <p className={`text-lg font-bold ${summary.total_unrealized_pnl_pct >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                  {formatPercent(summary.total_unrealized_pnl_pct)}
+                </p>
+              </div>
+              <div className="bg-slate-900/50 rounded-lg p-3">
+                <p className="text-xs text-slate-500 uppercase">Cash Balance</p>
+                <p className={`text-lg font-bold ${summary.cash_remaining >= 0 ? 'text-slate-200' : 'text-amber-400'}`}>
+                  ${formatCurrency(summary.cash_remaining)}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Recent Trades */}
         <div className="bg-slate-800/30 rounded-xl p-4 border border-slate-700/50">
           <h2 className="text-lg font-semibold text-slate-100 mb-4 flex items-center gap-2">
             <Clock className="w-5 h-5 text-cyan-400" />
-            Trade History
+            Recent Trades
           </h2>
           {trades.length === 0 ? (
-            <p className="text-slate-500 text-center py-8">No trades yet</p>
+            <p className="text-slate-500 text-center py-8">No recent trades</p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
@@ -450,49 +416,41 @@ export default function TradingPage() {
                     <th className="text-left py-3 px-2">Side</th>
                     <th className="text-right py-3 px-2">Qty</th>
                     <th className="text-right py-3 px-2">Price</th>
-                    <th className="text-right py-3 px-2">P/L</th>
-                    <th className="text-left py-3 px-2">Strategy</th>
+                    <th className="text-left py-3 px-2">Status</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {trades
-                    .slice()
-                    .reverse()
-                    .slice(0, 20)
-                    .map((trade) => (
-                      <TradeRow key={trade.id} trade={trade} />
-                    ))}
+                  {trades.slice(0, 20).map((trade, idx) => (
+                    <TradeRow key={`${trade.symbol}-${trade.filled_at}-${idx}`} trade={trade} />
+                  ))}
                 </tbody>
               </table>
             </div>
           )}
         </div>
 
-        {/* Strategies Info */}
+        {/* ETF Info */}
         <div className="bg-slate-800/30 rounded-xl p-4 border border-slate-700/50">
           <h2 className="text-lg font-semibold text-slate-100 mb-4">
-            Active Strategies
+            Inverse ETF Reference
           </h2>
           <div className="grid md:grid-cols-3 gap-4">
             <div className="bg-slate-900/50 rounded-lg p-4">
-              <h3 className="font-medium text-emerald-400 mb-2">Buy The Dip</h3>
+              <h3 className="font-medium text-amber-400 mb-2">GLL — Gold Short</h3>
               <p className="text-sm text-slate-400">
-                Buys when price dips 5%+ from recent high. Exits at 3% profit or
-                3% stop loss.
+                2x inverse gold ETF. Profits when gold prices decline. Hedges GLD exposure.
               </p>
             </div>
             <div className="bg-slate-900/50 rounded-lg p-4">
-              <h3 className="font-medium text-blue-400 mb-2">Trend Following</h3>
+              <h3 className="font-medium text-amber-400 mb-2">SH — S&P 500 Short</h3>
               <p className="text-sm text-slate-400">
-                SMA crossover strategy with ATR-based trailing stops. Rides
-                momentum trends.
+                1x inverse S&P 500 ETF. Profits when SPY declines. Direct hedge against market.
               </p>
             </div>
             <div className="bg-slate-900/50 rounded-lg p-4">
-              <h3 className="font-medium text-purple-400 mb-2">Breakout Wick</h3>
+              <h3 className="font-medium text-amber-400 mb-2">SQQQ — Nasdaq 3x Short</h3>
               <p className="text-sm text-slate-400">
-                Volume + wick pattern analysis. Enters on confirmed breakouts
-                above resistance.
+                3x inverse Nasdaq-100 ETF. Profits when QQQ/tech declines. High leverage.
               </p>
             </div>
           </div>

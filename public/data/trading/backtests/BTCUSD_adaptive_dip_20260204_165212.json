@@ -1,0 +1,91 @@
+{
+  "summary": {
+    "total_return_pct": 1.366404800000004,
+    "buy_hold_return_pct": -20.216211599611064,
+    "excess_return_pct": 21.58261639961107,
+    "max_drawdown_pct": -3.0244594372293987,
+    "sharpe_ratio": 1.7116186211748874,
+    "sortino_ratio": 5.2883580578369775,
+    "calmar_ratio": 5.728925721721764,
+    "win_rate_pct": 50.0,
+    "profit_factor": 1.6122162337991162,
+    "total_trades": 4,
+    "avg_trade_pct": 0.4223879712774936,
+    "best_trade_pct": 2.914408018375443,
+    "worst_trade_pct": -2.5335006402664817,
+    "avg_win": 1799.1519000000044,
+    "avg_loss": 1115.9494999999986,
+    "max_consecutive_wins": 2,
+    "max_consecutive_losses": 2,
+    "avg_trade_duration_hours": 5.5,
+    "exposure_pct": 3.6061026352288486
+  },
+  "equity_curve": {
+    "start": "2026-01-06 00:00:00",
+    "end": "2026-02-05 00:00:00",
+    "peak": 101440.74480000001,
+    "final": 101366.4048
+  },
+  "risk_metrics": {
+    "max_drawdown_pct": -3.0244594372293987,
+    "avg_drawdown_pct": -1.1608618672067825,
+    "max_drawdown_duration": "1 days 17:00:00",
+    "avg_drawdown_duration": "0 days 18:00:00"
+  },
+  "trades": [
+    {
+      "entry_time": "2026-02-02 16:00:00",
+      "exit_time": "2026-02-03 01:00:00",
+      "entry_price": 78821.3,
+      "exit_price": 79000.0,
+      "pnl": -336.5212999999971,
+      "pnl_pct": -0.004269420829141393,
+      "size": -1.0
+    },
+    {
+      "entry_time": "2026-02-03 18:00:00",
+      "exit_time": "2026-02-03 19:00:00",
+      "entry_price": 74812.6,
+      "exit_price": 73065.1,
+      "pnl": -1895.3777,
+      "pnl_pct": -0.02533500640266482,
+      "size": 1.0
+    },
+    {
+      "entry_time": "2026-02-03 20:00:00",
+      "exit_time": "2026-02-03 21:00:00",
+      "entry_price": 74857.9,
+      "exit_price": 76374.3,
+      "pnl": 1365.1678000000088,
+      "pnl_pct": 0.018236789971399155,
+      "size": 1.0
+    },
+    {
+      "entry_time": "2026-02-04 04:00:00",
+      "exit_time": "2026-02-04 15:00:00",
+      "entry_price": 76624.0,
+      "exit_price": 74240.0,
+      "pnl": 2233.136,
+      "pnl_pct": 0.029144080183754428,
+      "size": -1.0
+    }
+  ],
+  "trade_count": 4,
+  "metadata": {
+    "symbol": "BTC/USD",
+    "strategy": "adaptive_dip",
+    "timeframe": "1h",
+    "candle_count": 721,
+    "start_date": "2026-01-06 00:00:00",
+    "end_date": "2026-02-05 00:00:00",
+    "timestamp": "2026-02-04T16:52:12.718411",
+    "params_used": {
+      "sma_fast": 20,
+      "sma_slow": 50,
+      "dip_threshold": 0.05,
+      "take_profit": 0.03,
+      "stop_loss": 0.02,
+      "lookback": 20
+    }
+  }
+}

@@ -1,0 +1,583 @@
+{
+  "generated_at": "2026-02-04T17:00:06.130019",
+  "data_points": 256,
+  "assets_analyzed": 14,
+  "asset_list": [
+    "BTC/USD",
+    "ETH/USD",
+    "SOL/USD",
+    "SPY",
+    "QQQ",
+    "IWM",
+    "XLF",
+    "XLE",
+    "XLK",
+    "XLV",
+    "GLD",
+    "USO",
+    "TLT",
+    "VXX"
+  ],
+  "correlation_matrix": {
+    "BTC/USD": {
+      "BTC/USD": 1.0,
+      "ETH/USD": 0.934,
+      "SOL/USD": 0.906,
+      "SPY": 0.071,
+      "QQQ": 0.039,
+      "IWM": -0.003,
+      "XLF": -0.04,
+      "XLE": 0.145,
+      "XLK": 0.001,
+      "XLV": -0.075,
+      "GLD": 0.157,
+      "USO": 0.245,
+      "TLT": 0.326,
+      "VXX": -0.031
+    },
+    "ETH/USD": {
+      "BTC/USD": 0.934,
+      "ETH/USD": 1.0,
+      "SOL/USD": 0.909,
+      "SPY": 0.033,
+      "QQQ": 0.02,
+      "IWM": -0.085,
+      "XLF": -0.077,
+      "XLE": 0.148,
+      "XLK": -0.003,
+      "XLV": -0.119,
+      "GLD": 0.156,
+      "USO": 0.323,
+      "TLT": 0.343,
+      "VXX": 0.028
+    },
+    "SOL/USD": {
+      "BTC/USD": 0.906,
+      "ETH/USD": 0.909,
+      "SOL/USD": 1.0,
+      "SPY": 0.125,
+      "QQQ": 0.109,
+      "IWM": -0.015,
+      "XLF": -0.021,
+      "XLE": 0.094,
+      "XLK": 0.069,
+      "XLV": -0.122,
+      "GLD": 0.028,
+      "USO": 0.244,
+      "TLT": 0.434,
+      "VXX": -0.117
+    },
+    "SPY": {
+      "BTC/USD": 0.071,
+      "ETH/USD": 0.033,
+      "SOL/USD": 0.125,
+      "SPY": 1.0,
+      "QQQ": 0.93,
+      "IWM": 0.727,
+      "XLF": 0.437,
+      "XLE": -0.097,
+      "XLK": 0.856,
+      "XLV": 0.169,
+      "GLD": 0.116,
+      "USO": -0.349,
+      "TLT": 0.376,
+      "VXX": -0.891
+    },
+    "QQQ": {
+      "BTC/USD": 0.039,
+      "ETH/USD": 0.02,
+      "SOL/USD": 0.109,
+      "SPY": 0.93,
+      "QQQ": 1.0,
+      "IWM": 0.629,
+      "XLF": 0.211,
+      "XLE": -0.219,
+      "XLK": 0.971,
+      "XLV": -0.073,
+      "GLD": 0.094,
+      "USO": -0.329,
+      "TLT": 0.3,
+      "VXX": -0.826
+    },
+    "IWM": {
+      "BTC/USD": -0.003,
+      "ETH/USD": -0.085,
+      "SOL/USD": -0.015,
+      "SPY": 0.727,
+      "QQQ": 0.629,
+      "IWM": 1.0,
+      "XLF": 0.542,
+      "XLE": -0.031,
+      "XLK": 0.559,
+      "XLV": 0.288,
+      "GLD": 0.264,
+      "USO": -0.383,
+      "TLT": 0.192,
+      "VXX": -0.697
+    },
+    "XLF": {
+      "BTC/USD": -0.04,
+      "ETH/USD": -0.077,
+      "SOL/USD": -0.021,
+      "SPY": 0.437,
+      "QQQ": 0.211,
+      "IWM": 0.542,
+      "XLF": 1.0,
+      "XLE": -0.035,
+      "XLK": 0.133,
+      "XLV": 0.332,
+      "GLD": -0.072,
+      "USO": -0.336,
+      "TLT": 0.185,
+      "VXX": -0.446
+    },
+    "XLE": {
+      "BTC/USD": 0.145,
+      "ETH/USD": 0.148,
+      "SOL/USD": 0.094,
+      "SPY": -0.097,
+      "QQQ": -0.219,
+      "IWM": -0.031,
+      "XLF": -0.035,
+      "XLE": 1.0,
+      "XLK": -0.32,
+      "XLV": 0.194,
+      "GLD": 0.349,
+      "USO": 0.678,
+      "TLT": 0.057,
+      "VXX": 0.124
+    },
+    "XLK": {
+      "BTC/USD": 0.001,
+      "ETH/USD": -0.003,
+      "SOL/USD": 0.069,
+      "SPY": 0.856,
+      "QQQ": 0.971,
+      "IWM": 0.559,
+      "XLF": 0.133,
+      "XLE": -0.32,
+      "XLK": 1.0,
+      "XLV": -0.156,
+      "GLD": 0.058,
+      "USO": -0.367,
+      "TLT": 0.23,
+      "VXX": -0.757
+    },
+    "XLV": {
+      "BTC/USD": -0.075,
+      "ETH/USD": -0.119,
+      "SOL/USD": -0.122,
+      "SPY": 0.169,
+      "QQQ": -0.073,
+      "IWM": 0.288,
+      "XLF": 0.332,
+      "XLE": 0.194,
+      "XLK": -0.156,
+      "XLV": 1.0,
+      "GLD": 0.096,
+      "USO": -0.105,
+      "TLT": 0.084,
+      "VXX": -0.214
+    },
+    "GLD": {
+      "BTC/USD": 0.157,
+      "ETH/USD": 0.156,
+      "SOL/USD": 0.028,
+      "SPY": 0.116,
+      "QQQ": 0.094,
+      "IWM": 0.264,
+      "XLF": -0.072,
+      "XLE": 0.349,
+      "XLK": 0.058,
+      "XLV": 0.096,
+      "GLD": 1.0,
+      "USO": 0.269,
+      "TLT": 0.035,
+      "VXX": 0.01
+    },
+    "USO": {
+      "BTC/USD": 0.245,
+      "ETH/USD": 0.323,
+      "SOL/USD": 0.244,
+      "SPY": -0.349,
+      "QQQ": -0.329,
+      "IWM": -0.383,
+      "XLF": -0.336,
+      "XLE": 0.678,
+      "XLK": -0.367,
+      "XLV": -0.105,
+      "GLD": 0.269,
+      "USO": 1.0,
+      "TLT": -0.001,
+      "VXX": 0.395
+    },
+    "TLT": {
+      "BTC/USD": 0.326,
+      "ETH/USD": 0.343,
+      "SOL/USD": 0.434,
+      "SPY": 0.376,
+      "QQQ": 0.3,
+      "IWM": 0.192,
+      "XLF": 0.185,
+      "XLE": 0.057,
+      "XLK": 0.23,
+      "XLV": 0.084,
+      "GLD": 0.035,
+      "USO": -0.001,
+      "TLT": 1.0,
+      "VXX": -0.353
+    },
+    "VXX": {
+      "BTC/USD": -0.031,
+      "ETH/USD": 0.028,
+      "SOL/USD": -0.117,
+      "SPY": -0.891,
+      "QQQ": -0.826,
+      "IWM": -0.697,
+      "XLF": -0.446,
+      "XLE": 0.124,
+      "XLK": -0.757,
+      "XLV": -0.214,
+      "GLD": 0.01,
+      "USO": 0.395,
+      "TLT": -0.353,
+      "VXX": 1.0
+    }
+  },
+  "lead_lag_relationships": [
+    {
+      "pair": "QQQ \u2192 XLK",
+      "leader": "QQQ",
+      "follower": "XLK",
+      "lag_hours": 0,
+      "correlation": 0.971,
+      "relationship": "simultaneous",
+      "strength": "strong"
+    },
+    {
+      "pair": "BTC/USD \u2192 ETH/USD",
+      "leader": "BTC/USD",
+      "follower": "ETH/USD",
+      "lag_hours": 0,
+      "correlation": 0.934,
+      "relationship": "simultaneous",
+      "strength": "strong"
+    },
+    {
+      "pair": "SPY \u2192 QQQ",
+      "leader": "SPY",
+      "follower": "QQQ",
+      "lag_hours": 0,
+      "correlation": 0.93,
+      "relationship": "simultaneous",
+      "strength": "strong"
+    },
+    {
+      "pair": "ETH/USD \u2192 SOL/USD",
+      "leader": "ETH/USD",
+      "follower": "SOL/USD",
+      "lag_hours": 0,
+      "correlation": 0.909,
+      "relationship": "simultaneous",
+      "strength": "strong"
+    },
+    {
+      "pair": "BTC/USD \u2192 SOL/USD",
+      "leader": "BTC/USD",
+      "follower": "SOL/USD",
+      "lag_hours": 0,
+      "correlation": 0.906,
+      "relationship": "simultaneous",
+      "strength": "strong"
+    },
+    {
+      "pair": "SPY \u2192 VXX",
+      "leader": "SPY",
+      "follower": "VXX",
+      "lag_hours": 0,
+      "correlation": -0.891,
+      "relationship": "simultaneous",
+      "strength": "strong"
+    },
+    {
+      "pair": "SPY \u2192 XLK",
+      "leader": "SPY",
+      "follower": "XLK",
+      "lag_hours": 0,
+      "correlation": 0.856,
+      "relationship": "simultaneous",
+      "strength": "strong"
+    },
+    {
+      "pair": "QQQ \u2192 VXX",
+      "leader": "QQQ",
+      "follower": "VXX",
+      "lag_hours": 0,
+      "correlation": -0.826,
+      "relationship": "simultaneous",
+      "strength": "strong"
+    },
+    {
+      "pair": "XLK \u2192 VXX",
+      "leader": "XLK",
+      "follower": "VXX",
+      "lag_hours": 0,
+      "correlation": -0.757,
+      "relationship": "simultaneous",
+      "strength": "strong"
+    },
+    {
+      "pair": "SPY \u2192 IWM",
+      "leader": "SPY",
+      "follower": "IWM",
+      "lag_hours": 0,
+      "correlation": 0.727,
+      "relationship": "simultaneous",
+      "strength": "strong"
+    },
+    {
+      "pair": "IWM \u2192 VXX",
+      "leader": "IWM",
+      "follower": "VXX",
+      "lag_hours": 0,
+      "correlation": -0.697,
+      "relationship": "simultaneous",
+      "strength": "strong"
+    },
+    {
+      "pair": "XLE \u2192 USO",
+      "leader": "XLE",
+      "follower": "USO",
+      "lag_hours": 0,
+      "correlation": 0.678,
+      "relationship": "simultaneous",
+      "strength": "strong"
+    },
+    {
+      "pair": "QQQ \u2192 IWM",
+      "leader": "QQQ",
+      "follower": "IWM",
+      "lag_hours": 0,
+      "correlation": 0.629,
+      "relationship": "simultaneous",
+      "strength": "strong"
+    },
+    {
+      "pair": "IWM \u2192 XLK",
+      "leader": "IWM",
+      "follower": "XLK",
+      "lag_hours": 0,
+      "correlation": 0.559,
+      "relationship": "simultaneous",
+      "strength": "moderate"
+    },
+    {
+      "pair": "IWM \u2192 XLF",
+      "leader": "IWM",
+      "follower": "XLF",
+      "lag_hours": 0,
+      "correlation": 0.542,
+      "relationship": "simultaneous",
+      "strength": "moderate"
+    },
+    {
+      "pair": "XLF \u2192 VXX",
+      "leader": "XLF",
+      "follower": "VXX",
+      "lag_hours": 0,
+      "correlation": -0.446,
+      "relationship": "simultaneous",
+      "strength": "moderate"
+    },
+    {
+      "pair": "SPY \u2192 XLF",
+      "leader": "SPY",
+      "follower": "XLF",
+      "lag_hours": 0,
+      "correlation": 0.437,
+      "relationship": "simultaneous",
+      "strength": "moderate"
+    },
+    {
+      "pair": "SOL/USD \u2192 TLT",
+      "leader": "SOL/USD",
+      "follower": "TLT",
+      "lag_hours": 0,
+      "correlation": 0.434,
+      "relationship": "simultaneous",
+      "strength": "moderate"
+    },
+    {
+      "pair": "USO \u2192 VXX",
+      "leader": "USO",
+      "follower": "VXX",
+      "lag_hours": 0,
+      "correlation": 0.395,
+      "relationship": "simultaneous",
+      "strength": "moderate"
+    },
+    {
+      "pair": "IWM \u2192 USO",
+      "leader": "IWM",
+      "follower": "USO",
+      "lag_hours": 0,
+      "correlation": -0.383,
+      "relationship": "simultaneous",
+      "strength": "moderate"
+    }
+  ],
+  "asset_clusters": [
+    {
+      "assets": [
+        "SPY",
+        "QQQ",
+        "IWM",
+        "XLK"
+      ],
+      "size": 4,
+      "avg_correlation": 0.779,
+      "sectors": [
+        "index_us",
+        "index_tech",
+        "index_smallcap",
+        "sector_tech"
+      ]
+    },
+    {
+      "assets": [
+        "BTC/USD",
+        "ETH/USD",
+        "SOL/USD"
+      ],
+      "size": 3,
+      "avg_correlation": 0.916,
+      "sectors": [
+        "crypto_alt",
+        "crypto_major"
+      ]
+    },
+    {
+      "assets": [
+        "XLE",
+        "USO"
+      ],
+      "size": 2,
+      "avg_correlation": 0.678,
+      "sectors": [
+        "commodity_oil",
+        "sector_energy"
+      ]
+    }
+  ],
+  "hedging_pairs": [
+    {
+      "pair": "SPY / VXX",
+      "asset1": "SPY",
+      "asset2": "VXX",
+      "correlation": -0.891,
+      "hedge_quality": "excellent"
+    },
+    {
+      "pair": "QQQ / VXX",
+      "asset1": "QQQ",
+      "asset2": "VXX",
+      "correlation": -0.826,
+      "hedge_quality": "excellent"
+    },
+    {
+      "pair": "XLK / VXX",
+      "asset1": "XLK",
+      "asset2": "VXX",
+      "correlation": -0.757,
+      "hedge_quality": "excellent"
+    },
+    {
+      "pair": "IWM / VXX",
+      "asset1": "IWM",
+      "asset2": "VXX",
+      "correlation": -0.697,
+      "hedge_quality": "excellent"
+    },
+    {
+      "pair": "XLF / VXX",
+      "asset1": "XLF",
+      "asset2": "VXX",
+      "correlation": -0.446,
+      "hedge_quality": "good"
+    },
+    {
+      "pair": "IWM / USO",
+      "asset1": "IWM",
+      "asset2": "USO",
+      "correlation": -0.383,
+      "hedge_quality": "good"
+    },
+    {
+      "pair": "XLK / USO",
+      "asset1": "XLK",
+      "asset2": "USO",
+      "correlation": -0.367,
+      "hedge_quality": "good"
+    },
+    {
+      "pair": "TLT / VXX",
+      "asset1": "TLT",
+      "asset2": "VXX",
+      "correlation": -0.353,
+      "hedge_quality": "good"
+    },
+    {
+      "pair": "SPY / USO",
+      "asset1": "SPY",
+      "asset2": "USO",
+      "correlation": -0.349,
+      "hedge_quality": "good"
+    },
+    {
+      "pair": "XLF / USO",
+      "asset1": "XLF",
+      "asset2": "USO",
+      "correlation": -0.336,
+      "hedge_quality": "good"
+    }
+  ],
+  "predictability_scores": {
+    "BTC/USD": 799.6,
+    "ETH/USD": 741.4,
+    "SOL/USD": 551.6,
+    "TLT": 487.6,
+    "XLK": 438.9,
+    "QQQ": 377.0,
+    "IWM": 327.2,
+    "XLV": 287.0,
+    "XLE": 284.2,
+    "SPY": 225.6,
+    "USO": 223.7,
+    "VXX": 215.0,
+    "GLD": 156.9,
+    "XLF": 123.0
+  },
+  "trading_signals": [
+    {
+      "type": "momentum",
+      "description": "BTC/USD shows trend persistence (predictability: 799.6)",
+      "action": "Trend-following strategies work well on BTC/USD",
+      "predictability_score": 799.6,
+      "confidence": "high"
+    },
+    {
+      "type": "momentum",
+      "description": "ETH/USD shows trend persistence (predictability: 741.4)",
+      "action": "Trend-following strategies work well on ETH/USD",
+      "predictability_score": 741.4,
+      "confidence": "high"
+    },
+    {
+      "type": "momentum",
+      "description": "SOL/USD shows trend persistence (predictability: 551.6)",
+      "action": "Trend-following strategies work well on SOL/USD",
+      "predictability_score": 551.6,
+      "confidence": "high"
+    }
+  ]
+}

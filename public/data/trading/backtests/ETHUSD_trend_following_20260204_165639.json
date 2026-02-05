@@ -1,0 +1,156 @@
+{
+  "summary": {
+    "total_return_pct": -8.11834917999996,
+    "buy_hold_return_pct": -33.88907886102974,
+    "excess_return_pct": 25.770729681029778,
+    "max_drawdown_pct": -14.274588418551804,
+    "sharpe_ratio": -5.628008280029336,
+    "sortino_ratio": -2.9624568888176968,
+    "calmar_ratio": -4.420310044629405,
+    "win_rate_pct": 33.33333333333333,
+    "profit_factor": 0.4431752196869938,
+    "total_trades": 12,
+    "avg_trade_pct": -0.7084934485073413,
+    "best_trade_pct": 5.456412169919642,
+    "worst_trade_pct": -3.3951981587563,
+    "avg_win": 1615.3426125000044,
+    "avg_loss": 1822.4649537499977,
+    "max_consecutive_wins": 2,
+    "max_consecutive_losses": 3,
+    "avg_trade_duration_hours": 13.583333333333334,
+    "exposure_pct": 24.271844660194176
+  },
+  "equity_curve": {
+    "start": "2026-01-06 00:00:00",
+    "end": "2026-02-05 00:00:00",
+    "peak": 107181.34696000002,
+    "final": 91881.65082000004
+  },
+  "risk_metrics": {
+    "max_drawdown_pct": -14.274588418551804,
+    "avg_drawdown_pct": -2.008974373885608,
+    "max_drawdown_duration": "21 days 04:00:00",
+    "avg_drawdown_duration": "2 days 13:00:00"
+  },
+  "trades": [
+    {
+      "entry_time": "2026-01-10 15:00:00",
+      "exit_time": "2026-01-10 23:00:00",
+      "entry_price": 3086.93,
+      "exit_price": 3076.41,
+      "pnl": -533.8668799999994,
+      "pnl_pct": -0.005404508686623918,
+      "size": 32.0
+    },
+    {
+      "entry_time": "2026-01-11 06:00:00",
+      "exit_time": "2026-01-11 23:00:00",
+      "entry_price": 3095.18,
+      "exit_price": 3104.9,
+      "pnl": 112.63744000000816,
+      "pnl_pct": 0.0011372262679391586,
+      "size": 32.0
+    },
+    {
+      "entry_time": "2026-01-13 10:00:00",
+      "exit_time": "2026-01-15 03:00:00",
+      "entry_price": 3135.6,
+      "exit_price": 3313.14,
+      "pnl": 5303.829059999999,
+      "pnl_pct": 0.05456412169919642,
+      "size": 31.0
+    },
+    {
+      "entry_time": "2026-01-15 14:00:00",
+      "exit_time": "2026-01-15 18:00:00",
+      "entry_price": 3370.0,
+      "exit_price": 3299.99,
+      "pnl": -2377.079690000007,
+      "pnl_pct": -0.022753706231454087,
+      "size": 31.0
+    },
+    {
+      "entry_time": "2026-01-17 13:00:00",
+      "exit_time": "2026-01-17 22:00:00",
+      "entry_price": 3301.99,
+      "exit_price": 3311.0,
+      "pnl": 74.30731000000677,
+      "pnl_pct": 0.0007259289095363948,
+      "size": 31.0
+    },
+    {
+      "entry_time": "2026-01-21 23:00:00",
+      "exit_time": "2026-01-22 15:00:00",
+      "entry_price": 3007.99,
+      "exit_price": 2939.16,
+      "pnl": -2542.4230999999977,
+      "pnl_pct": -0.024859507511660543,
+      "size": 34.0
+    },
+    {
+      "entry_time": "2026-01-23 20:00:00",
+      "exit_time": "2026-01-24 14:00:00",
+      "entry_price": 2955.72,
+      "exit_price": 2944.6,
+      "pnl": -561.6705599999964,
+      "pnl_pct": -0.005758434493118343,
+      "size": 33.0
+    },
+    {
+      "entry_time": "2026-01-25 01:00:00",
+      "exit_time": "2026-01-25 03:00:00",
+      "entry_price": 2953.87,
+      "exit_price": 2948.83,
+      "pnl": -361.10909999999876,
+      "pnl_pct": -0.0037045299894714026,
+      "size": 33.0
+    },
+    {
+      "entry_time": "2026-01-26 13:00:00",
+      "exit_time": "2026-01-27 16:00:00",
+      "entry_price": 2899.33,
+      "exit_price": 2933.71,
+      "pnl": 970.5966400000037,
+      "pnl_pct": 0.009846054088358435,
+      "size": 34.0
+    },
+    {
+      "entry_time": "2026-01-27 17:00:00",
+      "exit_time": "2026-01-27 18:00:00",
+      "entry_price": 2986.97,
+      "exit_price": 2926.6,
+      "pnl": -2187.3578099999963,
+      "pnl_pct": -0.022190905834340448,
+      "size": 33.0
+    },
+    {
+      "entry_time": "2026-02-02 18:00:00",
+      "exit_time": "2026-02-03 11:00:00",
+      "entry_price": 2354.93,
+      "exit_price": 2279.61,
+      "pnl": -3278.1361399999882,
+      "pnl_pct": -0.033951981587563,
+      "size": 41.0
+    },
+    {
+      "entry_time": "2026-02-04 11:00:00",
+      "exit_time": "2026-02-04 14:00:00",
+      "entry_price": 2257.34,
+      "exit_price": 2195.01,
+      "pnl": -2738.076349999997,
+      "pnl_pct": -0.02958453312305635,
+      "size": 41.0
+    }
+  ],
+  "trade_count": 12,
+  "metadata": {
+    "symbol": "ETH/USD",
+    "strategy": "trend_following",
+    "timeframe": "1h",
+    "candle_count": 721,
+    "start_date": "2026-01-06 00:00:00",
+    "end_date": "2026-02-05 00:00:00",
+    "timestamp": "2026-02-04T16:56:39.742771",
+    "is_stock": false
+  }
+}

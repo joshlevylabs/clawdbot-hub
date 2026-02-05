@@ -1,0 +1,100 @@
+{
+  "summary": {
+    "total_return_pct": 0.8730171403198037,
+    "buy_hold_return_pct": 37.85537901525425,
+    "excess_return_pct": -36.98236187493445,
+    "max_drawdown_pct": -3.485138476398797,
+    "sharpe_ratio": 0.0992739082719821,
+    "sortino_ratio": 0.15152554284568595,
+    "calmar_ratio": 0.12547538586288978,
+    "win_rate_pct": 40.0,
+    "profit_factor": 1.149641840007175,
+    "total_trades": 5,
+    "avg_trade_pct": 0.17446168228163472,
+    "best_trade_pct": 3.8146325307035926,
+    "worst_trade_pct": -2.9010596998862312,
+    "avg_win": 3353.5307755737304,
+    "avg_loss": 1944.681470275879,
+    "max_consecutive_wins": 1,
+    "max_consecutive_losses": 2,
+    "avg_trade_duration_hours": 15.0,
+    "exposure_pct": 0.830945558739255
+  },
+  "equity_curve": {
+    "start": "2024-02-05 09:30:00-05:00",
+    "end": "2026-02-04 15:30:00-05:00",
+    "peak": 103873.45650024414,
+    "final": 100873.0171403198
+  },
+  "risk_metrics": {
+    "max_drawdown_pct": -3.485138476398797,
+    "avg_drawdown_pct": -3.485138476398797,
+    "max_drawdown_duration": "302 days 04:00:00",
+    "avg_drawdown_duration": "302 days 04:00:00"
+  },
+  "trades": [
+    {
+      "entry_time": "2025-04-08 10:30:00-04:00",
+      "exit_time": "2025-04-08 13:30:00-04:00",
+      "entry_price": 523.3599853515625,
+      "exit_price": 502.3699951171875,
+      "pnl": 3793.2094482421876,
+      "pnl_pct": 0.038146325307035926,
+      "size": -190.0
+    },
+    {
+      "entry_time": "2025-04-09 13:30:00-04:00",
+      "exit_time": "2025-04-09 14:30:00-04:00",
+      "entry_price": 524.02001953125,
+      "exit_price": 538.1599731445312,
+      "pnl": -2994.820320373535,
+      "pnl_pct": -0.029010596998862312,
+      "size": -197.0
+    },
+    {
+      "entry_time": "2025-04-09 15:30:00-04:00",
+      "exit_time": "2025-04-10 11:30:00-04:00",
+      "entry_price": 540.4500122070312,
+      "exit_price": 523.719970703125,
+      "pnl": 2913.8521029052736,
+      "pnl_pct": 0.02898671693432206,
+      "size": -186.0
+    },
+    {
+      "entry_time": "2025-04-10 13:30:00-04:00",
+      "exit_time": "2025-04-11 13:30:00-04:00",
+      "entry_price": 519.2100219726562,
+      "exit_price": 529.8400268554688,
+      "pnl": -2324.1319313964846,
+      "pnl_pct": -0.022493893487009246,
+      "size": -199.0
+    },
+    {
+      "entry_time": "2025-04-23 10:30:00-04:00",
+      "exit_time": "2025-04-24 13:30:00-04:00",
+      "entry_price": 543.8200073242188,
+      "exit_price": 545.5,
+      "pnl": -515.0921590576172,
+      "pnl_pct": -0.005092333209164917,
+      "size": -186.0
+    }
+  ],
+  "trade_count": 5,
+  "metadata": {
+    "symbol": "SPY",
+    "strategy": "adaptive_dip",
+    "timeframe": "1h",
+    "candle_count": 3490,
+    "start_date": "2024-02-05 09:30:00-05:00",
+    "end_date": "2026-02-04 15:30:00-05:00",
+    "timestamp": "2026-02-04T16:55:16.744972",
+    "params_used": {
+      "sma_fast": 20,
+      "sma_slow": 50,
+      "dip_threshold": 0.05,
+      "take_profit": 0.03,
+      "stop_loss": 0.02,
+      "lookback": 20
+    }
+  }
+}

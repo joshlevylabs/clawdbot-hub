@@ -1,0 +1,460 @@
+{
+  "generated_at": "2026-02-04T17:08:42.837731",
+  "total_tests": 36,
+  "timeframe_analysis": {
+    "15m": {
+      "total_tests": 9,
+      "strategies": {
+        "adaptive_dip": {
+          "avg_return": -0.42571159333333103,
+          "avg_excess": 15.135143897218024,
+          "avg_sharpe": 0.2128175817504654,
+          "tests": 3
+        },
+        "adaptive_dip_v2": {
+          "avg_return": -0.2906889400000024,
+          "avg_excess": 15.270166550551352,
+          "avg_sharpe": -0.573920870026398,
+          "tests": 3
+        },
+        "correlation_aware": {
+          "avg_return": -0.3982198533333285,
+          "avg_excess": 15.65220926056972,
+          "avg_sharpe": 1.0818763798924096,
+          "tests": 3
+        }
+      }
+    },
+    "1h": {
+      "total_tests": 9,
+      "strategies": {
+        "adaptive_dip": {
+          "avg_return": 1.247522333333327,
+          "avg_excess": 17.59714746338254,
+          "avg_sharpe": 0.8781667540702238,
+          "tests": 3
+        },
+        "adaptive_dip_v2": {
+          "avg_return": 3.1444121333333364,
+          "avg_excess": 19.494037263382552,
+          "avg_sharpe": 0.81414828252616,
+          "tests": 3
+        },
+        "correlation_aware": {
+          "avg_return": 1.2094781666666579,
+          "avg_excess": 19.187559181621832,
+          "avg_sharpe": 0.978322755158326,
+          "tests": 3
+        }
+      }
+    },
+    "4h": {
+      "total_tests": 9,
+      "strategies": {
+        "adaptive_dip": {
+          "avg_return": -2.5203670998933863,
+          "avg_excess": 5.1183219872389305,
+          "avg_sharpe": -0.29568387532562235,
+          "tests": 3
+        },
+        "adaptive_dip_v2": {
+          "avg_return": -1.0156695383545105,
+          "avg_excess": 6.623019548777807,
+          "avg_sharpe": -0.9093314069235743,
+          "tests": 3
+        },
+        "correlation_aware": {
+          "avg_return": 2.2703255759879735,
+          "avg_excess": 15.515853163472661,
+          "avg_sharpe": 0.5028834743658636,
+          "tests": 3
+        }
+      }
+    },
+    "1d": {
+      "total_tests": 9,
+      "strategies": {
+        "adaptive_dip": {
+          "avg_return": -13.393432356796238,
+          "avg_excess": -23.51762540908992,
+          "avg_sharpe": -0.47312998024350567,
+          "tests": 3
+        },
+        "adaptive_dip_v2": {
+          "avg_return": -19.676642240575905,
+          "avg_excess": -29.80083529286959,
+          "avg_sharpe": -1.3245961590016924,
+          "tests": 3
+        },
+        "correlation_aware": {
+          "avg_return": -20.4616911876969,
+          "avg_excess": -27.582153623976225,
+          "avg_sharpe": -1.0435698507826363,
+          "tests": 3
+        }
+      }
+    }
+  },
+  "detailed_results": [
+    {
+      "symbol": "ETH/USD",
+      "timeframe": "1h",
+      "strategy": "adaptive_dip_v2",
+      "return_pct": 9.433236400000009,
+      "excess_pct": 41.18766183066167,
+      "sharpe": 2.44244484757848,
+      "win_rate": 75.0,
+      "trades": 4
+    },
+    {
+      "symbol": "ETH/USD",
+      "timeframe": "4h",
+      "strategy": "correlation_aware",
+      "return_pct": 6.330240790000069,
+      "excess_pct": 37.80720370606892,
+      "sharpe": 0.6801399806553303,
+      "win_rate": 40.909090909090914,
+      "trades": 22
+    },
+    {
+      "symbol": "ETH/USD",
+      "timeframe": "1h",
+      "strategy": "adaptive_dip",
+      "return_pct": 2.376162199999977,
+      "excess_pct": 34.13058763066163,
+      "sharpe": 0.9228816410357842,
+      "win_rate": 55.55555555555556,
+      "trades": 9
+    },
+    {
+      "symbol": "BTC/USD",
+      "timeframe": "4h",
+      "strategy": "correlation_aware",
+      "return_pct": 11.5889764,
+      "excess_pct": 33.33564109114171,
+      "sharpe": 2.2087396245610402,
+      "win_rate": 62.5,
+      "trades": 8
+    },
+    {
+      "symbol": "ETH/USD",
+      "timeframe": "1h",
+      "strategy": "correlation_aware",
+      "return_pct": -1.956838500000027,
+      "excess_pct": 31.755639419136312,
+      "sharpe": -0.9287278728466272,
+      "win_rate": 40.0,
+      "trades": 10
+    },
+    {
+      "symbol": "ETH/USD",
+      "timeframe": "15m",
+      "strategy": "correlation_aware",
+      "return_pct": -1.5785372599999972,
+      "excess_pct": 27.26110448686396,
+      "sharpe": -2.3060462588346984,
+      "win_rate": 66.66666666666666,
+      "trades": 6
+    },
+    {
+      "symbol": "ETH/USD",
+      "timeframe": "15m",
+      "strategy": "adaptive_dip_v2",
+      "return_pct": -0.8720668200000072,
+      "excess_pct": 27.153889760868708,
+      "sharpe": -1.721762610079194,
+      "win_rate": 50.0,
+      "trades": 2
+    },
+    {
+      "symbol": "BTC/USD",
+      "timeframe": "1h",
+      "strategy": "correlation_aware",
+      "return_pct": 5.585273000000001,
+      "excess_pct": 26.808037318989125,
+      "sharpe": 3.8636961383216053,
+      "win_rate": 66.66666666666666,
+      "trades": 3
+    },
+    {
+      "symbol": "ETH/USD",
+      "timeframe": "15m",
+      "strategy": "adaptive_dip",
+      "return_pct": -1.9452780799999891,
+      "excess_pct": 26.080678500868725,
+      "sharpe": -2.769226426718025,
+      "win_rate": 33.33333333333333,
+      "trades": 6
+    },
+    {
+      "symbol": "BTC/USD",
+      "timeframe": "1h",
+      "strategy": "adaptive_dip",
+      "return_pct": 1.366404800000004,
+      "excess_pct": 21.09893499740455,
+      "sharpe": 1.7116186211748874,
+      "win_rate": 50.0,
+      "trades": 4
+    },
+    {
+      "symbol": "BTC/USD",
+      "timeframe": "1h",
+      "strategy": "adaptive_dip_v2",
+      "return_pct": 0.0,
+      "excess_pct": 19.732530197404547,
+      "sharpe": 0,
+      "win_rate": 0,
+      "trades": 0
+    },
+    {
+      "symbol": "BTC/USD",
+      "timeframe": "15m",
+      "strategy": "correlation_aware",
+      "return_pct": 0.3838777000000118,
+      "excess_pct": 19.05616711463046,
+      "sharpe": 5.551675398511927,
+      "win_rate": 100.0,
+      "trades": 1
+    },
+    {
+      "symbol": "BTC/USD",
+      "timeframe": "15m",
+      "strategy": "adaptive_dip",
+      "return_pct": 0.6681432999999961,
+      "excess_pct": 18.472173171776795,
+      "sharpe": 3.4076791719694213,
+      "win_rate": 100.0,
+      "trades": 1
+    },
+    {
+      "symbol": "BTC/USD",
+      "timeframe": "15m",
+      "strategy": "adaptive_dip_v2",
+      "return_pct": 0.0,
+      "excess_pct": 17.804029871776798,
+      "sharpe": 0,
+      "win_rate": 0,
+      "trades": 0
+    },
+    {
+      "symbol": "ETH/USD",
+      "timeframe": "4h",
+      "strategy": "adaptive_dip_v2",
+      "return_pct": -6.8378382500000585,
+      "excess_pct": 14.864815330516116,
+      "sharpe": -1.2233765588823695,
+      "win_rate": 38.46153846153847,
+      "trades": 13
+    },
+    {
+      "symbol": "BTC/USD",
+      "timeframe": "4h",
+      "strategy": "adaptive_dip",
+      "return_pct": 0.2892962000000407,
+      "excess_pct": 13.93716289889251,
+      "sharpe": 0.0875598910662563,
+      "win_rate": 55.55555555555556,
+      "trades": 9
+    },
+    {
+      "symbol": "ETH/USD",
+      "timeframe": "4h",
+      "strategy": "adaptive_dip",
+      "return_pct": -8.723414640000003,
+      "excess_pct": 12.97923894051617,
+      "sharpe": -1.1143590304902364,
+      "win_rate": 42.42424242424242,
+      "trades": 33
+    },
+    {
+      "symbol": "BTC/USD",
+      "timeframe": "4h",
+      "strategy": "adaptive_dip_v2",
+      "return_pct": -4.845704299999998,
+      "excess_pct": 8.802162398892472,
+      "sharpe": -2.655563578813024,
+      "win_rate": 40.0,
+      "trades": 5
+    },
+    {
+      "symbol": "BTC/USD",
+      "timeframe": "1d",
+      "strategy": "correlation_aware",
+      "return_pct": -11.947080000000017,
+      "excess_pct": 4.047539783016342,
+      "sharpe": -1.070277508006855,
+      "win_rate": 22.22222222222222,
+      "trades": 9
+    },
+    {
+      "symbol": "BTC/USD",
+      "timeframe": "1d",
+      "strategy": "adaptive_dip_v2",
+      "return_pct": -13.772622899999988,
+      "excess_pct": 2.6531498620373455,
+      "sharpe": -1.7974885001727707,
+      "win_rate": 0.0,
+      "trades": 4
+    },
+    {
+      "symbol": "BTC/USD",
+      "timeframe": "1d",
+      "strategy": "adaptive_dip",
+      "return_pct": -14.603413299999943,
+      "excess_pct": 1.8223594620373902,
+      "sharpe": -1.0136228701570562,
+      "win_rate": 37.5,
+      "trades": 24
+    },
+    {
+      "symbol": "SPY",
+      "timeframe": "15m",
+      "strategy": "adaptive_dip",
+      "return_pct": 0.0,
+      "excess_pct": 0.8525800190085496,
+      "sharpe": 0,
+      "win_rate": 0,
+      "trades": 0
+    },
+    {
+      "symbol": "SPY",
+      "timeframe": "15m",
+      "strategy": "adaptive_dip_v2",
+      "return_pct": 0.0,
+      "excess_pct": 0.8525800190085496,
+      "sharpe": 0,
+      "win_rate": 0,
+      "trades": 0
+    },
+    {
+      "symbol": "SPY",
+      "timeframe": "15m",
+      "strategy": "correlation_aware",
+      "return_pct": 0.0,
+      "excess_pct": 0.6393561802147392,
+      "sharpe": 0,
+      "win_rate": 0,
+      "trades": 0
+    },
+    {
+      "symbol": "SPY",
+      "timeframe": "1h",
+      "strategy": "correlation_aware",
+      "return_pct": 0.0,
+      "excess_pct": -1.0009991932599334,
+      "sharpe": 0,
+      "win_rate": 0,
+      "trades": 0
+    },
+    {
+      "symbol": "SPY",
+      "timeframe": "1h",
+      "strategy": "adaptive_dip",
+      "return_pct": 0.0,
+      "excess_pct": -2.4380802379185624,
+      "sharpe": 0,
+      "win_rate": 0,
+      "trades": 0
+    },
+    {
+      "symbol": "SPY",
+      "timeframe": "1h",
+      "strategy": "adaptive_dip_v2",
+      "return_pct": 0.0,
+      "excess_pct": -2.4380802379185624,
+      "sharpe": 0,
+      "win_rate": 0,
+      "trades": 0
+    },
+    {
+      "symbol": "SPY",
+      "timeframe": "4h",
+      "strategy": "adaptive_dip_v2",
+      "return_pct": 8.636533934936525,
+      "excess_pct": -3.7979190830751683,
+      "sharpe": 1.1509459169246707,
+      "win_rate": 100.0,
+      "trades": 2
+    },
+    {
+      "symbol": "SPY",
+      "timeframe": "4h",
+      "strategy": "adaptive_dip",
+      "return_pct": 0.8730171403198037,
+      "excess_pct": -11.561435877691888,
+      "sharpe": 0.13974751344711303,
+      "win_rate": 40.0,
+      "trades": 5
+    },
+    {
+      "symbol": "SPY",
+      "timeframe": "4h",
+      "strategy": "correlation_aware",
+      "return_pct": -11.108240462036148,
+      "excess_pct": -24.59528530679265,
+      "sharpe": -1.38022918211878,
+      "win_rate": 0.0,
+      "trades": 4
+    },
+    {
+      "symbol": "SPY",
+      "timeframe": "1d",
+      "strategy": "adaptive_dip",
+      "return_pct": 5.134335959611301,
+      "excess_pct": -34.07790551417002,
+      "sharpe": 0.3858527118623979,
+      "win_rate": 62.5,
+      "trades": 16
+    },
+    {
+      "symbol": "ETH/USD",
+      "timeframe": "1d",
+      "strategy": "adaptive_dip",
+      "return_pct": -30.71121973000007,
+      "excess_pct": -38.297330175137134,
+      "sharpe": -0.7916197824358587,
+      "win_rate": 46.05263157894737,
+      "trades": 76
+    },
+    {
+      "symbol": "ETH/USD",
+      "timeframe": "1d",
+      "strategy": "adaptive_dip_v2",
+      "return_pct": -31.005920799999977,
+      "excess_pct": -38.59203124513704,
+      "sharpe": -1.0332271469055911,
+      "win_rate": 37.5,
+      "trades": 40
+    },
+    {
+      "symbol": "SPY",
+      "timeframe": "1d",
+      "strategy": "correlation_aware",
+      "return_pct": -6.102282913090646,
+      "excess_pct": -42.781960599338966,
+      "sharpe": -0.3312101000994048,
+      "win_rate": 14.285714285714285,
+      "trades": 7
+    },
+    {
+      "symbol": "ETH/USD",
+      "timeframe": "1d",
+      "strategy": "correlation_aware",
+      "return_pct": -43.33571065000004,
+      "excess_pct": -44.01204005560606,
+      "sharpe": -1.7292219442416492,
+      "win_rate": 35.08771929824561,
+      "trades": 57
+    },
+    {
+      "symbol": "SPY",
+      "timeframe": "1d",
+      "strategy": "adaptive_dip_v2",
+      "return_pct": -14.251383021727756,
+      "excess_pct": -53.46362449550907,
+      "sharpe": -1.1430728299267152,
+      "win_rate": 28.57142857142857,
+      "trades": 7
+    }
+  ]
+}

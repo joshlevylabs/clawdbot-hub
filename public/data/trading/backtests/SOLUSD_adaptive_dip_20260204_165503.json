@@ -1,0 +1,136 @@
+{
+  "summary": {
+    "total_return_pct": -4.7116561399999775,
+    "buy_hold_return_pct": -32.935927442949094,
+    "excess_return_pct": 28.224271302949116,
+    "max_drawdown_pct": -5.503629727869585,
+    "sharpe_ratio": -3.892938895375511,
+    "sortino_ratio": -2.9100880351710416,
+    "calmar_ratio": -7.876373862134064,
+    "win_rate_pct": 33.33333333333333,
+    "profit_factor": 0.5151566870537492,
+    "total_trades": 9,
+    "avg_trade_pct": -0.5353695807010728,
+    "best_trade_pct": 3.4451778093883356,
+    "worst_trade_pct": -2.729174891433078,
+    "avg_win": 1668.7461033333364,
+    "avg_loss": 1619.6490749999978,
+    "max_consecutive_wins": 1,
+    "max_consecutive_losses": 2,
+    "avg_trade_duration_hours": 8.555555555555555,
+    "exposure_pct": 11.927877947295423
+  },
+  "equity_curve": {
+    "start": "2026-01-06 00:00:00",
+    "end": "2026-02-05 00:00:00",
+    "peak": 100838.09948,
+    "final": 95288.34386000002
+  },
+  "risk_metrics": {
+    "max_drawdown_pct": -5.503629727869585,
+    "avg_drawdown_pct": -3.0289307719409244,
+    "max_drawdown_duration": "26 days 23:00:00",
+    "avg_drawdown_duration": "13 days 13:00:00"
+  },
+  "trades": [
+    {
+      "entry_time": "2026-01-08 22:00:00",
+      "exit_time": "2026-01-09 05:00:00",
+      "entry_price": 139.47,
+      "exit_price": 139.6,
+      "pnl": -292.89411999999675,
+      "pnl_pct": -0.0029330321933030857,
+      "size": -716.0
+    },
+    {
+      "entry_time": "2026-01-26 14:00:00",
+      "exit_time": "2026-01-27 04:00:00",
+      "entry_price": 123.04,
+      "exit_price": 124.37,
+      "pnl": -1276.1246899999987,
+      "pnl_pct": -0.012820302340702229,
+      "size": -809.0
+    },
+    {
+      "entry_time": "2026-01-30 19:00:00",
+      "exit_time": "2026-01-31 12:00:00",
+      "entry_price": 117.93,
+      "exit_price": 115.87,
+      "pnl": 1521.2246000000018,
+      "pnl_pct": 0.015485457474773225,
+      "size": -833.0
+    },
+    {
+      "entry_time": "2026-01-31 15:00:00",
+      "exit_time": "2026-01-31 16:00:00",
+      "entry_price": 108.97,
+      "exit_price": 108.5,
+      "pnl": -629.7225199999989,
+      "pnl_pct": -0.006308800587317593,
+      "size": 916.0
+    },
+    {
+      "entry_time": "2026-01-31 19:00:00",
+      "exit_time": "2026-01-31 23:00:00",
+      "entry_price": 101.79,
+      "exit_price": 103.98,
+      "pnl": -2333.479979999998,
+      "pnl_pct": -0.02353639846743286,
+      "size": -974.0
+    },
+    {
+      "entry_time": "2026-02-01 00:00:00",
+      "exit_time": "2026-02-01 16:00:00",
+      "entry_price": 105.45,
+      "exit_price": 101.61,
+      "pnl": 3335.038920000003,
+      "pnl_pct": 0.034451778093883355,
+      "size": -918.0
+    },
+    {
+      "entry_time": "2026-02-02 08:00:00",
+      "exit_time": "2026-02-02 15:00:00",
+      "entry_price": 101.32,
+      "exit_price": 103.88,
+      "pnl": -2734.782800000002,
+      "pnl_pct": -0.027291748914330782,
+      "size": -989.0
+    },
+    {
+      "entry_time": "2026-02-02 16:00:00",
+      "exit_time": "2026-02-03 02:00:00",
+      "entry_price": 104.64,
+      "exit_price": 104.27,
+      "pnl": 149.97479000000425,
+      "pnl_pct": 0.0015394686544343106,
+      "size": -931.0
+    },
+    {
+      "entry_time": "2026-02-03 18:00:00",
+      "exit_time": "2026-02-03 19:00:00",
+      "entry_price": 98.99,
+      "exit_price": 96.7,
+      "pnl": -2450.890339999992,
+      "pnl_pct": -0.02511051621375892,
+      "size": 986.0
+    }
+  ],
+  "trade_count": 9,
+  "metadata": {
+    "symbol": "SOL/USD",
+    "strategy": "adaptive_dip",
+    "timeframe": "1h",
+    "candle_count": 721,
+    "start_date": "2026-01-06 00:00:00",
+    "end_date": "2026-02-05 00:00:00",
+    "timestamp": "2026-02-04T16:55:03.377861",
+    "params_used": {
+      "sma_fast": 20,
+      "sma_slow": 50,
+      "dip_threshold": 0.05,
+      "take_profit": 0.03,
+      "stop_loss": 0.02,
+      "lookback": 20
+    }
+  }
+}

@@ -1,14 +1,15 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+// Support both anon key (client-safe) and service role key (server-side API routes)
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 
 // Create client only if we have the required env vars
-export const supabase: SupabaseClient = supabaseUrl && supabaseAnonKey
-  ? createClient(supabaseUrl, supabaseAnonKey)
+export const supabase: SupabaseClient = supabaseUrl && supabaseKey
+  ? createClient(supabaseUrl, supabaseKey)
   : null as unknown as SupabaseClient;
 
-export const isSupabaseConfigured = () => Boolean(supabaseUrl && supabaseAnonKey);
+export const isSupabaseConfigured = () => Boolean(supabaseUrl && supabaseKey);
 
 // Types matching our schema
 export interface DbTask {

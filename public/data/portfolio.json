@@ -1,23 +1,23 @@
 {
-  "updated_at": "2026-02-05T10:00:06.219085",
+  "updated_at": "2026-02-05T11:00:05.798544",
   "account": {
-    "equity": 97920.7,
+    "equity": 99061.15,
     "cash": -66507.87,
-    "buying_power": 1758.49,
-    "portfolio_value": 97920.7,
-    "pnl_today": -2079.300000000003,
-    "pnl_today_pct": -2.079300000000006
+    "buying_power": 2776.78,
+    "portfolio_value": 99061.15,
+    "pnl_today": -938.8500000000058,
+    "pnl_today_pct": -0.9388500000000022
   },
   "positions": [
     {
       "symbol": "GLL",
       "qty": 1527.0,
       "entry_price": 19.663333,
-      "current_price": 19.42,
-      "market_value": 29654.34,
+      "current_price": 19.5,
+      "market_value": 29776.5,
       "cost_basis": 30025.909999,
-      "unrealized_pnl": -371.569999,
-      "unrealized_pnl_pct": -1.237,
+      "unrealized_pnl": -249.409999,
+      "unrealized_pnl_pct": -0.831,
       "side": "long",
       "is_inverse": true,
       "hedging": "GLD"
@@ -26,11 +26,11 @@
       "symbol": "SH",
       "qty": 1652.0,
       "entry_price": 36.445,
-      "current_price": 36.2999,
-      "market_value": 59967.4348,
+      "current_price": 36.41,
+      "market_value": 60149.32,
       "cost_basis": 60207.14,
-      "unrealized_pnl": -239.7052,
-      "unrealized_pnl_pct": -0.398,
+      "unrealized_pnl": -57.82,
+      "unrealized_pnl_pct": -0.096,
       "side": "long",
       "is_inverse": true,
       "hedging": "SPY"
@@ -39,11 +39,11 @@
       "symbol": "SQQQ",
       "qty": 1020.0,
       "entry_price": 74.779235,
-      "current_price": 73.34,
-      "market_value": 74806.8,
+      "current_price": 74.1486,
+      "market_value": 75631.572,
       "cost_basis": 76274.82,
-      "unrealized_pnl": -1468.02,
-      "unrealized_pnl_pct": -1.925,
+      "unrealized_pnl": -643.248,
+      "unrealized_pnl_pct": -0.843,
       "side": "long",
       "is_inverse": true,
       "hedging": "QQQ/NVDA"
@@ -159,9 +159,9 @@
   "regime_status": {},
   "summary": {
     "total_positions": 3,
-    "total_invested": 164428.5748,
-    "total_unrealized_pnl": -2079.295199,
-    "total_unrealized_pnl_pct": -1.2645583053487612,
+    "total_invested": 165557.392,
+    "total_unrealized_pnl": -950.4779990000001,
+    "total_unrealized_pnl_pct": -0.5741078592250355,
     "cash_remaining": -66507.87
   }
 }

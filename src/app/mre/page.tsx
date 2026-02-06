@@ -89,6 +89,11 @@ interface MRESignals {
     greed_sell: number;
     optimal_hold: number;
   };
+  meta?: {
+    version: string;
+    backtests: number;
+    key_insight: string;
+  };
 }
 
 // Fear & Greed Gauge Component

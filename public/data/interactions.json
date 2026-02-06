@@ -18,7 +18,7 @@
         "missed-opportunity",
         "acts-of-service"
       ],
-      "advice": "When you hear the baby at night, get up immediately — even if you're exhausted. The 5-minute delay while she handles it alone speaks louder than words. Consider setting up a schedule (alternate nights) so expectations are clear and no one feels abandoned."
+      "advice": "When you hear the baby at night, get up immediately \u2014 even if you're exhausted. The 5-minute delay while she handles it alone speaks louder than words. Consider setting up a schedule (alternate nights) so expectations are clear and no one feels abandoned."
     },
     {
       "id": "pos-1769698963",
@@ -38,7 +38,7 @@
         "apology",
         "initiative"
       ],
-      "advice": "This is exactly the right repair sequence: acknowledge the miss, apologize without excuses, and commit to a specific future action. The acts of service (school, breakfast) reinforce the repair. Keep this pattern — repairs build trust when done quickly and genuinely."
+      "advice": "This is exactly the right repair sequence: acknowledge the miss, apologize without excuses, and commit to a specific future action. The acts of service (school, breakfast) reinforce the repair. Keep this pattern \u2014 repairs build trust when done quickly and genuinely."
     },
     {
       "id": "neg-1769704299",
@@ -57,7 +57,7 @@
         "logic-vs-emotion",
         "mixed"
       ],
-      "advice": "The boundary-setting was good leadership. But the coffee defense was a missed opportunity — when something matters to her (the table), logic doesn't help. Next time: 'You're right, I'm sorry' + immediately fix it. Save the explaining for later, if ever."
+      "advice": "The boundary-setting was good leadership. But the coffee defense was a missed opportunity \u2014 when something matters to her (the table), logic doesn't help. Next time: 'You're right, I'm sorry' + immediately fix it. Save the explaining for later, if ever."
     },
     {
       "id": "pos-1769705154",
@@ -91,6 +91,26 @@
       },
       "tags": [],
       "advice": "This is the ideal pattern: receive her care (sandwich), be fully present when she shares, contribute without being asked (enthusiastic with Jett). Her visible happiness is the clearest signal you're in the right zone. More of this energy."
+    },
+    {
+      "id": "d2c3891f-d6e4-404c-a6d3-036ed40f3119",
+      "timestamp": "2026-02-05T15:55:50.745259Z",
+      "date": "2026-02-05",
+      "time": "07:45",
+      "type": "negative",
+      "description": "Morning repair attempt after tense night. Started well - said sorry, hugged it out despite eye roll. But second statement (didn't mean to make you feel like you need to change) confused her - wasn't what she was upset about. Revealed real issue: she's bothered by his views on women/submission. He wisely de-escalated with let's drop it.",
+      "compass": {
+        "power": 0,
+        "safety": -2
+      },
+      "tags": [
+        "morning",
+        "repair-attempt",
+        "values-conflict",
+        "de-escalation",
+        "communication"
+      ],
+      "advice": "The repair instinct was right, the hug worked. But the second statement was solving the wrong problem - always confirm what she's actually upset about before apologizing for something specific. The deeper issue (values on gender roles) won't resolve in a morning hallway chat. That's a longer, calmer conversation for when you're both regulated. Good call de-escalating."
     }
   ],
   "compassHistory": []

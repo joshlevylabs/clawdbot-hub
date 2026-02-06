@@ -3,124 +3,232 @@
   "time": "6:00 AM",
   "sections": {
     "prayer": {
-      "title": "🕊️ Morning Prayer",
+      "title": "\ud83d\udd4a\ufe0f Morning Prayer",
       "date": "Friday, February 06, 2026",
       "hebrew_date": "8 Cheshvan",
       "parsha": "Vayetzei",
       "parsha_theme": "dreams, building from nothing, divine protection",
-      "modeh_ani": "מודה אני לפניך — I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
-      "blessing": "Blessed are You who has provided me with all I need — I lack nothing essential.",
+      "modeh_ani": "\u05de\u05d5\u05d3\u05d4 \u05d0\u05e0\u05d9 \u05dc\u05e4\u05e0\u05d9\u05da \u2014 I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
+      "blessing": "Blessed are You who has provided me with all I need \u2014 I lack nothing essential.",
       "psalm": "Psalm 16:8: \"I have set the Lord always before me; He is at my right hand, I will not be shaken.\"",
       "proverb": "Proverbs 27:23: \"Know well the condition of your flocks, and give attention to your herds.\"",
       "intention": "Give me courage to take the risks You've called me to take.",
-      "closing": "Go in peace. Build with purpose. Return with gratitude."
+      "closing": "Go in peace. Build with purpose. Return with gratitude.",
+      "audio": "/audio/brief-2026-02-06-prayer.ogg"
     },
     "weather": {
-      "title": "☀️ Weather — Temecula",
-      "temperature": "52°F",
+      "title": "\u2600\ufe0f Weather \u2014 Temecula",
+      "temperature": "52\u00b0F",
       "condition": "Clear",
       "wind": "Light breeze",
-      "summary": "Cool February morning, warming to mid-60s by afternoon. Perfect building weather."
+      "summary": "Cool February morning, warming to mid-60s by afternoon. Perfect building weather.",
+      "audio": "/audio/brief-2026-02-06-weather.ogg"
     },
     "calendar": {
-      "title": "📅 Calendar",
-      "items": ["No events scheduled for today"],
-      "week": ["Clear week ahead — use it wisely"],
-      "note": "Valentine's Day coming up Feb 14th"
+      "title": "\ud83d\udcc5 Calendar",
+      "items": [
+        "No events scheduled for today"
+      ],
+      "week": [
+        "Clear week ahead \u2014 use it wisely"
+      ],
+      "note": "Valentine's Day coming up Feb 14th",
+      "audio": "/audio/brief-2026-02-06-calendar.ogg"
     },
     "email": {
-      "title": "📧 Email Highlights",
+      "title": "\ud83d\udce7 Email Highlights",
       "needs_attention": [
-        {"from": "GitHub", "subject": "A personal access token has been added to your account", "note": "Security — verify this was you"},
-        {"from": "Wise", "subject": "We're updating our Customer Agreement", "note": "Policy update"}
+        {
+          "from": "GitHub",
+          "subject": "A personal access token has been added to your account",
+          "note": "Security \u2014 verify this was you"
+        },
+        {
+          "from": "Wise",
+          "subject": "We're updating our Customer Agreement",
+          "note": "Policy update"
+        }
       ],
       "good_news": [
-        {"from": "Bluevine", "subject": "Your automatic transfer was successful"},
-        {"from": "Atlassian", "subject": "Your payment has been processed for invoice IN-005-537-432"}
+        {
+          "from": "Bluevine",
+          "subject": "Your automatic transfer was successful"
+        },
+        {
+          "from": "Atlassian",
+          "subject": "Your payment has been processed for invoice IN-005-537-432"
+        }
       ],
       "business": [
-        {"from": "Claude Team", "subject": "Introducing Claude Opus 4.6", "note": "AI update — relevant"},
-        {"from": "LinkedIn", "subject": "You have 1 new message"},
-        {"from": "Beehiiv (Tyler)", "subject": "Tomorrow: Get expert help with your newsletter"},
-        {"from": "Riverside.fm (Abel)", "subject": "Partner with us!"},
-        {"from": "Spotify for Creators", "subject": "Take your show with you"}
+        {
+          "from": "Claude Team",
+          "subject": "Introducing Claude Opus 4.6",
+          "note": "AI update \u2014 relevant"
+        },
+        {
+          "from": "LinkedIn",
+          "subject": "You have 1 new message"
+        },
+        {
+          "from": "Beehiiv (Tyler)",
+          "subject": "Tomorrow: Get expert help with your newsletter"
+        },
+        {
+          "from": "Riverside.fm (Abel)",
+          "subject": "Partner with us!"
+        },
+        {
+          "from": "Spotify for Creators",
+          "subject": "Take your show with you"
+        }
       ],
-      "total_unread": 15
+      "total_unread": 15,
+      "audio": "/audio/brief-2026-02-06-email.ogg"
     },
     "markets": {
-      "title": "📈 Markets & Trading Signals",
+      "title": "\ud83d\udcc8 Markets & Trading Signals",
       "summary": {
         "date": "2026-02-06",
         "market_status": "OPEN",
-        "spy": {"price": 677.62, "change_pct": -1.25},
+        "spy": {
+          "price": 677.62,
+          "change_pct": -1.25
+        },
         "vix": 20.17,
         "sentiment": "BEARISH",
         "volatility": "ELEVATED"
       },
       "overview": [
-        {"symbol": "SPY", "price": 677.62, "change_pct": -1.25, "trend": "BEARISH"},
-        {"symbol": "QQQ", "price": 597.03, "change_pct": -1.44, "trend": "BEARISH"},
-        {"symbol": "IWM", "price": 255.83, "change_pct": -1.8, "trend": "NEUTRAL"},
-        {"symbol": "DIA", "price": 488.91, "change_pct": -1.18, "trend": "NEUTRAL"}
+        {
+          "symbol": "SPY",
+          "price": 677.62,
+          "change_pct": -1.25,
+          "trend": "BEARISH"
+        },
+        {
+          "symbol": "QQQ",
+          "price": 597.03,
+          "change_pct": -1.44,
+          "trend": "BEARISH"
+        },
+        {
+          "symbol": "IWM",
+          "price": 255.83,
+          "change_pct": -1.8,
+          "trend": "NEUTRAL"
+        },
+        {
+          "symbol": "DIA",
+          "price": 488.91,
+          "change_pct": -1.18,
+          "trend": "NEUTRAL"
+        }
       ],
       "signals": [
-        {"type": "BUY", "symbol": "MSFT", "price": 393.67, "entry": 393.67, "stop": 366.38, "target": 434.60, "confidence": "MEDIUM", "rationale": "RSI oversold (24.6) | High volume | Near BB support"}
-      ]
+        {
+          "type": "BUY",
+          "symbol": "MSFT",
+          "price": 393.67,
+          "entry": 393.67,
+          "stop": 366.38,
+          "target": 434.6,
+          "confidence": "MEDIUM",
+          "rationale": "RSI oversold (24.6) | High volume | Near BB support"
+        }
+      ],
+      "audio": "/audio/brief-2026-02-06-markets.ogg"
     },
     "family": {
-      "title": "👨‍👩‍👧‍👦 Family Focus",
-      "suggestion": "Friday activity: Dance party in the living room with Jones — put on some Super Wings music and let him show you his moves. Jett will love watching!",
-      "conversationStarter": "Ask Jillian: 'What book are you reading right now? Any good?' — genuine interest in her world.",
-      "weeklyGoal": "Sunday Sweet Breakfast coming up — pancakes with the boys. Keep it simple, be present.",
+      "title": "\ud83d\udc68\u200d\ud83d\udc69\u200d\ud83d\udc67\u200d\ud83d\udc66 Family Focus",
+      "suggestion": "Friday activity: Dance party in the living room with Jones \u2014 put on some Super Wings music and let him show you his moves. Jett will love watching!",
+      "conversationStarter": "Ask Jillian: 'What book are you reading right now? Any good?' \u2014 genuine interest in her world.",
+      "weeklyGoal": "Sunday Sweet Breakfast coming up \u2014 pancakes with the boys. Keep it simple, be present.",
       "upcomingDates": [
-        {"date": "Feb 14", "event": "Valentine's Day", "daysAway": 8},
-        {"date": "Mar 26", "event": "Wedding Anniversary", "daysAway": 48}
+        {
+          "date": "Feb 14",
+          "event": "Valentine's Day",
+          "daysAway": 8
+        },
+        {
+          "date": "Mar 26",
+          "event": "Wedding Anniversary",
+          "daysAway": 48
+        }
       ],
       "potencyAction": "Give her space if she needs it, then come back with a genuine apology",
       "relationshipStatus": {
         "temperature": "critical",
         "ratio": 0.75,
-        "note": "⚠️ Below 5:1 threshold. Focus on repair — acknowledge without defending."
+        "note": "\u26a0\ufe0f Below 5:1 threshold. Focus on repair \u2014 acknowledge without defending."
       },
-      "reflection": "The relationship is in repair mode. This isn't about grand gestures — it's about showing up, listening without fixing, and genuine presence. Valentine's Day is 8 days out. Make it count."
+      "reflection": "The relationship is in repair mode. This isn't about grand gestures \u2014 it's about showing up, listening without fixing, and genuine presence. Valentine's Day is 8 days out. Make it count."
     },
     "news": {
-      "title": "🌍 World News",
+      "title": "\ud83c\udf0d World News",
       "subsections": {
         "israel": {
-          "title": "🇮🇱 Israel",
+          "title": "\ud83c\uddee\ud83c\uddf1 Israel",
           "items": [
-            {"headline": "US-Iran talks to begin tomorrow — threat of US attack still looming"},
-            {"headline": "Steve Witkoff in Jerusalem for high-level discussions ahead of last-chance Iran talks"},
-            {"headline": "Latin American countries electing conservative leaders friendly to Israel"}
+            {
+              "headline": "US-Iran talks to begin tomorrow \u2014 threat of US attack still looming"
+            },
+            {
+              "headline": "Steve Witkoff in Jerusalem for high-level discussions ahead of last-chance Iran talks"
+            },
+            {
+              "headline": "Latin American countries electing conservative leaders friendly to Israel"
+            }
           ]
         },
         "us": {
-          "title": "🇺🇸 United States",
+          "title": "\ud83c\uddfa\ud83c\uddf8 United States",
           "items": [
-            {"headline": "Trump admin finalizing Schedule F — up to 50,000 federal workers may lose civil service protections"},
-            {"headline": "President expands power to hire and fire career federal employees"},
-            {"headline": "Government shutdown debate continues over ICE and immigration enforcement"}
+            {
+              "headline": "Trump admin finalizing Schedule F \u2014 up to 50,000 federal workers may lose civil service protections"
+            },
+            {
+              "headline": "President expands power to hire and fire career federal employees"
+            },
+            {
+              "headline": "Government shutdown debate continues over ICE and immigration enforcement"
+            }
           ]
         },
         "world": {
-          "title": "🌐 Global",
+          "title": "\ud83c\udf10 Global",
           "items": [
-            {"headline": "US-Argentina deal slashes hundreds of reciprocal tariffs (Milei visit)"},
-            {"headline": "UN Human Rights chief says agency in 'survival mode' — launches $400M appeal"},
-            {"headline": "Deadly explosion at mosque in Islamabad, Pakistan"}
+            {
+              "headline": "US-Argentina deal slashes hundreds of reciprocal tariffs (Milei visit)"
+            },
+            {
+              "headline": "UN Human Rights chief says agency in 'survival mode' \u2014 launches $400M appeal"
+            },
+            {
+              "headline": "Deadly explosion at mosque in Islamabad, Pakistan"
+            }
           ]
         }
-      }
+      },
+      "audio": "/audio/brief-2026-02-06-news.ogg"
     },
     "ai": {
-      "title": "🤖 AI Intel",
+      "title": "\ud83e\udd16 AI Intel",
       "items": [
-        {"headline": "Anthropic releases Claude Opus 4.6 — works on tasks longer, gains in coding and finance", "note": "Check your inbox for the announcement"},
-        {"headline": "OpenAI launches GPT-5.3 Codex minutes after Anthropic — 25% faster, 'instrumental in creating itself'"},
-        {"headline": "Software stocks punished as AI capabilities advance — market concerned about job displacement"},
-        {"headline": "OpenAI vs Anthropic rivalry escalates — dueling models released same day"}
-      ]
+        {
+          "headline": "Anthropic releases Claude Opus 4.6 \u2014 works on tasks longer, gains in coding and finance",
+          "note": "Check your inbox for the announcement"
+        },
+        {
+          "headline": "OpenAI launches GPT-5.3 Codex minutes after Anthropic \u2014 25% faster, 'instrumental in creating itself'"
+        },
+        {
+          "headline": "Software stocks punished as AI capabilities advance \u2014 market concerned about job displacement"
+        },
+        {
+          "headline": "OpenAI vs Anthropic rivalry escalates \u2014 dueling models released same day"
+        }
+      ],
+      "audio": "/audio/brief-2026-02-06-ai.ogg"
     }
   }
 }

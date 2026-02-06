@@ -453,6 +453,7 @@ function Teleprompter({
   const [mirrorH, setMirrorH] = useState(false);
   const [mirrorV, setMirrorV] = useState(false);
   const [showControls, setShowControls] = useState(true);
+  const [isLandscape, setIsLandscape] = useState(false);
   const [voiceSync, setVoiceSync] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
@@ -473,17 +474,46 @@ function Teleprompter({
   const userScrollTimeoutRef = useRef<number | null>(null);
   const isProgrammaticScrollRef = useRef(false);
   const wordsRef = useRef<string[]>([]);
+  const controlsTimeoutRef = useRef<number | null>(null);
   
   // Calculate current WPS from slider
   const currentWps = sliderToWps(speedSlider);
 
-  // Check if mobile
+  // Check if mobile/landscape
   useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    const checkDevice = () => {
+      setIsMobile(window.innerWidth < 768);
+      setIsLandscape(window.innerWidth > window.innerHeight);
+    };
+    checkDevice();
+    window.addEventListener('resize', checkDevice);
+    return () => window.removeEventListener('resize', checkDevice);
   }, []);
+
+  // Auto-hide controls after 4 seconds of inactivity
+  const resetControlsTimer = useCallback(() => {
+    setShowControls(true);
+    if (controlsTimeoutRef.current) {
+      clearTimeout(controlsTimeoutRef.current);
+    }
+    controlsTimeoutRef.current = window.setTimeout(() => {
+      if (isScrolling || voiceSync) {
+        setShowControls(false);
+      }
+    }, 4000);
+  }, [isScrolling, voiceSync]);
+
+  useEffect(() => {
+    // Start auto-hide timer when scrolling starts
+    if (isScrolling || voiceSync) {
+      resetControlsTimer();
+    }
+    return () => {
+      if (controlsTimeoutRef.current) {
+        clearTimeout(controlsTimeoutRef.current);
+      }
+    };
+  }, [isScrolling, voiceSync, resetControlsTimer]);
 
   // Parse script into words for voice sync
   useEffect(() => {
@@ -990,11 +1020,17 @@ function Teleprompter({
         className="flex-1 overflow-auto p-8"
         style={{ 
           transform: transformStyle,
-          paddingTop: showControls ? (isMobile ? '180px' : '100px') : '40px',
+          paddingTop: showControls 
+            ? (isMobile 
+                ? (isLandscape ? '140px' : '200px')  // More padding for mobile, less for landscape
+                : '120px')  // Increased desktop padding
+            : '40px',
         }}
         onScroll={handleUserScroll}
         onWheel={handleUserScroll}
         onTouchMove={handleUserScroll}
+        onClick={resetControlsTimer}
+        onTouchStart={resetControlsTimer}
       >
         <div ref={contentRef}>
           <div 

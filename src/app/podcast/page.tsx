@@ -1372,7 +1372,10 @@ export default function PodcastPage() {
   // Load script for editing
   const loadScript = async (episode: Episode) => {
     try {
-      const res = await fetch(`/api/podcast?filename=${episode.filename}`);
+      // Add cache-busting param to ensure fresh fetch
+      const res = await fetch(`/api/podcast?filename=${encodeURIComponent(episode.filename)}&t=${Date.now()}`, {
+        cache: 'no-store',
+      });
       if (res.ok) {
         const data = await res.json();
         setEditingScript(data.content);
@@ -1405,7 +1408,10 @@ export default function PodcastPage() {
   // Open teleprompter
   const openTeleprompter = async (episode: Episode) => {
     try {
-      const res = await fetch(`/api/podcast?filename=${episode.filename}`);
+      // Add cache-busting param to ensure fresh fetch
+      const res = await fetch(`/api/podcast?filename=${encodeURIComponent(episode.filename)}&t=${Date.now()}`, {
+        cache: 'no-store',
+      });
       if (res.ok) {
         const data = await res.json();
         // Extract just the spoken parts (lines starting with >)

@@ -1,23 +1,23 @@
 {
-  "updated_at": "2026-02-06T10:00:06.392715",
+  "updated_at": "2026-02-06T11:00:08.206621",
   "account": {
-    "equity": 94653.53,
-    "cash": 94891.27,
-    "buying_power": 184202.76,
-    "portfolio_value": 94653.53,
-    "pnl_today": -5482.240000000005,
-    "pnl_today_pct": -5.474806854733338
+    "equity": 94649.57,
+    "cash": 94891.23,
+    "buying_power": 184192.68,
+    "portfolio_value": 94649.57,
+    "pnl_today": -5486.199999999997,
+    "pnl_today_pct": -5.478761485531091
   },
   "positions": [
     {
       "symbol": "QQQ",
       "qty": 4.0,
-      "entry_price": 608.325,
-      "current_price": 608.33,
-      "market_value": 2433.32,
-      "cost_basis": 2433.3,
-      "unrealized_pnl": 0.02,
-      "unrealized_pnl_pct": 0.001,
+      "entry_price": 608.3625,
+      "current_price": 608.115,
+      "market_value": 2432.46,
+      "cost_basis": 2433.45,
+      "unrealized_pnl": -0.99,
+      "unrealized_pnl_pct": -0.041,
       "side": "long",
       "is_inverse": false
     },
@@ -25,16 +25,144 @@
       "symbol": "XLK",
       "qty": -19.0,
       "entry_price": 140.62,
-      "current_price": 140.58,
-      "market_value": -2671.02,
+      "current_price": 140.74,
+      "market_value": -2674.06,
       "cost_basis": -2671.78,
-      "unrealized_pnl": 0.76,
-      "unrealized_pnl_pct": 0.027999999999999997,
+      "unrealized_pnl": -2.28,
+      "unrealized_pnl_pct": -0.08499999999999999,
       "side": "short",
       "is_inverse": false
     }
   ],
   "recent_trades": [
+    {
+      "symbol": "QQQ",
+      "side": "buy",
+      "qty": 4.0,
+      "price": 608.3625,
+      "filled_at": "2026-02-06T18:54:34.741237+00:00",
+      "status": "filled"
+    },
+    {
+      "symbol": "QQQ",
+      "side": "sell",
+      "qty": 4.0,
+      "price": 608.48,
+      "filled_at": "2026-02-06T18:53:26.534545+00:00",
+      "status": "filled"
+    },
+    {
+      "symbol": "QQQ",
+      "side": "buy",
+      "qty": 4.0,
+      "price": 608.535,
+      "filled_at": "2026-02-06T18:47:46.016091+00:00",
+      "status": "filled"
+    },
+    {
+      "symbol": "QQQ",
+      "side": "sell",
+      "qty": 4.0,
+      "price": 608.305,
+      "filled_at": "2026-02-06T18:46:37.594089+00:00",
+      "status": "filled"
+    },
+    {
+      "symbol": "QQQ",
+      "side": "buy",
+      "qty": 4.0,
+      "price": 608.58,
+      "filled_at": "2026-02-06T18:40:54.041301+00:00",
+      "status": "filled"
+    },
+    {
+      "symbol": "QQQ",
+      "side": "sell",
+      "qty": 4.0,
+      "price": 608.41,
+      "filled_at": "2026-02-06T18:39:45.589917+00:00",
+      "status": "filled"
+    },
+    {
+      "symbol": "QQQ",
+      "side": "buy",
+      "qty": 4.0,
+      "price": 608.225,
+      "filled_at": "2026-02-06T18:34:03.737645+00:00",
+      "status": "filled"
+    },
+    {
+      "symbol": "QQQ",
+      "side": "sell",
+      "qty": 4.0,
+      "price": 608.25,
+      "filled_at": "2026-02-06T18:32:54.362099+00:00",
+      "status": "filled"
+    },
+    {
+      "symbol": "QQQ",
+      "side": "buy",
+      "qty": 4.0,
+      "price": 608.1125,
+      "filled_at": "2026-02-06T18:27:12.341176+00:00",
+      "status": "filled"
+    },
+    {
+      "symbol": "QQQ",
+      "side": "sell",
+      "qty": 4.0,
+      "price": 608.11,
+      "filled_at": "2026-02-06T18:26:03.353210+00:00",
+      "status": "filled"
+    },
+    {
+      "symbol": "QQQ",
+      "side": "buy",
+      "qty": 4.0,
+      "price": 608.6,
+      "filled_at": "2026-02-06T18:20:20.209357+00:00",
+      "status": "filled"
+    },
+    {
+      "symbol": "QQQ",
+      "side": "sell",
+      "qty": 4.0,
+      "price": 608.5825,
+      "filled_at": "2026-02-06T18:19:10.794895+00:00",
+      "status": "filled"
+    },
+    {
+      "symbol": "QQQ",
+      "side": "buy",
+      "qty": 4.0,
+      "price": 608.3425,
+      "filled_at": "2026-02-06T18:13:24.793138+00:00",
+      "status": "filled"
+    },
+    {
+      "symbol": "QQQ",
+      "side": "sell",
+      "qty": 4.0,
+      "price": 608.685,
+      "filled_at": "2026-02-06T18:12:17.168949+00:00",
+      "status": "filled"
+    },
+    {
+      "symbol": "QQQ",
+      "side": "buy",
+      "qty": 4.0,
+      "price": 608.935,
+      "filled_at": "2026-02-06T18:06:31.169161+00:00",
+      "status": "filled"
+    },
+    {
+      "symbol": "QQQ",
+      "side": "sell",
+      "qty": 4.0,
+      "price": 608.86,
+      "filled_at": "2026-02-06T18:05:21.064386+00:00",
+      "status": "filled"
+    },
     {
       "symbol": "QQQ",
       "side": "buy",
@@ -66,143 +194,15 @@
       "price": 140.62,
       "filled_at": "2026-02-06T17:52:46.414425+00:00",
       "status": "filled"
-    },
-    {
-      "symbol": "XLK",
-      "side": "sell",
-      "qty": 19.0,
-      "price": 140.62,
-      "filled_at": "2026-02-06T17:52:45.964457+00:00",
-      "status": "filled"
-    },
-    {
-      "symbol": "QQQ",
-      "side": "sell",
-      "qty": 4.0,
-      "price": 608.04,
-      "filled_at": "2026-02-06T17:51:40.229930+00:00",
-      "status": "filled"
-    },
-    {
-      "symbol": "XLK",
-      "side": "buy",
-      "qty": 19.0,
-      "price": 140.58,
-      "filled_at": "2026-02-06T17:51:40.563207+00:00",
-      "status": "filled"
-    },
-    {
-      "symbol": "XLK",
-      "side": "sell",
-      "qty": 19.0,
-      "price": 140.57,
-      "filled_at": "2026-02-06T17:51:38.923798+00:00",
-      "status": "filled"
-    },
-    {
-      "symbol": "XLK",
-      "side": "buy",
-      "qty": 19.0,
-      "price": 140.6,
-      "filled_at": "2026-02-06T17:50:32.463200+00:00",
-      "status": "filled"
-    },
-    {
-      "symbol": "XLK",
-      "side": "sell",
-      "qty": 19.0,
-      "price": 140.59,
-      "filled_at": "2026-02-06T17:49:24.171940+00:00",
-      "status": "filled"
-    },
-    {
-      "symbol": "XLK",
-      "side": "buy",
-      "qty": 19.0,
-      "price": 140.59,
-      "filled_at": "2026-02-06T17:48:16.659918+00:00",
-      "status": "filled"
-    },
-    {
-      "symbol": "XLK",
-      "side": "sell",
-      "qty": 19.0,
-      "price": 140.58,
-      "filled_at": "2026-02-06T17:48:15.260040+00:00",
-      "status": "filled"
-    },
-    {
-      "symbol": "XLK",
-      "side": "buy",
-      "qty": 19.0,
-      "price": 140.63,
-      "filled_at": "2026-02-06T17:47:08.096992+00:00",
-      "status": "filled"
-    },
-    {
-      "symbol": "QQQ",
-      "side": "buy",
-      "qty": 4.0,
-      "price": 607.88,
-      "filled_at": "2026-02-06T17:46:00.557285+00:00",
-      "status": "filled"
-    },
-    {
-      "symbol": "XLK",
-      "side": "sell",
-      "qty": 19.0,
-      "price": 140.599474,
-      "filled_at": "2026-02-06T17:45:58.026476+00:00",
-      "status": "filled"
-    },
-    {
-      "symbol": "QQQ",
-      "side": "sell",
-      "qty": 4.0,
-      "price": 607.715,
-      "filled_at": "2026-02-06T17:44:51.670149+00:00",
-      "status": "filled"
-    },
-    {
-      "symbol": "XLK",
-      "side": "buy",
-      "qty": 19.0,
-      "price": 140.548947,
-      "filled_at": "2026-02-06T17:44:51.416447+00:00",
-      "status": "filled"
-    },
-    {
-      "symbol": "XLK",
-      "side": "sell",
-      "qty": 19.0,
-      "price": 140.527368,
-      "filled_at": "2026-02-06T17:44:49.208757+00:00",
-      "status": "filled"
-    },
-    {
-      "symbol": "XLK",
-      "side": "buy",
-      "qty": 19.0,
-      "price": 140.56,
-      "filled_at": "2026-02-06T17:43:42.945095+00:00",
-      "status": "filled"
-    },
-    {
-      "symbol": "XLK",
-      "side": "sell",
-      "qty": 19.0,
-      "price": 140.55,
-      "filled_at": "2026-02-06T17:43:41.432012+00:00",
-      "status": "filled"
     }
   ],
   "strategy": "RegimeHold + Inverse ETFs",
   "regime_status": {},
   "summary": {
     "total_positions": 2,
-    "total_invested": -237.69999999999982,
-    "total_unrealized_pnl": 0.78,
+    "total_invested": -241.5999999999999,
+    "total_unrealized_pnl": -3.2699999999999996,
     "total_unrealized_pnl_pct": 0,
-    "cash_remaining": 94891.27
+    "cash_remaining": 94891.23
   }
 }

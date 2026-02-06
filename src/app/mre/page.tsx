@@ -109,68 +109,72 @@ function FearGreedGauge({ value, rating }: { value: number; rating: string }) {
   const rotation = (value / 100) * 180 - 90;
 
   return (
-    <div className="relative w-64 h-32 mx-auto">
-      {/* Gauge background */}
-      <svg viewBox="0 0 200 100" className="w-full h-full">
-        {/* Gauge arc segments */}
-        <path
-          d="M 10 100 A 90 90 0 0 1 50 19"
-          fill="none"
-          stroke="#ef4444"
-          strokeWidth="20"
-          strokeLinecap="round"
-        />
-        <path
-          d="M 50 19 A 90 90 0 0 1 100 10"
-          fill="none"
-          stroke="#f97316"
-          strokeWidth="20"
-        />
-        <path
-          d="M 100 10 A 90 90 0 0 1 150 19"
-          fill="none"
-          stroke="#eab308"
-          strokeWidth="20"
-        />
-        <path
-          d="M 150 19 A 90 90 0 0 1 190 100"
-          fill="none"
-          stroke="#22c55e"
-          strokeWidth="20"
-          strokeLinecap="round"
-        />
-        
-        {/* Needle */}
-        <line
-          x1="100"
-          y1="100"
-          x2="100"
-          y2="25"
-          stroke={getColor(value)}
-          strokeWidth="4"
-          strokeLinecap="round"
-          transform={`rotate(${rotation}, 100, 100)`}
-        />
-        <circle cx="100" cy="100" r="8" fill={getColor(value)} />
-      </svg>
-      
-      {/* Value display */}
-      <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 text-center">
-        <div className="text-4xl font-bold" style={{ color: getColor(value) }}>
-          {value}
-        </div>
-        <div className="text-sm text-gray-400">{rating}</div>
+    <div className="flex flex-col items-center">
+      {/* Labels above gauge */}
+      <div className="flex justify-between w-56 mb-1">
+        <span className="text-xs text-red-500 font-medium">Fear</span>
+        <span className="text-xs text-green-500 font-medium">Greed</span>
       </div>
       
-      {/* Labels */}
-      <div className="absolute top-0 left-0 text-xs text-red-500">Fear</div>
-      <div className="absolute top-0 right-0 text-xs text-green-500">Greed</div>
+      {/* Gauge */}
+      <div className="relative w-56 h-28">
+        <svg viewBox="0 0 200 110" className="w-full h-full">
+          {/* Gauge arc segments - semi-circle from left to right */}
+          <path
+            d="M 20 100 A 80 80 0 0 1 55 30"
+            fill="none"
+            stroke="#ef4444"
+            strokeWidth="16"
+            strokeLinecap="round"
+          />
+          <path
+            d="M 55 30 A 80 80 0 0 1 100 20"
+            fill="none"
+            stroke="#f97316"
+            strokeWidth="16"
+          />
+          <path
+            d="M 100 20 A 80 80 0 0 1 145 30"
+            fill="none"
+            stroke="#eab308"
+            strokeWidth="16"
+          />
+          <path
+            d="M 145 30 A 80 80 0 0 1 180 100"
+            fill="none"
+            stroke="#22c55e"
+            strokeWidth="16"
+            strokeLinecap="round"
+          />
+          
+          {/* Needle */}
+          <line
+            x1="100"
+            y1="100"
+            x2="100"
+            y2="35"
+            stroke={getColor(value)}
+            strokeWidth="3"
+            strokeLinecap="round"
+            transform={`rotate(${rotation}, 100, 100)`}
+          />
+          <circle cx="100" cy="100" r="6" fill={getColor(value)} />
+        </svg>
+      </div>
+      
+      {/* Value display below */}
+      <div className="text-center -mt-2">
+        <div className="text-3xl font-bold" style={{ color: getColor(value) }}>
+          {Math.round(value)}
+        </div>
+        <div className="text-sm text-gray-400 capitalize">{rating}</div>
+      </div>
     </div>
   );
 }
 
 // Regime Badge Component
-function RegimeBadge({ regime }: { regime: string }) {
+function RegimeBadge({ regime, compact = false }: { regime: string; compact?: boolean }) {
   const config = {
     bull: { color: "bg-green-500/20 text-green-400 border-green-500/50", icon: TrendingUp },
     bear: { color: "bg-red-500/20 text-red-400 border-red-500/50", icon: TrendingDown },
@@ -181,8 +185,8 @@ function RegimeBadge({ regime }: { regime: string }) {
   const { color, icon: Icon } = config[regime as keyof typeof config] || config.unknown;
 
   return (
-    <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full border ${color}`}>
-      <Icon className="w-4 h-4" />
+    <span className={`inline-flex items-center gap-1 ${compact ? 'px-2 py-0.5 text-xs' : 'px-3 py-1 text-sm'} rounded-full border whitespace-nowrap ${color}`}>
+      <Icon className={compact ? "w-3 h-3" : "w-4 h-4"} />
       {regime.toUpperCase()}
     </span>
   );
@@ -201,29 +205,31 @@ function SignalCard({ signal }: { signal: AssetSignal }) {
 
   return (
     <div className={`p-4 rounded-lg border ${config.color}`}>
-      <div className="flex justify-between items-start mb-2">
+      <div className="flex justify-between items-start mb-3">
         <div>
           <div className="text-lg font-semibold">{signal.symbol}</div>
           <div className="text-xs text-gray-400 capitalize">{signal.asset_class.replace("_", " ")}</div>
         </div>
-        <Icon className={`w-6 h-6 ${config.iconColor}`} />
+        <Icon className={`w-6 h-6 ${config.iconColor} flex-shrink-0`} />
       </div>
       
-      <div className="grid grid-cols-2 gap-2 text-sm">
+      {/* Regime on its own row */}
+      <div className="mb-3">
+        <RegimeBadge regime={signal.regime} />
+      </div>
+      
+      {/* Stats in 3-column grid */}
+      <div className="grid grid-cols-3 gap-3 text-sm">
         <div>
-          <div className="text-gray-400">Price</div>
+          <div className="text-gray-400 text-xs">Price</div>
           <div className="font-mono">${signal.price.toFixed(2)}</div>
         </div>
         <div>
-          <div className="text-gray-400">Regime</div>
-          <RegimeBadge regime={signal.regime} />
-        </div>
-        <div>
-          <div className="text-gray-400">Sharpe</div>
+          <div className="text-gray-400 text-xs">Sharpe</div>
           <div className="font-mono">{signal.expected_sharpe.toFixed(1)}</div>
         </div>
         <div>
-          <div className="text-gray-400">Accuracy</div>
+          <div className="text-gray-400 text-xs">Accuracy</div>
           <div className="font-mono">{signal.expected_accuracy}%</div>
         </div>
       </div>
@@ -242,30 +248,30 @@ function SignalCard({ signal }: { signal: AssetSignal }) {
 function PairCard({ pair }: { pair: PairData }) {
   return (
     <div className={`p-4 rounded-lg border ${pair.is_diverged ? 'border-yellow-500 bg-yellow-500/10' : 'border-gray-700 bg-gray-800/50'}`}>
-      <div className="flex justify-between items-center mb-2">
-        <div className="font-semibold">{pair.symbol1}/{pair.symbol2}</div>
-        {pair.is_diverged && <Zap className="w-5 h-5 text-yellow-500" />}
+      <div className="flex justify-between items-center mb-3">
+        <div className="font-semibold text-base">{pair.symbol1}/{pair.symbol2}</div>
+        {pair.is_diverged && <Zap className="w-5 h-5 text-yellow-500 flex-shrink-0" />}
       </div>
       
-      <div className="grid grid-cols-3 gap-2 text-sm">
+      <div className="grid grid-cols-3 gap-3 text-sm">
         <div>
-          <div className="text-gray-400">Z-Score</div>
-          <div className={`font-mono ${Math.abs(pair.z_score) > 2 ? 'text-yellow-400' : ''}`}>
+          <div className="text-gray-400 text-xs mb-1">Z-Score</div>
+          <div className={`font-mono ${Math.abs(pair.z_score) > 2 ? 'text-yellow-400' : 'text-white'}`}>
             {pair.z_score.toFixed(2)}
           </div>
         </div>
         <div>
-          <div className="text-gray-400">Reverter</div>
-          <div className="font-mono">{pair.reverter}</div>
+          <div className="text-gray-400 text-xs mb-1">Reverter</div>
+          <div className="font-mono text-white">{pair.reverter}</div>
         </div>
         <div>
-          <div className="text-gray-400">Prob</div>
-          <div className="font-mono">{(pair.probability * 100).toFixed(0)}%</div>
+          <div className="text-gray-400 text-xs mb-1">Prob</div>
+          <div className="font-mono text-white">{(pair.probability * 100).toFixed(0)}%</div>
         </div>
       </div>
       
       {pair.is_diverged && (
-        <div className="mt-2 p-2 bg-yellow-500/20 rounded text-sm">
+        <div className="mt-3 p-2 bg-yellow-500/20 rounded text-sm">
           <span className="text-yellow-400">🔄 Diverged!</span>
           <span className="text-gray-400 ml-2">Buy {pair.reverter}</span>
         </div>
@@ -280,31 +286,33 @@ function FGHistoryChart({ history }: { history: { date: string; score: number }[
 
   const max = 100;
   const min = 0;
-  const width = 100;
-  const height = 40;
+  const width = 200;
+  const height = 60;
+  const padding = 5;
   
   const points = history.map((d, i) => {
-    const x = (i / (history.length - 1)) * width;
-    const y = height - ((d.score - min) / (max - min)) * height;
+    const x = padding + (i / (history.length - 1)) * (width - padding * 2);
+    const y = padding + (height - padding * 2) - ((d.score - min) / (max - min)) * (height - padding * 2);
     return `${x},${y}`;
   }).join(" ");
 
   return (
-    <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-16">
-      {/* Fear zone */}
-      <rect x="0" y={height * 0.7} width={width} height={height * 0.3} fill="rgba(239, 68, 68, 0.1)" />
-      {/* Greed zone */}
-      <rect x="0" y="0" width={width} height={height * 0.3} fill="rgba(34, 197, 94, 0.1)" />
+    <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-20" preserveAspectRatio="xMidYMid meet">
+      {/* Fear zone (bottom 30%) */}
+      <rect x={padding} y={height - padding - (height - padding * 2) * 0.3} width={width - padding * 2} height={(height - padding * 2) * 0.3} fill="rgba(239, 68, 68, 0.1)" />
+      {/* Greed zone (top 30%) */}
+      <rect x={padding} y={padding} width={width - padding * 2} height={(height - padding * 2) * 0.3} fill="rgba(34, 197, 94, 0.1)" />
       {/* Line */}
       <polyline
         points={points}
         fill="none"
         stroke="#3b82f6"
         strokeWidth="2"
+        strokeLinejoin="round"
       />
       {/* Threshold lines */}
-      <line x1="0" y1={height * 0.7} x2={width} y2={height * 0.7} stroke="#ef4444" strokeDasharray="2,2" strokeWidth="0.5" />
-      <line x1="0" y1={height * 0.3} x2={width} y2={height * 0.3} stroke="#22c55e" strokeDasharray="2,2" strokeWidth="0.5" />
+      <line x1={padding} y1={height - padding - (height - padding * 2) * 0.3} x2={width - padding} y2={height - padding - (height - padding * 2) * 0.3} stroke="#ef4444" strokeDasharray="4,4" strokeWidth="1" opacity="0.5" />
+      <line x1={padding} y1={padding + (height - padding * 2) * 0.3} x2={width - padding} y2={padding + (height - padding * 2) * 0.3} stroke="#22c55e" strokeDasharray="4,4" strokeWidth="1" opacity="0.5" />
     </svg>
   );
 }
@@ -395,7 +403,7 @@ export default function MREDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           {/* Fear & Greed Gauge */}
           <div className="bg-gray-800 rounded-xl p-6">
-            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+            <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
               <Activity className="w-5 h-5 text-blue-500" />
               Fear & Greed Index
             </h2>
@@ -403,52 +411,52 @@ export default function MREDashboard() {
               value={data.fear_greed.current} 
               rating={data.fear_greed.rating} 
             />
-            <div className="mt-4">
+            <div className="mt-6">
               <div className="text-sm text-gray-400 mb-2">30-Day History</div>
               <FGHistoryChart history={data.fear_greed.history} />
             </div>
             <div className="mt-4 grid grid-cols-2 gap-4 text-sm">
-              <div className="p-2 bg-gray-700/50 rounded">
-                <div className="text-gray-400">Buy Threshold</div>
+              <div className="p-3 bg-gray-700/50 rounded">
+                <div className="text-gray-400 text-xs mb-1">Buy Threshold</div>
                 <div className="font-mono text-green-400">&lt; {data.thresholds.fear_buy}</div>
               </div>
-              <div className="p-2 bg-gray-700/50 rounded">
-                <div className="text-gray-400">Source</div>
-                <div className="font-mono">{data.fear_greed.source}</div>
+              <div className="p-3 bg-gray-700/50 rounded">
+                <div className="text-gray-400 text-xs mb-1">Source</div>
+                <div className="font-mono uppercase">{data.fear_greed.source}</div>
               </div>
             </div>
           </div>
 
           {/* Regime Overview */}
           <div className="bg-gray-800 rounded-xl p-6">
-            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+            <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
               <BarChart3 className="w-5 h-5 text-blue-500" />
               Market Regime
             </h2>
-            <div className="space-y-4">
+            <div className="space-y-3">
               <div className="flex justify-between items-center p-3 bg-gray-700/50 rounded-lg">
-                <span>SPY (S&P 500)</span>
-                <RegimeBadge regime={data.regime.spy.regime} />
+                <span className="text-sm">SPY (S&P 500)</span>
+                <RegimeBadge regime={data.regime.spy.regime} compact />
               </div>
               <div className="flex justify-between items-center p-3 bg-gray-700/50 rounded-lg">
-                <span>QQQ (Nasdaq)</span>
-                <RegimeBadge regime={data.regime.qqq.regime} />
+                <span className="text-sm">QQQ (Nasdaq)</span>
+                <RegimeBadge regime={data.regime.qqq.regime} compact />
               </div>
             </div>
             
             {/* Signal Summary */}
-            <div className="mt-6 grid grid-cols-3 gap-4">
+            <div className="mt-6 grid grid-cols-3 gap-3">
               <div className="text-center p-3 bg-green-500/20 rounded-lg">
                 <div className="text-2xl font-bold text-green-400">{data.signals.summary.total_buy}</div>
-                <div className="text-xs text-gray-400">Buy Signals</div>
+                <div className="text-xs text-gray-400 mt-1">Buy Signals</div>
               </div>
               <div className="text-center p-3 bg-gray-500/20 rounded-lg">
-                <div className="text-2xl font-bold">{data.signals.summary.total_hold}</div>
-                <div className="text-xs text-gray-400">Hold</div>
+                <div className="text-2xl font-bold text-white">{data.signals.summary.total_hold}</div>
+                <div className="text-xs text-gray-400 mt-1">Hold</div>
               </div>
               <div className="text-center p-3 bg-yellow-500/20 rounded-lg">
                 <div className="text-2xl font-bold text-yellow-400">{data.pairs.diverged_count}</div>
-                <div className="text-xs text-gray-400">Pair Divergences</div>
+                <div className="text-xs text-gray-400 mt-1">Divergences</div>
               </div>
             </div>
           </div>

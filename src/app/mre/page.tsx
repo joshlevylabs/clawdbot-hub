@@ -15,7 +15,28 @@ import {
   Gauge,
   GitCompare,
   Zap,
+  ChevronDown,
+  ChevronUp,
+  Info,
 } from "lucide-react";
+
+// ============ INTERFACES ============
+
+interface FGComponent {
+  name: string;
+  score: number;
+  signal: string;
+  description: string;
+  raw_value: number;
+}
+
+interface FGBreakdown {
+  aggregate_score: number;
+  rating: string;
+  components: FGComponent[];
+  methodology: string;
+  sources: { name: string; used_for: string }[];
+}
 
 interface FearGreedData {
   current: number;
@@ -26,6 +47,21 @@ interface FearGreedData {
   is_extreme_greed: boolean;
   source: string;
   history: { date: string; score: number; vix: number }[];
+  breakdown?: FGBreakdown;
+}
+
+interface FibonacciLevels {
+  symbol: string;
+  current_price: number;
+  swing_high: number;
+  swing_low: number;
+  trend: string;
+  retracements: { [key: string]: number };
+  extensions: { [key: string]: number };
+  nearest_support: number;
+  nearest_resistance: number;
+  entry_zone: string;
+  profit_targets: number[];
 }
 
 interface RegimeData {
@@ -34,6 +70,19 @@ interface RegimeData {
   ema_20?: number;
   ema_50?: number;
   ema_200?: number;
+  regime_days?: number;
+  regime_stage?: string;
+  predicted_remaining_days?: number;
+  confidence?: number;
+  momentum_20d?: number;
+}
+
+interface Outlier {
+  symbol: string;
+  asset_regime: string;
+  market_regime: string;
+  reason: string;
+  action: string;
 }
 
 interface AssetSignal {
@@ -49,6 +98,8 @@ interface AssetSignal {
   expected_sharpe: number;
   expected_accuracy: number;
   price: number;
+  fibonacci?: FibonacciLevels;
+  regime_details?: RegimeData;
 }
 
 interface PairData {
@@ -66,11 +117,13 @@ interface PairData {
 interface MRESignals {
   timestamp: string;
   last_updated: string;
+  last_updated_unix: number;
   fear_greed: FearGreedData;
   regime: {
     spy: RegimeData;
     qqq: RegimeData;
     global: string;
+    outliers?: Outlier[];
   };
   signals: {
     summary: {
@@ -93,82 +146,140 @@ interface MRESignals {
     version: string;
     backtests: number;
     key_insight: string;
+    features?: string[];
   };
+}
+
+// ============ COMPONENTS ============
+
+// Live Timer Component
+function LiveTimer({ lastUpdatedUnix }: { lastUpdatedUnix: number }) {
+  const [elapsed, setElapsed] = useState("");
+
+  useEffect(() => {
+    const update = () => {
+      const now = Math.floor(Date.now() / 1000);
+      const diff = now - lastUpdatedUnix;
+      
+      if (diff < 60) {
+        setElapsed(`${diff}s ago`);
+      } else if (diff < 3600) {
+        setElapsed(`${Math.floor(diff / 60)}m ago`);
+      } else {
+        setElapsed(`${Math.floor(diff / 3600)}h ${Math.floor((diff % 3600) / 60)}m ago`);
+      }
+    };
+    
+    update();
+    const interval = setInterval(update, 1000);
+    return () => clearInterval(interval);
+  }, [lastUpdatedUnix]);
+
+  const isStale = (Date.now() / 1000 - lastUpdatedUnix) > 3600; // Over 1 hour old
+
+  return (
+    <div className={`flex items-center gap-2 text-sm ${isStale ? 'text-red-400' : 'text-gray-400'}`}>
+      <Clock className="w-4 h-4" />
+      <span>Updated: {elapsed}</span>
+      {isStale && <AlertTriangle className="w-4 h-4 text-red-400" />}
+    </div>
+  );
 }
 
 // Fear & Greed Gauge Component
 function FearGreedGauge({ value, rating }: { value: number; rating: string }) {
   const getColor = (val: number) => {
-    if (val <= 25) return "#ef4444"; // red - extreme fear
-    if (val <= 45) return "#f97316"; // orange - fear
-    if (val <= 55) return "#eab308"; // yellow - neutral
-    if (val <= 75) return "#84cc16"; // lime - greed
-    return "#22c55e"; // green - extreme greed
+    if (val <= 25) return "#ef4444";
+    if (val <= 45) return "#f97316";
+    if (val <= 55) return "#eab308";
+    if (val <= 75) return "#84cc16";
+    return "#22c55e";
   };
 
   const rotation = (value / 100) * 180 - 90;
 
   return (
     <div className="flex flex-col items-center">
-      {/* Labels above gauge */}
       <div className="flex justify-between w-56 mb-1">
         <span className="text-xs text-red-500 font-medium">Fear</span>
         <span className="text-xs text-green-500 font-medium">Greed</span>
       </div>
       
-      {/* Gauge */}
       <div className="relative w-56 h-28">
         <svg viewBox="0 0 200 110" className="w-full h-full">
-          {/* Gauge arc segments - semi-circle from left to right */}
-          <path
-            d="M 20 100 A 80 80 0 0 1 55 30"
-            fill="none"
-            stroke="#ef4444"
-            strokeWidth="16"
-            strokeLinecap="round"
-          />
-          <path
-            d="M 55 30 A 80 80 0 0 1 100 20"
-            fill="none"
-            stroke="#f97316"
-            strokeWidth="16"
-          />
-          <path
-            d="M 100 20 A 80 80 0 0 1 145 30"
-            fill="none"
-            stroke="#eab308"
-            strokeWidth="16"
-          />
-          <path
-            d="M 145 30 A 80 80 0 0 1 180 100"
-            fill="none"
-            stroke="#22c55e"
-            strokeWidth="16"
-            strokeLinecap="round"
-          />
-          
-          {/* Needle */}
-          <line
-            x1="100"
-            y1="100"
-            x2="100"
-            y2="35"
-            stroke={getColor(value)}
-            strokeWidth="3"
-            strokeLinecap="round"
-            transform={`rotate(${rotation}, 100, 100)`}
-          />
+          <path d="M 20 100 A 80 80 0 0 1 55 30" fill="none" stroke="#ef4444" strokeWidth="16" strokeLinecap="round" />
+          <path d="M 55 30 A 80 80 0 0 1 100 20" fill="none" stroke="#f97316" strokeWidth="16" />
+          <path d="M 100 20 A 80 80 0 0 1 145 30" fill="none" stroke="#eab308" strokeWidth="16" />
+          <path d="M 145 30 A 80 80 0 0 1 180 100" fill="none" stroke="#22c55e" strokeWidth="16" strokeLinecap="round" />
+          <line x1="100" y1="100" x2="100" y2="35" stroke={getColor(value)} strokeWidth="3" strokeLinecap="round" transform={`rotate(${rotation}, 100, 100)`} />
           <circle cx="100" cy="100" r="6" fill={getColor(value)} />
         </svg>
       </div>
       
-      {/* Value display below */}
       <div className="text-center -mt-2">
         <div className="text-4xl font-bold" style={{ color: getColor(value) }}>
           {Math.round(value)}
         </div>
         <div className="text-sm text-gray-400 capitalize">{rating}</div>
       </div>
+    </div>
+  );
+}
+
+// F&G Component Breakdown
+function FGBreakdownSection({ breakdown }: { breakdown: FGBreakdown }) {
+  const [expanded, setExpanded] = useState(false);
+
+  const getSignalColor = (signal: string) => {
+    if (signal === "GREED") return "text-green-400";
+    if (signal === "FEAR") return "text-red-400";
+    return "text-gray-400";
+  };
+
+  return (
+    <div className="mt-4">
+      <button
+        onClick={() => setExpanded(!expanded)}
+        className="flex items-center gap-2 text-sm text-blue-400 hover:text-blue-300"
+      >
+        <Info className="w-4 h-4" />
+        How is this calculated?
+        {expanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+      </button>
+      
+      {expanded && (
+        <div className="mt-3 p-4 bg-gray-700/50 rounded-lg">
+          <div className="text-xs text-gray-400 mb-3">{breakdown.methodology}</div>
+          
+          <div className="space-y-2">
+            {breakdown.components.map((c) => (
+              <div key={c.name} className="flex items-center justify-between text-sm">
+                <div className="flex-1">
+                  <div className="font-medium">{c.name}</div>
+                  <div className="text-xs text-gray-500">{c.description}</div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className={`font-mono ${getSignalColor(c.signal)}`}>{c.score.toFixed(0)}</span>
+                  <span className={`text-xs px-2 py-0.5 rounded ${getSignalColor(c.signal)} bg-gray-800`}>
+                    {c.signal}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+          
+          <div className="mt-3 pt-3 border-t border-gray-600">
+            <div className="text-xs text-gray-400">Data Sources:</div>
+            <div className="flex flex-wrap gap-2 mt-1">
+              {breakdown.sources.map((s) => (
+                <span key={s.name} className="text-xs bg-gray-800 px-2 py-1 rounded">
+                  {s.name}: {s.used_for}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -192,34 +303,100 @@ function RegimeBadge({ regime, compact = false }: { regime: string; compact?: bo
   );
 }
 
-// Signal Card Component
+// Regime Card with Predictions
+function RegimeCard({ label, data }: { label: string; data: RegimeData }) {
+  return (
+    <div className="p-4 bg-gray-700/50 rounded-lg">
+      <div className="flex justify-between items-center mb-3">
+        <span className="font-medium">{label}</span>
+        <RegimeBadge regime={data.regime} />
+      </div>
+      
+      {data.regime_days !== undefined && (
+        <div className="grid grid-cols-2 gap-3 text-sm">
+          <div>
+            <div className="text-gray-400 text-xs">Duration</div>
+            <div className="font-mono">{data.regime_days} days</div>
+          </div>
+          <div>
+            <div className="text-gray-400 text-xs">Stage</div>
+            <div className="font-mono capitalize">{data.regime_stage}</div>
+          </div>
+          <div>
+            <div className="text-gray-400 text-xs">Est. Remaining</div>
+            <div className="font-mono">{data.predicted_remaining_days}d</div>
+          </div>
+          <div>
+            <div className="text-gray-400 text-xs">Confidence</div>
+            <div className={`font-mono ${(data.confidence || 0) >= 70 ? 'text-green-400' : (data.confidence || 0) >= 50 ? 'text-yellow-400' : 'text-red-400'}`}>
+              {data.confidence}%
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Outliers Section
+function OutliersSection({ outliers }: { outliers: Outlier[] }) {
+  if (!outliers || outliers.length === 0) return null;
+
+  return (
+    <div className="mt-4 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
+      <div className="flex items-center gap-2 text-yellow-400 font-semibold mb-2">
+        <AlertTriangle className="w-5 h-5" />
+        Assets Bucking the Trend
+      </div>
+      <div className="space-y-2">
+        {outliers.map((o) => (
+          <div key={o.symbol} className="flex items-center justify-between text-sm">
+            <div>
+              <span className="font-mono font-semibold">{o.symbol}</span>
+              <span className="text-gray-400 ml-2">{o.reason}</span>
+            </div>
+            <span className="text-yellow-400 text-xs">{o.action}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// Signal Card with Fibonacci
 function SignalCard({ signal }: { signal: AssetSignal }) {
+  const [showFib, setShowFib] = useState(false);
+  
   const signalConfig = {
-    BUY: { color: "border-green-500 bg-green-500/10", icon: CheckCircle, iconColor: "text-green-500" },
-    HOLD: { color: "border-gray-500 bg-gray-500/10", icon: Clock, iconColor: "text-gray-400" },
-    WATCH: { color: "border-yellow-500 bg-yellow-500/10", icon: AlertTriangle, iconColor: "text-yellow-500" },
+    BUY: { color: "border-green-500 bg-green-500/10", textColor: "text-green-400", icon: CheckCircle },
+    HOLD: { color: "border-gray-500 bg-gray-500/10", textColor: "text-gray-400", icon: Clock },
+    WATCH: { color: "border-yellow-500 bg-yellow-500/10", textColor: "text-yellow-400", icon: AlertTriangle },
   };
 
   const config = signalConfig[signal.signal as keyof typeof signalConfig] || signalConfig.HOLD;
   const Icon = config.icon;
+  const fib = signal.fibonacci;
 
   return (
-    <div className={`p-4 rounded-lg border ${config.color}`}>
+    <div className={`p-4 rounded-lg border-2 ${config.color}`}>
       <div className="flex justify-between items-start mb-3">
         <div>
-          <div className="text-lg font-semibold">{signal.symbol}</div>
+          <div className="text-lg font-semibold flex items-center gap-2">
+            {signal.symbol}
+            <span className={`text-xs px-2 py-0.5 rounded ${config.textColor} bg-gray-800`}>
+              {signal.signal}
+            </span>
+          </div>
           <div className="text-xs text-gray-400 capitalize">{signal.asset_class.replace("_", " ")}</div>
         </div>
-        <Icon className={`w-6 h-6 ${config.iconColor} flex-shrink-0`} />
+        <Icon className={`w-6 h-6 ${config.textColor} flex-shrink-0`} />
       </div>
       
-      {/* Regime on its own row */}
       <div className="mb-3">
-        <RegimeBadge regime={signal.regime} />
+        <RegimeBadge regime={signal.regime} compact />
       </div>
       
-      {/* Stats in 3-column grid */}
-      <div className="grid grid-cols-3 gap-3 text-sm">
+      <div className="grid grid-cols-3 gap-3 text-sm mb-3">
         <div>
           <div className="text-gray-400 text-xs">Price</div>
           <div className="font-mono">${signal.price.toFixed(2)}</div>
@@ -233,6 +410,54 @@ function SignalCard({ signal }: { signal: AssetSignal }) {
           <div className="font-mono">{signal.expected_accuracy}%</div>
         </div>
       </div>
+
+      {/* Fibonacci Section */}
+      {fib && !fib.error && (
+        <>
+          <button
+            onClick={() => setShowFib(!showFib)}
+            className="flex items-center gap-1 text-xs text-blue-400 hover:text-blue-300 mb-2"
+          >
+            📐 Fibonacci Levels
+            {showFib ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+          </button>
+          
+          {showFib && (
+            <div className="p-3 bg-gray-800/50 rounded text-xs space-y-2">
+              <div className="flex justify-between">
+                <span className="text-gray-400">Support:</span>
+                <span className="font-mono text-green-400">${fib.nearest_support.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-400">Resistance:</span>
+                <span className="font-mono text-red-400">${fib.nearest_resistance.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-400">Entry Zone:</span>
+                <span className="font-mono">{fib.entry_zone}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-400">Targets:</span>
+                <span className="font-mono text-green-400">
+                  ${fib.profit_targets[0]?.toFixed(2)}, ${fib.profit_targets[1]?.toFixed(2)}
+                </span>
+              </div>
+              
+              <div className="pt-2 border-t border-gray-700">
+                <div className="text-gray-500 mb-1">Retracements:</div>
+                <div className="grid grid-cols-4 gap-1">
+                  {Object.entries(fib.retracements).slice(1, 5).map(([level, price]) => (
+                    <div key={level} className="text-center">
+                      <div className="text-gray-500">{level}%</div>
+                      <div className="font-mono">{price}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+        </>
+      )}
       
       {signal.signal === "BUY" && (
         <div className="mt-3 p-2 bg-green-500/20 rounded text-sm">
@@ -244,7 +469,7 @@ function SignalCard({ signal }: { signal: AssetSignal }) {
   );
 }
 
-// Pair Divergence Card
+// Pair Card
 function PairCard({ pair }: { pair: PairData }) {
   return (
     <div className={`p-4 rounded-lg border ${pair.is_diverged ? 'border-yellow-500 bg-yellow-500/10' : 'border-gray-700 bg-gray-800/50'}`}>
@@ -280,48 +505,37 @@ function PairCard({ pair }: { pair: PairData }) {
   );
 }
 
-// Mini Chart for F&G History
+// History Chart
 function FGHistoryChart({ history }: { history: { date: string; score: number }[] }) {
   if (!history || history.length === 0) return null;
 
-  const max = 100;
-  const min = 0;
   const width = 200;
   const height = 60;
   const padding = 5;
   
   const points = history.map((d, i) => {
     const x = padding + (i / (history.length - 1)) * (width - padding * 2);
-    const y = padding + (height - padding * 2) - ((d.score - min) / (max - min)) * (height - padding * 2);
+    const y = padding + (height - padding * 2) - ((d.score) / 100) * (height - padding * 2);
     return `${x},${y}`;
   }).join(" ");
 
   return (
     <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-20" preserveAspectRatio="xMidYMid meet">
-      {/* Fear zone (bottom 30%) */}
       <rect x={padding} y={height - padding - (height - padding * 2) * 0.3} width={width - padding * 2} height={(height - padding * 2) * 0.3} fill="rgba(239, 68, 68, 0.1)" />
-      {/* Greed zone (top 30%) */}
       <rect x={padding} y={padding} width={width - padding * 2} height={(height - padding * 2) * 0.3} fill="rgba(34, 197, 94, 0.1)" />
-      {/* Line */}
-      <polyline
-        points={points}
-        fill="none"
-        stroke="#3b82f6"
-        strokeWidth="2"
-        strokeLinejoin="round"
-      />
-      {/* Threshold lines */}
+      <polyline points={points} fill="none" stroke="#3b82f6" strokeWidth="2" strokeLinejoin="round" />
       <line x1={padding} y1={height - padding - (height - padding * 2) * 0.3} x2={width - padding} y2={height - padding - (height - padding * 2) * 0.3} stroke="#ef4444" strokeDasharray="4,4" strokeWidth="1" opacity="0.5" />
       <line x1={padding} y1={padding + (height - padding * 2) * 0.3} x2={width - padding} y2={padding + (height - padding * 2) * 0.3} stroke="#22c55e" strokeDasharray="4,4" strokeWidth="1" opacity="0.5" />
     </svg>
   );
 }
 
+// ============ MAIN COMPONENT ============
+
 export default function MREDashboard() {
   const [data, setData] = useState<MRESignals | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
 
   const fetchData = async () => {
     try {
@@ -330,7 +544,6 @@ export default function MREDashboard() {
       if (!res.ok) throw new Error("Failed to fetch");
       const json = await res.json();
       setData(json);
-      setLastRefresh(new Date());
       setError(null);
     } catch (e) {
       setError("Failed to load MRE signals");
@@ -342,7 +555,7 @@ export default function MREDashboard() {
 
   useEffect(() => {
     fetchData();
-    const interval = setInterval(fetchData, 60000); // Refresh every minute
+    const interval = setInterval(fetchData, 60000);
     return () => clearInterval(interval);
   }, []);
 
@@ -360,9 +573,7 @@ export default function MREDashboard() {
         <div className="text-center">
           <AlertTriangle className="w-12 h-12 text-yellow-500 mx-auto mb-4" />
           <p>{error}</p>
-          <button onClick={fetchData} className="mt-4 px-4 py-2 bg-blue-600 rounded">
-            Retry
-          </button>
+          <button onClick={fetchData} className="mt-4 px-4 py-2 bg-blue-600 rounded">Retry</button>
         </div>
       </div>
     );
@@ -376,45 +587,60 @@ export default function MREDashboard() {
   return (
     <div className="min-h-screen bg-gray-900 text-white p-6">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-8">
+        {/* Header with Live Timer */}
+        <div className="flex justify-between items-start mb-8">
           <div>
             <h1 className="text-3xl font-bold flex items-center gap-3">
               <Gauge className="w-8 h-8 text-blue-500" />
-              MRE v3 Dashboard
+              MRE {data.meta?.version} Dashboard
             </h1>
             <p className="text-gray-400 mt-1">Market Regime Ensemble — Real-time Signals</p>
           </div>
           <div className="text-right">
             <button 
               onClick={fetchData}
-              className="flex items-center gap-2 px-4 py-2 bg-gray-800 rounded-lg hover:bg-gray-700"
+              className="flex items-center gap-2 px-4 py-2 bg-gray-800 rounded-lg hover:bg-gray-700 mb-2"
             >
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
               Refresh
             </button>
-            <div className="text-xs text-gray-500 mt-1">
-              Updated: {data.last_updated}
-            </div>
+            <LiveTimer lastUpdatedUnix={data.last_updated_unix || 0} />
           </div>
         </div>
 
+        {/* Active Signals Alert */}
+        {(buySignals.length > 0 || divergedPairs.length > 0) && (
+          <div className="bg-green-500/20 border border-green-500/50 rounded-xl p-4 mb-8">
+            <div className="flex items-center gap-2 text-green-400 font-semibold mb-2">
+              <Zap className="w-5 h-5" />
+              Active Signals!
+            </div>
+            <div className="text-sm">
+              {buySignals.length > 0 && (
+                <span className="mr-4">🎯 Buy: {buySignals.map(s => s.symbol).join(", ")}</span>
+              )}
+              {divergedPairs.length > 0 && (
+                <span>🔄 Pairs: {divergedPairs.map(p => `${p.symbol1}/${p.symbol2}`).join(", ")}</span>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* Top Row: Fear & Greed + Regime */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          {/* Fear & Greed Gauge */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          {/* Fear & Greed with Breakdown */}
           <div className="bg-gray-800 rounded-xl p-6">
             <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
               <Activity className="w-5 h-5 text-blue-500" />
               Fear & Greed Index
             </h2>
-            <FearGreedGauge 
-              value={data.fear_greed.current} 
-              rating={data.fear_greed.rating} 
-            />
+            <FearGreedGauge value={data.fear_greed.current} rating={data.fear_greed.rating} />
+            
             <div className="mt-6">
               <div className="text-sm text-gray-400 mb-2">30-Day History</div>
               <FGHistoryChart history={data.fear_greed.history} />
             </div>
+            
             <div className="mt-4 grid grid-cols-2 gap-4 text-sm">
               <div className="p-3 bg-gray-700/50 rounded">
                 <div className="text-gray-400 text-xs mb-1">Buy Threshold</div>
@@ -425,24 +651,27 @@ export default function MREDashboard() {
                 <div className="font-mono uppercase">{data.fear_greed.source}</div>
               </div>
             </div>
+
+            {/* F&G Breakdown */}
+            {data.fear_greed.breakdown && (
+              <FGBreakdownSection breakdown={data.fear_greed.breakdown} />
+            )}
           </div>
 
-          {/* Regime Overview */}
+          {/* Regime with Predictions */}
           <div className="bg-gray-800 rounded-xl p-6">
             <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
               <BarChart3 className="w-5 h-5 text-blue-500" />
               Market Regime
             </h2>
-            <div className="space-y-3">
-              <div className="flex justify-between items-center p-3 bg-gray-700/50 rounded-lg">
-                <span className="text-sm">SPY (S&P 500)</span>
-                <RegimeBadge regime={data.regime.spy.regime} compact />
-              </div>
-              <div className="flex justify-between items-center p-3 bg-gray-700/50 rounded-lg">
-                <span className="text-sm">QQQ (Nasdaq)</span>
-                <RegimeBadge regime={data.regime.qqq.regime} compact />
-              </div>
+            
+            <div className="space-y-4">
+              <RegimeCard label="SPY (S&P 500)" data={data.regime.spy} />
+              <RegimeCard label="QQQ (Nasdaq)" data={data.regime.qqq} />
             </div>
+            
+            {/* Outliers */}
+            <OutliersSection outliers={data.regime.outliers || []} />
             
             {/* Signal Summary */}
             <div className="mt-6 grid grid-cols-3 gap-3">
@@ -462,28 +691,6 @@ export default function MREDashboard() {
           </div>
         </div>
 
-        {/* Active Signals Alert */}
-        {(buySignals.length > 0 || divergedPairs.length > 0) && (
-          <div className="bg-green-500/20 border border-green-500/50 rounded-xl p-4 mb-8">
-            <div className="flex items-center gap-2 text-green-400 font-semibold mb-2">
-              <Zap className="w-5 h-5" />
-              Active Signals!
-            </div>
-            <div className="text-sm">
-              {buySignals.length > 0 && (
-                <span className="mr-4">
-                  🎯 Buy: {buySignals.map(s => s.symbol).join(", ")}
-                </span>
-              )}
-              {divergedPairs.length > 0 && (
-                <span>
-                  🔄 Pairs: {divergedPairs.map(p => `${p.symbol1}/${p.symbol2}`).join(", ")}
-                </span>
-              )}
-            </div>
-          </div>
-        )}
-
         {/* Asset Class Signals */}
         <div className="mb-8">
           <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
@@ -492,7 +699,12 @@ export default function MREDashboard() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {data.signals.by_asset_class
-              .sort((a, b) => b.expected_sharpe - a.expected_sharpe)
+              .sort((a, b) => {
+                // Sort BUY first, then by Sharpe
+                if (a.signal === "BUY" && b.signal !== "BUY") return -1;
+                if (b.signal === "BUY" && a.signal !== "BUY") return 1;
+                return b.expected_sharpe - a.expected_sharpe;
+              })
               .map((signal) => (
                 <SignalCard key={signal.asset_class} signal={signal} />
               ))}
@@ -514,13 +726,18 @@ export default function MREDashboard() {
 
         {/* Footer */}
         <div className="mt-8 text-center text-sm text-gray-500">
-          MRE v3 — Based on {data.meta?.backtests?.toLocaleString()} backtests
+          MRE {data.meta?.version} — Based on {data.meta?.backtests?.toLocaleString()} backtests
           <br />
           {data.meta?.key_insight}
+          {data.meta?.features && (
+            <div className="mt-2 flex flex-wrap justify-center gap-2">
+              {data.meta.features.map((f) => (
+                <span key={f} className="text-xs bg-gray-800 px-2 py-1 rounded">✓ {f}</span>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
 }
-// cache bust 1770398011
-// force rebuild 1770409628

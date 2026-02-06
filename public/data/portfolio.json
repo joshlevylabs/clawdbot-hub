@@ -1,23 +1,23 @@
 {
-  "updated_at": "2026-02-06T13:00:08.225955",
+  "updated_at": "2026-02-06T14:00:07.053156",
   "account": {
-    "equity": 94645.56,
+    "equity": 94646.71,
     "cash": 94887.3,
-    "buying_power": 184172.58,
-    "portfolio_value": 94645.56,
-    "pnl_today": -5490.210000000006,
-    "pnl_today_pct": -5.482766048535915
+    "buying_power": 184183.23,
+    "portfolio_value": 94646.71,
+    "pnl_today": -5489.059999999998,
+    "pnl_today_pct": -5.481617607773925
   },
   "positions": [
     {
       "symbol": "QQQ",
       "qty": 4.0,
       "entry_price": 610.555,
-      "current_price": 609.6,
-      "market_value": 2438.4,
+      "current_price": 608.7,
+      "market_value": 2434.8,
       "cost_basis": 2442.22,
-      "unrealized_pnl": -3.82,
-      "unrealized_pnl_pct": -0.156,
+      "unrealized_pnl": -7.42,
+      "unrealized_pnl_pct": -0.304,
       "side": "long",
       "is_inverse": false
     },
@@ -25,11 +25,11 @@
       "symbol": "XLK",
       "qty": -19.0,
       "entry_price": 140.62,
-      "current_price": 141.06,
-      "market_value": -2680.14,
+      "current_price": 140.81,
+      "market_value": -2675.39,
       "cost_basis": -2671.78,
-      "unrealized_pnl": -8.36,
-      "unrealized_pnl_pct": -0.313,
+      "unrealized_pnl": -3.61,
+      "unrealized_pnl_pct": -0.135,
       "side": "short",
       "is_inverse": false
     }
@@ -200,8 +200,8 @@
   "regime_status": {},
   "summary": {
     "total_positions": 2,
-    "total_invested": -241.73999999999978,
-    "total_unrealized_pnl": -12.18,
+    "total_invested": -240.5899999999997,
+    "total_unrealized_pnl": -11.03,
     "total_unrealized_pnl_pct": 0,
     "cash_remaining": 94887.3
   }

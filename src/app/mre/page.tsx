@@ -62,6 +62,7 @@ interface FibonacciLevels {
   nearest_resistance: number;
   entry_zone: string;
   profit_targets: number[];
+  error?: string;
 }
 
 interface RegimeData {

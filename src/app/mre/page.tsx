@@ -164,7 +164,7 @@ function FearGreedGauge({ value, rating }: { value: number; rating: string }) {
       
       {/* Value display below */}
       <div className="text-center -mt-2">
-        <div className="text-3xl font-bold" style={{ color: getColor(value) }}>
+        <div className="text-4xl font-bold" style={{ color: getColor(value) }}>
           {Math.round(value)}
         </div>
         <div className="text-sm text-gray-400 capitalize">{rating}</div>

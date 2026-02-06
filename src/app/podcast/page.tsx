@@ -465,6 +465,7 @@ function Teleprompter({
   const containerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const scrollIntervalRef = useRef<number | null>(null);
+  const accumulatedScrollRef = useRef<number>(0); // Accumulate fractional pixels
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
@@ -516,14 +517,26 @@ function Teleprompter({
       const intervalMs = 1000 / 60;
       const pixelsPerFrame = pixelsPerSecond / 60;
       
+      // Reset accumulated scroll when starting
+      accumulatedScrollRef.current = 0;
+      
       scrollIntervalRef.current = window.setInterval(() => {
         if (containerRef.current) {
-          isProgrammaticScrollRef.current = true;
-          containerRef.current.scrollTop += pixelsPerFrame;
-          // Reset flag after scroll event fires
-          requestAnimationFrame(() => {
-            isProgrammaticScrollRef.current = false;
-          });
+          // Accumulate fractional pixels
+          accumulatedScrollRef.current += pixelsPerFrame;
+          
+          // Only scroll when we have at least 1 pixel to scroll
+          if (accumulatedScrollRef.current >= 1) {
+            const scrollAmount = Math.floor(accumulatedScrollRef.current);
+            accumulatedScrollRef.current -= scrollAmount;
+            
+            isProgrammaticScrollRef.current = true;
+            containerRef.current.scrollTop += scrollAmount;
+            // Reset flag after scroll event fires
+            requestAnimationFrame(() => {
+              isProgrammaticScrollRef.current = false;
+            });
+          }
         }
       }, intervalMs);
     } else if (scrollIntervalRef.current) {

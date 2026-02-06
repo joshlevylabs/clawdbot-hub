@@ -424,35 +424,70 @@ function SignalCard({ signal }: { signal: AssetSignal }) {
           </button>
           
           {showFib && (
-            <div className="p-3 bg-gray-800/50 rounded text-xs space-y-2">
-              <div className="flex justify-between">
-                <span className="text-gray-400">Support:</span>
-                <span className="font-mono text-green-400">${fib.nearest_support.toFixed(2)}</span>
+            <div className="p-3 bg-gray-800/50 rounded text-xs space-y-3">
+              {/* Quick Summary */}
+              <div className="grid grid-cols-2 gap-2">
+                <div className="flex justify-between">
+                  <span className="text-gray-400">Support:</span>
+                  <span className="font-mono text-green-400">${fib.nearest_support.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-400">Resistance:</span>
+                  <span className="font-mono text-red-400">${fib.nearest_resistance.toFixed(2)}</span>
+                </div>
               </div>
+              
               <div className="flex justify-between">
-                <span className="text-gray-400">Resistance:</span>
-                <span className="font-mono text-red-400">${fib.nearest_resistance.toFixed(2)}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-400">Entry Zone:</span>
-                <span className="font-mono">{fib.entry_zone}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-400">Targets:</span>
-                <span className="font-mono text-green-400">
-                  ${fib.profit_targets[0]?.toFixed(2)}, ${fib.profit_targets[1]?.toFixed(2)}
+                <span className="text-gray-400">Trend:</span>
+                <span className={`font-mono ${fib.trend === 'uptrend' ? 'text-green-400' : 'text-red-400'}`}>
+                  {fib.trend?.toUpperCase()}
                 </span>
               </div>
               
+              {/* Retracements - Buy zones in pullbacks */}
               <div className="pt-2 border-t border-gray-700">
-                <div className="text-gray-500 mb-1">Retracements:</div>
-                <div className="grid grid-cols-4 gap-1">
-                  {Object.entries(fib.retracements).slice(1, 5).map(([level, price]) => (
-                    <div key={level} className="text-center">
+                <div className="text-gray-400 mb-2 flex items-center gap-1">
+                  📉 Retracements <span className="text-gray-500">(pullback buy zones)</span>
+                </div>
+                <div className="grid grid-cols-3 gap-2">
+                  {Object.entries(fib.retracements)
+                    .filter(([level]) => ['23.6', '38.2', '50.0', '61.8', '78.6'].includes(level))
+                    .map(([level, price]) => (
+                    <div key={level} className="text-center bg-gray-900/50 p-1 rounded">
                       <div className="text-gray-500">{level}%</div>
-                      <div className="font-mono">{price}</div>
+                      <div className="font-mono text-yellow-400">${Number(price).toFixed(2)}</div>
                     </div>
                   ))}
+                </div>
+                <div className="mt-2 text-gray-500">
+                  Entry Zone: <span className="text-yellow-400 font-mono">{fib.entry_zone}</span>
+                </div>
+              </div>
+              
+              {/* Extensions - Profit targets */}
+              <div className="pt-2 border-t border-gray-700">
+                <div className="text-gray-400 mb-2 flex items-center gap-1">
+                  📈 Extensions <span className="text-gray-500">(profit targets)</span>
+                </div>
+                <div className="grid grid-cols-4 gap-2">
+                  {Object.entries(fib.extensions).map(([level, price]) => (
+                    <div key={level} className="text-center bg-gray-900/50 p-1 rounded">
+                      <div className="text-gray-500">{level}%</div>
+                      <div className="font-mono text-green-400">${Number(price).toFixed(2)}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              {/* Swing points for reference */}
+              <div className="pt-2 border-t border-gray-700 text-gray-500">
+                <div className="flex justify-between">
+                  <span>Swing High:</span>
+                  <span className="font-mono">${fib.swing_high.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Swing Low:</span>
+                  <span className="font-mono">${fib.swing_low.toFixed(2)}</span>
                 </div>
               </div>
             </div>

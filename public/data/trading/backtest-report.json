@@ -1,212 +1,212 @@
 {
-  "generated_at": "2026-02-05T07:00:15.210342",
+  "generated_at": "2026-02-06T07:00:16.723946",
   "total_tests": 15,
   "strategy_rankings": [
     {
       "rank": 1,
-      "strategy": "adaptive_dip",
+      "strategy": "trend_following",
       "test_count": 5,
-      "avg_return_pct": -1.9176472834687537,
-      "avg_excess_pct": 1.6899963875619464,
-      "avg_sharpe": -0.4396437782918395,
-      "avg_win_rate": 40.22222222222222,
-      "avg_drawdown": -6.064223826250947,
-      "best_return": 2.376162199999977,
-      "worst_return": -9.492164417663576,
+      "avg_return_pct": -4.3605496839047815,
+      "avg_excess_pct": 1.017727033801122,
+      "avg_sharpe": -3.853948681291398,
+      "avg_win_rate": 33.99753584229391,
+      "avg_drawdown": -12.942857549835832,
+      "best_return": 7.16961961242673,
+      "worst_return": -8.11834917999996,
       "positive_excess_count": 3
     },
     {
       "rank": 2,
-      "strategy": "trend_following",
+      "strategy": "adaptive_dip",
       "test_count": 5,
-      "avg_return_pct": -4.3763139659047825,
-      "avg_excess_pct": -0.5792999330473634,
-      "avg_sharpe": -3.869975955316689,
-      "avg_win_rate": 32.8864247311828,
-      "avg_drawdown": -12.942510042160231,
-      "best_return": 7.16961961242673,
-      "worst_return": -8.11834917999996,
+      "avg_return_pct": -6.95895149746876,
+      "avg_excess_pct": -1.74680892806361,
+      "avg_sharpe": -4.590678614175955,
+      "avg_win_rate": 33.77777777777778,
+      "avg_drawdown": -9.382560768956534,
+      "best_return": 0.8730171403198037,
+      "worst_return": -19.51085511999999,
       "positive_excess_count": 3
     },
     {
       "rank": 3,
       "strategy": "buy_the_dip",
       "test_count": 5,
-      "avg_return_pct": -15.59117698545142,
-      "avg_excess_pct": -11.330584602411093,
-      "avg_sharpe": -53.40028353256984,
-      "avg_win_rate": 38.503885003885,
-      "avg_drawdown": -24.168462087177645,
-      "best_return": 0.12687910571282554,
-      "worst_return": -32.38162320999999,
-      "positive_excess_count": 3
+      "avg_return_pct": -18.80219543856571,
+      "avg_excess_pct": -14.632997718852048,
+      "avg_sharpe": -83.29842018644287,
+      "avg_win_rate": 36.89872627372627,
+      "avg_drawdown": -28.695001292111378,
+      "best_return": 0.47010990145872344,
+      "worst_return": -36.43005931000003,
+      "positive_excess_count": 2
     }
   ],
   "detailed_results": [
     {
-      "symbol": "ETH/USD",
-      "strategy": "adaptive_dip",
-      "return_pct": 2.376162199999977,
-      "excess_pct": 36.761680577709505,
-      "sharpe": 0.9228816410357842,
-      "win_rate": 55.55555555555556,
-      "max_drawdown": -6.758289965582387,
-      "trades": 9,
-      "timestamp": "2026-02-05T07:00:11.556448"
-    },
-    {
-      "symbol": "SOL/USD",
-      "strategy": "adaptive_dip",
-      "return_pct": -4.7116561399999775,
-      "excess_pct": 31.029540787981478,
-      "sharpe": -3.892938895375511,
-      "win_rate": 33.33333333333333,
-      "max_drawdown": -5.503629727869585,
-      "trades": 9,
-      "timestamp": "2026-02-05T07:00:14.121451"
-    },
-    {
       "symbol": "SOL/USD",
       "strategy": "trend_following",
-      "return_pct": -6.724411749999999,
-      "excess_pct": 27.918182207258656,
-      "sharpe": -6.414148221954576,
-      "win_rate": 50.0,
-      "max_drawdown": -11.037750899144772,
-      "trades": 10,
-      "timestamp": "2026-02-05T07:00:14.150455"
+      "return_pct": -6.645590339999995,
+      "excess_pct": 32.347434943347864,
+      "sharpe": -6.334011851828119,
+      "win_rate": 55.55555555555556,
+      "max_drawdown": -11.03948843752277,
+      "trades": 9,
+      "timestamp": "2026-02-06T07:00:15.597169"
+    },
+    {
+      "symbol": "ETH/USD",
+      "strategy": "adaptive_dip",
+      "return_pct": -6.219411590000047,
+      "excess_pct": 30.645846651459788,
+      "sharpe": -2.7632862098630326,
+      "win_rate": 41.66666666666667,
+      "max_drawdown": -8.493725464396373,
+      "trades": 12,
+      "timestamp": "2026-02-06T07:00:12.905832"
     },
     {
       "symbol": "ETH/USD",
       "strategy": "trend_following",
       "return_pct": -8.11834917999996,
-      "excess_pct": 26.612810300367123,
+      "excess_pct": 28.21564886773706,
       "sharpe": -5.628008280029336,
       "win_rate": 33.33333333333333,
       "max_drawdown": -14.274588418551804,
       "trades": 12,
-      "timestamp": "2026-02-05T07:00:11.588272"
+      "timestamp": "2026-02-06T07:00:12.940251"
     },
     {
       "symbol": "BTC/USD",
       "strategy": "adaptive_dip",
-      "return_pct": 1.366404800000004,
-      "excess_pct": 24.942757982878152,
-      "sharpe": 1.7116186211748874,
-      "win_rate": 50.0,
-      "max_drawdown": -3.0244594372293987,
-      "trades": 4,
-      "timestamp": "2026-02-05T07:00:09.071516"
+      "return_pct": -0.4453434999999882,
+      "excess_pct": 25.095238088211776,
+      "sharpe": -0.5012511799225319,
+      "win_rate": 40.0,
+      "max_drawdown": -3.1854591170548674,
+      "trades": 5,
+      "timestamp": "2026-02-06T07:00:10.320816"
+    },
+    {
+      "symbol": "SOL/USD",
+      "strategy": "adaptive_dip",
+      "return_pct": -19.51085511999999,
+      "excess_pct": 20.420470439768227,
+      "sharpe": -18.749075422799855,
+      "win_rate": 25.0,
+      "max_drawdown": -20.198879262758062,
+      "trades": 12,
+      "timestamp": "2026-02-06T07:00:15.564172"
     },
     {
       "symbol": "BTC/USD",
       "strategy": "trend_following",
       "return_pct": -7.279724699999977,
-      "excess_pct": 16.380006641379477,
+      "excess_pct": 17.70571745665232,
       "sharpe": -7.1647196953447825,
       "win_rate": 6.25,
       "max_drawdown": -10.253829331998821,
       "trades": 16,
-      "timestamp": "2026-02-05T07:00:09.104261"
-    },
-    {
-      "symbol": "SOL/USD",
-      "strategy": "buy_the_dip",
-      "return_pct": -22.627848359999902,
-      "excess_pct": 14.689276525150994,
-      "sharpe": -36.89270749818873,
-      "win_rate": 33.33333333333333,
-      "max_drawdown": -25.178165572346668,
-      "trades": 27,
-      "timestamp": "2026-02-05T07:00:14.135056"
+      "timestamp": "2026-02-06T07:00:10.362263"
     },
     {
       "symbol": "ETH/USD",
       "strategy": "buy_the_dip",
-      "return_pct": -32.38162320999999,
-      "excess_pct": 5.0392306964769205,
-      "sharpe": -175.26467593734168,
-      "win_rate": 27.500000000000004,
-      "max_drawdown": -32.799199094866594,
-      "trades": 40,
-      "timestamp": "2026-02-05T07:00:11.571240"
+      "return_pct": -30.952473690000016,
+      "excess_pct": 6.543770549849942,
+      "sharpe": -103.12319462288147,
+      "win_rate": 25.0,
+      "max_drawdown": -34.76561465771461,
+      "trades": 28,
+      "timestamp": "2026-02-06T07:00:12.923228"
+    },
+    {
+      "symbol": "SOL/USD",
+      "strategy": "buy_the_dip",
+      "return_pct": -36.43005931000003,
+      "excess_pct": 1.6588590708891502,
+      "sharpe": -244.49701078409012,
+      "win_rate": 28.125,
+      "max_drawdown": -39.795214670000036,
+      "trades": 32,
+      "timestamp": "2026-02-06T07:00:15.579878"
     },
     {
       "symbol": "BTC/USD",
       "strategy": "buy_the_dip",
-      "return_pct": -22.588172700000055,
-      "excess_pct": 3.2461418446502286,
-      "sharpe": -54.832467010078695,
-      "win_rate": 28.888888888888886,
-      "max_drawdown": -24.413719032310077,
-      "trades": 45,
-      "timestamp": "2026-02-05T07:00:09.087776"
+      "return_pct": -27.225433200000044,
+      "excess_pct": -1.8929734967347862,
+      "sharpe": -68.89628918448193,
+      "win_rate": 28.57142857142857,
+      "max_drawdown": -30.462950396477375,
+      "trades": 49,
+      "timestamp": "2026-02-06T07:00:10.341725"
     },
     {
       "symbol": "QQQ",
       "strategy": "trend_following",
       "return_pct": 7.16961961242673,
-      "excess_pct": -30.620663495131538,
+      "excess_pct": -30.10844283058445,
       "sharpe": 0.3133583814333253,
       "win_rate": 45.16129032258064,
       "max_drawdown": -14.711096717849692,
       "trades": 62,
-      "timestamp": "2026-02-05T07:00:15.209541"
+      "timestamp": "2026-02-06T07:00:16.723007"
     },
     {
       "symbol": "SPY",
       "strategy": "adaptive_dip",
       "return_pct": 0.8730171403198037,
-      "excess_pct": -35.943607781402676,
+      "excess_pct": -36.14193634463504,
       "sharpe": 0.0991760870767401,
       "win_rate": 40.0,
       "max_drawdown": -3.485138476398797,
       "trades": 5,
-      "timestamp": "2026-02-05T07:00:14.715635"
+      "timestamp": "2026-02-06T07:00:16.304342"
     },
     {
       "symbol": "SPY",
       "strategy": "buy_the_dip",
       "return_pct": 0.12687910571282554,
-      "excess_pct": -38.44937703247137,
+      "excess_pct": -38.88835427785317,
       "sharpe": 0.006768698779083088,
       "win_rate": 51.515151515151516,
       "max_drawdown": -17.002828062389664,
       "trades": 33,
-      "timestamp": "2026-02-05T07:00:14.743555"
+      "timestamp": "2026-02-06T07:00:16.333472"
     },
     {
       "symbol": "QQQ",
       "strategy": "buy_the_dip",
-      "return_pct": -0.4851197629699891,
-      "excess_pct": -41.17819504586224,
-      "sharpe": -0.018335916019147785,
+      "return_pct": 0.47010990145872344,
+      "excess_pct": -40.586290440411375,
+      "sharpe": 0.017624960460127924,
       "win_rate": 51.28205128205128,
       "max_drawdown": -21.448398673975223,
       "trades": 78,
-      "timestamp": "2026-02-05T07:00:15.171949"
+      "timestamp": "2026-02-06T07:00:16.681675"
     },
     {
       "symbol": "SPY",
       "strategy": "trend_following",
       "return_pct": -6.928703811950705,
-      "excess_pct": -43.186835319110536,
+      "excess_pct": -43.07172326814718,
       "sharpe": -0.4563619606880768,
       "win_rate": 29.6875,
       "max_drawdown": -14.435284843256069,
       "trades": 64,
-      "timestamp": "2026-02-05T07:00:14.781260"
+      "timestamp": "2026-02-06T07:00:16.372329"
     },
     {
       "symbol": "QQQ",
       "strategy": "adaptive_dip",
       "return_pct": -9.492164417663576,
-      "excess_pct": -48.34038962935673,
+      "excess_pct": -48.7536634751228,
       "sharpe": -1.038956345371098,
       "win_rate": 22.22222222222222,
       "max_drawdown": -11.54960152417457,
       "trades": 9,
-      "timestamp": "2026-02-05T07:00:15.142109"
+      "timestamp": "2026-02-06T07:00:16.647980"
     }
   ]
 }

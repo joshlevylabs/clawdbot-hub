@@ -1,0 +1,204 @@
+{
+  "timestamp": "2026-02-06T08:37:06.359357",
+  "last_updated": "2026-02-06 08:37:06",
+  "fear_greed": {
+    "current": 50,
+    "rating": "Neutral",
+    "is_fear": false,
+    "is_extreme_fear": false,
+    "is_greed": false,
+    "is_extreme_greed": false,
+    "source": "vix_proxy",
+    "history": []
+  },
+  "regime": {
+    "spy": {
+      "regime": "unknown",
+      "ema_fast": 0,
+      "ema_medium": 0,
+      "ema_slow": 0
+    },
+    "qqq": {
+      "regime": "unknown",
+      "ema_fast": 0,
+      "ema_medium": 0,
+      "ema_slow": 0
+    },
+    "global": "unknown"
+  },
+  "signals": {
+    "summary": {
+      "total_buy": 0,
+      "total_hold": 9,
+      "total_watch": 0
+    },
+    "by_asset_class": [
+      {
+        "asset_class": "broad_market",
+        "symbol": "SPY",
+        "signal": "HOLD",
+        "signal_strength": 0.0,
+        "fear_threshold": 20,
+        "current_fg": 50,
+        "regime": "unknown",
+        "regime_weight": 1.0,
+        "hold_days": 10,
+        "expected_sharpe": 10.65,
+        "expected_accuracy": 70.6,
+        "price": 0
+      },
+      {
+        "asset_class": "commodities",
+        "symbol": "GLD",
+        "signal": "HOLD",
+        "signal_strength": 0.0,
+        "fear_threshold": 20,
+        "current_fg": 50,
+        "regime": "unknown",
+        "regime_weight": 1.0,
+        "hold_days": 20,
+        "expected_sharpe": 25.8,
+        "expected_accuracy": 61.3,
+        "price": 0
+      },
+      {
+        "asset_class": "financials",
+        "symbol": "XLF",
+        "signal": "HOLD",
+        "signal_strength": 0.0,
+        "fear_threshold": 20,
+        "current_fg": 50,
+        "regime": "unknown",
+        "regime_weight": 1.0,
+        "hold_days": 5,
+        "expected_sharpe": 15.52,
+        "expected_accuracy": 65.0,
+        "price": 0
+      },
+      {
+        "asset_class": "technology",
+        "symbol": "XLK",
+        "signal": "HOLD",
+        "signal_strength": 0.0,
+        "fear_threshold": 20,
+        "current_fg": 50,
+        "regime": "unknown",
+        "regime_weight": 1.0,
+        "hold_days": 5,
+        "expected_sharpe": 5.12,
+        "expected_accuracy": 65.7,
+        "price": 0
+      },
+      {
+        "asset_class": "healthcare",
+        "symbol": "XLV",
+        "signal": "HOLD",
+        "signal_strength": 0.0,
+        "fear_threshold": 20,
+        "current_fg": 50,
+        "regime": "unknown",
+        "regime_weight": 1.0,
+        "hold_days": 10,
+        "expected_sharpe": 14.22,
+        "expected_accuracy": 68.0,
+        "price": 0
+      },
+      {
+        "asset_class": "bonds",
+        "symbol": "TLT",
+        "signal": "HOLD",
+        "signal_strength": 0.0,
+        "fear_threshold": 20,
+        "current_fg": 50,
+        "regime": "unknown",
+        "regime_weight": 1.0,
+        "hold_days": 20,
+        "expected_sharpe": 18.55,
+        "expected_accuracy": 51.8,
+        "price": 0
+      },
+      {
+        "asset_class": "real_estate",
+        "symbol": "VNQ",
+        "signal": "HOLD",
+        "signal_strength": 0.0,
+        "fear_threshold": 20,
+        "current_fg": 50,
+        "regime": "unknown",
+        "regime_weight": 1.0,
+        "hold_days": 20,
+        "expected_sharpe": 8.36,
+        "expected_accuracy": 63.9,
+        "price": 0
+      },
+      {
+        "asset_class": "international",
+        "symbol": "EFA",
+        "signal": "HOLD",
+        "signal_strength": 0.0,
+        "fear_threshold": 20,
+        "current_fg": 50,
+        "regime": "unknown",
+        "regime_weight": 1.0,
+        "hold_days": 10,
+        "expected_sharpe": 11.87,
+        "expected_accuracy": 74.7,
+        "price": 0
+      },
+      {
+        "asset_class": "energy",
+        "symbol": "XLE",
+        "signal": "HOLD",
+        "signal_strength": 0.0,
+        "fear_threshold": 25,
+        "current_fg": 50,
+        "regime": "unknown",
+        "regime_weight": 1.0,
+        "hold_days": 20,
+        "expected_sharpe": 4.74,
+        "expected_accuracy": 68.8,
+        "price": 0
+      }
+    ]
+  },
+  "pairs": {
+    "diverged_count": 0,
+    "pairs": [
+      {
+        "error": "yfinance not available",
+        "reverter": "XLF",
+        "probability": 0.87
+      },
+      {
+        "error": "yfinance not available",
+        "reverter": "IYR",
+        "probability": 0.86
+      },
+      {
+        "error": "yfinance not available",
+        "reverter": "VNQ",
+        "probability": 0.85
+      },
+      {
+        "error": "yfinance not available",
+        "reverter": "SPY",
+        "probability": 0.82
+      },
+      {
+        "error": "yfinance not available",
+        "reverter": "EEM",
+        "probability": 0.78
+      }
+    ]
+  },
+  "thresholds": {
+    "fear_buy": 30,
+    "greed_sell": 85,
+    "optimal_hold": 5
+  },
+  "meta": {
+    "version": "v3",
+    "backtests": 4113,
+    "key_insight": "Fear signals 65.6% accurate, Greed only 30.6%"
+  }
+}

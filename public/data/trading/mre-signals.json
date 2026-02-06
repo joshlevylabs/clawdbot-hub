@@ -1,7 +1,7 @@
 {
-  "timestamp": "2026-02-06T14:41:07.100550",
-  "last_updated": "2026-02-06 14:41:07",
-  "last_updated_unix": 1770417667,
+  "timestamp": "2026-02-06T14:47:47.293842",
+  "last_updated": "2026-02-06 14:47:47",
+  "last_updated_unix": 1770418067,
   "fear_greed": {
     "current": 44.8857142857143,
     "rating": "fear",
@@ -1358,6 +1358,51 @@
       "source": "kalshi",
       "cached": true,
       "note": "Markets closed - using last available signal"
+    },
+    "polymarket": {
+      "available": true,
+      "signal": "BEARISH",
+      "confidence": 70,
+      "events_analyzed": 12,
+      "top_events": [
+        {
+          "title": "Who will Trump nominate as Fed Chair?",
+          "probability": null,
+          "liquidity": 58227773.22219,
+          "volume": 415603749.503354,
+          "id": "35908"
+        },
+        {
+          "title": "Will China invade Taiwan by end of 2026?",
+          "probability": null,
+          "liquidity": 581827.6791,
+          "volume": 8224265.065069,
+          "id": "34044"
+        },
+        {
+          "title": "MegaETH market cap (FDV) one day after launch?",
+          "probability": null,
+          "liquidity": 275808.1639,
+          "volume": 10410284.744315,
+          "id": "28999"
+        },
+        {
+          "title": "MicroStrategy sells any Bitcoin by ___ ?",
+          "probability": null,
+          "liquidity": 232258.47093,
+          "volume": 19976388.458121,
+          "id": "16167"
+        },
+        {
+          "title": "How much revenue will the U.S. raise from tariffs in 2025?",
+          "probability": null,
+          "liquidity": 165888.11153,
+          "volume": 5011687.257483,
+          "id": "22862"
+        }
+      ],
+      "timestamp": "2026-02-06T22:47:43.173615+00:00",
+      "source": "polymarket"
     }
   },
   "meta": {

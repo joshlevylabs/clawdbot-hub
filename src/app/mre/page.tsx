@@ -139,6 +139,25 @@ interface KalshiData {
   error?: string;
 }
 
+interface PolymarketEvent {
+  title: string;
+  probability: number | null;
+  liquidity: number;
+  volume: number;
+  id: string;
+}
+
+interface PolymarketData {
+  available: boolean;
+  signal?: string;
+  confidence?: number;
+  events_analyzed?: number;
+  top_events?: PolymarketEvent[];
+  timestamp?: string;
+  source?: string;
+  error?: string;
+}
+
 interface MRESignals {
   timestamp: string;
   last_updated: string;
@@ -164,6 +183,7 @@ interface MRESignals {
   };
   prediction_markets?: {
     kalshi?: KalshiData;
+    polymarket?: PolymarketData;
   };
   thresholds: {
     fear_buy: number;
@@ -391,9 +411,12 @@ function OutliersSection({ outliers }: { outliers: Outlier[] }) {
   );
 }
 
-// Kalshi Prediction Markets Section
-function KalshiSection({ kalshi }: { kalshi?: KalshiData }) {
-  if (!kalshi || !kalshi.available) return null;
+// Prediction Markets Section (Kalshi + Polymarket)
+function PredictionMarketsSection({ kalshi, polymarket }: { kalshi?: KalshiData; polymarket?: PolymarketData }) {
+  const hasKalshi = kalshi && kalshi.available;
+  const hasPolymarket = polymarket && polymarket.available;
+  
+  if (!hasKalshi && !hasPolymarket) return null;
 
   const getSignalColor = (signal?: string) => {
     if (signal === "BULLISH") return "text-green-400 bg-green-500/20 border-green-500/50";
@@ -407,81 +430,124 @@ function KalshiSection({ kalshi }: { kalshi?: KalshiData }) {
     return Minus;
   };
 
-  const SignalIcon = getSignalIcon(kalshi.signal);
+  const formatVolume = (vol: number) => {
+    if (vol >= 1000000) return `$${(vol / 1000000).toFixed(1)}M`;
+    if (vol >= 1000) return `$${(vol / 1000).toFixed(0)}K`;
+    return `$${vol.toFixed(0)}`;
+  };
 
   return (
     <div className="bg-gray-800 rounded-xl p-6 mb-8">
       <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
         🎰 Prediction Markets
-        <span className="text-xs text-gray-400 font-normal">(96.6% historical accuracy)</span>
       </h2>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Kalshi Signal */}
-        <div className={`p-4 rounded-lg border ${getSignalColor(kalshi.signal)}`}>
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <span className="font-semibold">Kalshi S&P 500</span>
-              {kalshi.cached && (
-                <span className="text-xs bg-gray-700 px-2 py-0.5 rounded text-gray-400">cached</span>
-              )}
-            </div>
-            <SignalIcon className="w-5 h-5" />
-          </div>
-          
-          <div className="grid grid-cols-2 gap-3 text-sm">
-            <div>
-              <div className="text-gray-400 text-xs">Signal</div>
-              <div className="font-semibold">{kalshi.signal || "N/A"}</div>
-            </div>
-            <div>
-              <div className="text-gray-400 text-xs">Confidence</div>
-              <div className={`font-mono ${(kalshi.confidence || 0) >= 60 ? 'text-green-400' : 'text-gray-400'}`}>
-                {kalshi.confidence || 0}%
+        {hasKalshi && (
+          <div className={`p-4 rounded-lg border ${getSignalColor(kalshi.signal)}`}>
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <span className="font-semibold">Kalshi S&P 500</span>
+                {kalshi.cached && (
+                  <span className="text-xs bg-gray-700 px-2 py-0.5 rounded text-gray-400">cached</span>
+                )}
+                <span className="text-xs text-gray-500">(96.6% accuracy)</span>
               </div>
+              {(() => { const Icon = getSignalIcon(kalshi.signal); return <Icon className="w-5 h-5" />; })()}
             </div>
-            <div>
-              <div className="text-gray-400 text-xs">Expected Price</div>
-              <div className="font-mono">{kalshi.expected_price?.toFixed(0) || "N/A"}</div>
-            </div>
-            <div>
-              <div className="text-gray-400 text-xs">Implied Range</div>
-              <div className="font-mono text-xs">
-                {kalshi.implied_range ? `${kalshi.implied_range[0].toFixed(0)} - ${kalshi.implied_range[1].toFixed(0)}` : "N/A"}
+            
+            <div className="grid grid-cols-2 gap-3 text-sm">
+              <div>
+                <div className="text-gray-400 text-xs">Signal</div>
+                <div className="font-semibold">{kalshi.signal || "N/A"}</div>
               </div>
-            </div>
-          </div>
-          
-          {kalshi.note && (
-            <div className="mt-3 text-xs text-gray-500">{kalshi.note}</div>
-          )}
-        </div>
-
-        {/* Top Markets */}
-        {kalshi.top_markets && kalshi.top_markets.length > 0 && (
-          <div className="p-4 bg-gray-700/50 rounded-lg">
-            <div className="text-sm text-gray-400 mb-2">Top Predicted Ranges</div>
-            <div className="space-y-2">
-              {kalshi.top_markets.slice(0, 3).map((m, i) => (
-                <div key={m.ticker} className="flex items-center justify-between text-sm">
-                  <div className="flex items-center gap-2">
-                    <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs ${i === 0 ? 'bg-yellow-500/20 text-yellow-400' : 'bg-gray-600 text-gray-400'}`}>
-                      {i + 1}
-                    </span>
-                    <span className="font-mono">{m.range_low.toFixed(0)} - {m.range_high.toFixed(0)}</span>
-                  </div>
-                  <span className={`font-mono ${m.yes_bid >= 20 ? 'text-green-400' : 'text-gray-400'}`}>
-                    {m.yes_bid}%
-                  </span>
+              <div>
+                <div className="text-gray-400 text-xs">Confidence</div>
+                <div className={`font-mono ${(kalshi.confidence || 0) >= 60 ? 'text-green-400' : 'text-gray-400'}`}>
+                  {kalshi.confidence || 0}%
                 </div>
-              ))}
+              </div>
+              <div>
+                <div className="text-gray-400 text-xs">Expected</div>
+                <div className="font-mono">{kalshi.expected_price?.toFixed(0) || "N/A"}</div>
+              </div>
+              <div>
+                <div className="text-gray-400 text-xs">Range</div>
+                <div className="font-mono text-xs">
+                  {kalshi.implied_range ? `${kalshi.implied_range[0].toFixed(0)}-${kalshi.implied_range[1].toFixed(0)}` : "N/A"}
+                </div>
+              </div>
             </div>
-            <div className="mt-2 text-xs text-gray-500">
-              {kalshi.markets_analyzed} markets analyzed
+            
+            {kalshi.note && (
+              <div className="mt-3 text-xs text-gray-500">{kalshi.note}</div>
+            )}
+          </div>
+        )}
+
+        {/* Polymarket Signal */}
+        {hasPolymarket && (
+          <div className={`p-4 rounded-lg border ${getSignalColor(polymarket.signal)}`}>
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <span className="font-semibold">Polymarket Economic</span>
+              </div>
+              {(() => { const Icon = getSignalIcon(polymarket.signal); return <Icon className="w-5 h-5" />; })()}
+            </div>
+            
+            <div className="grid grid-cols-2 gap-3 text-sm">
+              <div>
+                <div className="text-gray-400 text-xs">Signal</div>
+                <div className="font-semibold">{polymarket.signal || "N/A"}</div>
+              </div>
+              <div>
+                <div className="text-gray-400 text-xs">Confidence</div>
+                <div className={`font-mono ${(polymarket.confidence || 0) >= 60 ? 'text-green-400' : 'text-gray-400'}`}>
+                  {polymarket.confidence || 0}%
+                </div>
+              </div>
+              <div className="col-span-2">
+                <div className="text-gray-400 text-xs">Events Analyzed</div>
+                <div className="font-mono">{polymarket.events_analyzed || 0}</div>
+              </div>
             </div>
           </div>
         )}
       </div>
+
+      {/* Top Events from Polymarket */}
+      {hasPolymarket && polymarket.top_events && polymarket.top_events.length > 0 && (
+        <div className="mt-4 p-4 bg-gray-700/50 rounded-lg">
+          <div className="text-sm text-gray-400 mb-3">🔮 Top Economic Events (Polymarket)</div>
+          <div className="space-y-2">
+            {polymarket.top_events.slice(0, 4).map((e) => (
+              <div key={e.id} className="flex items-center justify-between text-sm">
+                <span className="text-gray-300 truncate max-w-[70%]">{e.title}</span>
+                <span className="text-gray-500 font-mono text-xs">{formatVolume(e.volume)} vol</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Kalshi Top Markets */}
+      {hasKalshi && kalshi.top_markets && kalshi.top_markets.length > 0 && (
+        <div className="mt-4 p-4 bg-gray-700/50 rounded-lg">
+          <div className="text-sm text-gray-400 mb-3">📊 S&P 500 Price Predictions (Kalshi)</div>
+          <div className="grid grid-cols-3 gap-2">
+            {kalshi.top_markets.slice(0, 3).map((m, i) => (
+              <div key={m.ticker} className={`text-center p-2 rounded ${i === 0 ? 'bg-yellow-500/10 border border-yellow-500/30' : 'bg-gray-800'}`}>
+                <div className="text-xs text-gray-500">#{i + 1}</div>
+                <div className="font-mono text-sm">{m.range_low.toFixed(0)}-{m.range_high.toFixed(0)}</div>
+                <div className={`text-xs font-mono ${m.yes_bid >= 20 ? 'text-green-400' : 'text-gray-400'}`}>
+                  {m.yes_bid}%
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -850,7 +916,10 @@ export default function MREDashboard() {
         </div>
 
         {/* Prediction Markets */}
-        <KalshiSection kalshi={data.prediction_markets?.kalshi} />
+        <PredictionMarketsSection 
+          kalshi={data.prediction_markets?.kalshi} 
+          polymarket={data.prediction_markets?.polymarket} 
+        />
 
         {/* Asset Class Signals */}
         <div className="mb-8">

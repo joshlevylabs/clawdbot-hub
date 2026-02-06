@@ -5,5 +5,12 @@
     "regime": "unknown",
     "buy_signals": 0,
     "diverged_pairs": 0
+  },
+  {
+    "timestamp": "2026-02-06T08:39:38.470438",
+    "fg_score": 42.5142857142857,
+    "regime": "bull",
+    "buy_signals": 0,
+    "diverged_pairs": 0
   }
 ]

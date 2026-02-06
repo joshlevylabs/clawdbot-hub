@@ -1,30 +1,189 @@
 {
-  "timestamp": "2026-02-06T08:37:06.359357",
-  "last_updated": "2026-02-06 08:37:06",
+  "timestamp": "2026-02-06T08:39:38.253305",
+  "last_updated": "2026-02-06 08:39:38",
   "fear_greed": {
-    "current": 50,
-    "rating": "Neutral",
+    "current": 42.5142857142857,
+    "rating": "fear",
     "is_fear": false,
     "is_extreme_fear": false,
     "is_greed": false,
     "is_extreme_greed": false,
-    "source": "vix_proxy",
-    "history": []
+    "source": "cnn",
+    "history": [
+      {
+        "date": "2025-12-24",
+        "score": 85,
+        "vix": 13.47
+      },
+      {
+        "date": "2025-12-26",
+        "score": 85,
+        "vix": 13.6
+      },
+      {
+        "date": "2025-12-29",
+        "score": 85,
+        "vix": 14.2
+      },
+      {
+        "date": "2025-12-30",
+        "score": 85,
+        "vix": 14.33
+      },
+      {
+        "date": "2025-12-31",
+        "score": 85,
+        "vix": 14.95
+      },
+      {
+        "date": "2026-01-02",
+        "score": 85,
+        "vix": 14.51
+      },
+      {
+        "date": "2026-01-05",
+        "score": 85,
+        "vix": 14.9
+      },
+      {
+        "date": "2026-01-06",
+        "score": 85,
+        "vix": 14.75
+      },
+      {
+        "date": "2026-01-07",
+        "score": 65,
+        "vix": 15.38
+      },
+      {
+        "date": "2026-01-08",
+        "score": 65,
+        "vix": 15.45
+      },
+      {
+        "date": "2026-01-09",
+        "score": 85,
+        "vix": 14.49
+      },
+      {
+        "date": "2026-01-12",
+        "score": 65,
+        "vix": 15.12
+      },
+      {
+        "date": "2026-01-13",
+        "score": 65,
+        "vix": 15.98
+      },
+      {
+        "date": "2026-01-14",
+        "score": 65,
+        "vix": 16.75
+      },
+      {
+        "date": "2026-01-15",
+        "score": 65,
+        "vix": 15.84
+      },
+      {
+        "date": "2026-01-16",
+        "score": 65,
+        "vix": 15.86
+      },
+      {
+        "date": "2026-01-20",
+        "score": 45,
+        "vix": 20.09
+      },
+      {
+        "date": "2026-01-21",
+        "score": 65,
+        "vix": 16.9
+      },
+      {
+        "date": "2026-01-22",
+        "score": 65,
+        "vix": 15.64
+      },
+      {
+        "date": "2026-01-23",
+        "score": 65,
+        "vix": 16.09
+      },
+      {
+        "date": "2026-01-26",
+        "score": 65,
+        "vix": 16.15
+      },
+      {
+        "date": "2026-01-27",
+        "score": 65,
+        "vix": 16.35
+      },
+      {
+        "date": "2026-01-28",
+        "score": 65,
+        "vix": 16.35
+      },
+      {
+        "date": "2026-01-29",
+        "score": 65,
+        "vix": 16.88
+      },
+      {
+        "date": "2026-01-30",
+        "score": 65,
+        "vix": 17.44
+      },
+      {
+        "date": "2026-02-02",
+        "score": 65,
+        "vix": 16.34
+      },
+      {
+        "date": "2026-02-03",
+        "score": 65,
+        "vix": 18.0
+      },
+      {
+        "date": "2026-02-04",
+        "score": 65,
+        "vix": 18.64
+      },
+      {
+        "date": "2026-02-05",
+        "score": 45,
+        "vix": 21.77
+      },
+      {
+        "date": "2026-02-06",
+        "score": 65,
+        "vix": 18.49
+      }
+    ]
   },
   "regime": {
     "spy": {
-      "regime": "unknown",
-      "ema_fast": 0,
-      "ema_medium": 0,
-      "ema_slow": 0
+      "regime": "bull",
+      "price": 687.85,
+      "ema_20": 688.73,
+      "ema_50": 684.47,
+      "ema_200": 656.11,
+      "above_ema_20": false,
+      "above_ema_50": true,
+      "above_ema_200": true
     },
     "qqq": {
-      "regime": "unknown",
-      "ema_fast": 0,
-      "ema_medium": 0,
-      "ema_slow": 0
+      "regime": "sideways",
+      "price": 606.98,
+      "ema_20": 617.57,
+      "ema_50": 616.68,
+      "ema_200": 589.93,
+      "above_ema_20": false,
+      "above_ema_50": false,
+      "above_ema_200": true
     },
-    "global": "unknown"
+    "global": "bull"
   },
   "signals": {
     "summary": {
@@ -39,13 +198,13 @@
         "signal": "HOLD",
         "signal_strength": 0.0,
         "fear_threshold": 20,
-        "current_fg": 50,
-        "regime": "unknown",
-        "regime_weight": 1.0,
+        "current_fg": 42.5142857142857,
+        "regime": "bull",
+        "regime_weight": 0.5,
         "hold_days": 10,
         "expected_sharpe": 10.65,
         "expected_accuracy": 70.6,
-        "price": 0
+        "price": 687.85
       },
       {
         "asset_class": "commodities",
@@ -53,13 +212,13 @@
         "signal": "HOLD",
         "signal_strength": 0.0,
         "fear_threshold": 20,
-        "current_fg": 50,
-        "regime": "unknown",
-        "regime_weight": 1.0,
+        "current_fg": 42.5142857142857,
+        "regime": "bull",
+        "regime_weight": 0.5,
         "hold_days": 20,
         "expected_sharpe": 25.8,
         "expected_accuracy": 61.3,
-        "price": 0
+        "price": 453.82
       },
       {
         "asset_class": "financials",
@@ -67,13 +226,13 @@
         "signal": "HOLD",
         "signal_strength": 0.0,
         "fear_threshold": 20,
-        "current_fg": 50,
-        "regime": "unknown",
-        "regime_weight": 1.0,
+        "current_fg": 42.5142857142857,
+        "regime": "sideways",
+        "regime_weight": 1.5,
         "hold_days": 5,
         "expected_sharpe": 15.52,
         "expected_accuracy": 65.0,
-        "price": 0
+        "price": 54.05
       },
       {
         "asset_class": "technology",
@@ -81,13 +240,13 @@
         "signal": "HOLD",
         "signal_strength": 0.0,
         "fear_threshold": 20,
-        "current_fg": 50,
-        "regime": "unknown",
-        "regime_weight": 1.0,
+        "current_fg": 42.5142857142857,
+        "regime": "sideways",
+        "regime_weight": 1.5,
         "hold_days": 5,
         "expected_sharpe": 5.12,
         "expected_accuracy": 65.7,
-        "price": 0
+        "price": 140.57
       },
       {
         "asset_class": "healthcare",
@@ -95,13 +254,13 @@
         "signal": "HOLD",
         "signal_strength": 0.0,
         "fear_threshold": 20,
-        "current_fg": 50,
-        "regime": "unknown",
-        "regime_weight": 1.0,
+        "current_fg": 42.5142857142857,
+        "regime": "bull",
+        "regime_weight": 0.5,
         "hold_days": 10,
         "expected_sharpe": 14.22,
         "expected_accuracy": 68.0,
-        "price": 0
+        "price": 157.01
       },
       {
         "asset_class": "bonds",
@@ -109,13 +268,13 @@
         "signal": "HOLD",
         "signal_strength": 0.0,
         "fear_threshold": 20,
-        "current_fg": 50,
-        "regime": "unknown",
-        "regime_weight": 1.0,
+        "current_fg": 42.5142857142857,
+        "regime": "sideways",
+        "regime_weight": 1.5,
         "hold_days": 20,
         "expected_sharpe": 18.55,
         "expected_accuracy": 51.8,
-        "price": 0
+        "price": 87.25
       },
       {
         "asset_class": "real_estate",
@@ -123,13 +282,13 @@
         "signal": "HOLD",
         "signal_strength": 0.0,
         "fear_threshold": 20,
-        "current_fg": 50,
-        "regime": "unknown",
-        "regime_weight": 1.0,
+        "current_fg": 42.5142857142857,
+        "regime": "bull",
+        "regime_weight": 0.5,
         "hold_days": 20,
         "expected_sharpe": 8.36,
         "expected_accuracy": 63.9,
-        "price": 0
+        "price": 91.39
       },
       {
         "asset_class": "international",
@@ -137,13 +296,13 @@
         "signal": "HOLD",
         "signal_strength": 0.0,
         "fear_threshold": 20,
-        "current_fg": 50,
-        "regime": "unknown",
-        "regime_weight": 1.0,
+        "current_fg": 42.5142857142857,
+        "regime": "bull",
+        "regime_weight": 0.5,
         "hold_days": 10,
         "expected_sharpe": 11.87,
         "expected_accuracy": 74.7,
-        "price": 0
+        "price": 102.18
       },
       {
         "asset_class": "energy",
@@ -151,13 +310,13 @@
         "signal": "HOLD",
         "signal_strength": 0.0,
         "fear_threshold": 25,
-        "current_fg": 50,
-        "regime": "unknown",
-        "regime_weight": 1.0,
+        "current_fg": 42.5142857142857,
+        "regime": "bull",
+        "regime_weight": 0.5,
         "hold_days": 20,
         "expected_sharpe": 4.74,
         "expected_accuracy": 68.8,
-        "price": 0
+        "price": 53.17
       }
     ]
   },
@@ -165,27 +324,472 @@
     "diverged_count": 0,
     "pairs": [
       {
-        "error": "yfinance not available",
+        "symbol1": "XLF",
+        "symbol2": "SPY",
+        "current_spread": 0.0786,
+        "mean_spread": 0.078,
+        "std": 0.001,
+        "z_score": 0.56,
+        "is_diverged": false,
+        "divergence_direction": "normal",
+        "history": [
+          {
+            "date": "2026-01-09",
+            "spread": 0.0803
+          },
+          {
+            "date": "2026-01-12",
+            "spread": 0.0795
+          },
+          {
+            "date": "2026-01-13",
+            "spread": 0.0782
+          },
+          {
+            "date": "2026-01-14",
+            "spread": 0.0784
+          },
+          {
+            "date": "2026-01-15",
+            "spread": 0.0785
+          },
+          {
+            "date": "2026-01-16",
+            "spread": 0.0787
+          },
+          {
+            "date": "2026-01-20",
+            "spread": 0.0785
+          },
+          {
+            "date": "2026-01-21",
+            "spread": 0.078
+          },
+          {
+            "date": "2026-01-22",
+            "spread": 0.0781
+          },
+          {
+            "date": "2026-01-23",
+            "spread": 0.077
+          },
+          {
+            "date": "2026-01-26",
+            "spread": 0.0771
+          },
+          {
+            "date": "2026-01-27",
+            "spread": 0.0762
+          },
+          {
+            "date": "2026-01-28",
+            "spread": 0.0762
+          },
+          {
+            "date": "2026-01-29",
+            "spread": 0.0772
+          },
+          {
+            "date": "2026-01-30",
+            "spread": 0.0772
+          },
+          {
+            "date": "2026-02-02",
+            "spread": 0.0777
+          },
+          {
+            "date": "2026-02-03",
+            "spread": 0.0776
+          },
+          {
+            "date": "2026-02-04",
+            "spread": 0.0786
+          },
+          {
+            "date": "2026-02-05",
+            "spread": 0.0786
+          },
+          {
+            "date": "2026-02-06",
+            "spread": 0.0786
+          }
+        ],
         "reverter": "XLF",
         "probability": 0.87
       },
       {
-        "error": "yfinance not available",
+        "symbol1": "IYR",
+        "symbol2": "TLT",
+        "current_spread": 1.1085,
+        "mean_spread": 1.1003,
+        "std": 0.0105,
+        "z_score": 0.78,
+        "is_diverged": false,
+        "divergence_direction": "normal",
+        "history": [
+          {
+            "date": "2026-01-09",
+            "spread": 1.0816
+          },
+          {
+            "date": "2026-01-12",
+            "spread": 1.0865
+          },
+          {
+            "date": "2026-01-13",
+            "spread": 1.0908
+          },
+          {
+            "date": "2026-01-14",
+            "spread": 1.095
+          },
+          {
+            "date": "2026-01-15",
+            "spread": 1.1029
+          },
+          {
+            "date": "2026-01-16",
+            "spread": 1.124
+          },
+          {
+            "date": "2026-01-20",
+            "spread": 1.1169
+          },
+          {
+            "date": "2026-01-21",
+            "spread": 1.1112
+          },
+          {
+            "date": "2026-01-22",
+            "spread": 1.0962
+          },
+          {
+            "date": "2026-01-23",
+            "spread": 1.0964
+          },
+          {
+            "date": "2026-01-26",
+            "spread": 1.0901
+          },
+          {
+            "date": "2026-01-27",
+            "spread": 1.0979
+          },
+          {
+            "date": "2026-01-28",
+            "spread": 1.0895
+          },
+          {
+            "date": "2026-01-29",
+            "spread": 1.1029
+          },
+          {
+            "date": "2026-01-30",
+            "spread": 1.1084
+          },
+          {
+            "date": "2026-02-02",
+            "spread": 1.1003
+          },
+          {
+            "date": "2026-02-03",
+            "spread": 1.095
+          },
+          {
+            "date": "2026-02-04",
+            "spread": 1.1135
+          },
+          {
+            "date": "2026-02-05",
+            "spread": 1.099
+          },
+          {
+            "date": "2026-02-06",
+            "spread": 1.1085
+          }
+        ],
         "reverter": "IYR",
         "probability": 0.86
       },
       {
-        "error": "yfinance not available",
+        "symbol1": "VNQ",
+        "symbol2": "TLT",
+        "current_spread": 1.0473,
+        "mean_spread": 1.0379,
+        "std": 0.01,
+        "z_score": 0.94,
+        "is_diverged": false,
+        "divergence_direction": "normal",
+        "history": [
+          {
+            "date": "2026-01-09",
+            "spread": 1.0214
+          },
+          {
+            "date": "2026-01-12",
+            "spread": 1.0258
+          },
+          {
+            "date": "2026-01-13",
+            "spread": 1.0298
+          },
+          {
+            "date": "2026-01-14",
+            "spread": 1.0327
+          },
+          {
+            "date": "2026-01-15",
+            "spread": 1.0401
+          },
+          {
+            "date": "2026-01-16",
+            "spread": 1.0589
+          },
+          {
+            "date": "2026-01-20",
+            "spread": 1.0531
+          },
+          {
+            "date": "2026-01-21",
+            "spread": 1.0492
+          },
+          {
+            "date": "2026-01-22",
+            "spread": 1.0344
+          },
+          {
+            "date": "2026-01-23",
+            "spread": 1.0336
+          },
+          {
+            "date": "2026-01-26",
+            "spread": 1.0273
+          },
+          {
+            "date": "2026-01-27",
+            "spread": 1.0334
+          },
+          {
+            "date": "2026-01-28",
+            "spread": 1.0251
+          },
+          {
+            "date": "2026-01-29",
+            "spread": 1.0392
+          },
+          {
+            "date": "2026-01-30",
+            "spread": 1.0461
+          },
+          {
+            "date": "2026-02-02",
+            "spread": 1.0382
+          },
+          {
+            "date": "2026-02-03",
+            "spread": 1.0334
+          },
+          {
+            "date": "2026-02-04",
+            "spread": 1.051
+          },
+          {
+            "date": "2026-02-05",
+            "spread": 1.0382
+          },
+          {
+            "date": "2026-02-06",
+            "spread": 1.0473
+          }
+        ],
         "reverter": "VNQ",
         "probability": 0.85
       },
       {
-        "error": "yfinance not available",
+        "symbol1": "TIP",
+        "symbol2": "SPY",
+        "current_spread": 0.1607,
+        "mean_spread": 0.1598,
+        "std": 0.0012,
+        "z_score": 0.79,
+        "is_diverged": false,
+        "divergence_direction": "normal",
+        "history": [
+          {
+            "date": "2026-01-09",
+            "spread": 0.1587
+          },
+          {
+            "date": "2026-01-12",
+            "spread": 0.1585
+          },
+          {
+            "date": "2026-01-13",
+            "spread": 0.159
+          },
+          {
+            "date": "2026-01-14",
+            "spread": 0.1599
+          },
+          {
+            "date": "2026-01-15",
+            "spread": 0.1592
+          },
+          {
+            "date": "2026-01-16",
+            "spread": 0.1591
+          },
+          {
+            "date": "2026-01-20",
+            "spread": 0.1619
+          },
+          {
+            "date": "2026-01-21",
+            "spread": 0.1607
+          },
+          {
+            "date": "2026-01-22",
+            "spread": 0.1597
+          },
+          {
+            "date": "2026-01-23",
+            "spread": 0.1599
+          },
+          {
+            "date": "2026-01-26",
+            "spread": 0.1593
+          },
+          {
+            "date": "2026-01-27",
+            "spread": 0.1587
+          },
+          {
+            "date": "2026-01-28",
+            "spread": 0.1588
+          },
+          {
+            "date": "2026-01-29",
+            "spread": 0.1592
+          },
+          {
+            "date": "2026-01-30",
+            "spread": 0.1597
+          },
+          {
+            "date": "2026-02-02",
+            "spread": 0.1585
+          },
+          {
+            "date": "2026-02-03",
+            "spread": 0.1601
+          },
+          {
+            "date": "2026-02-04",
+            "spread": 0.1607
+          },
+          {
+            "date": "2026-02-05",
+            "spread": 0.1632
+          },
+          {
+            "date": "2026-02-06",
+            "spread": 0.1607
+          }
+        ],
         "reverter": "SPY",
         "probability": 0.82
       },
       {
-        "error": "yfinance not available",
+        "symbol1": "GLD",
+        "symbol2": "EEM",
+        "current_spread": 7.5972,
+        "mean_spread": 7.5911,
+        "std": 0.2791,
+        "z_score": 0.02,
+        "is_diverged": false,
+        "divergence_direction": "normal",
+        "history": [
+          {
+            "date": "2026-01-09",
+            "spread": 7.2536
+          },
+          {
+            "date": "2026-01-12",
+            "spread": 7.2874
+          },
+          {
+            "date": "2026-01-13",
+            "spread": 7.3314
+          },
+          {
+            "date": "2026-01-14",
+            "spread": 7.3756
+          },
+          {
+            "date": "2026-01-15",
+            "spread": 7.2875
+          },
+          {
+            "date": "2026-01-16",
+            "spread": 7.2799
+          },
+          {
+            "date": "2026-01-20",
+            "spread": 7.6292
+          },
+          {
+            "date": "2026-01-21",
+            "spread": 7.6141
+          },
+          {
+            "date": "2026-01-22",
+            "spread": 7.6966
+          },
+          {
+            "date": "2026-01-23",
+            "spread": 7.7535
+          },
+          {
+            "date": "2026-01-26",
+            "spread": 7.8536
+          },
+          {
+            "date": "2026-01-27",
+            "spread": 7.8903
+          },
+          {
+            "date": "2026-01-28",
+            "spread": 8.1409
+          },
+          {
+            "date": "2026-01-29",
+            "spread": 8.2048
+          },
+          {
+            "date": "2026-01-30",
+            "spread": 7.5288
+          },
+          {
+            "date": "2026-02-02",
+            "spread": 7.2053
+          },
+          {
+            "date": "2026-02-03",
+            "spread": 7.6223
+          },
+          {
+            "date": "2026-02-04",
+            "spread": 7.7206
+          },
+          {
+            "date": "2026-02-05",
+            "spread": 7.5496
+          },
+          {
+            "date": "2026-02-06",
+            "spread": 7.5972
+          }
+        ],
         "reverter": "EEM",
         "probability": 0.78
       }

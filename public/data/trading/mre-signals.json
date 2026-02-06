@@ -1,7 +1,7 @@
 {
-  "timestamp": "2026-02-06T13:28:24.257810",
-  "last_updated": "2026-02-06 13:28:24",
-  "last_updated_unix": 1770413304,
+  "timestamp": "2026-02-06T14:41:07.100550",
+  "last_updated": "2026-02-06 14:41:07",
+  "last_updated_unix": 1770417667,
   "fear_greed": {
     "current": 44.8857142857143,
     "rating": "fear",
@@ -159,11 +159,11 @@
       {
         "date": "2026-02-06",
         "score": 65,
-        "vix": 17.79
+        "vix": 17.76
       }
     ],
     "breakdown": {
-      "aggregate_score": 57.5,
+      "aggregate_score": 57.6,
       "rating": "Greed",
       "components": [
         {
@@ -189,7 +189,7 @@
         },
         {
           "name": "Put/Call Ratio",
-          "score": 67.8,
+          "score": 68.0,
           "signal": "NEUTRAL",
           "description": "VIX at 17.8 (proxy for options sentiment)",
           "raw_value": 17.8
@@ -203,10 +203,10 @@
         },
         {
           "name": "Market Volatility",
-          "score": 33.1,
-          "signal": "FEAR",
-          "description": "VIX 17.8 is +10.1% vs 50-day MA (16.2)",
-          "raw_value": 10.1
+          "score": 33.4,
+          "signal": "NEUTRAL",
+          "description": "VIX 17.8 is +10.0% vs 50-day MA (16.2)",
+          "raw_value": 10.0
         },
         {
           "name": "Safe Haven Demand",
@@ -377,10 +377,10 @@
         "hold_days": 20,
         "expected_sharpe": 25.8,
         "expected_accuracy": 61.3,
-        "price": 455.37,
+        "price": 455.46,
         "fibonacci": {
           "symbol": "GLD",
-          "current_price": 455.3699951171875,
+          "current_price": 455.4599914550781,
           "swing_high": 509.70001220703125,
           "swing_low": 364.70001220703125,
           "trend": "uptrend",
@@ -409,9 +409,9 @@
         },
         "regime_details": {
           "regime": "bull",
-          "price": 455.37,
-          "ema_20": 445.06,
-          "ema_50": 422.2,
+          "price": 455.46,
+          "ema_20": 445.07,
+          "ema_50": 422.21,
           "ema_200": 371.2,
           "above_ema_20": true,
           "above_ema_50": true,
@@ -420,7 +420,7 @@
           "regime_stage": "early",
           "predicted_remaining_days": 133,
           "confidence": 85,
-          "momentum_20d": 9.87,
+          "momentum_20d": 9.89,
           "ema_spread_pct": 19.9
         }
       },
@@ -1130,7 +1130,7 @@
         "current_spread": 0.1602,
         "mean_spread": 0.1597,
         "std": 0.0011,
-        "z_score": 0.42,
+        "z_score": 0.44,
         "is_diverged": false,
         "divergence_direction": "normal",
         "history": [
@@ -1221,8 +1221,8 @@
       {
         "symbol1": "GLD",
         "symbol2": "EEM",
-        "current_spread": 7.5807,
-        "mean_spread": 7.5903,
+        "current_spread": 7.5822,
+        "mean_spread": 7.5904,
         "std": 0.2791,
         "z_score": -0.03,
         "is_diverged": false,
@@ -1306,7 +1306,7 @@
           },
           {
             "date": "2026-02-06",
-            "spread": 7.5807
+            "spread": 7.5822
           }
         ],
         "reverter": "EEM",
@@ -1319,15 +1319,57 @@
     "greed_sell": 85,
     "optimal_hold": 5
   },
+  "prediction_markets": {
+    "kalshi": {
+      "available": true,
+      "signal": "NEUTRAL",
+      "confidence": 17,
+      "expected_price": 6814.722172222222,
+      "implied_range": [
+        6800.0,
+        6824.9999
+      ],
+      "markets_analyzed": 10,
+      "top_markets": [
+        {
+          "ticker": "KXINX-26FEB06H1600-B6812",
+          "yes_bid": 17,
+          "range_low": 6800.0,
+          "range_high": 6824.9999,
+          "midpoint": 6812.499949999999
+        },
+        {
+          "ticker": "KXINX-26FEB06H1600-B6837",
+          "yes_bid": 16,
+          "range_low": 6825.0,
+          "range_high": 6849.9999,
+          "midpoint": 6837.499949999999
+        },
+        {
+          "ticker": "KXINX-26FEB06H1600-B6787",
+          "yes_bid": 12,
+          "range_low": 6775.0,
+          "range_high": 6799.9999,
+          "midpoint": 6787.499949999999
+        }
+      ],
+      "timestamp": "2026-02-06T05:59:45.450150+00:00",
+      "historical_accuracy": 96.6,
+      "source": "kalshi",
+      "cached": true,
+      "note": "Markets closed - using last available signal"
+    }
+  },
   "meta": {
-    "version": "v4",
+    "version": "v5",
     "backtests": 4113,
     "key_insight": "Fear signals 65.6% accurate, Greed only 30.6%",
     "features": [
       "F&G component breakdown",
       "Fibonacci retracement/extension levels",
       "Regime duration predictions",
-      "Outlier detection"
+      "Outlier detection",
+      "Kalshi prediction markets (96.6% accuracy)"
     ]
   }
 }

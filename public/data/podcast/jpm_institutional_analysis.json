@@ -1,0 +1,275 @@
+{
+  "generated": "2026-02-06T05:10:31.313663",
+  "framework": "JPM Cross-Asset Strategy & Quantitative Research",
+  "sections": {
+    "statistical_significance": {
+      "sample_size": {
+        "total_backtests": 4113,
+        "unique_configurations": 27,
+        "avg_signals_per_test": 88.4,
+        "assessment": "SUFFICIENT"
+      },
+      "statistical_tests": {
+        "overall_accuracy": {
+          "mean": 0.6009,
+          "std": 0.1552,
+          "t_statistic": 41.69,
+          "p_value": 0.0,
+          "significant_at_5pct": "True"
+        },
+        "buy_accuracy": {
+          "mean": 0.6565,
+          "t_statistic": 57.42,
+          "p_value": 0.0,
+          "significant_at_1pct": "True"
+        },
+        "effect_size_cohens_d": 0.65
+      },
+      "jpm_verdict": {
+        "statistically_valid": "True",
+        "effect_size": "MEDIUM",
+        "confidence_level": "HIGH"
+      }
+    },
+    "risk_adjusted_metrics": {
+      "sharpe_analysis": {
+        "mean": 1.13,
+        "median": 0.84,
+        "std": 3.03,
+        "pct_above_1": 45.0,
+        "pct_above_2": 25.5,
+        "jpm_threshold": "MEETS"
+      },
+      "drawdown_analysis": {
+        "avg_max_dd": -0.524,
+        "worst_max_dd": -1.0,
+        "pct_under_10pct_dd": 14.2
+      },
+      "sortino_ratio": 0.88,
+      "by_asset_class": {
+        "broad_market": {
+          "avg_sharpe": 1.99,
+          "max_drawdown": -0.962,
+          "risk_rating": "HIGH"
+        },
+        "healthcare": {
+          "avg_sharpe": 1.78,
+          "max_drawdown": -0.991,
+          "risk_rating": "HIGH"
+        },
+        "commodities": {
+          "avg_sharpe": -0.04,
+          "max_drawdown": -1.0,
+          "risk_rating": "HIGH"
+        },
+        "real_estate": {
+          "avg_sharpe": 0.7,
+          "max_drawdown": -0.963,
+          "risk_rating": "HIGH"
+        },
+        "financials": {
+          "avg_sharpe": 1.44,
+          "max_drawdown": -0.981,
+          "risk_rating": "HIGH"
+        },
+        "international": {
+          "avg_sharpe": 2.19,
+          "max_drawdown": -0.918,
+          "risk_rating": "HIGH"
+        },
+        "energy": {
+          "avg_sharpe": 1.06,
+          "max_drawdown": -1.0,
+          "risk_rating": "HIGH"
+        },
+        "bonds": {
+          "avg_sharpe": -0.2,
+          "max_drawdown": -0.808,
+          "risk_rating": "HIGH"
+        },
+        "technology": {
+          "avg_sharpe": 1.24,
+          "max_drawdown": -1.0,
+          "risk_rating": "HIGH"
+        }
+      },
+      "jpm_verdict": {
+        "risk_adjusted_quality": "ACCEPTABLE",
+        "downside_protection": "MODERATE"
+      }
+    },
+    "regime_analysis": {
+      "by_market_period": {
+        "recent": {
+          "avg_accuracy": 0.631,
+          "avg_sharpe": 2.23,
+          "n_tests": 780
+        },
+        "post_covid": {
+          "avg_accuracy": 0.583,
+          "avg_sharpe": 1.13,
+          "n_tests": 831
+        },
+        "bear_2022": {
+          "avg_accuracy": 0.615,
+          "avg_sharpe": 1.76,
+          "n_tests": 828
+        },
+        "full_history": {
+          "avg_accuracy": 0.568,
+          "avg_sharpe": 0.4,
+          "n_tests": 837
+        },
+        "covid_crash": {
+          "avg_accuracy": 0.609,
+          "avg_sharpe": 0.23,
+          "n_tests": 837
+        }
+      },
+      "correlation_stability": {
+        "divergence_patterns": 5,
+        "top_divergence": {
+          "pair": "XLF/SPY",
+          "reverter": "XLF",
+          "revert_probability": 0.87
+        },
+        "avg_revert_probability": 0.8358000000000001
+      },
+      "regime_recommendations": {
+        "best_performing_regime": "recent",
+        "worst_performing_regime": "covid_crash",
+        "regime_sensitivity": "MODERATE"
+      },
+      "jpm_verdict": {
+        "regime_robustness": "REGIME_DEPENDENT",
+        "recommended_deployment": "ALL_REGIMES"
+      }
+    },
+    "capacity_analysis": {
+      "signal_frequency": {
+        "avg_signals_per_config": 88.4,
+        "avg_buy_signals": 52.3,
+        "annualized_opportunities": 1061.0,
+        "frequency_assessment": "HIGH"
+      },
+      "liquidity_by_asset_class": {
+        "broad_market": {
+          "liquidity_tier": "TIER_1_HIGHLY_LIQUID",
+          "avg_signals": 90.1,
+          "scalable": true
+        },
+        "healthcare": {
+          "liquidity_tier": "TIER_2_LIQUID",
+          "avg_signals": 81.4,
+          "scalable": true
+        },
+        "commodities": {
+          "liquidity_tier": "TIER_2_LIQUID",
+          "avg_signals": 104.3,
+          "scalable": true
+        },
+        "real_estate": {
+          "liquidity_tier": "TIER_2_LIQUID",
+          "avg_signals": 85.3,
+          "scalable": true
+        },
+        "financials": {
+          "liquidity_tier": "TIER_1_HIGHLY_LIQUID",
+          "avg_signals": 106.2,
+          "scalable": true
+        },
+        "international": {
+          "liquidity_tier": "TIER_2_LIQUID",
+          "avg_signals": 68.0,
+          "scalable": true
+        },
+        "energy": {
+          "liquidity_tier": "TIER_2_LIQUID",
+          "avg_signals": 109.6,
+          "scalable": true
+        },
+        "bonds": {
+          "liquidity_tier": "TIER_1_HIGHLY_LIQUID",
+          "avg_signals": 24.8,
+          "scalable": true
+        },
+        "technology": {
+          "liquidity_tier": "TIER_1_HIGHLY_LIQUID",
+          "avg_signals": 136.4,
+          "scalable": true
+        }
+      },
+      "capacity_estimate": {
+        "tier_1_deployable": [
+          "broad_market",
+          "financials",
+          "bonds",
+          "technology"
+        ],
+        "estimated_capacity_usd": "$100M-500M",
+        "market_impact_risk": "LOW"
+      },
+      "jpm_verdict": {
+        "institutional_scalable": true,
+        "recommended_initial_allocation": "$10M-50M",
+        "deployment_priority": [
+          "broad_market",
+          "financials",
+          "bonds"
+        ]
+      }
+    },
+    "alpha_sustainability": {
+      "crowding_assessment": {
+        "signal_type": "Fear & Greed Contrarian",
+        "public_availability": "CNN publishes daily, widely followed",
+        "institutional_usage": "MODERATE - Some quant funds use sentiment",
+        "retail_awareness": "HIGH - but few trade systematically",
+        "crowding_risk": "MEDIUM"
+      },
+      "alpha_decay": {
+        "estimated_decay_rate": -1.152,
+        "decay_assessment": "MINIMAL",
+        "expected_half_life": "2-3 years"
+      },
+      "edge_sources": [
+        "Behavioral bias exploitation (contrarian)",
+        "Systematic vs discretionary advantage",
+        "Multi-asset confirmation signals",
+        "Regime-aware position sizing",
+        "Cross-asset correlation insights"
+      ],
+      "differentiation": {
+        "vs_simple_fear_greed": "Uses multi-asset confirmation, regime filtering, asymmetric weighting",
+        "vs_other_sentiment": "Combines prediction markets (Kalshi) + news + quantitative factors",
+        "unique_elements": [
+          "Kalshi integration (96.6% accurate)",
+          "Asset-class specific thresholds",
+          "Correlation-based confirmation"
+        ]
+      },
+      "jpm_verdict": {
+        "alpha_sustainability": "MEDIUM-HIGH",
+        "recommended_review_frequency": "Quarterly",
+        "key_risks": [
+          "Increased adoption of sentiment signals",
+          "Market structure changes"
+        ]
+      }
+    }
+  },
+  "executive_summary": {
+    "overall_assessment": "APPROVED_FOR_DEPLOYMENT",
+    "key_strengths": [
+      "Buy accuracy 65.6% (p < 0.01)",
+      "Sharpe ratio 1.13",
+      "Scalable to $100M-500M"
+    ],
+    "key_risks": [
+      "Regime-dependent performance",
+      "MEDIUM crowding risk",
+      "Sell signals less reliable than buy signals"
+    ],
+    "recommendation": "Deploy with asymmetric weighting (fear >> greed) and regime filter"
+  }
+}

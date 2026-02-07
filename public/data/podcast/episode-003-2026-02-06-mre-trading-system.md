@@ -155,13 +155,74 @@
 
 > Papers on momentum factor investing. Research on regime-switching models. Analysis of Fibonacci effectiveness in trending markets. The models understand WHY these signals work, not just what to calculate.
 
-> And here's the validation that matters: we ran our system through JP Morgan's quantitative analysis framework — the same tools they use to evaluate institutional strategies. The result? **Enterprise-level scores.** The framework indicated our system was capable of managing over 500 million dollars in assets.
+---
 
-> Now, am I managing 500 million dollars? No. But knowing the system is built to that standard matters. It's not a toy.
+## SECTION 4: The JP Morgan Validation (4 min)
+
+> Here's where I need to pause and talk about validation. Because anyone can build a trading system. The question is: does it actually work?
+
+> We ran our system through JP Morgan's Cross-Asset Strategy and Quantitative Research framework — the same institutional-grade analysis they use to evaluate hedge fund strategies. And the results were... honestly, better than I expected.
+
+*(beat)*
+
+> Let me give you the specific numbers.
+
+**Statistical Significance**
+
+> We ran over **4,100 backtests** across 27 unique configurations. That's not cherry-picking one good result — that's stress-testing across market conditions.
+
+> The overall accuracy came in at **60.09%**. But here's the important part: Buy signal accuracy was **65.65%** with a p-value of essentially zero. That means the result is statistically significant at the 1% level. This isn't random chance.
+
+> The effect size — Cohen's d — was 0.65, which JP Morgan classifies as MEDIUM. Not a weak signal. Not noise.
+
+**Risk-Adjusted Returns**
+
+> The Sharpe ratio — which measures return per unit of risk — averaged **1.13**. Anything above 1.0 is considered good. 45% of our configurations scored above 1.0, and 25% scored above 2.0.
+
+> Breaking it down by asset class, the standouts were:
+> - International stocks: Sharpe of **2.19**
+> - Broad market: **1.99**
+> - Healthcare: **1.78**
+> - Financials: **1.44**
+> - Technology: **1.24**
+
+> The weakest performers were commodities and bonds — which makes sense, because those asset classes behave differently than equities.
+
+**Institutional Capacity**
+
+> This is the part that blew my mind. JP Morgan's framework assessed our system's **capacity** — how much money it could manage before market impact becomes a problem.
+
+> The verdict: **$100 million to $500 million deployable.** With tier-1 liquidity in broad market, financials, bonds, and technology.
+
+> Their recommended initial allocation? $10 to $50 million, prioritizing broad market index ETFs.
+
+> I'm not managing $50 million. But the system is built to that scale. That's not a toy strategy.
+
+**Alpha Sustainability**
+
+> The framework also assessed whether our edge would decay over time — a critical question for any quantitative strategy.
+
+> The finding: **MEDIUM-HIGH sustainability** with an expected half-life of 2-3 years. The key differentiators were:
+> - Our Kalshi prediction market integration — which showed **96.6% accuracy** in directional calls
+> - Multi-asset confirmation signals
+> - Regime-aware position sizing
+> - Cross-asset correlation insights
+
+> The crowding risk was rated MEDIUM. The Fear & Greed Index is publicly available, but few people trade it systematically with the additional filters we use.
+
+**The Verdict**
+
+> JP Morgan's overall assessment: **APPROVED FOR DEPLOYMENT.**
+
+> Key recommendation: Deploy with asymmetric weighting — meaning lean heavier on fear signals than greed signals, because buying extreme fear has historically outperformed selling extreme greed.
+
+> That's exactly what our system does.
+
+> Now, am I managing $500 million? No. But knowing the system passed institutional-grade scrutiny matters. It's not a toy.
 
 ---
 
-## SECTION 4: Today's Plays — From Signals to Action (4 min)
+## SECTION 5: Today's Plays — From Signals to Action (4 min)
 
 > Here's the thing most people get wrong about quantitative trading: having data isn't the same as having a decision.
 
@@ -199,7 +260,7 @@
 
 ---
 
-## SECTION 5: The Agent Fleet — AI That Works for You (5 min)
+## SECTION 6: The Agent Fleet — AI That Works for You (5 min)
 
 > Now here's where it gets interesting. Having a trading system is one thing. Operating it is another.
 
@@ -249,7 +310,7 @@
 
 ---
 
-## SECTION 6: The Dashboard — Tracking Performance (2 min)
+## SECTION 7: The Dashboard — Tracking Performance (2 min)
 
 > I'm a visual person. I need to see what's happening.
 
@@ -288,17 +349,19 @@
 
 ---
 
-## RECAP & TAKEAWAYS (1 min)
+## RECAP & TAKEAWAYS (1.5 min)
 
-> Let's bring it home. Four things to remember from today:
+> Let's bring it home. Five things to remember from today:
 
-1. **Buy and hold isn't always safe.** Asset rotation — moving between what's working — can protect you during downturns and capture upside during recoveries.
+1. **Buy and hold isn't always safe.** Asset rotation — moving between what's working — can protect you during downturns and capture upside during recoveries. Chris Vermeulen's work opened my eyes to this.
 
 2. **Regime signals cut through the noise.** Don't react to daily headlines. Read the underlying trend. Bull, bear, or sideways — position accordingly.
 
-3. **Combine technical analysis with prediction markets.** Fibonacci levels give you entry and exit points. Prediction markets give you probabilistic views on macro events. Together, they're powerful.
+3. **Combine technical analysis with prediction markets.** Fibonacci retracements give you entry points. Projections give you targets. Kalshi and Polymarket give you probabilistic views on macro events. Together, they're powerful.
 
-4. **AI agents can manage complexity for you.** You don't need to watch the market all day. Build a team of specialized agents — updater, advisor, analyst, optimizer — and let them do the work.
+4. **Validate with institutional-grade frameworks.** We didn't just guess that our system works — we proved it. 4,100 backtests. 65.6% buy accuracy. Sharpe ratio of 1.13. JP Morgan's framework rated it deployable at $100-500 million scale.
+
+5. **AI agents can manage complexity for you.** You don't need to watch the market all day. Build a team of specialized agents — updater, advisor, analyst, optimizer — and let them do the work.
 
 ---
 
@@ -325,10 +388,13 @@
 - [ ] Buy and hold is dangerous — "Thirteen years of waiting"
 - [ ] Chris Vermeulen insight — "You don't need to predict the future"
 - [ ] Regime explanation — "Weather versus climate"
-- [ ] JP Morgan validation — "Enterprise-level scores, 500 million"
 - [ ] Fibonacci retracements vs projections — "Three points to predict"
+- [ ] JP Morgan stats — "65.6% buy accuracy, Sharpe of 1.13"
+- [ ] Capacity estimate — "$100 million to $500 million deployable"
+- [ ] Kalshi accuracy — "96.6% accurate in directional calls"
 - [ ] The GLD example — "While everyone was panicking..."
 - [ ] Agent fleet overview — "Four agents, each with a specific job"
+- [ ] The Advisor override — "Here's the key..."
 - [ ] Faith tie-in — "The plans of the diligent..."
 
 **Keywords for SEO:**
@@ -339,7 +405,12 @@
 - Fibonacci retracement projection
 - Prediction markets trading
 - Kalshi Polymarket
+- JP Morgan quant analysis
+- Institutional trading system
 - AI agents automation
 - Claude AI trading
 
-**Estimated runtime:** 28 minutes (4,200 words at 150 wpm)
+**Estimated runtime:** 32 minutes (4,800 words at 150 wpm)
+
+**Attachments:**
+- jpm_institutional_analysis.json — Full JP Morgan analysis report

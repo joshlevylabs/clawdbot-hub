@@ -20,6 +20,7 @@ import {
   Wind,
   Thermometer,
 } from "lucide-react";
+import MREWidget from "@/components/MREWidget";
 
 // Live Weather types
 interface LiveWeatherData {
@@ -543,6 +544,9 @@ export default function DashboardPage() {
               </div>
             </div>
           )}
+
+          {/* MRE Trading Widget */}
+          <MREWidget />
 
           {/* Markets Card */}
           {briefData.sections.markets && (

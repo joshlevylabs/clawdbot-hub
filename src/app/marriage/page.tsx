@@ -156,14 +156,14 @@ export default function MarriagePage() {
         const data = await response.json();
         if (!data.error) {
           setCompassState(data);
-        } else {
-          // Fall back to static file
-          const staticResponse = await fetch("/data/compass-state.json");
-          if (staticResponse.ok) {
-            const staticData = await staticResponse.json();
-            setCompassState(staticData);
-          }
+          return;
         }
+      }
+      // API failed or returned error - fall back to static file
+      const staticResponse = await fetch("/data/compass-state.json");
+      if (staticResponse.ok) {
+        const staticData = await staticResponse.json();
+        setCompassState(staticData);
       }
     } catch (err) {
       console.error("Failed to load compass state:", err);

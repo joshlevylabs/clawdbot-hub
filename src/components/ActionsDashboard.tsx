@@ -1,0 +1,529 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import {
+  Target,
+  TrendingUp,
+  TrendingDown,
+  Minus,
+  Clock,
+  AlertTriangle,
+  Zap,
+  Shield,
+  ShoppingCart,
+  LogOut,
+  Loader2,
+} from "lucide-react";
+
+interface FibonacciLevels {
+  nearest_support: number;
+  nearest_resistance: number;
+  entry_zone: string;
+  profit_targets: number[];
+  retracements: Record<string, number>;
+}
+
+interface RegimeDetails {
+  regime: string;
+  confidence: number;
+  momentum_20d: number;
+  regime_stage: string;
+  predicted_remaining_days: number;
+}
+
+interface AssetSignal {
+  asset_class: string;
+  symbol: string;
+  signal: string;
+  price: number;
+  fibonacci: FibonacciLevels;
+  regime_details: RegimeDetails;
+  expected_accuracy: number;
+}
+
+interface MREData {
+  timestamp: string;
+  fear_greed: {
+    current: number;
+    rating: string;
+    breakdown: {
+      aggregate_score: number;
+      rating: string;
+    };
+  };
+  regime: {
+    global: string;
+  };
+  signals: {
+    summary: {
+      total_buy: number;
+      total_hold: number;
+    };
+    by_asset_class: AssetSignal[];
+  };
+  prediction_markets: {
+    kalshi: {
+      signal: string;
+      confidence: number;
+    };
+    polymarket: {
+      signal: string;
+      confidence: number;
+    };
+  };
+}
+
+interface Position {
+  symbol: string;
+  qty: number;
+  entry_price: number;
+}
+
+export interface ActionItem {
+  symbol: string;
+  assetClass: string;
+  action: "BUY" | "SELL" | "HOLD" | "WAIT" | "WATCH";
+  entry: number | null;
+  entryDisplay: string;
+  stop: number | null;
+  stopDisplay: string;
+  target: number | null;
+  targetDisplay: string;
+  currentPrice: number;
+  confidence: number;
+  rationale: string;
+  priority: number;
+}
+
+interface ActionsDashboardProps {
+  positions?: Position[];
+  cash?: number;
+  onTrade?: (symbol: string, side: "buy" | "sell", qty: number, price: number, target?: number, stop?: number) => void;
+  tradingEnabled?: boolean;
+}
+
+function generateActions(data: MREData): ActionItem[] {
+  const actions: ActionItem[] = [];
+  const fg = data.fear_greed.current;
+
+  for (const asset of data.signals.by_asset_class) {
+    const { symbol, price, fibonacci, regime_details, expected_accuracy, signal } = asset;
+    const { regime, confidence, momentum_20d, regime_stage } = regime_details;
+
+    let action: ActionItem["action"] = "HOLD";
+    let entry: number | null = null;
+    let entryDisplay = "—";
+    let stop: number | null = null;
+    let stopDisplay = "—";
+    let target: number | null = null;
+    let targetDisplay = "—";
+    let rationale = "";
+    let priority = 3;
+
+    // Parse entry zone
+    const entryZoneParts = fibonacci.entry_zone.split(" - ").map(Number);
+    const entryHigh = entryZoneParts[0];
+    const entryLow = entryZoneParts[1];
+    const distanceToEntry = ((price - entryHigh) / price) * 100;
+
+    // Decision logic
+    if (signal === "BUY" || (fg < 30 && regime === "bull")) {
+      action = "BUY";
+      entry = price; // Buy at current price
+      entryDisplay = `$${price.toFixed(2)}`;
+      stop = fibonacci.retracements["78.6"];
+      stopDisplay = `$${stop.toFixed(2)}`;
+      target = fibonacci.profit_targets[0];
+      targetDisplay = `$${target.toFixed(2)}`;
+      rationale = `Fear at ${fg.toFixed(0)}, ${regime} regime. Buy zone.`;
+      priority = 1;
+    } else if (regime === "bull" && confidence >= 70 && momentum_20d > 0) {
+      if (distanceToEntry < 3) {
+        action = "BUY";
+        entry = price;
+        entryDisplay = `$${price.toFixed(2)}`;
+        stop = fibonacci.retracements["61.8"];
+        stopDisplay = `$${stop.toFixed(2)}`;
+        target = fibonacci.profit_targets[0];
+        targetDisplay = `$${target.toFixed(2)}`;
+        rationale = `Near entry zone in strong ${regime_stage} bull trend.`;
+        priority = 1;
+      } else {
+        action = "HOLD";
+        entry = entryHigh;
+        entryDisplay = `Wait $${entryHigh.toFixed(2)}`;
+        target = fibonacci.profit_targets[0];
+        targetDisplay = `$${target.toFixed(2)}`;
+        rationale = `Bull trend, ${confidence}% confidence. Add on pullbacks.`;
+        priority = 3;
+      }
+    } else if (regime === "bull" && confidence < 70) {
+      action = "HOLD";
+      entry = entryHigh;
+      entryDisplay = `$${entryHigh.toFixed(2)} (dip)`;
+      target = fibonacci.nearest_resistance;
+      targetDisplay = `$${target.toFixed(2)}`;
+      rationale = `Early bull, ${confidence}% confidence. Wait for confirmation.`;
+      priority = 3;
+    } else if (regime === "sideways") {
+      action = "WATCH";
+      entry = fibonacci.nearest_resistance;
+      entryDisplay = `>$${entry.toFixed(2)}`;
+      stop = fibonacci.retracements["61.8"];
+      stopDisplay = `$${stop.toFixed(2)}`;
+      target = fibonacci.profit_targets[0];
+      targetDisplay = `$${target.toFixed(2)}`;
+      rationale = `Consolidating. Buy breakout above resistance.`;
+      priority = 2;
+    } else if (regime === "bear") {
+      action = "WAIT";
+      rationale = `Bear regime. Avoid until trend reversal.`;
+      priority = 4;
+    }
+
+    if (momentum_20d > 5 && regime === "bull") {
+      priority = Math.max(1, priority - 1);
+      rationale += ` Strong momentum (+${momentum_20d.toFixed(1)}%).`;
+    }
+
+    actions.push({
+      symbol,
+      assetClass: asset.asset_class.replace("_", " "),
+      action,
+      entry,
+      entryDisplay,
+      stop,
+      stopDisplay,
+      target,
+      targetDisplay,
+      currentPrice: price,
+      confidence: Math.round(expected_accuracy),
+      rationale,
+      priority,
+    });
+  }
+
+  return actions.sort((a, b) => a.priority - b.priority);
+}
+
+function generateThesis(data: MREData): string {
+  const fg = data.fear_greed.current;
+  const globalRegime = data.regime.global;
+  const polySignal = data.prediction_markets?.polymarket?.signal || "NEUTRAL";
+
+  let thesis = "";
+
+  if (fg < 25) {
+    thesis += `Extreme fear (${fg.toFixed(0)}) — historically strong buying opportunity. `;
+  } else if (fg < 45) {
+    thesis += `Fear elevated (${fg.toFixed(0)}) — watch for capitulation entries. `;
+  } else if (fg > 75) {
+    thesis += `Greed high (${fg.toFixed(0)}) — reduce exposure, don't chase. `;
+  } else {
+    thesis += `Neutral sentiment (${fg.toFixed(0)}). `;
+  }
+
+  if (globalRegime === "bull") {
+    thesis += `Bull regime intact — buy dips, don't fight the trend. `;
+  } else if (globalRegime === "bear") {
+    thesis += `Bear regime — preserve capital, wait for reversal. `;
+  } else {
+    thesis += `Sideways market — wait for direction or trade ranges. `;
+  }
+
+  if (polySignal === "BEARISH") {
+    thesis += `Prediction markets lean bearish — stay nimble.`;
+  } else if (polySignal === "BULLISH") {
+    thesis += `Prediction markets bullish — supports long bias.`;
+  }
+
+  return thesis;
+}
+
+function ActionIcon({ action }: { action: ActionItem["action"] }) {
+  switch (action) {
+    case "BUY":
+      return <TrendingUp className="w-4 h-4" />;
+    case "SELL":
+      return <TrendingDown className="w-4 h-4" />;
+    case "HOLD":
+      return <Minus className="w-4 h-4" />;
+    case "WAIT":
+      return <Clock className="w-4 h-4" />;
+    case "WATCH":
+      return <Target className="w-4 h-4" />;
+  }
+}
+
+function ActionBadge({ action }: { action: ActionItem["action"] }) {
+  const styles: Record<ActionItem["action"], string> = {
+    BUY: "bg-emerald-500/20 text-emerald-400 border-emerald-500/50",
+    SELL: "bg-red-500/20 text-red-400 border-red-500/50",
+    HOLD: "bg-slate-500/20 text-slate-400 border-slate-500/50",
+    WAIT: "bg-amber-500/20 text-amber-400 border-amber-500/50",
+    WATCH: "bg-cyan-500/20 text-cyan-400 border-cyan-500/50",
+  };
+
+  return (
+    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-xs font-bold ${styles[action]}`}>
+      <ActionIcon action={action} />
+      {action}
+    </span>
+  );
+}
+
+function ConfidenceMeter({ value }: { value: number }) {
+  const color = value >= 70 ? "bg-emerald-500" : value >= 50 ? "bg-amber-500" : "bg-red-500";
+
+  return (
+    <div className="flex items-center gap-2">
+      <div className="w-16 h-1.5 bg-slate-700 rounded-full overflow-hidden">
+        <div className={`h-full ${color} rounded-full`} style={{ width: `${value}%` }} />
+      </div>
+      <span className="text-xs text-slate-400">{value}%</span>
+    </div>
+  );
+}
+
+export default function ActionsDashboard({
+  positions = [],
+  cash = 0,
+  onTrade,
+  tradingEnabled = false,
+}: ActionsDashboardProps) {
+  const [data, setData] = useState<MREData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [tradingSymbol, setTradingSymbol] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const res = await fetch("/data/trading/mre-signals.json");
+        if (!res.ok) throw new Error("Failed to load signals");
+        const json = await res.json();
+        setData(json);
+      } catch (e) {
+        setError("Could not load market signals");
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700/50 animate-pulse">
+        <div className="h-8 bg-slate-700 rounded w-48 mb-4" />
+        <div className="h-24 bg-slate-700 rounded" />
+      </div>
+    );
+  }
+
+  if (error || !data) {
+    return (
+      <div className="bg-red-900/20 border border-red-500/30 rounded-xl p-4 flex items-center gap-3">
+        <AlertTriangle className="w-5 h-5 text-red-400" />
+        <span className="text-red-300">{error || "No data available"}</span>
+      </div>
+    );
+  }
+
+  const actions = generateActions(data);
+  const thesis = generateThesis(data);
+
+  const updated = new Date(data.timestamp).toLocaleString("en-US", {
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  });
+
+  // Calculate position for each action
+  const getPosition = (symbol: string) => positions.find((p) => p.symbol === symbol);
+
+  // Handle trade execution with confidence-weighted sizing
+  const handleTrade = (item: ActionItem) => {
+    if (!onTrade || !tradingEnabled) return;
+
+    setTradingSymbol(item.symbol);
+
+    const position = getPosition(item.symbol);
+
+    if (item.action === "BUY" && item.entry) {
+      // Confidence-weighted position sizing:
+      // - 50% confidence = 8% of cash
+      // - 70% confidence = 15% of cash  
+      // - 90% confidence = 25% of cash
+      // Linear interpolation: allocation = 0.08 + (confidence - 50) * 0.00425
+      const minAlloc = 0.08;
+      const maxAlloc = 0.25;
+      const confidenceNormalized = Math.max(50, Math.min(90, item.confidence));
+      const allocPct = minAlloc + ((confidenceNormalized - 50) / 40) * (maxAlloc - minAlloc);
+      
+      const allocation = Math.min(cash * allocPct, cash);
+      const shares = Math.floor(allocation / item.currentPrice);
+
+      if (shares > 0) {
+        console.log(`BUY ${item.symbol}: ${item.confidence}% confidence → ${(allocPct * 100).toFixed(1)}% allocation ($${allocation.toFixed(0)})`);
+        onTrade(item.symbol, "buy", shares, item.currentPrice, item.target || undefined, item.stop || undefined);
+      }
+    } else if (position && position.qty > 0) {
+      // Sell entire position
+      onTrade(item.symbol, "sell", position.qty, item.currentPrice);
+    }
+
+    setTimeout(() => setTradingSymbol(null), 500);
+  };
+
+  return (
+    <div className="space-y-4">
+      {/* Main Actions Panel */}
+      <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 rounded-xl border border-primary-500/30 overflow-hidden">
+        {/* Header */}
+        <div className="bg-primary-600/20 border-b border-primary-500/30 px-4 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Zap className="w-5 h-5 text-primary-400" />
+            <h2 className="font-bold text-lg text-slate-100">Today's Plays</h2>
+          </div>
+          <span className="text-xs text-slate-500">Updated {updated}</span>
+        </div>
+
+        {/* Thesis Banner */}
+        <div className="px-4 py-3 bg-slate-800/50 border-b border-slate-700/50">
+          <p className="text-sm text-slate-300 italic">
+            <span className="text-primary-400 font-medium">Thesis:</span> {thesis}
+          </p>
+        </div>
+
+        {/* Action Items */}
+        <div className="p-4">
+          {actions.length === 0 ? (
+            <div className="text-center py-6">
+              <Shield className="w-8 h-8 text-slate-600 mx-auto mb-2" />
+              <p className="text-slate-400">No signals. Market in wait mode.</p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="text-xs text-slate-500 uppercase border-b border-slate-700">
+                    <th className="text-left py-2 px-2">Asset</th>
+                    <th className="text-left py-2 px-2">Signal</th>
+                    <th className="text-left py-2 px-2">Position</th>
+                    <th className="text-left py-2 px-2">Entry</th>
+                    <th className="text-left py-2 px-2">Stop</th>
+                    <th className="text-left py-2 px-2">Target</th>
+                    <th className="text-left py-2 px-2">Confidence</th>
+                    {tradingEnabled && <th className="text-center py-2 px-2">Action</th>}
+                  </tr>
+                </thead>
+                <tbody>
+                  {actions.map((item) => {
+                    const position = getPosition(item.symbol);
+                    const hasPosition = position && position.qty > 0;
+                    const isTrading = tradingSymbol === item.symbol;
+
+                    return (
+                      <tr key={item.symbol} className="border-b border-slate-800 hover:bg-slate-800/50">
+                        <td className="py-3 px-2">
+                          <div>
+                            <span className="font-bold text-slate-100">{item.symbol}</span>
+                            <p className="text-xs text-slate-500 capitalize">{item.assetClass}</p>
+                          </div>
+                        </td>
+                        <td className="py-3 px-2">
+                          <ActionBadge action={item.action} />
+                        </td>
+                        <td className="py-3 px-2">
+                          {hasPosition ? (
+                            <div className="text-xs">
+                              <span className="text-emerald-400 font-mono">{position.qty} shares</span>
+                              <p className="text-slate-500">@ ${position.entry_price.toFixed(2)}</p>
+                            </div>
+                          ) : (
+                            <span className="text-xs text-slate-500">—</span>
+                          )}
+                        </td>
+                        <td className="py-3 px-2 font-mono text-sm text-slate-300">{item.entryDisplay}</td>
+                        <td className="py-3 px-2 font-mono text-sm text-red-400">{item.stopDisplay}</td>
+                        <td className="py-3 px-2 font-mono text-sm text-emerald-400">{item.targetDisplay}</td>
+                        <td className="py-3 px-2">
+                          <ConfidenceMeter value={item.confidence} />
+                        </td>
+                        {tradingEnabled && (
+                          <td className="py-3 px-2 text-center">
+                            {item.action === "BUY" && !hasPosition && cash > item.currentPrice ? (
+                              <button
+                                onClick={() => handleTrade(item)}
+                                disabled={isTrading}
+                                className="inline-flex items-center gap-1 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg transition-colors disabled:opacity-50"
+                              >
+                                {isTrading ? (
+                                  <Loader2 className="w-3 h-3 animate-spin" />
+                                ) : (
+                                  <ShoppingCart className="w-3 h-3" />
+                                )}
+                                Buy
+                              </button>
+                            ) : hasPosition ? (
+                              <button
+                                onClick={() => handleTrade(item)}
+                                disabled={isTrading}
+                                className="inline-flex items-center gap-1 px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-lg transition-colors disabled:opacity-50"
+                              >
+                                {isTrading ? (
+                                  <Loader2 className="w-3 h-3 animate-spin" />
+                                ) : (
+                                  <LogOut className="w-3 h-3" />
+                                )}
+                                Sell
+                              </button>
+                            ) : (
+                              <span className="text-xs text-slate-500">—</span>
+                            )}
+                          </td>
+                        )}
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Quick Stats Row */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div className="bg-slate-800/50 rounded-lg p-3 border border-slate-700/50">
+          <p className="text-xs text-slate-500">Fear & Greed</p>
+          <p className={`text-xl font-bold ${data.fear_greed.current < 30 ? "text-red-400" : data.fear_greed.current > 70 ? "text-emerald-400" : "text-amber-400"}`}>
+            {data.fear_greed.current.toFixed(0)}
+          </p>
+          <p className="text-xs text-slate-500 capitalize">{data.fear_greed.rating}</p>
+        </div>
+        <div className="bg-slate-800/50 rounded-lg p-3 border border-slate-700/50">
+          <p className="text-xs text-slate-500">Market Regime</p>
+          <p className={`text-xl font-bold capitalize ${data.regime.global === "bull" ? "text-emerald-400" : data.regime.global === "bear" ? "text-red-400" : "text-amber-400"}`}>
+            {data.regime.global}
+          </p>
+          <p className="text-xs text-slate-500">Global trend</p>
+        </div>
+        <div className="bg-slate-800/50 rounded-lg p-3 border border-slate-700/50">
+          <p className="text-xs text-slate-500">Active Signals</p>
+          <p className="text-xl font-bold text-primary-400">{data.signals.summary.total_buy}</p>
+          <p className="text-xs text-slate-500">Buy signals</p>
+        </div>
+        <div className="bg-slate-800/50 rounded-lg p-3 border border-slate-700/50">
+          <p className="text-xs text-slate-500">Kalshi Prediction</p>
+          <p className={`text-xl font-bold ${data.prediction_markets?.kalshi?.signal === "BULLISH" ? "text-emerald-400" : data.prediction_markets?.kalshi?.signal === "BEARISH" ? "text-red-400" : "text-slate-400"}`}>
+            {data.prediction_markets?.kalshi?.signal || "—"}
+          </p>
+          <p className="text-xs text-slate-500">{data.prediction_markets?.kalshi?.confidence || 0}% confidence</p>
+        </div>
+      </div>
+    </div>
+  );
+}

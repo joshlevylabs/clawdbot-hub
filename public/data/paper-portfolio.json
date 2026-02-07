@@ -1,0 +1,19 @@
+{
+  "account": {
+    "starting_capital": 100000,
+    "cash": 100000,
+    "created_at": "2026-02-06T15:17:00-08:00"
+  },
+  "positions": [],
+  "trades": [],
+  "performance": [
+    {
+      "date": "2026-02-06",
+      "equity": 100000,
+      "cash": 100000,
+      "spy_price": 690.62,
+      "spy_baseline": 690.62
+    }
+  ],
+  "updated_at": "2026-02-06T15:17:00-08:00"
+}

@@ -38,6 +38,72 @@
 
 ---
 
+## WHY I'M BUILDING THIS — The Real Talk (3 min)
+
+> Before I dive into the system, I need to tell you why I'm actually doing this. Because it's not just intellectual curiosity. It's survival.
+
+*(beat)*
+
+> Here's the thing. I'm a test engineer at a major tech company. I've been doing this for over a decade. I'm good at it. But I'm not naive about what's coming.
+
+> **AI is going to replace my job.**
+
+> Not might. Will. It's not a question of if — it's a question of when. And I've done the math. I give myself roughly 5 to 10 years before my role as a full-time test engineer becomes obsolete. Maybe less.
+
+> Look at what's already happening. AI can write code. AI can review code. AI can generate test cases, find bugs, and automate entire QA pipelines. Right now, in 2026, these tools still need human oversight. But that gap is closing fast. Every month, the models get better. Every month, the oversight required gets smaller.
+
+> I'm not bitter about this. I'm not scared. I'm just... realistic. The same skills that make me valuable today — pattern recognition, systematic thinking, debugging complex systems — those are exactly the skills that AI is getting good at.
+
+*(beat)*
+
+> So I asked myself a hard question: **If I have 5 to 10 years left in this career, what do I do with that time?**
+
+> I could bury my head in the sand. Pretend it's not happening. Ride the wave until it crashes.
+
+> Or I could use this window — while I still have a stable income — to build something that replaces that income before I'm forced to.
+
+> That's what this auto-trading system is about. It's not a hobby. It's not a side project. It's an **income replacement strategy.**
+
+**The Math**
+
+> Let me be specific, because I think specificity matters here.
+
+> To sustain my family's current lifestyle — mortgage, kids, savings, the basics — I need approximately **$200,000 per year** in income. That's my target. That's what I need this system to eventually generate.
+
+> Now, I'm not starting with a million-dollar portfolio. I'm starting with something more realistic: **$100,000** in a brokerage account. That's money I've saved over years. It's not nothing, but it's not hedge fund capital either.
+
+> So here's the question: **How do you get from $100K to $200K per year in trading income?**
+
+> Let's run the numbers.
+
+> If I need $200K per year from a $100K account, that's a 200% annual return. That's... not realistic. That's gambling, not trading. Nobody sustains 200% returns year over year.
+
+> But that's not actually the plan. The plan has three phases.
+
+**Phase 1: Grow the Capital**
+
+> For the next 5-10 years, while I still have my engineering salary, I'm not trying to live off trading income. I'm trying to **grow the account.** Every dollar I can save from my paycheck goes into the brokerage. Every gain compounds.
+
+> If I can average 15-20% annual returns — which is aggressive but achievable with a solid system — and I'm adding $30-40K per year from my salary... in 7-8 years, that $100K becomes $500K to $800K.
+
+**Phase 2: Transition to Income**
+
+> Once the account is large enough, the math changes. A 25-30% return on $700K is over $200K per year. That's still aggressive, but it's in the realm of what systematic traders achieve. That's the transition point — when the portfolio can sustain my income needs.
+
+**Phase 3: Scale and Diversify**
+
+> Beyond that, you diversify strategies, reduce risk, maybe target 15% returns on a larger base. The goal isn't to get rich quick. The goal is to build a system that generates reliable income — **before I'm forced to find out if I can.**
+
+*(beat)*
+
+> So that's why I built the MRE. That's why I'm sharing this with you. Because I'm betting my family's financial future on this system working.
+
+> If that sounds dramatic... good. It should. This isn't a game to me.
+
+> Now let me show you how it actually works.
+
+---
+
 ## EPISODE SETUP (1.5 min)
 
 **Today's Topic:** How I built an AI-powered trading system called MRE — the Multi-Regime Engine — and how you can apply the same principles to any domain.

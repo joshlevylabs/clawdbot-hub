@@ -3,8 +3,17 @@
 **Episode #:** 3  
 **Title:** I Built an AI Trading Desk (And You Can Too)  
 **Pillar:** AI for Builders  
-**Target Length:** 25-30 minutes  
+**Target Length:** 28-32 minutes  
 **Recording Date:** TBD
+
+---
+
+## SCRIPT VERSION
+
+| Version | Date | Changes |
+|---------|------|---------|
+| v1.0 | 2026-02-06 | Initial script with MRE system breakdown |
+| v1.1 | 2026-02-07 | Added "Why I'm Building This" section — personal stakes, job replacement timeline, $200K income goal, 3-phase plan |
 
 ---
 

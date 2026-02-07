@@ -12,7 +12,7 @@
 
 | Version | Date | Changes |
 |---------|------|---------|
-| v5 | 2026-02-07 | Added "Why I'm Building This" section — personal stakes, job replacement timeline, $200K income goal, 3-phase plan |
+| v6 | 2026-02-07 | Merged "Why I'm Building This" + "How I Got Here" into single cohesive Section 1 — AI job replacement, compressed timeline, why 60/40 fails, 3-phase plan, asset revesting intro |
 
 ---
 
@@ -46,9 +46,9 @@
 
 ---
 
-## WHY I'M BUILDING THIS — The Real Talk (3 min)
+## SECTION 1: Why I'm Building This — The Clock is Ticking (7 min)
 
-> Before I dive into the system, I need to tell you why I'm actually doing this. Because it's not just intellectual curiosity. It's survival.
+> Before I show you the system, I need to tell you why I'm building it. Because this isn't a hobby project. This is survival.
 
 *(beat)*
 
@@ -56,13 +56,11 @@
 
 > **AI is going to replace my job.**
 
-> Not might. Will. It's not a question of if — it's a question of when. And I've done the math. I give myself roughly 5 to 10 years before my role as a full-time test engineer becomes obsolete. Maybe less.
+> Not might. Will. It's not a question of if — it's a question of when. And I've done the math. I give myself roughly **5 to 10 years** before my role as a full-time test engineer becomes obsolete. Maybe less.
 
 > Look at what's already happening. AI can write code. AI can review code. AI can generate test cases, find bugs, and automate entire QA pipelines. Right now, in 2026, these tools still need human oversight. But that gap is closing fast. Every month, the models get better. Every month, the oversight required gets smaller.
 
-> I'm not bitter about this. I'm not scared. I'm just... realistic. The same skills that make me valuable today — pattern recognition, systematic thinking, debugging complex systems — those are exactly the skills that AI is getting good at.
-
-*(beat)*
+> The same skills that make me valuable today — pattern recognition, systematic thinking, debugging complex systems — those are exactly the skills that AI is getting good at.
 
 > So I asked myself a hard question: **If I have 5 to 10 years left in this career, what do I do with that time?**
 
@@ -70,108 +68,67 @@
 
 > Or I could use this window — while I still have a stable income — to build something that replaces that income before I'm forced to.
 
-> That's what this auto-trading system is about. It's not a hobby. It's not a side project. It's an **income replacement strategy.**
+**Why 60/40 Won't Save Me**
 
-**The Math**
-
-> Let me be specific, because I think specificity matters here.
-
-> To sustain my family's current lifestyle — mortgage, kids, savings, the basics — I need approximately **$200,000 per year** in income. That's my target. That's what I need this system to eventually generate.
-
-> Now, I'm not starting with a million-dollar portfolio. I'm starting with something more realistic: **$100,000** in a brokerage account. That's money I've saved over years. It's not nothing, but it's not hedge fund capital either.
-
-> So here's the question: **How do you get from $100K to $200K per year in trading income?**
-
-> Let's run the numbers.
-
-> If I need $200K per year from a $100K account, that's a 200% annual return. That's... not realistic. That's gambling, not trading. Nobody sustains 200% returns year over year.
-
-> But that's not actually the plan. The plan has three phases.
-
-**Phase 1: Grow the Capital**
-
-> For the next 5-10 years, while I still have my engineering salary, I'm not trying to live off trading income. I'm trying to **grow the account.** Every dollar I can save from my paycheck goes into the brokerage. Every gain compounds.
-
-> If I can average 15-20% annual returns — which is aggressive but achievable with a solid system — and I'm adding $30-40K per year from my salary... in 7-8 years, that $100K becomes $500K to $800K.
-
-**Phase 2: Transition to Income**
-
-> Once the account is large enough, the math changes. A 25-30% return on $700K is over $200K per year. That's still aggressive, but it's in the realm of what systematic traders achieve. That's the transition point — when the portfolio can sustain my income needs.
-
-**Phase 3: Scale and Diversify**
-
-> Beyond that, you diversify strategies, reduce risk, maybe target 15% returns on a larger base. The goal isn't to get rich quick. The goal is to build a system that generates reliable income — **before I'm forced to find out if I can.**
+> Now, the conventional wisdom would say: just invest. Build a nest egg. The classic 60/40 portfolio — 60% stocks, 40% bonds. Buy and hold. Don't try to time the market. Set it and forget it.
 
 *(beat)*
 
-> So that's why I built the MRE. That's why I'm sharing this with you. Because I'm betting my family's financial future on this system working.
+> Here's the problem: **I don't have time for buy and hold.**
 
-> If that sounds dramatic... good. It should. This isn't a game to me.
+> I stumbled across Chris Vermeulen's work a few years ago. Chris is a quantitative researcher who completely changed how I think about investing. His critique of the traditional 60/40 approach is devastating — and it's especially devastating for someone on a compressed timeline like me.
 
-> Now let me show you how it actually works.
+> Let me explain.
 
----
+> A traditional 60/40 investor sits through drawdowns of 30% to 50%. That's not a minor dip — that's watching half your portfolio disappear. And here's the kicker: **it can take YEARS to recover.**
 
-## EPISODE SETUP (1.5 min)
+> Look at the S&P 500 from 2000 to 2013. If you bought at the dot-com peak in March 2000, you watched your portfolio drop 50% by 2002. Then it slowly recovered — and you finally broke even in late 2007. Great, right? Except two months later, the financial crisis hit, and you lost another 50%. You didn't permanently recover your 2000 investment until **2013**.
 
-**Today's Topic:** How I built an AI-powered trading system called MRE — the Multi-Regime Engine — and how you can apply the same principles to any domain.
-
-**Why It Matters:** The barrier between retail and institutional trading has never been lower. The same AI tools that hedge funds are scrambling to adopt are available to anyone who can write a prompt.
-
-**What You'll Walk Away With:** 
-> By the end of this episode, you'll understand the architecture of an AI trading system, how to synthesize multiple data sources into actionable signals, and how to build a team of AI agents that work for you 24/7.
-
-> Whether you want to trade or not, the patterns here apply to any complex decision-making system. Stick with me.
-
----
-
-## SECTION 1: How I Got Here — The Problem with Buy and Hold (6 min)
-
-> Let me start with how I got here, because the origin story matters.
-
-> Like most retail investors, I started with the conventional wisdom: the classic 60/40 portfolio. 60% stocks, 40% bonds. Buy and hold. Don't try to time the market. Set it and forget it.
+> That's **thirteen years** of stress. Two massive crashes. And if you needed that money in between — for a house, for retirement, for an emergency — you were selling at a loss.
 
 *(beat)*
 
-> Sounds great, right? Except here's what nobody tells you: **the 60/40 buy-and-hold strategy can be dangerous.** And I don't say that lightly.
+> Now think about my situation. I have 5 to 10 years before AI potentially eliminates my job. If a crash hits in year 3, and I'm down 50%, and it takes 7 years to recover... **I'm done.** I don't have 13 years of runway. I don't have the luxury of waiting out a lost decade.
 
-> I stumbled across Chris Vermeulen's work a few years ago. Chris is a quantitative researcher who completely changed how I think about investing. His critique of the traditional approach is devastating — and once you hear it, you can't unhear it.
-
-**The Drawdown Problem**
-
-> Here's the first issue: **drawdown vulnerability.** A traditional 60/40 investor sits through drawdowns of 30% to 50%. That's not a minor dip — that's watching half your retirement disappear. And here's the kicker: it can take YEARS to recover.
-
-> Look at the S&P 500 from 2000 to 2013. If you bought at the dot-com peak in March 2000, you watched your portfolio drop 50% by 2002. Then it slowly recovered — and you finally broke even in late 2007. Great, right? Except two months later, the financial crisis hit, and you lost another 50%. You didn't permanently recover your 2000 investment until 2013.
-
-> That's thirteen years of stress. Two massive crashes. And if you needed that money in between — for a house, for retirement, for an emergency — you were selling at a loss.
-
-> Buy and hold assumes you have infinite time and infinite emotional resilience. Most people have neither.
-
-**The False Sense of Balance**
+> Buy and hold assumes you have infinite time and infinite emotional resilience. I have neither.
 
 > The second issue: the 60/40 split offers a **false sense of security.** The whole premise is that stocks and bonds are negatively correlated — when one goes down, the other goes up. Diversification protects you.
 
-*(beat)*
-
-> Except in 2022, both stocks AND bonds fell simultaneously. The promised diversification failed. In high-inflation or rising-rate environments — which we're living through right now — that historical negative correlation breaks down completely.
+> Except in 2022, both stocks AND bonds fell simultaneously. The promised diversification failed. In high-inflation or rising-rate environments, that historical negative correlation breaks down completely.
 
 > So you're holding two losing assets, telling yourself you're "diversified." That's not strategy. That's hope.
 
-**Holding Underperformers**
+> And third: by design, a 60/40 portfolio **forces you to keep owning losing assets.** Chris Vermeulen puts it bluntly: wealth builds faster when it's not constantly being "repaired" from losses.
 
-> Third issue: by design, a 60/40 portfolio **forces you to keep owning losing assets.** Chris Vermeulen puts it bluntly: wealth builds faster when it's not constantly being "repaired" from losses.
+> If you lose 50%, you need a 100% gain just to get back to even. That's not building wealth — that's running on a treadmill.
 
-> Think about that. If you lose 50%, you need a 100% gain just to get back to even. That's not building wealth — that's running on a treadmill.
+**The Math I Need to Hit**
+
+> So let me be specific about what I actually need.
+
+> To sustain my family's current lifestyle — mortgage, kids, savings, the basics — I need approximately **$200,000 per year** in income. That's my target. That's what this system needs to eventually generate.
+
+> I'm starting with **$100,000** in a brokerage account. That's money I've saved over years. It's not nothing, but it's not hedge fund capital either.
+
+> If I need $200K per year from a $100K account, that's a 200% annual return. That's not realistic. That's gambling.
+
+> But that's not the plan. The plan has three phases:
+
+> **Phase 1: Grow the Capital.** For the next 5-10 years, while I still have my engineering salary, I'm not trying to live off trading income. I'm trying to grow the account. Every dollar I save goes into the brokerage. Every gain compounds. If I can average 15-20% annual returns and add $30-40K per year from my salary... in 7-8 years, that $100K becomes $500K to $800K.
+
+> **Phase 2: Transition to Income.** Once the account is large enough, the math changes. A 25-30% return on $700K is over $200K per year. That's still aggressive, but it's in the realm of what systematic traders achieve.
+
+> **Phase 3: Scale and Diversify.** Beyond that, you reduce risk, target 15% returns on a larger base. The goal isn't to get rich quick. The goal is reliable income — before I'm forced to find out if I can.
 
 **The Alternative: Asset Revesting**
 
-> So what does Chris Vermeulen advocate instead? He calls it **"Asset Revesting"** — a tactical approach focused on capital protection and trend following.
+> So what does Chris Vermeulen advocate instead of 60/40? He calls it **"Asset Revesting"** — a tactical approach focused on capital protection and trend following.
 
 > Here's the core insight that changed everything for me: **you don't need to predict the future. You just need to follow the regime.**
 
-> Instead of a fixed allocation, you rotate capital between stocks, bonds, currencies, or cash — depending on which asset class is currently in a strong uptrend. If nothing meets your criteria for a healthy trend? You hold cash. Vermeulen says he may hold 100% cash for up to 40% of the year if no asset is trending well.
+> Instead of a fixed allocation, you rotate capital between stocks, bonds, commodities, or cash — depending on which asset class is currently in a strong uptrend. If nothing meets your criteria for a healthy trend? You hold cash. Vermeulen says he may hold 100% cash for up to 40% of the year if no asset is trending well.
 
-> That sounds crazy to a traditional investor. "But you're missing gains!" Maybe. But you're also missing losses. And not losing is the first rule of compounding.
+> That sounds crazy to a traditional investor. "But you're missing gains!" Maybe. But you're also missing losses. And **not losing is the first rule of compounding.**
 
 > The strategy ignores news, earnings, and "hope." It relies strictly on price mechanics — technical modeling of price, volume, and cycles to decide when to move into or out of a position.
 
@@ -179,9 +136,13 @@
 
 > That's asset revesting. Not day trading. Not predicting every tick. Just reading the environment and positioning accordingly.
 
-> The problem is, doing this manually is exhausting. You'd have to track dozens of indicators across multiple asset classes every single day. So I asked a simple question: What if I could automate this? What if I could build a system that does the analysis for me?
+> The problem is, doing this manually is exhausting. You'd have to track dozens of indicators across multiple asset classes every single day. So I asked a simple question: **What if I could automate this? What if I could build a system that does the analysis for me?**
 
 > That question became the MRE — the Multi-Regime Engine.
+
+> So that's why I built it. That's why I'm sharing this with you. Because I'm betting my family's financial future on this system working.
+
+> If that sounds dramatic... good. It should. This isn't a game to me.
 
 ---
 

@@ -1,7 +1,7 @@
 {
-  "timestamp": "2026-02-06T14:47:47.293842",
-  "last_updated": "2026-02-06 14:47:47",
-  "last_updated_unix": 1770418067,
+  "timestamp": "2026-02-07T14:54:08.920881",
+  "last_updated": "2026-02-07 14:54:08",
+  "last_updated_unix": 1770504848,
   "fear_greed": {
     "current": 44.8857142857143,
     "rating": "fear",
@@ -158,13 +158,13 @@
       },
       {
         "date": "2026-02-06",
-        "score": 65,
-        "vix": 17.76
+        "score": 45,
+        "vix": 20.37
       }
     ],
     "breakdown": {
-      "aggregate_score": 57.6,
-      "rating": "Greed",
+      "aggregate_score": 51.7,
+      "rating": "Neutral",
       "components": [
         {
           "name": "Stock Price Momentum",
@@ -189,10 +189,10 @@
         },
         {
           "name": "Put/Call Ratio",
-          "score": 68.0,
+          "score": 53.5,
           "signal": "NEUTRAL",
-          "description": "VIX at 17.8 (proxy for options sentiment)",
-          "raw_value": 17.8
+          "description": "VIX at 20.4 (proxy for options sentiment)",
+          "raw_value": 20.4
         },
         {
           "name": "Junk Bond Demand",
@@ -203,10 +203,10 @@
         },
         {
           "name": "Market Volatility",
-          "score": 33.4,
-          "signal": "NEUTRAL",
-          "description": "VIX 17.8 is +10.0% vs 50-day MA (16.2)",
-          "raw_value": 10.0
+          "score": 7.2,
+          "signal": "FEAR",
+          "description": "VIX 20.4 is +25.7% vs 50-day MA (16.2)",
+          "raw_value": 25.7
         },
         {
           "name": "Safe Haven Demand",
@@ -319,6 +319,9 @@
         "expected_sharpe": 10.65,
         "expected_accuracy": 70.6,
         "price": 690.62,
+        "tlt_filtered": false,
+        "kalshi_applied": false,
+        "kalshi_adjustment": 0,
         "fibonacci": {
           "symbol": "SPY",
           "current_price": 690.6199951171875,
@@ -378,6 +381,9 @@
         "expected_sharpe": 25.8,
         "expected_accuracy": 61.3,
         "price": 455.46,
+        "tlt_filtered": false,
+        "kalshi_applied": false,
+        "kalshi_adjustment": 0,
         "fibonacci": {
           "symbol": "GLD",
           "current_price": 455.4599914550781,
@@ -437,6 +443,9 @@
         "expected_sharpe": 15.52,
         "expected_accuracy": 65.0,
         "price": 54.26,
+        "tlt_filtered": false,
+        "kalshi_applied": false,
+        "kalshi_adjustment": 0,
         "fibonacci": {
           "symbol": "XLF",
           "current_price": 54.2599983215332,
@@ -496,6 +505,9 @@
         "expected_sharpe": 5.12,
         "expected_accuracy": 65.7,
         "price": 141.13,
+        "tlt_filtered": false,
+        "kalshi_applied": false,
+        "kalshi_adjustment": 0,
         "fibonacci": {
           "symbol": "XLK",
           "current_price": 141.1300048828125,
@@ -555,6 +567,9 @@
         "expected_sharpe": 14.22,
         "expected_accuracy": 68.0,
         "price": 157.71,
+        "tlt_filtered": false,
+        "kalshi_applied": false,
+        "kalshi_adjustment": 0,
         "fibonacci": {
           "symbol": "XLV",
           "current_price": 157.7100067138672,
@@ -614,6 +629,9 @@
         "expected_sharpe": 18.55,
         "expected_accuracy": 51.8,
         "price": 87.54,
+        "tlt_filtered": false,
+        "kalshi_applied": false,
+        "kalshi_adjustment": 0,
         "fibonacci": {
           "symbol": "TLT",
           "current_price": 87.54000091552734,
@@ -673,6 +691,9 @@
         "expected_sharpe": 8.36,
         "expected_accuracy": 63.9,
         "price": 92.25,
+        "tlt_filtered": false,
+        "kalshi_applied": false,
+        "kalshi_adjustment": 0,
         "fibonacci": {
           "symbol": "VNQ",
           "current_price": 92.25,
@@ -732,6 +753,9 @@
         "expected_sharpe": 11.87,
         "expected_accuracy": 74.7,
         "price": 102.61,
+        "tlt_filtered": false,
+        "kalshi_applied": false,
+        "kalshi_adjustment": 0,
         "fibonacci": {
           "symbol": "EFA",
           "current_price": 102.61000061035156,
@@ -791,15 +815,18 @@
         "expected_sharpe": 4.74,
         "expected_accuracy": 68.8,
         "price": 53.25,
+        "tlt_filtered": false,
+        "kalshi_applied": false,
+        "kalshi_adjustment": 0,
         "fibonacci": {
           "symbol": "XLE",
           "current_price": 53.25,
-          "swing_high": 53.415000915527344,
+          "swing_high": 53.41999816894531,
           "swing_low": 43.40004208032951,
           "trend": "uptrend",
           "retracements": {
             "0.0": 53.42,
-            "23.6": 51.05,
+            "23.6": 51.06,
             "38.2": 49.59,
             "50.0": 48.41,
             "61.8": 47.23,
@@ -807,17 +834,17 @@
             "100.0": 43.4
           },
           "extensions": {
-            "127.2": 56.14,
-            "161.8": 59.6,
-            "200.0": 63.43,
-            "261.8": 69.62
+            "127.2": 56.15,
+            "161.8": 59.61,
+            "200.0": 63.44,
+            "261.8": 69.63
           },
-          "nearest_support": 51.05,
+          "nearest_support": 51.06,
           "nearest_resistance": 53.42,
           "entry_zone": "49.59 - 47.23",
           "profit_targets": [
-            56.14,
-            59.6
+            56.15,
+            59.61
           ]
         },
         "regime_details": {
@@ -1317,47 +1344,46 @@
   "thresholds": {
     "fear_buy": 30,
     "greed_sell": 85,
-    "optimal_hold": 5
+    "optimal_hold": 10
   },
   "prediction_markets": {
     "kalshi": {
       "available": true,
       "signal": "NEUTRAL",
-      "confidence": 17,
-      "expected_price": 6814.722172222222,
+      "confidence": 20,
+      "expected_price": 6931.249949999999,
       "implied_range": [
-        6800.0,
-        6824.9999
+        6925.0,
+        6949.9999
       ],
-      "markets_analyzed": 10,
+      "markets_analyzed": 8,
       "top_markets": [
         {
-          "ticker": "KXINX-26FEB06H1600-B6812",
-          "yes_bid": 17,
-          "range_low": 6800.0,
-          "range_high": 6824.9999,
-          "midpoint": 6812.499949999999
+          "ticker": "KXINX-26FEB09H1600-B6937",
+          "yes_bid": 20,
+          "range_low": 6925.0,
+          "range_high": 6949.9999,
+          "midpoint": 6937.499949999999
         },
         {
-          "ticker": "KXINX-26FEB06H1600-B6837",
-          "yes_bid": 16,
-          "range_low": 6825.0,
-          "range_high": 6849.9999,
-          "midpoint": 6837.499949999999
+          "ticker": "KXINX-26FEB09H1600-B6912",
+          "yes_bid": 10,
+          "range_low": 6900.0,
+          "range_high": 6924.9999,
+          "midpoint": 6912.499949999999
         },
         {
-          "ticker": "KXINX-26FEB06H1600-B6787",
-          "yes_bid": 12,
-          "range_low": 6775.0,
-          "range_high": 6799.9999,
-          "midpoint": 6787.499949999999
+          "ticker": "KXINX-26FEB09H1600-B6962",
+          "yes_bid": 2,
+          "range_low": 6950.0,
+          "range_high": 6974.9999,
+          "midpoint": 6962.499949999999
         }
       ],
-      "timestamp": "2026-02-06T05:59:45.450150+00:00",
+      "timestamp": "2026-02-07T22:54:04.104685+00:00",
       "historical_accuracy": 96.6,
       "source": "kalshi",
-      "cached": true,
-      "note": "Markets closed - using last available signal"
+      "cached": false
     },
     "polymarket": {
       "available": true,
@@ -1368,45 +1394,45 @@
         {
           "title": "Who will Trump nominate as Fed Chair?",
           "probability": null,
-          "liquidity": 58227773.22219,
-          "volume": 415603749.503354,
+          "liquidity": 58430212.73179,
+          "volume": 422186979.116999,
           "id": "35908"
         },
         {
           "title": "Will China invade Taiwan by end of 2026?",
           "probability": null,
-          "liquidity": 581827.6791,
-          "volume": 8224265.065069,
+          "liquidity": 578322.5857,
+          "volume": 8252487.617951,
           "id": "34044"
         },
         {
           "title": "MegaETH market cap (FDV) one day after launch?",
           "probability": null,
-          "liquidity": 275808.1639,
-          "volume": 10410284.744315,
+          "liquidity": 271333.70401,
+          "volume": 10610359.272065,
           "id": "28999"
         },
         {
           "title": "MicroStrategy sells any Bitcoin by ___ ?",
           "probability": null,
-          "liquidity": 232258.47093,
-          "volume": 19976388.458121,
+          "liquidity": 231978.44219,
+          "volume": 19996995.00454,
           "id": "16167"
         },
         {
           "title": "How much revenue will the U.S. raise from tariffs in 2025?",
           "probability": null,
-          "liquidity": 165888.11153,
-          "volume": 5011687.257483,
+          "liquidity": 163241.31307,
+          "volume": 5902893.60068,
           "id": "22862"
         }
       ],
-      "timestamp": "2026-02-06T22:47:43.173615+00:00",
+      "timestamp": "2026-02-07T22:54:04.391683+00:00",
       "source": "polymarket"
     }
   },
   "meta": {
-    "version": "v5",
+    "version": "v6",
     "backtests": 4113,
     "key_insight": "Fear signals 65.6% accurate, Greed only 30.6%",
     "features": [
@@ -1414,7 +1440,11 @@
       "Fibonacci retracement/extension levels",
       "Regime duration predictions",
       "Outlier detection",
-      "Kalshi prediction markets (96.6% accuracy)"
-    ]
+      "Kalshi prediction markets (96.6% accuracy)",
+      "[v6] TLT sell filter (blocks 9.2% accuracy sell signals)",
+      "[v6] Kalshi signal integration (+15%/-30% confidence adjustment)",
+      "[v6] 10-day optimal horizon (from 5-day)"
+    ],
+    "last_optimization": "2026-02-07"
   }
 }

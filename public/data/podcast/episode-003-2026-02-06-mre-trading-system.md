@@ -51,27 +51,57 @@
 
 ---
 
-## SECTION 1: How I Got Here — The Problem with Buy and Hold (5 min)
+## SECTION 1: How I Got Here — The Problem with Buy and Hold (6 min)
 
 > Let me start with how I got here, because the origin story matters.
 
-> Like most retail investors, I started with the conventional wisdom: buy and hold. Put your money in index funds. Don't try to time the market. Set it and forget it.
+> Like most retail investors, I started with the conventional wisdom: the classic 60/40 portfolio. 60% stocks, 40% bonds. Buy and hold. Don't try to time the market. Set it and forget it.
 
 *(beat)*
 
-> Sounds great, right? Except here's what nobody tells you: **buy and hold can be dangerous.**
+> Sounds great, right? Except here's what nobody tells you: **the 60/40 buy-and-hold strategy can be dangerous.** And I don't say that lightly.
 
-> Think about it. If you bought the S&P 500 in 2000, you didn't break even until 2013. Thirteen years of waiting. If you bought in 2007, you waited until 2013 too. If you needed that money in between — for a house, for retirement, for an emergency — you were selling at a loss.
+> I stumbled across Chris Vermeulen's work a few years ago. Chris is a quantitative researcher who completely changed how I think about investing. His critique of the traditional approach is devastating — and once you hear it, you can't unhear it.
+
+**The Drawdown Problem**
+
+> Here's the first issue: **drawdown vulnerability.** A traditional 60/40 investor sits through drawdowns of 30% to 50%. That's not a minor dip — that's watching half your retirement disappear. And here's the kicker: it can take YEARS to recover.
+
+> If you bought the S&P 500 in 2000, you didn't break even until 2013. Thirteen years of waiting. If you bought in 2007, same thing — years of recovery. If you needed that money in between — for a house, for retirement, for an emergency — you were selling at a loss.
 
 > Buy and hold assumes you have infinite time and infinite emotional resilience. Most people have neither.
 
-> I stumbled across Chris Vermeulen's work a few years ago. Chris is a quantitative researcher who specializes in what he calls "asset rotation" — the idea that you shouldn't just buy and hold one thing forever. Different asset classes perform well at different times. Stocks, bonds, gold, real estate, energy — they rotate in and out of favor based on the macro environment.
+**The False Sense of Balance**
 
-> Here's the insight that changed everything for me: **you don't need to predict the future. You just need to follow the regime.**
+> The second issue: the 60/40 split offers a **false sense of security.** The whole premise is that stocks and bonds are negatively correlated — when one goes down, the other goes up. Diversification protects you.
+
+*(beat)*
+
+> Except in 2022, both stocks AND bonds fell simultaneously. The promised diversification failed. In high-inflation or rising-rate environments — which we're living through right now — that historical negative correlation breaks down completely.
+
+> So you're holding two losing assets, telling yourself you're "diversified." That's not strategy. That's hope.
+
+**Holding Underperformers**
+
+> Third issue: by design, a 60/40 portfolio **forces you to keep owning losing assets.** Chris Vermeulen puts it bluntly: wealth builds faster when it's not constantly being "repaired" from losses.
+
+> Think about that. If you lose 50%, you need a 100% gain just to get back to even. That's not building wealth — that's running on a treadmill.
+
+**The Alternative: Asset Revesting**
+
+> So what does Chris Vermeulen advocate instead? He calls it **"Asset Revesting"** — a tactical approach focused on capital protection and trend following.
+
+> Here's the core insight that changed everything for me: **you don't need to predict the future. You just need to follow the regime.**
+
+> Instead of a fixed allocation, you rotate capital between stocks, bonds, currencies, or cash — depending on which asset class is currently in a strong uptrend. If nothing meets your criteria for a healthy trend? You hold cash. Vermeulen says he may hold 100% cash for up to 40% of the year if no asset is trending well.
+
+> That sounds crazy to a traditional investor. "But you're missing gains!" Maybe. But you're also missing losses. And not losing is the first rule of compounding.
+
+> The strategy ignores news, earnings, and "hope." It relies strictly on price mechanics — technical modeling of price, volume, and cycles to decide when to move into or out of a position.
 
 > Is the market in a bull regime? Buy stocks. Bear regime? Rotate to bonds or gold. Sideways? Stay in cash and wait for clarity.
 
-> That's the core of asset rotation. Not day trading. Not predicting every tick. Just reading the environment and positioning accordingly.
+> That's asset revesting. Not day trading. Not predicting every tick. Just reading the environment and positioning accordingly.
 
 > The problem is, doing this manually is exhausting. You'd have to track dozens of indicators across multiple asset classes every single day. So I asked a simple question: What if I could automate this? What if I could build a system that does the analysis for me?
 

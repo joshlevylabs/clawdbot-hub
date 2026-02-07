@@ -67,7 +67,9 @@
 
 > Here's the first issue: **drawdown vulnerability.** A traditional 60/40 investor sits through drawdowns of 30% to 50%. That's not a minor dip — that's watching half your retirement disappear. And here's the kicker: it can take YEARS to recover.
 
-> If you bought the S&P 500 in 2000, you didn't break even until 2013. Thirteen years of waiting. If you bought in 2007, same thing — years of recovery. If you needed that money in between — for a house, for retirement, for an emergency — you were selling at a loss.
+> Look at the S&P 500 from 2000 to 2013. If you bought at the dot-com peak in March 2000, you watched your portfolio drop 50% by 2002. Then it slowly recovered — and you finally broke even in late 2007. Great, right? Except two months later, the financial crisis hit, and you lost another 50%. You didn't permanently recover your 2000 investment until 2013.
+
+> That's thirteen years of stress. Two massive crashes. And if you needed that money in between — for a house, for retirement, for an emergency — you were selling at a loss.
 
 > Buy and hold assumes you have infinite time and infinite emotional resilience. Most people have neither.
 

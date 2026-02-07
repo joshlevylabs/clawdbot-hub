@@ -129,7 +129,7 @@
 
 > Every day, the financial news tells you the market is either crashing or mooning. It's designed to trigger emotion. But when you zoom out and look at the regime, you see the actual trend.
 
-> Think of it like weather versus climate. The daily price action is weather — unpredictable, noisy, stressful. The regime is climate — the underlying pattern that determines what you should wear.
+> Think of it like the tide versus the waves. The waves crash in every direction — chaotic, loud, hard to predict. But the tide? The tide tells you whether the water is rising or falling. You can't fight the tide. Daily price action is waves. The regime is the tide.
 
 > Our system calculates regime signals for every major asset class: US stocks, international stocks, bonds, gold, healthcare, energy, real estate, technology. Each one can be in a different regime at the same time.
 
@@ -177,7 +177,7 @@
 
 > Every signal we generate comes with a confidence score and expected accuracy — and here's how we got those numbers.
 
-> We ran backtests for an **entire week straight**. Not just once — continuously. The system would test a hypothesis, measure the results, identify weaknesses, and improve itself. Then test again. Hundreds of iterations.
+> I used Clawdbot — my AI co-pilot — running cron jobs every five minutes for an **entire week straight**. The system would test a hypothesis, measure the results, identify weaknesses, and improve itself. Then test again. Hundreds of iterations, completely automated.
 
 > By the end, we had expected accuracy numbers for each asset class based on historical performance. When the regime signal for gold is bullish with these specific parameters, it's been correct 65% of the time over the past decade. That's not a guess — that's empirical.
 
@@ -276,11 +276,15 @@
 
 > Let me give you an example from this week. GLD — the gold ETF — was showing as a BUY.
 
-> Why? The regime had been bullish for 117 days. Confidence was 85%. Momentum was +9.89% over 20 days. And the price had just pulled back to the 38.2% Fibonacci retracement — right at the entry zone. The Fibonacci projections gave us clear profit targets at the 127.2% and 161.8% extensions.
+> Why? Trump had just announced his Fed Chair pick, triggering a 5% selloff in gold. The news felt bad. But here's what the system saw:
 
-> Meanwhile, Trump had just announced his Fed Chair pick, which caused a 5% selloff in gold. The news was bad, but the technicals were screaming opportunity. And the prediction markets were still pricing gold-favorable outcomes.
+> The regime had been bullish for 117 days. Confidence was 85%. Momentum was still +9.89% over 20 days. The selloff hadn't broken the trend — it had just created a discount.
 
-> That's the power of systematic analysis. While everyone else was panicking about headlines, the system was saying: "This is exactly the pullback we wanted. Buy the dip."
+> And not just any discount. The price had pulled back exactly to the 38.2% Fibonacci retracement — the first major entry zone in a bull trend. Because the regime was still bullish, we weren't looking for downside targets. We were looking for upside. The Fibonacci extensions gave us clear profit targets at 127.2% and 161.8%.
+
+> The prediction markets confirmed it — still pricing gold-favorable outcomes despite the headline noise.
+
+> News said sell. Regime said buy the dip. We followed the regime.
 
 **Position Sizing**
 
@@ -419,7 +423,7 @@
 - [ ] Cold open (0:00-0:45) — "What if I told you..."
 - [ ] Buy and hold is dangerous — "Thirteen years of waiting"
 - [ ] Chris Vermeulen insight — "You don't need to predict the future"
-- [ ] Regime explanation — "Weather versus climate"
+- [ ] Regime explanation — "Tide versus waves"
 - [ ] Fibonacci retracements vs projections — "Three points to predict"
 - [ ] JP Morgan stats — "65.6% buy accuracy, Sharpe of 1.13"
 - [ ] Capacity estimate — "$100 million to $500 million deployable"

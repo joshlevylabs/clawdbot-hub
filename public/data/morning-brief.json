@@ -3,38 +3,44 @@
   "time": "6:00 AM",
   "sections": {
     "prayer": {
-      "title": "🕊️ Morning Prayer",
+      "title": "\ud83d\udd4a\ufe0f Morning Prayer",
       "date": "Saturday, February 07, 2026",
       "hebrew_date": "9 Cheshvan",
       "parsha": "Vayetzei",
       "parsha_theme": "dreams, building from nothing, divine protection",
-      "modeh_ani": "מודה אני לפניך — I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
-      "blessing": "Blessed are You who releases the bound — free me from what holds me back.",
+      "modeh_ani": "\u05de\u05d5\u05d3\u05d4 \u05d0\u05e0\u05d9 \u05dc\u05e4\u05e0\u05d9\u05da \u2014 I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
+      "blessing": "Blessed are You who releases the bound \u2014 free me from what holds me back.",
       "psalm": "Psalm 118:25: \"Lord, save us! Lord, grant us success!\"",
       "proverb": "Proverbs 16:3: \"Commit your work to the Lord, and your plans will be established.\"",
       "intention": "Open doors that no one can shut, and close doors that would lead me astray.",
-      "closing": "Baruch atah Adonai — Blessed are You, Lord, who renews creation daily with goodness."
+      "closing": "Baruch atah Adonai \u2014 Blessed are You, Lord, who renews creation daily with goodness.",
+      "audio": "/audio/brief-2026-02-07-prayer.ogg"
     },
     "weather": {
-      "title": "☀️ Weather — Los Angeles",
-      "temperature": "52°F",
+      "title": "\u2600\ufe0f Weather \u2014 Los Angeles",
+      "temperature": "52\u00b0F",
       "condition": "Partly cloudy",
       "wind": "Light",
-      "summary": "Cool morning, clearing skies expected"
+      "summary": "Cool morning, clearing skies expected",
+      "audio": "/audio/brief-2026-02-07-weather.ogg"
     },
     "calendar": {
-      "title": "📅 Calendar",
-      "items": ["Saturday — No scheduled events today"]
+      "title": "\ud83d\udcc5 Calendar",
+      "items": [
+        "Saturday \u2014 No scheduled events today"
+      ],
+      "audio": "/audio/brief-2026-02-07-calendar.ogg"
     },
     "email": {
-      "title": "📧 Email Highlights",
+      "title": "\ud83d\udce7 Email Highlights",
       "needs_attention": [],
       "dev_work": [],
       "good_news": [],
-      "summary": "Inbox clear — no unread messages"
+      "summary": "Inbox clear \u2014 no unread messages",
+      "audio": "/audio/brief-2026-02-07-email.ogg"
     },
     "mre": {
-      "title": "📊 MRE Trading",
+      "title": "\ud83d\udcca MRE Trading",
       "fear_greed": 45,
       "fear_greed_rating": "fear",
       "regime": "bull",
@@ -42,16 +48,36 @@
       "spy_price": 690.62,
       "todays_plays": [],
       "sectors_to_watch": [
-        {"symbol": "GLD", "regime": "bull", "momentum": "+9.9%", "note": "117-day bull run, strong momentum"},
-        {"symbol": "XLE", "regime": "bull", "momentum": "+14.1%", "note": "Energy sector breakout"},
-        {"symbol": "EFA", "regime": "bull", "momentum": "+3.9%", "note": "International equities strength"}
+        {
+          "symbol": "GLD",
+          "regime": "bull",
+          "momentum": "+9.9%",
+          "note": "117-day bull run, strong momentum"
+        },
+        {
+          "symbol": "XLE",
+          "regime": "bull",
+          "momentum": "+14.1%",
+          "note": "Energy sector breakout"
+        },
+        {
+          "symbol": "EFA",
+          "regime": "bull",
+          "momentum": "+3.9%",
+          "note": "International equities strength"
+        }
       ],
-      "outliers": ["XLF consolidating", "XLK consolidating", "TLT sideways"],
+      "outliers": [
+        "XLF consolidating",
+        "XLK consolidating",
+        "TLT sideways"
+      ],
       "pending_triggers": [],
-      "thesis": "Fear at 45, bull regime intact. No BUY signals today — wait for Fear/Greed below 30 for optimal entries. Dow hit 50,000 milestone. Energy and gold showing strong momentum."
+      "thesis": "Fear at 45, bull regime intact. No BUY signals today \u2014 wait for Fear/Greed below 30 for optimal entries. Dow hit 50,000 milestone. Energy and gold showing strong momentum.",
+      "audio": "/audio/brief-2026-02-07-mre.ogg"
     },
     "family": {
-      "title": "💕 Family Focus",
+      "title": "\ud83d\udc95 Family Focus",
       "relationship_temp": "critical",
       "trend": "urgent",
       "potency_action": "Acknowledge what happened without defending: 'You're right, I shouldn't have...'",
@@ -63,44 +89,76 @@
       ]
     },
     "news": {
-      "title": "🌍 World News",
+      "title": "\ud83c\udf0d World News",
       "subsections": {
         "israel": {
-          "title": "🇮🇱 Israel",
+          "title": "\ud83c\uddee\ud83c\uddf1 Israel",
           "items": [
-            {"headline": "Herzog's Australia visit sparks protests; anti-Israel groups call for arrest"},
-            {"headline": "Abbas receives draft constitution to transition PA to full state"},
-            {"headline": "IDF Chief Zamir: Military in 'period of improving readiness for war'"},
-            {"headline": "Iran-US negotiations ongoing in Oman via Foreign Minister Araghchi"}
+            {
+              "headline": "Herzog's Australia visit sparks protests; anti-Israel groups call for arrest"
+            },
+            {
+              "headline": "Abbas receives draft constitution to transition PA to full state"
+            },
+            {
+              "headline": "IDF Chief Zamir: Military in 'period of improving readiness for war'"
+            },
+            {
+              "headline": "Iran-US negotiations ongoing in Oman via Foreign Minister Araghchi"
+            }
           ]
         },
         "us": {
-          "title": "🇺🇸 United States",
+          "title": "\ud83c\uddfa\ud83c\uddf8 United States",
           "items": [
-            {"headline": "Dow Jones crosses 50,000 for first time amid strong earnings"},
-            {"headline": "Trump admin moves to finalize Schedule F for federal workforce"},
-            {"headline": "Defense Sec. Hegseth: Iran 'will not have nuclear weapons capability'"},
-            {"headline": "Federal judge rules EV charger funding freeze unlawful"}
+            {
+              "headline": "Dow Jones crosses 50,000 for first time amid strong earnings"
+            },
+            {
+              "headline": "Trump admin moves to finalize Schedule F for federal workforce"
+            },
+            {
+              "headline": "Defense Sec. Hegseth: Iran 'will not have nuclear weapons capability'"
+            },
+            {
+              "headline": "Federal judge rules EV charger funding freeze unlawful"
+            }
           ]
         },
         "world": {
-          "title": "🌐 Global",
+          "title": "\ud83c\udf10 Global",
           "items": [
-            {"headline": "2026 Winter Olympics opening ceremony in Milan; Israel team greeted with some boos"},
-            {"headline": "Tariffs at highest effective level since 1935 under current policy"}
+            {
+              "headline": "2026 Winter Olympics opening ceremony in Milan; Israel team greeted with some boos"
+            },
+            {
+              "headline": "Tariffs at highest effective level since 1935 under current policy"
+            }
           ]
         }
-      }
+      },
+      "audio": "/audio/brief-2026-02-07-news.ogg"
     },
     "ai": {
-      "title": "🤖 AI Intel",
+      "title": "\ud83e\udd16 AI Intel",
       "items": [
-        {"headline": "MIT Tech Review: More Silicon Valley products will be built on Chinese LLMs in 2026"},
-        {"headline": "DeepSeek R1 'moment' became benchmark for efficient AI development"},
-        {"headline": "Google announces Universal Commerce Protocol (UCP) for retailers"},
-        {"headline": "OpenAI's dedicated AI for Science team following DeepMind's lead"},
-        {"headline": "World Labs releases Marble — next-gen world model for 3D generation"}
-      ]
+        {
+          "headline": "MIT Tech Review: More Silicon Valley products will be built on Chinese LLMs in 2026"
+        },
+        {
+          "headline": "DeepSeek R1 'moment' became benchmark for efficient AI development"
+        },
+        {
+          "headline": "Google announces Universal Commerce Protocol (UCP) for retailers"
+        },
+        {
+          "headline": "OpenAI's dedicated AI for Science team following DeepMind's lead"
+        },
+        {
+          "headline": "World Labs releases Marble \u2014 next-gen world model for 3D generation"
+        }
+      ],
+      "audio": "/audio/brief-2026-02-07-ai.ogg"
     }
   }
 }

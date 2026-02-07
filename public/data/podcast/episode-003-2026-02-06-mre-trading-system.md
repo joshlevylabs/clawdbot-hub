@@ -12,8 +12,7 @@
 
 | Version | Date | Changes |
 |---------|------|---------|
-| v1.0 | 2026-02-06 | Initial script with MRE system breakdown |
-| v1.1 | 2026-02-07 | Added "Why I'm Building This" section — personal stakes, job replacement timeline, $200K income goal, 3-phase plan |
+| v5 | 2026-02-07 | Added "Why I'm Building This" section — personal stakes, job replacement timeline, $200K income goal, 3-phase plan |
 
 ---
 

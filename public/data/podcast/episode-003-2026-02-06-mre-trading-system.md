@@ -12,7 +12,8 @@
 
 | Version | Date | Changes |
 |---------|------|---------|
-| v6 | 2026-02-07 | Merged "Why I'm Building This" + "How I Got Here" into single cohesive Section 1 — AI job replacement, compressed timeline, why 60/40 fails, 3-phase plan, asset revesting intro |
+| v7 | 2026-02-07 | Added legal disclaimers + "Today's Plays" newsletter CTAs throughout (after intro, after Section 5, strengthened CTA section) |
+| v6 | 2026-02-07 | Merged "Why I'm Building This" + "How I Got Here" into single cohesive Section 1 |
 
 ---
 
@@ -43,6 +44,16 @@
 ## INTRO (30 sec)
 
 > You're listening to The Builder's Frequency. I'm Joshua Levy — test engineer by day, founder by night. This is where we talk about building things that matter: businesses, systems, and a life worth passing down.
+
+**⚠️ IMPORTANT DISCLAIMER**
+
+> Before we go any further, I need to be crystal clear about something: **I am not a financial advisor.** Nothing in this episode — or anywhere on this podcast — constitutes financial advice.
+
+> Everything I'm sharing today is **experimental.** I'm building this system in public, testing it with my own money, and documenting the journey. This is educational content about how I'm approaching a personal project.
+
+> **Do not trade based on anything I say.** Do your own research. Consult a licensed financial professional before making any investment decisions. Past performance doesn't guarantee future results. You can lose money — possibly all of it.
+
+> I'm sharing this because I think the process is interesting, not because I think you should copy me. Clear? Okay. Let's go.
 
 ---
 
@@ -143,6 +154,14 @@
 > So that's why I built it. That's why I'm sharing this with you. Because I'm betting my family's financial future on this system working.
 
 > If that sounds dramatic... good. It should. This isn't a game to me.
+
+*(beat)*
+
+> And if you want to follow along with how this experiment unfolds — whether the system works or crashes and burns — I publish daily updates in a newsletter called **"Today's Plays."** Every day, the system generates its signals. Every day, I document what it says. You can track the wins, the losses, and everything in between.
+
+> Link in the show notes. It's free. I'll remind you again at the end.
+
+> Now let me explain how the system actually works.
 
 ---
 
@@ -329,6 +348,16 @@
 
 > Every BUY signal also comes with a stop-loss based on Fibonacci retracements and profit targets based on projections. No emotion. Just math.
 
+*(beat)*
+
+> **This is exactly what you get in the "Today's Plays" newsletter.** Every morning before market open, I publish the system's signals — what's showing BUY, what's showing HOLD, what's in WATCH mode. I show the confidence levels, the entry zones, the targets.
+
+> And here's the key: I also track performance. Did last week's BUY signals hit their targets? Did the stops get triggered? What's the running accuracy?
+
+> It's a real-time window into whether this system actually works. I'm not hiding the losses. I'm documenting everything — because that's the only way to know if this is real or if I'm fooling myself.
+
+> Again, **this is all experimental.** I'm not telling you to trade these signals. I'm showing you my process. But if you want to follow along and see how it plays out — link in the show notes.
+
 ---
 
 ## SECTION 6: The Agent Fleet — AI That Works for You (5 min)
@@ -436,11 +465,21 @@
 
 ---
 
-## CALL TO ACTION (30 sec)
+## CALL TO ACTION (45 sec)
 
-> If you want to see this system in action, I'm going to share the architecture in the newsletter this week. The actual code. The prompt templates. The agent configurations. The research papers we incorporated.
+> If you want to follow this experiment in real-time, subscribe to **"Today's Plays"** — my daily newsletter where I publish the MRE system's signals before market open.
 
-> Link in the show notes. Subscribe if you haven't.
+> Every day, you'll see: What's showing BUY. What's in HOLD mode. What the confidence levels are. What the Fibonacci entry zones and targets look like.
+
+> And more importantly, you'll see the results. Did the signals work? What's the running accuracy? Am I beating buy-and-hold, or am I fooling myself?
+
+> This is a live experiment. I'm not cherry-picking wins. I'm showing you everything — the good, the bad, and the lessons learned. If this system is going to replace my income in 5-10 years, I need to know if it actually works. And now you can follow along.
+
+> Link is in the show notes. It's free.
+
+> **One more time for the lawyers:** I am not a financial advisor. This is not financial advice. Everything I'm sharing is experimental and educational. Don't trade based on my signals. Do your own research. Past performance doesn't guarantee anything. You can lose money.
+
+> But if you're curious about the process — the architecture, the code, the agent configurations, the research papers — that's all in the newsletter too. Subscribe and I'll send it to you.
 
 > And if you're building something similar — trading, research, operations — I'd love to hear about it. Reply to the newsletter or find me on X. Let's compare notes.
 

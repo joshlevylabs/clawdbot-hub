@@ -1,16 +1,19 @@
 {
   "current": {
-    "power": 0,
-    "safety": 0,
-    "quadrant": "unknown",
-    "count": 0
+    "power": 0.29,
+    "safety": 0.71,
+    "quadrant": "topRight",
+    "quadrantName": "Secure Leadership",
+    "inIdealZone": false,
+    "count": 7,
+    "calculatedAt": "2026-02-06T16:54:06.486672"
   },
   "trend": {
-    "power": 0,
-    "safety": 0
+    "power": 0.29,
+    "safety": 0.71
   },
-  "recentCount": 0,
-  "totalCount": 0,
+  "recentCount": 7,
+  "totalCount": 7,
   "quadrants": {
     "topRight": {
       "name": "Secure Leadership Partnership",

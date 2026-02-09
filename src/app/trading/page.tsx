@@ -316,7 +316,7 @@ export default function TradingPage() {
   const [error, setError] = useState<string | null>(null);
   const [dataSource, setDataSource] = useState<"supabase" | "static">("supabase");
   const [marketStatus] = useState(getMarketStatus());
-  const [activeTab, setActiveTab] = useState<"overview" | "trades" | "signals">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "positions" | "trades" | "signals">("overview");
 
   // Legacy state for ActionsDashboard compatibility
   const [legacyPositions, setLegacyPositions] = useState<{ symbol: string; qty: number; entry_price: number }[]>([]);
@@ -486,7 +486,7 @@ export default function TradingPage() {
 
         {/* Tab Nav */}
         <div className="flex gap-1 bg-slate-800/50 rounded-lg p-1 w-fit">
-          {(["overview", "trades", "signals"] as const).map((tab) => (
+          {(["overview", "positions", "trades", "signals"] as const).map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -601,8 +601,20 @@ export default function TradingPage() {
               }}
             />
 
-            {/* Open Positions */}
-            {positions.length > 0 && (
+            {/* Signal Accuracy */}
+            {signalStats && <SignalAccuracyPanel stats={signalStats} />}
+          </>
+        )}
+
+        {/* ===== POSITIONS TAB ===== */}
+        {activeTab === "positions" && (
+          <>
+            {positions.length === 0 ? (
+              <div className="bg-slate-800/50 rounded-xl p-12 border border-slate-700/50 text-center">
+                <Database className="w-8 h-8 text-slate-600 mx-auto mb-3" />
+                <p className="text-slate-400">No open positions</p>
+              </div>
+            ) : (
               <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50">
                 <h2 className="text-lg font-semibold text-slate-100 mb-4 flex items-center gap-2">
                   <Activity className="w-5 h-5 text-primary-400" />
@@ -613,10 +625,15 @@ export default function TradingPage() {
                     <thead>
                       <tr className="text-xs text-slate-500 uppercase border-b border-slate-700">
                         <th className="text-left py-2 px-2">Symbol</th>
+                        <th className="text-left py-2 px-2">Regime</th>
                         <th className="text-right py-2 px-2">Qty</th>
                         <th className="text-right py-2 px-2">Entry</th>
                         <th className="text-right py-2 px-2">Current</th>
-                        <th className="text-right py-2 px-2">P/L</th>
+                        <th className="text-right py-2 px-2">P/L ($)</th>
+                        <th className="text-right py-2 px-2">P/L (%)</th>
+                        <th className="text-right py-2 px-2">Value</th>
+                        <th className="text-right py-2 px-2">% of Portfolio</th>
+                        <th className="text-right py-2 px-2">Confidence</th>
                         <th className="text-right py-2 px-2">Stop</th>
                         <th className="text-right py-2 px-2">Target</th>
                         <th className="text-right py-2 px-2">Days</th>
@@ -630,27 +647,47 @@ export default function TradingPage() {
                         const unrealizedPnlPct = ((currentPrice - pos.entry_price) / pos.entry_price) * 100;
                         const isProfit = unrealizedPnl >= 0;
                         const holdDays = daysSince(pos.opened_at);
+                        const posValue = pos.qty * currentPrice;
+                        const portfolioPct = equity > 0 ? (posValue / equity) * 100 : 0;
 
                         return (
                           <tr key={pos.id} className="border-b border-slate-800 hover:bg-slate-800/50">
                             <td className="py-3 px-2">
                               <span className="font-bold text-slate-100">{pos.symbol}</span>
+                              {pos.notes && <p className="text-[10px] text-slate-600 mt-0.5 truncate max-w-[120px]">{pos.notes}</p>}
+                            </td>
+                            <td className="py-3 px-2">
                               {pos.signal_regime && (
-                                <span className={`ml-2 text-xs px-1.5 py-0.5 rounded ${
-                                  pos.signal_regime === "bull" ? "bg-emerald-900/50 text-emerald-400" :
-                                  pos.signal_regime === "bear" ? "bg-red-900/50 text-red-400" :
-                                  "bg-slate-700 text-slate-400"
+                                <span className={`text-xs px-2 py-0.5 rounded-lg border font-medium capitalize ${
+                                  pos.signal_regime === "bull" ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/40" :
+                                  pos.signal_regime === "bear" ? "bg-red-500/20 text-red-400 border-red-500/40" :
+                                  "bg-amber-500/20 text-amber-400 border-amber-500/40"
                                 }`}>
-                                  {pos.signal_regime}
+                                  {pos.signal_regime === "bull" ? "🟢" : pos.signal_regime === "bear" ? "🔴" : "🟡"} {pos.signal_regime}
                                 </span>
                               )}
                             </td>
                             <td className="py-3 px-2 text-right font-mono text-slate-300">{pos.qty}</td>
                             <td className="py-3 px-2 text-right font-mono text-slate-400">${formatCurrency(pos.entry_price)}</td>
                             <td className="py-3 px-2 text-right font-mono text-slate-300">${formatCurrency(currentPrice)}</td>
-                            <td className={`py-3 px-2 text-right font-mono ${isProfit ? "text-emerald-400" : "text-red-400"}`}>
+                            <td className={`py-3 px-2 text-right font-mono font-bold ${isProfit ? "text-emerald-400" : "text-red-400"}`}>
                               {isProfit ? "+" : ""}${formatCurrency(unrealizedPnl)}
-                              <br /><span className="text-xs">{formatPercent(unrealizedPnlPct)}</span>
+                            </td>
+                            <td className={`py-3 px-2 text-right font-mono ${isProfit ? "text-emerald-400" : "text-red-400"}`}>
+                              {formatPercent(unrealizedPnlPct)}
+                            </td>
+                            <td className="py-3 px-2 text-right font-mono text-slate-300">${formatCurrency(posValue)}</td>
+                            <td className="py-3 px-2 text-right font-mono text-slate-400">{portfolioPct.toFixed(1)}%</td>
+                            <td className="py-3 px-2 text-right">
+                              {pos.signal_confidence ? (
+                                <div className="flex items-center justify-end gap-1.5">
+                                  <div className="w-12 h-1.5 bg-slate-700 rounded-full overflow-hidden">
+                                    <div className={`h-full rounded-full ${pos.signal_confidence >= 70 ? "bg-emerald-500" : pos.signal_confidence >= 50 ? "bg-amber-500" : "bg-red-500"}`}
+                                      style={{ width: `${pos.signal_confidence}%` }} />
+                                  </div>
+                                  <span className="text-xs text-slate-400">{pos.signal_confidence}%</span>
+                                </div>
+                              ) : <span className="text-xs text-slate-600">—</span>}
                             </td>
                             <td className="py-3 px-2 text-right font-mono text-red-400/70">
                               {pos.stop_loss ? `$${formatCurrency(pos.stop_loss)}` : "—"}
@@ -663,23 +700,40 @@ export default function TradingPage() {
                               {pos.hold_days && <span className="text-xs text-slate-600">/{pos.hold_days}</span>}
                             </td>
                             <td className="py-3 px-2 text-center">
-                              {pos.auto_tracked ? (
-                                <Zap className="w-4 h-4 text-primary-400 mx-auto" />
-                              ) : (
-                                <span className="text-xs text-slate-600">—</span>
-                              )}
+                              {pos.auto_tracked ? <Zap className="w-4 h-4 text-primary-400 mx-auto" /> : <span className="text-xs text-slate-600">—</span>}
                             </td>
                           </tr>
                         );
                       })}
                     </tbody>
+                    <tfoot>
+                      <tr className="border-t-2 border-slate-600 bg-slate-800/80 font-bold">
+                        <td className="py-3 px-2 text-slate-100">Total</td>
+                        <td></td>
+                        <td></td>
+                        <td className="py-3 px-2 text-right font-mono text-slate-400">
+                          ${formatCurrency(positions.reduce((s, p) => s + p.entry_price * p.qty, 0))}
+                        </td>
+                        <td></td>
+                        <td className={`py-3 px-2 text-right font-mono ${totalPnl >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+                          {totalPnl >= 0 ? "+" : ""}${formatCurrency(totalPnl)}
+                        </td>
+                        <td className={`py-3 px-2 text-right font-mono ${totalPnl >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+                          {formatPercent(totalPnlPct)}
+                        </td>
+                        <td className="py-3 px-2 text-right font-mono text-slate-200">${formatCurrency(positionsValue)}</td>
+                        <td className="py-3 px-2 text-right font-mono text-slate-400">
+                          {equity > 0 ? ((positionsValue / equity) * 100).toFixed(1) : "0"}%
+                        </td>
+                        <td colSpan={5} className="py-3 px-2 text-right text-sm text-slate-500">
+                          Cash: ${formatCurrency(cash)} ({equity > 0 ? ((cash / equity) * 100).toFixed(1) : 100}%)
+                        </td>
+                      </tr>
+                    </tfoot>
                   </table>
                 </div>
               </div>
             )}
-
-            {/* Signal Accuracy */}
-            {signalStats && <SignalAccuracyPanel stats={signalStats} />}
           </>
         )}
 

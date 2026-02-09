@@ -65,6 +65,111 @@ export async function GET(request: NextRequest) {
   }
 }
 
+export async function POST(request: NextRequest) {
+  const authenticated = await getSession();
+  if (!authenticated) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  if (!isPaperSupabaseConfigured()) {
+    return NextResponse.json({ error: 'Paper trading Supabase not configured' }, { status: 500 });
+  }
+
+  try {
+    const body = await request.json();
+    const { symbol, side, qty, price, target, stop } = body;
+
+    if (!symbol || !side || !qty || !price) {
+      return NextResponse.json({ error: 'Missing required fields: symbol, side, qty, price' }, { status: 400 });
+    }
+
+    if (side === 'buy') {
+      // Open a new position
+      const { data, error } = await paperSupabase
+        .from('paper_positions')
+        .insert({
+          symbol,
+          qty,
+          entry_price: price,
+          current_price: price,
+          target_price: target || null,
+          stop_price: stop || null,
+          opened_at: new Date().toISOString(),
+          status: 'open',
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      // Deduct cash from config
+      const cost = qty * price;
+      try {
+        const { data: config } = await paperSupabase
+          .from('paper_trading_config')
+          .select('*')
+          .limit(1)
+          .single();
+        if (config) {
+          await paperSupabase
+            .from('paper_trading_config')
+            .update({ cash: ((config as Record<string, number>).cash || 100000) - cost })
+            .limit(1);
+        }
+      } catch { /* cash tracking optional */ }
+
+      return NextResponse.json({ success: true, trade: data, side: 'buy' });
+
+    } else if (side === 'sell') {
+      // Close position — find open position for this symbol
+      const { data: position } = await paperSupabase
+        .from('paper_positions')
+        .select('*')
+        .eq('symbol', symbol)
+        .eq('status', 'open')
+        .limit(1)
+        .single();
+
+      if (!position) {
+        return NextResponse.json({ error: `No open position for ${symbol}` }, { status: 404 });
+      }
+
+      // Record the trade
+      const pnl = (price - position.entry_price) * position.qty;
+      const { data: trade, error: tradeErr } = await paperSupabase
+        .from('paper_trades')
+        .insert({
+          symbol,
+          side: 'sell',
+          qty: position.qty,
+          entry_price: position.entry_price,
+          exit_price: price,
+          pnl,
+          pnl_pct: ((price - position.entry_price) / position.entry_price) * 100,
+          opened_at: position.opened_at,
+          closed_at: new Date().toISOString(),
+        })
+        .select()
+        .single();
+
+      if (tradeErr) throw tradeErr;
+
+      // Mark position closed
+      await paperSupabase
+        .from('paper_positions')
+        .update({ status: 'closed', current_price: price })
+        .eq('id', position.id);
+
+      return NextResponse.json({ success: true, trade, side: 'sell', pnl });
+    }
+
+    return NextResponse.json({ error: 'Invalid side. Use "buy" or "sell".' }, { status: 400 });
+  } catch (err) {
+    console.error('Paper trading POST error:', err);
+    return NextResponse.json({ error: 'Trade execution failed' }, { status: 500 });
+  }
+}
+
 interface SignalStats {
   overall: {
     total: number;

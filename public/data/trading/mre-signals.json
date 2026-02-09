@@ -1,9 +1,9 @@
 {
-  "timestamp": "2026-02-08T10:00:49.683209",
-  "last_updated": "2026-02-08 10:00:49",
-  "last_updated_unix": 1770573649,
+  "timestamp": "2026-02-09T03:31:28.638690",
+  "last_updated": "2026-02-09 03:31:28",
+  "last_updated_unix": 1770636688,
   "fear_greed": {
-    "current": 44.8857142857143,
+    "current": 43.7632653061224,
     "rating": "fear",
     "is_fear": false,
     "is_extreme_fear": false,
@@ -11,11 +11,6 @@
     "is_extreme_greed": false,
     "source": "cnn",
     "history": [
-      {
-        "date": "2025-12-24",
-        "score": 85,
-        "vix": 13.47
-      },
       {
         "date": "2025-12-26",
         "score": 85,
@@ -160,11 +155,16 @@
         "date": "2026-02-06",
         "score": 45,
         "vix": 20.37
+      },
+      {
+        "date": "2026-02-09",
+        "score": 65,
+        "vix": 18.9
       }
     ],
     "breakdown": {
-      "aggregate_score": 51.7,
-      "rating": "Neutral",
+      "aggregate_score": 55.1,
+      "rating": "Greed",
       "components": [
         {
           "name": "Stock Price Momentum",
@@ -189,10 +189,10 @@
         },
         {
           "name": "Put/Call Ratio",
-          "score": 53.5,
+          "score": 61.7,
           "signal": "NEUTRAL",
-          "description": "VIX at 20.4 (proxy for options sentiment)",
-          "raw_value": 20.4
+          "description": "VIX at 18.9 (proxy for options sentiment)",
+          "raw_value": 18.9
         },
         {
           "name": "Junk Bond Demand",
@@ -203,10 +203,10 @@
         },
         {
           "name": "Market Volatility",
-          "score": 7.2,
+          "score": 22.4,
           "signal": "FEAR",
-          "description": "VIX 20.4 is +25.7% vs 50-day MA (16.2)",
-          "raw_value": 25.7
+          "description": "VIX 18.9 is +16.6% vs 50-day MA (16.2)",
+          "raw_value": 16.6
         },
         {
           "name": "Safe Haven Demand",
@@ -281,13 +281,6 @@
     "global": "bull",
     "outliers": [
       {
-        "symbol": "XLF",
-        "asset_regime": "sideways",
-        "market_regime": "bull",
-        "reason": "XLF consolidating while market trending - watch for breakout",
-        "action": "Monitor closely"
-      },
-      {
         "symbol": "XLK",
         "asset_regime": "bear",
         "market_regime": "bull",
@@ -309,9 +302,9 @@
         "signal": "HOLD",
         "signal_strength": 0.0,
         "fear_threshold": 18,
-        "current_fg": 44.8857142857143,
+        "current_fg": 43.7632653061224,
         "regime": "bull",
-        "regime_weight": 0.5,
+        "regime_weight": 1.0,
         "hold_days": 10,
         "expected_sharpe": 10.65,
         "expected_accuracy": 70.6,
@@ -324,7 +317,7 @@
         "cluster_limited": false,
         "international_priority": false,
         "sma_period": 100,
-        "version": "v8",
+        "version": "v9",
         "fibonacci": {
           "symbol": "SPY",
           "current_price": 690.6199951171875,
@@ -379,9 +372,9 @@
         "signal": "HOLD",
         "signal_strength": 0.0,
         "fear_threshold": 18,
-        "current_fg": 44.8857142857143,
+        "current_fg": 43.7632653061224,
         "regime": "bull",
-        "regime_weight": 0.5,
+        "regime_weight": 1.0,
         "hold_days": 20,
         "expected_sharpe": 25.8,
         "expected_accuracy": 61.3,
@@ -394,7 +387,7 @@
         "cluster_limited": false,
         "international_priority": false,
         "sma_period": 200,
-        "version": "v8",
+        "version": "v9",
         "fibonacci": {
           "symbol": "GLD",
           "current_price": 455.4599914550781,
@@ -449,9 +442,9 @@
         "signal": "HOLD",
         "signal_strength": 0.0,
         "fear_threshold": 18,
-        "current_fg": 44.8857142857143,
-        "regime": "sideways",
-        "regime_weight": 1.5,
+        "current_fg": 43.7632653061224,
+        "regime": "bull",
+        "regime_weight": 1.0,
         "hold_days": 5,
         "expected_sharpe": 15.52,
         "expected_accuracy": 65.0,
@@ -463,8 +456,8 @@
         "sideways_applied": false,
         "cluster_limited": false,
         "international_priority": false,
-        "sma_period": 50,
-        "version": "v8",
+        "sma_period": 100,
+        "version": "v9",
         "fibonacci": {
           "symbol": "XLF",
           "current_price": 54.2599983215332,
@@ -495,22 +488,22 @@
           ]
         },
         "regime_details": {
-          "regime": "sideways",
+          "regime": "bull",
           "price": 54.26,
           "ema_20": 53.89,
           "ema_50": 53.9,
-          "ema_slow": 53.9,
+          "ema_slow": 53.47,
           "ema_200": 52.8,
           "above_ema_20": true,
           "above_ema_50": true,
           "above_ema_200": true,
           "regime_days": 2,
           "regime_stage": "early",
-          "predicted_remaining_days": 43,
+          "predicted_remaining_days": 248,
           "confidence": 40,
           "momentum_20d": -2.64,
-          "ema_spread_pct": 0.02,
-          "sma_period": 50
+          "ema_spread_pct": 0.79,
+          "sma_period": 100
         }
       },
       {
@@ -519,7 +512,7 @@
         "signal": "HOLD",
         "signal_strength": 0.0,
         "fear_threshold": 18,
-        "current_fg": 44.8857142857143,
+        "current_fg": 43.7632653061224,
         "regime": "bear",
         "regime_weight": 1.0,
         "hold_days": 5,
@@ -534,7 +527,7 @@
         "cluster_limited": false,
         "international_priority": false,
         "sma_period": 50,
-        "version": "v8",
+        "version": "v9",
         "fibonacci": {
           "symbol": "XLK",
           "current_price": 141.1300048828125,
@@ -589,9 +582,9 @@
         "signal": "HOLD",
         "signal_strength": 0.0,
         "fear_threshold": 18,
-        "current_fg": 44.8857142857143,
+        "current_fg": 43.7632653061224,
         "regime": "bull",
-        "regime_weight": 0.5,
+        "regime_weight": 1.0,
         "hold_days": 10,
         "expected_sharpe": 14.22,
         "expected_accuracy": 68.0,
@@ -604,7 +597,7 @@
         "cluster_limited": false,
         "international_priority": false,
         "sma_period": 50,
-        "version": "v8",
+        "version": "v9",
         "fibonacci": {
           "symbol": "XLV",
           "current_price": 157.7100067138672,
@@ -659,9 +652,9 @@
         "signal": "HOLD",
         "signal_strength": 0.0,
         "fear_threshold": 18,
-        "current_fg": 44.8857142857143,
+        "current_fg": 43.7632653061224,
         "regime": "bull",
-        "regime_weight": 0.5,
+        "regime_weight": 1.0,
         "hold_days": 20,
         "expected_sharpe": 18.55,
         "expected_accuracy": 51.8,
@@ -674,7 +667,7 @@
         "cluster_limited": false,
         "international_priority": false,
         "sma_period": 200,
-        "version": "v8",
+        "version": "v9",
         "fibonacci": {
           "symbol": "TLT",
           "current_price": 87.54000091552734,
@@ -729,9 +722,9 @@
         "signal": "HOLD",
         "signal_strength": 0.0,
         "fear_threshold": 18,
-        "current_fg": 44.8857142857143,
+        "current_fg": 43.7632653061224,
         "regime": "bull",
-        "regime_weight": 0.5,
+        "regime_weight": 1.0,
         "hold_days": 20,
         "expected_sharpe": 8.36,
         "expected_accuracy": 63.9,
@@ -744,7 +737,7 @@
         "cluster_limited": false,
         "international_priority": false,
         "sma_period": 100,
-        "version": "v8",
+        "version": "v9",
         "fibonacci": {
           "symbol": "VNQ",
           "current_price": 92.25,
@@ -799,9 +792,9 @@
         "signal": "HOLD",
         "signal_strength": 0.0,
         "fear_threshold": 18,
-        "current_fg": 44.8857142857143,
+        "current_fg": 43.7632653061224,
         "regime": "bull",
-        "regime_weight": 0.5,
+        "regime_weight": 1.0,
         "hold_days": 10,
         "expected_sharpe": 11.87,
         "expected_accuracy": 74.7,
@@ -814,7 +807,7 @@
         "cluster_limited": false,
         "international_priority": true,
         "sma_period": 200,
-        "version": "v8",
+        "version": "v9",
         "fibonacci": {
           "symbol": "EFA",
           "current_price": 102.61000061035156,
@@ -869,9 +862,9 @@
         "signal": "HOLD",
         "signal_strength": 0.0,
         "fear_threshold": 22,
-        "current_fg": 44.8857142857143,
+        "current_fg": 43.7632653061224,
         "regime": "bull",
-        "regime_weight": 0.5,
+        "regime_weight": 1.0,
         "hold_days": 20,
         "expected_sharpe": 4.74,
         "expected_accuracy": 68.8,
@@ -884,7 +877,7 @@
         "cluster_limited": false,
         "international_priority": false,
         "sma_period": 100,
-        "version": "v8",
+        "version": "v9",
         "fibonacci": {
           "symbol": "XLE",
           "current_price": 53.25,
@@ -1445,8 +1438,8 @@
     "kalshi": {
       "available": true,
       "signal": "NEUTRAL",
-      "confidence": 25,
-      "expected_price": 6931.089693589744,
+      "confidence": 29,
+      "expected_price": 6938.8332833333325,
       "implied_range": [
         6925.0,
         6949.9999
@@ -1455,27 +1448,27 @@
       "top_markets": [
         {
           "ticker": "KXINX-26FEB09H1600-B6937",
-          "yes_bid": 25,
+          "yes_bid": 29,
           "range_low": 6925.0,
           "range_high": 6949.9999,
           "midpoint": 6937.499949999999
         },
         {
-          "ticker": "KXINX-26FEB09H1600-B6912",
-          "yes_bid": 12,
-          "range_low": 6900.0,
-          "range_high": 6924.9999,
-          "midpoint": 6912.499949999999
-        },
-        {
-          "ticker": "KXINX-26FEB13H1600-B6962",
-          "yes_bid": 2,
+          "ticker": "KXINX-26FEB09H1600-B6962",
+          "yes_bid": 25,
           "range_low": 6950.0,
           "range_high": 6974.9999,
           "midpoint": 6962.499949999999
+        },
+        {
+          "ticker": "KXINX-26FEB09H1600-B6912",
+          "yes_bid": 21,
+          "range_low": 6900.0,
+          "range_high": 6924.9999,
+          "midpoint": 6912.499949999999
         }
       ],
-      "timestamp": "2026-02-08T18:00:44.067831+00:00",
+      "timestamp": "2026-02-09T11:31:22.603227+00:00",
       "historical_accuracy": 96.6,
       "source": "kalshi",
       "cached": false
@@ -1489,45 +1482,45 @@
         {
           "title": "Who will Trump nominate as Fed Chair?",
           "probability": null,
-          "liquidity": 52569108.79615,
-          "volume": 427881882.366363,
+          "liquidity": 54740351.07821,
+          "volume": 431960093.675796,
           "id": "35908"
         },
         {
           "title": "Will China invade Taiwan by end of 2026?",
           "probability": null,
-          "liquidity": 579049.0398,
-          "volume": 8272883.093629,
+          "liquidity": 519015.2377,
+          "volume": 8353305.063226,
           "id": "34044"
         },
         {
           "title": "MegaETH market cap (FDV) one day after launch?",
           "probability": null,
-          "liquidity": 264757.22324,
-          "volume": 10690605.975995,
+          "liquidity": 326820.57361,
+          "volume": 10853593.361335,
           "id": "28999"
         },
         {
           "title": "MicroStrategy sells any Bitcoin by ___ ?",
           "probability": null,
-          "liquidity": 229657.92105,
-          "volume": 20123802.966724,
+          "liquidity": 206815.14259,
+          "volume": 20244017.226324,
           "id": "16167"
         },
         {
           "title": "How much revenue will the U.S. raise from tariffs in 2025?",
           "probability": null,
-          "liquidity": 159608.67762,
-          "volume": 6052840.447755,
+          "liquidity": 178006.41887,
+          "volume": 6164287.979347,
           "id": "22862"
         }
       ],
-      "timestamp": "2026-02-08T18:00:44.459375+00:00",
+      "timestamp": "2026-02-09T11:31:22.882038+00:00",
       "source": "polymarket"
     }
   },
   "meta": {
-    "version": "v8",
+    "version": "v9",
     "backtests": 4113,
     "key_insight": "Fear signals 65.6% accurate, Greed only 30.6%",
     "features": [
@@ -1546,7 +1539,10 @@
       "[v7] Kalshi weight: 0.35 (boosted integration)",
       "[v7] Bonds sell_enabled=False (full sell block)",
       "[v8] Per-asset SMA periods (SPY:100, GLD:200, EFA:200, TLT:200, VNQ:100, XLE:100)",
-      "[v8] Divergence pair signals: SPY/XLF (87% revert), IYR/TLT (86.3% revert)"
+      "[v8] Divergence pair signals: SPY/XLF (87% revert), IYR/TLT (86.3% revert)",
+      "[v9] min_regime_days=3: Regime persists 3+ days before weights/penalties apply",
+      "[v9] XLF SMA 50\u2192100: Removes false sideways penalty on financials",
+      "[v9] kalshi_weight 0.35\u21920.25: Calibrated to directional accuracy (~65-70%)"
     ],
     "last_optimization": "2026-02-09"
   }

@@ -668,7 +668,25 @@ export default function TradingPage() {
             <ActionsDashboard
               positions={legacyPositions}
               cash={cash}
-              tradingEnabled={false}
+              tradingEnabled={true}
+              onTrade={async (symbol, side, qty, price, target, stop) => {
+                try {
+                  const res = await fetch("/api/paper-trading", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ symbol, side, qty, price, target, stop }),
+                  });
+                  if (!res.ok) {
+                    const err = await res.json();
+                    alert(`Trade failed: ${err.error}`);
+                    return;
+                  }
+                  // Refresh data after trade
+                  loadFromSupabase();
+                } catch (err) {
+                  alert(`Trade error: ${err}`);
+                }
+              }}
             />
 
             {/* Equity Curve */}

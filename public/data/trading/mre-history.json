@@ -89,5 +89,19 @@
     "regime": "bull",
     "buy_signals": 0,
     "diverged_pairs": 0
+  },
+  {
+    "timestamp": "2026-02-09T02:32:49.240656",
+    "fg_score": 44.1714285714286,
+    "regime": "bull",
+    "buy_signals": 0,
+    "diverged_pairs": 0
+  },
+  {
+    "timestamp": "2026-02-09T03:31:28.642036",
+    "fg_score": 43.7632653061224,
+    "regime": "bull",
+    "buy_signals": 0,
+    "diverged_pairs": 0
   }
 ]

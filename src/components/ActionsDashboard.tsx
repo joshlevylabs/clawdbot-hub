@@ -383,9 +383,6 @@ export default function ActionsDashboard({
 
   return (
     <div className="space-y-4">
-      {/* Performance vs S&P 500 */}
-      <PerformanceChart snapshots={snapshots} compact />
-
       {/* Main Actions Panel */}
       <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 rounded-xl border border-primary-500/30 overflow-hidden">
         {/* Header */}
@@ -420,6 +417,7 @@ export default function ActionsDashboard({
                     <th className="text-left py-2 px-2">Price</th>
                     <th className="text-left py-2 px-2">Signal</th>
                     <th className="text-left py-2 px-2">Position</th>
+                    <th className="text-right py-2 px-2">Total P&L</th>
                     <th className="text-left py-2 px-2">Entry</th>
                     <th className="text-left py-2 px-2">Stop</th>
                     <th className="text-left py-2 px-2">Target</th>
@@ -454,6 +452,25 @@ export default function ActionsDashboard({
                               <p className="text-slate-500">@ ${position.entry_price.toFixed(2)}</p>
                             </div>
                           ) : (
+                            <span className="text-xs text-slate-500">—</span>
+                          )}
+                        </td>
+                        <td className="py-3 px-2 text-right">
+                          {hasPosition ? (() => {
+                            const pnl = (item.currentPrice - position.entry_price) * position.qty;
+                            const pnlPct = ((item.currentPrice - position.entry_price) / position.entry_price) * 100;
+                            const isUp = pnl >= 0;
+                            return (
+                              <div className="text-xs font-mono">
+                                <span className={isUp ? "text-emerald-400" : "text-red-400"}>
+                                  {isUp ? "+" : ""}${pnl.toFixed(2)}
+                                </span>
+                                <p className={isUp ? "text-emerald-400/70" : "text-red-400/70"}>
+                                  {isUp ? "+" : ""}{pnlPct.toFixed(2)}%
+                                </p>
+                              </div>
+                            );
+                          })() : (
                             <span className="text-xs text-slate-500">—</span>
                           )}
                         </td>
@@ -500,6 +517,49 @@ export default function ActionsDashboard({
                     );
                   })}
                 </tbody>
+                {/* Portfolio Totals Footer */}
+                {positions.length > 0 && (() => {
+                  const totalPnl = positions.reduce((sum, pos) => {
+                    const asset = actions.find(a => a.symbol === pos.symbol);
+                    const currentPrice = asset?.currentPrice || pos.entry_price;
+                    return sum + (currentPrice - pos.entry_price) * pos.qty;
+                  }, 0);
+                  const totalCost = positions.reduce((sum, pos) => sum + pos.entry_price * pos.qty, 0);
+                  const totalPnlPct = totalCost > 0 ? (totalPnl / totalCost) * 100 : 0;
+                  const totalValue = positions.reduce((sum, pos) => {
+                    const asset = actions.find(a => a.symbol === pos.symbol);
+                    const currentPrice = asset?.currentPrice || pos.entry_price;
+                    return sum + currentPrice * pos.qty;
+                  }, 0);
+                  const isUp = totalPnl >= 0;
+                  return (
+                    <tfoot>
+                      <tr className="border-t-2 border-slate-600 bg-slate-800/80">
+                        <td className="py-3 px-2 font-bold text-slate-100">Portfolio Total</td>
+                        <td className="py-3 px-2 font-mono text-sm text-slate-200">${totalValue.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                        <td className="py-3 px-2">
+                          <span className="text-xs text-slate-400">{positions.length} positions</span>
+                        </td>
+                        <td className="py-3 px-2 text-xs text-slate-400">
+                          ${totalCost.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} invested
+                        </td>
+                        <td className="py-3 px-2 text-right">
+                          <div className="font-mono font-bold">
+                            <span className={`text-sm ${isUp ? "text-emerald-400" : "text-red-400"}`}>
+                              {isUp ? "+" : ""}${totalPnl.toFixed(2)}
+                            </span>
+                            <p className={`text-xs ${isUp ? "text-emerald-400/70" : "text-red-400/70"}`}>
+                              {isUp ? "+" : ""}{totalPnlPct.toFixed(2)}%
+                            </p>
+                          </div>
+                        </td>
+                        <td colSpan={4} className="py-3 px-2 text-right text-xs text-slate-500">
+                          Cash: ${cash.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </td>
+                      </tr>
+                    </tfoot>
+                  );
+                })()}
               </table>
             </div>
           )}

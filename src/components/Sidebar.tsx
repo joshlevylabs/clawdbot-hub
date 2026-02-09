@@ -8,7 +8,6 @@ import {
   Link2,
   Zap,
   Settings,
-  BarChart2,
   Menu,
   X,
   LogOut,
@@ -19,16 +18,13 @@ import {
   Users,
   MessageSquare,
   TrendingUp,
-  Gauge,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 const navItems = [
   { href: "/dashboard", icon: Sunrise, label: "Dashboard" },
   { href: "/morning-brief", icon: Clock, label: "Morning Brief" },
-  { href: "/markets", icon: BarChart2, label: "Markets" },
-  { href: "/mre", icon: Gauge, label: "MRE Signals" },
-  { href: "/trading", icon: TrendingUp, label: "Paper Trading" },
+  { href: "/trading", icon: TrendingUp, label: "Trading" },
   { href: "/podcast", icon: Mic, label: "Podcast" },
   { href: "/family", icon: Users, label: "Family" },
   { href: "/marriage", icon: Heart, label: "Marriage" },

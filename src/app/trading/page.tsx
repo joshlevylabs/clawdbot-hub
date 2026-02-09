@@ -19,9 +19,13 @@ import {
   AlertTriangle,
   Zap,
   Database,
+  Gauge,
+  BarChart2,
 } from "lucide-react";
 import ActionsDashboard from "@/components/ActionsDashboard";
 import PerformanceChart from "@/components/PerformanceChart";
+import MREDashboard from "./MREDashboard";
+import MarketsOverview from "./MarketsOverview";
 
 // ===== Types =====
 
@@ -308,94 +312,31 @@ function SignalAccuracyPanel({ stats }: { stats: SignalStats }) {
   );
 }
 
-// ===== Main Page =====
+// ===== Portfolio Tab Component =====
 
-export default function TradingPage() {
-  const [data, setData] = useState<PaperTradingData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [dataSource, setDataSource] = useState<"supabase" | "static">("supabase");
-  const [marketStatus] = useState(getMarketStatus());
-  const [activeTab, setActiveTab] = useState<"overview" | "positions" | "trades" | "signals">("overview");
-
-  // Legacy state for ActionsDashboard compatibility
-  const [legacyPositions, setLegacyPositions] = useState<{ symbol: string; qty: number; entry_price: number }[]>([]);
-
-  const loadFromSupabase = useCallback(async () => {
-    try {
-      const res = await fetch("/api/paper-trading");
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const json: PaperTradingData = await res.json();
-      setData(json);
-      setDataSource("supabase");
-
-      // Map positions for ActionsDashboard compatibility
-      setLegacyPositions(
-        json.positions.map((p) => ({
-          symbol: p.symbol,
-          qty: p.qty,
-          entry_price: p.entry_price,
-        }))
-      );
-    } catch (err) {
-      console.error("Supabase fetch failed, falling back to static:", err);
-      await loadFromStatic();
-    }
-  }, []);
-
-  const loadFromStatic = useCallback(async () => {
-    try {
-      const res = await fetch("/data/paper-portfolio.json");
-      if (!res.ok) throw new Error("Static file not found");
-      const portfolio = await res.json();
-
-      // Convert static format to new format
-      setData({
-        positions: portfolio.positions || [],
-        trades: portfolio.trades || [],
-        snapshots: (portfolio.performance || []).map((p: any) => ({
-          id: p.date,
-          date: p.date,
-          equity: p.equity,
-          cash: p.cash,
-          positions_value: p.equity - p.cash,
-          spy_price: p.spy_price,
-          spy_baseline: p.spy_baseline,
-        })),
-        signals: [],
-        config: {
-          starting_capital: portfolio.account?.starting_capital || 100000,
-          current_cash: portfolio.account?.cash || 100000,
-          auto_trade: false,
-          max_position_pct: 10,
-          default_stop_loss_pct: 5,
-          default_take_profit_pct: 10,
-        },
-        signalStats: {
-          overall: { total: 0, correct_5d: 0, correct_10d: 0, correct_20d: 0, accuracy_5d: 0, accuracy_10d: 0, accuracy_20d: 0, avg_outcome_5d: 0, avg_outcome_10d: 0, avg_outcome_20d: 0 },
-          bySymbol: {},
-          bySignalType: {},
-        },
-        timestamp: portfolio.updated_at || new Date().toISOString(),
-      });
-      setDataSource("static");
-      setLegacyPositions(portfolio.positions?.map((p: any) => ({ symbol: p.symbol, qty: p.qty, entry_price: p.entry_price })) || []);
-    } catch (err) {
-      setError("Failed to load trading data");
-    }
-  }, []);
-
-  const loadData = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    await loadFromSupabase();
-    setLoading(false);
-  }, [loadFromSupabase]);
-
-  useEffect(() => {
-    loadData();
-  }, [loadData]);
-
+function PortfolioTab({
+  data,
+  loading,
+  error,
+  dataSource,
+  marketStatus,
+  activeTab,
+  setActiveTab,
+  legacyPositions,
+  loadData,
+  loadFromSupabase,
+}: {
+  data: PaperTradingData | null;
+  loading: boolean;
+  error: string | null;
+  dataSource: "supabase" | "static";
+  marketStatus: { open: boolean; message: string };
+  activeTab: "overview" | "positions" | "trades" | "signals";
+  setActiveTab: (tab: "overview" | "positions" | "trades" | "signals") => void;
+  legacyPositions: { symbol: string; qty: number; entry_price: number }[];
+  loadData: () => Promise<void>;
+  loadFromSupabase: () => Promise<void>;
+}) {
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-900 flex items-center justify-center">
@@ -440,66 +381,65 @@ export default function TradingPage() {
   const profitFactor = avgLoss > 0 ? avgWin / avgLoss : avgWin > 0 ? Infinity : 0;
 
   return (
-    <div className="min-h-screen bg-slate-900 p-4 lg:p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold text-slate-100 flex items-center gap-2">
-              <BarChart3 className="w-6 h-6 text-primary-400" />
-              Paper Trading Dashboard
-            </h1>
-            <div className="flex items-center gap-3 mt-1">
-              <span className={`text-xs px-2 py-0.5 rounded-full flex items-center gap-1 ${
-                dataSource === "supabase"
-                  ? "bg-emerald-900/50 text-emerald-400"
-                  : "bg-amber-900/50 text-amber-400"
-              }`}>
-                <Database className="w-3 h-3" />
-                {dataSource === "supabase" ? "Live (Supabase)" : "Static (JSON)"}
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-100 flex items-center gap-2">
+            <BarChart3 className="w-6 h-6 text-primary-400" />
+            Paper Trading Dashboard
+          </h1>
+          <div className="flex items-center gap-3 mt-1">
+            <span className={`text-xs px-2 py-0.5 rounded-full flex items-center gap-1 ${
+              dataSource === "supabase"
+                ? "bg-emerald-900/50 text-emerald-400"
+                : "bg-amber-900/50 text-amber-400"
+            }`}>
+              <Database className="w-3 h-3" />
+              {dataSource === "supabase" ? "Live (Supabase)" : "Static (JSON)"}
+            </span>
+            <span className={`text-xs px-2 py-0.5 rounded-full ${
+              marketStatus.open
+                ? "bg-emerald-900/50 text-emerald-400"
+                : "bg-amber-900/50 text-amber-400"
+            }`}>
+              {marketStatus.open ? "🟢 " : "🔴 "}{marketStatus.message}
+            </span>
+            {config?.auto_trade && (
+              <span className="text-xs px-2 py-0.5 rounded-full bg-primary-900/50 text-primary-400">
+                <Zap className="w-3 h-3 inline" /> Auto-Trade ON
               </span>
-              <span className={`text-xs px-2 py-0.5 rounded-full ${
-                marketStatus.open
-                  ? "bg-emerald-900/50 text-emerald-400"
-                  : "bg-amber-900/50 text-amber-400"
-              }`}>
-                {marketStatus.open ? "🟢 " : "🔴 "}{marketStatus.message}
-              </span>
-              {config?.auto_trade && (
-                <span className="text-xs px-2 py-0.5 rounded-full bg-primary-900/50 text-primary-400">
-                  <Zap className="w-3 h-3 inline" /> Auto-Trade ON
-                </span>
-              )}
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={loadData}
-              disabled={loading}
-              className="flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors disabled:opacity-50"
-            >
-              <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
-              Refresh
-            </button>
+            )}
           </div>
         </div>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={loadData}
+            disabled={loading}
+            className="flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors disabled:opacity-50"
+          >
+            <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
+            Refresh
+          </button>
+        </div>
+      </div>
 
-        {/* Tab Nav */}
-        <div className="flex gap-1 bg-slate-800/50 rounded-lg p-1 w-fit">
-          {(["overview", "positions", "trades", "signals"] as const).map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors capitalize ${
-                activeTab === tab
-                  ? "bg-primary-600 text-white"
-                  : "text-slate-400 hover:text-slate-200"
-              }`}
-            >
-              {tab}
-            </button>
-          ))}
-        </div>
+      {/* Tab Nav */}
+      <div className="flex gap-1 bg-slate-800/50 rounded-lg p-1 w-fit">
+        {(["overview", "positions", "trades", "signals"] as const).map((tab) => (
+          <button
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            className={`px-4 py-2 rounded-md text-sm font-medium transition-colors capitalize ${
+              activeTab === tab
+                ? "bg-primary-600 text-white"
+                : "text-slate-400 hover:text-slate-200"
+            }`}
+          >
+            {tab}
+          </button>
+        ))}
+      </div>
 
         {/* ===== OVERVIEW TAB ===== */}
         {activeTab === "overview" && (
@@ -926,6 +866,172 @@ export default function TradingPage() {
             )}
           </>
         )}
+      </div>
+    </div>
+  );
+}
+
+// ===== Main Page =====
+
+export default function TradingPage() {
+  const [mainTab, setMainTab] = useState<"portfolio" | "mre" | "markets">("portfolio");
+
+  // Portfolio tab state
+  const [data, setData] = useState<PaperTradingData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [dataSource, setDataSource] = useState<"supabase" | "static">("supabase");
+  const [marketStatus] = useState(getMarketStatus());
+  const [activeTab, setActiveTab] = useState<"overview" | "positions" | "trades" | "signals">("overview");
+
+  // Legacy state for ActionsDashboard compatibility
+  const [legacyPositions, setLegacyPositions] = useState<{ symbol: string; qty: number; entry_price: number }[]>([]);
+
+  const loadFromStatic = useCallback(async () => {
+    try {
+      const res = await fetch("/data/paper-portfolio.json");
+      if (!res.ok) throw new Error("Static file not found");
+      const portfolio = await res.json();
+
+      // Convert static format to new format
+      setData({
+        positions: portfolio.positions || [],
+        trades: portfolio.trades || [],
+        snapshots: (portfolio.performance || []).map((p: any) => ({
+          id: p.date,
+          date: p.date,
+          equity: p.equity,
+          cash: p.cash,
+          positions_value: p.equity - p.cash,
+          spy_price: p.spy_price,
+          spy_baseline: p.spy_baseline,
+        })),
+        signals: [],
+        config: {
+          starting_capital: portfolio.account?.starting_capital || 100000,
+          current_cash: portfolio.account?.cash || 100000,
+          auto_trade: false,
+          max_position_pct: 10,
+          default_stop_loss_pct: 5,
+          default_take_profit_pct: 10,
+        },
+        signalStats: {
+          overall: { total: 0, correct_5d: 0, correct_10d: 0, correct_20d: 0, accuracy_5d: 0, accuracy_10d: 0, accuracy_20d: 0, avg_outcome_5d: 0, avg_outcome_10d: 0, avg_outcome_20d: 0 },
+          bySymbol: {},
+          bySignalType: {},
+        },
+        timestamp: portfolio.updated_at || new Date().toISOString(),
+      });
+      setDataSource("static");
+      setLegacyPositions(portfolio.positions?.map((p: any) => ({ symbol: p.symbol, qty: p.qty, entry_price: p.entry_price })) || []);
+    } catch (err) {
+      setError("Failed to load trading data");
+    }
+  }, []);
+
+  const loadFromSupabase = useCallback(async () => {
+    try {
+      const res = await fetch("/api/paper-trading");
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const json: PaperTradingData = await res.json();
+      setData(json);
+      setDataSource("supabase");
+
+      // Map positions for ActionsDashboard compatibility
+      setLegacyPositions(
+        json.positions.map((p) => ({
+          symbol: p.symbol,
+          qty: p.qty,
+          entry_price: p.entry_price,
+        }))
+      );
+    } catch (err) {
+      console.error("Supabase fetch failed, falling back to static:", err);
+      await loadFromStatic();
+    }
+  }, [loadFromStatic]);
+
+  const loadData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    await loadFromSupabase();
+    setLoading(false);
+  }, [loadFromSupabase]);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
+
+  return (
+    <div className="min-h-screen bg-slate-900 p-4 lg:p-6">
+      <div className="max-w-7xl mx-auto space-y-6">
+        {/* Header */}
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold text-slate-100 flex items-center gap-2">
+              <BarChart3 className="w-6 h-6 text-primary-400" />
+              Trading Dashboard
+            </h1>
+            <p className="text-slate-400 text-sm mt-1">Portfolio, signals, and market analysis</p>
+          </div>
+        </div>
+
+        {/* Main Tab Navigation */}
+        <div className="flex gap-1 bg-slate-800/50 rounded-lg p-1 w-fit">
+          <button
+            onClick={() => setMainTab("portfolio")}
+            className={`px-4 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-2 ${
+              mainTab === "portfolio"
+                ? "bg-primary-600 text-white"
+                : "text-slate-400 hover:text-slate-200"
+            }`}
+          >
+            <TrendingUp className="w-4 h-4" />
+            Portfolio
+          </button>
+          <button
+            onClick={() => setMainTab("mre")}
+            className={`px-4 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-2 ${
+              mainTab === "mre"
+                ? "bg-primary-600 text-white"
+                : "text-slate-400 hover:text-slate-200"
+            }`}
+          >
+            <Gauge className="w-4 h-4" />
+            MRE Signals
+          </button>
+          <button
+            onClick={() => setMainTab("markets")}
+            className={`px-4 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-2 ${
+              mainTab === "markets"
+                ? "bg-primary-600 text-white"
+                : "text-slate-400 hover:text-slate-200"
+            }`}
+          >
+            <BarChart2 className="w-4 h-4" />
+            Markets
+          </button>
+        </div>
+
+        {/* Tab Content */}
+        {mainTab === "portfolio" && (
+          <PortfolioTab
+            data={data}
+            loading={loading}
+            error={error}
+            dataSource={dataSource}
+            marketStatus={marketStatus}
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            legacyPositions={legacyPositions}
+            loadData={loadData}
+            loadFromSupabase={loadFromSupabase}
+          />
+        )}
+        
+        {mainTab === "mre" && <MREDashboard />}
+        
+        {mainTab === "markets" && <MarketsOverview />}
       </div>
     </div>
   );

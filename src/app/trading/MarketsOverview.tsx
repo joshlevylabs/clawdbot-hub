@@ -357,6 +357,7 @@ function ChartCanvas({
     return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
   };
 
+  // Simplified chart drawing for the overview
   useEffect(() => {
     if (!canvasRef.current || visibleCandles.length === 0) return;
 
@@ -395,6 +396,7 @@ function ChartCanvas({
     const maxPrice = priceCenter + scaledPriceRange / 2;
     const priceRange = scaledPriceRange;
     const pricePadding = priceRange * 0.03;
+
     // Calculate candle width based on the full view range (including empty space)
     const viewRangeSize = viewRange.end - viewRange.start;
     const candleWidth = Math.max(1, (chartWidth / viewRangeSize) - 0.5);
@@ -593,481 +595,15 @@ function ChartCanvas({
       ctx.fillRect(x - candleWidth / 2, bodyTop, candleWidth, bodyHeight);
     });
 
-    // Draw Fib point markers (A/B/C) - for both custom and default
-    const drawMarker = (globalIdx: number, label: string, color: string, priceOverride?: number) => {
-      const localIdx = globalIdx - visibleStart;
-      if (localIdx < 0 || localIdx >= visibleCandles.length) return;
-      
-      const x = scaleX(localIdx) + candleWidth / 2;
-      const candle = candles[globalIdx];
-      let y: number;
-      if (priceOverride !== undefined) {
-        y = scaleY(priceOverride);
-      } else {
-        y = label === 'A' ? scaleY(candle.low) : label === 'B' ? scaleY(candle.high) : scaleY(candle.low);
-      }
-      
-      ctx.fillStyle = color;
-      ctx.beginPath();
-      ctx.arc(x, y, 6, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = '#fff';
-      ctx.font = 'bold 9px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText(label, x, y + 3);
-    };
-
-    // Show markers when Fib is enabled (retracements OR extensions)
-    const showFibMarkers = settings.showFibRetracements || settings.showFibExtensions;
-    
-    if (showFibMarkers && fibonacci) {
-      // Use custom points if set, otherwise find from API data
-      let aIdx = fibPoints.a;
-      let bIdx = fibPoints.b;
-      let cIdx = fibPoints.c;
-      
-      // If no custom points, find indices from API fibonacci data
-      if (aIdx === null && fibonacci.low) {
-        aIdx = findCandleIndexByDate(candles, fibonacci.swingLowDate) 
-          ?? findCandleIndexByPrice(candles, fibonacci.low, 'low');
-      }
-      if (bIdx === null && fibonacci.high) {
-        bIdx = findCandleIndexByDate(candles, fibonacci.swingHighDate)
-          ?? findCandleIndexByPrice(candles, fibonacci.high, 'high');
-      }
-      if (cIdx === null && fibonacci.pullback) {
-        cIdx = findCandleIndexByDate(candles, fibonacci.pullbackDate)
-          ?? findCandleIndexByPrice(candles, fibonacci.pullback, 'low');
-      }
-      
-      // Draw the markers
-      if (aIdx !== null) drawMarker(aIdx, 'A', '#10b981', fibonacci.low);
-      if (bIdx !== null) drawMarker(bIdx, 'B', '#ef4444', fibonacci.high);
-      if (cIdx !== null && fibonacci.pullback) drawMarker(cIdx, 'C', '#f59e0b', fibonacci.pullback);
-    }
-    
-    // Draw drag preview line
-    if (dragPreview && selectMode !== 'none') {
-      const previewLocalIdx = dragPreview.globalIndex - visibleStart;
-      if (previewLocalIdx >= 0 && previewLocalIdx < visibleCandles.length) {
-        const x = scaleX(previewLocalIdx) + candleWidth / 2;
-        
-        // Vertical line
-        ctx.strokeStyle = dragPreview.isValid ? '#f59e0b' : '#ef4444';
-        ctx.lineWidth = 2;
-        ctx.setLineDash([5, 5]);
-        ctx.beginPath();
-        ctx.moveTo(x, padding.top);
-        ctx.lineTo(x, canvasHeight - padding.bottom);
-        ctx.stroke();
-        ctx.setLineDash([]);
-        
-        // Label at top
-        const label = selectMode.toUpperCase();
-        const candle = visibleCandles[previewLocalIdx];
-        ctx.fillStyle = dragPreview.isValid ? '#f59e0b' : '#ef4444';
-        ctx.font = 'bold 12px sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillText(label, x, padding.top - 5);
-        
-        // Price indicator
-        const price = selectMode === 'b' ? candle.high : candle.low;
-        const priceY = scaleY(price);
-        ctx.beginPath();
-        ctx.arc(x, priceY, 6, 0, Math.PI * 2);
-        ctx.fillStyle = dragPreview.isValid ? '#f59e0b' : '#ef4444';
-        ctx.fill();
-        ctx.strokeStyle = '#0f172a';
-        ctx.lineWidth = 2;
-        ctx.stroke();
-      }
-    }
-
   }, [candles, visibleCandles, visibleStart, visibleEnd, viewRange, yScale, isOverYAxis, fibonacci, movingAverages, settings, fibPoints, dragPreview, selectMode]);
 
-  // Calculate candle index from mouse position
-  const getCandleIndexFromPosition = (clientX: number): { localIndex: number; globalIndex: number; x: number } | null => {
-    if (!canvasRef.current || !chartDims.current || visibleCandles.length === 0) return null;
-    const rect = canvasRef.current.getBoundingClientRect();
-    const x = clientX - rect.left;
-    const { padding, chartWidth, candleWidth } = chartDims.current;
-    
-    const viewRangeSize = viewRange.end - viewRange.start;
-    const startOffset = visibleStart - viewRange.start;
-    
-    // Reverse the scaleX calculation
-    const posInChart = (x - padding.left) / chartWidth * viewRangeSize;
-    const localIndex = Math.floor(posInChart - startOffset);
-    
-    if (localIndex < 0 || localIndex >= visibleCandles.length) return null;
-    const globalIndex = localIndex + visibleStart;
-    
-    // Calculate exact x position of this candle
-    const candleX = padding.left + ((localIndex + startOffset) / viewRangeSize) * chartWidth + candleWidth / 2;
-    
-    return { localIndex, globalIndex, x: candleX };
-  };
-  
-  // Validate if a Fib point can be placed at this index
-  const isFibPointValid = (globalIndex: number): boolean => {
-    if (selectMode === 'b' && fibPoints.a !== null && globalIndex <= fibPoints.a) return false;
-    if (selectMode === 'c' && fibPoints.b !== null && globalIndex <= fibPoints.b) return false;
-    return true;
-  };
-  
-  const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    if (isPanning) return;
-    
-    // If in select mode and not dragging, treat click as instant place
-    if (selectMode !== 'none' && !isDraggingFib.current) {
-      const pos = getCandleIndexFromPosition(e.clientX);
-      if (!pos) return;
-      
-      if (!isFibPointValid(pos.globalIndex)) {
-        // Show error feedback
-        const rect = canvasRef.current!.getBoundingClientRect();
-        const candle = candles[pos.globalIndex];
-        setTooltip({
-          x: e.clientX - rect.left,
-          y: e.clientY - rect.top,
-          candle,
-          index: pos.globalIndex,
-          date: selectMode === 'b' ? '⚠️ Point B must be AFTER point A' : '⚠️ Point C must be AFTER point B',
-        });
-        return;
-      }
-      
-      // Set the point
-      const newPoints = { ...fibPoints, [selectMode]: pos.globalIndex };
-      setFibPoints(newPoints);
-      setDragPreview(null);
-      
-      // Advance to next point
-      if (selectMode === 'a') setSelectMode('b');
-      else if (selectMode === 'b') setSelectMode('c');
-      else setSelectMode('none');
-      return;
-    }
-    
-    // Normal click - show tooltip
-    const pos = getCandleIndexFromPosition(e.clientX);
-    if (!pos) return;
-    
-    const rect = canvasRef.current!.getBoundingClientRect();
-    const candle = candles[pos.globalIndex];
-    setTooltip({
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
-      candle,
-      index: pos.globalIndex,
-      date: formatDate(candle.time) + ' ' + formatTime(candle.time),
-    });
-  };
-  
-  // Handle Fib drag start
-  const handleFibDragStart = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
-    if (selectMode === 'none') return;
-    
-    isDraggingFib.current = true;
-    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
-    const pos = getCandleIndexFromPosition(clientX);
-    if (pos) {
-      const preview = { globalIndex: pos.globalIndex, x: pos.x, isValid: isFibPointValid(pos.globalIndex) };
-      dragPreviewRef.current = preview;
-      setDragPreview(preview);
-    }
-  };
-  
-  // Handle Fib drag move
-  const handleFibDragMove = (clientX: number) => {
-    if (selectMode === 'none' || !isDraggingFib.current) return;
-    
-    const pos = getCandleIndexFromPosition(clientX);
-    if (pos) {
-      const preview = { globalIndex: pos.globalIndex, x: pos.x, isValid: isFibPointValid(pos.globalIndex) };
-      dragPreviewRef.current = preview;
-      setDragPreview(preview);
-    }
-  };
-  
-  // Handle Fib drag end
-  const handleFibDragEnd = () => {
-    const preview = dragPreviewRef.current;
-    
-    if (selectMode === 'none' || !isDraggingFib.current || !preview) {
-      isDraggingFib.current = false;
-      dragPreviewRef.current = null;
-      setDragPreview(null);
-      return;
-    }
-    
-    isDraggingFib.current = false;
-    
-    if (preview.isValid) {
-      // Set the point
-      const newPoints = { ...fibPoints, [selectMode]: preview.globalIndex };
-      setFibPoints(newPoints);
-      
-      // Advance to next point
-      if (selectMode === 'a') setSelectMode('b');
-      else if (selectMode === 'b') setSelectMode('c');
-      else setSelectMode('none');
-    }
-    
-    dragPreviewRef.current = null;
-    setDragPreview(null);
-  };
-
   const handleMouseLeave = () => {
-    if (selectMode === 'none') setTooltip(null);
+    setTooltip(null);
     setIsPanning(false);
     setIsOverYAxis(false);
     panStartRef.current = null;
   };
   
-  // Mouse wheel zoom
-  const handleWheel = (e: React.WheelEvent<HTMLCanvasElement>) => {
-    e.preventDefault();
-    if (candles.length === 0) return;
-    
-    const rect = canvasRef.current?.getBoundingClientRect();
-    if (!rect || !chartDims.current) return;
-    
-    const mouseX = e.clientX - rect.left;
-    const { padding, chartWidth, width } = chartDims.current;
-    
-    // Check if mouse is on Y-axis area (right side)
-    const isOnYAxis = mouseX > width - padding.right;
-    
-    if (isOnYAxis) {
-      // Y-axis zoom: scroll up = zoom in (smaller scale), scroll down = zoom out (larger scale)
-      const zoomFactor = e.deltaY > 0 ? 1.15 : 0.87;
-      const newYScale = Math.max(0.2, Math.min(5, yScale * zoomFactor)); // Limit range 0.2x to 5x
-      setYScale(newYScale);
-      return;
-    }
-    
-    // X-axis zoom (chart area)
-    const zoomFactor = e.deltaY > 0 ? 1.1 : 0.9; // Zoom out : Zoom in
-    const currentRange = viewRange.end - viewRange.start;
-    const maxRange = candles.length * (1 + SCROLL_BUFFER_RATIO * 2);
-    const newRange = Math.max(10, Math.min(maxRange, currentRange * zoomFactor)); // Min 10 candles visible
-    
-    const ratio = Math.max(0, Math.min(1, (mouseX - padding.left) / chartWidth));
-    
-    // Calculate new start/end centered on mouse position
-    const currentPos = viewRange.start + (viewRange.end - viewRange.start) * ratio;
-    let newStart = currentPos - newRange * ratio;
-    let newEnd = currentPos + newRange * (1 - ratio);
-    
-    // Clamp with buffer
-    const buffer = newRange * SCROLL_BUFFER_RATIO;
-    const minStart = -buffer;
-    const maxEnd = candles.length + buffer;
-    
-    if (newStart < minStart) {
-      newStart = minStart;
-      newEnd = Math.min(maxEnd, newStart + newRange);
-    }
-    if (newEnd > maxEnd) {
-      newEnd = maxEnd;
-      newStart = Math.max(minStart, maxEnd - newRange);
-    }
-    
-    setViewRange({ start: newStart, end: newEnd });
-    setTooltip(null);
-  };
-  
-  // Mouse drag pan
-  const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    if (selectMode !== 'none') {
-      handleFibDragStart(e);
-      return;
-    }
-    panStartRef.current = {
-      x: e.clientX,
-      viewStart: viewRange.start,
-      viewEnd: viewRange.end,
-    };
-  };
-  
-  const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    // Handle Fib drag preview
-    if (selectMode !== 'none') {
-      handleFibDragMove(e.clientX);
-    }
-    
-    // Check if over Y-axis for visual feedback
-    if (chartDims.current) {
-      const rect = canvasRef.current?.getBoundingClientRect();
-      if (rect) {
-        const mouseX = e.clientX - rect.left;
-        const { width, padding } = chartDims.current;
-        setIsOverYAxis(mouseX > width - padding.right);
-      }
-    }
-    
-    if (!panStartRef.current || !chartDims.current) return;
-    
-    const dx = e.clientX - panStartRef.current.x;
-    const { chartWidth } = chartDims.current;
-    const candlesInView = panStartRef.current.viewEnd - panStartRef.current.viewStart;
-    const candlesPanned = -(dx / chartWidth) * candlesInView;
-    
-    let newStart = panStartRef.current.viewStart + candlesPanned;
-    let newEnd = panStartRef.current.viewEnd + candlesPanned;
-    
-    // Allow scrolling beyond boundaries by buffer amount
-    const buffer = candlesInView * SCROLL_BUFFER_RATIO;
-    const minStart = -buffer;
-    const maxEnd = candles.length + buffer;
-    
-    if (newStart < minStart) {
-      newEnd -= (newStart - minStart);
-      newStart = minStart;
-    }
-    if (newEnd > maxEnd) {
-      newStart -= (newEnd - maxEnd);
-      newEnd = maxEnd;
-    }
-    
-    if (Math.abs(dx) > 5) setIsPanning(true);
-    setViewRange({ start: Math.max(minStart, newStart), end: Math.min(maxEnd, newEnd) });
-    setTooltip(null);
-  };
-  
-  const handleMouseUp = () => {
-    if (selectMode !== 'none') {
-      handleFibDragEnd();
-    }
-    panStartRef.current = null;
-    setTimeout(() => setIsPanning(false), 50);
-  };
-  
-  // Touch handlers for mobile
-  const handleTouchStart = (e: React.TouchEvent<HTMLCanvasElement>) => {
-    if (selectMode !== 'none') {
-      handleFibDragStart(e);
-      return;
-    }
-    
-    const touches = Array.from(e.touches).map(t => ({ x: t.clientX, y: t.clientY }));
-    touchStartRef.current = {
-      touches,
-      viewStart: viewRange.start,
-      viewEnd: viewRange.end,
-      yScale,
-    };
-  };
-  
-  const handleTouchMove = (e: React.TouchEvent<HTMLCanvasElement>) => {
-    // Handle Fib drag on mobile
-    if (selectMode !== 'none' && e.touches.length === 1) {
-      e.preventDefault();
-      handleFibDragMove(e.touches[0].clientX);
-      return;
-    }
-    
-    if (!touchStartRef.current || !chartDims.current) return;
-    e.preventDefault();
-    
-    const currentTouches = Array.from(e.touches).map(t => ({ x: t.clientX, y: t.clientY }));
-    const { touches: startTouches, viewStart, viewEnd } = touchStartRef.current;
-    const { chartWidth } = chartDims.current;
-    const candlesInView = viewEnd - viewStart;
-    
-    if (currentTouches.length === 1 && startTouches.length === 1) {
-      // Single finger pan
-      const dx = currentTouches[0].x - startTouches[0].x;
-      const candlesPanned = -(dx / chartWidth) * candlesInView;
-      
-      let newStart = viewStart + candlesPanned;
-      let newEnd = viewEnd + candlesPanned;
-      
-      // Allow scrolling beyond boundaries by buffer amount
-      const buffer = candlesInView * SCROLL_BUFFER_RATIO;
-      const minStart = -buffer;
-      const maxEnd = candles.length + buffer;
-      
-      if (newStart < minStart) {
-        newEnd -= (newStart - minStart);
-        newStart = minStart;
-      }
-      if (newEnd > maxEnd) {
-        newStart -= (newEnd - maxEnd);
-        newEnd = maxEnd;
-      }
-      
-      setViewRange({ start: Math.max(minStart, newStart), end: Math.min(maxEnd, newEnd) });
-    } else if (currentTouches.length === 2 && startTouches.length === 2) {
-      // Pinch zoom - horizontal for X, vertical for Y
-      const startDistX = Math.abs(startTouches[1].x - startTouches[0].x);
-      const currentDistX = Math.abs(currentTouches[1].x - currentTouches[0].x);
-      const startDistY = Math.abs(startTouches[1].y - startTouches[0].y);
-      const currentDistY = Math.abs(currentTouches[1].y - currentTouches[0].y);
-      
-      // Horizontal pinch - X axis zoom
-      if (startDistX > 20) {
-        const scaleX = startDistX / Math.max(1, currentDistX);
-        const maxRange = candles.length * (1 + SCROLL_BUFFER_RATIO * 2);
-        const newRange = Math.max(10, Math.min(maxRange, candlesInView * scaleX));
-        const centerRatio = 0.5;
-        const currentCenter = viewStart + candlesInView * centerRatio;
-        
-        let newStart = currentCenter - newRange * centerRatio;
-        let newEnd = currentCenter + newRange * (1 - centerRatio);
-        
-        const buffer = newRange * SCROLL_BUFFER_RATIO;
-        const minStart = -buffer;
-        const maxEnd = candles.length + buffer;
-        
-        if (newStart < minStart) {
-          newStart = minStart;
-          newEnd = Math.min(maxEnd, newStart + newRange);
-        }
-        if (newEnd > maxEnd) {
-          newEnd = maxEnd;
-          newStart = Math.max(minStart, maxEnd - newRange);
-        }
-        
-        setViewRange({ start: newStart, end: newEnd });
-      }
-      
-      // Vertical pinch - Y axis zoom
-      if (startDistY > 20) {
-        const scaleY = startDistY / Math.max(1, currentDistY);
-        const startYScale = touchStartRef.current?.yScale ?? 1;
-        const newYScale = Math.max(0.2, Math.min(5, startYScale * scaleY));
-        setYScale(newYScale);
-      }
-    }
-    
-    setTooltip(null);
-  };
-  
-  const handleTouchEnd = () => {
-    if (selectMode !== 'none') {
-      handleFibDragEnd();
-    }
-    touchStartRef.current = null;
-  };
-  
-  const resetView = () => {
-    setViewRange({ start: 0, end: candles.length });
-    setYScale(1);
-  };
-
-  const startFibSelection = () => {
-    setFibPoints({ a: null, b: null, c: null });
-    setSelectMode('a');
-    setTooltip(null);
-  };
-
-  const clearCustomFib = () => {
-    setFibPoints({ a: null, b: null, c: null });
-    setSelectMode('none');
-  };
-
   if (candles.length === 0) {
     return (
       <div className="w-full bg-slate-800/30 rounded-lg flex items-center justify-center text-slate-600 text-sm" style={{ height }}>
@@ -1076,57 +612,8 @@ function ChartCanvas({
     );
   }
 
-  const hasCustomFib = fibPoints.a !== null || fibPoints.b !== null || fibPoints.c !== null;
-
   return (
     <div className="space-y-2">
-      {/* Chart controls - OUTSIDE the chart */}
-      <div className="flex items-center justify-between">
-        {/* Selection mode indicator */}
-        {selectMode !== 'none' ? (
-          <div className="bg-slate-900/90 border border-amber-500/50 rounded-lg px-3 py-1.5 text-sm">
-            <span className="text-amber-400">Click to set point {selectMode.toUpperCase()}</span>
-            <span className="text-slate-500 ml-2">
-              {selectMode === 'a' && '(Swing Low)'}
-              {selectMode === 'b' && '(after A, Swing High)'}
-              {selectMode === 'c' && '(after B, Pullback)'}
-            </span>
-          </div>
-        ) : (
-          <div className="text-[10px] text-slate-500 lg:hidden">
-            Scroll to pan • Pinch to zoom
-          </div>
-        )}
-        
-        {/* Controls */}
-        <div className="flex gap-1 ml-auto">
-          {isZoomed && (
-            <button 
-              onClick={resetView}
-              className="bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 px-2 py-1 rounded flex items-center gap-1"
-            >
-              <span className="text-[10px]">⟲</span> Reset
-            </button>
-          )}
-          {!hasCustomFib && selectMode === 'none' && (
-            <button 
-              onClick={startFibSelection}
-              className="bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 px-2 py-1 rounded"
-            >
-              Custom A-B-C
-            </button>
-          )}
-          {(hasCustomFib || selectMode !== 'none') && (
-            <button 
-              onClick={clearCustomFib}
-              className="bg-red-900/50 hover:bg-red-900 text-xs text-red-300 px-2 py-1 rounded"
-            >
-              Reset Fib
-            </button>
-          )}
-        </div>
-      </div>
-      
       {/* Chart canvas */}
       <div className="relative">
         {isLoadingMore && (
@@ -1144,33 +631,11 @@ function ChartCanvas({
             touchAction: 'none',
             cursor: isOverYAxis ? 'ns-resize' : 'crosshair'
           }}
-          onClick={handleCanvasClick}
           onMouseLeave={handleMouseLeave}
-          onWheel={handleWheel}
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
         />
-      
-        {/* Vertical crosshair line when tooltip visible */}
-        {tooltip && selectMode === 'none' && chartDims.current && (
-          <div 
-            className="absolute pointer-events-none"
-            style={{ 
-              left: tooltip.x,
-              top: chartDims.current.padding.top,
-              width: 1,
-              height: chartDims.current.drawHeight,
-              background: 'rgba(148, 163, 184, 0.4)',
-            }}
-          />
-        )}
         
         {/* Tooltip */}
-        {tooltip && selectMode === 'none' && (
+        {tooltip && (
           <div 
             className="absolute bg-slate-900/95 border border-slate-700 rounded-lg p-3 text-sm pointer-events-none z-10 min-w-[150px]"
             style={{ left: Math.min(tooltip.x + 10, 200), top: tooltip.y - 80 }}
@@ -1414,123 +879,7 @@ function FibonacciPanel({ fibonacci, currentPrice }: { fibonacci: FibonacciData;
   );
 }
 
-// Mobile Modal
-function DetailModal({ detail, onClose, selectedTimeframe, setTimeframe, settings, setSettings, onRequestMoreData, isLoadingMore }: { 
-  detail: SymbolDetail; onClose: () => void; selectedTimeframe: string;
-  setTimeframe: (label: string) => void; settings: ChartSettings; setSettings: (s: ChartSettings) => void;
-  onRequestMoreData?: () => void; isLoadingMore?: boolean;
-}) {
-  const isPositive = detail.quote.change >= 0;
-  
-  return (
-    <div className="fixed inset-0 z-50 bg-slate-950 overflow-auto">
-      <div className="sticky top-0 z-[60] bg-slate-950/95 backdrop-blur-sm border-b border-slate-800 p-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-xl font-bold text-slate-100">{detail.quote.symbol}</h2>
-            <p className="text-sm text-slate-500">{detail.quote.name}</p>
-          </div>
-          <div className="flex items-center gap-2">
-            <SettingsPanel settings={settings} onChange={setSettings} movingAverages={detail.movingAverages} />
-            <button onClick={onClose} className="p-2 hover:bg-slate-800 rounded-lg"><X className="w-5 h-5 text-slate-400" /></button>
-          </div>
-        </div>
-        <div className="flex items-baseline gap-3 mt-2">
-          <span className="text-3xl font-bold text-slate-100">${formatPrice(detail.quote.price)}</span>
-          <span className={`text-lg font-medium ${isPositive ? 'text-emerald-400' : 'text-red-400'}`}>
-            {isPositive ? '+' : ''}{formatPrice(detail.quote.change)} ({safePercent(detail.quote.changePercent)}%)
-          </span>
-        </div>
-      </div>
-      
-      <div className="p-4 space-y-4">
-        <div className="flex flex-wrap gap-1">
-          {TIMEFRAMES.map(tf => (
-            <button key={tf.label} onClick={() => setTimeframe(tf.label)}
-              className={`px-2 py-1 rounded text-xs font-medium ${selectedTimeframe === tf.label ? 'bg-primary-600 text-white' : 'bg-slate-800 text-slate-400'}`}>
-              {tf.label}
-            </button>
-          ))}
-        </div>
-        
-        <ChartCanvas candles={detail.candles} fibonacci={detail.fibonacci} movingAverages={detail.movingAverages} settings={settings} height={280} onRequestMoreData={onRequestMoreData} isLoadingMore={isLoadingMore} />
-        <FibonacciPanel fibonacci={detail.fibonacci} currentPrice={detail.quote.price} />
-        
-        <div className="bg-slate-800/50 rounded-xl p-4">
-          <h3 className="font-medium text-slate-200 mb-3">Statistics</h3>
-          <div className="grid grid-cols-2 gap-2 text-sm">
-            <div className="flex justify-between"><span className="text-slate-500">Open</span><span className="text-slate-200">${formatPrice(detail.quote.open)}</span></div>
-            <div className="flex justify-between"><span className="text-slate-500">Close</span><span className="text-slate-200">${formatPrice(detail.quote.prevClose)}</span></div>
-            <div className="flex justify-between"><span className="text-slate-500">High</span><span className="text-emerald-400">${formatPrice(detail.quote.high)}</span></div>
-            <div className="flex justify-between"><span className="text-slate-500">Low</span><span className="text-red-400">${formatPrice(detail.quote.low)}</span></div>
-            <div className="flex justify-between"><span className="text-slate-500">52W H</span><span className="text-slate-200">${formatPrice(detail.quote.fiftyTwoWeekHigh)}</span></div>
-            <div className="flex justify-between"><span className="text-slate-500">52W L</span><span className="text-slate-200">${formatPrice(detail.quote.fiftyTwoWeekLow)}</span></div>
-            <div className="col-span-2 flex justify-between"><span className="text-slate-500">Volume</span><span className="text-slate-200">{formatVolume(detail.quote.volume)}</span></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// Calculate custom Fibonacci from user-selected A-B-C points
-function calculateCustomFibonacci(candles: CandleData[], points: CustomFibPoints): FibonacciData | null {
-  if (points.a === null || points.b === null) return null;
-  
-  const swingLow = candles[points.a].low;
-  const swingHigh = candles[points.b].high;
-  const range = swingHigh - swingLow;
-  
-  // Retracements
-  const retracementLevels = [0, 0.236, 0.382, 0.5, 0.618, 0.786, 1];
-  const retracements = retracementLevels.map(fib => ({
-    level: `${(fib * 100).toFixed(1)}%`,
-    price: Math.round((swingHigh - range * fib) * 100) / 100,
-    percent: fib * 100,
-  }));
-  
-  // Extensions (only if we have point C)
-  let extensions: { level: string; price: number; percent: number }[] = [];
-  const pullback = points.c !== null ? candles[points.c].low : null;
-  
-  if (pullback !== null) {
-    const extLevels = [1.0, 1.272, 1.414, 1.618, 2.0, 2.618];
-    extensions = extLevels.map(ext => ({
-      level: `${(ext * 100).toFixed(1)}%`,
-      price: Math.round((pullback + range * ext) * 100) / 100,
-      percent: ext * 100,
-    }));
-  }
-  
-  const formatDate = (ts: number) => new Date(ts * 1000).toLocaleDateString();
-  
-  return {
-    high: swingHigh,
-    low: swingLow,
-    pullback,
-    retracements,
-    extensions,
-    trend: 'up' as const,
-    swingLowDate: formatDate(candles[points.a].time),
-    swingHighDate: formatDate(candles[points.b].time),
-    pullbackDate: points.c !== null ? formatDate(candles[points.c].time) : undefined,
-  };
-}
-
-// Map ranges to extended ranges for loading more historical data
-const EXTENDED_RANGES: Record<string, string> = {
-  '1d': '5d',
-  '5d': '1mo',
-  '1mo': '3mo',
-  '3mo': '6mo',
-  '6mo': '1y',
-  '1y': '3y',
-  '3y': '5y',
-  '5y': '10y',
-  '10y': '10y', // Max
-};
-
-export default function MarketsPage() {
+export default function MarketsOverview() {
   const [quotes, setQuotes] = useState<QuoteData[]>([]);
   const [selectedSymbol, setSelectedSymbol] = useState<string | null>(null);
   const [symbolDetail, setSymbolDetail] = useState<SymbolDetail | null>(null);
@@ -1539,24 +888,16 @@ export default function MarketsPage() {
   const [loadingMoreData, setLoadingMoreData] = useState(false);
   const [currentDataRange, setCurrentDataRange] = useState<string>('3mo'); // Will be set by initial fetch
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
-  const [selectedTimeframe, setSelectedTimeframe] = useState('3M');
+  const [selectedTimeframe, setSelectedTimeframe] = useState('1D');
   
   // Derive range and interval from selected timeframe
-  const currentTf = TIMEFRAMES.find(tf => tf.label === selectedTimeframe) || TIMEFRAMES[6]; // Default to 3M
+  const currentTf = TIMEFRAMES.find(tf => tf.label === selectedTimeframe) || TIMEFRAMES[5]; // Default to 1D
   const range = currentTf.range;
   const interval = currentTf.interval;
   const [isMobile, setIsMobile] = useState(false);
-  const [showModal, setShowModal] = useState(false);
   const [settings, setSettings] = useState<ChartSettings>(DEFAULT_SETTINGS);
   const [customFibPoints, setCustomFibPoints] = useState<CustomFibPoints>({ a: null, b: null, c: null });
   
-  // Calculate effective fibonacci (custom if set, otherwise API-provided)
-  const effectiveFibonacci = symbolDetail ? (
-    (customFibPoints.a !== null && customFibPoints.b !== null)
-      ? calculateCustomFibonacci(symbolDetail.candles, customFibPoints)
-      : symbolDetail.fibonacci
-  ) : null;
-
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 1024);
     checkMobile();
@@ -1622,28 +963,6 @@ export default function MarketsPage() {
     }
   }, []);
 
-  // Load more historical data when user scrolls to the start
-  const loadMoreHistoricalData = useCallback(() => {
-    if (!selectedSymbol) {
-      console.log('No symbol selected');
-      return;
-    }
-    if (loadingMoreData) {
-      console.log('Already loading more data');
-      return;
-    }
-    
-    const extendedRange = EXTENDED_RANGES[currentDataRange];
-    if (!extendedRange || extendedRange === currentDataRange) {
-      console.log(`Already at maximum data range: ${currentDataRange}`);
-      return;
-    }
-    
-    console.log(`Loading more historical data: ${currentDataRange} → ${extendedRange} (interval: ${interval})`);
-    setLoadingMoreData(true);
-    fetchSymbolDetail(selectedSymbol, extendedRange, interval, true);
-  }, [selectedSymbol, loadingMoreData, currentDataRange, interval, fetchSymbolDetail]);
-
   useEffect(() => {
     fetchQuotes();
     const timer = window.setInterval(fetchQuotes, 60 * 1000);
@@ -1665,7 +984,6 @@ export default function MarketsPage() {
 
   const handleSelectSymbol = (symbol: string) => {
     setSelectedSymbol(symbol);
-    if (isMobile) setShowModal(true);
   };
 
   const handleTimeframeChange = (label: string) => {
@@ -1679,18 +997,12 @@ export default function MarketsPage() {
     if (selectedSymbol) fetchSymbolDetail(selectedSymbol, range, interval);
   };
 
-  if (isMobile && showModal && symbolDetail) {
-    return <DetailModal detail={symbolDetail} onClose={() => setShowModal(false)} selectedTimeframe={selectedTimeframe}
-      setTimeframe={handleTimeframeChange} settings={settings} setSettings={setSettings} 
-      onRequestMoreData={loadMoreHistoricalData} isLoadingMore={loadingMoreData} />;
-  }
-
   return (
     <div className="space-y-4 lg:space-y-6 max-w-7xl">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl lg:text-2xl font-semibold text-slate-100 flex items-center gap-2">
-            <BarChart3 className="w-5 h-5 lg:w-6 lg:h-6 text-emerald-500" />Markets
+            <BarChart3 className="w-5 h-5 lg:w-6 lg:h-6 text-emerald-500" />Markets Overview
           </h1>
           {lastUpdate && <p className="text-xs text-slate-500 mt-1"><Clock className="w-3 h-3 inline" /> {lastUpdate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}</p>}
         </div>
@@ -1761,19 +1073,18 @@ export default function MarketsPage() {
                   {detailLoading ? <div className="h-[300px] bg-slate-800/50 rounded-lg animate-pulse" /> :
                     <ChartCanvas 
                       candles={symbolDetail.candles} 
-                      fibonacci={effectiveFibonacci || symbolDetail.fibonacci} 
+                      fibonacci={symbolDetail.fibonacci} 
                       movingAverages={symbolDetail.movingAverages} 
                       settings={settings} 
                       height={300}
                       customFibPoints={customFibPoints}
                       onCustomFib={setCustomFibPoints}
-                      onRequestMoreData={loadMoreHistoricalData}
                       isLoadingMore={loadingMoreData}
                     />}
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-4">
-                  <FibonacciPanel fibonacci={effectiveFibonacci || symbolDetail.fibonacci} currentPrice={symbolDetail.quote.price} />
+                  <FibonacciPanel fibonacci={symbolDetail.fibonacci} currentPrice={symbolDetail.quote.price} />
                   <div className="bg-slate-850 rounded-xl border border-slate-800 p-5">
                     <h3 className="font-medium text-slate-200 mb-3">Key Statistics</h3>
                     <div className="grid grid-cols-2 gap-3 text-sm">

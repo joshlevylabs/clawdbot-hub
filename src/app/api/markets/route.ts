@@ -1,7 +1,18 @@
 import { NextResponse } from 'next/server';
 
-// Symbols to track
-const SYMBOLS = ['SPY', 'QQQ', 'AAPL', 'MSFT', 'GLD', 'SLV'];
+// MRE V10 - All 25 tracked assets
+const SYMBOLS = [
+  // Broad Market
+  'SPY', 'QQQ', 'IWM',
+  // Sectors
+  'XLK', 'XLC', 'XLF', 'XLV', 'XLP', 'XLE', 'XLB', 'XLU',
+  // International
+  'EFA', 'EEM', 'INDA', 'FXI', 'EWJ',
+  // Fixed Income
+  'TLT', 'IEF', 'HYG',
+  // Commodities & Crypto
+  'GLD', 'SLV', 'GDX', 'DBA', 'BITO'
+];
 
 interface QuoteData {
   symbol: string;
@@ -52,12 +63,35 @@ interface MovingAverages {
 }
 
 const SYMBOL_NAMES: Record<string, string> = {
+  // Broad Market
   SPY: 'S&P 500 ETF',
   QQQ: 'Nasdaq 100 ETF',
-  AAPL: 'Apple Inc.',
-  MSFT: 'Microsoft Corp.',
-  GLD: 'Gold ETF',
-  SLV: 'Silver ETF',
+  IWM: 'Russell 2000 ETF',
+  // Sectors
+  XLK: 'Technology Select Sector',
+  XLC: 'Communication Services Select Sector',
+  XLF: 'Financial Select Sector',
+  XLV: 'Health Care Select Sector',
+  XLP: 'Consumer Staples Select Sector',
+  XLE: 'Energy Select Sector',
+  XLB: 'Materials Select Sector',
+  XLU: 'Utilities Select Sector',
+  // International
+  EFA: 'iShares MSCI EAFE ETF',
+  EEM: 'iShares MSCI Emerging Markets ETF',
+  INDA: 'iShares MSCI India ETF',
+  FXI: 'iShares China Large-Cap ETF',
+  EWJ: 'iShares MSCI Japan ETF',
+  // Fixed Income
+  TLT: 'iShares 20+ Year Treasury Bond ETF',
+  IEF: 'iShares 7-10 Year Treasury Bond ETF',
+  HYG: 'iShares iBoxx High Yield Corporate Bond ETF',
+  // Commodities & Crypto
+  GLD: 'SPDR Gold Shares',
+  SLV: 'iShares Silver Trust',
+  GDX: 'VanEck Gold Miners ETF',
+  DBA: 'Invesco DB Agriculture Fund',
+  BITO: 'ProShares Bitcoin Strategy ETF'
 };
 
 // Map our range/interval to Yahoo Finance parameters

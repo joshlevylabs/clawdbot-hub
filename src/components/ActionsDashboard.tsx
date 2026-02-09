@@ -88,9 +88,37 @@ interface Position {
   entry_price: number;
 }
 
-export interface ActionItem {
+export // Category configuration (shared with MRE page logic)
+const ASSET_CATEGORIES_DASH = {
+  broad_market: { name: "Broad Market", icon: "📊", color: "blue" },
+  sectors: { name: "Sectors", icon: "🏭", color: "purple" },
+  international: { name: "International", icon: "🌍", color: "green" },
+  bonds: { name: "Fixed Income", icon: "🏛️", color: "gray" },
+  commodities: { name: "Commodities", icon: "🥇", color: "amber" }
+};
+
+const ASSET_CLASS_MAPPING_DASH: Record<string, keyof typeof ASSET_CATEGORIES_DASH> = {
+  broad_market: "broad_market",
+  technology: "sectors",
+  financials: "sectors", 
+  healthcare: "sectors",
+  energy: "sectors",
+  real_estate: "sectors",
+  international: "international",
+  bonds: "bonds",
+  commodities: "commodities"
+};
+
+function getCategoryForAsset(assetClass: string): typeof ASSET_CATEGORIES_DASH[keyof typeof ASSET_CATEGORIES_DASH] {
+  const category = ASSET_CLASS_MAPPING_DASH[assetClass];
+  return ASSET_CATEGORIES_DASH[category] || ASSET_CATEGORIES_DASH.broad_market;
+}
+
+interface ActionItem {
   symbol: string;
   assetClass: string;
+  category: string; // Add category field
+  categoryIcon: string; // Add category icon
   regime: string;
   regimeStage: string;
   regimeDays: number;
@@ -119,8 +147,8 @@ interface ActionsDashboardProps {
 
 type SortKey = "symbol" | "action" | "regime" | "confidence" | "currentPrice" | "pnl" | "momentum" | "assetClass" | "sharpe";
 type SortDir = "asc" | "desc";
-type SignalFilter = "ALL" | "BUY" | "HOLD" | "WATCH" | "WAIT" | "SELL" | "POSITIONS";
-type GroupBy = "none" | "assetClass" | "regime";
+type SignalFilter = "ALL" | "BUY" | "HOLD" | "WATCH" | "WAIT" | "SELL" | "POSITIONS" | "BROAD_MARKET" | "SECTORS" | "INTERNATIONAL" | "BONDS" | "COMMODITIES";
+type GroupBy = "none" | "assetClass" | "regime" | "category";
 
 // ── Action generation ──────────────────────────────────────────────
 
@@ -131,6 +159,9 @@ function generateActions(data: MREData): ActionItem[] {
   for (const asset of data.signals.by_asset_class) {
     const { symbol, price, fibonacci, regime_details, expected_accuracy, signal, expected_sharpe, hold_days } = asset;
     const { regime, confidence, momentum_20d, regime_stage, regime_days } = regime_details;
+    
+    // Get category info
+    const categoryInfo = getCategoryForAsset(asset.asset_class);
 
     let action: ActionItem["action"] = "HOLD";
     let entry: number | null = null;
@@ -183,6 +214,8 @@ function generateActions(data: MREData): ActionItem[] {
     actions.push({
       symbol,
       assetClass: asset.asset_class.replace(/_/g, " "),
+      category: categoryInfo.name,
+      categoryIcon: categoryInfo.icon,
       regime,
       regimeStage: regime_stage,
       regimeDays: regime_days,
@@ -346,6 +379,16 @@ export default function ActionsDashboard({
         const p = getPosition(a.symbol);
         return p && p.qty > 0;
       });
+    } else if (signalFilter === "BROAD_MARKET") {
+      items = items.filter(a => a.category === "Broad Market");
+    } else if (signalFilter === "SECTORS") {
+      items = items.filter(a => a.category === "Sectors");
+    } else if (signalFilter === "INTERNATIONAL") {
+      items = items.filter(a => a.category === "International");
+    } else if (signalFilter === "BONDS") {
+      items = items.filter(a => a.category === "Fixed Income");
+    } else if (signalFilter === "COMMODITIES") {
+      items = items.filter(a => a.category === "Commodities");
     } else if (signalFilter !== "ALL") {
       items = items.filter(a => a.action === signalFilter);
     }
@@ -374,7 +417,9 @@ export default function ActionsDashboard({
     if (groupBy === "none") return { "": filteredActions };
     const groups: Record<string, ActionItem[]> = {};
     for (const item of filteredActions) {
-      const key = groupBy === "assetClass" ? item.assetClass : item.regime;
+      const key = groupBy === "assetClass" ? item.assetClass 
+        : groupBy === "category" ? item.category 
+        : item.regime;
       if (!groups[key]) groups[key] = [];
       groups[key].push(item);
     }
@@ -425,6 +470,11 @@ export default function ActionsDashboard({
     WAIT: actions.filter(a => a.action === "WAIT").length,
     SELL: actions.filter(a => a.action === "SELL").length,
     POSITIONS: positions.filter(p => p.qty > 0).length,
+    BROAD_MARKET: actions.filter(a => a.category === "Broad Market").length,
+    SECTORS: actions.filter(a => a.category === "Sectors").length,
+    INTERNATIONAL: actions.filter(a => a.category === "International").length,
+    BONDS: actions.filter(a => a.category === "Fixed Income").length,
+    COMMODITIES: actions.filter(a => a.category === "Commodities").length,
   };
 
   // Portfolio totals
@@ -447,8 +497,13 @@ export default function ActionsDashboard({
       <tr key={item.symbol} className="border-b border-slate-800 hover:bg-slate-800/50">
         {/* Asset */}
         <td className="py-2.5 px-2">
-          <span className="font-bold text-slate-100">{item.symbol}</span>
-          <p className="text-[10px] text-slate-500 capitalize">{item.assetClass}</p>
+          <div className="flex items-center gap-2">
+            <div>
+              <span className="font-bold text-slate-100">{item.symbol}</span>
+              <p className="text-[10px] text-slate-500 capitalize">{item.assetClass}</p>
+            </div>
+            <span className="text-xs opacity-80">{item.categoryIcon}</span>
+          </div>
         </td>
         {/* Signal */}
         <td className="py-2.5 px-2"><ActionBadge action={item.action} /></td>
@@ -534,7 +589,9 @@ export default function ActionsDashboard({
         {/* Filter Bar */}
         <div className="px-4 py-2.5 border-b border-slate-700/50 flex flex-wrap items-center gap-2">
           <Filter className="w-3.5 h-3.5 text-slate-500" />
-          {(["ALL", "BUY", "HOLD", "WATCH", "WAIT", "POSITIONS"] as SignalFilter[]).map(f => (
+          
+          {/* Signal Filters */}
+          {(["ALL", "BUY", "POSITIONS"] as SignalFilter[]).map(f => (
             <button key={f} onClick={() => setSignalFilter(f)}
               className={`px-2.5 py-1 text-xs rounded-lg font-medium transition-colors ${
                 signalFilter === f
@@ -546,11 +603,31 @@ export default function ActionsDashboard({
                `${f} (${signalCounts[f]})`}
             </button>
           ))}
+          
+          <div className="w-px h-4 bg-slate-700" />
+          
+          {/* Category Filters */}
+          {(["BROAD_MARKET", "SECTORS", "INTERNATIONAL", "BONDS", "COMMODITIES"] as SignalFilter[]).map(f => (
+            <button key={f} onClick={() => setSignalFilter(f)}
+              className={`px-2.5 py-1 text-xs rounded-lg font-medium transition-colors ${
+                signalFilter === f
+                  ? "bg-primary-500/30 text-primary-300 border border-primary-500/50"
+                  : "bg-slate-800 text-slate-500 border border-slate-700 hover:text-slate-300"
+              }`}>
+              {f === "BROAD_MARKET" ? `📊 Broad (${signalCounts.BROAD_MARKET})` :
+               f === "SECTORS" ? `🏭 Sectors (${signalCounts.SECTORS})` :
+               f === "INTERNATIONAL" ? `🌍 Intl (${signalCounts.INTERNATIONAL})` :
+               f === "BONDS" ? `🏛️ Bonds (${signalCounts.BONDS})` :
+               `🥇 Commodities (${signalCounts.COMMODITIES})`}
+            </button>
+          ))}
+          
           <div className="ml-auto flex items-center gap-2">
             <Layers className="w-3.5 h-3.5 text-slate-500" />
             <select value={groupBy} onChange={e => setGroupBy(e.target.value as GroupBy)}
               className="bg-slate-800 text-slate-400 text-xs border border-slate-700 rounded-lg px-2 py-1">
               <option value="none">No grouping</option>
+              <option value="category">Group by Category</option>
               <option value="assetClass">Group by Class</option>
               <option value="regime">Group by Regime</option>
             </select>
@@ -591,6 +668,7 @@ export default function ActionsDashboard({
                       <tr className="bg-slate-800/60">
                         <td colSpan={tradingEnabled ? 12 : 11} className="py-1.5 px-2 text-xs font-bold text-primary-400 uppercase tracking-wider">
                           {groupBy === "regime" && (group === "bull" ? "🟢 " : group === "bear" ? "🔴 " : "🟡 ")}
+                          {groupBy === "category" && items.length > 0 && `${items[0].categoryIcon} `}
                           {group} ({items.length})
                         </td>
                       </tr>

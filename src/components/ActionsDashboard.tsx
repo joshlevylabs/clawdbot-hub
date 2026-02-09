@@ -390,6 +390,7 @@ export default function ActionsDashboard({
                 <thead>
                   <tr className="text-xs text-slate-500 uppercase border-b border-slate-700">
                     <th className="text-left py-2 px-2">Asset</th>
+                    <th className="text-left py-2 px-2">Price</th>
                     <th className="text-left py-2 px-2">Signal</th>
                     <th className="text-left py-2 px-2">Position</th>
                     <th className="text-left py-2 px-2">Entry</th>
@@ -412,6 +413,9 @@ export default function ActionsDashboard({
                             <span className="font-bold text-slate-100">{item.symbol}</span>
                             <p className="text-xs text-slate-500 capitalize">{item.assetClass}</p>
                           </div>
+                        </td>
+                        <td className="py-3 px-2 font-mono text-sm text-slate-200">
+                          ${item.currentPrice.toFixed(2)}
                         </td>
                         <td className="py-3 px-2">
                           <ActionBadge action={item.action} />

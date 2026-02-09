@@ -1,0 +1,106 @@
+{
+  "generated": "2026-02-09T05:30:00",
+  "version": "v9",
+  "global_context": {
+    "regime": "bull",
+    "fear_greed": 43.76,
+    "thesis": "Fear elevated (44) but above buy threshold (25). Bull regime intact. Buy dips on high-confidence setups. Sell signals deprioritized (30.6% accuracy).",
+    "key_risks": [
+      "Walk-forward accuracy gap (17.7%) \u2014 overfitting risk",
+      "Tech sector weakest Sharpe (5.12) \u2014 XLK in bear regime",
+      "VNQ/TLT pair approaching divergence trigger (z=1.50, fires at 2.0)"
+    ]
+  },
+  "assets": {
+    "SPY": {
+      "pit_verdict": "HOLD \u2014 Strong fundamentals but F&G not at buy threshold",
+      "accuracy": "70.6% buy accuracy (best in broad market)",
+      "sharpe": 10.65,
+      "best_horizon": "10d",
+      "sma_period": 100,
+      "notes": "SPY/XLF pair at z=0.55 (normal). Wait for F&G < 25 for high-conviction entry.",
+      "pattern": "Uptrend intact. Above EMA20/50/200. Regime 45+ days bull."
+    },
+    "GLD": {
+      "pit_verdict": "STRONG BUY \u2014 Highest Sharpe, fear-regime beneficiary",
+      "accuracy": "61.3% buy accuracy",
+      "sharpe": 25.8,
+      "best_horizon": "20d",
+      "sma_period": 200,
+      "notes": "Best risk-adjusted returns in backtest (Sharpe 25.80). Gold benefits from elevated fear. 20-day hold optimal.",
+      "pattern": "Strong bull regime, 74.9% of time in uptrend. SMA 200 provides clean regime signals."
+    },
+    "EFA": {
+      "pit_verdict": "BUY \u2014 International showing strength with clean regime",
+      "accuracy": "62.1% buy accuracy",
+      "sharpe": 12.3,
+      "best_horizon": "10d",
+      "sma_period": 200,
+      "notes": "Best regime persistence (12.8d avg) among all assets. SMA 200 gives fewest false transitions (12.5/100d).",
+      "pattern": "Stable bull regime. International priority boost active since V7."
+    },
+    "XLV": {
+      "pit_verdict": "HOLD \u2014 Solid accuracy but regime late stage",
+      "accuracy": "68.0% buy accuracy",
+      "sharpe": 14.22,
+      "best_horizon": "10d",
+      "sma_period": 50,
+      "notes": "Second-highest accuracy after SPY. Healthcare defensive play in elevated fear environment.",
+      "pattern": "Bull regime, above all EMAs. Good diversification from tech weakness."
+    },
+    "XLE": {
+      "pit_verdict": "WATCH \u2014 Energy canary signal active",
+      "accuracy": "60.2% buy accuracy",
+      "sharpe": 11.5,
+      "best_horizon": "10d",
+      "sma_period": 100,
+      "notes": "XLE fear precedes broad equity weakness (canary signal). Cross-prediction: XLE fear \u2192 XLK returns (-0.268). Monitor closely.",
+      "pattern": "Bull regime but watch for regime transition. Energy volatility elevated."
+    },
+    "XLF": {
+      "pit_verdict": "HOLD \u2014 SMA adjusted to 100 in V9",
+      "accuracy": "65.0% buy accuracy",
+      "sharpe": 15.52,
+      "best_horizon": "5d",
+      "sma_period": 100,
+      "notes": "V9 changed SMA 50\u2192100 to fix false sideways classification. SPY/XLF pair at z=0.55 (normal). Good Sharpe but short hold horizon.",
+      "pattern": "Was incorrectly classified as sideways at SMA 50. Fixed in V9."
+    },
+    "TLT": {
+      "pit_verdict": "WATCH \u2014 Bonds showing weakness, pair divergence building",
+      "accuracy": "51.8% buy accuracy",
+      "sharpe": 18.55,
+      "best_horizon": "20d",
+      "sma_period": 200,
+      "notes": "VNQ/TLT pair at z=1.50 (fires at 2.0). If divergence triggers, TLT is the revert candidate (86.3% revert rate). High Sharpe when signals fire.",
+      "pattern": "Momentum -0.1% (flat). VNQ outperforming significantly. Pair trade setup building."
+    },
+    "VNQ": {
+      "pit_verdict": "HOLD \u2014 Approaching pair divergence with TLT",
+      "accuracy": "58.5% buy accuracy",
+      "sharpe": 10.2,
+      "best_horizon": "10d",
+      "sma_period": 100,
+      "notes": "VNQ/TLT at z=1.50. VNQ momentum +3.1% vs TLT -0.1%. If pair fires, VNQ may be the short leg. Watch for mean reversion.",
+      "pattern": "Bull regime, strong momentum. But outperformance vs TLT could reverse."
+    },
+    "QQQ": {
+      "pit_verdict": "AVOID \u2014 Tech in bear regime, worst Sharpe",
+      "accuracy": "65.7% buy accuracy",
+      "sharpe": 5.12,
+      "best_horizon": "5d",
+      "sma_period": 50,
+      "notes": "XLK bear outlier in bull market. Weakest Sharpe (5.12). Momentum fights contrarian strategy. Wait for regime flip.",
+      "pattern": "Below key EMAs. Tech diverging from broad market. Not a good contrarian setup yet."
+    },
+    "IWM": {
+      "pit_verdict": "HOLD \u2014 Small caps following broad market",
+      "accuracy": "63.0% buy accuracy",
+      "sharpe": 9.8,
+      "best_horizon": "10d",
+      "sma_period": 50,
+      "notes": "Tracking SPY. No independent signal strength. Wait for F&G dip for entry.",
+      "pattern": "Bull regime, above EMAs. No divergence signals."
+    }
+  }
+}

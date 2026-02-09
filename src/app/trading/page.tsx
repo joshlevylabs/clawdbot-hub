@@ -1024,7 +1024,6 @@ export default function TradingPage() {
             <MarketsOverview
               initialSymbol={analyzeSymbol}
               mreSignalData={analyzeSignalData}
-              onSymbolConsumed={() => setAnalyzeSymbol(null)}
             />
           )}
 

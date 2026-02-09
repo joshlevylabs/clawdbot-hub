@@ -916,7 +916,39 @@ interface MRESignalData {
   };
 }
 
+interface PitRecommendation {
+  pit_verdict: string;
+  accuracy: string;
+  sharpe: number;
+  best_horizon: string;
+  sma_period: number;
+  notes: string;
+  pattern: string;
+}
+
+interface PitData {
+  generated: string;
+  version: string;
+  global_context: {
+    regime: string;
+    fear_greed: number;
+    thesis: string;
+    key_risks: string[];
+  };
+  assets: Record<string, PitRecommendation>;
+}
+
 function MREAnalysisPanel({ signal }: { signal: MRESignalData }) {
+  const [pitData, setPitData] = useState<PitData | null>(null);
+
+  useEffect(() => {
+    fetch("/data/trading/pit-recommendations.json?" + Date.now())
+      .then(r => r.json())
+      .then(d => setPitData(d))
+      .catch(() => {});
+  }, []);
+
+  const pitRec = pitData?.assets?.[signal.symbol] || null;
   const { regime_details: rd, fibonacci: fib } = signal;
 
   const signalColor = signal.signal === "BUY"
@@ -1062,6 +1094,68 @@ function MREAnalysisPanel({ signal }: { signal: MRESignalData }) {
             </div>
           </div>
         </div>
+
+        {/* Pit Agent Fleet Recommendation */}
+        {pitRec && (
+          <div className="bg-slate-900/50 rounded-lg p-4 border border-amber-500/20">
+            <h4 className="text-sm font-medium text-amber-400 mb-3 flex items-center gap-2">
+              🤖 Pit Agent Fleet — {signal.symbol}
+            </h4>
+            
+            {/* Verdict */}
+            <div className="mb-3 p-3 rounded-lg bg-slate-800/80 border border-slate-700">
+              <p className="text-sm font-bold text-slate-100">{pitRec.pit_verdict}</p>
+            </div>
+
+            {/* Key Metrics from Pit */}
+            <div className="grid grid-cols-3 gap-3 mb-3">
+              <div className="bg-slate-800/50 rounded-lg p-2 text-center">
+                <p className="text-[10px] text-slate-500 uppercase">Backtest Accuracy</p>
+                <p className="text-sm font-bold text-slate-200">{pitRec.accuracy}</p>
+              </div>
+              <div className="bg-slate-800/50 rounded-lg p-2 text-center">
+                <p className="text-[10px] text-slate-500 uppercase">Backtest Sharpe</p>
+                <p className={`text-sm font-bold ${pitRec.sharpe >= 15 ? "text-emerald-400" : pitRec.sharpe >= 10 ? "text-amber-400" : "text-red-400"}`}>{pitRec.sharpe.toFixed(2)}</p>
+              </div>
+              <div className="bg-slate-800/50 rounded-lg p-2 text-center">
+                <p className="text-[10px] text-slate-500 uppercase">Optimal Hold</p>
+                <p className="text-sm font-bold text-slate-200">{pitRec.best_horizon}</p>
+              </div>
+            </div>
+
+            {/* Pattern Recognition */}
+            <div className="mb-3">
+              <p className="text-xs text-slate-500 uppercase tracking-wide mb-1">Pattern Recognition</p>
+              <p className="text-sm text-slate-300">{pitRec.pattern}</p>
+            </div>
+
+            {/* Analyst Notes */}
+            <div className="mb-3">
+              <p className="text-xs text-slate-500 uppercase tracking-wide mb-1">Analyst Notes</p>
+              <p className="text-sm text-slate-300">{pitRec.notes}</p>
+            </div>
+
+            {/* Global Context */}
+            {pitData?.global_context && (
+              <div className="mt-3 pt-3 border-t border-slate-700">
+                <p className="text-xs text-slate-500 uppercase tracking-wide mb-1">Market Thesis (MRE {pitData.version})</p>
+                <p className="text-xs text-slate-400 italic">{pitData.global_context.thesis}</p>
+                {pitData.global_context.key_risks.length > 0 && (
+                  <div className="mt-2">
+                    <p className="text-xs text-red-400/70 uppercase tracking-wide mb-1">Key Risks</p>
+                    <ul className="text-xs text-slate-500 space-y-0.5">
+                      {pitData.global_context.key_risks.map((risk, i) => (
+                        <li key={i} className="flex items-start gap-1">
+                          <span className="text-red-400/50 mt-0.5">⚠</span> {risk}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -1101,18 +1195,30 @@ export default function MarketsOverview({ initialSymbol, mreSignalData, onSymbol
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
+  // Local MRE signal data — persists even after parent clears analyzeSymbol
+  const [localMreSignal, setLocalMreSignal] = useState<MRESignalData | null>(null);
+
   // Handle initial symbol from Analyze feature
   useEffect(() => {
     if (initialSymbol) {
       setSelectedSymbol(initialSymbol);
-      // Signal that we've consumed it so the parent can clear it if desired
-      if (onSymbolConsumed) {
-        // Delay slightly so the symbol has time to load
-        const timer = setTimeout(onSymbolConsumed, 500);
-        return () => clearTimeout(timer);
-      }
     }
-  }, [initialSymbol, onSymbolConsumed]);
+  }, [initialSymbol]);
+
+  // Store MRE signal data locally when received
+  useEffect(() => {
+    if (mreSignalData) {
+      setLocalMreSignal(mreSignalData);
+    }
+  }, [mreSignalData]);
+
+  // Clear local MRE signal when user manually selects a different symbol
+  const handleSelectSymbolWithClear = (symbol: string) => {
+    setSelectedSymbol(symbol);
+    if (symbol !== localMreSignal?.symbol) {
+      setLocalMreSignal(null);
+    }
+  };
 
   // Load stored settings when symbol changes
   useEffect(() => {
@@ -1192,7 +1298,7 @@ export default function MarketsOverview({ initialSymbol, mreSignalData, onSymbol
   }, [quotes, selectedSymbol]);
 
   const handleSelectSymbol = (symbol: string) => {
-    setSelectedSymbol(symbol);
+    handleSelectSymbolWithClear(symbol);
   };
 
   const handleTimeframeChange = (label: string) => {
@@ -1309,8 +1415,8 @@ export default function MarketsOverview({ initialSymbol, mreSignalData, onSymbol
                 </div>
 
                 {/* MRE Analysis Panel — shown when signal data is available */}
-                {mreSignalData && mreSignalData.symbol === selectedSymbol && (
-                  <MREAnalysisPanel signal={mreSignalData} />
+                {localMreSignal && localMreSignal.symbol === selectedSymbol && (
+                  <MREAnalysisPanel signal={localMreSignal} />
                 )}
               </>
             )}

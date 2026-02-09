@@ -71,6 +71,17 @@ interface MREData {
       confidence: number;
     };
   };
+  breadth?: {
+    available: boolean;
+    signal: string;
+    trend_5d: string;
+    spread_5d: number;
+    spread_10d: number;
+    divergence_vs_spy: boolean;
+    advancing_days_10d: number;
+    spy_5d_return: number;
+    rsp_5d_return: number;
+  };
 }
 
 interface Position {
@@ -508,6 +519,61 @@ export default function ActionsDashboard({
           <p className="text-xs text-slate-500">{data.prediction_markets?.kalshi?.confidence || 0}% confidence</p>
         </div>
       </div>
+
+      {/* Breadth Indicator */}
+      {data.breadth?.available && (
+        <div className={`bg-slate-800/50 rounded-xl p-4 border ${data.breadth.divergence_vs_spy ? "border-amber-500/50" : "border-slate-700/50"}`}>
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-semibold text-slate-200">📊 Market Breadth</span>
+              <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                data.breadth.signal === "STRONG_BULL" ? "bg-emerald-500/20 text-emerald-400" :
+                data.breadth.signal === "BULL" ? "bg-green-500/20 text-green-400" :
+                data.breadth.signal === "NEUTRAL" ? "bg-slate-500/20 text-slate-400" :
+                data.breadth.signal === "WEAK" ? "bg-amber-500/20 text-amber-400" :
+                "bg-red-500/20 text-red-400"
+              }`}>
+                {data.breadth.signal}
+              </span>
+            </div>
+            {data.breadth.divergence_vs_spy && (
+              <span className="text-xs px-2 py-1 bg-amber-500/20 text-amber-400 rounded-full flex items-center gap-1">
+                <AlertTriangle className="w-3 h-3" /> Divergence
+              </span>
+            )}
+          </div>
+          <div className="grid grid-cols-4 gap-3 text-sm">
+            <div>
+              <p className="text-xs text-slate-500">Trend (5d)</p>
+              <p className={`font-medium capitalize ${
+                data.breadth.trend_5d === "expanding" ? "text-emerald-400" :
+                data.breadth.trend_5d === "narrowing" ? "text-red-400" : "text-slate-300"
+              }`}>{data.breadth.trend_5d}</p>
+            </div>
+            <div>
+              <p className="text-xs text-slate-500">Spread (5d)</p>
+              <p className={`font-mono ${data.breadth.spread_5d > 0 ? "text-emerald-400" : data.breadth.spread_5d < 0 ? "text-red-400" : "text-slate-300"}`}>
+                {data.breadth.spread_5d > 0 ? "+" : ""}{data.breadth.spread_5d}%
+              </p>
+            </div>
+            <div>
+              <p className="text-xs text-slate-500">Advancing Days</p>
+              <p className="font-mono text-slate-300">{data.breadth.advancing_days_10d}/10</p>
+            </div>
+            <div>
+              <p className="text-xs text-slate-500">RSP vs SPY (5d)</p>
+              <p className="font-mono text-slate-400 text-xs">
+                RSP {data.breadth.rsp_5d_return > 0 ? "+" : ""}{data.breadth.rsp_5d_return}% / SPY {data.breadth.spy_5d_return > 0 ? "+" : ""}{data.breadth.spy_5d_return}%
+              </p>
+            </div>
+          </div>
+          {data.breadth.divergence_vs_spy && (
+            <div className="mt-3 p-2 bg-amber-500/10 rounded text-xs text-amber-300">
+              ⚠️ SPY rising but breadth narrowing — rally may be thinning. Fewer stocks participating.
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

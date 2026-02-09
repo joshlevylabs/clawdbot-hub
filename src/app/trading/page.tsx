@@ -11,16 +11,12 @@ import {
   Clock,
   DollarSign,
   Percent,
-  LineChart,
-  Download,
   Target,
   CheckCircle,
   XCircle,
   AlertTriangle,
   Zap,
   Database,
-  Gauge,
-  BarChart2,
 } from "lucide-react";
 import ActionsDashboard from "@/components/ActionsDashboard";
 import PerformanceChart from "@/components/PerformanceChart";
@@ -312,573 +308,17 @@ function SignalAccuracyPanel({ stats }: { stats: SignalStats }) {
   );
 }
 
-// ===== Portfolio Tab Component =====
+// ===== Unified Trading Page with Single Tab Bar =====
 
-function PortfolioTab({
-  data,
-  loading,
-  error,
-  dataSource,
-  marketStatus,
-  activeTab,
-  setActiveTab,
-  legacyPositions,
-  loadData,
-  loadFromSupabase,
-}: {
-  data: PaperTradingData | null;
-  loading: boolean;
-  error: string | null;
-  dataSource: "supabase" | "static";
-  marketStatus: { open: boolean; message: string };
-  activeTab: "overview" | "positions" | "trades" | "signals";
-  setActiveTab: (tab: "overview" | "positions" | "trades" | "signals") => void;
-  legacyPositions: { symbol: string; qty: number; entry_price: number }[];
-  loadData: () => Promise<void>;
-  loadFromSupabase: () => Promise<void>;
-}) {
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
-        <RefreshCw className="w-8 h-8 text-primary-400 animate-spin" />
-      </div>
-    );
-  }
+type ActiveTab = "overview" | "positions" | "trades" | "signals" | "mre" | "markets";
 
-  if (error) {
-    return (
-      <div className="min-h-screen bg-slate-900 p-6 flex items-center justify-center">
-        <div className="bg-red-900/20 border border-red-500/30 rounded-xl p-6 max-w-md text-center">
-          <AlertTriangle className="w-8 h-8 text-red-400 mx-auto mb-3" />
-          <p className="text-red-300">{error}</p>
-          <button onClick={loadData} className="mt-4 px-4 py-2 bg-primary-600 rounded-lg text-sm">
-            Retry
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  const config = data?.config;
-  const positions = data?.positions || [];
-  const trades = data?.trades || [];
-  const snapshots = data?.snapshots || [];
-  const signalStats = data?.signalStats;
-  const startingCapital = config?.starting_capital || 100000;
-  const cash = config?.current_cash || 100000;
-  const positionsValue = positions.reduce((sum, p) => sum + p.qty * (p.current_price || p.entry_price), 0);
-  const equity = cash + positionsValue;
-  const totalPnl = equity - startingCapital;
-  const totalPnlPct = (totalPnl / startingCapital) * 100;
-
-  // Trade stats
-  const winningTrades = trades.filter((t) => t.pnl > 0);
-  const losingTrades = trades.filter((t) => t.pnl < 0);
-  const winRate = trades.length > 0 ? (winningTrades.length / trades.length) * 100 : 0;
-  const totalRealizedPnl = trades.reduce((sum, t) => sum + t.pnl, 0);
-  const avgWin = winningTrades.length > 0 ? winningTrades.reduce((s, t) => s + t.pnl, 0) / winningTrades.length : 0;
-  const avgLoss = losingTrades.length > 0 ? Math.abs(losingTrades.reduce((s, t) => s + t.pnl, 0) / losingTrades.length) : 0;
-  const profitFactor = avgLoss > 0 ? avgWin / avgLoss : avgWin > 0 ? Infinity : 0;
-
-  return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-100 flex items-center gap-2">
-            <BarChart3 className="w-6 h-6 text-primary-400" />
-            Paper Trading Dashboard
-          </h1>
-          <div className="flex items-center gap-3 mt-1">
-            <span className={`text-xs px-2 py-0.5 rounded-full flex items-center gap-1 ${
-              dataSource === "supabase"
-                ? "bg-emerald-900/50 text-emerald-400"
-                : "bg-amber-900/50 text-amber-400"
-            }`}>
-              <Database className="w-3 h-3" />
-              {dataSource === "supabase" ? "Live (Supabase)" : "Static (JSON)"}
-            </span>
-            <span className={`text-xs px-2 py-0.5 rounded-full ${
-              marketStatus.open
-                ? "bg-emerald-900/50 text-emerald-400"
-                : "bg-amber-900/50 text-amber-400"
-            }`}>
-              {marketStatus.open ? "🟢 " : "🔴 "}{marketStatus.message}
-            </span>
-            {config?.auto_trade && (
-              <span className="text-xs px-2 py-0.5 rounded-full bg-primary-900/50 text-primary-400">
-                <Zap className="w-3 h-3 inline" /> Auto-Trade ON
-              </span>
-            )}
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={loadData}
-            disabled={loading}
-            className="flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors disabled:opacity-50"
-          >
-            <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
-            Refresh
-          </button>
-        </div>
-      </div>
-
-      {/* Tab Nav */}
-      <div className="flex gap-1 bg-slate-800/50 rounded-lg p-1 w-fit">
-        {(["overview", "positions", "trades", "signals"] as const).map((tab) => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={`px-4 py-2 rounded-md text-sm font-medium transition-colors capitalize ${
-              activeTab === tab
-                ? "bg-primary-600 text-white"
-                : "text-slate-400 hover:text-slate-200"
-            }`}
-          >
-            {tab}
-          </button>
-        ))}
-      </div>
-
-      {/* ===== OVERVIEW TAB ===== */}
-      {activeTab === "overview" && (
-        <>
-          {/* Portfolio Stats */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <StatCard
-              icon={Wallet}
-              label="Total Equity"
-              value={`$${formatCurrency(equity)}`}
-              subValue={`Started: $${formatCurrency(startingCapital)}`}
-              trend={totalPnl >= 0 ? "up" : "down"}
-            />
-            <StatCard
-              icon={totalPnl >= 0 ? TrendingUp : TrendingDown}
-              label="Total P/L"
-              value={`${totalPnl >= 0 ? "+" : ""}$${formatCurrency(totalPnl)}`}
-              subValue={formatPercent(totalPnlPct)}
-              trend={totalPnl >= 0 ? "up" : "down"}
-            />
-            <StatCard
-              icon={DollarSign}
-              label="Cash Available"
-              value={`$${formatCurrency(cash)}`}
-              subValue={`${equity > 0 ? ((cash / equity) * 100).toFixed(0) : 100}% of portfolio`}
-              trend="neutral"
-            />
-            <StatCard
-              icon={Activity}
-              label="Open Positions"
-              value={positions.length.toString()}
-              subValue={`$${formatCurrency(positionsValue)} invested`}
-              trend="neutral"
-            />
-          </div>
-
-          {/* Trade Performance Stats */}
-          {trades.length > 0 && (
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-              <StatCard
-                icon={CheckCircle}
-                label="Win Rate"
-                value={`${winRate.toFixed(1)}%`}
-                subValue={`${winningTrades.length}W / ${losingTrades.length}L of ${trades.length}`}
-                trend={winRate >= 50 ? "up" : "down"}
-              />
-              <StatCard
-                icon={DollarSign}
-                label="Realized P/L"
-                value={`${totalRealizedPnl >= 0 ? "+" : ""}$${formatCurrency(totalRealizedPnl)}`}
-                subValue={`${trades.length} closed trades`}
-                trend={totalRealizedPnl >= 0 ? "up" : "down"}
-              />
-              <StatCard
-                icon={Percent}
-                label="Profit Factor"
-                value={profitFactor === Infinity ? "∞" : profitFactor.toFixed(2)}
-                subValue={`Avg Win: $${formatCurrency(avgWin)}`}
-                trend={profitFactor >= 1.5 ? "up" : profitFactor >= 1 ? "neutral" : "down"}
-              />
-              <StatCard
-                icon={Clock}
-                label="Avg Hold"
-                value={`${trades.length > 0 ? (trades.reduce((s, t) => s + (t.hold_days_actual || 0), 0) / trades.length).toFixed(1) : "0"} days`}
-                subValue="Average hold time"
-                trend="neutral"
-              />
-            </div>
-          )}
-
-          {/* Performance vs S&P 500 — PROMINENT */}
-          <PerformanceChart
-            snapshots={snapshots}
-            startingCapital={startingCapital}
-          />
-
-          {/* Actions Dashboard (MRE Signals) */}
-          <ActionsDashboard
-            positions={legacyPositions}
-            cash={cash}
-            tradingEnabled={true}
-            onTrade={async (symbol, side, qty, price, target, stop) => {
-              try {
-                const res = await fetch("/api/paper-trading", {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ symbol, side, qty, price, target, stop }),
-                });
-                if (!res.ok) {
-                  const err = await res.json();
-                  alert(`Trade failed: ${err.error}`);
-                  return;
-                }
-                // Refresh data after trade
-                loadFromSupabase();
-              } catch (err) {
-                alert(`Trade error: ${err}`);
-              }
-            }}
-          />
-
-          {/* Signal Accuracy */}
-          {signalStats && <SignalAccuracyPanel stats={signalStats} />}
-        </>
-      )}
-
-      {/* ===== POSITIONS TAB ===== */}
-      {activeTab === "positions" && (
-        <>
-          {positions.length === 0 ? (
-            <div className="bg-slate-800/50 rounded-xl p-12 border border-slate-700/50 text-center">
-              <Database className="w-8 h-8 text-slate-600 mx-auto mb-3" />
-              <p className="text-slate-400">No open positions</p>
-            </div>
-          ) : (
-            <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50">
-              <h2 className="text-lg font-semibold text-slate-100 mb-4 flex items-center gap-2">
-                <Activity className="w-5 h-5 text-primary-400" />
-                Open Positions ({positions.length})
-              </h2>
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="text-xs text-slate-500 uppercase border-b border-slate-700">
-                      <th className="text-left py-2 px-2">Symbol</th>
-                      <th className="text-left py-2 px-2">Regime</th>
-                      <th className="text-right py-2 px-2">Qty</th>
-                      <th className="text-right py-2 px-2">Entry</th>
-                      <th className="text-right py-2 px-2">Current</th>
-                      <th className="text-right py-2 px-2">P/L ($)</th>
-                      <th className="text-right py-2 px-2">P/L (%)</th>
-                      <th className="text-right py-2 px-2">Value</th>
-                      <th className="text-right py-2 px-2">% of Portfolio</th>
-                      <th className="text-right py-2 px-2">Confidence</th>
-                      <th className="text-right py-2 px-2">Stop</th>
-                      <th className="text-right py-2 px-2">Target</th>
-                      <th className="text-right py-2 px-2">Days</th>
-                      <th className="text-center py-2 px-2">Auto</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {positions.map((pos) => {
-                      const currentPrice = pos.current_price || pos.entry_price;
-                      const unrealizedPnl = pos.qty * (currentPrice - pos.entry_price);
-                      const unrealizedPnlPct = ((currentPrice - pos.entry_price) / pos.entry_price) * 100;
-                      const isProfit = unrealizedPnl >= 0;
-                      const holdDays = daysSince(pos.opened_at);
-                      const posValue = pos.qty * currentPrice;
-                      const portfolioPct = equity > 0 ? (posValue / equity) * 100 : 0;
-
-                      return (
-                        <tr key={pos.id} className="border-b border-slate-800 hover:bg-slate-800/50">
-                          <td className="py-3 px-2">
-                            <span className="font-bold text-slate-100">{pos.symbol}</span>
-                            {pos.notes && <p className="text-[10px] text-slate-600 mt-0.5 truncate max-w-[120px]">{pos.notes}</p>}
-                          </td>
-                          <td className="py-3 px-2">
-                            {pos.signal_regime && (
-                              <span className={`text-xs px-2 py-0.5 rounded-lg border font-medium capitalize ${
-                                pos.signal_regime === "bull" ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/40" :
-                                pos.signal_regime === "bear" ? "bg-red-500/20 text-red-400 border-red-500/40" :
-                                "bg-amber-500/20 text-amber-400 border-amber-500/40"
-                              }`}>
-                                {pos.signal_regime === "bull" ? "🟢" : pos.signal_regime === "bear" ? "🔴" : "🟡"} {pos.signal_regime}
-                              </span>
-                            )}
-                          </td>
-                          <td className="py-3 px-2 text-right font-mono text-slate-300">{pos.qty}</td>
-                          <td className="py-3 px-2 text-right font-mono text-slate-400">${formatCurrency(pos.entry_price)}</td>
-                          <td className="py-3 px-2 text-right font-mono text-slate-300">${formatCurrency(currentPrice)}</td>
-                          <td className={`py-3 px-2 text-right font-mono font-bold ${isProfit ? "text-emerald-400" : "text-red-400"}`}>
-                            {isProfit ? "+" : ""}${formatCurrency(unrealizedPnl)}
-                          </td>
-                          <td className={`py-3 px-2 text-right font-mono ${isProfit ? "text-emerald-400" : "text-red-400"}`}>
-                            {formatPercent(unrealizedPnlPct)}
-                          </td>
-                          <td className="py-3 px-2 text-right font-mono text-slate-300">${formatCurrency(posValue)}</td>
-                          <td className="py-3 px-2 text-right font-mono text-slate-400">{portfolioPct.toFixed(1)}%</td>
-                          <td className="py-3 px-2 text-right">
-                            {pos.signal_confidence ? (
-                              <div className="flex items-center justify-end gap-1.5">
-                                <div className="w-12 h-1.5 bg-slate-700 rounded-full overflow-hidden">
-                                  <div className={`h-full rounded-full ${pos.signal_confidence >= 70 ? "bg-emerald-500" : pos.signal_confidence >= 50 ? "bg-amber-500" : "bg-red-500"}`}
-                                    style={{ width: `${pos.signal_confidence}%` }} />
-                                </div>
-                                <span className="text-xs text-slate-400">{pos.signal_confidence}%</span>
-                              </div>
-                            ) : <span className="text-xs text-slate-600">—</span>}
-                          </td>
-                          <td className="py-3 px-2 text-right font-mono text-red-400/70">
-                            {pos.stop_loss ? `$${formatCurrency(pos.stop_loss)}` : "—"}
-                          </td>
-                          <td className="py-3 px-2 text-right font-mono text-emerald-400/70">
-                            {pos.take_profit ? `$${formatCurrency(pos.take_profit)}` : "—"}
-                          </td>
-                          <td className="py-3 px-2 text-right text-sm text-slate-400">
-                            {holdDays}d
-                            {pos.hold_days && <span className="text-xs text-slate-600">/{pos.hold_days}</span>}
-                          </td>
-                          <td className="py-3 px-2 text-center">
-                            {pos.auto_tracked ? <Zap className="w-4 h-4 text-primary-400 mx-auto" /> : <span className="text-xs text-slate-600">—</span>}
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                  <tfoot>
-                    <tr className="border-t-2 border-slate-600 bg-slate-800/80 font-bold">
-                      <td className="py-3 px-2 text-slate-100">Total</td>
-                      <td></td>
-                      <td></td>
-                      <td className="py-3 px-2 text-right font-mono text-slate-400">
-                        ${formatCurrency(positions.reduce((s, p) => s + p.entry_price * p.qty, 0))}
-                      </td>
-                      <td></td>
-                      <td className={`py-3 px-2 text-right font-mono ${totalPnl >= 0 ? "text-emerald-400" : "text-red-400"}`}>
-                        {totalPnl >= 0 ? "+" : ""}${formatCurrency(totalPnl)}
-                      </td>
-                      <td className={`py-3 px-2 text-right font-mono ${totalPnl >= 0 ? "text-emerald-400" : "text-red-400"}`}>
-                        {formatPercent(totalPnlPct)}
-                      </td>
-                      <td className="py-3 px-2 text-right font-mono text-slate-200">${formatCurrency(positionsValue)}</td>
-                      <td className="py-3 px-2 text-right font-mono text-slate-400">
-                        {equity > 0 ? ((positionsValue / equity) * 100).toFixed(1) : "0"}%
-                      </td>
-                      <td colSpan={5} className="py-3 px-2 text-right text-sm text-slate-500">
-                        Cash: ${formatCurrency(cash)} ({equity > 0 ? ((cash / equity) * 100).toFixed(1) : 100}%)
-                      </td>
-                    </tr>
-                  </tfoot>
-                </table>
-              </div>
-            </div>
-          )}
-        </>
-      )}
-
-      {/* ===== TRADES TAB ===== */}
-      {activeTab === "trades" && (
-        <>
-          {trades.length === 0 ? (
-            <div className="bg-slate-800/50 rounded-xl p-12 border border-slate-700/50 text-center">
-              <Clock className="w-10 h-10 text-slate-600 mx-auto mb-3" />
-              <p className="text-slate-400 text-lg">No closed trades yet</p>
-              <p className="text-sm text-slate-600 mt-1">
-                Trades will appear here once positions are opened and closed
-              </p>
-            </div>
-          ) : (
-            <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50">
-              <h2 className="text-lg font-semibold text-slate-100 mb-4 flex items-center gap-2">
-                <Clock className="w-5 h-5 text-cyan-400" />
-                Trade History ({trades.length})
-              </h2>
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="text-xs text-slate-500 uppercase border-b border-slate-700">
-                      <th className="text-left py-2 px-2">Closed</th>
-                      <th className="text-left py-2 px-2">Symbol</th>
-                      <th className="text-left py-2 px-2">Side</th>
-                      <th className="text-right py-2 px-2">Qty</th>
-                      <th className="text-right py-2 px-2">Entry</th>
-                      <th className="text-right py-2 px-2">Exit</th>
-                      <th className="text-right py-2 px-2">P/L</th>
-                      <th className="text-right py-2 px-2">P/L %</th>
-                      <th className="text-right py-2 px-2">Hold</th>
-                      <th className="text-left py-2 px-2">Reason</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {trades.map((trade) => {
-                      const isProfit = trade.pnl >= 0;
-                      return (
-                        <tr key={trade.id} className="border-b border-slate-800 hover:bg-slate-800/50">
-                          <td className="py-2 px-2 text-sm text-slate-400">{formatDate(trade.closed_at)}</td>
-                          <td className="py-2 px-2 font-medium text-slate-200">{trade.symbol}</td>
-                          <td className="py-2 px-2">
-                            <span className={`px-2 py-0.5 rounded text-xs font-medium ${
-                              trade.side === "long" ? "bg-emerald-900/50 text-emerald-400" : "bg-red-900/50 text-red-400"
-                            }`}>
-                              {trade.side.toUpperCase()}
-                            </span>
-                          </td>
-                          <td className="py-2 px-2 text-right font-mono text-slate-300">{trade.qty}</td>
-                          <td className="py-2 px-2 text-right font-mono text-slate-400">${formatCurrency(trade.entry_price)}</td>
-                          <td className="py-2 px-2 text-right font-mono text-slate-300">${formatCurrency(trade.exit_price)}</td>
-                          <td className={`py-2 px-2 text-right font-mono font-bold ${isProfit ? "text-emerald-400" : "text-red-400"}`}>
-                            {isProfit ? "+" : ""}${formatCurrency(trade.pnl)}
-                          </td>
-                          <td className={`py-2 px-2 text-right font-mono ${isProfit ? "text-emerald-400" : "text-red-400"}`}>
-                            {formatPercent(trade.pnl_pct)}
-                          </td>
-                          <td className="py-2 px-2 text-right text-sm text-slate-400">
-                            {trade.hold_days_actual || "—"}d
-                          </td>
-                          <td className="py-2 px-2 text-sm text-slate-500">
-                            {trade.close_reason ? (
-                              <span className={`px-2 py-0.5 rounded text-xs ${
-                                trade.close_reason === "take_profit" ? "bg-emerald-900/30 text-emerald-400" :
-                                trade.close_reason === "stop_loss" ? "bg-red-900/30 text-red-400" :
-                                trade.close_reason === "signal_flip" ? "bg-amber-900/30 text-amber-400" :
-                                "bg-slate-700 text-slate-400"
-                              }`}>
-                                {trade.close_reason.replace(/_/g, " ")}
-                              </span>
-                            ) : "—"}
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
-        </>
-      )}
-
-      {/* ===== SIGNALS TAB ===== */}
-      {activeTab === "signals" && (
-        <>
-          {/* Signal Accuracy */}
-          {signalStats && <SignalAccuracyPanel stats={signalStats} />}
-
-          {/* Recent Signals Table */}
-          {data?.signals && data.signals.length > 0 ? (
-            <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50">
-              <h2 className="text-lg font-semibold text-slate-100 mb-4 flex items-center gap-2">
-                <Target className="w-5 h-5 text-primary-400" />
-                Signal History ({data.signals.length})
-              </h2>
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="text-xs text-slate-500 uppercase border-b border-slate-700">
-                      <th className="text-left py-2 px-2">Date</th>
-                      <th className="text-left py-2 px-2">Symbol</th>
-                      <th className="text-left py-2 px-2">Signal</th>
-                      <th className="text-right py-2 px-2">Price</th>
-                      <th className="text-right py-2 px-2">Confidence</th>
-                      <th className="text-left py-2 px-2">Regime</th>
-                      <th className="text-center py-2 px-2">5D</th>
-                      <th className="text-center py-2 px-2">10D</th>
-                      <th className="text-center py-2 px-2">20D</th>
-                      <th className="text-right py-2 px-2">5D %</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {data.signals.slice(0, 50).map((sig) => (
-                      <tr key={sig.id} className="border-b border-slate-800 hover:bg-slate-800/50">
-                        <td className="py-2 px-2 text-sm text-slate-400">{formatDate(sig.generated_at)}</td>
-                        <td className="py-2 px-2 font-medium text-slate-200">{sig.symbol}</td>
-                        <td className="py-2 px-2">
-                          <span className={`px-2 py-0.5 rounded text-xs font-bold ${
-                            sig.signal === "BUY" ? "bg-emerald-900/50 text-emerald-400" :
-                            sig.signal === "SELL" ? "bg-red-900/50 text-red-400" :
-                            "bg-slate-700 text-slate-400"
-                          }`}>
-                            {sig.signal}
-                          </span>
-                        </td>
-                        <td className="py-2 px-2 text-right font-mono text-slate-300">${formatCurrency(sig.price_at_signal)}</td>
-                        <td className="py-2 px-2 text-right text-sm text-slate-400">
-                          {sig.confidence ? `${sig.confidence}%` : "—"}
-                        </td>
-                        <td className="py-2 px-2 text-sm">
-                          <span className={`px-1.5 py-0.5 rounded text-xs ${
-                            sig.regime === "bull" ? "bg-emerald-900/30 text-emerald-400" :
-                            sig.regime === "bear" ? "bg-red-900/30 text-red-400" :
-                            "bg-slate-700 text-slate-400"
-                          }`}>
-                            {sig.regime || "—"}
-                          </span>
-                        </td>
-                        <td className="py-2 px-2 text-center">
-                          {sig.was_correct_5d === null ? (
-                            <Clock className="w-3.5 h-3.5 text-slate-600 mx-auto" />
-                          ) : sig.was_correct_5d ? (
-                            <CheckCircle className="w-3.5 h-3.5 text-emerald-400 mx-auto" />
-                          ) : (
-                            <XCircle className="w-3.5 h-3.5 text-red-400 mx-auto" />
-                          )}
-                        </td>
-                        <td className="py-2 px-2 text-center">
-                          {sig.was_correct_10d === null ? (
-                            <Clock className="w-3.5 h-3.5 text-slate-600 mx-auto" />
-                          ) : sig.was_correct_10d ? (
-                            <CheckCircle className="w-3.5 h-3.5 text-emerald-400 mx-auto" />
-                          ) : (
-                            <XCircle className="w-3.5 h-3.5 text-red-400 mx-auto" />
-                          )}
-                        </td>
-                        <td className="py-2 px-2 text-center">
-                          {sig.was_correct_20d === null ? (
-                            <Clock className="w-3.5 h-3.5 text-slate-600 mx-auto" />
-                          ) : sig.was_correct_20d ? (
-                            <CheckCircle className="w-3.5 h-3.5 text-emerald-400 mx-auto" />
-                          ) : (
-                            <XCircle className="w-3.5 h-3.5 text-red-400 mx-auto" />
-                          )}
-                        </td>
-                        <td className={`py-2 px-2 text-right font-mono text-sm ${
-                          sig.outcome_5d_pct !== null
-                            ? sig.outcome_5d_pct >= 0 ? "text-emerald-400" : "text-red-400"
-                            : "text-slate-600"
-                        }`}>
-                          {sig.outcome_5d_pct !== null ? formatPercent(sig.outcome_5d_pct) : "—"}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          ) : (
-            <div className="bg-slate-800/50 rounded-xl p-12 border border-slate-700/50 text-center">
-              <Target className="w-10 h-10 text-slate-600 mx-auto mb-3" />
-              <p className="text-slate-400 text-lg">No signal history yet</p>
-              <p className="text-sm text-slate-600 mt-1">
-                Signals will be recorded by the auto-tracker service
-              </p>
-            </div>
-          )}
-        </>
-      )}
-    </div>
-  );
-}
-
-// ===== Main Page =====
-
-function PortfolioPage() {
+export default function TradingPage() {
+  const [activeTab, setActiveTab] = useState<ActiveTab>("overview");
   const [data, setData] = useState<PaperTradingData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [dataSource, setDataSource] = useState<"supabase" | "static">("supabase");
   const [marketStatus] = useState(getMarketStatus());
-  const [activeTab, setActiveTab] = useState<"overview" | "positions" | "trades" | "signals">("overview");
 
   // Legacy state for ActionsDashboard compatibility
   const [legacyPositions, setLegacyPositions] = useState<{ symbol: string; qty: number; entry_price: number }[]>([]);
@@ -958,28 +398,7 @@ function PortfolioPage() {
     loadData();
   }, [loadData]);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
-        <RefreshCw className="w-8 h-8 text-primary-400 animate-spin" />
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-slate-900 p-6 flex items-center justify-center">
-        <div className="bg-red-900/20 border border-red-500/30 rounded-xl p-6 max-w-md text-center">
-          <AlertTriangle className="w-8 h-8 text-red-400 mx-auto mb-3" />
-          <p className="text-red-300">{error}</p>
-          <button onClick={loadData} className="mt-4 px-4 py-2 bg-primary-600 rounded-lg text-sm">
-            Retry
-          </button>
-        </div>
-      </div>
-    );
-  }
-
+  // Derived portfolio data
   const config = data?.config;
   const positions = data?.positions || [];
   const trades = data?.trades || [];
@@ -1001,528 +420,75 @@ function PortfolioPage() {
   const avgLoss = losingTrades.length > 0 ? Math.abs(losingTrades.reduce((s, t) => s + t.pnl, 0) / losingTrades.length) : 0;
   const profitFactor = avgLoss > 0 ? avgWin / avgLoss : avgWin > 0 ? Infinity : 0;
 
-  return (
-    <div className="min-h-screen bg-slate-900 p-4 lg:p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold text-slate-100 flex items-center gap-2">
-              <BarChart3 className="w-6 h-6 text-primary-400" />
-              Paper Trading Dashboard
-            </h1>
-            <div className="flex items-center gap-3 mt-1">
-              <span className={`text-xs px-2 py-0.5 rounded-full flex items-center gap-1 ${
-                dataSource === "supabase"
-                  ? "bg-emerald-900/50 text-emerald-400"
-                  : "bg-amber-900/50 text-amber-400"
-              }`}>
-                <Database className="w-3 h-3" />
-                {dataSource === "supabase" ? "Live (Supabase)" : "Static (JSON)"}
-              </span>
-              <span className={`text-xs px-2 py-0.5 rounded-full ${
-                marketStatus.open
-                  ? "bg-emerald-900/50 text-emerald-400"
-                  : "bg-amber-900/50 text-amber-400"
-              }`}>
-                {marketStatus.open ? "🟢 " : "🔴 "}{marketStatus.message}
-              </span>
-              {config?.auto_trade && (
-                <span className="text-xs px-2 py-0.5 rounded-full bg-primary-900/50 text-primary-400">
-                  <Zap className="w-3 h-3 inline" /> Auto-Trade ON
-                </span>
-              )}
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={loadData}
-              disabled={loading}
-              className="flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors disabled:opacity-50"
-            >
-              <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
-              Refresh
-            </button>
-          </div>
-        </div>
+  const isPortfolioTab = activeTab === "overview" || activeTab === "positions" || activeTab === "trades" || activeTab === "signals";
 
-        {/* Tab Nav */}
-        <div className="flex gap-1 bg-slate-800/50 rounded-lg p-1 w-fit">
-          {(["overview", "positions", "trades", "signals"] as const).map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors capitalize ${
-                activeTab === tab
-                  ? "bg-primary-600 text-white"
-                  : "text-slate-400 hover:text-slate-200"
-              }`}
-            >
-              {tab}
-            </button>
-          ))}
-        </div>
-
-        {/* ===== OVERVIEW TAB ===== */}
-        {activeTab === "overview" && (
-          <>
-            {/* Portfolio Stats */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-              <StatCard
-                icon={Wallet}
-                label="Total Equity"
-                value={`$${formatCurrency(equity)}`}
-                subValue={`Started: $${formatCurrency(startingCapital)}`}
-                trend={totalPnl >= 0 ? "up" : "down"}
-              />
-              <StatCard
-                icon={totalPnl >= 0 ? TrendingUp : TrendingDown}
-                label="Total P/L"
-                value={`${totalPnl >= 0 ? "+" : ""}$${formatCurrency(totalPnl)}`}
-                subValue={formatPercent(totalPnlPct)}
-                trend={totalPnl >= 0 ? "up" : "down"}
-              />
-              <StatCard
-                icon={DollarSign}
-                label="Cash Available"
-                value={`$${formatCurrency(cash)}`}
-                subValue={`${equity > 0 ? ((cash / equity) * 100).toFixed(0) : 100}% of portfolio`}
-                trend="neutral"
-              />
-              <StatCard
-                icon={Activity}
-                label="Open Positions"
-                value={positions.length.toString()}
-                subValue={`$${formatCurrency(positionsValue)} invested`}
-                trend="neutral"
-              />
-            </div>
-
-            {/* Trade Performance Stats */}
-            {trades.length > 0 && (
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <StatCard
-                  icon={CheckCircle}
-                  label="Win Rate"
-                  value={`${winRate.toFixed(1)}%`}
-                  subValue={`${winningTrades.length}W / ${losingTrades.length}L of ${trades.length}`}
-                  trend={winRate >= 50 ? "up" : "down"}
-                />
-                <StatCard
-                  icon={DollarSign}
-                  label="Realized P/L"
-                  value={`${totalRealizedPnl >= 0 ? "+" : ""}$${formatCurrency(totalRealizedPnl)}`}
-                  subValue={`${trades.length} closed trades`}
-                  trend={totalRealizedPnl >= 0 ? "up" : "down"}
-                />
-                <StatCard
-                  icon={Percent}
-                  label="Profit Factor"
-                  value={profitFactor === Infinity ? "∞" : profitFactor.toFixed(2)}
-                  subValue={`Avg Win: $${formatCurrency(avgWin)}`}
-                  trend={profitFactor >= 1.5 ? "up" : profitFactor >= 1 ? "neutral" : "down"}
-                />
-                <StatCard
-                  icon={Clock}
-                  label="Avg Hold"
-                  value={`${trades.length > 0 ? (trades.reduce((s, t) => s + (t.hold_days_actual || 0), 0) / trades.length).toFixed(1) : "0"} days`}
-                  subValue="Average hold time"
-                  trend="neutral"
-                />
-              </div>
-            )}
-
-            {/* Performance vs S&P 500 — PROMINENT */}
-            <PerformanceChart
-              snapshots={snapshots}
-              startingCapital={startingCapital}
-            />
-
-            {/* Actions Dashboard (MRE Signals) */}
-            <ActionsDashboard
-              positions={legacyPositions}
-              cash={cash}
-              tradingEnabled={true}
-              onTrade={async (symbol, side, qty, price, target, stop) => {
-                try {
-                  const res = await fetch("/api/paper-trading", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ symbol, side, qty, price, target, stop }),
-                  });
-                  if (!res.ok) {
-                    const err = await res.json();
-                    alert(`Trade failed: ${err.error}`);
-                    return;
-                  }
-                  // Refresh data after trade
-                  loadFromSupabase();
-                } catch (err) {
-                  alert(`Trade error: ${err}`);
-                }
-              }}
-            />
-
-            {/* Signal Accuracy */}
-            {signalStats && <SignalAccuracyPanel stats={signalStats} />}
-          </>
-        )}
-
-        {/* ===== POSITIONS TAB ===== */}
-        {activeTab === "positions" && (
-          <>
-            {positions.length === 0 ? (
-              <div className="bg-slate-800/50 rounded-xl p-12 border border-slate-700/50 text-center">
-                <Database className="w-8 h-8 text-slate-600 mx-auto mb-3" />
-                <p className="text-slate-400">No open positions</p>
-              </div>
-            ) : (
-              <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50">
-                <h2 className="text-lg font-semibold text-slate-100 mb-4 flex items-center gap-2">
-                  <Activity className="w-5 h-5 text-primary-400" />
-                  Open Positions ({positions.length})
-                </h2>
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="text-xs text-slate-500 uppercase border-b border-slate-700">
-                        <th className="text-left py-2 px-2">Symbol</th>
-                        <th className="text-left py-2 px-2">Regime</th>
-                        <th className="text-right py-2 px-2">Qty</th>
-                        <th className="text-right py-2 px-2">Entry</th>
-                        <th className="text-right py-2 px-2">Current</th>
-                        <th className="text-right py-2 px-2">P/L ($)</th>
-                        <th className="text-right py-2 px-2">P/L (%)</th>
-                        <th className="text-right py-2 px-2">Value</th>
-                        <th className="text-right py-2 px-2">% of Portfolio</th>
-                        <th className="text-right py-2 px-2">Confidence</th>
-                        <th className="text-right py-2 px-2">Stop</th>
-                        <th className="text-right py-2 px-2">Target</th>
-                        <th className="text-right py-2 px-2">Days</th>
-                        <th className="text-center py-2 px-2">Auto</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {positions.map((pos) => {
-                        const currentPrice = pos.current_price || pos.entry_price;
-                        const unrealizedPnl = pos.qty * (currentPrice - pos.entry_price);
-                        const unrealizedPnlPct = ((currentPrice - pos.entry_price) / pos.entry_price) * 100;
-                        const isProfit = unrealizedPnl >= 0;
-                        const holdDays = daysSince(pos.opened_at);
-                        const posValue = pos.qty * currentPrice;
-                        const portfolioPct = equity > 0 ? (posValue / equity) * 100 : 0;
-
-                        return (
-                          <tr key={pos.id} className="border-b border-slate-800 hover:bg-slate-800/50">
-                            <td className="py-3 px-2">
-                              <span className="font-bold text-slate-100">{pos.symbol}</span>
-                              {pos.notes && <p className="text-[10px] text-slate-600 mt-0.5 truncate max-w-[120px]">{pos.notes}</p>}
-                            </td>
-                            <td className="py-3 px-2">
-                              {pos.signal_regime && (
-                                <span className={`text-xs px-2 py-0.5 rounded-lg border font-medium capitalize ${
-                                  pos.signal_regime === "bull" ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/40" :
-                                  pos.signal_regime === "bear" ? "bg-red-500/20 text-red-400 border-red-500/40" :
-                                  "bg-amber-500/20 text-amber-400 border-amber-500/40"
-                                }`}>
-                                  {pos.signal_regime === "bull" ? "🟢" : pos.signal_regime === "bear" ? "🔴" : "🟡"} {pos.signal_regime}
-                                </span>
-                              )}
-                            </td>
-                            <td className="py-3 px-2 text-right font-mono text-slate-300">{pos.qty}</td>
-                            <td className="py-3 px-2 text-right font-mono text-slate-400">${formatCurrency(pos.entry_price)}</td>
-                            <td className="py-3 px-2 text-right font-mono text-slate-300">${formatCurrency(currentPrice)}</td>
-                            <td className={`py-3 px-2 text-right font-mono font-bold ${isProfit ? "text-emerald-400" : "text-red-400"}`}>
-                              {isProfit ? "+" : ""}${formatCurrency(unrealizedPnl)}
-                            </td>
-                            <td className={`py-3 px-2 text-right font-mono ${isProfit ? "text-emerald-400" : "text-red-400"}`}>
-                              {formatPercent(unrealizedPnlPct)}
-                            </td>
-                            <td className="py-3 px-2 text-right font-mono text-slate-300">${formatCurrency(posValue)}</td>
-                            <td className="py-3 px-2 text-right font-mono text-slate-400">{portfolioPct.toFixed(1)}%</td>
-                            <td className="py-3 px-2 text-right">
-                              {pos.signal_confidence ? (
-                                <div className="flex items-center justify-end gap-1.5">
-                                  <div className="w-12 h-1.5 bg-slate-700 rounded-full overflow-hidden">
-                                    <div className={`h-full rounded-full ${pos.signal_confidence >= 70 ? "bg-emerald-500" : pos.signal_confidence >= 50 ? "bg-amber-500" : "bg-red-500"}`}
-                                      style={{ width: `${pos.signal_confidence}%` }} />
-                                  </div>
-                                  <span className="text-xs text-slate-400">{pos.signal_confidence}%</span>
-                                </div>
-                              ) : <span className="text-xs text-slate-600">—</span>}
-                            </td>
-                            <td className="py-3 px-2 text-right font-mono text-red-400/70">
-                              {pos.stop_loss ? `$${formatCurrency(pos.stop_loss)}` : "—"}
-                            </td>
-                            <td className="py-3 px-2 text-right font-mono text-emerald-400/70">
-                              {pos.take_profit ? `$${formatCurrency(pos.take_profit)}` : "—"}
-                            </td>
-                            <td className="py-3 px-2 text-right text-sm text-slate-400">
-                              {holdDays}d
-                              {pos.hold_days && <span className="text-xs text-slate-600">/{pos.hold_days}</span>}
-                            </td>
-                            <td className="py-3 px-2 text-center">
-                              {pos.auto_tracked ? <Zap className="w-4 h-4 text-primary-400 mx-auto" /> : <span className="text-xs text-slate-600">—</span>}
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                    <tfoot>
-                      <tr className="border-t-2 border-slate-600 bg-slate-800/80 font-bold">
-                        <td className="py-3 px-2 text-slate-100">Total</td>
-                        <td></td>
-                        <td></td>
-                        <td className="py-3 px-2 text-right font-mono text-slate-400">
-                          ${formatCurrency(positions.reduce((s, p) => s + p.entry_price * p.qty, 0))}
-                        </td>
-                        <td></td>
-                        <td className={`py-3 px-2 text-right font-mono ${totalPnl >= 0 ? "text-emerald-400" : "text-red-400"}`}>
-                          {totalPnl >= 0 ? "+" : ""}${formatCurrency(totalPnl)}
-                        </td>
-                        <td className={`py-3 px-2 text-right font-mono ${totalPnl >= 0 ? "text-emerald-400" : "text-red-400"}`}>
-                          {formatPercent(totalPnlPct)}
-                        </td>
-                        <td className="py-3 px-2 text-right font-mono text-slate-200">${formatCurrency(positionsValue)}</td>
-                        <td className="py-3 px-2 text-right font-mono text-slate-400">
-                          {equity > 0 ? ((positionsValue / equity) * 100).toFixed(1) : "0"}%
-                        </td>
-                        <td colSpan={5} className="py-3 px-2 text-right text-sm text-slate-500">
-                          Cash: ${formatCurrency(cash)} ({equity > 0 ? ((cash / equity) * 100).toFixed(1) : 100}%)
-                        </td>
-                      </tr>
-                    </tfoot>
-                  </table>
-                </div>
-              </div>
-            )}
-          </>
-        )}
-
-        {/* ===== TRADES TAB ===== */}
-        {activeTab === "trades" && (
-          <>
-            {trades.length === 0 ? (
-              <div className="bg-slate-800/50 rounded-xl p-12 border border-slate-700/50 text-center">
-                <Clock className="w-10 h-10 text-slate-600 mx-auto mb-3" />
-                <p className="text-slate-400 text-lg">No closed trades yet</p>
-                <p className="text-sm text-slate-600 mt-1">
-                  Trades will appear here once positions are opened and closed
-                </p>
-              </div>
-            ) : (
-              <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50">
-                <h2 className="text-lg font-semibold text-slate-100 mb-4 flex items-center gap-2">
-                  <Clock className="w-5 h-5 text-cyan-400" />
-                  Trade History ({trades.length})
-                </h2>
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="text-xs text-slate-500 uppercase border-b border-slate-700">
-                        <th className="text-left py-2 px-2">Closed</th>
-                        <th className="text-left py-2 px-2">Symbol</th>
-                        <th className="text-left py-2 px-2">Side</th>
-                        <th className="text-right py-2 px-2">Qty</th>
-                        <th className="text-right py-2 px-2">Entry</th>
-                        <th className="text-right py-2 px-2">Exit</th>
-                        <th className="text-right py-2 px-2">P/L</th>
-                        <th className="text-right py-2 px-2">P/L %</th>
-                        <th className="text-right py-2 px-2">Hold</th>
-                        <th className="text-left py-2 px-2">Reason</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {trades.map((trade) => {
-                        const isProfit = trade.pnl >= 0;
-                        return (
-                          <tr key={trade.id} className="border-b border-slate-800 hover:bg-slate-800/50">
-                            <td className="py-2 px-2 text-sm text-slate-400">{formatDate(trade.closed_at)}</td>
-                            <td className="py-2 px-2 font-medium text-slate-200">{trade.symbol}</td>
-                            <td className="py-2 px-2">
-                              <span className={`px-2 py-0.5 rounded text-xs font-medium ${
-                                trade.side === "long" ? "bg-emerald-900/50 text-emerald-400" : "bg-red-900/50 text-red-400"
-                              }`}>
-                                {trade.side.toUpperCase()}
-                              </span>
-                            </td>
-                            <td className="py-2 px-2 text-right font-mono text-slate-300">{trade.qty}</td>
-                            <td className="py-2 px-2 text-right font-mono text-slate-400">${formatCurrency(trade.entry_price)}</td>
-                            <td className="py-2 px-2 text-right font-mono text-slate-300">${formatCurrency(trade.exit_price)}</td>
-                            <td className={`py-2 px-2 text-right font-mono font-bold ${isProfit ? "text-emerald-400" : "text-red-400"}`}>
-                              {isProfit ? "+" : ""}${formatCurrency(trade.pnl)}
-                            </td>
-                            <td className={`py-2 px-2 text-right font-mono ${isProfit ? "text-emerald-400" : "text-red-400"}`}>
-                              {formatPercent(trade.pnl_pct)}
-                            </td>
-                            <td className="py-2 px-2 text-right text-sm text-slate-400">
-                              {trade.hold_days_actual || "—"}d
-                            </td>
-                            <td className="py-2 px-2 text-sm text-slate-500">
-                              {trade.close_reason ? (
-                                <span className={`px-2 py-0.5 rounded text-xs ${
-                                  trade.close_reason === "take_profit" ? "bg-emerald-900/30 text-emerald-400" :
-                                  trade.close_reason === "stop_loss" ? "bg-red-900/30 text-red-400" :
-                                  trade.close_reason === "signal_flip" ? "bg-amber-900/30 text-amber-400" :
-                                  "bg-slate-700 text-slate-400"
-                                }`}>
-                                  {trade.close_reason.replace(/_/g, " ")}
-                                </span>
-                              ) : "—"}
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            )}
-          </>
-        )}
-
-        {/* ===== SIGNALS TAB ===== */}
-        {activeTab === "signals" && (
-          <>
-            {/* Signal Accuracy */}
-            {signalStats && <SignalAccuracyPanel stats={signalStats} />}
-
-            {/* Recent Signals Table */}
-            {data?.signals && data.signals.length > 0 ? (
-              <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50">
-                <h2 className="text-lg font-semibold text-slate-100 mb-4 flex items-center gap-2">
-                  <Target className="w-5 h-5 text-primary-400" />
-                  Signal History ({data.signals.length})
-                </h2>
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="text-xs text-slate-500 uppercase border-b border-slate-700">
-                        <th className="text-left py-2 px-2">Date</th>
-                        <th className="text-left py-2 px-2">Symbol</th>
-                        <th className="text-left py-2 px-2">Signal</th>
-                        <th className="text-right py-2 px-2">Price</th>
-                        <th className="text-right py-2 px-2">Confidence</th>
-                        <th className="text-left py-2 px-2">Regime</th>
-                        <th className="text-center py-2 px-2">5D</th>
-                        <th className="text-center py-2 px-2">10D</th>
-                        <th className="text-center py-2 px-2">20D</th>
-                        <th className="text-right py-2 px-2">5D %</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {data.signals.slice(0, 50).map((sig) => (
-                        <tr key={sig.id} className="border-b border-slate-800 hover:bg-slate-800/50">
-                          <td className="py-2 px-2 text-sm text-slate-400">{formatDate(sig.generated_at)}</td>
-                          <td className="py-2 px-2 font-medium text-slate-200">{sig.symbol}</td>
-                          <td className="py-2 px-2">
-                            <span className={`px-2 py-0.5 rounded text-xs font-bold ${
-                              sig.signal === "BUY" ? "bg-emerald-900/50 text-emerald-400" :
-                              sig.signal === "SELL" ? "bg-red-900/50 text-red-400" :
-                              "bg-slate-700 text-slate-400"
-                            }`}>
-                              {sig.signal}
-                            </span>
-                          </td>
-                          <td className="py-2 px-2 text-right font-mono text-slate-300">${formatCurrency(sig.price_at_signal)}</td>
-                          <td className="py-2 px-2 text-right text-sm text-slate-400">
-                            {sig.confidence ? `${sig.confidence}%` : "—"}
-                          </td>
-                          <td className="py-2 px-2 text-sm">
-                            <span className={`px-1.5 py-0.5 rounded text-xs ${
-                              sig.regime === "bull" ? "bg-emerald-900/30 text-emerald-400" :
-                              sig.regime === "bear" ? "bg-red-900/30 text-red-400" :
-                              "bg-slate-700 text-slate-400"
-                            }`}>
-                              {sig.regime || "—"}
-                            </span>
-                          </td>
-                          <td className="py-2 px-2 text-center">
-                            {sig.was_correct_5d === null ? (
-                              <Clock className="w-3.5 h-3.5 text-slate-600 mx-auto" />
-                            ) : sig.was_correct_5d ? (
-                              <CheckCircle className="w-3.5 h-3.5 text-emerald-400 mx-auto" />
-                            ) : (
-                              <XCircle className="w-3.5 h-3.5 text-red-400 mx-auto" />
-                            )}
-                          </td>
-                          <td className="py-2 px-2 text-center">
-                            {sig.was_correct_10d === null ? (
-                              <Clock className="w-3.5 h-3.5 text-slate-600 mx-auto" />
-                            ) : sig.was_correct_10d ? (
-                              <CheckCircle className="w-3.5 h-3.5 text-emerald-400 mx-auto" />
-                            ) : (
-                              <XCircle className="w-3.5 h-3.5 text-red-400 mx-auto" />
-                            )}
-                          </td>
-                          <td className="py-2 px-2 text-center">
-                            {sig.was_correct_20d === null ? (
-                              <Clock className="w-3.5 h-3.5 text-slate-600 mx-auto" />
-                            ) : sig.was_correct_20d ? (
-                              <CheckCircle className="w-3.5 h-3.5 text-emerald-400 mx-auto" />
-                            ) : (
-                              <XCircle className="w-3.5 h-3.5 text-red-400 mx-auto" />
-                            )}
-                          </td>
-                          <td className={`py-2 px-2 text-right font-mono text-sm ${
-                            sig.outcome_5d_pct !== null
-                              ? sig.outcome_5d_pct >= 0 ? "text-emerald-400" : "text-red-400"
-                              : "text-slate-600"
-                          }`}>
-                            {sig.outcome_5d_pct !== null ? formatPercent(sig.outcome_5d_pct) : "—"}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            ) : (
-              <div className="bg-slate-800/50 rounded-xl p-12 border border-slate-700/50 text-center">
-                <Target className="w-10 h-10 text-slate-600 mx-auto mb-3" />
-                <p className="text-slate-400 text-lg">No signal history yet</p>
-                <p className="text-sm text-slate-600 mt-1">
-                  Signals will be recorded by the auto-tracker service
-                </p>
-              </div>
-            )}
-          </>
-        )}
-      </div>
-    </div>
-  );
-}
-
-// ===== Unified Trading Page with Tabs =====
-
-export default function TradingPage() {
-  const [topTab, setTopTab] = useState<"portfolio" | "mre" | "markets">("portfolio");
+  const tabConfig: { key: ActiveTab; label: string }[] = [
+    { key: "overview", label: "Overview" },
+    { key: "positions", label: "Positions" },
+    { key: "trades", label: "Trades" },
+    { key: "signals", label: "Signals" },
+    { key: "mre", label: "MRE" },
+    { key: "markets", label: "Markets" },
+  ];
 
   return (
     <div className="min-h-screen bg-slate-900">
-      {/* Top-Level Tab Bar */}
+      {/* Sticky Header with Unified Tab Bar */}
       <div className="sticky top-0 z-10 bg-slate-900/95 backdrop-blur-sm border-b border-slate-800 px-4 lg:px-6 py-3">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <h1 className="text-xl font-bold text-slate-100 flex items-center gap-2">
-            <BarChart3 className="w-5 h-5 text-primary-400" />
-            Trading
-          </h1>
-          <div className="flex gap-1 bg-slate-800/60 rounded-lg p-1">
-            {([
-              { key: "portfolio" as const, icon: TrendingUp, label: "Portfolio" },
-              { key: "mre" as const, icon: Gauge, label: "MRE Signals" },
-              { key: "markets" as const, icon: BarChart2, label: "Markets" },
-            ]).map((tab) => (
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-3">
+              <h1 className="text-xl font-bold text-slate-100 flex items-center gap-2">
+                <BarChart3 className="w-5 h-5 text-primary-400" />
+                Trading
+              </h1>
+              {isPortfolioTab && (
+                <div className="flex items-center gap-2">
+                  <span className={`text-xs px-2 py-0.5 rounded-full flex items-center gap-1 ${
+                    dataSource === "supabase"
+                      ? "bg-emerald-900/50 text-emerald-400"
+                      : "bg-amber-900/50 text-amber-400"
+                  }`}>
+                    <Database className="w-3 h-3" />
+                    {dataSource === "supabase" ? "Live" : "Static"}
+                  </span>
+                  <span className={`text-xs px-2 py-0.5 rounded-full ${
+                    marketStatus.open
+                      ? "bg-emerald-900/50 text-emerald-400"
+                      : "bg-amber-900/50 text-amber-400"
+                  }`}>
+                    {marketStatus.open ? "🟢" : "🔴"} {marketStatus.message}
+                  </span>
+                  {config?.auto_trade && (
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-primary-900/50 text-primary-400">
+                      <Zap className="w-3 h-3 inline" /> Auto
+                    </span>
+                  )}
+                </div>
+              )}
+            </div>
+            {isPortfolioTab && (
+              <button
+                onClick={loadData}
+                disabled={loading}
+                className="flex items-center gap-2 px-3 py-1.5 bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors disabled:opacity-50 text-sm"
+              >
+                <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
+                Refresh
+              </button>
+            )}
+          </div>
+          <div className="flex gap-1 bg-slate-800/60 rounded-lg p-1 overflow-x-auto">
+            {tabConfig.map((tab) => (
               <button
                 key={tab.key}
-                onClick={() => setTopTab(tab.key)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                  topTab === tab.key
+                onClick={() => setActiveTab(tab.key)}
+                className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors whitespace-nowrap ${
+                  activeTab === tab.key
                     ? "bg-primary-600 text-white shadow-sm"
                     : "text-slate-400 hover:text-slate-200 hover:bg-slate-700/50"
                 }`}
               >
-                <tab.icon className="w-4 h-4" />
                 {tab.label}
               </button>
             ))}
@@ -1531,9 +497,463 @@ export default function TradingPage() {
       </div>
 
       {/* Tab Content */}
-      {topTab === "portfolio" && <PortfolioPage />}
-      {topTab === "mre" && <MREDashboard />}
-      {topTab === "markets" && <MarketsOverview />}
+      <div className="p-4 lg:p-6">
+        <div className="max-w-7xl mx-auto space-y-6">
+
+          {/* Loading state for portfolio tabs */}
+          {isPortfolioTab && loading && (
+            <div className="flex items-center justify-center py-24">
+              <RefreshCw className="w-8 h-8 text-primary-400 animate-spin" />
+            </div>
+          )}
+
+          {/* Error state for portfolio tabs */}
+          {isPortfolioTab && !loading && error && (
+            <div className="flex items-center justify-center py-24">
+              <div className="bg-red-900/20 border border-red-500/30 rounded-xl p-6 max-w-md text-center">
+                <AlertTriangle className="w-8 h-8 text-red-400 mx-auto mb-3" />
+                <p className="text-red-300">{error}</p>
+                <button onClick={loadData} className="mt-4 px-4 py-2 bg-primary-600 rounded-lg text-sm">
+                  Retry
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* ===== OVERVIEW TAB ===== */}
+          {activeTab === "overview" && !loading && !error && (
+            <>
+              {/* Portfolio Stats */}
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <StatCard
+                  icon={Wallet}
+                  label="Total Equity"
+                  value={`$${formatCurrency(equity)}`}
+                  subValue={`Started: $${formatCurrency(startingCapital)}`}
+                  trend={totalPnl >= 0 ? "up" : "down"}
+                />
+                <StatCard
+                  icon={totalPnl >= 0 ? TrendingUp : TrendingDown}
+                  label="Total P/L"
+                  value={`${totalPnl >= 0 ? "+" : ""}$${formatCurrency(totalPnl)}`}
+                  subValue={formatPercent(totalPnlPct)}
+                  trend={totalPnl >= 0 ? "up" : "down"}
+                />
+                <StatCard
+                  icon={DollarSign}
+                  label="Cash Available"
+                  value={`$${formatCurrency(cash)}`}
+                  subValue={`${equity > 0 ? ((cash / equity) * 100).toFixed(0) : 100}% of portfolio`}
+                  trend="neutral"
+                />
+                <StatCard
+                  icon={Activity}
+                  label="Open Positions"
+                  value={positions.length.toString()}
+                  subValue={`$${formatCurrency(positionsValue)} invested`}
+                  trend="neutral"
+                />
+              </div>
+
+              {/* Trade Performance Stats */}
+              {trades.length > 0 && (
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                  <StatCard
+                    icon={CheckCircle}
+                    label="Win Rate"
+                    value={`${winRate.toFixed(1)}%`}
+                    subValue={`${winningTrades.length}W / ${losingTrades.length}L of ${trades.length}`}
+                    trend={winRate >= 50 ? "up" : "down"}
+                  />
+                  <StatCard
+                    icon={DollarSign}
+                    label="Realized P/L"
+                    value={`${totalRealizedPnl >= 0 ? "+" : ""}$${formatCurrency(totalRealizedPnl)}`}
+                    subValue={`${trades.length} closed trades`}
+                    trend={totalRealizedPnl >= 0 ? "up" : "down"}
+                  />
+                  <StatCard
+                    icon={Percent}
+                    label="Profit Factor"
+                    value={profitFactor === Infinity ? "∞" : profitFactor.toFixed(2)}
+                    subValue={`Avg Win: $${formatCurrency(avgWin)}`}
+                    trend={profitFactor >= 1.5 ? "up" : profitFactor >= 1 ? "neutral" : "down"}
+                  />
+                  <StatCard
+                    icon={Clock}
+                    label="Avg Hold"
+                    value={`${trades.length > 0 ? (trades.reduce((s, t) => s + (t.hold_days_actual || 0), 0) / trades.length).toFixed(1) : "0"} days`}
+                    subValue="Average hold time"
+                    trend="neutral"
+                  />
+                </div>
+              )}
+
+              {/* Performance vs S&P 500 — PROMINENT */}
+              <PerformanceChart
+                snapshots={snapshots}
+                startingCapital={startingCapital}
+              />
+
+              {/* Actions Dashboard (MRE Signals) */}
+              <ActionsDashboard
+                positions={legacyPositions}
+                cash={cash}
+                tradingEnabled={true}
+                onTrade={async (symbol, side, qty, price, target, stop) => {
+                  try {
+                    const res = await fetch("/api/paper-trading", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ symbol, side, qty, price, target, stop }),
+                    });
+                    if (!res.ok) {
+                      const err = await res.json();
+                      alert(`Trade failed: ${err.error}`);
+                      return;
+                    }
+                    // Refresh data after trade
+                    loadFromSupabase();
+                  } catch (err) {
+                    alert(`Trade error: ${err}`);
+                  }
+                }}
+              />
+
+              {/* Signal Accuracy */}
+              {signalStats && <SignalAccuracyPanel stats={signalStats} />}
+            </>
+          )}
+
+          {/* ===== POSITIONS TAB ===== */}
+          {activeTab === "positions" && !loading && !error && (
+            <>
+              {positions.length === 0 ? (
+                <div className="bg-slate-800/50 rounded-xl p-12 border border-slate-700/50 text-center">
+                  <Database className="w-8 h-8 text-slate-600 mx-auto mb-3" />
+                  <p className="text-slate-400">No open positions</p>
+                </div>
+              ) : (
+                <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50">
+                  <h2 className="text-lg font-semibold text-slate-100 mb-4 flex items-center gap-2">
+                    <Activity className="w-5 h-5 text-primary-400" />
+                    Open Positions ({positions.length})
+                  </h2>
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead>
+                        <tr className="text-xs text-slate-500 uppercase border-b border-slate-700">
+                          <th className="text-left py-2 px-2">Symbol</th>
+                          <th className="text-left py-2 px-2">Regime</th>
+                          <th className="text-right py-2 px-2">Qty</th>
+                          <th className="text-right py-2 px-2">Entry</th>
+                          <th className="text-right py-2 px-2">Current</th>
+                          <th className="text-right py-2 px-2">P/L ($)</th>
+                          <th className="text-right py-2 px-2">P/L (%)</th>
+                          <th className="text-right py-2 px-2">Value</th>
+                          <th className="text-right py-2 px-2">% of Portfolio</th>
+                          <th className="text-right py-2 px-2">Confidence</th>
+                          <th className="text-right py-2 px-2">Stop</th>
+                          <th className="text-right py-2 px-2">Target</th>
+                          <th className="text-right py-2 px-2">Days</th>
+                          <th className="text-center py-2 px-2">Auto</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {positions.map((pos) => {
+                          const currentPrice = pos.current_price || pos.entry_price;
+                          const unrealizedPnl = pos.qty * (currentPrice - pos.entry_price);
+                          const unrealizedPnlPct = ((currentPrice - pos.entry_price) / pos.entry_price) * 100;
+                          const isProfit = unrealizedPnl >= 0;
+                          const holdDays = daysSince(pos.opened_at);
+                          const posValue = pos.qty * currentPrice;
+                          const portfolioPct = equity > 0 ? (posValue / equity) * 100 : 0;
+
+                          return (
+                            <tr key={pos.id} className="border-b border-slate-800 hover:bg-slate-800/50">
+                              <td className="py-3 px-2">
+                                <span className="font-bold text-slate-100">{pos.symbol}</span>
+                                {pos.notes && <p className="text-[10px] text-slate-600 mt-0.5 truncate max-w-[120px]">{pos.notes}</p>}
+                              </td>
+                              <td className="py-3 px-2">
+                                {pos.signal_regime && (
+                                  <span className={`text-xs px-2 py-0.5 rounded-lg border font-medium capitalize ${
+                                    pos.signal_regime === "bull" ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/40" :
+                                    pos.signal_regime === "bear" ? "bg-red-500/20 text-red-400 border-red-500/40" :
+                                    "bg-amber-500/20 text-amber-400 border-amber-500/40"
+                                  }`}>
+                                    {pos.signal_regime === "bull" ? "🟢" : pos.signal_regime === "bear" ? "🔴" : "🟡"} {pos.signal_regime}
+                                  </span>
+                                )}
+                              </td>
+                              <td className="py-3 px-2 text-right font-mono text-slate-300">{pos.qty}</td>
+                              <td className="py-3 px-2 text-right font-mono text-slate-400">${formatCurrency(pos.entry_price)}</td>
+                              <td className="py-3 px-2 text-right font-mono text-slate-300">${formatCurrency(currentPrice)}</td>
+                              <td className={`py-3 px-2 text-right font-mono font-bold ${isProfit ? "text-emerald-400" : "text-red-400"}`}>
+                                {isProfit ? "+" : ""}${formatCurrency(unrealizedPnl)}
+                              </td>
+                              <td className={`py-3 px-2 text-right font-mono ${isProfit ? "text-emerald-400" : "text-red-400"}`}>
+                                {formatPercent(unrealizedPnlPct)}
+                              </td>
+                              <td className="py-3 px-2 text-right font-mono text-slate-300">${formatCurrency(posValue)}</td>
+                              <td className="py-3 px-2 text-right font-mono text-slate-400">{portfolioPct.toFixed(1)}%</td>
+                              <td className="py-3 px-2 text-right">
+                                {pos.signal_confidence ? (
+                                  <div className="flex items-center justify-end gap-1.5">
+                                    <div className="w-12 h-1.5 bg-slate-700 rounded-full overflow-hidden">
+                                      <div className={`h-full rounded-full ${pos.signal_confidence >= 70 ? "bg-emerald-500" : pos.signal_confidence >= 50 ? "bg-amber-500" : "bg-red-500"}`}
+                                        style={{ width: `${pos.signal_confidence}%` }} />
+                                    </div>
+                                    <span className="text-xs text-slate-400">{pos.signal_confidence}%</span>
+                                  </div>
+                                ) : <span className="text-xs text-slate-600">—</span>}
+                              </td>
+                              <td className="py-3 px-2 text-right font-mono text-red-400/70">
+                                {pos.stop_loss ? `$${formatCurrency(pos.stop_loss)}` : "—"}
+                              </td>
+                              <td className="py-3 px-2 text-right font-mono text-emerald-400/70">
+                                {pos.take_profit ? `$${formatCurrency(pos.take_profit)}` : "—"}
+                              </td>
+                              <td className="py-3 px-2 text-right text-sm text-slate-400">
+                                {holdDays}d
+                                {pos.hold_days && <span className="text-xs text-slate-600">/{pos.hold_days}</span>}
+                              </td>
+                              <td className="py-3 px-2 text-center">
+                                {pos.auto_tracked ? <Zap className="w-4 h-4 text-primary-400 mx-auto" /> : <span className="text-xs text-slate-600">—</span>}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                      <tfoot>
+                        <tr className="border-t-2 border-slate-600 bg-slate-800/80 font-bold">
+                          <td className="py-3 px-2 text-slate-100">Total</td>
+                          <td></td>
+                          <td></td>
+                          <td className="py-3 px-2 text-right font-mono text-slate-400">
+                            ${formatCurrency(positions.reduce((s, p) => s + p.entry_price * p.qty, 0))}
+                          </td>
+                          <td></td>
+                          <td className={`py-3 px-2 text-right font-mono ${totalPnl >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+                            {totalPnl >= 0 ? "+" : ""}${formatCurrency(totalPnl)}
+                          </td>
+                          <td className={`py-3 px-2 text-right font-mono ${totalPnl >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+                            {formatPercent(totalPnlPct)}
+                          </td>
+                          <td className="py-3 px-2 text-right font-mono text-slate-200">${formatCurrency(positionsValue)}</td>
+                          <td className="py-3 px-2 text-right font-mono text-slate-400">
+                            {equity > 0 ? ((positionsValue / equity) * 100).toFixed(1) : "0"}%
+                          </td>
+                          <td colSpan={5} className="py-3 px-2 text-right text-sm text-slate-500">
+                            Cash: ${formatCurrency(cash)} ({equity > 0 ? ((cash / equity) * 100).toFixed(1) : 100}%)
+                          </td>
+                        </tr>
+                      </tfoot>
+                    </table>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+
+          {/* ===== TRADES TAB ===== */}
+          {activeTab === "trades" && !loading && !error && (
+            <>
+              {trades.length === 0 ? (
+                <div className="bg-slate-800/50 rounded-xl p-12 border border-slate-700/50 text-center">
+                  <Clock className="w-10 h-10 text-slate-600 mx-auto mb-3" />
+                  <p className="text-slate-400 text-lg">No closed trades yet</p>
+                  <p className="text-sm text-slate-600 mt-1">
+                    Trades will appear here once positions are opened and closed
+                  </p>
+                </div>
+              ) : (
+                <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50">
+                  <h2 className="text-lg font-semibold text-slate-100 mb-4 flex items-center gap-2">
+                    <Clock className="w-5 h-5 text-cyan-400" />
+                    Trade History ({trades.length})
+                  </h2>
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead>
+                        <tr className="text-xs text-slate-500 uppercase border-b border-slate-700">
+                          <th className="text-left py-2 px-2">Closed</th>
+                          <th className="text-left py-2 px-2">Symbol</th>
+                          <th className="text-left py-2 px-2">Side</th>
+                          <th className="text-right py-2 px-2">Qty</th>
+                          <th className="text-right py-2 px-2">Entry</th>
+                          <th className="text-right py-2 px-2">Exit</th>
+                          <th className="text-right py-2 px-2">P/L</th>
+                          <th className="text-right py-2 px-2">P/L %</th>
+                          <th className="text-right py-2 px-2">Hold</th>
+                          <th className="text-left py-2 px-2">Reason</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {trades.map((trade) => {
+                          const isProfit = trade.pnl >= 0;
+                          return (
+                            <tr key={trade.id} className="border-b border-slate-800 hover:bg-slate-800/50">
+                              <td className="py-2 px-2 text-sm text-slate-400">{formatDate(trade.closed_at)}</td>
+                              <td className="py-2 px-2 font-medium text-slate-200">{trade.symbol}</td>
+                              <td className="py-2 px-2">
+                                <span className={`px-2 py-0.5 rounded text-xs font-medium ${
+                                  trade.side === "long" ? "bg-emerald-900/50 text-emerald-400" : "bg-red-900/50 text-red-400"
+                                }`}>
+                                  {trade.side.toUpperCase()}
+                                </span>
+                              </td>
+                              <td className="py-2 px-2 text-right font-mono text-slate-300">{trade.qty}</td>
+                              <td className="py-2 px-2 text-right font-mono text-slate-400">${formatCurrency(trade.entry_price)}</td>
+                              <td className="py-2 px-2 text-right font-mono text-slate-300">${formatCurrency(trade.exit_price)}</td>
+                              <td className={`py-2 px-2 text-right font-mono font-bold ${isProfit ? "text-emerald-400" : "text-red-400"}`}>
+                                {isProfit ? "+" : ""}${formatCurrency(trade.pnl)}
+                              </td>
+                              <td className={`py-2 px-2 text-right font-mono ${isProfit ? "text-emerald-400" : "text-red-400"}`}>
+                                {formatPercent(trade.pnl_pct)}
+                              </td>
+                              <td className="py-2 px-2 text-right text-sm text-slate-400">
+                                {trade.hold_days_actual || "—"}d
+                              </td>
+                              <td className="py-2 px-2 text-sm text-slate-500">
+                                {trade.close_reason ? (
+                                  <span className={`px-2 py-0.5 rounded text-xs ${
+                                    trade.close_reason === "take_profit" ? "bg-emerald-900/30 text-emerald-400" :
+                                    trade.close_reason === "stop_loss" ? "bg-red-900/30 text-red-400" :
+                                    trade.close_reason === "signal_flip" ? "bg-amber-900/30 text-amber-400" :
+                                    "bg-slate-700 text-slate-400"
+                                  }`}>
+                                    {trade.close_reason.replace(/_/g, " ")}
+                                  </span>
+                                ) : "—"}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+
+          {/* ===== SIGNALS TAB ===== */}
+          {activeTab === "signals" && !loading && !error && (
+            <>
+              {/* Signal Accuracy */}
+              {signalStats && <SignalAccuracyPanel stats={signalStats} />}
+
+              {/* Recent Signals Table */}
+              {data?.signals && data.signals.length > 0 ? (
+                <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50">
+                  <h2 className="text-lg font-semibold text-slate-100 mb-4 flex items-center gap-2">
+                    <Target className="w-5 h-5 text-primary-400" />
+                    Signal History ({data.signals.length})
+                  </h2>
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead>
+                        <tr className="text-xs text-slate-500 uppercase border-b border-slate-700">
+                          <th className="text-left py-2 px-2">Date</th>
+                          <th className="text-left py-2 px-2">Symbol</th>
+                          <th className="text-left py-2 px-2">Signal</th>
+                          <th className="text-right py-2 px-2">Price</th>
+                          <th className="text-right py-2 px-2">Confidence</th>
+                          <th className="text-left py-2 px-2">Regime</th>
+                          <th className="text-center py-2 px-2">5D</th>
+                          <th className="text-center py-2 px-2">10D</th>
+                          <th className="text-center py-2 px-2">20D</th>
+                          <th className="text-right py-2 px-2">5D %</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {data.signals.slice(0, 50).map((sig) => (
+                          <tr key={sig.id} className="border-b border-slate-800 hover:bg-slate-800/50">
+                            <td className="py-2 px-2 text-sm text-slate-400">{formatDate(sig.generated_at)}</td>
+                            <td className="py-2 px-2 font-medium text-slate-200">{sig.symbol}</td>
+                            <td className="py-2 px-2">
+                              <span className={`px-2 py-0.5 rounded text-xs font-bold ${
+                                sig.signal === "BUY" ? "bg-emerald-900/50 text-emerald-400" :
+                                sig.signal === "SELL" ? "bg-red-900/50 text-red-400" :
+                                "bg-slate-700 text-slate-400"
+                              }`}>
+                                {sig.signal}
+                              </span>
+                            </td>
+                            <td className="py-2 px-2 text-right font-mono text-slate-300">${formatCurrency(sig.price_at_signal)}</td>
+                            <td className="py-2 px-2 text-right text-sm text-slate-400">
+                              {sig.confidence ? `${sig.confidence}%` : "—"}
+                            </td>
+                            <td className="py-2 px-2 text-sm">
+                              <span className={`px-1.5 py-0.5 rounded text-xs ${
+                                sig.regime === "bull" ? "bg-emerald-900/30 text-emerald-400" :
+                                sig.regime === "bear" ? "bg-red-900/30 text-red-400" :
+                                "bg-slate-700 text-slate-400"
+                              }`}>
+                                {sig.regime || "—"}
+                              </span>
+                            </td>
+                            <td className="py-2 px-2 text-center">
+                              {sig.was_correct_5d === null ? (
+                                <Clock className="w-3.5 h-3.5 text-slate-600 mx-auto" />
+                              ) : sig.was_correct_5d ? (
+                                <CheckCircle className="w-3.5 h-3.5 text-emerald-400 mx-auto" />
+                              ) : (
+                                <XCircle className="w-3.5 h-3.5 text-red-400 mx-auto" />
+                              )}
+                            </td>
+                            <td className="py-2 px-2 text-center">
+                              {sig.was_correct_10d === null ? (
+                                <Clock className="w-3.5 h-3.5 text-slate-600 mx-auto" />
+                              ) : sig.was_correct_10d ? (
+                                <CheckCircle className="w-3.5 h-3.5 text-emerald-400 mx-auto" />
+                              ) : (
+                                <XCircle className="w-3.5 h-3.5 text-red-400 mx-auto" />
+                              )}
+                            </td>
+                            <td className="py-2 px-2 text-center">
+                              {sig.was_correct_20d === null ? (
+                                <Clock className="w-3.5 h-3.5 text-slate-600 mx-auto" />
+                              ) : sig.was_correct_20d ? (
+                                <CheckCircle className="w-3.5 h-3.5 text-emerald-400 mx-auto" />
+                              ) : (
+                                <XCircle className="w-3.5 h-3.5 text-red-400 mx-auto" />
+                              )}
+                            </td>
+                            <td className={`py-2 px-2 text-right font-mono text-sm ${
+                              sig.outcome_5d_pct !== null
+                                ? sig.outcome_5d_pct >= 0 ? "text-emerald-400" : "text-red-400"
+                                : "text-slate-600"
+                            }`}>
+                              {sig.outcome_5d_pct !== null ? formatPercent(sig.outcome_5d_pct) : "—"}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              ) : (
+                <div className="bg-slate-800/50 rounded-xl p-12 border border-slate-700/50 text-center">
+                  <Target className="w-10 h-10 text-slate-600 mx-auto mb-3" />
+                  <p className="text-slate-400 text-lg">No signal history yet</p>
+                  <p className="text-sm text-slate-600 mt-1">
+                    Signals will be recorded by the auto-tracker service
+                  </p>
+                </div>
+              )}
+            </>
+          )}
+
+          {/* ===== MRE TAB ===== */}
+          {activeTab === "mre" && <MREDashboard />}
+
+          {/* ===== MARKETS TAB ===== */}
+          {activeTab === "markets" && <MarketsOverview />}
+
+        </div>
+      </div>
     </div>
   );
 }

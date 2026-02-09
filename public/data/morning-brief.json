@@ -1,199 +1,112 @@
 {
-  "date": "2026-02-08",
+  "date": "2026-02-09",
   "time": "6:00 AM",
   "sections": {
     "prayer": {
-      "title": "\ud83d\udd4a\ufe0f Morning Prayer",
-      "date": "Sunday, February 08, 2026",
-      "hebrew_date": "10 Cheshvan",
-      "parsha": "Vayetzei",
-      "parsha_theme": "dreams, building from nothing, divine protection",
-      "modeh_ani": "\u05de\u05d5\u05d3\u05d4 \u05d0\u05e0\u05d9 \u05dc\u05e4\u05e0\u05d9\u05da \u2014 I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
-      "blessing": "Blessed are You who guides the steps of man \u2014 direct my path today.",
-      "psalm": "Psalm 1:3: \"He is like a tree planted by streams of water, yielding fruit in season.\"",
-      "proverb": "Proverbs 10:4: \"A slack hand causes poverty, but the hand of the diligent makes rich.\"",
-      "intention": "Help me lead with integrity. Let my yes be yes and my no be no.",
-      "closing": "Baruch atah Adonai \u2014 Blessed are You, Lord, who renews creation daily with goodness.",
-      "audio": "/audio/brief-2026-02-08-prayer.ogg"
+      "title": "🕊️ Morning Prayer",
+      "date": "Monday, February 09, 2026",
+      "hebrew_date": "11 Cheshvan",
+      "parsha": "Vayishlach",
+      "parsha_theme": "confronting fears, transformation, reconciliation",
+      "modeh_ani": "מודה אני לפניך — I gratefully thank You, living and eternal King, for returning my soul within me with compassion — great is Your faithfulness.",
+      "blessing": "Blessed are You who gives strength to the weary and renews the spirit of the exhausted.",
+      "psalm": "Psalm 118:25: \"Lord, save us! Lord, grant us success!\"",
+      "proverb": "Proverbs 16:9: \"The heart of man plans his way, but the Lord establishes his steps.\"",
+      "intention": "Let my work today compound into something that outlasts me.",
+      "closing": "May your work today be a pleasing offering. May your rest tonight be deep and restorative."
     },
     "weather": {
-      "title": "\u2600\ufe0f Weather \u2014 Temecula",
-      "temperature": "81\u00b0F",
+      "title": "☀️ Weather — Temecula, CA",
+      "temperature": "81°F",
       "condition": "Sunny",
-      "wind": "Light breeze",
-      "summary": "Generally sunny despite a few afternoon clouds. High 81\u00b0F. Beautiful Sunday to get outside.",
-      "audio": "/audio/brief-2026-02-08-weather.ogg"
+      "wind": "SW 5-10 mph",
+      "summary": "Beautiful sunny Monday — 81°F high. Patchy fog tonight. Rain likely Tuesday night through Wednesday (50% chance). Cooler midweek (62-69°F), clearing Thursday-Friday."
     },
     "calendar": {
-      "title": "\ud83d\udcc5 Calendar",
-      "items": [
-        "No events scheduled today \u2014 open Sunday for family and building."
-      ],
-      "note": "\u26a0\ufe0f OAuth tokens expired for joshua.seth.levy@gmail.com and farbisimo@gmail.com \u2014 need re-auth.",
-      "audio": "/audio/brief-2026-02-08-calendar.ogg"
+      "title": "📅 Calendar",
+      "items": ["No events scheduled today (josh@joshlevylabs.com). Note: 3 calendar accounts need re-auth — joshua.seth.levy@gmail.com, farbisimo@gmail.com, josh@thelyceum.io tokens expired."]
     },
     "email": {
-      "title": "\ud83d\udce7 Email Highlights",
-      "needs_attention": [
-        {
-          "from": "Vercel",
-          "subject": "Failed production deployment on joshlevylabs",
-          "note": "Production deploy failed \u2014 check build logs"
-        },
-        {
-          "from": "GitHub",
-          "subject": "Personal access token about to expire",
-          "note": "Action needed before it expires"
-        },
-        {
-          "from": "Dropbox",
-          "subject": "Manage storage \u2014 files deleted in 30 days",
-          "note": "Storage cleanup needed"
-        }
-      ],
-      "dev_work": [
-        {
-          "from": "Vercel",
-          "subject": "Failed preview deployment on joshlevylabs",
-          "note": "Preview deploy also failing"
-        },
-        {
-          "from": "X (Twitter)",
-          "subject": "New login from iPhone",
-          "note": "Verify this was you"
-        }
-      ],
+      "title": "📧 Email Highlights",
+      "needs_attention": [],
+      "dev_work": [],
       "good_news": [
-        {
-          "from": "YouTube",
-          "subject": "Aziz has subscribed to you!",
-          "note": "New subscriber \ud83c\udf89"
-        },
-        {
-          "from": "Spotify for Creators",
-          "subject": "It's your page. Show it off.",
-          "note": "Podcast page ready to customize"
-        }
-      ],
-      "audio": "/audio/brief-2026-02-08-email.ogg"
+        {"from": "TrueFans", "subject": "Congratulations your podcast was successful", "note": "Podcast milestone notification"},
+        {"from": "Stripe", "subject": "Payment of $2.99 from Joshua Levy for Josh Levy Labs", "note": "Revenue — payment received"}
+      ]
     },
     "mre": {
-      "title": "\ud83d\udcca MRE Trading",
-      "fear_greed": 44.9,
+      "title": "📊 MRE Trading",
+      "fear_greed": 43.8,
       "fear_greed_rating": "fear",
-      "aggregate_score": 51.7,
-      "aggregate_rating": "Neutral",
       "regime": "bull",
-      "regime_details": "SPY $690.62 \u2014 early bull (2 days), above all EMAs. QQQ sideways, XLK in bear mode.",
+      "regime_details": {
+        "spy": {"regime": "bull", "price": 690.62, "confidence": 55, "momentum_20d": -0.5},
+        "qqq": {"regime": "sideways", "price": 609.65, "confidence": 40, "momentum_20d": -2.71}
+      },
       "todays_plays": [],
-      "signals_summary": "All 9 assets on HOLD \u2014 fear not deep enough (44.9 vs threshold 25) to trigger BUY signals.",
-      "outliers": [
-        {
-          "symbol": "XLK",
-          "note": "Bear regime while market is bull \u2014 tech weakness, monitor closely"
-        },
-        {
-          "symbol": "XLF",
-          "note": "Sideways consolidation \u2014 watch for breakout"
-        },
-        {
-          "symbol": "TLT",
-          "note": "Sideways \u2014 bonds range-bound"
-        }
+      "signals_summary": "All 9 assets on HOLD — no active BUY signals today",
+      "key_levels": [
+        {"symbol": "SPY", "price": 690.62, "regime": "bull", "support": 686.30, "resistance": 697.84},
+        {"symbol": "GLD", "price": 455.46, "regime": "bull", "support": 454.31, "resistance": 475.48, "momentum": "+9.89%"},
+        {"symbol": "XLE", "price": 53.25, "regime": "bull", "support": 51.06, "resistance": 53.42, "momentum": "+14.1%"},
+        {"symbol": "EFA", "price": 102.61, "regime": "bull", "support": 99.58, "resistance": 102.67, "momentum": "+3.85%"},
+        {"symbol": "XLK", "price": 141.13, "regime": "bear", "support": 139.79, "resistance": 141.72, "momentum": "-3.43%"}
       ],
-      "key_levels": {
-        "SPY": {
-          "price": 690.62,
-          "support": 686.3,
-          "resistance": 697.84
-        },
-        "GLD": {
-          "price": 455.46,
-          "support": 454.31,
-          "resistance": 475.48
-        },
-        "XLE": {
-          "price": 53.25,
-          "support": 51.06,
-          "resistance": 53.42
-        }
-      },
-      "prediction_markets": {
-        "kalshi": "Neutral \u2014 S&P expected ~6928 Monday (96.6% historical accuracy)",
-        "polymarket": "Bearish sentiment \u2014 key events: Fed Chair nomination, China-Taiwan risk"
-      },
-      "thesis": "Fear elevated (44.9) but not at buy threshold (25). Bull regime intact on SPY. Tech dragging (XLK bear). Stay patient \u2014 no new entries today. Watch for deeper fear to trigger buys.",
-      "audio": "/audio/brief-2026-02-08-mre.ogg"
+      "outliers": [{"symbol": "XLK", "note": "Tech in BEAR regime while broad market is BULL — potential weakness"}],
+      "kalshi": {"signal": "NEUTRAL", "expected_spy": 6938.83, "confidence": 29},
+      "pending_triggers": [],
+      "thesis": "Fear at 43.8 — approaching buy zone but not triggered. Bull regime intact (SPY above all EMAs). All signals HOLD — patience. GLD and XLE showing strongest momentum. Tech (XLK) diverging bearish — watch for resolution."
     },
     "family": {
-      "title": "\u2764\ufe0f Family Focus",
+      "title": "💛 Family Focus",
       "relationship_temp": "critical",
       "trend": "urgent",
-      "ratio": 1.2,
       "recommendations": [
         "PRIORITY: Focus on repair. Acknowledge recent conflicts without defending.",
         "Increase acts of service dramatically this week.",
         "Create space for her to express frustrations without fixing."
       ],
-      "todays_action": "It's Sunday \u2014 put your phone away for 30 minutes after the kids go to bed and give Jillian your full attention. No agenda, no fixing. Just be present.",
-      "love_languages": "Quality Time + Acts of Service"
+      "action": "Today's focus: Acts of service for Jillian. Start the week with repair, not retreat."
     },
     "news": {
-      "title": "\ud83c\udf0d World News",
+      "title": "🌍 World News",
       "subsections": {
         "israel": {
-          "title": "\ud83c\uddee\ud83c\uddf1 Israel",
+          "title": "🇮🇱 Israel",
           "items": [
-            {
-              "headline": "Gaza ceasefire Phase 2 stalled: Negotiations for the second phase \u2014 intended to release all remaining hostages and end the war \u2014 were supposed to begin in February but have not materialized. Rafah crossing reopened with limited access last week."
-            },
-            {
-              "headline": "All hostages from Phase 1 returned: Final deceased hostage Ran Gvili returned to Israel. Trump visited the Knesset celebrating the Phase 1 achievement, calling it 'the end of an age of terror.'"
-            }
+            {"headline": "Israel security cabinet approves expanded civilian oversight of West Bank antiquities and land registration — supporters cite preservation of archaeological sites, critics call it policy extension"},
+            {"headline": "Court orders Ben Gvir to stop blocking promotion of officer who testified in Netanyahu trial"},
+            {"headline": "Netanyahu publishes 55-page document on Oct 7 response — Gantz and opposition push back on accountability framing"},
+            {"headline": "Israeli President Herzog visits Australia amid protests; bobsled team's apartment robbed ahead of Milan Winter Olympics"}
           ]
         },
         "us": {
-          "title": "\ud83c\uddfa\ud83c\uddf8 United States",
+          "title": "🇺🇸 United States",
           "items": [
-            {
-              "headline": "Appeals court upholds immigration detention policy: Federal court ruled that individuals arrested under immigration enforcement may be held in mandatory detention, reinforcing the administration's border security framework."
-            },
-            {
-              "headline": "DNI Gabbard faces scrutiny over intelligence handling: Questions surrounding the handling of a sensitive intelligence intercept continue to generate discussion in Washington."
-            }
+            {"headline": "Schedule F revival: Trump reclassifies up to 50K policy-role federal employees for at-will status, citing accountability and efficiency in government"},
+            {"headline": "Portugal presidential runoff: Center-left Socialist António José Seguro defeats hard-right populist André Ventura"},
+            {"headline": "Milan-Cortina 2026 Winter Olympics underway — Day 2 of competition"}
           ]
         },
         "world": {
-          "title": "\ud83c\udf10 Global",
+          "title": "🌐 Global",
           "items": [
-            {
-              "headline": "Big Tech AI capex forecast: $650B in 2026: Apple, Google, Meta, and Microsoft collectively plan staggering infrastructure spending, primarily on AI data centers and compute capacity."
-            },
-            {
-              "headline": "Polymarket tracking China-Taiwan risk: Prediction markets actively pricing geopolitical scenarios including potential China-Taiwan conflict by end of 2026."
-            }
+            {"headline": "US-Iran nuclear talks in Oman progressing — discussions reportedly limited to nuclear file only"},
+            {"headline": "WHO launches 2026 global healthcare appeal for conflict zones"},
+            {"headline": "China's robot makers spotlight AI-powered entertainment for Lunar New Year"}
           ]
         }
-      },
-      "audio": "/audio/brief-2026-02-08-news.ogg"
+      }
     },
     "ai": {
-      "title": "\ud83e\udd16 AI Intel",
+      "title": "🤖 AI Intel",
       "items": [
-        {
-          "headline": "Anthropic launches Cowork AI legal tool \u2014 triggered $285B software stock selloff as investors priced in AI automation of legal work (contract review, NDA triage, compliance workflows)."
-        },
-        {
-          "headline": "Claude Opus 4.6 released \u2014 improved agentic coding, 1M context window, multi-agent task delegation in Claude Code. The model you're hearing this from right now."
-        },
-        {
-          "headline": "Apple adds Anthropic + OpenAI agents to Xcode \u2014 agentic coding now built into Apple's IDE, supporting Claude Agent and OpenAI Codex."
-        },
-        {
-          "headline": "Alphabet resets AI infrastructure bar \u2014 massive 2026 capex for Google DeepMind compute capacity and cloud customer demand."
-        }
-      ],
-      "audio": "/audio/brief-2026-02-08-ai.ogg"
+        {"headline": "Anthropic's Claude Cowork plugins hammer enterprise software stocks — Thomson Reuters, LegalZoom drop 15%+. Salesforce, Workday also hit. Market shifting from 'all winners' to 'winners and losers' in AI"},
+        {"headline": "Oracle announces $50B AI infrastructure expansion plan — shares dip on dilution concerns"},
+        {"headline": "MCP standard gaining momentum: OpenAI, Microsoft, Google all adopting Anthropic's protocol. Donated to Linux Foundation's Agentic AI Foundation"},
+        {"headline": "Belgian study reveals AI recruitment tools have deeper gender bias than previously estimated — proxy variables bypass de-biasing"}
+      ]
     }
   }
 }

@@ -126,22 +126,24 @@ export default function PerformanceChart({
 
     const cutoff = Date.now() - TIME_RANGE_MS[timeRange];
     
-    // For 1D view, only show intraday snapshots (with timestamps)
-    // For longer views, show all snapshots
-    let candidates = snapshots;
+    // For 1D view, show intraday snapshots but anchor to previous day's close
     if (timeRange === "1D") {
       const intradayOnly = snapshots.filter(isIntraday);
       if (intradayOnly.length >= 2) {
-        candidates = intradayOnly;
+        // Find last non-intraday (daily) snapshot to use as starting anchor
+        const dailySnapshots = snapshots.filter((s) => !isIntraday(s));
+        const lastDaily = dailySnapshots.length > 0 ? dailySnapshots[dailySnapshots.length - 1] : null;
+        // Prepend the previous day's close so chart starts from correct baseline
+        return lastDaily ? [lastDaily, ...intradayOnly] : intradayOnly;
       }
     }
     
-    const filtered = candidates.filter((s) => {
+    const filtered = snapshots.filter((s) => {
       const dateStr = s.date.includes("T") ? s.date : s.date + "T00:00";
       return new Date(dateStr).getTime() >= cutoff;
     });
 
-    return filtered.length >= 2 ? filtered : candidates;
+    return filtered.length >= 2 ? filtered : snapshots;
   }, [snapshots, timeRange]);
 
   // Whether we're showing all data because the range had insufficient data

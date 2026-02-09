@@ -437,6 +437,19 @@ export default function TradingPage() {
   const totalPnl = equity - startingCapital;
   const totalPnlPct = (totalPnl / startingCapital) * 100;
 
+  // Today's return: find previous day's close equity from snapshots
+  const todayReturn = (() => {
+    if (snapshots.length < 2) return { pnl: 0, pct: 0 };
+    // Daily snapshots don't have "T", intraday do
+    const dailySnapshots = snapshots.filter((s) => !s.date.includes("T"));
+    const prevDayEquity = dailySnapshots.length > 0
+      ? dailySnapshots[dailySnapshots.length - 1].equity
+      : startingCapital;
+    const pnl = equity - prevDayEquity;
+    const pct = prevDayEquity > 0 ? (pnl / prevDayEquity) * 100 : 0;
+    return { pnl, pct };
+  })();
+
   // Trade stats
   const winningTrades = trades.filter((t) => t.pnl > 0);
   const losingTrades = trades.filter((t) => t.pnl < 0);
@@ -550,7 +563,7 @@ export default function TradingPage() {
           {activeTab === "overview" && !loading && !error && (
             <>
               {/* Portfolio Stats */}
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
                 <StatCard
                   icon={Wallet}
                   label="Total Equity"
@@ -560,10 +573,17 @@ export default function TradingPage() {
                 />
                 <StatCard
                   icon={totalPnl >= 0 ? TrendingUp : TrendingDown}
-                  label="Total P/L"
+                  label="All-Time Return"
                   value={`${totalPnl >= 0 ? "+" : ""}$${formatCurrency(totalPnl)}`}
                   subValue={formatPercent(totalPnlPct)}
                   trend={totalPnl >= 0 ? "up" : "down"}
+                />
+                <StatCard
+                  icon={todayReturn.pnl >= 0 ? TrendingUp : TrendingDown}
+                  label="Today's Return"
+                  value={`${todayReturn.pnl >= 0 ? "+" : ""}$${formatCurrency(todayReturn.pnl)}`}
+                  subValue={formatPercent(todayReturn.pct)}
+                  trend={todayReturn.pnl >= 0 ? "up" : "down"}
                 />
                 <StatCard
                   icon={DollarSign}

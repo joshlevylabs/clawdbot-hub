@@ -1,8 +1,14 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 // Paper trading uses a separate Supabase instance (unified system with Lever app)
+// Server-side: use service role key to bypass RLS
+// Client-side: use anon key (limited by RLS policies)
 const paperSupabaseUrl = process.env.NEXT_PUBLIC_PAPER_SUPABASE_URL || '';
-const paperSupabaseKey = process.env.NEXT_PUBLIC_PAPER_SUPABASE_ANON_KEY || '';
+const paperServiceRoleKey = process.env.PAPER_SUPABASE_SERVICE_ROLE_KEY || '';
+const paperAnonKey = process.env.NEXT_PUBLIC_PAPER_SUPABASE_ANON_KEY || '';
+
+// Prefer service role key (server-side API routes), fall back to anon key
+const paperSupabaseKey = paperServiceRoleKey || paperAnonKey;
 
 export const paperSupabase: SupabaseClient = paperSupabaseUrl && paperSupabaseKey
   ? createClient(paperSupabaseUrl, paperSupabaseKey)

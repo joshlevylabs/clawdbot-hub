@@ -126,45 +126,17 @@ function generateActions(data: MREData): ActionItem[] {
     const entryLow = entryZoneParts[1];
     const distanceToEntry = ((price - entryHigh) / price) * 100;
 
-    // Decision logic
-    if (signal === "BUY" || (fg < 30 && regime === "bull")) {
+    // Decision logic — RESPECT MRE engine signals as source of truth
+    if (signal === "BUY") {
       action = "BUY";
-      entry = price; // Buy at current price
+      entry = price;
       entryDisplay = `$${price.toFixed(2)}`;
       stop = fibonacci.retracements["78.6"];
       stopDisplay = `$${stop.toFixed(2)}`;
       target = fibonacci.profit_targets[0];
       targetDisplay = `$${target.toFixed(2)}`;
-      rationale = `Fear at ${fg.toFixed(0)}, ${regime} regime. Buy zone.`;
+      rationale = `MRE BUY signal. Fear at ${fg.toFixed(0)}, ${regime} regime.`;
       priority = 1;
-    } else if (regime === "bull" && confidence >= 70 && momentum_20d > 0) {
-      if (distanceToEntry < 3) {
-        action = "BUY";
-        entry = price;
-        entryDisplay = `$${price.toFixed(2)}`;
-        stop = fibonacci.retracements["61.8"];
-        stopDisplay = `$${stop.toFixed(2)}`;
-        target = fibonacci.profit_targets[0];
-        targetDisplay = `$${target.toFixed(2)}`;
-        rationale = `Near entry zone in strong ${regime_stage} bull trend.`;
-        priority = 1;
-      } else {
-        action = "HOLD";
-        entry = entryHigh;
-        entryDisplay = `Wait $${entryHigh.toFixed(2)}`;
-        target = fibonacci.profit_targets[0];
-        targetDisplay = `$${target.toFixed(2)}`;
-        rationale = `Bull trend, ${confidence}% confidence. Add on pullbacks.`;
-        priority = 3;
-      }
-    } else if (regime === "bull" && confidence < 70) {
-      action = "HOLD";
-      entry = entryHigh;
-      entryDisplay = `$${entryHigh.toFixed(2)} (dip)`;
-      target = fibonacci.nearest_resistance;
-      targetDisplay = `$${target.toFixed(2)}`;
-      rationale = `Early bull, ${confidence}% confidence. Wait for confirmation.`;
-      priority = 3;
     } else if (regime === "sideways") {
       action = "WATCH";
       entry = fibonacci.nearest_resistance;
@@ -179,11 +151,19 @@ function generateActions(data: MREData): ActionItem[] {
       action = "WAIT";
       rationale = `Bear regime. Avoid until trend reversal.`;
       priority = 4;
-    }
+    } else {
+      // Bull regime but MRE says HOLD — show entry levels for reference
+      action = "HOLD";
+      entry = entryHigh;
+      entryDisplay = `$${entryHigh.toFixed(2)} (dip)`;
+      target = fibonacci.profit_targets[0];
+      targetDisplay = `$${target.toFixed(2)}`;
+      rationale = `${regime} regime, ${confidence}% confidence. MRE threshold not met (F&G ${fg.toFixed(0)}).`;
+      priority = 3;
 
-    if (momentum_20d > 5 && regime === "bull") {
-      priority = Math.max(1, priority - 1);
-      rationale += ` Strong momentum (+${momentum_20d.toFixed(1)}%).`;
+      if (momentum_20d > 5) {
+        rationale += ` Strong momentum (+${momentum_20d.toFixed(1)}%).`;
+      }
     }
 
     actions.push({

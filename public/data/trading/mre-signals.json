@@ -1520,7 +1520,7 @@
     }
   },
   "meta": {
-    "version": "v9",
+    "version": "v10",
     "backtests": 4113,
     "key_insight": "Fear signals 65.6% accurate, Greed only 30.6%",
     "features": [
@@ -1542,8 +1542,26 @@
       "[v8] Divergence pair signals: SPY/XLF (87% revert), IYR/TLT (86.3% revert)",
       "[v9] min_regime_days=3: Regime persists 3+ days before weights/penalties apply",
       "[v9] XLF SMA 50\u2192100: Removes false sideways penalty on financials",
-      "[v9] kalshi_weight 0.35\u21920.25: Calibrated to directional accuracy (~65-70%)"
+      "[v9] kalshi_weight 0.35\u21920.25: Calibrated to directional accuracy (~65-70%)",
+      "[v10] Market breadth: RSP/SPY relative performance as $BCMM proxy",
+      "[v10] Breadth divergence detection: SPY up but breadth narrowing = warning"
     ],
     "last_optimization": "2026-02-09"
+  },
+  "breadth": {
+    "available": true,
+    "signal": "NEUTRAL",
+    "trend_5d": "expanding",
+    "spread_5d": 1.567,
+    "spread_10d": 1.108,
+    "spread_20d": 2.145,
+    "advancing_days_10d": 4,
+    "divergence_vs_spy": false,
+    "spy_5d_return": 0.018,
+    "rsp_5d_return": 1.585,
+    "spy_price": 695.53,
+    "rsp_price": 202.26,
+    "methodology": "RSP/SPY relative performance as breadth proxy. RSP outperformance = more stocks participating.",
+    "timestamp": "2026-02-09T09:19:27.582167"
   }
 }

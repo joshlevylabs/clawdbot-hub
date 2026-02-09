@@ -3,63 +3,131 @@
   "time": "6:00 AM",
   "sections": {
     "prayer": {
-      "title": "🕊️ Morning Prayer",
+      "title": "\ud83d\udd4a\ufe0f Morning Prayer",
       "date": "Monday, February 09, 2026",
       "hebrew_date": "11 Cheshvan",
       "parsha": "Vayishlach",
       "parsha_theme": "confronting fears, transformation, reconciliation",
-      "modeh_ani": "מודה אני לפניך — I gratefully thank You, living and eternal King, for returning my soul within me with compassion — great is Your faithfulness.",
+      "modeh_ani": "\u05de\u05d5\u05d3\u05d4 \u05d0\u05e0\u05d9 \u05dc\u05e4\u05e0\u05d9\u05da \u2014 I gratefully thank You, living and eternal King, for returning my soul within me with compassion \u2014 great is Your faithfulness.",
       "blessing": "Blessed are You who gives strength to the weary and renews the spirit of the exhausted.",
       "psalm": "Psalm 118:25: \"Lord, save us! Lord, grant us success!\"",
       "proverb": "Proverbs 16:9: \"The heart of man plans his way, but the Lord establishes his steps.\"",
       "intention": "Let my work today compound into something that outlasts me.",
-      "closing": "May your work today be a pleasing offering. May your rest tonight be deep and restorative."
+      "closing": "May your work today be a pleasing offering. May your rest tonight be deep and restorative.",
+      "audio": "/audio/brief-2026-02-09-prayer.ogg"
     },
     "weather": {
-      "title": "☀️ Weather — Temecula, CA",
-      "temperature": "81°F",
+      "title": "\u2600\ufe0f Weather \u2014 Temecula, CA",
+      "temperature": "81\u00b0F",
       "condition": "Sunny",
       "wind": "SW 5-10 mph",
-      "summary": "Beautiful sunny Monday — 81°F high. Patchy fog tonight. Rain likely Tuesday night through Wednesday (50% chance). Cooler midweek (62-69°F), clearing Thursday-Friday."
+      "summary": "Beautiful sunny Monday \u2014 81\u00b0F high. Patchy fog tonight. Rain likely Tuesday night through Wednesday (50% chance). Cooler midweek (62-69\u00b0F), clearing Thursday-Friday.",
+      "audio": "/audio/brief-2026-02-09-weather.ogg"
     },
     "calendar": {
-      "title": "📅 Calendar",
-      "items": ["No events scheduled today (josh@joshlevylabs.com). Note: 3 calendar accounts need re-auth — joshua.seth.levy@gmail.com, farbisimo@gmail.com, josh@thelyceum.io tokens expired."]
+      "title": "\ud83d\udcc5 Calendar",
+      "items": [
+        "No events scheduled today (josh@joshlevylabs.com). Note: 3 calendar accounts need re-auth \u2014 joshua.seth.levy@gmail.com, farbisimo@gmail.com, josh@thelyceum.io tokens expired."
+      ],
+      "audio": "/audio/brief-2026-02-09-calendar.ogg"
     },
     "email": {
-      "title": "📧 Email Highlights",
+      "title": "\ud83d\udce7 Email Highlights",
       "needs_attention": [],
       "dev_work": [],
       "good_news": [
-        {"from": "TrueFans", "subject": "Congratulations your podcast was successful", "note": "Podcast milestone notification"},
-        {"from": "Stripe", "subject": "Payment of $2.99 from Joshua Levy for Josh Levy Labs", "note": "Revenue — payment received"}
-      ]
+        {
+          "from": "TrueFans",
+          "subject": "Congratulations your podcast was successful",
+          "note": "Podcast milestone notification"
+        },
+        {
+          "from": "Stripe",
+          "subject": "Payment of $2.99 from Joshua Levy for Josh Levy Labs",
+          "note": "Revenue \u2014 payment received"
+        }
+      ],
+      "audio": "/audio/brief-2026-02-09-email.ogg"
     },
     "mre": {
-      "title": "📊 MRE Trading",
+      "title": "\ud83d\udcca MRE Trading",
       "fear_greed": 43.8,
       "fear_greed_rating": "fear",
       "regime": "bull",
       "regime_details": {
-        "spy": {"regime": "bull", "price": 690.62, "confidence": 55, "momentum_20d": -0.5},
-        "qqq": {"regime": "sideways", "price": 609.65, "confidence": 40, "momentum_20d": -2.71}
+        "spy": {
+          "regime": "bull",
+          "price": 690.62,
+          "confidence": 55,
+          "momentum_20d": -0.5
+        },
+        "qqq": {
+          "regime": "sideways",
+          "price": 609.65,
+          "confidence": 40,
+          "momentum_20d": -2.71
+        }
       },
       "todays_plays": [],
-      "signals_summary": "All 9 assets on HOLD — no active BUY signals today",
+      "signals_summary": "All 9 assets on HOLD \u2014 no active BUY signals today",
       "key_levels": [
-        {"symbol": "SPY", "price": 690.62, "regime": "bull", "support": 686.30, "resistance": 697.84},
-        {"symbol": "GLD", "price": 455.46, "regime": "bull", "support": 454.31, "resistance": 475.48, "momentum": "+9.89%"},
-        {"symbol": "XLE", "price": 53.25, "regime": "bull", "support": 51.06, "resistance": 53.42, "momentum": "+14.1%"},
-        {"symbol": "EFA", "price": 102.61, "regime": "bull", "support": 99.58, "resistance": 102.67, "momentum": "+3.85%"},
-        {"symbol": "XLK", "price": 141.13, "regime": "bear", "support": 139.79, "resistance": 141.72, "momentum": "-3.43%"}
+        {
+          "symbol": "SPY",
+          "price": 690.62,
+          "regime": "bull",
+          "support": 686.3,
+          "resistance": 697.84
+        },
+        {
+          "symbol": "GLD",
+          "price": 455.46,
+          "regime": "bull",
+          "support": 454.31,
+          "resistance": 475.48,
+          "momentum": "+9.89%"
+        },
+        {
+          "symbol": "XLE",
+          "price": 53.25,
+          "regime": "bull",
+          "support": 51.06,
+          "resistance": 53.42,
+          "momentum": "+14.1%"
+        },
+        {
+          "symbol": "EFA",
+          "price": 102.61,
+          "regime": "bull",
+          "support": 99.58,
+          "resistance": 102.67,
+          "momentum": "+3.85%"
+        },
+        {
+          "symbol": "XLK",
+          "price": 141.13,
+          "regime": "bear",
+          "support": 139.79,
+          "resistance": 141.72,
+          "momentum": "-3.43%"
+        }
       ],
-      "outliers": [{"symbol": "XLK", "note": "Tech in BEAR regime while broad market is BULL — potential weakness"}],
-      "kalshi": {"signal": "NEUTRAL", "expected_spy": 6938.83, "confidence": 29},
+      "outliers": [
+        {
+          "symbol": "XLK",
+          "note": "Tech in BEAR regime while broad market is BULL \u2014 potential weakness"
+        }
+      ],
+      "kalshi": {
+        "signal": "NEUTRAL",
+        "expected_spy": 6938.83,
+        "confidence": 29
+      },
       "pending_triggers": [],
-      "thesis": "Fear at 43.8 — approaching buy zone but not triggered. Bull regime intact (SPY above all EMAs). All signals HOLD — patience. GLD and XLE showing strongest momentum. Tech (XLK) diverging bearish — watch for resolution."
+      "thesis": "Fear at 43.8 \u2014 approaching buy zone but not triggered. Bull regime intact (SPY above all EMAs). All signals HOLD \u2014 patience. GLD and XLE showing strongest momentum. Tech (XLK) diverging bearish \u2014 watch for resolution.",
+      "audio": "/audio/brief-2026-02-09-mre.ogg"
     },
     "family": {
-      "title": "💛 Family Focus",
+      "title": "\ud83d\udc9b Family Focus",
       "relationship_temp": "critical",
       "trend": "urgent",
       "recommendations": [
@@ -70,43 +138,73 @@
       "action": "Today's focus: Acts of service for Jillian. Start the week with repair, not retreat."
     },
     "news": {
-      "title": "🌍 World News",
+      "title": "\ud83c\udf0d World News",
       "subsections": {
         "israel": {
-          "title": "🇮🇱 Israel",
+          "title": "\ud83c\uddee\ud83c\uddf1 Israel",
           "items": [
-            {"headline": "Israel security cabinet approves expanded civilian oversight of West Bank antiquities and land registration — supporters cite preservation of archaeological sites, critics call it policy extension"},
-            {"headline": "Court orders Ben Gvir to stop blocking promotion of officer who testified in Netanyahu trial"},
-            {"headline": "Netanyahu publishes 55-page document on Oct 7 response — Gantz and opposition push back on accountability framing"},
-            {"headline": "Israeli President Herzog visits Australia amid protests; bobsled team's apartment robbed ahead of Milan Winter Olympics"}
+            {
+              "headline": "Israel security cabinet approves expanded civilian oversight of West Bank antiquities and land registration \u2014 supporters cite preservation of archaeological sites, critics call it policy extension"
+            },
+            {
+              "headline": "Court orders Ben Gvir to stop blocking promotion of officer who testified in Netanyahu trial"
+            },
+            {
+              "headline": "Netanyahu publishes 55-page document on Oct 7 response \u2014 Gantz and opposition push back on accountability framing"
+            },
+            {
+              "headline": "Israeli President Herzog visits Australia amid protests; bobsled team's apartment robbed ahead of Milan Winter Olympics"
+            }
           ]
         },
         "us": {
-          "title": "🇺🇸 United States",
+          "title": "\ud83c\uddfa\ud83c\uddf8 United States",
           "items": [
-            {"headline": "Schedule F revival: Trump reclassifies up to 50K policy-role federal employees for at-will status, citing accountability and efficiency in government"},
-            {"headline": "Portugal presidential runoff: Center-left Socialist António José Seguro defeats hard-right populist André Ventura"},
-            {"headline": "Milan-Cortina 2026 Winter Olympics underway — Day 2 of competition"}
+            {
+              "headline": "Schedule F revival: Trump reclassifies up to 50K policy-role federal employees for at-will status, citing accountability and efficiency in government"
+            },
+            {
+              "headline": "Portugal presidential runoff: Center-left Socialist Ant\u00f3nio Jos\u00e9 Seguro defeats hard-right populist Andr\u00e9 Ventura"
+            },
+            {
+              "headline": "Milan-Cortina 2026 Winter Olympics underway \u2014 Day 2 of competition"
+            }
           ]
         },
         "world": {
-          "title": "🌐 Global",
+          "title": "\ud83c\udf10 Global",
           "items": [
-            {"headline": "US-Iran nuclear talks in Oman progressing — discussions reportedly limited to nuclear file only"},
-            {"headline": "WHO launches 2026 global healthcare appeal for conflict zones"},
-            {"headline": "China's robot makers spotlight AI-powered entertainment for Lunar New Year"}
+            {
+              "headline": "US-Iran nuclear talks in Oman progressing \u2014 discussions reportedly limited to nuclear file only"
+            },
+            {
+              "headline": "WHO launches 2026 global healthcare appeal for conflict zones"
+            },
+            {
+              "headline": "China's robot makers spotlight AI-powered entertainment for Lunar New Year"
+            }
           ]
         }
-      }
+      },
+      "audio": "/audio/brief-2026-02-09-news.ogg"
     },
     "ai": {
-      "title": "🤖 AI Intel",
+      "title": "\ud83e\udd16 AI Intel",
       "items": [
-        {"headline": "Anthropic's Claude Cowork plugins hammer enterprise software stocks — Thomson Reuters, LegalZoom drop 15%+. Salesforce, Workday also hit. Market shifting from 'all winners' to 'winners and losers' in AI"},
-        {"headline": "Oracle announces $50B AI infrastructure expansion plan — shares dip on dilution concerns"},
-        {"headline": "MCP standard gaining momentum: OpenAI, Microsoft, Google all adopting Anthropic's protocol. Donated to Linux Foundation's Agentic AI Foundation"},
-        {"headline": "Belgian study reveals AI recruitment tools have deeper gender bias than previously estimated — proxy variables bypass de-biasing"}
-      ]
+        {
+          "headline": "Anthropic's Claude Cowork plugins hammer enterprise software stocks \u2014 Thomson Reuters, LegalZoom drop 15%+. Salesforce, Workday also hit. Market shifting from 'all winners' to 'winners and losers' in AI"
+        },
+        {
+          "headline": "Oracle announces $50B AI infrastructure expansion plan \u2014 shares dip on dilution concerns"
+        },
+        {
+          "headline": "MCP standard gaining momentum: OpenAI, Microsoft, Google all adopting Anthropic's protocol. Donated to Linux Foundation's Agentic AI Foundation"
+        },
+        {
+          "headline": "Belgian study reveals AI recruitment tools have deeper gender bias than previously estimated \u2014 proxy variables bypass de-biasing"
+        }
+      ],
+      "audio": "/audio/brief-2026-02-09-ai.ogg"
     }
   }
 }

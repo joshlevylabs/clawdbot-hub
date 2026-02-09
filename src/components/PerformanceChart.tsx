@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import {
   ResponsiveContainer,
   AreaChart,
@@ -28,7 +28,7 @@ interface PortfolioSnapshot {
 
 interface PerformanceChartProps {
   snapshots: PortfolioSnapshot[];
-  /** Compact mode for embedding in smaller spaces (ActionsDashboard, Lever) */
+  /** Compact mode for embedding in smaller spaces */
   compact?: boolean;
   /** Starting capital for % calculations */
   startingCapital?: number;
@@ -43,6 +43,24 @@ interface ChartDataPoint {
   spy: number;
   alpha: number;
 }
+
+type TimeRange = "1D" | "1W" | "1M" | "3M" | "1Y";
+
+const TIME_RANGE_MS: Record<TimeRange, number> = {
+  "1D": 1 * 24 * 60 * 60 * 1000,
+  "1W": 7 * 24 * 60 * 60 * 1000,
+  "1M": 30 * 24 * 60 * 60 * 1000,
+  "3M": 90 * 24 * 60 * 60 * 1000,
+  "1Y": 365 * 24 * 60 * 60 * 1000,
+};
+
+const TIME_RANGE_LABELS: Record<TimeRange, string> = {
+  "1D": "1 day",
+  "1W": "1 week",
+  "1M": "1 month",
+  "3M": "3 months",
+  "1Y": "1 year",
+};
 
 function formatPercent(value: number): string {
   return `${value >= 0 ? "+" : ""}${value.toFixed(2)}%`;
@@ -97,30 +115,83 @@ export default function PerformanceChart({
   startingCapital = 100000,
   className = "",
 }: PerformanceChartProps) {
-  const chartData = useMemo<ChartDataPoint[]>(() => {
+  const [timeRange, setTimeRange] = useState<TimeRange>("1D");
+
+  // Detect if snapshot has intraday timestamp (contains "T")
+  const isIntraday = (s: PortfolioSnapshot) => s.date.includes("T");
+
+  // Filter snapshots by selected time range
+  const filteredSnapshots = useMemo(() => {
     if (!snapshots || snapshots.length === 0) return [];
 
-    const startEquity = snapshots[0].equity || startingCapital;
-    const startSpy = snapshots[0].spy_baseline || snapshots[0].spy_price || 1;
+    const cutoff = Date.now() - TIME_RANGE_MS[timeRange];
+    
+    // For 1D view, only show intraday snapshots (with timestamps)
+    // For longer views, show all snapshots
+    let candidates = snapshots;
+    if (timeRange === "1D") {
+      const intradayOnly = snapshots.filter(isIntraday);
+      if (intradayOnly.length >= 2) {
+        candidates = intradayOnly;
+      }
+    }
+    
+    const filtered = candidates.filter((s) => {
+      const dateStr = s.date.includes("T") ? s.date : s.date + "T00:00";
+      return new Date(dateStr).getTime() >= cutoff;
+    });
 
-    return snapshots.map((s) => {
+    return filtered.length >= 2 ? filtered : candidates;
+  }, [snapshots, timeRange]);
+
+  // Whether we're showing all data because the range had insufficient data
+  const isShowingAllData = useMemo(() => {
+    if (!snapshots || snapshots.length === 0) return false;
+    const cutoff = Date.now() - TIME_RANGE_MS[timeRange];
+    const filtered = snapshots.filter((s) => {
+      const dateStr = s.date.includes("T") ? s.date : s.date + "T00:00";
+      return new Date(dateStr).getTime() >= cutoff;
+    });
+    return filtered.length < 2 && snapshots.length >= 2;
+  }, [snapshots, timeRange]);
+
+  const chartData = useMemo<ChartDataPoint[]>(() => {
+    if (!filteredSnapshots || filteredSnapshots.length === 0) return [];
+
+    const startEquity = filteredSnapshots[0].equity || startingCapital;
+    const startSpy = filteredSnapshots[0].spy_baseline || filteredSnapshots[0].spy_price || 1;
+
+    return filteredSnapshots.map((s) => {
       const portfolioReturn = ((s.equity - startEquity) / startEquity) * 100;
       const spyReturn = s.spy_price
         ? ((s.spy_price - startSpy) / startSpy) * 100
         : 0;
 
-      return {
-        date: s.date,
-        dateLabel: new Date(s.date).toLocaleDateString("en-US", {
+      // Format label based on whether it's intraday
+      let dateLabel: string;
+      if (s.date.includes("T")) {
+        const ts = new Date(s.date);
+        if (timeRange === "1D") {
+          dateLabel = ts.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+        } else {
+          dateLabel = `${ts.toLocaleDateString("en-US", { month: "short", day: "numeric" })} ${ts.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}`;
+        }
+      } else {
+        dateLabel = new Date(s.date).toLocaleDateString("en-US", {
           month: "short",
           day: "numeric",
-        }),
+        });
+      }
+
+      return {
+        date: s.date,
+        dateLabel,
         portfolio: Math.round(portfolioReturn * 100) / 100,
         spy: Math.round(spyReturn * 100) / 100,
         alpha: Math.round((portfolioReturn - spyReturn) * 100) / 100,
       };
     });
-  }, [snapshots, startingCapital]);
+  }, [filteredSnapshots, startingCapital, timeRange]);
 
   // Summary stats
   const latestData = chartData[chartData.length - 1];
@@ -143,7 +214,7 @@ export default function PerformanceChart({
           <div>
             <Activity className="w-8 h-8 text-slate-600 mx-auto mb-2" />
             <p className="text-slate-400 text-sm">
-              Performance chart appears after 2+ daily snapshots
+              Performance chart appears after 2+ snapshots
             </p>
             <p className="text-slate-600 text-xs mt-1">
               Snapshots are captured every 5 minutes during market hours
@@ -153,6 +224,10 @@ export default function PerformanceChart({
       </div>
     );
   }
+
+  const timeRanges: TimeRange[] = compact
+    ? ["1W", "1M", "3M"]
+    : ["1D", "1W", "1M", "3M", "1Y"];
 
   return (
     <div className={`bg-slate-800/50 rounded-xl border border-slate-700/50 ${compact ? "p-3" : "p-4"} ${className}`}>
@@ -168,7 +243,31 @@ export default function PerformanceChart({
             Performance vs S&P 500
           </h3>
         </div>
+
+        {/* Timeline selector */}
+        <div className="flex gap-1 bg-slate-900/50 rounded-lg p-0.5">
+          {timeRanges.map((range) => (
+            <button
+              key={range}
+              onClick={() => setTimeRange(range)}
+              className={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors ${
+                timeRange === range
+                  ? "bg-primary-600 text-white"
+                  : "text-slate-500 hover:text-slate-300"
+              }`}
+            >
+              {range}
+            </button>
+          ))}
+        </div>
       </div>
+
+      {/* Insufficient data notice */}
+      {isShowingAllData && (
+        <div className="mb-3 px-3 py-1.5 bg-amber-900/20 border border-amber-700/30 rounded-lg text-xs text-amber-400">
+          Not enough data for {TIME_RANGE_LABELS[timeRange]} — showing all available data
+        </div>
+      )}
 
       {/* Summary Stats Bar */}
       <div className={`grid grid-cols-3 gap-3 mb-3 ${compact ? "text-xs" : "text-sm"}`}>
@@ -212,6 +311,7 @@ export default function PerformanceChart({
               tick={{ fill: "#64748b", fontSize: compact ? 10 : 12 }}
               axisLine={{ stroke: "#334155" }}
               tickLine={false}
+              interval="preserveStartEnd"
             />
             <YAxis
               tick={{ fill: "#64748b", fontSize: compact ? 10 : 12 }}
@@ -252,9 +352,9 @@ export default function PerformanceChart({
         </ResponsiveContainer>
       </div>
 
-      {/* Footer — days tracking */}
+      {/* Footer */}
       <div className="flex items-center justify-between mt-2 text-xs text-slate-600">
-        <span>{chartData.length} days tracked</span>
+        <span>{chartData.length} snapshots ({TIME_RANGE_LABELS[timeRange]})</span>
         <span>
           {chartData[0]?.dateLabel} → {latestData?.dateLabel}
         </span>

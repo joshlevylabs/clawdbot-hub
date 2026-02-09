@@ -130,10 +130,26 @@ interface SignalStats {
   }>;
 }
 
+interface IntradaySnapshot {
+  id: string;
+  timestamp: string;
+  equity: number;
+  cash: number;
+  positions_value: number;
+  daily_pnl: number | null;
+  daily_pnl_pct: number | null;
+  total_pnl: number | null;
+  total_pnl_pct: number | null;
+  spy_price: number | null;
+  spy_baseline: number | null;
+  open_positions: number | null;
+}
+
 interface PaperTradingData {
   positions: PaperPosition[];
   trades: PaperTrade[];
   snapshots: PortfolioSnapshot[];
+  intradaySnapshots: IntradaySnapshot[];
   signals: SignalRecord[];
   config: TradingConfig | null;
   signalStats: SignalStats;
@@ -364,6 +380,7 @@ export default function TradingPage() {
           spy_price: p.spy_price,
           spy_baseline: p.spy_baseline,
         })),
+        intradaySnapshots: [],
         signals: [],
         config: {
           starting_capital: portfolio.account?.starting_capital || 100000,
@@ -398,11 +415,20 @@ export default function TradingPage() {
     loadData();
   }, [loadData]);
 
+  // Auto-refresh every 5 minutes
+  useEffect(() => {
+    const interval = setInterval(() => {
+      loadFromSupabase(); // Silent refresh, don't set loading state
+    }, 5 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, [loadFromSupabase]);
+
   // Derived portfolio data
   const config = data?.config;
   const positions = data?.positions || [];
   const trades = data?.trades || [];
   const snapshots = data?.snapshots || [];
+  const intradaySnapshots = data?.intradaySnapshots || [];
   const signalStats = data?.signalStats;
   const startingCapital = config?.starting_capital || 100000;
   const cash = config?.current_cash || 100000;

@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
 
   try {
     // Fetch all data in parallel — no user_id filter since this is admin-only Hub
-    const [positionsRes, tradesRes, snapshotsRes, signalsRes, configRes] = await Promise.all([
+    const [positionsRes, tradesRes, snapshotsRes, intradaySnapshotsRes, signalsRes, configRes] = await Promise.all([
       paperSupabase
         .from('paper_positions')
         .select('*')
@@ -31,7 +31,14 @@ export async function GET(request: NextRequest) {
         .from('paper_portfolio_snapshots')
         .select('*')
         .order('date', { ascending: true })
-        .limit(365),
+        .limit(2000),
+
+      // Intraday snapshots for fine-grained charting (1D/1W views)
+      paperSupabase
+        .from('paper_portfolio_snapshots_intraday')
+        .select('*')
+        .order('timestamp', { ascending: true })
+        .limit(2000),
 
       paperSupabase
         .from('signal_history')
@@ -54,6 +61,7 @@ export async function GET(request: NextRequest) {
       positions: positionsRes.data || [],
       trades: tradesRes.data || [],
       snapshots: snapshotsRes.data || [],
+      intradaySnapshots: intradaySnapshotsRes.data || [],
       signals: signals,
       config: configRes.data || null,
       signalStats,

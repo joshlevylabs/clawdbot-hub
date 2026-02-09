@@ -14,6 +14,7 @@ import {
   LogOut,
   Loader2,
 } from "lucide-react";
+import PerformanceChart from "@/components/PerformanceChart";
 
 interface FibonacciLevels {
   nearest_support: number;
@@ -286,14 +287,26 @@ export default function ActionsDashboard({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [tradingSymbol, setTradingSymbol] = useState<string | null>(null);
+  const [snapshots, setSnapshots] = useState<{ date: string; equity: number; spy_price: number | null }[]>([]);
 
   useEffect(() => {
     async function load() {
       try {
-        const res = await fetch("/data/trading/mre-signals.json");
-        if (!res.ok) throw new Error("Failed to load signals");
-        const json = await res.json();
+        const [signalsRes, paperRes] = await Promise.all([
+          fetch("/data/trading/mre-signals.json"),
+          fetch("/api/paper-trading").catch(() => null),
+        ]);
+        if (!signalsRes.ok) throw new Error("Failed to load signals");
+        const json = await signalsRes.json();
         setData(json);
+
+        // Load snapshots for performance chart
+        if (paperRes?.ok) {
+          const paperData = await paperRes.json();
+          if (paperData.snapshots) {
+            setSnapshots(paperData.snapshots);
+          }
+        }
       } catch (e) {
         setError("Could not load market signals");
       } finally {
@@ -370,6 +383,9 @@ export default function ActionsDashboard({
 
   return (
     <div className="space-y-4">
+      {/* Performance vs S&P 500 */}
+      <PerformanceChart snapshots={snapshots} compact />
+
       {/* Main Actions Panel */}
       <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 rounded-xl border border-primary-500/30 overflow-hidden">
         {/* Header */}

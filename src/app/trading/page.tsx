@@ -21,6 +21,7 @@ import {
   Database,
 } from "lucide-react";
 import ActionsDashboard from "@/components/ActionsDashboard";
+import PerformanceChart from "@/components/PerformanceChart";
 
 // ===== Types =====
 
@@ -664,6 +665,12 @@ export default function TradingPage() {
               </div>
             )}
 
+            {/* Performance vs S&P 500 — PROMINENT */}
+            <PerformanceChart
+              snapshots={snapshots}
+              startingCapital={startingCapital}
+            />
+
             {/* Actions Dashboard (MRE Signals) */}
             <ActionsDashboard
               positions={legacyPositions}
@@ -688,9 +695,6 @@ export default function TradingPage() {
                 }
               }}
             />
-
-            {/* Equity Curve */}
-            <EquityCurveChart data={snapshots} />
 
             {/* Open Positions */}
             {positions.length > 0 && (

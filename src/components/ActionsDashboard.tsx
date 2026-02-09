@@ -17,6 +17,7 @@ import {
   ChevronDown,
   Filter,
   Layers,
+  BarChart3,
 } from "lucide-react";
 import PerformanceChart from "@/components/PerformanceChart";
 
@@ -143,6 +144,7 @@ interface ActionsDashboardProps {
   cash?: number;
   onTrade?: (symbol: string, side: "buy" | "sell", qty: number, price: number, target?: number, stop?: number) => void;
   tradingEnabled?: boolean;
+  onAnalyze?: (symbol: string) => void;
 }
 
 type SortKey = "symbol" | "action" | "regime" | "confidence" | "currentPrice" | "pnl" | "momentum" | "assetClass" | "sharpe";
@@ -329,6 +331,7 @@ export default function ActionsDashboard({
   cash = 0,
   onTrade,
   tradingEnabled = false,
+  onAnalyze,
 }: ActionsDashboardProps) {
   const [data, setData] = useState<MREData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -546,6 +549,19 @@ export default function ActionsDashboard({
         {/* Stop / Target */}
         <td className="py-2.5 px-2 font-mono text-xs text-red-400/80">{item.stopDisplay}</td>
         <td className="py-2.5 px-2 font-mono text-xs text-emerald-400/80">{item.targetDisplay}</td>
+        {/* Analyze */}
+        {onAnalyze && (
+          <td className="py-2.5 px-2 text-center">
+            <button
+              onClick={() => onAnalyze(item.symbol)}
+              className="inline-flex items-center gap-1 px-2 py-1 bg-primary-600/20 text-primary-400 hover:bg-primary-600/40 rounded-lg text-xs font-medium transition-colors"
+              title={`Analyze ${item.symbol}`}
+            >
+              <BarChart3 className="w-3 h-3" />
+              <span className="hidden sm:inline">Analyze</span>
+            </button>
+          </td>
+        )}
         {/* Trade */}
         {tradingEnabled && (
           <td className="py-2.5 px-2 text-center">
@@ -657,6 +673,7 @@ export default function ActionsDashboard({
                     <th className="text-left py-2 px-2">Entry</th>
                     <th className="text-left py-2 px-2">Stop</th>
                     <th className="text-left py-2 px-2">Target</th>
+                    {onAnalyze && <th className="text-center py-2 px-2">Analyze</th>}
                     {tradingEnabled && <th className="text-center py-2 px-2">Trade</th>}
                   </tr>
                 </thead>
@@ -666,7 +683,7 @@ export default function ActionsDashboard({
                   Object.entries(groupedActions).sort().map(([group, items]) => (
                     <tbody key={group}>
                       <tr className="bg-slate-800/60">
-                        <td colSpan={tradingEnabled ? 12 : 11} className="py-1.5 px-2 text-xs font-bold text-primary-400 uppercase tracking-wider">
+                        <td colSpan={(tradingEnabled ? 12 : 11) + (onAnalyze ? 1 : 0)} className="py-1.5 px-2 text-xs font-bold text-primary-400 uppercase tracking-wider">
                           {groupBy === "regime" && (group === "bull" ? "🟢 " : group === "bear" ? "🔴 " : "🟡 ")}
                           {groupBy === "category" && items.length > 0 && `${items[0].categoryIcon} `}
                           {group} ({items.length})
@@ -698,7 +715,7 @@ export default function ActionsDashboard({
                           {totalPnl >= 0 ? "+" : ""}{totalPnlPct.toFixed(2)}%
                         </p>
                       </td>
-                      <td colSpan={tradingEnabled ? 4 : 3} className="py-2.5 px-2 text-right text-xs text-slate-500">
+                      <td colSpan={(tradingEnabled ? 4 : 3) + (onAnalyze ? 1 : 0)} className="py-2.5 px-2 text-right text-xs text-slate-500">
                         Cash: ${cash.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </td>
                     </tr>

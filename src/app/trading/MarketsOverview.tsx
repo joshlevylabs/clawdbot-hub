@@ -879,7 +879,203 @@ function FibonacciPanel({ fibonacci, currentPrice }: { fibonacci: FibonacciData;
   );
 }
 
-export default function MarketsOverview() {
+// ─── MRE Analysis Panel ─────────────────────────────────────────
+
+interface MRESignalData {
+  asset_class: string;
+  symbol: string;
+  signal: string;
+  signal_strength: number;
+  price: number;
+  regime: string;
+  hold_days: number;
+  expected_sharpe: number;
+  expected_accuracy: number;
+  fibonacci: {
+    nearest_support: number;
+    nearest_resistance: number;
+    entry_zone: string;
+    profit_targets: number[];
+    retracements: Record<string, number>;
+  };
+  regime_details: {
+    regime: string;
+    confidence: number;
+    momentum_20d: number;
+    regime_stage: string;
+    regime_days: number;
+    predicted_remaining_days: number;
+    above_ema_20?: boolean;
+    above_ema_50?: boolean;
+    above_ema_200?: boolean;
+    ema_20?: number;
+    ema_50?: number;
+    ema_200?: number;
+    ema_slow?: number;
+    ema_spread_pct?: number;
+  };
+}
+
+function MREAnalysisPanel({ signal }: { signal: MRESignalData }) {
+  const { regime_details: rd, fibonacci: fib } = signal;
+
+  const signalColor = signal.signal === "BUY"
+    ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/50"
+    : signal.signal === "HOLD"
+    ? "bg-slate-500/20 text-slate-400 border-slate-500/50"
+    : "bg-cyan-500/20 text-cyan-400 border-cyan-500/50";
+
+  const regimeColor = rd.regime === "bull"
+    ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/40"
+    : rd.regime === "bear"
+    ? "bg-red-500/20 text-red-400 border-red-500/40"
+    : "bg-amber-500/20 text-amber-400 border-amber-500/40";
+
+  const regimeIcon = rd.regime === "bull" ? "🟢" : rd.regime === "bear" ? "🔴" : "🟡";
+
+  return (
+    <div className="bg-slate-850 rounded-xl border border-primary-500/30 overflow-hidden">
+      {/* Header */}
+      <div className="bg-primary-600/20 border-b border-primary-500/30 px-4 py-3 flex items-center gap-2">
+        <Activity className="w-4 h-4 text-primary-400" />
+        <span className="font-semibold text-slate-100">MRE Signal Analysis</span>
+        <span className={`ml-auto inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg border text-xs font-bold ${signalColor}`}>
+          {signal.signal}
+        </span>
+      </div>
+
+      <div className="p-4 space-y-4">
+        {/* Signal Summary */}
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+          <div className="bg-slate-900/50 rounded-lg p-3">
+            <p className="text-xs text-slate-500">Confidence</p>
+            <div className="flex items-center gap-2 mt-1">
+              <div className="w-full h-1.5 bg-slate-700 rounded-full overflow-hidden">
+                <div className={`h-full rounded-full ${rd.confidence >= 70 ? "bg-emerald-500" : rd.confidence >= 50 ? "bg-amber-500" : "bg-red-500"}`}
+                  style={{ width: `${rd.confidence}%` }} />
+              </div>
+              <span className="text-sm font-bold text-slate-200">{rd.confidence}%</span>
+            </div>
+          </div>
+          <div className="bg-slate-900/50 rounded-lg p-3">
+            <p className="text-xs text-slate-500">Expected Sharpe</p>
+            <p className={`text-lg font-bold ${signal.expected_sharpe >= 1 ? "text-emerald-400" : "text-amber-400"}`}>{signal.expected_sharpe.toFixed(2)}</p>
+          </div>
+          <div className="bg-slate-900/50 rounded-lg p-3">
+            <p className="text-xs text-slate-500">Expected Accuracy</p>
+            <p className={`text-lg font-bold ${signal.expected_accuracy >= 60 ? "text-emerald-400" : "text-amber-400"}`}>{signal.expected_accuracy.toFixed(1)}%</p>
+          </div>
+          <div className="bg-slate-900/50 rounded-lg p-3">
+            <p className="text-xs text-slate-500">Hold Days</p>
+            <p className="text-lg font-bold text-slate-200">{signal.hold_days}d</p>
+          </div>
+          <div className="bg-slate-900/50 rounded-lg p-3">
+            <p className="text-xs text-slate-500">Signal Strength</p>
+            <p className="text-lg font-bold text-slate-200">{(signal.signal_strength * 100).toFixed(0)}%</p>
+          </div>
+          <div className="bg-slate-900/50 rounded-lg p-3">
+            <p className="text-xs text-slate-500">Regime</p>
+            <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-lg border text-xs font-medium capitalize ${regimeColor}`}>
+              {regimeIcon} {rd.regime}
+            </span>
+          </div>
+        </div>
+
+        {/* Fibonacci Entry Zones from MRE */}
+        <div className="bg-slate-900/50 rounded-lg p-4">
+          <h4 className="text-sm font-medium text-blue-400 mb-3 flex items-center gap-2">
+            <Target className="w-3.5 h-3.5" /> MRE Fibonacci Zones
+          </h4>
+          <div className="grid grid-cols-2 gap-3 text-sm">
+            <div>
+              <p className="text-xs text-slate-500">Entry Zone</p>
+              <p className="text-slate-200 font-mono">${fib.entry_zone}</p>
+            </div>
+            <div>
+              <p className="text-xs text-slate-500">Nearest Support</p>
+              <p className="text-emerald-400 font-mono">${fib.nearest_support.toFixed(2)}</p>
+            </div>
+            <div>
+              <p className="text-xs text-slate-500">Nearest Resistance</p>
+              <p className="text-red-400 font-mono">${fib.nearest_resistance.toFixed(2)}</p>
+            </div>
+            <div>
+              <p className="text-xs text-slate-500">Profit Targets</p>
+              <div className="flex flex-wrap gap-1 mt-0.5">
+                {fib.profit_targets.map((t, i) => (
+                  <span key={i} className="text-emerald-400 font-mono text-xs bg-emerald-500/10 px-1.5 py-0.5 rounded">${t.toFixed(2)}</span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Regime Details */}
+        <div className="bg-slate-900/50 rounded-lg p-4">
+          <h4 className="text-sm font-medium text-amber-400 mb-3 flex items-center gap-2">
+            <TrendingUp className="w-3.5 h-3.5" /> Regime Details
+          </h4>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm">
+            <div>
+              <p className="text-xs text-slate-500">Regime Duration</p>
+              <p className="text-slate-200">{rd.regime_days} days</p>
+            </div>
+            <div>
+              <p className="text-xs text-slate-500">Regime Stage</p>
+              <p className="text-slate-200 capitalize">{rd.regime_stage}</p>
+            </div>
+            <div>
+              <p className="text-xs text-slate-500">Predicted Remaining</p>
+              <p className="text-slate-200">{rd.predicted_remaining_days}d</p>
+            </div>
+            <div>
+              <p className="text-xs text-slate-500">20d Momentum</p>
+              <p className={`font-mono ${rd.momentum_20d >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+                {rd.momentum_20d >= 0 ? "+" : ""}{rd.momentum_20d.toFixed(2)}%
+              </p>
+            </div>
+            {rd.ema_spread_pct !== undefined && (
+              <div>
+                <p className="text-xs text-slate-500">EMA Spread</p>
+                <p className="text-slate-200 font-mono">{rd.ema_spread_pct.toFixed(2)}%</p>
+              </div>
+            )}
+            <div>
+              <p className="text-xs text-slate-500">EMA Position</p>
+              <div className="flex flex-wrap gap-1 mt-0.5">
+                {rd.above_ema_20 !== undefined && (
+                  <span className={`text-xs px-1.5 py-0.5 rounded ${rd.above_ema_20 ? "bg-emerald-500/20 text-emerald-400" : "bg-red-500/20 text-red-400"}`}>
+                    {rd.above_ema_20 ? "↑" : "↓"} EMA20
+                  </span>
+                )}
+                {rd.above_ema_50 !== undefined && (
+                  <span className={`text-xs px-1.5 py-0.5 rounded ${rd.above_ema_50 ? "bg-emerald-500/20 text-emerald-400" : "bg-red-500/20 text-red-400"}`}>
+                    {rd.above_ema_50 ? "↑" : "↓"} EMA50
+                  </span>
+                )}
+                {rd.above_ema_200 !== undefined && (
+                  <span className={`text-xs px-1.5 py-0.5 rounded ${rd.above_ema_200 ? "bg-emerald-500/20 text-emerald-400" : "bg-red-500/20 text-red-400"}`}>
+                    {rd.above_ema_200 ? "↑" : "↓"} EMA200
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Markets Overview Component ──────────────────────────────────
+
+interface MarketsOverviewProps {
+  initialSymbol?: string | null;
+  mreSignalData?: MRESignalData | null;
+  onSymbolConsumed?: () => void;
+}
+
+export default function MarketsOverview({ initialSymbol, mreSignalData, onSymbolConsumed }: MarketsOverviewProps = {}) {
   const [quotes, setQuotes] = useState<QuoteData[]>([]);
   const [selectedSymbol, setSelectedSymbol] = useState<string | null>(null);
   const [symbolDetail, setSymbolDetail] = useState<SymbolDetail | null>(null);
@@ -904,6 +1100,19 @@ export default function MarketsOverview() {
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
+
+  // Handle initial symbol from Analyze feature
+  useEffect(() => {
+    if (initialSymbol) {
+      setSelectedSymbol(initialSymbol);
+      // Signal that we've consumed it so the parent can clear it if desired
+      if (onSymbolConsumed) {
+        // Delay slightly so the symbol has time to load
+        const timer = setTimeout(onSymbolConsumed, 500);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [initialSymbol, onSymbolConsumed]);
 
   // Load stored settings when symbol changes
   useEffect(() => {
@@ -1098,6 +1307,11 @@ export default function MarketsOverview() {
                     </div>
                   </div>
                 </div>
+
+                {/* MRE Analysis Panel — shown when signal data is available */}
+                {mreSignalData && mreSignalData.symbol === selectedSymbol && (
+                  <MREAnalysisPanel signal={mreSignalData} />
+                )}
               </>
             )}
             {!selectedSymbol && <div className="bg-slate-850 rounded-xl border border-slate-800 p-12 text-center"><BarChart3 className="w-12 h-12 text-slate-700 mx-auto mb-4" /><p className="text-slate-500">Select a symbol</p></div>}

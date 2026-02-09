@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import {
   TrendingUp,
   TrendingDown,
@@ -336,6 +336,29 @@ export default function TradingPage() {
   const [dataSource, setDataSource] = useState<"supabase" | "static">("supabase");
   const [marketStatus] = useState(getMarketStatus());
 
+  // Analyze feature: switch to markets tab with a pre-selected symbol
+  const [analyzeSymbol, setAnalyzeSymbol] = useState<string | null>(null);
+  const [mreData, setMreData] = useState<any>(null);
+
+  // Load MRE signals for the analyze feature
+  useEffect(() => {
+    fetch("/data/trading/mre-signals.json?" + Date.now())
+      .then(r => r.json())
+      .then(d => setMreData(d))
+      .catch(() => {});
+  }, []);
+
+  const handleAnalyze = (symbol: string) => {
+    setAnalyzeSymbol(symbol);
+    setActiveTab("markets");
+  };
+
+  // Find the MRE signal data for the currently analyzed symbol
+  const analyzeSignalData = useMemo(() => {
+    if (!analyzeSymbol || !mreData) return null;
+    return mreData.signals?.by_asset_class?.find((s: any) => s.symbol === analyzeSymbol) || null;
+  }, [analyzeSymbol, mreData]);
+
   // Legacy state for ActionsDashboard compatibility
   const [legacyPositions, setLegacyPositions] = useState<{ symbol: string; qty: number; entry_price: number }[]>([]);
 
@@ -646,6 +669,7 @@ export default function TradingPage() {
                 positions={legacyPositions}
                 cash={cash}
                 tradingEnabled={true}
+                onAnalyze={handleAnalyze}
                 onTrade={async (symbol, side, qty, price, target, stop) => {
                   try {
                     const res = await fetch("/api/paper-trading", {
@@ -996,7 +1020,13 @@ export default function TradingPage() {
           {activeTab === "mre" && <MREDashboard />}
 
           {/* ===== MARKETS TAB ===== */}
-          {activeTab === "markets" && <MarketsOverview />}
+          {activeTab === "markets" && (
+            <MarketsOverview
+              initialSymbol={analyzeSymbol}
+              mreSignalData={analyzeSignalData}
+              onSymbolConsumed={() => setAnalyzeSymbol(null)}
+            />
+          )}
 
         </div>
       </div>

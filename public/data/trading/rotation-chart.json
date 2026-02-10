@@ -1,8 +1,10 @@
 {
-  "generated": "2026-02-10T16:39:59.973419+00:00",
+  "generated": "2026-02-10T23:43:57.283717+00:00",
   "version": "1.0.0",
   "config_version": "1.0.0",
   "legacy_version": "v12.0",
+  "summary": "GDX, GLD, XLB leading \u2014 late-cycle commodities pattern. XLK, INDA lagging.",
+  "phase_summary": "Late cycle \u2014 commodities and defensives outperforming growth.",
   "chart": {
     "type": "grouped_line",
     "x_axis": "Date",

@@ -1,0 +1,382 @@
+{
+  "generated": "2026-02-10T22:47:00Z",
+  "version": "1.0.0",
+  "title": "Lever Analysis Pipeline — Complete Taxonomy",
+  "description": "Every analysis component that feeds into Today's Plays, named and documented independently.",
+
+  "pipeline_stages": [
+    {
+      "stage": 1,
+      "name": "Data Collection",
+      "description": "Raw market data ingestion from multiple sources",
+      "components": [
+        {
+          "id": "DC-01",
+          "name": "Fear & Greed Index",
+          "source": "CNN Fear & Greed API",
+          "code": "regime-detector/collectors/cnn_fear_greed.py",
+          "output": "mre-signals.json → fear_greed",
+          "description": "CNN's composite sentiment gauge (0-100). Primary entry gate — Pit V10.2 requires F&G < 12-15 for panic-only entries.",
+          "status": "active"
+        },
+        {
+          "id": "DC-02",
+          "name": "VIX Volatility",
+          "source": "Yahoo Finance / CBOE",
+          "code": "regime-detector/collectors/vix.py",
+          "output": "mre-signals.json → regime data",
+          "description": "CBOE Volatility Index. Used for regime classification and crash detection.",
+          "status": "active"
+        },
+        {
+          "id": "DC-03",
+          "name": "Market Breadth",
+          "source": "Calculated from sector ETFs",
+          "code": "regime-detector/collectors/momentum.py",
+          "output": "mre-signals.json → breadth",
+          "description": "Advance/decline ratios, % above 200 DMA, new highs vs lows. Measures market health beneath the surface.",
+          "status": "active"
+        },
+        {
+          "id": "DC-04",
+          "name": "Put/Call Ratio",
+          "source": "CBOE",
+          "code": "regime-detector/collectors/put_call.py",
+          "output": "mre-signals.json → sentiment",
+          "description": "Options market sentiment. High readings = bearish positioning = potential contrarian buy.",
+          "status": "active"
+        },
+        {
+          "id": "DC-05",
+          "name": "Prediction Markets",
+          "source": "Kalshi, Polymarket",
+          "code": "regime-detector/collectors/kalshi_live.py, polymarket_live.py",
+          "output": "mre-signals.json → prediction_markets",
+          "description": "Real-money predictions on recession, rate cuts, sector outcomes. Crowd wisdom signal.",
+          "status": "active"
+        },
+        {
+          "id": "DC-06",
+          "name": "Credit Spreads",
+          "source": "FRED / Treasury data",
+          "code": "regime-detector/collectors/credit.py",
+          "output": "Regime classification input",
+          "description": "Investment grade vs high yield spread. Widening = stress. Early warning for regime transitions.",
+          "status": "active"
+        },
+        {
+          "id": "DC-07",
+          "name": "Leading Economic Indicators",
+          "source": "FRED / Conference Board",
+          "code": "regime-detector/collectors/leading_indicators.py",
+          "output": "Macro classifier input",
+          "description": "Composite leading indicators, yield curve, building permits, etc.",
+          "status": "active"
+        },
+        {
+          "id": "DC-08",
+          "name": "Global Markets",
+          "source": "International indices",
+          "code": "regime-detector/collectors/global_markets.py",
+          "output": "Regime/divergence analysis",
+          "description": "International market data for global risk assessment and divergence detection.",
+          "status": "active"
+        }
+      ]
+    },
+    {
+      "stage": 2,
+      "name": "Regime Detection",
+      "description": "Determine current market regime (bull/bear/sideways/recovery) per asset and globally",
+      "components": [
+        {
+          "id": "RD-01",
+          "name": "EMA Regime Classifier",
+          "code": "regime-detector/engine/classifier.py",
+          "output": "mre-signals.json → regime (per-asset)",
+          "description": "Uses EMA-20/50/slow/200 crossovers to classify each asset as bull, bear, sideways, or recovery. Tracks regime days, stage (early/mid/late), and confidence.",
+          "status": "active"
+        },
+        {
+          "id": "RD-02",
+          "name": "Macro Regime Classifier",
+          "code": "regime-detector/engine/macro_classifier.py",
+          "output": "Global regime assessment",
+          "description": "Combines credit spreads, yield curve, leading indicators into a macro-level regime call. Overrides asset-level in extreme conditions.",
+          "status": "active"
+        },
+        {
+          "id": "RD-03",
+          "name": "Crash Mode Detector",
+          "code": "rotation_analyzer.py → crash_mode",
+          "output": "rotation-status.json → crash_mode",
+          "description": "Monitors for crash conditions: VIX spike, breadth collapse, correlation convergence. Activates defensive positioning when triggered.",
+          "status": "active"
+        },
+        {
+          "id": "RD-04",
+          "name": "Regime Outlier Detection",
+          "code": "mre_signal_exporter.py",
+          "output": "mre-signals.json → regime.outliers",
+          "description": "Identifies assets whose regime diverges from the global regime (e.g., BITO in bear while market is bull). Flags for monitoring.",
+          "status": "active"
+        }
+      ]
+    },
+    {
+      "stage": 3,
+      "name": "Sector Rotation Analysis",
+      "description": "Stovall-based cycle positioning and V12 rotation scoring",
+      "components": [
+        {
+          "id": "SR-01",
+          "name": "Stovall Cycle Model (Theoretical)",
+          "code": "AssetCycleModal.tsx → SECTOR_OPTIMAL_ZONES",
+          "output": "UI display only (insight box)",
+          "description": "Sam Stovall's sector rotation model mapping sectors to business cycle phases. THEORETICAL — may not match historical data. Each sector has an 'optimal zone' on the cycle.",
+          "status": "active",
+          "known_issues": ["XLU bear market narrative contradicted by historical data (-0.4% avg vs SPY, 44% win rate)"]
+        },
+        {
+          "id": "SR-02",
+          "name": "V12 Rotation Scoring Engine",
+          "code": "rotation_analyzer.py",
+          "output": "rotation-status.json → rotation_scores",
+          "description": "Composite rotation score (0-1) per asset. Components: role_alignment (Stovall fit), rs_momentum (60d relative strength), recovery_sequence (recovery order position), trend_confirmation (price trend). Includes favorable_phase flag and confidence_modifier.",
+          "status": "active"
+        },
+        {
+          "id": "SR-03",
+          "name": "Cycle Phase Detection",
+          "code": "rotation_analyzer.py",
+          "output": "rotation-status.json → cycle_phase, transition_probability",
+          "description": "Determines macro cycle phase: early_recovery, mid_bull, late_bull, early_bear, mid_bear, late_bear, recession. Includes transition probabilities to each phase.",
+          "status": "active"
+        },
+        {
+          "id": "SR-04",
+          "name": "Sector Leadership Tracker",
+          "code": "rotation_analyzer.py",
+          "output": "rotation-status.json → sector_leadership",
+          "description": "Tracks which sectors are currently leading/lagging. Used to confirm or deny Stovall model predictions.",
+          "status": "active"
+        }
+      ]
+    },
+    {
+      "stage": 4,
+      "name": "Historical Backtesting & Validation",
+      "description": "Test every claim against historical data",
+      "components": [
+        {
+          "id": "HB-01",
+          "name": "Regime Performance Comparison",
+          "code": "enrich_regime_periods.py → RegimeComparisonChart.tsx",
+          "output": "regime-comparison.json",
+          "description": "Historical asset vs SPY performance across all past bull/bear/recovery/sideways periods. Shows per-period returns, drawdowns, and aggregate win rates. THIS IS THE GROUND TRUTH that validates or contradicts Stovall.",
+          "status": "active"
+        },
+        {
+          "id": "HB-02",
+          "name": "Downturn Comparison",
+          "code": "DownturnComparisonChart.tsx",
+          "output": "downturn-comparison.json",
+          "description": "How each asset performed during specific historical downturns (2000 dot-com, 2008 GFC, 2020 COVID, etc.).",
+          "status": "active"
+        },
+        {
+          "id": "HB-03",
+          "name": "Multi-Timeframe Backtest",
+          "code": "paper-trader/multi-timeframe-test.py",
+          "output": "multi-timeframe-report.json",
+          "description": "Tests strategies across 1d, 5d, 10d, 20d hold periods to find optimal horizon per asset.",
+          "status": "active"
+        },
+        {
+          "id": "HB-04",
+          "name": "Correlation Analysis",
+          "code": "regime-detector/backtest/correlation_analyzer.py",
+          "output": "correlation-report.json",
+          "description": "Asset correlation matrix, lead/lag relationships, hedging pairs, asset clusters. Used for diversification and pair trade identification.",
+          "status": "active"
+        },
+        {
+          "id": "HB-05",
+          "name": "Fear & Greed Backtest",
+          "code": "regime-detector/backtest/fear_greed_backtest.py",
+          "output": "Backtest results",
+          "description": "Tests F&G-based entry thresholds across history. Validated the V10.2 panic-only (F&G < 12-15) approach.",
+          "status": "active"
+        }
+      ]
+    },
+    {
+      "stage": 5,
+      "name": "Signal Generation",
+      "description": "Convert analysis into actionable signals",
+      "components": [
+        {
+          "id": "SG-01",
+          "name": "MRE Signal Engine",
+          "code": "mre_signal_exporter.py",
+          "output": "mre-signals.json → signals",
+          "description": "Primary signal generator. Combines regime, F&G, rotation scores, and technical analysis into buy/sell/hold signals per asset.",
+          "status": "active"
+        },
+        {
+          "id": "SG-02",
+          "name": "Divergence Detection",
+          "code": "mre_signal_exporter.py",
+          "output": "mre-signals.json → divergence_signals, pairs",
+          "description": "Identifies divergences between correlated assets (e.g., XLK vs QQQ diverging). Potential mean-reversion opportunities.",
+          "status": "active"
+        },
+        {
+          "id": "SG-03",
+          "name": "CGS Fibonacci Signals",
+          "code": "tools/cgs-trader/cgs_signals.py",
+          "output": "Morning brief → markets section",
+          "description": "Vermeulen CGS method: Fibonacci retracement levels for entry/exit on trend-following trades. Uses EMAs + Fib zones.",
+          "status": "active"
+        }
+      ]
+    },
+    {
+      "stage": 6,
+      "name": "The Pit (Recommendation Engine)",
+      "description": "Final synthesis into Today's Plays with confidence scores",
+      "components": [
+        {
+          "id": "PIT-01",
+          "name": "Pit Verdict Generator",
+          "code": "agents/mre-optimizer (nightly cron)",
+          "output": "pit-recommendations.json",
+          "description": "The Pit synthesizes ALL upstream analysis into per-asset verdicts: BUY/SELL/HOLD with confidence multipliers. Factors in: win rate, profit factor, optimal horizon, SMA period, and regime context. V10.2 uses panic-only entries.",
+          "status": "active"
+        },
+        {
+          "id": "PIT-02",
+          "name": "Confidence Multiplier",
+          "code": "pit-recommendations.json → confidence_multiplier",
+          "output": "Per-asset confidence (0.0-1.5x)",
+          "description": "Adjusts signal strength based on: historical win rate, profit factor, regime alignment, and backtest consistency. Assets with <33% WR get penalized to 0.8x.",
+          "status": "active"
+        },
+        {
+          "id": "PIT-03",
+          "name": "Global Context Engine",
+          "code": "pit-recommendations.json → global_context",
+          "output": "Regime summary, F&G, thesis, key risks",
+          "description": "Top-level market assessment that frames all individual asset recommendations. Includes the overall thesis and risk factors.",
+          "status": "active"
+        }
+      ]
+    },
+    {
+      "stage": 7,
+      "name": "Visualization & Decision Support (Lever App)",
+      "description": "UI components that present analysis to the user",
+      "components": [
+        {
+          "id": "UI-01",
+          "name": "Compass (Risk/Reward Quadrant)",
+          "screen": "compass.tsx",
+          "hook": "useCompass.ts",
+          "description": "Maps current market conditions onto a risk/reward quadrant chart. Shows where 'today' sits relative to ideal trading conditions.",
+          "status": "active"
+        },
+        {
+          "id": "UI-02",
+          "name": "Rotation Card",
+          "component": "RotationCard.tsx",
+          "hook": "useRotation.ts",
+          "description": "Per-asset card showing V12 rotation score, favorable phase status, and phase alignment.",
+          "status": "active"
+        },
+        {
+          "id": "UI-03",
+          "name": "Asset Cycle Modal (Stovall Deep Dive)",
+          "component": "AssetCycleModal.tsx",
+          "description": "Full cycle analysis for a single asset: sine wave position, rotation score breakdown, Stovall narrative (now reconciled with data), and historical regime comparison.",
+          "status": "active"
+        },
+        {
+          "id": "UI-04",
+          "name": "Regime Comparison Chart",
+          "component": "RegimeComparisonChart.tsx",
+          "hook": "useRegimeComparison.ts",
+          "description": "Historical chart showing asset vs SPY across all past regime periods. Filterable by regime type. Shows aggregate win rate and avg outperformance.",
+          "status": "active"
+        },
+        {
+          "id": "UI-05",
+          "name": "Bull/Bear Timeline",
+          "component": "BullBearTimeline.tsx",
+          "hook": "useRegimePeriods.ts",
+          "description": "Visual timeline of historical bull/bear/sideways periods for context on current regime duration.",
+          "status": "active"
+        },
+        {
+          "id": "UI-06",
+          "name": "Downturn Comparison",
+          "component": "DownturnComparisonChart.tsx",
+          "hook": "useDownturnData.ts",
+          "description": "How assets performed during specific named crashes (2008, 2020, etc).",
+          "status": "active"
+        },
+        {
+          "id": "UI-07",
+          "name": "Candlestick Chart + Fibonacci",
+          "component": "charts/CandlestickChartSection.tsx, charts/FibonacciOverlay.tsx",
+          "description": "Technical price chart with Fibonacci retracement overlays for visual entry/exit identification.",
+          "status": "active"
+        },
+        {
+          "id": "UI-08",
+          "name": "Performance Chart",
+          "component": "PerformanceChart.tsx",
+          "hook": "usePerformance.ts",
+          "description": "Asset performance over time with configurable timespan.",
+          "status": "active"
+        },
+        {
+          "id": "UI-09",
+          "name": "Week In Review",
+          "component": "WeekInReview.tsx",
+          "hook": "useWeeklyPerformance.ts",
+          "description": "Weekly performance summary across the portfolio.",
+          "status": "active"
+        },
+        {
+          "id": "UI-10",
+          "name": "Analyze Modal",
+          "component": "AnalyzeModal.tsx",
+          "description": "On-demand deep analysis view for any asset.",
+          "status": "active"
+        },
+        {
+          "id": "UI-11",
+          "name": "Today's Plays Screen",
+          "screen": "plays.tsx",
+          "hook": "useSignals.ts",
+          "description": "Main action screen showing current Pit recommendations and signals.",
+          "status": "active"
+        }
+      ]
+    }
+  ],
+
+  "data_flow_summary": "Data Collection (DC-01..08) → Regime Detection (RD-01..04) → Sector Rotation (SR-01..04) → Historical Validation (HB-01..05) → Signal Generation (SG-01..03) → The Pit (PIT-01..03) → Lever UI (UI-01..11)",
+
+  "known_issues": [
+    {
+      "id": "ISSUE-001",
+      "component": "SR-01 (Stovall Model)",
+      "description": "Stovall narratives are static theoretical claims that can conflict with actual historical data (HB-01). Fix deployed: AssetCycleModal now reconciles theory with data using buildReconciled().",
+      "status": "fixed"
+    }
+  ],
+
+  "total_components": 34,
+  "stages": 7
+}

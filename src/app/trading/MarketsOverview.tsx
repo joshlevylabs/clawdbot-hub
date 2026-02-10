@@ -1414,7 +1414,7 @@ export default function MarketsOverview({ initialSymbol, onSymbolConsumed }: Mar
 
       {(!loading || quotes.length > 0) && (
         <div className="grid lg:grid-cols-3 gap-4 lg:gap-6">
-          <div className="space-y-4">
+          <div className={`space-y-4 ${selectedSymbol && isMobile ? 'hidden' : 'block'}`}>
             {Object.entries(SYMBOL_CATEGORIES).map(([cat, syms]) => {
               // Map category keys to display names and icons
               const categoryInfo = {
@@ -1441,7 +1441,18 @@ export default function MarketsOverview({ initialSymbol, onSymbolConsumed }: Mar
             })}
           </div>
 
-          <div className="hidden lg:block lg:col-span-2 space-y-4">
+          <div className={`lg:col-span-2 space-y-4 ${selectedSymbol && isMobile ? 'block' : 'hidden lg:block'}`}>
+            {/* Mobile back button */}
+            {isMobile && selectedSymbol && (
+              <button
+                onClick={() => setSelectedSymbol(null)}
+                className="flex items-center gap-1.5 text-sm text-slate-400 hover:text-slate-200 mb-2"
+              >
+                <ChevronUp className="w-4 h-4 rotate-[-90deg]" />
+                All Symbols
+              </button>
+            )}
+
             {selectedSymbol && symbolDetail && (
               <>
                 <div className="bg-slate-850 rounded-xl border border-slate-800 p-5">

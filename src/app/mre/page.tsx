@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import {
   TrendingUp,
   TrendingDown,
@@ -18,6 +19,7 @@ import {
   ChevronDown,
   ChevronUp,
   Info,
+  ArrowRight,
 } from "lucide-react";
 
 // ============ INTERFACES ============
@@ -552,6 +554,126 @@ function PredictionMarketsSection({ kalshi, polymarket }: { kalshi?: KalshiData;
   );
 }
 
+// ============ ROTATION SUMMARY TYPES ============
+
+interface RotationLeader {
+  symbol: string;
+  return_3m: number;
+  trend: string;
+}
+
+interface RotationStatusData {
+  timestamp: string;
+  as_of_date: string;
+  current_phase: string;
+  current_regime: string;
+  confidence: number;
+  crash_mode: boolean;
+  crash_score: number;
+  leaders: RotationLeader[];
+  laggards: RotationLeader[];
+  rotation_pattern: string;
+  warnings: string[];
+  role_activation: Record<string, { status: string; assets: string[]; note: string }>;
+}
+
+// Rotation Summary Widget (links to /mre/rotation)
+function RotationSummaryWidget({ data }: { data: RotationStatusData | null; }) {
+  if (!data) {
+    return (
+      <div className="bg-gray-800 rounded-xl p-6 mb-8 border border-gray-700/50">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-semibold flex items-center gap-2">
+            🔄 Sector Rotation
+          </h2>
+          <Link href="/mre/rotation" className="text-sm text-blue-400 hover:text-blue-300 flex items-center gap-1">
+            View Details <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+        <div className="text-gray-500 text-sm">Rotation data not yet available</div>
+      </div>
+    );
+  }
+
+  const leaders = data.leaders?.slice(0, 3) || [];
+  const laggards = data.laggards?.slice(0, 3) || [];
+
+  return (
+    <div className="bg-gray-800 rounded-xl p-6 mb-8 border border-gray-700/50">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-xl font-semibold flex items-center gap-2">
+          🔄 Sector Rotation
+        </h2>
+        <Link href="/mre/rotation" className="text-sm text-blue-400 hover:text-blue-300 flex items-center gap-1">
+          Full Analysis <ArrowRight className="w-3.5 h-3.5" />
+        </Link>
+      </div>
+
+      {/* Phase + Confidence Row */}
+      <div className="flex flex-wrap items-center gap-3 mb-4">
+        <span className="px-3 py-1 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/40 font-semibold text-sm">
+          {data.current_phase}
+        </span>
+        <span className={`text-sm font-mono ${data.confidence >= 70 ? "text-green-400" : data.confidence >= 50 ? "text-yellow-400" : "text-red-400"}`}>
+          {data.confidence}% confidence
+        </span>
+        {data.crash_mode ? (
+          <span className="px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 border border-red-500/40 text-xs animate-pulse">
+            🚨 CRASH MODE
+          </span>
+        ) : (
+          <span className="px-2 py-0.5 rounded-full bg-green-500/10 text-green-500/60 border border-green-500/20 text-xs">
+            ✅ Normal
+          </span>
+        )}
+      </div>
+
+      {/* Leaders & Laggards */}
+      <div className="grid grid-cols-2 gap-4 mb-4">
+        <div>
+          <div className="text-xs text-gray-500 mb-2 flex items-center gap-1">
+            <TrendingUp className="w-3 h-3 text-green-400" /> Leaders (3m)
+          </div>
+          <div className="space-y-1">
+            {leaders.map((l) => (
+              <div key={l.symbol} className="flex items-center justify-between text-sm">
+                <span className="font-mono">{l.symbol}</span>
+                <span className="text-green-400 font-mono text-xs">+{l.return_3m.toFixed(1)}%</span>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div>
+          <div className="text-xs text-gray-500 mb-2 flex items-center gap-1">
+            <TrendingDown className="w-3 h-3 text-red-400" /> Laggards (3m)
+          </div>
+          <div className="space-y-1">
+            {laggards.map((l) => (
+              <div key={l.symbol} className="flex items-center justify-between text-sm">
+                <span className="font-mono">{l.symbol}</span>
+                <span className={`font-mono text-xs ${l.return_3m >= 0 ? "text-green-400" : "text-red-400"}`}>
+                  {l.return_3m >= 0 ? "+" : ""}{l.return_3m.toFixed(1)}%
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Pattern + Warning */}
+      <div className="text-sm text-gray-400">
+        <span className="text-amber-400/80">⚡ {data.rotation_pattern}</span>
+      </div>
+
+      {data.warnings && data.warnings.length > 0 && (
+        <div className="mt-3 p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg">
+          <div className="text-xs text-amber-300">{data.warnings[0]}</div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // Category configuration for V10 (25 assets)
 const ASSET_CATEGORIES = {
   broad_market: {
@@ -838,17 +960,27 @@ function FGHistoryChart({ history }: { history: { date: string; score: number }[
 
 export default function MREDashboard() {
   const [data, setData] = useState<MRESignals | null>(null);
+  const [rotationStatus, setRotationStatus] = useState<RotationStatusData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchData = async () => {
     try {
       setLoading(true);
-      const res = await fetch("/data/trading/mre-signals.json?" + Date.now());
-      if (!res.ok) throw new Error("Failed to fetch");
-      const json = await res.json();
+      const [mreRes, rotRes] = await Promise.all([
+        fetch("/data/trading/mre-signals.json?" + Date.now()),
+        fetch("/data/trading/rotation-status.json?" + Date.now()).catch(() => null),
+      ]);
+      if (!mreRes.ok) throw new Error("Failed to fetch");
+      const json = await mreRes.json();
       setData(json);
       setError(null);
+
+      // Rotation status is optional — don't fail if missing
+      if (rotRes && rotRes.ok) {
+        const rotJson = await rotRes.json();
+        setRotationStatus(rotJson);
+      }
     } catch (e) {
       setError("Failed to load MRE signals");
       console.error(e);
@@ -1000,6 +1132,9 @@ export default function MREDashboard() {
           kalshi={data.prediction_markets?.kalshi} 
           polymarket={data.prediction_markets?.polymarket} 
         />
+
+        {/* Sector Rotation Summary */}
+        <RotationSummaryWidget data={rotationStatus} />
 
         {/* Asset Category Signals */}
         <div className="mb-8">

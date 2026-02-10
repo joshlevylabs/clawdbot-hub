@@ -1,0 +1,396 @@
+{
+  "timestamp": "2026-02-10T15:22:48.844521+00:00",
+  "cycle_phase": "late_bull",
+  "cycle_confidence": 65.0,
+  "phase_duration_days": 0,
+  "transition_probability": {
+    "to_early_recovery": 0.02,
+    "to_mid_bull": 0.05,
+    "stay_late_bull": 0.39,
+    "to_early_bear": 0.18,
+    "to_mid_bear": 0.02,
+    "to_late_bear": 0.02,
+    "to_recession": 0.02
+  },
+  "crash_mode": {
+    "active": false,
+    "crash_score": 0,
+    "triggers_met": [],
+    "severity": null,
+    "consecutive_trigger_days": 0,
+    "consecutive_recovery_days": 0,
+    "everything_crash": false,
+    "activated_date": null,
+    "exit_reason": null
+  },
+  "rotation_scores": {
+    "GDX": {
+      "score": 0.85,
+      "favorable_phase": true,
+      "phase_alignment": "peak_favorable",
+      "confidence_modifier": 1.09,
+      "lead_lag_signal": "strong_leading_indicator",
+      "relative_strength_60d": 39.12,
+      "components": {
+        "role_alignment": 0.85,
+        "rs_momentum": 1.0,
+        "recovery_sequence": 0.5,
+        "trend_confirmation": 0.9
+      }
+    },
+    "GLD": {
+      "score": 0.85,
+      "favorable_phase": true,
+      "phase_alignment": "peak_favorable",
+      "confidence_modifier": 1.09,
+      "lead_lag_signal": "leading_indicator",
+      "relative_strength_60d": 23.07,
+      "components": {
+        "role_alignment": 0.85,
+        "rs_momentum": 1.0,
+        "recovery_sequence": 0.5,
+        "trend_confirmation": 0.9
+      }
+    },
+    "XLB": {
+      "score": 0.839,
+      "favorable_phase": true,
+      "phase_alignment": "peak_favorable",
+      "confidence_modifier": 1.086,
+      "lead_lag_signal": null,
+      "relative_strength_60d": 18.5,
+      "components": {
+        "role_alignment": 0.85,
+        "rs_momentum": 0.963,
+        "recovery_sequence": 0.5,
+        "trend_confirmation": 0.9
+      }
+    },
+    "XLE": {
+      "score": 0.828,
+      "favorable_phase": true,
+      "phase_alignment": "peak_favorable",
+      "confidence_modifier": 1.081,
+      "lead_lag_signal": null,
+      "relative_strength_60d": 17.1,
+      "components": {
+        "role_alignment": 0.85,
+        "rs_momentum": 0.927,
+        "recovery_sequence": 0.5,
+        "trend_confirmation": 0.9
+      }
+    },
+    "XLP": {
+      "score": 0.784,
+      "favorable_phase": true,
+      "phase_alignment": "peak_favorable",
+      "confidence_modifier": 1.063,
+      "lead_lag_signal": "lagging_indicator",
+      "relative_strength_60d": 11.16,
+      "components": {
+        "role_alignment": 0.85,
+        "rs_momentum": 0.779,
+        "recovery_sequence": 0.5,
+        "trend_confirmation": 0.9
+      }
+    },
+    "EWJ": {
+      "score": 0.775,
+      "favorable_phase": true,
+      "phase_alignment": "peak_favorable",
+      "confidence_modifier": 1.06,
+      "lead_lag_signal": null,
+      "relative_strength_60d": 9.98,
+      "components": {
+        "role_alignment": 0.85,
+        "rs_momentum": 0.75,
+        "recovery_sequence": 0.5,
+        "trend_confirmation": 0.9
+      }
+    },
+    "EEM": {
+      "score": 0.766,
+      "favorable_phase": true,
+      "phase_alignment": "peak_favorable",
+      "confidence_modifier": 1.056,
+      "lead_lag_signal": "leading_indicator",
+      "relative_strength_60d": 8.78,
+      "components": {
+        "role_alignment": 0.85,
+        "rs_momentum": 0.72,
+        "recovery_sequence": 0.5,
+        "trend_confirmation": 0.9
+      }
+    },
+    "EFA": {
+      "score": 0.764,
+      "favorable_phase": true,
+      "phase_alignment": "peak_favorable",
+      "confidence_modifier": 1.056,
+      "lead_lag_signal": null,
+      "relative_strength_60d": 8.54,
+      "components": {
+        "role_alignment": 0.85,
+        "rs_momentum": 0.714,
+        "recovery_sequence": 0.5,
+        "trend_confirmation": 0.9
+      }
+    },
+    "IWM": {
+      "score": 0.753,
+      "favorable_phase": true,
+      "phase_alignment": "peak_favorable",
+      "confidence_modifier": 1.051,
+      "lead_lag_signal": null,
+      "relative_strength_60d": 7.1,
+      "components": {
+        "role_alignment": 0.85,
+        "rs_momentum": 0.677,
+        "recovery_sequence": 0.5,
+        "trend_confirmation": 0.9
+      }
+    },
+    "XLV": {
+      "score": 0.528,
+      "favorable_phase": false,
+      "phase_alignment": "neutral",
+      "confidence_modifier": 0.961,
+      "lead_lag_signal": null,
+      "relative_strength_60d": 3.69,
+      "components": {
+        "role_alignment": 0.35,
+        "rs_momentum": 0.592,
+        "recovery_sequence": 0.5,
+        "trend_confirmation": 0.9
+      }
+    },
+    "XLC": {
+      "score": 0.661,
+      "favorable_phase": true,
+      "phase_alignment": "favorable",
+      "confidence_modifier": 1.015,
+      "lead_lag_signal": null,
+      "relative_strength_60d": 0.86,
+      "components": {
+        "role_alignment": 0.85,
+        "rs_momentum": 0.521,
+        "recovery_sequence": 0.5,
+        "trend_confirmation": 0.6
+      }
+    },
+    "SPY": {
+      "score": 0.655,
+      "favorable_phase": true,
+      "phase_alignment": "favorable",
+      "confidence_modifier": 1.012,
+      "lead_lag_signal": null,
+      "relative_strength_60d": 0.0,
+      "components": {
+        "role_alignment": 0.85,
+        "rs_momentum": 0.5,
+        "recovery_sequence": 0.5,
+        "trend_confirmation": 0.6
+      }
+    },
+    "VNQ": {
+      "score": 0.654,
+      "favorable_phase": true,
+      "phase_alignment": "favorable",
+      "confidence_modifier": 1.012,
+      "lead_lag_signal": null,
+      "relative_strength_60d": -0.12,
+      "components": {
+        "role_alignment": 0.85,
+        "rs_momentum": 0.497,
+        "recovery_sequence": 0.5,
+        "trend_confirmation": 0.6
+      }
+    },
+    "XLF": {
+      "score": 0.646,
+      "favorable_phase": true,
+      "phase_alignment": "favorable",
+      "confidence_modifier": 1.008,
+      "lead_lag_signal": null,
+      "relative_strength_60d": -1.18,
+      "components": {
+        "role_alignment": 0.85,
+        "rs_momentum": 0.47,
+        "recovery_sequence": 0.5,
+        "trend_confirmation": 0.6
+      }
+    },
+    "HYG": {
+      "score": 0.643,
+      "favorable_phase": true,
+      "phase_alignment": "favorable",
+      "confidence_modifier": 1.007,
+      "lead_lag_signal": "leading_indicator",
+      "relative_strength_60d": -1.54,
+      "components": {
+        "role_alignment": 0.85,
+        "rs_momentum": 0.462,
+        "recovery_sequence": 0.5,
+        "trend_confirmation": 0.6
+      }
+    },
+    "DBA": {
+      "score": 0.641,
+      "favorable_phase": true,
+      "phase_alignment": "favorable",
+      "confidence_modifier": 1.006,
+      "lead_lag_signal": null,
+      "relative_strength_60d": -1.9,
+      "components": {
+        "role_alignment": 0.85,
+        "rs_momentum": 0.453,
+        "recovery_sequence": 0.5,
+        "trend_confirmation": 0.6
+      }
+    },
+    "QQQ": {
+      "score": 0.534,
+      "favorable_phase": false,
+      "phase_alignment": "neutral",
+      "confidence_modifier": 0.963,
+      "lead_lag_signal": null,
+      "relative_strength_60d": -2.85,
+      "components": {
+        "role_alignment": 0.6,
+        "rs_momentum": 0.429,
+        "recovery_sequence": 0.5,
+        "trend_confirmation": 0.6
+      }
+    },
+    "IEF": {
+      "score": 0.429,
+      "favorable_phase": false,
+      "phase_alignment": "neutral",
+      "confidence_modifier": 0.922,
+      "lead_lag_signal": null,
+      "relative_strength_60d": -3.41,
+      "components": {
+        "role_alignment": 0.35,
+        "rs_momentum": 0.415,
+        "recovery_sequence": 0.5,
+        "trend_confirmation": 0.6
+      }
+    },
+    "FXI": {
+      "score": 0.625,
+      "favorable_phase": true,
+      "phase_alignment": "favorable",
+      "confidence_modifier": 1.0,
+      "lead_lag_signal": null,
+      "relative_strength_60d": -4.01,
+      "components": {
+        "role_alignment": 0.85,
+        "rs_momentum": 0.4,
+        "recovery_sequence": 0.5,
+        "trend_confirmation": 0.6
+      }
+    },
+    "XLK": {
+      "score": 0.624,
+      "favorable_phase": true,
+      "phase_alignment": "favorable",
+      "confidence_modifier": 1.0,
+      "lead_lag_signal": null,
+      "relative_strength_60d": -4.09,
+      "components": {
+        "role_alignment": 0.85,
+        "rs_momentum": 0.398,
+        "recovery_sequence": 0.5,
+        "trend_confirmation": 0.6
+      }
+    },
+    "INDA": {
+      "score": 0.608,
+      "favorable_phase": true,
+      "phase_alignment": "favorable",
+      "confidence_modifier": 0.993,
+      "lead_lag_signal": null,
+      "relative_strength_60d": -4.31,
+      "components": {
+        "role_alignment": 0.85,
+        "rs_momentum": 0.392,
+        "recovery_sequence": 0.5,
+        "trend_confirmation": 0.5
+      }
+    },
+    "TLT": {
+      "score": 0.418,
+      "favorable_phase": false,
+      "phase_alignment": "neutral",
+      "confidence_modifier": 0.917,
+      "lead_lag_signal": "strong_leading_indicator",
+      "relative_strength_60d": -4.91,
+      "components": {
+        "role_alignment": 0.35,
+        "rs_momentum": 0.377,
+        "recovery_sequence": 0.5,
+        "trend_confirmation": 0.6
+      }
+    },
+    "XLU": {
+      "score": 0.61,
+      "favorable_phase": true,
+      "phase_alignment": "favorable",
+      "confidence_modifier": 0.994,
+      "lead_lag_signal": "leading_indicator",
+      "relative_strength_60d": -6.05,
+      "components": {
+        "role_alignment": 0.85,
+        "rs_momentum": 0.349,
+        "recovery_sequence": 0.5,
+        "trend_confirmation": 0.6
+      }
+    },
+    "BITO": {
+      "score": 0.445,
+      "favorable_phase": false,
+      "phase_alignment": "neutral",
+      "confidence_modifier": 0.928,
+      "lead_lag_signal": null,
+      "relative_strength_60d": -36.17,
+      "components": {
+        "role_alignment": 0.85,
+        "rs_momentum": 0,
+        "recovery_sequence": 0.5,
+        "trend_confirmation": 0.2
+      }
+    }
+  },
+  "sector_leadership": {
+    "leaders": [
+      "GDX",
+      "GLD",
+      "XLB",
+      "XLE",
+      "XLP"
+    ],
+    "laggards": [
+      "XLK",
+      "INDA",
+      "TLT",
+      "XLU",
+      "BITO"
+    ],
+    "rotation_pattern": "late_cycle_commodities",
+    "pattern_confidence": 0.8
+  },
+  "warnings": [
+    "Gold miners +43% RS \u2014 historically precedes cycle transition by 3-6 months",
+    "Classic late-cycle rotation: 4/4 commodity sectors leading"
+  ],
+  "bear_asset_pct": 4.2,
+  "input_data": {
+    "spy_regime": "bull",
+    "breadth_pct": 91.7,
+    "vix": null,
+    "fg_score": null,
+    "total_assets": 24,
+    "bear_assets": 1
+  },
+  "version": "v12.0"
+}

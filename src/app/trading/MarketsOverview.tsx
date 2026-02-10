@@ -77,6 +77,8 @@ interface ChartSettings {
   showMA100: boolean;
   showFibRetracements: boolean;
   showFibExtensions: boolean;
+  showXGrid: boolean;
+  showYGrid: boolean;
 }
 
 const DEFAULT_SETTINGS: ChartSettings = {
@@ -86,6 +88,8 @@ const DEFAULT_SETTINGS: ChartSettings = {
   showMA100: false,
   showFibRetracements: true,
   showFibExtensions: true,
+  showXGrid: true,
+  showYGrid: true,
 };
 
 // ─── Timespan + Candle Dual Selector ─────────────────────────────
@@ -115,26 +119,26 @@ const CANDLES = [
 
 // Valid candle sizes per timespan, with defaults
 const VALID_CANDLES: Record<string, { valid: string[]; default: string }> = {
-  '1D':  { valid: ['5m', '15m', '30m'],           default: '5m'  },
-  '5D':  { valid: ['5m', '15m', '30m', '1H'],     default: '15m' },
-  '1M':  { valid: ['15m', '30m', '1H', '4H', '1D'], default: '1H' },
-  '3M':  { valid: ['1H', '4H', '1D'],             default: '1D'  },
-  '6M':  { valid: ['1D', '1W'],                   default: '1D'  },
-  '1Y':  { valid: ['1D', '1W', '1M'],             default: '1D'  },
-  '2Y':  { valid: ['1D', '1W', '1M'],             default: '1W'  },
-  '5Y':  { valid: ['1W', '1M'],                   default: '1M'  },
+  '1D':  { valid: ['5m', '15m', '30m'],                    default: '5m'  },
+  '5D':  { valid: ['5m', '15m', '30m', '1H'],              default: '15m' },
+  '1M':  { valid: ['15m', '30m', '1H', '4H', '1D'],       default: '1D'  },
+  '3M':  { valid: ['30m', '1H', '4H', '1D', '1W'],        default: '1D'  },
+  '6M':  { valid: ['1H', '4H', '1D', '1W'],               default: '1D'  },
+  '1Y':  { valid: ['4H', '1D', '1W', '1M'],               default: '1D'  },
+  '2Y':  { valid: ['1D', '1W', '1M'],                     default: '1W'  },
+  '5Y':  { valid: ['1D', '1W', '1M'],                     default: '1M'  },
 };
 
 // Reverse: valid timespans per candle
 const VALID_TIMESPANS: Record<string, { valid: string[]; default: string }> = {
-  '5m':  { valid: ['1D', '5D'],                   default: '1D'  },
-  '15m': { valid: ['1D', '5D', '1M'],             default: '5D'  },
-  '30m': { valid: ['1D', '5D', '1M'],             default: '5D'  },
-  '1H':  { valid: ['5D', '1M', '3M'],             default: '1M'  },
-  '4H':  { valid: ['1M', '3M'],                   default: '3M'  },
-  '1D':  { valid: ['3M', '6M', '1Y', '2Y'],       default: '1Y'  },
-  '1W':  { valid: ['6M', '1Y', '2Y', '5Y'],       default: '2Y'  },
-  '1M':  { valid: ['1Y', '2Y', '5Y'],             default: '5Y'  },
+  '5m':  { valid: ['1D', '5D'],                            default: '1D'  },
+  '15m': { valid: ['1D', '5D', '1M'],                     default: '5D'  },
+  '30m': { valid: ['1D', '5D', '1M', '3M'],               default: '5D'  },
+  '1H':  { valid: ['5D', '1M', '3M', '6M'],               default: '1M'  },
+  '4H':  { valid: ['1M', '3M', '6M', '1Y'],               default: '3M'  },
+  '1D':  { valid: ['1M', '3M', '6M', '1Y', '2Y', '5Y'],  default: '1Y'  },
+  '1W':  { valid: ['3M', '6M', '1Y', '2Y', '5Y'],        default: '2Y'  },
+  '1M':  { valid: ['1Y', '2Y', '5Y'],                     default: '5Y'  },
 };
 
 function isCandleValidForTimespan(candle: string, timespan: string): boolean {
@@ -480,10 +484,12 @@ function ChartCanvas({
     ctx.lineWidth = 0.5;
     for (let i = 0; i <= 4; i++) {
       const y = padding.top + (drawHeight / 4) * i;
-      ctx.beginPath();
-      ctx.moveTo(padding.left, y);
-      ctx.lineTo(width - padding.right, y);
-      ctx.stroke();
+      if (settings.showYGrid) {
+        ctx.beginPath();
+        ctx.moveTo(padding.left, y);
+        ctx.lineTo(width - padding.right, y);
+        ctx.stroke();
+      }
       
       const price = maxPrice + pricePadding - ((priceRange + pricePadding * 2) / 4) * i;
       ctx.fillStyle = isOverYAxis ? '#60a5fa' : '#94a3b8'; // Brighter labels
@@ -503,13 +509,30 @@ function ChartCanvas({
     const labelCount = Math.min(maxLabels, Math.min(6, visibleCandles.length));
     const labelStep = Math.max(1, Math.floor(visibleCandles.length / labelCount));
     
-    // Shorter format for mobile
+    // Intraday-aware label formatting
     const formatLabel = (timestamp: number) => {
       const d = new Date(timestamp * 1000);
-      if (width < 500) {
-        return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      const firstDate = new Date(visibleCandles[0].time * 1000);
+      const lastDate = new Date(visibleCandles[visibleCandles.length - 1].time * 1000);
+      const sameDay = firstDate.toDateString() === lastDate.toDateString();
+      const spanMs = lastDate.getTime() - firstDate.getTime();
+      
+      if (sameDay) {
+        // Pure intraday — show time only
+        return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+      } else if (spanMs < 5 * 24 * 60 * 60 * 1000) {
+        // Few days — show date + time
+        if (width < 500) {
+          return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+        }
+        return `${d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} ${d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}`;
+      } else {
+        // Long timespan — show date only
+        if (width < 500) {
+          return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        }
+        return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: '2-digit' });
       }
-      return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: '2-digit' });
     };
     
     let lastLabelX = -100; // Track last label position to avoid overlap
@@ -519,6 +542,15 @@ function ChartCanvas({
       if (x - lastLabelX < labelWidth) continue;
       const date = formatLabel(visibleCandles[i].time);
       ctx.fillText(date, x, canvasHeight - padding.bottom + 15);
+      // Draw vertical grid line at this label position
+      if (settings.showXGrid) {
+        ctx.strokeStyle = '#1e293b';
+        ctx.lineWidth = 0.5;
+        ctx.beginPath();
+        ctx.moveTo(x, padding.top);
+        ctx.lineTo(x, canvasHeight - padding.bottom);
+        ctx.stroke();
+      }
       lastLabelX = x;
     }
     // Last date (only if not overlapping)
@@ -526,6 +558,14 @@ function ChartCanvas({
       const lastX = scaleX(visibleCandles.length - 1) + candleWidth / 2;
       if (lastX - lastLabelX >= labelWidth) {
         ctx.fillText(formatLabel(visibleCandles[visibleCandles.length - 1].time), lastX, canvasHeight - padding.bottom + 15);
+        if (settings.showXGrid) {
+          ctx.strokeStyle = '#1e293b';
+          ctx.lineWidth = 0.5;
+          ctx.beginPath();
+          ctx.moveTo(lastX, padding.top);
+          ctx.lineTo(lastX, canvasHeight - padding.bottom);
+          ctx.stroke();
+        }
       }
     }
 
@@ -810,6 +850,27 @@ function SettingsPanel({
                 checked={settings.showFibExtensions} 
                 onChange={() => toggle('showFibExtensions')}
                 className="w-4 h-4 rounded accent-emerald-500"
+              />
+            </label>
+          </div>
+          
+          <div className="border-t border-slate-700 mt-3 pt-3 space-y-2">
+            <label className="flex items-center justify-between cursor-pointer">
+              <span className="text-sm text-slate-300">X Grid Lines</span>
+              <input 
+                type="checkbox" 
+                checked={settings.showXGrid} 
+                onChange={() => toggle('showXGrid')}
+                className="w-4 h-4 rounded accent-slate-500"
+              />
+            </label>
+            <label className="flex items-center justify-between cursor-pointer">
+              <span className="text-sm text-slate-300">Y Grid Lines</span>
+              <input 
+                type="checkbox" 
+                checked={settings.showYGrid} 
+                onChange={() => toggle('showYGrid')}
+                className="w-4 h-4 rounded accent-slate-500"
               />
             </label>
           </div>

@@ -1,6 +1,8 @@
 {
-  "generated": "2026-02-10T15:47:02.484059+00:00",
-  "version": "v12.0",
+  "generated": "2026-02-10T16:39:59.973419+00:00",
+  "version": "1.0.0",
+  "config_version": "1.0.0",
+  "legacy_version": "v12.0",
   "chart": {
     "type": "grouped_line",
     "x_axis": "Date",

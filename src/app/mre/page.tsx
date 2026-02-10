@@ -194,6 +194,10 @@ interface MRESignals {
   };
   meta?: {
     version: string;
+    config_version?: string;
+    cycle_version?: string;
+    pit_version?: string;
+    legacy_version?: string;
     backtests: number;
     key_insight: string;
     features?: string[];
@@ -1028,7 +1032,7 @@ export default function MREDashboard() {
           <div>
             <h1 className="text-3xl font-bold flex items-center gap-3">
               <Gauge className="w-8 h-8 text-blue-500" />
-              MRE {data.meta?.version} Dashboard
+              MRE Signals {data.meta?.version ? `v${data.meta.version}` : ''} Dashboard
             </h1>
             <p className="text-gray-400 mt-1">Market Regime Ensemble — Real-time Signals</p>
           </div>
@@ -1140,7 +1144,7 @@ export default function MREDashboard() {
         <div className="mb-8">
           <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
             <Target className="w-5 h-5 text-blue-500" />
-            MRE V10 Signals — {data.signals.by_asset_class.length} Assets
+            MRE Signals — {data.signals.by_asset_class.length} Assets
           </h2>
           
           {/* Category Sections */}
@@ -1234,7 +1238,7 @@ export default function MREDashboard() {
 
         {/* Footer */}
         <div className="mt-8 text-center text-sm text-gray-500">
-          MRE {data.meta?.version} — Based on {data.meta?.backtests?.toLocaleString()} backtests
+          MRE Signals v{data.meta?.version} (config v{data.meta?.config_version}) — Based on {data.meta?.backtests?.toLocaleString()} backtests
           <br />
           {data.meta?.key_insight}
           {data.meta?.features && (

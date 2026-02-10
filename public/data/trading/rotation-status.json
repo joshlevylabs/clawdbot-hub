@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-02-10T15:46:59.005715+00:00",
+  "timestamp": "2026-02-10T16:39:56.971783+00:00",
   "cycle_phase": "late_bull",
   "cycle_confidence": 65.0,
   "phase_duration_days": 0,
@@ -392,5 +392,7 @@
     "total_assets": 24,
     "bear_assets": 1
   },
-  "version": "v12.0"
+  "version": "1.0.0",
+  "config_version": "1.0.0",
+  "legacy_version": "v12.0"
 }

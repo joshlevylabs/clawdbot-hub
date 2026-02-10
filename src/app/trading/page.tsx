@@ -326,7 +326,7 @@ function SignalAccuracyPanel({ stats }: { stats: SignalStats }) {
 
 // ===== Unified Trading Page with Single Tab Bar =====
 
-type ActiveTab = "overview" | "positions" | "trades" | "signals" | "mre" | "markets";
+type ActiveTab = "overview" | "plays" | "positions" | "trades" | "signals" | "mre" | "markets";
 
 export default function TradingPage() {
   const [activeTab, setActiveTab] = useState<ActiveTab>("overview");
@@ -472,10 +472,11 @@ export default function TradingPage() {
   const avgLoss = losingTrades.length > 0 ? Math.abs(losingTrades.reduce((s, t) => s + t.pnl, 0) / losingTrades.length) : 0;
   const profitFactor = avgLoss > 0 ? avgWin / avgLoss : avgWin > 0 ? Infinity : 0;
 
-  const isPortfolioTab = activeTab === "overview" || activeTab === "positions" || activeTab === "trades" || activeTab === "signals";
+  const isPortfolioTab = activeTab === "overview" || activeTab === "plays" || activeTab === "positions" || activeTab === "trades" || activeTab === "signals";
 
   const tabConfig: { key: ActiveTab; label: string }[] = [
     { key: "overview", label: "Overview" },
+    { key: "plays", label: "Today's Plays" },
     { key: "positions", label: "Positions" },
     { key: "trades", label: "Trades" },
     { key: "signals", label: "Signals" },
@@ -654,35 +655,37 @@ export default function TradingPage() {
                 startingCapital={startingCapital}
               />
 
-              {/* Actions Dashboard (MRE Signals) */}
-              <ActionsDashboard
-                positions={legacyPositions}
-                cash={cash}
-                tradingEnabled={true}
-                onAnalyze={handleAnalyze}
-                onTrade={async (symbol, side, qty, price, target, stop) => {
-                  try {
-                    const res = await fetch("/api/paper-trading", {
-                      method: "POST",
-                      headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({ symbol, side, qty, price, target, stop }),
-                    });
-                    if (!res.ok) {
-                      const err = await res.json();
-                      alert(`Trade failed: ${err.error}`);
-                      return;
-                    }
-                    // Refresh data after trade
-                    loadFromSupabase();
-                  } catch (err) {
-                    alert(`Trade error: ${err}`);
-                  }
-                }}
-              />
-
               {/* Signal Accuracy */}
               {signalStats && <SignalAccuracyPanel stats={signalStats} />}
             </>
+          )}
+
+          {/* ===== TODAY'S PLAYS TAB ===== */}
+          {activeTab === "plays" && !loading && !error && (
+            <ActionsDashboard
+              positions={legacyPositions}
+              cash={cash}
+              tradingEnabled={true}
+              onAnalyze={handleAnalyze}
+              onTrade={async (symbol, side, qty, price, target, stop) => {
+                try {
+                  const res = await fetch("/api/paper-trading", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ symbol, side, qty, price, target, stop }),
+                  });
+                  if (!res.ok) {
+                    const err = await res.json();
+                    alert(`Trade failed: ${err.error}`);
+                    return;
+                  }
+                  // Refresh data after trade
+                  loadFromSupabase();
+                } catch (err) {
+                  alert(`Trade error: ${err}`);
+                }
+              }}
+            />
           )}
 
           {/* ===== POSITIONS TAB ===== */}

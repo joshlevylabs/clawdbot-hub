@@ -1220,11 +1220,10 @@ function MREAnalysisPanel({ signal }: { signal: MRESignalData }) {
 
 interface MarketsOverviewProps {
   initialSymbol?: string | null;
-  mreSignalData?: MRESignalData | null;
   onSymbolConsumed?: () => void;
 }
 
-export default function MarketsOverview({ initialSymbol, mreSignalData, onSymbolConsumed }: MarketsOverviewProps = {}) {
+export default function MarketsOverview({ initialSymbol, onSymbolConsumed }: MarketsOverviewProps = {}) {
   const [quotes, setQuotes] = useState<QuoteData[]>([]);
   const [selectedSymbol, setSelectedSymbol] = useState<string | null>(null);
   const [symbolDetail, setSymbolDetail] = useState<SymbolDetail | null>(null);
@@ -1265,19 +1264,14 @@ export default function MarketsOverview({ initialSymbol, mreSignalData, onSymbol
       .catch(() => {});
   }, []);
 
-  // Handle initial symbol from Analyze feature
+  // Handle initial symbol from Analyze feature — consume once then clear
   useEffect(() => {
     if (initialSymbol) {
       setSelectedSymbol(initialSymbol);
+      // Tell parent we consumed it so it doesn't keep re-applying
+      onSymbolConsumed?.();
     }
-  }, [initialSymbol]);
-
-  // Store MRE signal data locally when received from parent OR from fetched signals
-  useEffect(() => {
-    if (mreSignalData) {
-      setLocalMreSignal(mreSignalData);
-    }
-  }, [mreSignalData]);
+  }, [initialSymbol]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // When selected symbol changes, find its MRE signal from fetched data
   useEffect(() => {

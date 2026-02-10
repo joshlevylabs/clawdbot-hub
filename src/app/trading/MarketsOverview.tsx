@@ -88,26 +88,70 @@ const DEFAULT_SETTINGS: ChartSettings = {
   showFibExtensions: true,
 };
 
-// Note: label is the unique key used for selection matching
-// Timeframes: label = candle size, range = default data to fetch, interval = Yahoo interval
-const TIMEFRAMES = [
-  // Intraday candles
-  { label: '5m', range: '1d', interval: '5m' },
-  { label: '15m', range: '5d', interval: '15m' },
-  { label: '30m', range: '5d', interval: '30m' },
-  { label: '1H', range: '1mo', interval: '1h' },
-  { label: '4H', range: '3mo', interval: '4h' },
-  // Daily candles
-  { label: '1D', range: '6mo', interval: '1d' },
-  // Weekly candles
-  { label: '1W', range: '2y', interval: '1wk' },
-  // Monthly candles
-  { label: '1M', range: '5y', interval: '1mo' },
-  // 6-month candles (custom aggregation from monthly)
-  { label: '6M', range: '10y', interval: '6mo' },
-  // Yearly candles (custom aggregation from monthly)
-  { label: '1Y', range: '10y', interval: '12mo' },
-];
+// ─── Timespan + Candle Dual Selector ─────────────────────────────
+// Timespans control how much history the x-axis shows (maps to Yahoo `range`)
+const TIMESPANS = [
+  { label: '1D', range: '1d' },
+  { label: '5D', range: '5d' },
+  { label: '1M', range: '1mo' },
+  { label: '3M', range: '3mo' },
+  { label: '6M', range: '6mo' },
+  { label: '1Y', range: '1y' },
+  { label: '2Y', range: '2y' },
+  { label: '5Y', range: '5y' },
+] as const;
+
+// Candle sizes control how much time each candle represents (maps to Yahoo `interval`)
+const CANDLES = [
+  { label: '5m', interval: '5m' },
+  { label: '15m', interval: '15m' },
+  { label: '30m', interval: '30m' },
+  { label: '1H', interval: '1h' },
+  { label: '4H', interval: '4h' },
+  { label: '1D', interval: '1d' },
+  { label: '1W', interval: '1wk' },
+  { label: '1M', interval: '1mo' },
+] as const;
+
+// Valid candle sizes per timespan, with defaults
+const VALID_CANDLES: Record<string, { valid: string[]; default: string }> = {
+  '1D':  { valid: ['5m', '15m', '30m'],           default: '5m'  },
+  '5D':  { valid: ['5m', '15m', '30m', '1H'],     default: '15m' },
+  '1M':  { valid: ['15m', '30m', '1H', '4H', '1D'], default: '1H' },
+  '3M':  { valid: ['1H', '4H', '1D'],             default: '1D'  },
+  '6M':  { valid: ['1D', '1W'],                   default: '1D'  },
+  '1Y':  { valid: ['1D', '1W', '1M'],             default: '1D'  },
+  '2Y':  { valid: ['1D', '1W', '1M'],             default: '1W'  },
+  '5Y':  { valid: ['1W', '1M'],                   default: '1M'  },
+};
+
+// Reverse: valid timespans per candle
+const VALID_TIMESPANS: Record<string, { valid: string[]; default: string }> = {
+  '5m':  { valid: ['1D', '5D'],                   default: '1D'  },
+  '15m': { valid: ['1D', '5D', '1M'],             default: '5D'  },
+  '30m': { valid: ['1D', '5D', '1M'],             default: '5D'  },
+  '1H':  { valid: ['5D', '1M', '3M'],             default: '1M'  },
+  '4H':  { valid: ['1M', '3M'],                   default: '3M'  },
+  '1D':  { valid: ['3M', '6M', '1Y', '2Y'],       default: '1Y'  },
+  '1W':  { valid: ['6M', '1Y', '2Y', '5Y'],       default: '2Y'  },
+  '1M':  { valid: ['1Y', '2Y', '5Y'],             default: '5Y'  },
+};
+
+function isCandleValidForTimespan(candle: string, timespan: string): boolean {
+  return VALID_CANDLES[timespan]?.valid.includes(candle) ?? false;
+}
+
+function isTimespanValidForCandle(timespan: string, candle: string): boolean {
+  return VALID_TIMESPANS[candle]?.valid.includes(timespan) ?? false;
+}
+
+function getIntervalForCandle(candleLabel: string): string {
+  return CANDLES.find(c => c.label === candleLabel)?.interval ?? '1d';
+}
+
+function getRangeForTimespan(timespanLabel: string): string {
+  return TIMESPANS.find(t => t.label === timespanLabel)?.range ?? '1y';
+}
 
 const SYMBOL_CATEGORIES = {
   broad_market: ['SPY', 'QQQ', 'IWM'],
@@ -135,29 +179,40 @@ function storeSettings(symbol: string, settings: ChartSettings) {
   } catch {}
 }
 
-function getStoredTimeframe(symbol: string): string {
-  if (typeof window === 'undefined') return '3M';
+function getStoredTimespanCandle(symbol: string): { timespan: string; candle: string } {
+  const defaults = { timespan: '1Y', candle: '1D' };
+  if (typeof window === 'undefined') return defaults;
   try {
-    const stored = localStorage.getItem(`markets_timeframe_${symbol}`);
+    const stored = localStorage.getItem(`markets_tf2_${symbol}`);
     if (stored) {
       const parsed = JSON.parse(stored);
-      // Handle old format { range, interval } by finding matching label
-      if (typeof parsed === 'object' && parsed.range) {
-        const match = TIMEFRAMES.find(tf => tf.range === parsed.range && tf.interval === parsed.interval);
-        return match?.label ?? '3M';
-      }
-      return parsed;
+      if (parsed.timespan && parsed.candle) return parsed;
     }
-    return '3M';
+    // Migrate from old format
+    const oldStored = localStorage.getItem(`markets_timeframe_${symbol}`);
+    if (oldStored) {
+      const parsed = JSON.parse(oldStored);
+      // Old format was just a label string like "1D" which was a candle label in the old TIMEFRAMES
+      // Try to map it
+      if (typeof parsed === 'string') {
+        // Old labels mapped: 5m→1D/5m, 15m→5D/15m, 30m→5D/30m, 1H→1M/1H, 4H→3M/4H, 1D→1Y/1D, 1W→2Y/1W, 1M→5Y/1M
+        const candleLabel = parsed;
+        const mapping = VALID_TIMESPANS[candleLabel];
+        if (mapping) {
+          return { timespan: mapping.default, candle: candleLabel };
+        }
+      }
+    }
+    return defaults;
   } catch {
-    return '3M';
+    return defaults;
   }
 }
 
-function storeTimeframe(symbol: string, label: string) {
+function storeTimespanCandle(symbol: string, timespan: string, candle: string) {
   if (typeof window === 'undefined') return;
   try {
-    localStorage.setItem(`markets_timeframe_${symbol}`, JSON.stringify(label));
+    localStorage.setItem(`markets_tf2_${symbol}`, JSON.stringify({ timespan, candle }));
   } catch {}
 }
 
@@ -1176,14 +1231,14 @@ export default function MarketsOverview({ initialSymbol, mreSignalData, onSymbol
   const [loading, setLoading] = useState(true);
   const [detailLoading, setDetailLoading] = useState(false);
   const [loadingMoreData, setLoadingMoreData] = useState(false);
-  const [currentDataRange, setCurrentDataRange] = useState<string>('3mo'); // Will be set by initial fetch
+  const [currentDataRange, setCurrentDataRange] = useState<string>('1y');
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
-  const [selectedTimeframe, setSelectedTimeframe] = useState('1D');
+  const [selectedTimespan, setSelectedTimespan] = useState('1Y');
+  const [selectedCandle, setSelectedCandle] = useState('1D');
   
-  // Derive range and interval from selected timeframe
-  const currentTf = TIMEFRAMES.find(tf => tf.label === selectedTimeframe) || TIMEFRAMES[5]; // Default to 1D
-  const range = currentTf.range;
-  const interval = currentTf.interval;
+  // Derive range and interval from the two selectors
+  const range = getRangeForTimespan(selectedTimespan);
+  const interval = getIntervalForCandle(selectedCandle);
   const [isMobile, setIsMobile] = useState(false);
   const [settings, setSettings] = useState<ChartSettings>(DEFAULT_SETTINGS);
   const [customFibPoints, setCustomFibPoints] = useState<CustomFibPoints>({ a: null, b: null, c: null });
@@ -1195,8 +1250,20 @@ export default function MarketsOverview({ initialSymbol, mreSignalData, onSymbol
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Local MRE signal data — persists even after parent clears analyzeSymbol
+  // MRE signals — fetched once on mount, used to find signal for any selected symbol
+  const [allMreSignals, setAllMreSignals] = useState<MRESignalData[]>([]);
   const [localMreSignal, setLocalMreSignal] = useState<MRESignalData | null>(null);
+
+  // Fetch all MRE signals on mount
+  useEffect(() => {
+    fetch('/data/trading/mre-signals.json?' + Date.now())
+      .then(r => r.json())
+      .then(data => {
+        const signals = data?.signals?.by_asset_class || [];
+        setAllMreSignals(signals);
+      })
+      .catch(() => {});
+  }, []);
 
   // Handle initial symbol from Analyze feature
   useEffect(() => {
@@ -1205,27 +1272,35 @@ export default function MarketsOverview({ initialSymbol, mreSignalData, onSymbol
     }
   }, [initialSymbol]);
 
-  // Store MRE signal data locally when received
+  // Store MRE signal data locally when received from parent OR from fetched signals
   useEffect(() => {
     if (mreSignalData) {
       setLocalMreSignal(mreSignalData);
     }
   }, [mreSignalData]);
 
-  // Clear local MRE signal when user manually selects a different symbol
+  // When selected symbol changes, find its MRE signal from fetched data
+  useEffect(() => {
+    if (selectedSymbol && allMreSignals.length > 0) {
+      // Only auto-set if we don't already have a matching signal from the parent
+      if (!localMreSignal || localMreSignal.symbol !== selectedSymbol) {
+        const found = allMreSignals.find(s => s.symbol === selectedSymbol) || null;
+        setLocalMreSignal(found);
+      }
+    }
+  }, [selectedSymbol, allMreSignals]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const handleSelectSymbolWithClear = (symbol: string) => {
     setSelectedSymbol(symbol);
-    if (symbol !== localMreSignal?.symbol) {
-      setLocalMreSignal(null);
-    }
   };
 
   // Load stored settings when symbol changes
   useEffect(() => {
     if (selectedSymbol) {
       setSettings(getStoredSettings(selectedSymbol));
-      const storedTf = getStoredTimeframe(selectedSymbol);
-      setSelectedTimeframe(storedTf);
+      const { timespan, candle } = getStoredTimespanCandle(selectedSymbol);
+      setSelectedTimespan(timespan);
+      setSelectedCandle(candle);
       // Reset custom Fib points when symbol changes
       setCustomFibPoints({ a: null, b: null, c: null });
     }
@@ -1234,7 +1309,7 @@ export default function MarketsOverview({ initialSymbol, mreSignalData, onSymbol
   // Reset custom Fib points when timeframe changes
   useEffect(() => {
     setCustomFibPoints({ a: null, b: null, c: null });
-  }, [selectedTimeframe]);
+  }, [selectedTimespan, selectedCandle]);
 
   // Save settings when they change
   useEffect(() => {
@@ -1301,9 +1376,26 @@ export default function MarketsOverview({ initialSymbol, mreSignalData, onSymbol
     handleSelectSymbolWithClear(symbol);
   };
 
-  const handleTimeframeChange = (label: string) => {
-    setSelectedTimeframe(label);
-    if (selectedSymbol) storeTimeframe(selectedSymbol, label);
+  const handleTimespanChange = (newTimespan: string) => {
+    let candle = selectedCandle;
+    // If current candle isn't valid for the new timespan, pick the default
+    if (!isCandleValidForTimespan(candle, newTimespan)) {
+      candle = VALID_CANDLES[newTimespan]?.default ?? '1D';
+    }
+    setSelectedTimespan(newTimespan);
+    setSelectedCandle(candle);
+    if (selectedSymbol) storeTimespanCandle(selectedSymbol, newTimespan, candle);
+  };
+
+  const handleCandleChange = (newCandle: string) => {
+    let timespan = selectedTimespan;
+    // If current timespan isn't valid for the new candle, pick the default
+    if (!isTimespanValidForCandle(timespan, newCandle)) {
+      timespan = VALID_TIMESPANS[newCandle]?.default ?? '1Y';
+    }
+    setSelectedTimespan(timespan);
+    setSelectedCandle(newCandle);
+    if (selectedSymbol) storeTimespanCandle(selectedSymbol, timespan, newCandle);
   };
 
   const handleRefresh = () => {
@@ -1376,13 +1468,38 @@ export default function MarketsOverview({ initialSymbol, mreSignalData, onSymbol
                     <SettingsPanel settings={settings} onChange={setSettings} movingAverages={symbolDetail.movingAverages} />
                   </div>
                   
-                  <div className="flex flex-wrap gap-1 mb-4">
-                    {TIMEFRAMES.map(tf => (
-                      <button key={tf.label} onClick={() => handleTimeframeChange(tf.label)}
-                        className={`px-2 py-1 rounded text-xs font-medium ${selectedTimeframe === tf.label ? 'bg-primary-600 text-white' : 'bg-slate-800 text-slate-400 hover:text-white'}`}>
-                        {tf.label}
-                      </button>
-                    ))}
+                  <div className="space-y-2 mb-4">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] text-slate-500 uppercase tracking-wider font-medium w-14 shrink-0">Timespan</span>
+                      <div className="flex flex-wrap gap-1">
+                        {TIMESPANS.map(ts => (
+                          <button key={ts.label} onClick={() => handleTimespanChange(ts.label)}
+                            className={`px-2 py-1 rounded text-xs font-medium transition-colors ${selectedTimespan === ts.label ? 'bg-primary-600 text-white' : 'bg-slate-800 text-slate-400 hover:text-white'}`}>
+                            {ts.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] text-slate-500 uppercase tracking-wider font-medium w-14 shrink-0">Candle</span>
+                      <div className="flex flex-wrap gap-1">
+                        {CANDLES.map(c => {
+                          const isValid = isCandleValidForTimespan(c.label, selectedTimespan);
+                          return (
+                            <button key={c.label} onClick={() => handleCandleChange(c.label)}
+                              className={`px-2 py-1 rounded text-xs font-medium transition-colors ${
+                                selectedCandle === c.label
+                                  ? 'bg-emerald-600 text-white'
+                                  : isValid
+                                    ? 'bg-slate-800 text-slate-400 hover:text-white'
+                                    : 'bg-slate-800/40 text-slate-600 hover:text-slate-400'
+                              }`}>
+                              {c.label}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
                   </div>
 
                   {detailLoading ? <div className="h-[300px] bg-slate-800/50 rounded-lg animate-pulse" /> :
@@ -1414,7 +1531,7 @@ export default function MarketsOverview({ initialSymbol, mreSignalData, onSymbol
                   </div>
                 </div>
 
-                {/* MRE Analysis Panel — shown when signal data is available */}
+                {/* MRE Analysis Panel — always shown when signal data is available for selected symbol */}
                 {localMreSignal && localMreSignal.symbol === selectedSymbol && (
                   <MREAnalysisPanel signal={localMreSignal} />
                 )}

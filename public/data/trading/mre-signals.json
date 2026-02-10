@@ -1,9 +1,9 @@
 {
-  "timestamp": "2026-02-10T07:23:22.900162",
-  "last_updated": "2026-02-10T15:35:28Z",
-  "last_updated_unix": 1770737728,
+  "timestamp": "2026-02-10T07:43:25.869806",
+  "last_updated": "2026-02-10 07:43:25",
+  "last_updated_unix": 1770738205,
   "fear_greed": {
-    "current": 50.1142857142857,
+    "current": 49.7142857142857,
     "rating": "neutral",
     "is_fear": false,
     "is_extreme_fear": false,
@@ -159,19 +159,19 @@
       {
         "date": "2026-02-10",
         "score": 65,
-        "vix": 17.16
+        "vix": 17.33
       }
     ],
     "breakdown": {
-      "aggregate_score": 64.8,
+      "aggregate_score": 64.2,
       "rating": "Greed",
       "components": [
         {
           "name": "Stock Price Momentum",
-          "score": 69.1,
+          "score": 68.8,
           "signal": "GREED",
           "description": "S&P 500 is +3.8% vs 125-day MA",
-          "raw_value": 3.82
+          "raw_value": 3.76
         },
         {
           "name": "Stock Price Strength",
@@ -189,31 +189,31 @@
         },
         {
           "name": "Put/Call Ratio",
-          "score": 71.3,
+          "score": 70.4,
           "signal": "NEUTRAL",
-          "description": "VIX at 17.2 (proxy for options sentiment)",
-          "raw_value": 17.2
+          "description": "VIX at 17.3 (proxy for options sentiment)",
+          "raw_value": 17.3
         },
         {
           "name": "Junk Bond Demand",
-          "score": 47.6,
+          "score": 47.8,
           "signal": "NEUTRAL",
           "description": "HYG vs LQD 20d spread: -0.1%",
-          "raw_value": -0.14
+          "raw_value": -0.13
         },
         {
           "name": "Market Volatility",
-          "score": 39.9,
+          "score": 38.2,
           "signal": "NEUTRAL",
-          "description": "VIX 17.2 is +6.1% vs 50-day MA (16.2)",
-          "raw_value": 6.1
+          "description": "VIX 17.3 is +7.1% vs 50-day MA (16.2)",
+          "raw_value": 7.1
         },
         {
           "name": "Safe Haven Demand",
-          "score": 43.6,
+          "score": 42.6,
           "signal": "NEUTRAL",
-          "description": "SPY vs TLT 20d: -0.6% (positive = stocks winning)",
-          "raw_value": -0.64
+          "description": "SPY vs TLT 20d: -0.7% (positive = stocks winning)",
+          "raw_value": -0.74
         }
       ],
       "methodology": "Equal-weighted average of 7 market factors",
@@ -244,10 +244,10 @@
   "regime": {
     "spy": {
       "regime": "bull",
-      "price": 695.8,
-      "ema_20": 690.11,
-      "ema_50": 685.39,
-      "ema_slow": 674.34,
+      "price": 695.88,
+      "ema_20": 690.08,
+      "ema_50": 685.37,
+      "ema_slow": 674.33,
       "ema_200": 657.08,
       "above_ema_20": true,
       "above_ema_50": true,
@@ -256,17 +256,17 @@
       "regime_stage": "early",
       "predicted_remaining_days": 246,
       "confidence": 55,
-      "momentum_20d": 0.36,
+      "momentum_20d": 0.3,
       "ema_spread_pct": 2.34,
       "sma_period": 100
     },
     "qqq": {
       "regime": "sideways",
-      "price": 615.9,
-      "ema_20": 617.39,
-      "ema_50": 616.68,
-      "ema_slow": 607.68,
-      "ema_200": 590.62,
+      "price": 615.86,
+      "ema_20": 617.34,
+      "ema_50": 616.66,
+      "ema_slow": 607.67,
+      "ema_200": 590.61,
       "above_ema_20": false,
       "above_ema_50": false,
       "above_ema_200": true,
@@ -274,8 +274,8 @@
       "regime_stage": "early",
       "predicted_remaining_days": 38,
       "confidence": 40,
-      "momentum_20d": -1.57,
-      "ema_spread_pct": 1.6,
+      "momentum_20d": -1.66,
+      "ema_spread_pct": 1.59,
       "sma_period": 100
     },
     "global": "bull",
@@ -323,13 +323,13 @@
         "signal": "HOLD",
         "signal_strength": 0,
         "fear_threshold": 15,
-        "current_fg": 50.1142857142857,
+        "current_fg": 49.7142857142857,
         "regime": "bull",
         "regime_weight": 1.0,
         "hold_days": 5,
         "expected_sharpe": 10.65,
         "expected_accuracy": 70.6,
-        "price": 695.8,
+        "price": 695.88,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -355,7 +355,7 @@
         "version": "v12.0",
         "fibonacci": {
           "symbol": "SPY",
-          "current_price": 695.8,
+          "current_price": 695.8270874023438,
           "swing_high": 697.8400268554688,
           "swing_low": 648.9324254696204,
           "trend": "uptrend",
@@ -384,10 +384,10 @@
         },
         "regime_details": {
           "regime": "bull",
-          "price": 696.34,
-          "ema_20": 690.12,
-          "ema_50": 685.39,
-          "ema_slow": 674.34,
+          "price": 695.83,
+          "ema_20": 690.07,
+          "ema_50": 685.37,
+          "ema_slow": 674.33,
           "ema_200": 657.08,
           "above_ema_20": true,
           "above_ema_50": true,
@@ -396,8 +396,8 @@
           "regime_stage": "early",
           "predicted_remaining_days": 246,
           "confidence": 55,
-          "momentum_20d": 0.37,
-          "ema_spread_pct": 2.34,
+          "momentum_20d": 0.3,
+          "ema_spread_pct": 2.33,
           "sma_period": 100
         }
       },
@@ -407,13 +407,13 @@
         "signal": "HOLD",
         "signal_strength": 0,
         "fear_threshold": 15,
-        "current_fg": 50.1142857142857,
+        "current_fg": 49.7142857142857,
         "regime": "sideways",
         "regime_weight": 1.0,
         "hold_days": 5,
         "expected_sharpe": 10.65,
         "expected_accuracy": 70.6,
-        "price": 615.9,
+        "price": 615.86,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -439,7 +439,7 @@
         "version": "v12.0",
         "fibonacci": {
           "symbol": "QQQ",
-          "current_price": 615.9,
+          "current_price": 615.8250122070312,
           "swing_high": 636.5999755859375,
           "swing_low": 579.992718365408,
           "trend": "uptrend",
@@ -468,11 +468,11 @@
         },
         "regime_details": {
           "regime": "sideways",
-          "price": 616.52,
-          "ema_20": 617.4,
-          "ema_50": 616.69,
-          "ema_slow": 607.68,
-          "ema_200": 590.62,
+          "price": 615.83,
+          "ema_20": 617.34,
+          "ema_50": 616.66,
+          "ema_slow": 607.67,
+          "ema_200": 590.61,
           "above_ema_20": false,
           "above_ema_50": false,
           "above_ema_200": true,
@@ -480,8 +480,8 @@
           "regime_stage": "early",
           "predicted_remaining_days": 38,
           "confidence": 40,
-          "momentum_20d": -1.55,
-          "ema_spread_pct": 1.6,
+          "momentum_20d": -1.66,
+          "ema_spread_pct": 1.59,
           "sma_period": 100
         }
       },
@@ -491,13 +491,13 @@
         "signal": "HOLD",
         "signal_strength": 0,
         "fear_threshold": 15,
-        "current_fg": 50.1142857142857,
+        "current_fg": 49.7142857142857,
         "regime": "bull",
         "regime_weight": 1.0,
         "hold_days": 5,
         "expected_sharpe": 10.65,
         "expected_accuracy": 70.6,
-        "price": 267.65,
+        "price": 267.99,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -523,7 +523,7 @@
         "version": "v12.0",
         "fibonacci": {
           "symbol": "IWM",
-          "current_price": 267.65,
+          "current_price": 267.9299011230469,
           "swing_high": 271.6000061035156,
           "swing_low": 228.13496396973687,
           "trend": "uptrend",
@@ -552,10 +552,10 @@
         },
         "regime_details": {
           "regime": "bull",
-          "price": 267.58,
-          "ema_20": 262.23,
-          "ema_50": 256.87,
-          "ema_slow": 249.43,
+          "price": 267.93,
+          "ema_20": 262.27,
+          "ema_50": 256.88,
+          "ema_slow": 249.44,
           "ema_200": 240.41,
           "above_ema_20": true,
           "above_ema_50": true,
@@ -564,8 +564,8 @@
           "regime_stage": "early",
           "predicted_remaining_days": 246,
           "confidence": 70,
-          "momentum_20d": 2.39,
-          "ema_spread_pct": 5.13,
+          "momentum_20d": 2.52,
+          "ema_spread_pct": 5.14,
           "sma_period": 100
         }
       },
@@ -575,13 +575,13 @@
         "signal": "HOLD",
         "signal_strength": 0,
         "fear_threshold": 15,
-        "current_fg": 50.1142857142857,
+        "current_fg": 49.7142857142857,
         "regime": "sideways",
         "regime_weight": 1.0,
         "hold_days": 5,
         "expected_sharpe": 16.68,
         "expected_accuracy": 83.3,
-        "price": 143.85,
+        "price": 143.78,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -607,7 +607,7 @@
         "version": "v12.0",
         "fibonacci": {
           "symbol": "XLK",
-          "current_price": 143.85,
+          "current_price": 143.77999877929688,
           "swing_high": 149.89999389648438,
           "swing_low": 133.53745825911813,
           "trend": "uptrend",
@@ -636,20 +636,20 @@
         },
         "regime_details": {
           "regime": "sideways",
-          "price": 143.9,
-          "ema_20": 143.49,
+          "price": 143.78,
+          "ema_20": 143.48,
           "ema_50": 143.85,
           "ema_slow": 143.85,
           "ema_200": 137.2,
           "above_ema_20": true,
-          "above_ema_50": true,
+          "above_ema_50": false,
           "above_ema_200": true,
           "regime_days": 2,
           "regime_stage": "early",
           "predicted_remaining_days": 43,
           "confidence": 40,
-          "momentum_20d": -1.76,
-          "ema_spread_pct": 0.25,
+          "momentum_20d": -1.84,
+          "ema_spread_pct": 0.26,
           "sma_period": 50
         }
       },
@@ -659,13 +659,13 @@
         "signal": "HOLD",
         "signal_strength": 0,
         "fear_threshold": 15,
-        "current_fg": 50.1142857142857,
+        "current_fg": 49.7142857142857,
         "regime": "bull",
         "regime_weight": 1.0,
         "hold_days": 5,
         "expected_sharpe": 16.68,
         "expected_accuracy": 83.3,
-        "price": 117.57,
+        "price": 117.61,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -691,7 +691,7 @@
         "version": "v12.0",
         "fibonacci": {
           "symbol": "XLC",
-          "current_price": 117.57,
+          "current_price": 117.5999984741211,
           "swing_high": 120.40499877929688,
           "swing_low": 109.51047067492786,
           "trend": "uptrend",
@@ -720,8 +720,8 @@
         },
         "regime_details": {
           "regime": "bull",
-          "price": 117.63,
-          "ema_20": 117.14,
+          "price": 117.61,
+          "ema_20": 117.13,
           "ema_50": 116.46,
           "ema_slow": 116.46,
           "ema_200": 112.35,
@@ -732,7 +732,7 @@
           "regime_stage": "early",
           "predicted_remaining_days": 248,
           "confidence": 40,
-          "momentum_20d": 0.63,
+          "momentum_20d": 0.61,
           "ema_spread_pct": 0.58,
           "sma_period": 50
         }
@@ -743,13 +743,13 @@
         "signal": "HOLD",
         "signal_strength": 0,
         "fear_threshold": 15,
-        "current_fg": 50.1142857142857,
+        "current_fg": 49.7142857142857,
         "regime": "bull",
         "regime_weight": 1.0,
         "hold_days": 10,
         "expected_sharpe": 15.52,
         "expected_accuracy": 65.0,
-        "price": 54.21,
+        "price": 54.17,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -775,7 +775,7 @@
         "version": "v12.0",
         "fibonacci": {
           "symbol": "XLF",
-          "current_price": 54.21,
+          "current_price": 54.17499923706055,
           "swing_high": 56.52000045776367,
           "swing_low": 50.90209727943318,
           "trend": "uptrend",
@@ -804,8 +804,8 @@
         },
         "regime_details": {
           "regime": "bull",
-          "price": 54.19,
-          "ema_20": 53.93,
+          "price": 54.17,
+          "ema_20": 53.92,
           "ema_50": 53.92,
           "ema_slow": 53.5,
           "ema_200": 52.83,
@@ -816,7 +816,7 @@
           "regime_stage": "early",
           "predicted_remaining_days": 246,
           "confidence": 40,
-          "momentum_20d": -0.08,
+          "momentum_20d": -0.1,
           "ema_spread_pct": 0.8,
           "sma_period": 100
         }
@@ -827,13 +827,13 @@
         "signal": "HOLD",
         "signal_strength": 0,
         "fear_threshold": 15,
-        "current_fg": 50.1142857142857,
+        "current_fg": 49.7142857142857,
         "regime": "bull",
         "regime_weight": 1.0,
         "hold_days": 5,
         "expected_sharpe": 33.4,
         "expected_accuracy": 83.3,
-        "price": 156.35,
+        "price": 156.48,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -859,7 +859,7 @@
         "version": "v12.0",
         "fibonacci": {
           "symbol": "XLV",
-          "current_price": 156.35,
+          "current_price": 156.47000122070312,
           "swing_high": 160.58999633789062,
           "swing_low": 145.10210436320136,
           "trend": "uptrend",
@@ -888,7 +888,7 @@
         },
         "regime_details": {
           "regime": "bull",
-          "price": 156.52,
+          "price": 156.48,
           "ema_20": 156.0,
           "ema_50": 154.47,
           "ema_slow": 154.47,
@@ -900,7 +900,7 @@
           "regime_stage": "early",
           "predicted_remaining_days": 246,
           "confidence": 40,
-          "momentum_20d": -0.14,
+          "momentum_20d": -0.17,
           "ema_spread_pct": 0.99,
           "sma_period": 50
         }
@@ -911,13 +911,13 @@
         "signal": "HOLD",
         "signal_strength": 0,
         "fear_threshold": 15,
-        "current_fg": 50.1142857142857,
+        "current_fg": 49.7142857142857,
         "regime": "bull",
         "regime_weight": 1.0,
         "hold_days": 5,
         "expected_sharpe": 33.4,
         "expected_accuracy": 83.3,
-        "price": 87.17,
+        "price": 87.14,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -943,7 +943,7 @@
         "version": "v12.0",
         "fibonacci": {
           "symbol": "XLP",
-          "current_price": 87.17,
+          "current_price": 87.1449966430664,
           "swing_high": 88.22000122070312,
           "swing_low": 75.32568050324537,
           "trend": "uptrend",
@@ -972,11 +972,11 @@
         },
         "regime_details": {
           "regime": "bull",
-          "price": 87.42,
-          "ema_20": 84.15,
-          "ema_50": 81.49,
-          "ema_slow": 81.49,
-          "ema_200": 79.54,
+          "price": 87.14,
+          "ema_20": 84.13,
+          "ema_50": 81.48,
+          "ema_slow": 81.48,
+          "ema_200": 79.53,
           "above_ema_20": true,
           "above_ema_50": true,
           "above_ema_200": true,
@@ -984,8 +984,8 @@
           "regime_stage": "early",
           "predicted_remaining_days": 226,
           "confidence": 55,
-          "momentum_20d": 7.78,
-          "ema_spread_pct": 3.27,
+          "momentum_20d": 7.44,
+          "ema_spread_pct": 3.25,
           "sma_period": 50
         }
       },
@@ -995,13 +995,13 @@
         "signal": "HOLD",
         "signal_strength": 0,
         "fear_threshold": 12,
-        "current_fg": 50.1142857142857,
+        "current_fg": 49.7142857142857,
         "regime": "bull",
         "regime_weight": 1.0,
         "hold_days": 5,
         "expected_sharpe": 4.74,
         "expected_accuracy": 40.0,
-        "price": 53.33,
+        "price": 53.42,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -1027,7 +1027,7 @@
         "version": "v12.0",
         "fibonacci": {
           "symbol": "XLE",
-          "current_price": 53.33,
+          "current_price": 53.42499923706055,
           "swing_high": 53.790000915527344,
           "swing_low": 43.40004208032951,
           "trend": "uptrend",
@@ -1056,9 +1056,9 @@
         },
         "regime_details": {
           "regime": "bull",
-          "price": 53.41,
+          "price": 53.42,
           "ema_20": 50.45,
-          "ema_50": 47.99,
+          "ema_50": 48.0,
           "ema_slow": 46.27,
           "ema_200": 44.95,
           "above_ema_20": true,
@@ -1068,7 +1068,7 @@
           "regime_stage": "early",
           "predicted_remaining_days": 219,
           "confidence": 70,
-          "momentum_20d": 13.64,
+          "momentum_20d": 13.67,
           "ema_spread_pct": 9.04,
           "sma_period": 100
         }
@@ -1079,13 +1079,13 @@
         "signal": "HOLD",
         "signal_strength": 0,
         "fear_threshold": 12,
-        "current_fg": 50.1142857142857,
+        "current_fg": 49.7142857142857,
         "regime": "bull",
         "regime_weight": 1.0,
         "hold_days": 10,
         "expected_sharpe": 4.74,
         "expected_accuracy": 40.0,
-        "price": 52.35,
+        "price": 52.4,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -1111,7 +1111,7 @@
         "version": "v12.0",
         "fibonacci": {
           "symbol": "XLB",
-          "current_price": 52.35,
+          "current_price": 52.404998779296875,
           "swing_high": 52.5,
           "swing_low": 41.99820401336554,
           "trend": "uptrend",
@@ -1140,11 +1140,11 @@
         },
         "regime_details": {
           "regime": "bull",
-          "price": 52.5,
-          "ema_20": 50.03,
-          "ema_50": 47.96,
+          "price": 52.4,
+          "ema_20": 50.02,
+          "ema_50": 47.95,
           "ema_slow": 46.43,
-          "ema_200": 45.34,
+          "ema_200": 45.33,
           "above_ema_20": true,
           "above_ema_50": true,
           "above_ema_200": true,
@@ -1152,8 +1152,8 @@
           "regime_stage": "early",
           "predicted_remaining_days": 209,
           "confidence": 70,
-          "momentum_20d": 7.74,
-          "ema_spread_pct": 7.75,
+          "momentum_20d": 7.54,
+          "ema_spread_pct": 7.73,
           "sma_period": 100
         }
       },
@@ -1163,13 +1163,13 @@
         "signal": "HOLD",
         "signal_strength": 0,
         "fear_threshold": 15,
-        "current_fg": 50.1142857142857,
+        "current_fg": 49.7142857142857,
         "regime": "bull",
         "regime_weight": 1.0,
         "hold_days": 5,
         "expected_sharpe": 122.81,
         "expected_accuracy": 75.0,
-        "price": 43.8,
+        "price": 43.86,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -1195,7 +1195,7 @@
         "version": "v12.0",
         "fibonacci": {
           "symbol": "XLU",
-          "current_price": 43.8,
+          "current_price": 43.86000061035156,
           "swing_high": 45.01277074302523,
           "swing_low": 41.7400016784668,
           "trend": "uptrend",
@@ -1224,7 +1224,7 @@
         },
         "regime_details": {
           "regime": "bull",
-          "price": 43.88,
+          "price": 43.86,
           "ema_20": 43.17,
           "ema_50": 43.15,
           "ema_slow": 43.03,
@@ -1236,8 +1236,8 @@
           "regime_stage": "early",
           "predicted_remaining_days": 243,
           "confidence": 40,
-          "momentum_20d": 2.39,
-          "ema_spread_pct": 0.33,
+          "momentum_20d": 2.36,
+          "ema_spread_pct": 0.32,
           "sma_period": 100
         }
       },
@@ -1247,13 +1247,13 @@
         "signal": "HOLD",
         "signal_strength": 0,
         "fear_threshold": 12,
-        "current_fg": 50.1142857142857,
+        "current_fg": 49.7142857142857,
         "regime": "bull",
         "regime_weight": 1.0,
         "hold_days": 5,
         "expected_sharpe": 117.59,
         "expected_accuracy": 90.0,
-        "price": 104.54,
+        "price": 104.53,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -1279,7 +1279,7 @@
         "version": "v12.0",
         "fibonacci": {
           "symbol": "EFA",
-          "current_price": 104.54,
+          "current_price": 104.52970123291016,
           "swing_high": 104.66999816894531,
           "swing_low": 89.58664689323894,
           "trend": "uptrend",
@@ -1308,8 +1308,8 @@
         },
         "regime_details": {
           "regime": "bull",
-          "price": 104.59,
-          "ema_20": 100.95,
+          "price": 104.53,
+          "ema_20": 100.94,
           "ema_50": 98.35,
           "ema_slow": 92.89,
           "ema_200": 92.89,
@@ -1320,7 +1320,7 @@
           "regime_stage": "early",
           "predicted_remaining_days": 198,
           "confidence": 70,
-          "momentum_20d": 5.82,
+          "momentum_20d": 5.76,
           "ema_spread_pct": 8.67,
           "sma_period": 200
         }
@@ -1331,13 +1331,13 @@
         "signal": "HOLD",
         "signal_strength": 0,
         "fear_threshold": 12,
-        "current_fg": 50.1142857142857,
+        "current_fg": 49.7142857142857,
         "regime": "bull",
         "regime_weight": 1.0,
         "hold_days": 5,
         "expected_sharpe": 117.59,
         "expected_accuracy": 90.0,
-        "price": 60.63,
+        "price": 60.65,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -1363,7 +1363,7 @@
         "version": "v12.0",
         "fibonacci": {
           "symbol": "EEM",
-          "current_price": 60.63,
+          "current_price": 60.654998779296875,
           "swing_high": 60.95000076293945,
           "swing_low": 51.640987088379525,
           "trend": "uptrend",
@@ -1392,8 +1392,8 @@
         },
         "regime_details": {
           "regime": "bull",
-          "price": 60.7,
-          "ema_20": 58.97,
+          "price": 60.65,
+          "ema_20": 58.96,
           "ema_50": 57.09,
           "ema_slow": 52.81,
           "ema_200": 52.81,
@@ -1404,7 +1404,7 @@
           "regime_stage": "early",
           "predicted_remaining_days": 214,
           "confidence": 85,
-          "momentum_20d": 5.55,
+          "momentum_20d": 5.46,
           "ema_spread_pct": 11.65,
           "sma_period": 200
         }
@@ -1415,7 +1415,7 @@
         "signal": "HOLD",
         "signal_strength": 0,
         "fear_threshold": 12,
-        "current_fg": 50.1142857142857,
+        "current_fg": 49.7142857142857,
         "regime": "sideways",
         "regime_weight": 1.0,
         "hold_days": 5,
@@ -1447,7 +1447,7 @@
         "version": "v12.0",
         "fibonacci": {
           "symbol": "INDA",
-          "current_price": 53.69,
+          "current_price": 53.685001373291016,
           "swing_high": 55.099998474121094,
           "swing_low": 50.939998626708984,
           "trend": "uptrend",
@@ -1476,8 +1476,8 @@
         },
         "regime_details": {
           "regime": "sideways",
-          "price": 53.74,
-          "ema_20": 52.88,
+          "price": 53.69,
+          "ema_20": 52.87,
           "ema_50": 53.14,
           "ema_slow": 53.34,
           "ema_200": 53.34,
@@ -1488,8 +1488,8 @@
           "regime_stage": "early",
           "predicted_remaining_days": 37,
           "confidence": 40,
-          "momentum_20d": 1.32,
-          "ema_spread_pct": 0.86,
+          "momentum_20d": 1.22,
+          "ema_spread_pct": 0.87,
           "sma_period": 200
         }
       },
@@ -1499,13 +1499,13 @@
         "signal": "HOLD",
         "signal_strength": 0,
         "fear_threshold": 12,
-        "current_fg": 50.1142857142857,
+        "current_fg": 49.7142857142857,
         "regime": "bull",
         "regime_weight": 1.0,
         "hold_days": 10,
         "expected_sharpe": 117.59,
         "expected_accuracy": 90.0,
-        "price": 39.46,
+        "price": 39.5,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -1531,7 +1531,7 @@
         "version": "v12.0",
         "fibonacci": {
           "symbol": "FXI",
-          "current_price": 39.46,
+          "current_price": 39.500099182128906,
           "swing_high": 41.16999816894531,
           "swing_low": 37.68000030517578,
           "trend": "uptrend",
@@ -1560,7 +1560,7 @@
         },
         "regime_details": {
           "regime": "bull",
-          "price": 39.49,
+          "price": 39.5,
           "ema_20": 39.31,
           "ema_50": 39.28,
           "ema_slow": 38.49,
@@ -1572,7 +1572,7 @@
           "regime_stage": "early",
           "predicted_remaining_days": 247,
           "confidence": 55,
-          "momentum_20d": -1.89,
+          "momentum_20d": -1.86,
           "ema_spread_pct": 2.13,
           "sma_period": 200
         }
@@ -1583,13 +1583,13 @@
         "signal": "HOLD",
         "signal_strength": 0,
         "fear_threshold": 12,
-        "current_fg": 50.1142857142857,
+        "current_fg": 49.7142857142857,
         "regime": "bull",
         "regime_weight": 1.0,
         "hold_days": 5,
         "expected_sharpe": 117.59,
         "expected_accuracy": 90.0,
-        "price": 93.26,
+        "price": 93.28,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -1615,7 +1615,7 @@
         "version": "v12.0",
         "fibonacci": {
           "symbol": "EWJ",
-          "current_price": 93.26,
+          "current_price": 93.27999877929688,
           "swing_high": 93.55999755859375,
           "swing_low": 76.61340520975051,
           "trend": "uptrend",
@@ -1644,9 +1644,9 @@
         },
         "regime_details": {
           "regime": "bull",
-          "price": 93.39,
-          "ema_20": 86.73,
-          "ema_50": 84.04,
+          "price": 93.28,
+          "ema_20": 86.72,
+          "ema_50": 84.03,
           "ema_slow": 78.67,
           "ema_200": 78.67,
           "above_ema_20": true,
@@ -1656,8 +1656,8 @@
           "regime_stage": "early",
           "predicted_remaining_days": 214,
           "confidence": 85,
-          "momentum_20d": 10.58,
-          "ema_spread_pct": 10.25,
+          "momentum_20d": 10.46,
+          "ema_spread_pct": 10.24,
           "sma_period": 200
         }
       },
@@ -1667,13 +1667,13 @@
         "signal": "HOLD",
         "signal_strength": 0,
         "fear_threshold": 12,
-        "current_fg": 50.1142857142857,
+        "current_fg": 49.7142857142857,
         "regime": "bull",
         "regime_weight": 1.0,
         "hold_days": 5,
         "expected_sharpe": 18.55,
         "expected_accuracy": 51.8,
-        "price": 88.36,
+        "price": 88.4,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -1699,7 +1699,7 @@
         "version": "v12.0",
         "fibonacci": {
           "symbol": "TLT",
-          "current_price": 88.36,
+          "current_price": 88.4000015258789,
           "swing_high": 89.62452697753906,
           "swing_low": 86.21025038222956,
           "trend": "uptrend",
@@ -1728,8 +1728,8 @@
         },
         "regime_details": {
           "regime": "bull",
-          "price": 88.38,
-          "ema_20": 87.35,
+          "price": 88.4,
+          "ema_20": 87.36,
           "ema_50": 87.48,
           "ema_slow": 87.03,
           "ema_200": 87.03,
@@ -1740,7 +1740,7 @@
           "regime_stage": "early",
           "predicted_remaining_days": 245,
           "confidence": 40,
-          "momentum_20d": 1.02,
+          "momentum_20d": 1.05,
           "ema_spread_pct": 0.38,
           "sma_period": 200
         }
@@ -1751,13 +1751,13 @@
         "signal": "HOLD",
         "signal_strength": 0,
         "fear_threshold": 12,
-        "current_fg": 50.1142857142857,
+        "current_fg": 49.7142857142857,
         "regime": "bull",
         "regime_weight": 1.0,
         "hold_days": 5,
         "expected_sharpe": 18.55,
         "expected_accuracy": 51.8,
-        "price": 96.47,
+        "price": 96.49,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -1783,8 +1783,8 @@
         "version": "v12.0",
         "fibonacci": {
           "symbol": "IEF",
-          "current_price": 96.47,
-          "swing_high": 96.78058103883555,
+          "current_price": 96.48989868164062,
+          "swing_high": 96.78057340084138,
           "swing_low": 95.2193338530091,
           "trend": "uptrend",
           "retracements": {
@@ -1812,7 +1812,7 @@
         },
         "regime_details": {
           "regime": "bull",
-          "price": 96.47,
+          "price": 96.49,
           "ema_20": 95.85,
           "ema_50": 95.81,
           "ema_slow": 94.88,
@@ -1824,7 +1824,7 @@
           "regime_stage": "early",
           "predicted_remaining_days": 245,
           "confidence": 40,
-          "momentum_20d": 0.5,
+          "momentum_20d": 0.52,
           "ema_spread_pct": 1.02,
           "sma_period": 200
         }
@@ -1835,13 +1835,13 @@
         "signal": "HOLD",
         "signal_strength": 0,
         "fear_threshold": 12,
-        "current_fg": 50.1142857142857,
+        "current_fg": 49.7142857142857,
         "regime": "bull",
         "regime_weight": 1.0,
         "hold_days": 20,
         "expected_sharpe": 18.55,
         "expected_accuracy": 51.8,
-        "price": 80.99,
+        "price": 81.0,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -1867,9 +1867,9 @@
         "version": "v12.0",
         "fibonacci": {
           "symbol": "HYG",
-          "current_price": 80.99,
+          "current_price": 80.99500274658203,
           "swing_high": 81.0,
-          "swing_low": 78.85431912655832,
+          "swing_low": 78.8543343624901,
           "trend": "uptrend",
           "retracements": {
             "0.0": 81.0,
@@ -1887,7 +1887,7 @@
             "261.8": 84.47
           },
           "nearest_support": 80.49,
-          "nearest_resistance": 81.58,
+          "nearest_resistance": 81.0,
           "entry_zone": "80.18 - 79.67",
           "profit_targets": [
             81.58,
@@ -1919,13 +1919,13 @@
         "signal": "HOLD",
         "signal_strength": 0,
         "fear_threshold": 15,
-        "current_fg": 50.1142857142857,
+        "current_fg": 49.7142857142857,
         "regime": "bull",
         "regime_weight": 1.0,
         "hold_days": 15,
         "expected_sharpe": 25.8,
         "expected_accuracy": 61.3,
-        "price": 462.3,
+        "price": 460.97,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -1951,7 +1951,7 @@
         "version": "v12.0",
         "fibonacci": {
           "symbol": "GLD",
-          "current_price": 462.3,
+          "current_price": 461.2699890136719,
           "swing_high": 509.70001220703125,
           "swing_low": 368.5199890136719,
           "trend": "uptrend",
@@ -1980,11 +1980,11 @@
         },
         "regime_details": {
           "regime": "bull",
-          "price": 463.8,
-          "ema_20": 448.74,
-          "ema_50": 425.53,
-          "ema_slow": 373.32,
-          "ema_200": 373.32,
+          "price": 460.97,
+          "ema_20": 448.47,
+          "ema_50": 425.42,
+          "ema_slow": 373.29,
+          "ema_200": 373.29,
           "above_ema_20": true,
           "above_ema_50": true,
           "above_ema_200": true,
@@ -1992,8 +1992,8 @@
           "regime_stage": "early",
           "predicted_remaining_days": 246,
           "confidence": 85,
-          "momentum_20d": 10.0,
-          "ema_spread_pct": 20.2,
+          "momentum_20d": 9.33,
+          "ema_spread_pct": 20.14,
           "sma_period": 200
         }
       },
@@ -2003,13 +2003,13 @@
         "signal": "HOLD",
         "signal_strength": 0,
         "fear_threshold": 15,
-        "current_fg": 50.1142857142857,
+        "current_fg": 49.7142857142857,
         "regime": "bull",
         "regime_weight": 1.0,
         "hold_days": 5,
         "expected_sharpe": 25.8,
         "expected_accuracy": 61.3,
-        "price": 102.54,
+        "price": 102.15,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -2035,7 +2035,7 @@
         "version": "v12.0",
         "fibonacci": {
           "symbol": "GDX",
-          "current_price": 102.54,
+          "current_price": 102.20999908447266,
           "swing_high": 113.5,
           "swing_low": 71.92760542289034,
           "trend": "uptrend",
@@ -2064,9 +2064,9 @@
         },
         "regime_details": {
           "regime": "bull",
-          "price": 102.76,
-          "ema_20": 99.04,
-          "ema_50": 92.91,
+          "price": 102.15,
+          "ema_20": 98.98,
+          "ema_50": 92.88,
           "ema_slow": 76.01,
           "ema_200": 76.01,
           "above_ema_20": true,
@@ -2076,8 +2076,8 @@
           "regime_stage": "early",
           "predicted_remaining_days": 247,
           "confidence": 85,
-          "momentum_20d": 6.52,
-          "ema_spread_pct": 30.29,
+          "momentum_20d": 5.89,
+          "ema_spread_pct": 30.22,
           "sma_period": 200
         }
       },
@@ -2087,13 +2087,13 @@
         "signal": "HOLD",
         "signal_strength": 0,
         "fear_threshold": 15,
-        "current_fg": 50.1142857142857,
+        "current_fg": 49.7142857142857,
         "regime": "bull",
         "regime_weight": 1.0,
         "hold_days": 10,
         "expected_sharpe": 25.8,
         "expected_accuracy": 61.3,
-        "price": 25.78,
+        "price": 25.76,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -2119,7 +2119,7 @@
         "version": "v12.0",
         "fibonacci": {
           "symbol": "DBA",
-          "current_price": 25.78,
+          "current_price": 25.760000228881836,
           "swing_high": 26.049999237060547,
           "swing_low": 24.660624550871383,
           "trend": "uptrend",
@@ -2148,8 +2148,8 @@
         },
         "regime_details": {
           "regime": "bull",
-          "price": 25.77,
-          "ema_20": 25.72,
+          "price": 25.76,
+          "ema_20": 25.71,
           "ema_50": 25.65,
           "ema_slow": 25.68,
           "ema_200": 25.68,
@@ -2160,8 +2160,8 @@
           "regime_stage": "early",
           "predicted_remaining_days": 243,
           "confidence": 40,
-          "momentum_20d": 0.8,
-          "ema_spread_pct": 0.16,
+          "momentum_20d": 0.74,
+          "ema_spread_pct": 0.15,
           "sma_period": 200
         }
       },
@@ -2171,13 +2171,13 @@
         "signal": "HOLD",
         "signal_strength": 0,
         "fear_threshold": 15,
-        "current_fg": 50.1142857142857,
+        "current_fg": 49.7142857142857,
         "regime": "bear",
         "regime_weight": 1.0,
         "hold_days": 5,
         "expected_sharpe": 25.8,
         "expected_accuracy": 61.3,
-        "price": 9.57,
+        "price": 9.59,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -2203,7 +2203,7 @@
         "version": "v12.0",
         "fibonacci": {
           "symbol": "BITO",
-          "current_price": 9.57,
+          "current_price": 9.574999809265137,
           "swing_high": 14.839949831503551,
           "swing_low": 8.609999656677246,
           "trend": "downtrend",
@@ -2232,7 +2232,7 @@
         },
         "regime_details": {
           "regime": "bear",
-          "price": 9.57,
+          "price": 9.59,
           "ema_20": 11.1,
           "ema_50": 12.1,
           "ema_slow": 13.74,
@@ -2244,8 +2244,8 @@
           "regime_stage": "early",
           "predicted_remaining_days": 63,
           "confidence": 85,
-          "momentum_20d": -27.0,
-          "ema_spread_pct": 19.2,
+          "momentum_20d": -26.88,
+          "ema_spread_pct": 19.19,
           "sma_period": 200
         }
       },
@@ -2255,13 +2255,13 @@
         "signal": "HOLD",
         "signal_strength": 0,
         "fear_threshold": 15,
-        "current_fg": 50.1142857142857,
+        "current_fg": 49.7142857142857,
         "regime": "bull",
         "regime_weight": 1.0,
         "hold_days": 10,
         "expected_sharpe": 122.81,
         "expected_accuracy": 75.0,
-        "price": 93.1,
+        "price": 93.16,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -2287,7 +2287,7 @@
         "version": "v12.0",
         "fibonacci": {
           "symbol": "VNQ",
-          "current_price": 93.1,
+          "current_price": 93.16000366210938,
           "swing_high": 93.30000305175781,
           "swing_low": 87.3133358153632,
           "trend": "uptrend",
@@ -2316,8 +2316,8 @@
         },
         "regime_details": {
           "regime": "bull",
-          "price": 93.07,
-          "ema_20": 90.88,
+          "price": 93.16,
+          "ema_20": 90.89,
           "ema_50": 90.1,
           "ema_slow": 89.62,
           "ema_200": 89.13,
@@ -2328,8 +2328,8 @@
           "regime_stage": "early",
           "predicted_remaining_days": 244,
           "confidence": 40,
-          "momentum_20d": 3.31,
-          "ema_spread_pct": 1.41,
+          "momentum_20d": 3.41,
+          "ema_spread_pct": 1.42,
           "sma_period": 100
         }
       }
@@ -2341,10 +2341,10 @@
       {
         "symbol1": "XLF",
         "symbol2": "SPY",
-        "current_spread": 0.0778,
+        "current_spread": 0.0779,
         "mean_spread": 0.0778,
         "std": 0.0008,
-        "z_score": 0.04,
+        "z_score": 0.07,
         "is_diverged": false,
         "divergence_direction": "normal",
         "history": [
@@ -2426,7 +2426,7 @@
           },
           {
             "date": "2026-02-10",
-            "spread": 0.0778
+            "spread": 0.0779
           }
         ],
         "reverter": "XLF",
@@ -2435,10 +2435,10 @@
       {
         "symbol1": "IYR",
         "symbol2": "TLT",
-        "current_spread": 1.1143,
+        "current_spread": 1.1149,
         "mean_spread": 1.104,
-        "std": 0.0104,
-        "z_score": 0.98,
+        "std": 0.0105,
+        "z_score": 1.04,
         "is_diverged": false,
         "divergence_direction": "normal",
         "history": [
@@ -2520,7 +2520,7 @@
           },
           {
             "date": "2026-02-10",
-            "spread": 1.1143
+            "spread": 1.1149
           }
         ],
         "reverter": "IYR",
@@ -2529,10 +2529,10 @@
       {
         "symbol1": "VNQ",
         "symbol2": "TLT",
-        "current_spread": 1.0531,
+        "current_spread": 1.0538,
         "mean_spread": 1.0415,
-        "std": 0.0103,
-        "z_score": 1.13,
+        "std": 0.0104,
+        "z_score": 1.19,
         "is_diverged": false,
         "divergence_direction": "normal",
         "history": [
@@ -2614,7 +2614,7 @@
           },
           {
             "date": "2026-02-10",
-            "spread": 1.0531
+            "spread": 1.0538
           }
         ],
         "reverter": "VNQ",
@@ -2623,10 +2623,10 @@
       {
         "symbol1": "TIP",
         "symbol2": "SPY",
-        "current_spread": 0.1595,
+        "current_spread": 0.1596,
         "mean_spread": 0.1598,
         "std": 0.0011,
-        "z_score": -0.33,
+        "z_score": -0.25,
         "is_diverged": false,
         "divergence_direction": "normal",
         "history": [
@@ -2708,7 +2708,7 @@
           },
           {
             "date": "2026-02-10",
-            "spread": 0.1595
+            "spread": 0.1596
           }
         ],
         "reverter": "SPY",
@@ -2717,10 +2717,10 @@
       {
         "symbol1": "GLD",
         "symbol2": "EEM",
-        "current_spread": 7.6421,
-        "mean_spread": 7.6313,
-        "std": 0.2587,
-        "z_score": 0.04,
+        "current_spread": 7.603,
+        "mean_spread": 7.6294,
+        "std": 0.2588,
+        "z_score": -0.1,
         "is_diverged": false,
         "divergence_direction": "normal",
         "history": [
@@ -2802,7 +2802,7 @@
           },
           {
             "date": "2026-02-10",
-            "spread": 7.6421
+            "spread": 7.603
           }
         ],
         "reverter": "EEM",
@@ -2811,10 +2811,10 @@
       {
         "symbol1": "GDX",
         "symbol2": "GLD",
-        "current_spread": 0.2215,
+        "current_spread": 0.2217,
         "mean_spread": 0.2241,
         "std": 0.0076,
-        "z_score": -0.34,
+        "z_score": -0.32,
         "is_diverged": false,
         "divergence_direction": "normal",
         "history": [
@@ -2896,7 +2896,7 @@
           },
           {
             "date": "2026-02-10",
-            "spread": 0.2215
+            "spread": 0.2217
           }
         ],
         "reverter": "GDX",
@@ -2905,10 +2905,10 @@
       {
         "symbol1": "XLU",
         "symbol2": "TLT",
-        "current_spread": 0.4964,
+        "current_spread": 0.4962,
         "mean_spread": 0.4942,
         "std": 0.0037,
-        "z_score": 0.59,
+        "z_score": 0.53,
         "is_diverged": false,
         "divergence_direction": "normal",
         "history": [
@@ -2990,7 +2990,7 @@
           },
           {
             "date": "2026-02-10",
-            "spread": 0.4964
+            "spread": 0.4962
           }
         ],
         "reverter": "XLU",
@@ -2999,10 +2999,10 @@
       {
         "symbol1": "HYG",
         "symbol2": "TLT",
-        "current_spread": 0.9163,
+        "current_spread": 0.9162,
         "mean_spread": 0.9242,
         "std": 0.0052,
-        "z_score": -1.51,
+        "z_score": -1.52,
         "is_diverged": false,
         "divergence_direction": "normal",
         "history": [
@@ -3084,7 +3084,7 @@
           },
           {
             "date": "2026-02-10",
-            "spread": 0.9163
+            "spread": 0.9162
           }
         ],
         "reverter": "HYG",
@@ -3093,10 +3093,10 @@
       {
         "symbol1": "IWM",
         "symbol2": "SPY",
-        "current_spread": 0.3843,
-        "mean_spread": 0.3821,
+        "current_spread": 0.385,
+        "mean_spread": 0.3822,
         "std": 0.0043,
-        "z_score": 0.5,
+        "z_score": 0.66,
         "is_diverged": false,
         "divergence_direction": "normal",
         "history": [
@@ -3178,7 +3178,7 @@
           },
           {
             "date": "2026-02-10",
-            "spread": 0.3843
+            "spread": 0.385
           }
         ],
         "reverter": "IWM",
@@ -3300,7 +3300,7 @@
         "symbol2": "TLT",
         "signal": "NO_SIGNAL",
         "reason": "Correlation 0.22 below threshold 0.6",
-        "current_correlation": 0.218,
+        "current_correlation": 0.219,
         "z_score": 0,
         "historical_revert_rate": 0.863
       },
@@ -3309,10 +3309,10 @@
         "symbol1": "GDX",
         "symbol2": "GLD",
         "signal": "NO_SIGNAL",
-        "reason": "Z-score 0.56 within normal range (trigger: \u00b12.0)",
-        "z_score": 0.56,
+        "reason": "Z-score 0.58 within normal range (trigger: \u00b12.0)",
+        "z_score": 0.58,
         "z_trigger": 2.0,
-        "current_spread": 0.2215,
+        "current_spread": 0.2216,
         "mean_spread": 0.2159,
         "current_correlation": 0.821,
         "historical_revert_rate": 0.85
@@ -3322,8 +3322,8 @@
         "symbol1": "XLU",
         "symbol2": "TLT",
         "signal": "NO_SIGNAL",
-        "reason": "Correlation 0.09 below threshold 0.5",
-        "current_correlation": 0.094,
+        "reason": "Correlation 0.10 below threshold 0.5",
+        "current_correlation": 0.099,
         "z_score": 0,
         "historical_revert_rate": 0.8
       },
@@ -3333,7 +3333,7 @@
         "symbol2": "TLT",
         "signal": "NO_SIGNAL",
         "reason": "Correlation 0.22 below threshold 0.4",
-        "current_correlation": 0.22,
+        "current_correlation": 0.221,
         "z_score": 0,
         "historical_revert_rate": 0.82
       },
@@ -3342,12 +3342,12 @@
         "symbol1": "IWM",
         "symbol2": "SPY",
         "signal": "NO_SIGNAL",
-        "reason": "Z-score 1.33 within normal range (trigger: \u00b12.0)",
-        "z_score": 1.33,
+        "reason": "Z-score 1.40 within normal range (trigger: \u00b12.0)",
+        "z_score": 1.4,
         "z_trigger": 2.0,
-        "current_spread": 0.3843,
-        "mean_spread": 0.3704,
-        "current_correlation": 0.796,
+        "current_spread": 0.385,
+        "mean_spread": 0.3705,
+        "current_correlation": 0.797,
         "historical_revert_rate": 0.78
       },
       {
@@ -3360,7 +3360,7 @@
         "z_trigger": 2.0,
         "current_spread": 0.0872,
         "mean_spread": 0.0818,
-        "current_correlation": 0.74,
+        "current_correlation": 0.739,
         "historical_revert_rate": 0.75
       }
     ]
@@ -3375,7 +3375,7 @@
       "available": true,
       "signal": "NEUTRAL",
       "confidence": 34,
-      "expected_price": 6988.140975641024,
+      "expected_price": 6984.141741044776,
       "implied_range": [
         6975.0,
         6999.9999
@@ -3390,21 +3390,21 @@
           "midpoint": 6987.499949999999
         },
         {
-          "ticker": "KXINX-26FEB10H1600-B7012",
-          "yes_bid": 23,
-          "range_low": 7000.0,
-          "range_high": 7024.9999,
-          "midpoint": 7012.499949999999
-        },
-        {
           "ticker": "KXINX-26FEB10H1600-B6962",
           "yes_bid": 21,
           "range_low": 6950.0,
           "range_high": 6974.9999,
           "midpoint": 6962.499949999999
+        },
+        {
+          "ticker": "KXINX-26FEB10H1600-B7012",
+          "yes_bid": 12,
+          "range_low": 7000.0,
+          "range_high": 7024.9999,
+          "midpoint": 7012.499949999999
         }
       ],
-      "timestamp": "2026-02-10T15:23:06.398207+00:00",
+      "timestamp": "2026-02-10T15:43:10.645728+00:00",
       "historical_accuracy": 96.6,
       "source": "kalshi",
       "cached": false
@@ -3418,40 +3418,40 @@
         {
           "title": "Who will Trump nominate as Fed Chair?",
           "probability": null,
-          "liquidity": 58827082.62635,
-          "volume": 444224312.79578,
+          "liquidity": 58678251.66431,
+          "volume": 444322738.130577,
           "id": "35908"
         },
         {
           "title": "Will China invade Taiwan by end of 2026?",
           "probability": null,
-          "liquidity": 542496.0647,
+          "liquidity": 543461.1634,
           "volume": 8379884.603153,
           "id": "34044"
         },
         {
           "title": "MegaETH market cap (FDV) one day after launch?",
           "probability": null,
-          "liquidity": 347024.97289,
-          "volume": 11088122.525305,
+          "liquidity": 346686.1021,
+          "volume": 11088456.725305,
           "id": "28999"
         },
         {
           "title": "How much revenue will the U.S. raise from tariffs in 2025?",
           "probability": null,
-          "liquidity": 232382.87728,
-          "volume": 6303940.184394,
+          "liquidity": 234582.52472,
+          "volume": 6304029.014394,
           "id": "22862"
         },
         {
           "title": "MicroStrategy sells any Bitcoin by ___ ?",
           "probability": null,
-          "liquidity": 175799.97556,
-          "volume": 20277724.541733,
+          "liquidity": 177727.96171,
+          "volume": 20277835.331733,
           "id": "16167"
         }
       ],
-      "timestamp": "2026-02-10T15:23:06.800848+00:00",
+      "timestamp": "2026-02-10T15:43:11.028602+00:00",
       "source": "polymarket"
     }
   },
@@ -3459,17 +3459,17 @@
     "available": true,
     "signal": "BULL",
     "trend_5d": "expanding",
-    "spread_5d": 1.462,
-    "spread_10d": 2.142,
-    "spread_20d": 2.689,
+    "spread_5d": 1.498,
+    "spread_10d": 2.177,
+    "spread_20d": 2.724,
     "advancing_days_10d": 6,
     "divergence_vs_spy": false,
-    "spy_5d_return": 0.983,
-    "rsp_5d_return": 2.445,
-    "spy_price": 696.31,
-    "rsp_price": 203.43,
+    "spy_5d_return": 0.919,
+    "rsp_5d_return": 2.417,
+    "spy_price": 695.87,
+    "rsp_price": 203.37,
     "methodology": "RSP/SPY relative performance as breadth proxy. RSP outperformance = more stocks participating.",
-    "timestamp": "2026-02-10T07:23:07.253381"
+    "timestamp": "2026-02-10T07:43:11.450510"
   },
   "rotation": {
     "available": true

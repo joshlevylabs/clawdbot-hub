@@ -1,106 +1,238 @@
 {
-  "generated": "2026-02-09T05:30:00",
-  "version": "v9",
+  "generated": "2026-02-10T01:15:00",
+  "version": "v10.2",
   "global_context": {
     "regime": "bull",
-    "fear_greed": 43.76,
-    "thesis": "Fear elevated (44) but above buy threshold (25). Bull regime intact. Buy dips on high-confidence setups. Sell signals deprioritized (30.6% accuracy).",
+    "fear_greed": 48.6,
+    "thesis": "F&G neutral (49). Bull regime intact. V10.2 tightened entries to panic-only (F&G<12-15). No signals until fear deepens. Star performers (XLK, XLV, XLU, INDA) get priority allocation. Energy/SLV/IEF removed or heavily penalized.",
     "key_risks": [
-      "Walk-forward accuracy gap (17.7%) \u2014 overfitting risk",
-      "Tech sector weakest Sharpe (5.12) \u2014 XLK in bear regime",
-      "VNQ/TLT pair approaching divergence trigger (z=1.50, fires at 2.0)"
+      "Tighter fear thresholds (12-15) may reduce signal frequency — monitor for missed entries",
+      "SLV/IEF removed from universe — no coverage if they become opportunities",
+      "XLE 0.50x confidence may still generate occasional false signals (30% WR)"
     ]
   },
   "assets": {
     "SPY": {
-      "pit_verdict": "HOLD \u2014 Strong fundamentals but F&G not at buy threshold",
-      "accuracy": "70.6% buy accuracy (best in broad market)",
-      "sharpe": 10.65,
-      "best_horizon": "10d",
+      "pit_verdict": "HOLD — Confidence penalized to 0.80x (33% WR, but 4.74 PF keeps it in universe)",
+      "accuracy": "33.3% WR (3 trades), but 10.50% avg win vs -1.11% avg loss",
+      "sharpe": 7.93,
+      "best_horizon": "5d (short holds 50% WR, medium 0%)",
       "sma_period": 100,
-      "notes": "SPY/XLF pair at z=0.55 (normal). Wait for F&G < 25 for high-conviction entry.",
-      "pattern": "Uptrend intact. Above EMA20/50/200. Regime 45+ days bull."
-    },
-    "GLD": {
-      "pit_verdict": "STRONG BUY \u2014 Highest Sharpe, fear-regime beneficiary",
-      "accuracy": "61.3% buy accuracy",
-      "sharpe": 25.8,
-      "best_horizon": "20d",
-      "sma_period": 200,
-      "notes": "Best risk-adjusted returns in backtest (Sharpe 25.80). Gold benefits from elevated fear. 20-day hold optimal.",
-      "pattern": "Strong bull regime, 74.9% of time in uptrend. SMA 200 provides clean regime signals."
-    },
-    "EFA": {
-      "pit_verdict": "BUY \u2014 International showing strength with clean regime",
-      "accuracy": "62.1% buy accuracy",
-      "sharpe": 12.3,
-      "best_horizon": "10d",
-      "sma_period": 200,
-      "notes": "Best regime persistence (12.8d avg) among all assets. SMA 200 gives fewest false transitions (12.5/100d).",
-      "pattern": "Stable bull regime. International priority boost active since V7."
-    },
-    "XLV": {
-      "pit_verdict": "HOLD \u2014 Solid accuracy but regime late stage",
-      "accuracy": "68.0% buy accuracy",
-      "sharpe": 14.22,
-      "best_horizon": "10d",
-      "sma_period": 50,
-      "notes": "Second-highest accuracy after SPY. Healthcare defensive play in elevated fear environment.",
-      "pattern": "Bull regime, above all EMAs. Good diversification from tech weakness."
-    },
-    "XLE": {
-      "pit_verdict": "WATCH \u2014 Energy canary signal active",
-      "accuracy": "60.2% buy accuracy",
-      "sharpe": 11.5,
-      "best_horizon": "10d",
-      "sma_period": 100,
-      "notes": "XLE fear precedes broad equity weakness (canary signal). Cross-prediction: XLE fear \u2192 XLK returns (-0.268). Monitor closely.",
-      "pattern": "Bull regime but watch for regime transition. Energy volatility elevated."
-    },
-    "XLF": {
-      "pit_verdict": "HOLD \u2014 SMA adjusted to 100 in V9",
-      "accuracy": "65.0% buy accuracy",
-      "sharpe": 15.52,
-      "best_horizon": "5d",
-      "sma_period": 100,
-      "notes": "V9 changed SMA 50\u2192100 to fix false sideways classification. SPY/XLF pair at z=0.55 (normal). Good Sharpe but short hold horizon.",
-      "pattern": "Was incorrectly classified as sideways at SMA 50. Fixed in V9."
-    },
-    "TLT": {
-      "pit_verdict": "WATCH \u2014 Bonds showing weakness, pair divergence building",
-      "accuracy": "51.8% buy accuracy",
-      "sharpe": 18.55,
-      "best_horizon": "20d",
-      "sma_period": 200,
-      "notes": "VNQ/TLT pair at z=1.50 (fires at 2.0). If divergence triggers, TLT is the revert candidate (86.3% revert rate). High Sharpe when signals fire.",
-      "pattern": "Momentum -0.1% (flat). VNQ outperforming significantly. Pair trade setup building."
-    },
-    "VNQ": {
-      "pit_verdict": "HOLD \u2014 Approaching pair divergence with TLT",
-      "accuracy": "58.5% buy accuracy",
-      "sharpe": 10.2,
-      "best_horizon": "10d",
-      "sma_period": 100,
-      "notes": "VNQ/TLT at z=1.50. VNQ momentum +3.1% vs TLT -0.1%. If pair fires, VNQ may be the short leg. Watch for mean reversion.",
-      "pattern": "Bull regime, strong momentum. But outperformance vs TLT could reverse."
+      "confidence_multiplier": 0.80,
+      "notes": "SPY underperforms on WR but has large wins. Kept for tail-gain capture at 0.80x confidence.",
+      "pattern": "Bull regime. Wait for F&G < 15 (extreme panic)."
     },
     "QQQ": {
-      "pit_verdict": "AVOID \u2014 Tech in bear regime, worst Sharpe",
-      "accuracy": "65.7% buy accuracy",
-      "sharpe": 5.12,
+      "pit_verdict": "HOLD — Boosted to 1.10x (67% WR, 100% short-hold WR)",
+      "accuracy": "66.7% WR, 100% at short holds (1-5d)",
+      "sharpe": 7.67,
+      "best_horizon": "5d",
+      "sma_period": 100,
+      "confidence_multiplier": 1.10,
+      "notes": "QQQ is reliable on short holds. Medium holds (6-15d) have 0% WR. V10.2 shortened horizon to 5d."
+    },
+    "XLK": {
+      "pit_verdict": "STAR — Boosted to 1.25x (100% WR, infinite PF, Sharpe 16.68)",
+      "accuracy": "100% WR (3 trades), 5.79% avg return",
+      "sharpe": 16.68,
       "best_horizon": "5d",
       "sma_period": 50,
-      "notes": "XLK bear outlier in bull market. Weakest Sharpe (5.12). Momentum fights contrarian strategy. Wait for regime flip.",
-      "pattern": "Below key EMAs. Tech diverging from broad market. Not a good contrarian setup yet."
+      "confidence_multiplier": 1.25,
+      "notes": "Best tech asset. All wins in panic conditions (F&G 0-10). Short holds dominate."
+    },
+    "XLV": {
+      "pit_verdict": "STAR — Boosted to 1.25x (100% WR, Sharpe 33.40)",
+      "accuracy": "100% WR (3 trades), 2.93% avg return",
+      "sharpe": 33.40,
+      "best_horizon": "5d",
+      "sma_period": 50,
+      "confidence_multiplier": 1.25,
+      "notes": "Healthcare defensive play. Works in both panic AND greed conditions (unusual)."
+    },
+    "XLU": {
+      "pit_verdict": "STAR — Boosted to 1.30x (100% WR, Sharpe 122.81 — BEST in universe)",
+      "accuracy": "100% WR (3 trades), 100% target-hit rate",
+      "sharpe": 122.81,
+      "best_horizon": "5d",
+      "sma_period": 100,
+      "confidence_multiplier": 1.30,
+      "notes": "Highest Sharpe in entire universe. Panic entries only (F&G 0-10). Zero stop-hits."
+    },
+    "INDA": {
+      "pit_verdict": "STAR — Boosted to 1.30x (100% WR, Sharpe 117.59)",
+      "accuracy": "100% WR (3 trades), 3.51% avg return",
+      "sharpe": 117.59,
+      "best_horizon": "5d",
+      "sma_period": 200,
+      "confidence_multiplier": 1.30,
+      "notes": "Second-highest Sharpe. India ETF benefits from diversification + panic buying."
+    },
+    "EFA": {
+      "pit_verdict": "STAR — Boosted to 1.30x (100% WR, 7.72% avg return)",
+      "accuracy": "100% WR (1 trade), 7.72% avg return",
+      "sharpe": 0.0,
+      "best_horizon": "5d",
+      "sma_period": 200,
+      "confidence_multiplier": 1.30,
+      "notes": "Highest single-trade return in universe. International priority active."
+    },
+    "EEM": {
+      "pit_verdict": "STAR — Boosted to 1.30x (100% WR, Sharpe 42.13)",
+      "accuracy": "100% WR (2 trades), 5.03% avg return",
+      "sharpe": 42.13,
+      "best_horizon": "5d",
+      "sma_period": 200,
+      "confidence_multiplier": 1.30,
+      "notes": "EM outperforms on panic entries. Zero stop-hits, 100% target-hit."
+    },
+    "GLD": {
+      "pit_verdict": "STRONG — Boosted to 1.20x (75% WR, best commodity)",
+      "accuracy": "75% WR (4 trades), 100% at panic F&G",
+      "sharpe": 6.23,
+      "best_horizon": "15d (medium holds optimal)",
+      "sma_period": 200,
+      "confidence_multiplier": 1.20,
+      "notes": "Gold benefits from fear. V10.2 extended hold to 15d (medium 100% WR, 4.15% avg)."
+    },
+    "XLE": {
+      "pit_verdict": "WEAK — Penalized to 0.50x (30% WR, -9.21 Sharpe, 80% stop-hit)",
+      "accuracy": "30% WR (10 trades), worst performer",
+      "sharpe": -9.21,
+      "best_horizon": "5d (still only 50% WR at best)",
+      "sma_period": 100,
+      "confidence_multiplier": 0.50,
+      "notes": "Worst asset in universe. MRE contrarian strategy fundamentally doesn't work for energy."
+    },
+    "FXI": {
+      "pit_verdict": "WEAK — Penalized to 0.60x (50% WR but -1.40 Sharpe)",
+      "accuracy": "50% WR (10 trades), -0.50% avg return",
+      "sharpe": -1.40,
+      "best_horizon": "10d (medium holds 57% WR)",
+      "sma_period": 200,
+      "confidence_multiplier": 0.60,
+      "notes": "China ETF is noisy. Only medium holds and panic F&G entries are profitable."
+    },
+    "TLT": {
+      "pit_verdict": "WEAK — Penalized to 0.70x (50% WR, -2.43 Sharpe)",
+      "accuracy": "50% WR (2 trades)",
+      "sharpe": -2.43,
+      "best_horizon": "5d (short holds 100% WR)",
+      "sma_period": 200,
+      "confidence_multiplier": 0.70,
+      "notes": "V10.2 shortened hold from 20d to 5d. Short holds profitable, long holds not."
+    },
+    "XLF": {
+      "pit_verdict": "HOLD — Slight penalty 0.90x (50% WR, medium holds only)",
+      "accuracy": "50% WR (2 trades)",
+      "sharpe": 9.75,
+      "best_horizon": "10d",
+      "sma_period": 100,
+      "confidence_multiplier": 0.90,
+      "notes": "XLF needs medium holds (100% WR) — short holds have 0% WR. V10.2 adjusted horizon."
+    },
+    "VNQ": {
+      "pit_verdict": "HOLD — Penalized to 0.80x (50% WR, medium holds optimal)",
+      "accuracy": "50% WR (4 trades)",
+      "sharpe": 0.58,
+      "best_horizon": "10d",
+      "sma_period": 100,
+      "confidence_multiplier": 0.80,
+      "notes": "REITs need patience. Medium holds 100% WR (3.15% avg), long holds 0%."
+    },
+    "HYG": {
+      "pit_verdict": "CAUTIOUS BUY — Boosted to 1.15x (100% WR, 1 trade only)",
+      "accuracy": "100% WR (1 trade), 2.38% return",
+      "sharpe": 0.0,
+      "best_horizon": "20d",
+      "sma_period": 200,
+      "confidence_multiplier": 1.15,
+      "notes": "High-yield credit. Only 1 trade in backtest — promising but insufficient data."
+    },
+    "GDX": {
+      "pit_verdict": "WEAK — Penalized to 0.70x (46% WR, -1.70 Sharpe)",
+      "accuracy": "46.2% WR (13 trades), highest trade count in universe",
+      "sharpe": -1.70,
+      "best_horizon": "5d (short holds 67% WR)",
+      "sma_period": 200,
+      "confidence_multiplier": 0.70,
+      "notes": "Gold miners are noisy. Short holds are only profitable window. Panic entries best."
+    },
+    "BITO": {
+      "pit_verdict": "HOLD — Slight boost 1.05x (75% WR but volatile)",
+      "accuracy": "75% WR (4 trades), 50% stop-hit rate",
+      "sharpe": 3.98,
+      "best_horizon": "5d",
+      "sma_period": 200,
+      "confidence_multiplier": 1.05,
+      "notes": "Bitcoin proxy works on fear entries (F&G 10-20 extreme fear has 100% WR). Short holds only."
     },
     "IWM": {
-      "pit_verdict": "HOLD \u2014 Small caps following broad market",
-      "accuracy": "63.0% buy accuracy",
-      "sharpe": 9.8,
-      "best_horizon": "10d",
+      "pit_verdict": "HOLD — Penalized to 0.75x (50% WR, 75% stop-hit)",
+      "accuracy": "50% WR (4 trades)",
+      "sharpe": 3.22,
+      "best_horizon": "5d",
+      "sma_period": 100,
+      "confidence_multiplier": 0.75,
+      "notes": "Small caps have high stop-hit rate. Only panic entries (F&G 0-10) profitable."
+    },
+    "XLC": {
+      "pit_verdict": "HOLD — Boosted to 1.10x (67% WR, 9.33 PF)",
+      "accuracy": "66.7% WR (3 trades)",
+      "sharpe": 9.67,
+      "best_horizon": "5d",
       "sma_period": 50,
-      "notes": "Tracking SPY. No independent signal strength. Wait for F&G dip for entry.",
-      "pattern": "Bull regime, above EMAs. No divergence signals."
+      "confidence_multiplier": 1.10,
+      "notes": "Communications tracks tech closely. Short holds 100% WR."
+    },
+    "XLP": {
+      "pit_verdict": "HOLD — Slight boost 1.05x (67% WR, 5.16 PF)",
+      "accuracy": "66.7% WR (3 trades)",
+      "sharpe": 13.04,
+      "best_horizon": "5d",
+      "sma_period": 50,
+      "confidence_multiplier": 1.05,
+      "notes": "Defensive consumer staples. Short holds 100% WR. Panic entries strongest."
+    },
+    "EWJ": {
+      "pit_verdict": "STRONG — Boosted to 1.20x (100% WR)",
+      "accuracy": "100% WR (2 trades)",
+      "sharpe": 20.58,
+      "best_horizon": "5d",
+      "sma_period": 200,
+      "confidence_multiplier": 1.20,
+      "notes": "Japan ETF solid on panic entries. 50% stop-hit but still 100% WR = recovers from dips."
+    },
+    "XLB": {
+      "pit_verdict": "WEAK — Penalized to 0.75x (50% WR, ~0 Sharpe)",
+      "accuracy": "50% WR (2 trades)",
+      "sharpe": -0.02,
+      "best_horizon": "10d (medium holds 100% WR, short 0%)",
+      "sma_period": 100,
+      "confidence_multiplier": 0.75,
+      "notes": "Materials need medium holds. Short holds have 0% WR — V10.2 extended horizon to 10d."
+    },
+    "DBA": {
+      "pit_verdict": "HOLD — Penalized to 0.80x (50% WR, medium holds needed)",
+      "accuracy": "50% WR (2 trades)",
+      "sharpe": 1.09,
+      "best_horizon": "10d",
+      "sma_period": 200,
+      "confidence_multiplier": 0.80,
+      "notes": "Agriculture. Medium holds 100% WR (3.57%), short holds 0%. V10.2 adjusted horizon."
+    }
+  },
+  "removed_assets": {
+    "SLV": {
+      "reason": "33% WR, -4.54 Sharpe, -1.10% avg return, 66.7% stop-hit rate. Negative expectancy.",
+      "win_rate": 0.333,
+      "sharpe": -4.54,
+      "profit_factor": 0.55
+    },
+    "IEF": {
+      "reason": "0% WR (worst in universe), -17.68 Sharpe, -0.70% avg return. No profitable scenario.",
+      "win_rate": 0.0,
+      "sharpe": -17.68,
+      "profit_factor": 0.0
     }
   }
 }

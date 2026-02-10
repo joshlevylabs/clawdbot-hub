@@ -993,16 +993,7 @@ interface PitData {
   assets: Record<string, PitRecommendation>;
 }
 
-function MREAnalysisPanel({ signal }: { signal: MRESignalData }) {
-  const [pitData, setPitData] = useState<PitData | null>(null);
-
-  useEffect(() => {
-    fetch("/data/trading/pit-recommendations.json?" + Date.now())
-      .then(r => r.json())
-      .then(d => setPitData(d))
-      .catch(() => {});
-  }, []);
-
+function MREAnalysisPanel({ signal, pitData }: { signal: MRESignalData; pitData: PitData | null }) {
   const pitRec = pitData?.assets?.[signal.symbol] || null;
   const { regime_details: rd, fibonacci: fib } = signal;
 
@@ -1249,11 +1240,12 @@ export default function MarketsOverview({ initialSymbol, onSymbolConsumed }: Mar
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // MRE signals — fetched once on mount, used to find signal for any selected symbol
+  // MRE signals + Pit recommendations — fetched once on mount
   const [allMreSignals, setAllMreSignals] = useState<MRESignalData[]>([]);
   const [localMreSignal, setLocalMreSignal] = useState<MRESignalData | null>(null);
+  const [pitData, setPitData] = useState<PitData | null>(null);
 
-  // Fetch all MRE signals on mount
+  // Fetch all MRE signals and Pit recommendations on mount
   useEffect(() => {
     fetch('/data/trading/mre-signals.json?' + Date.now())
       .then(r => r.json())
@@ -1261,6 +1253,10 @@ export default function MarketsOverview({ initialSymbol, onSymbolConsumed }: Mar
         const signals = data?.signals?.by_asset_class || [];
         setAllMreSignals(signals);
       })
+      .catch(() => {});
+    fetch('/data/trading/pit-recommendations.json?' + Date.now())
+      .then(r => r.json())
+      .then(d => setPitData(d))
       .catch(() => {});
   }, []);
 
@@ -1527,7 +1523,7 @@ export default function MarketsOverview({ initialSymbol, onSymbolConsumed }: Mar
 
                 {/* MRE Analysis Panel — always shown when signal data is available for selected symbol */}
                 {localMreSignal && localMreSignal.symbol === selectedSymbol && (
-                  <MREAnalysisPanel signal={localMreSignal} />
+                  <MREAnalysisPanel signal={localMreSignal} pitData={pitData} />
                 )}
               </>
             )}

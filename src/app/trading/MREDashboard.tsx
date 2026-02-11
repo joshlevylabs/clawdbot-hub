@@ -196,6 +196,15 @@ interface MRESignals {
     key_insight: string;
     features?: string[];
   };
+  universeData?: {
+    signals: {
+      by_asset_class: AssetSignal[];
+      summary: {
+        total_buy: number;
+        total_hold: number;
+      };
+    };
+  };
 }
 
 // ============ COMPONENTS ============

@@ -582,7 +582,8 @@ interface RotationStatusData {
 }
 
 // Rotation Summary Widget (links to /mre/rotation)
-function RotationSummaryWidget({ data }: { data: RotationStatusData | null; }) {
+// Handles both old format (current_phase/leaders[].symbol) and new format (cycle_phase/sector_leadership.leaders[])
+function RotationSummaryWidget({ data }: { data: any | null; }) {
   if (!data) {
     return (
       <div className="bg-gray-800 rounded-xl p-6 mb-8 border border-gray-700/50">
@@ -599,8 +600,24 @@ function RotationSummaryWidget({ data }: { data: RotationStatusData | null; }) {
     );
   }
 
-  const leaders = data.leaders?.slice(0, 3) || [];
-  const laggards = data.laggards?.slice(0, 3) || [];
+  // Normalize data shape — handle both old and new formats
+  const phase = data.current_phase ?? data.cycle_phase ?? 'unknown';
+  const confidence = data.confidence ?? data.cycle_confidence ?? 0;
+  const crashMode = typeof data.crash_mode === 'boolean' ? data.crash_mode : data.crash_mode?.active ?? false;
+  const warnings = data.warnings ?? [];
+  const pattern = data.rotation_pattern ?? data.summary ?? '';
+
+  // Leaders/laggards: old format = [{symbol, return_3m}], new format = sector_leadership.leaders = string[]
+  const rawLeaders = data.leaders ?? data.sector_leadership?.leaders ?? [];
+  const rawLaggards = data.laggards ?? data.sector_leadership?.laggards ?? [];
+
+  // Normalize to [{symbol, return_3m?}]
+  const leaders = rawLeaders.slice(0, 3).map((l: any) =>
+    typeof l === 'string' ? { symbol: l } : l
+  );
+  const laggards = rawLaggards.slice(0, 3).map((l: any) =>
+    typeof l === 'string' ? { symbol: l } : l
+  );
 
   return (
     <div className="bg-gray-800 rounded-xl p-6 mb-8 border border-gray-700/50">
@@ -615,13 +632,13 @@ function RotationSummaryWidget({ data }: { data: RotationStatusData | null; }) {
 
       {/* Phase + Confidence Row */}
       <div className="flex flex-wrap items-center gap-3 mb-4">
-        <span className="px-3 py-1 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/40 font-semibold text-sm">
-          {data.current_phase}
+        <span className="px-3 py-1 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/40 font-semibold text-sm capitalize">
+          {String(phase).replace(/_/g, ' ')}
         </span>
-        <span className={`text-sm font-mono ${data.confidence >= 70 ? "text-green-400" : data.confidence >= 50 ? "text-yellow-400" : "text-red-400"}`}>
-          {data.confidence}% confidence
+        <span className={`text-sm font-mono ${confidence >= 70 ? "text-green-400" : confidence >= 50 ? "text-yellow-400" : "text-red-400"}`}>
+          {Number(confidence).toFixed(0)}% confidence
         </span>
-        {data.crash_mode ? (
+        {crashMode ? (
           <span className="px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 border border-red-500/40 text-xs animate-pulse">
             🚨 CRASH MODE
           </span>
@@ -636,28 +653,32 @@ function RotationSummaryWidget({ data }: { data: RotationStatusData | null; }) {
       <div className="grid grid-cols-2 gap-4 mb-4">
         <div>
           <div className="text-xs text-gray-500 mb-2 flex items-center gap-1">
-            <TrendingUp className="w-3 h-3 text-green-400" /> Leaders (3m)
+            <TrendingUp className="w-3 h-3 text-green-400" /> Leaders
           </div>
           <div className="space-y-1">
-            {leaders.map((l) => (
+            {leaders.map((l: any) => (
               <div key={l.symbol} className="flex items-center justify-between text-sm">
                 <span className="font-mono">{l.symbol}</span>
-                <span className="text-green-400 font-mono text-xs">+{l.return_3m.toFixed(1)}%</span>
+                {l.return_3m != null && (
+                  <span className="text-green-400 font-mono text-xs">+{Number(l.return_3m).toFixed(1)}%</span>
+                )}
               </div>
             ))}
           </div>
         </div>
         <div>
           <div className="text-xs text-gray-500 mb-2 flex items-center gap-1">
-            <TrendingDown className="w-3 h-3 text-red-400" /> Laggards (3m)
+            <TrendingDown className="w-3 h-3 text-red-400" /> Laggards
           </div>
           <div className="space-y-1">
-            {laggards.map((l) => (
+            {laggards.map((l: any) => (
               <div key={l.symbol} className="flex items-center justify-between text-sm">
                 <span className="font-mono">{l.symbol}</span>
-                <span className={`font-mono text-xs ${l.return_3m >= 0 ? "text-green-400" : "text-red-400"}`}>
-                  {l.return_3m >= 0 ? "+" : ""}{l.return_3m.toFixed(1)}%
-                </span>
+                {l.return_3m != null && (
+                  <span className={`font-mono text-xs ${Number(l.return_3m) >= 0 ? "text-green-400" : "text-red-400"}`}>
+                    {Number(l.return_3m) >= 0 ? "+" : ""}{Number(l.return_3m).toFixed(1)}%
+                  </span>
+                )}
               </div>
             ))}
           </div>
@@ -665,13 +686,15 @@ function RotationSummaryWidget({ data }: { data: RotationStatusData | null; }) {
       </div>
 
       {/* Pattern + Warning */}
-      <div className="text-sm text-gray-400">
-        <span className="text-amber-400/80">⚡ {data.rotation_pattern}</span>
-      </div>
+      {pattern && (
+        <div className="text-sm text-gray-400">
+          <span className="text-amber-400/80">⚡ {pattern}</span>
+        </div>
+      )}
 
-      {data.warnings && data.warnings.length > 0 && (
+      {warnings.length > 0 && (
         <div className="mt-3 p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg">
-          <div className="text-xs text-amber-300">{data.warnings[0]}</div>
+          <div className="text-xs text-amber-300">{warnings[0]}</div>
         </div>
       )}
     </div>

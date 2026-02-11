@@ -1005,7 +1005,7 @@ export default function MREDashboard() {
         <div className="mb-8">
           <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
             <Target className="w-5 h-5 text-blue-500" />
-            MRE V10 Signals — {data.signals.by_asset_class.length} Assets
+            MRE Signals — {data.signals.by_asset_class.length} Assets
           </h2>
           
           {/* Category Sections */}

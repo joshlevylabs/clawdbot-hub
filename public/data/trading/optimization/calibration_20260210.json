@@ -1,0 +1,475 @@
+{
+  "generated": "2026-02-10T19:32:58.202342",
+  "synthesis_runtime_seconds": 0.0,
+  "tickers_calibrated": 20,
+  "summary": {
+    "avg_confidence": 0.84,
+    "median_confidence": 0.85,
+    "avg_robustness": 0.135
+  },
+  "calibration": {
+    "AAPL": {
+      "confidence_multiplier": 0.79,
+      "best_strategy": "fear_greed",
+      "optimal_params": {
+        "momentum_threshold": -5,
+        "hold_period": 7
+      },
+      "confirmation_threshold": 1,
+      "regime_preference": {
+        "bull": "fear_greed",
+        "bear": "fear_greed",
+        "sideways": "fear_greed"
+      },
+      "robustness_score": 0.0,
+      "walk_forward_oos_wr": 49.41,
+      "walk_forward_oos_sharpe": 0.511,
+      "total_trades_25yr": 511,
+      "monte_carlo_median_return": -0.9246,
+      "monte_carlo_5th_pct": -1.1977,
+      "sector": "Information Technology",
+      "asset_class": "technology",
+      "grid_composite_score": 0.026
+    },
+    "AMZN": {
+      "confidence_multiplier": 0.86,
+      "best_strategy": "fear_greed",
+      "optimal_params": {
+        "momentum_threshold": -10,
+        "hold_period": 7
+      },
+      "confirmation_threshold": 1,
+      "regime_preference": {
+        "bull": "fear_greed",
+        "bear": "fear_greed",
+        "sideways": "fear_greed"
+      },
+      "robustness_score": 0.392,
+      "walk_forward_oos_wr": 54.43,
+      "walk_forward_oos_sharpe": 0.9071,
+      "total_trades_25yr": 188,
+      "monte_carlo_median_return": -0.059,
+      "monte_carlo_5th_pct": -0.7947,
+      "sector": "Consumer Discretionary",
+      "asset_class": "broad_market",
+      "grid_composite_score": 0.1013
+    },
+    "GLD": {
+      "confidence_multiplier": 0.85,
+      "best_strategy": "fear_greed",
+      "optimal_params": {
+        "momentum_threshold": -5,
+        "hold_period": 7
+      },
+      "confirmation_threshold": 1,
+      "regime_preference": {
+        "bull": "fear_greed",
+        "bear": "fear_greed",
+        "sideways": "fear_greed"
+      },
+      "robustness_score": 0.123,
+      "walk_forward_oos_wr": 60.0,
+      "walk_forward_oos_sharpe": 0.5063,
+      "total_trades_25yr": 101,
+      "monte_carlo_median_return": -0.2991,
+      "monte_carlo_5th_pct": -0.7064,
+      "sector": "Commodities",
+      "asset_class": "commodities",
+      "grid_composite_score": 0.1305
+    },
+    "GOOGL": {
+      "confidence_multiplier": 0.85,
+      "best_strategy": "fear_greed",
+      "optimal_params": {
+        "momentum_threshold": -5,
+        "hold_period": 3
+      },
+      "confirmation_threshold": 1,
+      "regime_preference": {
+        "bull": "fear_greed",
+        "bear": "fear_greed",
+        "sideways": "fear_greed"
+      },
+      "robustness_score": 0.0,
+      "walk_forward_oos_wr": 55.41,
+      "walk_forward_oos_sharpe": 1.7683,
+      "total_trades_25yr": 302,
+      "monte_carlo_median_return": -0.3871,
+      "monte_carlo_5th_pct": -0.6598,
+      "sector": "Communication Services",
+      "asset_class": "technology",
+      "grid_composite_score": 0.1023
+    },
+    "IWM": {
+      "confidence_multiplier": 0.84,
+      "best_strategy": "fear_greed",
+      "optimal_params": {
+        "momentum_threshold": -10,
+        "hold_period": 7
+      },
+      "confirmation_threshold": 1,
+      "regime_preference": {
+        "bull": "fear_greed",
+        "bear": "fear_greed",
+        "sideways": "fear_greed"
+      },
+      "robustness_score": 0.084,
+      "walk_forward_oos_wr": 61.78,
+      "walk_forward_oos_sharpe": 1.2289,
+      "total_trades_25yr": 58,
+      "monte_carlo_median_return": -0.8109,
+      "monte_carlo_5th_pct": -1.5078,
+      "sector": "Broad Market",
+      "asset_class": "broad_market",
+      "grid_composite_score": 0.092
+    },
+    "JNJ": {
+      "confidence_multiplier": 0.83,
+      "best_strategy": "mean_reversion",
+      "optimal_params": {
+        "bb_width": 3.0,
+        "bb_period": 20,
+        "hold_period": 7
+      },
+      "confirmation_threshold": 1,
+      "regime_preference": {
+        "bull": "mean_reversion",
+        "bear": "fear_greed",
+        "sideways": "fear_greed"
+      },
+      "robustness_score": 0.056,
+      "walk_forward_oos_wr": 52.19,
+      "walk_forward_oos_sharpe": 1.023,
+      "total_trades_25yr": 51,
+      "monte_carlo_median_return": -0.7482,
+      "monte_carlo_5th_pct": -1.5726,
+      "sector": "Health Care",
+      "asset_class": "healthcare",
+      "grid_composite_score": 0.3225
+    },
+    "JPM": {
+      "confidence_multiplier": 0.8,
+      "best_strategy": "fear_greed",
+      "optimal_params": {
+        "momentum_threshold": -10,
+        "hold_period": 7
+      },
+      "confirmation_threshold": 1,
+      "regime_preference": {
+        "bull": "fear_greed",
+        "bear": "fear_greed",
+        "sideways": "fear_greed"
+      },
+      "robustness_score": 0.149,
+      "walk_forward_oos_wr": 53.17,
+      "walk_forward_oos_sharpe": 0.7583,
+      "total_trades_25yr": 177,
+      "monte_carlo_median_return": -0.3358,
+      "monte_carlo_5th_pct": -0.868,
+      "sector": "Financials",
+      "asset_class": "financials",
+      "grid_composite_score": 0.0902
+    },
+    "META": {
+      "confidence_multiplier": 0.79,
+      "best_strategy": "fear_greed",
+      "optimal_params": {
+        "momentum_threshold": -10,
+        "hold_period": 3
+      },
+      "confirmation_threshold": 1,
+      "regime_preference": {
+        "bull": "fear_greed",
+        "bear": "fear_greed",
+        "sideways": "fear_greed"
+      },
+      "robustness_score": 0.03,
+      "walk_forward_oos_wr": 57.14,
+      "walk_forward_oos_sharpe": 2.8186,
+      "total_trades_25yr": 107,
+      "monte_carlo_median_return": -0.6596,
+      "monte_carlo_5th_pct": -1.4115,
+      "sector": "Communication Services",
+      "asset_class": "technology",
+      "grid_composite_score": 0.0529
+    },
+    "MSFT": {
+      "confidence_multiplier": 0.87,
+      "best_strategy": "fear_greed",
+      "optimal_params": {
+        "momentum_threshold": -10,
+        "hold_period": 7
+      },
+      "confirmation_threshold": 1,
+      "regime_preference": {
+        "bull": "fear_greed",
+        "bear": "fear_greed",
+        "sideways": "fear_greed"
+      },
+      "robustness_score": 0.374,
+      "walk_forward_oos_wr": 56.91,
+      "walk_forward_oos_sharpe": 1.3354,
+      "total_trades_25yr": 150,
+      "monte_carlo_median_return": -0.1953,
+      "monte_carlo_5th_pct": -0.9751,
+      "sector": "Information Technology",
+      "asset_class": "technology",
+      "grid_composite_score": 0.106
+    },
+    "NVDA": {
+      "confidence_multiplier": 0.8,
+      "best_strategy": "fear_greed",
+      "optimal_params": {
+        "momentum_threshold": -10,
+        "hold_period": 7
+      },
+      "confirmation_threshold": 1,
+      "regime_preference": {
+        "bull": "fear_greed",
+        "bear": "fear_greed",
+        "sideways": "fear_greed"
+      },
+      "robustness_score": 0.057,
+      "walk_forward_oos_wr": 57.58,
+      "walk_forward_oos_sharpe": 0.9861,
+      "total_trades_25yr": 211,
+      "monte_carlo_median_return": -0.6922,
+      "monte_carlo_5th_pct": -1.4488,
+      "sector": "Information Technology",
+      "asset_class": "technology",
+      "grid_composite_score": 0.0424
+    },
+    "QQQ": {
+      "confidence_multiplier": 0.87,
+      "best_strategy": "fear_greed",
+      "optimal_params": {
+        "momentum_threshold": -10,
+        "hold_period": 7
+      },
+      "confirmation_threshold": 1,
+      "regime_preference": {
+        "bull": "fear_greed",
+        "bear": "fear_greed",
+        "sideways": "fear_greed"
+      },
+      "robustness_score": 0.0,
+      "walk_forward_oos_wr": 59.2,
+      "walk_forward_oos_sharpe": 1.3124,
+      "total_trades_25yr": 77,
+      "monte_carlo_median_return": -1.0795,
+      "monte_carlo_5th_pct": -1.9916,
+      "sector": "Broad Market",
+      "asset_class": "broad_market",
+      "grid_composite_score": 0.0737
+    },
+    "SPY": {
+      "confidence_multiplier": 0.84,
+      "best_strategy": "fear_greed",
+      "optimal_params": {
+        "momentum_threshold": -10,
+        "hold_period": 7
+      },
+      "confirmation_threshold": 1,
+      "regime_preference": {
+        "bull": "fear_greed",
+        "bear": "fear_greed",
+        "sideways": "fear_greed"
+      },
+      "robustness_score": 0.132,
+      "walk_forward_oos_wr": 59.84,
+      "walk_forward_oos_sharpe": 1.6944,
+      "total_trades_25yr": 38,
+      "monte_carlo_median_return": -0.5243,
+      "monte_carlo_5th_pct": -1.4406,
+      "sector": "Broad Market",
+      "asset_class": "broad_market",
+      "grid_composite_score": 0.2321
+    },
+    "TLT": {
+      "confidence_multiplier": 0.81,
+      "best_strategy": "fear_greed",
+      "optimal_params": {
+        "momentum_threshold": -5,
+        "hold_period": 7
+      },
+      "confirmation_threshold": 1,
+      "regime_preference": {
+        "bull": "fear_greed",
+        "bear": "fear_greed",
+        "sideways": "fear_greed"
+      },
+      "robustness_score": 0.0,
+      "walk_forward_oos_wr": 51.74,
+      "walk_forward_oos_sharpe": 1.1839,
+      "total_trades_25yr": 91,
+      "monte_carlo_median_return": -0.6919,
+      "monte_carlo_5th_pct": -0.9768,
+      "sector": "Fixed Income",
+      "asset_class": "bonds",
+      "grid_composite_score": 0.0518
+    },
+    "TSLA": {
+      "confidence_multiplier": 0.86,
+      "best_strategy": "fear_greed",
+      "optimal_params": {
+        "momentum_threshold": -5,
+        "hold_period": 7
+      },
+      "confirmation_threshold": 1,
+      "regime_preference": {
+        "bull": "fear_greed",
+        "bear": "fear_greed",
+        "sideways": "fear_greed"
+      },
+      "robustness_score": 0.436,
+      "walk_forward_oos_wr": 54.17,
+      "walk_forward_oos_sharpe": 1.0282,
+      "total_trades_25yr": 216,
+      "monte_carlo_median_return": 0.0259,
+      "monte_carlo_5th_pct": -0.6622,
+      "sector": "Consumer Discretionary",
+      "asset_class": "broad_market",
+      "grid_composite_score": 0.0908
+    },
+    "VNQ": {
+      "confidence_multiplier": 0.81,
+      "best_strategy": "fear_greed",
+      "optimal_params": {
+        "momentum_threshold": -10,
+        "hold_period": 7
+      },
+      "confirmation_threshold": 1,
+      "regime_preference": {
+        "bull": "fear_greed",
+        "bear": "fear_greed",
+        "sideways": "fear_greed"
+      },
+      "robustness_score": 0.112,
+      "walk_forward_oos_wr": 57.63,
+      "walk_forward_oos_sharpe": 0.7747,
+      "total_trades_25yr": 41,
+      "monte_carlo_median_return": -1.3824,
+      "monte_carlo_5th_pct": -2.6365,
+      "sector": "Real Estate",
+      "asset_class": "real_estate",
+      "grid_composite_score": 0.144
+    },
+    "XLE": {
+      "confidence_multiplier": 0.86,
+      "best_strategy": "fear_greed",
+      "optimal_params": {
+        "momentum_threshold": -10,
+        "hold_period": 7
+      },
+      "confirmation_threshold": 1,
+      "regime_preference": {
+        "bull": "fear_greed",
+        "bear": "fear_greed",
+        "sideways": "fear_greed"
+      },
+      "robustness_score": 0.257,
+      "walk_forward_oos_wr": 57.11,
+      "walk_forward_oos_sharpe": 1.0199,
+      "total_trades_25yr": 77,
+      "monte_carlo_median_return": -0.2281,
+      "monte_carlo_5th_pct": -0.7756,
+      "sector": "Energy",
+      "asset_class": "energy",
+      "grid_composite_score": 0.1367
+    },
+    "XLF": {
+      "confidence_multiplier": 0.89,
+      "best_strategy": "fear_greed",
+      "optimal_params": {
+        "momentum_threshold": -10,
+        "hold_period": 7
+      },
+      "confirmation_threshold": 1,
+      "regime_preference": {
+        "bull": "fear_greed",
+        "bear": "fear_greed",
+        "sideways": "fear_greed"
+      },
+      "robustness_score": 0.155,
+      "walk_forward_oos_wr": 66.95,
+      "walk_forward_oos_sharpe": 1.9822,
+      "total_trades_25yr": 75,
+      "monte_carlo_median_return": -0.6115,
+      "monte_carlo_5th_pct": -1.7163,
+      "sector": "Financials",
+      "asset_class": "financials",
+      "grid_composite_score": 0.076
+    },
+    "XLK": {
+      "confidence_multiplier": 0.88,
+      "best_strategy": "fear_greed",
+      "optimal_params": {
+        "momentum_threshold": -10,
+        "hold_period": 7
+      },
+      "confirmation_threshold": 1,
+      "regime_preference": {
+        "bull": "fear_greed",
+        "bear": "fear_greed",
+        "sideways": "fear_greed"
+      },
+      "robustness_score": 0.057,
+      "walk_forward_oos_wr": 71.43,
+      "walk_forward_oos_sharpe": 1.0897,
+      "total_trades_25yr": 76,
+      "monte_carlo_median_return": -0.8579,
+      "monte_carlo_5th_pct": -1.4306,
+      "sector": "Information Technology",
+      "asset_class": "technology",
+      "grid_composite_score": 0.0482
+    },
+    "XLV": {
+      "confidence_multiplier": 0.88,
+      "best_strategy": "fear_greed",
+      "optimal_params": {
+        "momentum_threshold": -5,
+        "hold_period": 7
+      },
+      "confirmation_threshold": 1,
+      "regime_preference": {
+        "bull": "fear_greed",
+        "bear": "fear_greed",
+        "sideways": "fear_greed"
+      },
+      "robustness_score": 0.247,
+      "walk_forward_oos_wr": 60.11,
+      "walk_forward_oos_sharpe": 1.3126,
+      "total_trades_25yr": 119,
+      "monte_carlo_median_return": -0.1503,
+      "monte_carlo_5th_pct": -0.533,
+      "sector": "Health Care",
+      "asset_class": "healthcare",
+      "grid_composite_score": 0.1435
+    },
+    "XOM": {
+      "confidence_multiplier": 0.86,
+      "best_strategy": "rsi_oversold",
+      "optimal_params": {
+        "rsi_threshold": 35,
+        "sma_fast": 50,
+        "sma_slow": 200,
+        "hold_period": 7
+      },
+      "confirmation_threshold": 1,
+      "regime_preference": {
+        "bull": "regime_confirmation",
+        "bear": "rsi_oversold",
+        "sideways": "regime_confirmation"
+      },
+      "robustness_score": 0.032,
+      "walk_forward_oos_wr": 60.11,
+      "walk_forward_oos_sharpe": 1.0708,
+      "total_trades_25yr": 157,
+      "monte_carlo_median_return": -0.3128,
+      "monte_carlo_5th_pct": -0.563,
+      "sector": "Energy",
+      "asset_class": "energy",
+      "grid_composite_score": 0.2591
+    }
+  }
+}

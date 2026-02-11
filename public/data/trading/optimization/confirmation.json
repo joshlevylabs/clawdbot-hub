@@ -1,0 +1,247 @@
+{
+  "generated": "2026-02-10T19:32:46.815110",
+  "runtime_seconds": 12.5,
+  "sectors_analyzed": 8,
+  "results": {
+    "technology": {
+      "optimal_threshold": 1,
+      "thresholds": {
+        "1": {
+          "win_rate": 100.0,
+          "avg_return": 0.6634,
+          "trade_count": 1471,
+          "tickers_tested": 6
+        },
+        "2": {
+          "win_rate": 0,
+          "avg_return": 0,
+          "trade_count": 0,
+          "tickers_tested": 6
+        },
+        "3": {
+          "win_rate": 0,
+          "avg_return": 0,
+          "trade_count": 0,
+          "tickers_tested": 6
+        },
+        "4": {
+          "win_rate": 0,
+          "avg_return": 0,
+          "trade_count": 0,
+          "tickers_tested": 6
+        }
+      },
+      "ticker_count": 6
+    },
+    "broad_market": {
+      "optimal_threshold": 1,
+      "thresholds": {
+        "1": {
+          "win_rate": 100.0,
+          "avg_return": 0.8503,
+          "trade_count": 714,
+          "tickers_tested": 5
+        },
+        "2": {
+          "win_rate": 0,
+          "avg_return": 0,
+          "trade_count": 0,
+          "tickers_tested": 5
+        },
+        "3": {
+          "win_rate": 0,
+          "avg_return": 0,
+          "trade_count": 0,
+          "tickers_tested": 5
+        },
+        "4": {
+          "win_rate": 0,
+          "avg_return": 0,
+          "trade_count": 0,
+          "tickers_tested": 5
+        }
+      },
+      "ticker_count": 5
+    },
+    "financials": {
+      "optimal_threshold": 1,
+      "thresholds": {
+        "1": {
+          "win_rate": 100.0,
+          "avg_return": 0.567,
+          "trade_count": 308,
+          "tickers_tested": 2
+        },
+        "2": {
+          "win_rate": 0,
+          "avg_return": 0,
+          "trade_count": 0,
+          "tickers_tested": 2
+        },
+        "3": {
+          "win_rate": 0,
+          "avg_return": 0,
+          "trade_count": 0,
+          "tickers_tested": 2
+        },
+        "4": {
+          "win_rate": 0,
+          "avg_return": 0,
+          "trade_count": 0,
+          "tickers_tested": 2
+        }
+      },
+      "ticker_count": 2
+    },
+    "energy": {
+      "optimal_threshold": 1,
+      "thresholds": {
+        "1": {
+          "win_rate": 100.0,
+          "avg_return": 0.7885,
+          "trade_count": 562,
+          "tickers_tested": 2
+        },
+        "2": {
+          "win_rate": 100.0,
+          "avg_return": 1.0094,
+          "trade_count": 151,
+          "tickers_tested": 2
+        },
+        "3": {
+          "win_rate": 100.0,
+          "avg_return": 2.7385,
+          "trade_count": 11,
+          "tickers_tested": 2
+        },
+        "4": {
+          "win_rate": 0,
+          "avg_return": 0,
+          "trade_count": 0,
+          "tickers_tested": 2
+        }
+      },
+      "ticker_count": 2
+    },
+    "healthcare": {
+      "optimal_threshold": 1,
+      "thresholds": {
+        "1": {
+          "win_rate": 100.0,
+          "avg_return": 1.1699,
+          "trade_count": 391,
+          "tickers_tested": 2
+        },
+        "2": {
+          "win_rate": 100.0,
+          "avg_return": 3.0525,
+          "trade_count": 26,
+          "tickers_tested": 2
+        },
+        "3": {
+          "win_rate": 100.0,
+          "avg_return": 7.6601,
+          "trade_count": 2,
+          "tickers_tested": 2
+        },
+        "4": {
+          "win_rate": 0,
+          "avg_return": 0,
+          "trade_count": 0,
+          "tickers_tested": 2
+        }
+      },
+      "ticker_count": 2
+    },
+    "commodities": {
+      "optimal_threshold": 1,
+      "thresholds": {
+        "1": {
+          "win_rate": 100.0,
+          "avg_return": 0.4044,
+          "trade_count": 120,
+          "tickers_tested": 1
+        },
+        "2": {
+          "win_rate": 0,
+          "avg_return": 0,
+          "trade_count": 0,
+          "tickers_tested": 1
+        },
+        "3": {
+          "win_rate": 0,
+          "avg_return": 0,
+          "trade_count": 0,
+          "tickers_tested": 1
+        },
+        "4": {
+          "win_rate": 0,
+          "avg_return": 0,
+          "trade_count": 0,
+          "tickers_tested": 1
+        }
+      },
+      "ticker_count": 1
+    },
+    "bonds": {
+      "optimal_threshold": 1,
+      "thresholds": {
+        "1": {
+          "win_rate": 100.0,
+          "avg_return": 0.132,
+          "trade_count": 107,
+          "tickers_tested": 1
+        },
+        "2": {
+          "win_rate": 0,
+          "avg_return": 0,
+          "trade_count": 0,
+          "tickers_tested": 1
+        },
+        "3": {
+          "win_rate": 0,
+          "avg_return": 0,
+          "trade_count": 0,
+          "tickers_tested": 1
+        },
+        "4": {
+          "win_rate": 0,
+          "avg_return": 0,
+          "trade_count": 0,
+          "tickers_tested": 1
+        }
+      },
+      "ticker_count": 1
+    },
+    "real_estate": {
+      "optimal_threshold": 1,
+      "thresholds": {
+        "1": {
+          "win_rate": 0.0,
+          "avg_return": -0.099,
+          "trade_count": 53,
+          "tickers_tested": 1
+        },
+        "2": {
+          "win_rate": 0,
+          "avg_return": 0,
+          "trade_count": 0,
+          "tickers_tested": 1
+        },
+        "3": {
+          "win_rate": 0,
+          "avg_return": 0,
+          "trade_count": 0,
+          "tickers_tested": 1
+        },
+        "4": {
+          "win_rate": 0,
+          "avg_return": 0,
+          "trade_count": 0,
+          "tickers_tested": 1
+        }
+      },
+      "ticker_count": 1
+    }
+  }
+}

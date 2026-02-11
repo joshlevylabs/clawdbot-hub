@@ -1,0 +1,478 @@
+{
+  "generated": "2026-02-10T19:32:56.974481",
+  "runtime_seconds": 10.2,
+  "tickers_analyzed": 20,
+  "tickers_skipped": 0,
+  "regime_winner_counts": {
+    "sideways": {
+      "fear_greed": 19,
+      "regime_confirmation": 1
+    },
+    "bull": {
+      "regime_confirmation": 1,
+      "mean_reversion": 1
+    },
+    "bear": {
+      "rsi_oversold": 1,
+      "fear_greed": 1
+    }
+  },
+  "results": {
+    "AAPL": {
+      "sector": "Information Technology",
+      "asset_class": "technology",
+      "regimes": {
+        "sideways": {
+          "best_strategy": "fear_greed",
+          "strategies": {
+            "fear_greed": {
+              "win_rate": 52.26,
+              "avg_return": 0.333,
+              "sharpe": 0.0446,
+              "trade_count": 641
+            }
+          }
+        }
+      }
+    },
+    "MSFT": {
+      "sector": "Information Technology",
+      "asset_class": "technology",
+      "regimes": {
+        "sideways": {
+          "best_strategy": "fear_greed",
+          "strategies": {
+            "fear_greed": {
+              "win_rate": 56.94,
+              "avg_return": 0.9782,
+              "sharpe": 0.1901,
+              "trade_count": 432
+            }
+          }
+        }
+      }
+    },
+    "AMZN": {
+      "sector": "Consumer Discretionary",
+      "asset_class": "broad_market",
+      "regimes": {
+        "sideways": {
+          "best_strategy": "fear_greed",
+          "strategies": {
+            "fear_greed": {
+              "win_rate": 55.01,
+              "avg_return": 1.159,
+              "sharpe": 0.1259,
+              "trade_count": 389
+            }
+          }
+        }
+      }
+    },
+    "JPM": {
+      "sector": "Financials",
+      "asset_class": "financials",
+      "regimes": {
+        "sideways": {
+          "best_strategy": "fear_greed",
+          "strategies": {
+            "fear_greed": {
+              "win_rate": 53.56,
+              "avg_return": 0.4536,
+              "sharpe": 0.0753,
+              "trade_count": 519
+            }
+          }
+        }
+      }
+    },
+    "XOM": {
+      "sector": "Energy",
+      "asset_class": "energy",
+      "regimes": {
+        "bull": {
+          "best_strategy": "regime_confirmation",
+          "strategies": {
+            "fear_greed": {
+              "win_rate": 33.33,
+              "avg_return": 0.1105,
+              "sharpe": 0.0478,
+              "trade_count": 6
+            },
+            "regime_confirmation": {
+              "win_rate": 58.29,
+              "avg_return": 0.6189,
+              "sharpe": 0.1769,
+              "trade_count": 199
+            },
+            "mean_reversion": {
+              "win_rate": 25.0,
+              "avg_return": -0.5922,
+              "sharpe": -0.2832,
+              "trade_count": 4
+            }
+          }
+        },
+        "bear": {
+          "best_strategy": "rsi_oversold",
+          "strategies": {
+            "fear_greed": {
+              "win_rate": 56.83,
+              "avg_return": 0.7273,
+              "sharpe": 0.1822,
+              "trade_count": 417
+            },
+            "rsi_oversold": {
+              "win_rate": 64.62,
+              "avg_return": 1.557,
+              "sharpe": 0.3675,
+              "trade_count": 65
+            },
+            "mean_reversion": {
+              "win_rate": 59.78,
+              "avg_return": 0.9945,
+              "sharpe": 0.2823,
+              "trade_count": 271
+            }
+          }
+        },
+        "sideways": {
+          "best_strategy": "regime_confirmation",
+          "strategies": {
+            "fear_greed": {
+              "win_rate": 52.58,
+              "avg_return": 0.0128,
+              "sharpe": 0.0038,
+              "trade_count": 97
+            },
+            "regime_confirmation": {
+              "win_rate": 57.36,
+              "avg_return": 0.4645,
+              "sharpe": 0.1504,
+              "trade_count": 265
+            },
+            "mean_reversion": {
+              "win_rate": 56.19,
+              "avg_return": 0.2048,
+              "sharpe": 0.0769,
+              "trade_count": 105
+            }
+          }
+        }
+      }
+    },
+    "JNJ": {
+      "sector": "Health Care",
+      "asset_class": "healthcare",
+      "regimes": {
+        "bull": {
+          "best_strategy": "mean_reversion",
+          "strategies": {
+            "fear_greed": {
+              "win_rate": 80.0,
+              "avg_return": 2.0233,
+              "sharpe": 0.9945,
+              "trade_count": 5
+            },
+            "regime_confirmation": {
+              "win_rate": 55.78,
+              "avg_return": 0.7175,
+              "sharpe": 0.2149,
+              "trade_count": 251
+            },
+            "mean_reversion": {
+              "win_rate": 80.0,
+              "avg_return": 2.1698,
+              "sharpe": 1.0533,
+              "trade_count": 5
+            }
+          }
+        },
+        "bear": {
+          "best_strategy": "fear_greed",
+          "strategies": {
+            "fear_greed": {
+              "win_rate": 56.43,
+              "avg_return": 0.7239,
+              "sharpe": 0.1678,
+              "trade_count": 459
+            },
+            "rsi_oversold": {
+              "win_rate": 52.34,
+              "avg_return": 0.7251,
+              "sharpe": 0.1736,
+              "trade_count": 107
+            },
+            "mean_reversion": {
+              "win_rate": 53.96,
+              "avg_return": 0.6148,
+              "sharpe": 0.1427,
+              "trade_count": 265
+            }
+          }
+        },
+        "sideways": {
+          "best_strategy": "fear_greed",
+          "strategies": {
+            "fear_greed": {
+              "win_rate": 52.22,
+              "avg_return": 0.3724,
+              "sharpe": 0.0956,
+              "trade_count": 90
+            },
+            "regime_confirmation": {
+              "win_rate": 52.48,
+              "avg_return": 0.2964,
+              "sharpe": 0.0919,
+              "trade_count": 202
+            },
+            "mean_reversion": {
+              "win_rate": 54.05,
+              "avg_return": 0.2715,
+              "sharpe": 0.0914,
+              "trade_count": 111
+            }
+          }
+        }
+      }
+    },
+    "NVDA": {
+      "sector": "Information Technology",
+      "asset_class": "technology",
+      "regimes": {
+        "sideways": {
+          "best_strategy": "fear_greed",
+          "strategies": {
+            "fear_greed": {
+              "win_rate": 50.13,
+              "avg_return": 0.0239,
+              "sharpe": 0.0026,
+              "trade_count": 385
+            }
+          }
+        }
+      }
+    },
+    "GOOGL": {
+      "sector": "Communication Services",
+      "asset_class": "technology",
+      "regimes": {
+        "sideways": {
+          "best_strategy": "fear_greed",
+          "strategies": {
+            "fear_greed": {
+              "win_rate": 55.31,
+              "avg_return": 0.5521,
+              "sharpe": 0.1267,
+              "trade_count": 226
+            }
+          }
+        }
+      }
+    },
+    "META": {
+      "sector": "Communication Services",
+      "asset_class": "technology",
+      "regimes": {
+        "sideways": {
+          "best_strategy": "fear_greed",
+          "strategies": {
+            "fear_greed": {
+              "win_rate": 54.84,
+              "avg_return": 0.4716,
+              "sharpe": 0.0712,
+              "trade_count": 155
+            }
+          }
+        }
+      }
+    },
+    "TSLA": {
+      "sector": "Consumer Discretionary",
+      "asset_class": "broad_market",
+      "regimes": {
+        "sideways": {
+          "best_strategy": "fear_greed",
+          "strategies": {
+            "fear_greed": {
+              "win_rate": 52.94,
+              "avg_return": 0.3037,
+              "sharpe": 0.0364,
+              "trade_count": 272
+            }
+          }
+        }
+      }
+    },
+    "SPY": {
+      "sector": "Broad Market",
+      "asset_class": "broad_market",
+      "regimes": {
+        "sideways": {
+          "best_strategy": "fear_greed",
+          "strategies": {
+            "fear_greed": {
+              "win_rate": 61.93,
+              "avg_return": 0.6168,
+              "sharpe": 0.156,
+              "trade_count": 176
+            }
+          }
+        }
+      }
+    },
+    "QQQ": {
+      "sector": "Broad Market",
+      "asset_class": "broad_market",
+      "regimes": {
+        "sideways": {
+          "best_strategy": "fear_greed",
+          "strategies": {
+            "fear_greed": {
+              "win_rate": 53.85,
+              "avg_return": 0.412,
+              "sharpe": 0.0787,
+              "trade_count": 234
+            }
+          }
+        }
+      }
+    },
+    "GLD": {
+      "sector": "Commodities",
+      "asset_class": "commodities",
+      "regimes": {
+        "sideways": {
+          "best_strategy": "fear_greed",
+          "strategies": {
+            "fear_greed": {
+              "win_rate": 60.0,
+              "avg_return": 0.4044,
+              "sharpe": 0.1478,
+              "trade_count": 120
+            }
+          }
+        }
+      }
+    },
+    "TLT": {
+      "sector": "Fixed Income",
+      "asset_class": "bonds",
+      "regimes": {
+        "sideways": {
+          "best_strategy": "fear_greed",
+          "strategies": {
+            "fear_greed": {
+              "win_rate": 49.53,
+              "avg_return": 0.132,
+              "sharpe": 0.0573,
+              "trade_count": 107
+            }
+          }
+        }
+      }
+    },
+    "XLK": {
+      "sector": "Information Technology",
+      "asset_class": "technology",
+      "regimes": {
+        "sideways": {
+          "best_strategy": "fear_greed",
+          "strategies": {
+            "fear_greed": {
+              "win_rate": 54.55,
+              "avg_return": 0.2901,
+              "sharpe": 0.0595,
+              "trade_count": 231
+            }
+          }
+        }
+      }
+    },
+    "IWM": {
+      "sector": "Broad Market",
+      "asset_class": "broad_market",
+      "regimes": {
+        "sideways": {
+          "best_strategy": "fear_greed",
+          "strategies": {
+            "fear_greed": {
+              "win_rate": 59.19,
+              "avg_return": 0.1438,
+              "sharpe": 0.0318,
+              "trade_count": 223
+            }
+          }
+        }
+      }
+    },
+    "XLE": {
+      "sector": "Energy",
+      "asset_class": "energy",
+      "regimes": {
+        "sideways": {
+          "best_strategy": "fear_greed",
+          "strategies": {
+            "fear_greed": {
+              "win_rate": 57.65,
+              "avg_return": 0.6052,
+              "sharpe": 0.1208,
+              "trade_count": 281
+            }
+          }
+        }
+      }
+    },
+    "XLF": {
+      "sector": "Financials",
+      "asset_class": "financials",
+      "regimes": {
+        "sideways": {
+          "best_strategy": "fear_greed",
+          "strategies": {
+            "fear_greed": {
+              "win_rate": 56.42,
+              "avg_return": 0.2623,
+              "sharpe": 0.0452,
+              "trade_count": 218
+            }
+          }
+        }
+      }
+    },
+    "XLV": {
+      "sector": "Health Care",
+      "asset_class": "healthcare",
+      "regimes": {
+        "sideways": {
+          "best_strategy": "fear_greed",
+          "strategies": {
+            "fear_greed": {
+              "win_rate": 63.45,
+              "avg_return": 0.8188,
+              "sharpe": 0.2237,
+              "trade_count": 145
+            }
+          }
+        }
+      }
+    },
+    "VNQ": {
+      "sector": "Real Estate",
+      "asset_class": "real_estate",
+      "regimes": {
+        "sideways": {
+          "best_strategy": "fear_greed",
+          "strategies": {
+            "fear_greed": {
+              "win_rate": 62.05,
+              "avg_return": 0.5489,
+              "sharpe": 0.1113,
+              "trade_count": 166
+            }
+          }
+        }
+      }
+    }
+  }
+}

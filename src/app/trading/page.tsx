@@ -23,6 +23,7 @@ import PerformanceChart from "@/components/PerformanceChart";
 import MREDashboard from "./MREDashboard";
 import UniverseTable from "./UniverseTable";
 import MarketsOverview from "./MarketsOverview";
+import OptimizerResults from "./OptimizerResults";
 
 // ===== Types =====
 
@@ -327,7 +328,7 @@ function SignalAccuracyPanel({ stats }: { stats: SignalStats }) {
 
 // ===== Unified Trading Page with Single Tab Bar =====
 
-type ActiveTab = "overview" | "plays" | "positions" | "trades" | "signals" | "mre" | "universe" | "markets";
+type ActiveTab = "overview" | "plays" | "positions" | "trades" | "signals" | "mre" | "universe" | "optimizer" | "markets";
 
 export default function TradingPage() {
   const [activeTab, setActiveTab] = useState<ActiveTab>("overview");
@@ -483,6 +484,7 @@ export default function TradingPage() {
     { key: "signals", label: "Signals" },
     { key: "mre", label: "MRE" },
     { key: "universe", label: "Universe" },
+    { key: "optimizer", label: "Optimizer" },
     { key: "markets", label: "Markets" },
   ];
 
@@ -1016,6 +1018,9 @@ export default function TradingPage() {
 
           {/* ===== UNIVERSE TAB ===== */}
           {activeTab === "universe" && <UniverseTable />}
+
+          {/* ===== OPTIMIZER TAB ===== */}
+          {activeTab === "optimizer" && <OptimizerResults />}
 
           {/* ===== MARKETS TAB ===== */}
           {activeTab === "markets" && (

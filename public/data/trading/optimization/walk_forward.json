@@ -1,0 +1,691 @@
+{
+  "generated": "2026-02-10T19:51:16.215802",
+  "runtime_seconds": 5.2,
+  "tickers_validated": 20,
+  "tickers_skipped": 0,
+  "v13_data_sources": [
+    "VIX_boost"
+  ],
+  "results": {
+    "AAPL": {
+      "sector": "Information Technology",
+      "asset_class": "technology",
+      "strategies": {
+        "fear_greed": {
+          "oos_win_rate": 51.02,
+          "oos_sharpe": 0.31,
+          "oos_avg_return": 0.3767,
+          "oos_trade_count": 927,
+          "windows_tested": 24
+        },
+        "regime_confirmation": {
+          "oos_win_rate": 51.45,
+          "oos_sharpe": 0.4475,
+          "oos_avg_return": 0.6075,
+          "oos_trade_count": 587,
+          "windows_tested": 24
+        },
+        "rsi_oversold": {
+          "oos_win_rate": 57.83,
+          "oos_sharpe": 0.1574,
+          "oos_avg_return": 0.413,
+          "oos_trade_count": 83,
+          "windows_tested": 24
+        },
+        "mean_reversion": {
+          "oos_win_rate": 49.72,
+          "oos_sharpe": 0.5979,
+          "oos_avg_return": 0.8724,
+          "oos_trade_count": 354,
+          "windows_tested": 24
+        }
+      }
+    },
+    "MSFT": {
+      "sector": "Information Technology",
+      "asset_class": "technology",
+      "strategies": {
+        "fear_greed": {
+          "oos_win_rate": 56.98,
+          "oos_sharpe": 1.3455,
+          "oos_avg_return": 1.1197,
+          "oos_trade_count": 609,
+          "windows_tested": 24
+        },
+        "regime_confirmation": {
+          "oos_win_rate": 56.12,
+          "oos_sharpe": 0.6513,
+          "oos_avg_return": 0.6176,
+          "oos_trade_count": 449,
+          "windows_tested": 24
+        },
+        "rsi_oversold": {
+          "oos_win_rate": 62.69,
+          "oos_sharpe": 0.7195,
+          "oos_avg_return": 1.6885,
+          "oos_trade_count": 67,
+          "windows_tested": 24
+        },
+        "mean_reversion": {
+          "oos_win_rate": 57.95,
+          "oos_sharpe": 1.3206,
+          "oos_avg_return": 1.4494,
+          "oos_trade_count": 283,
+          "windows_tested": 24
+        }
+      }
+    },
+    "AMZN": {
+      "sector": "Consumer Discretionary",
+      "asset_class": "broad_market",
+      "strategies": {
+        "fear_greed": {
+          "oos_win_rate": 55.1,
+          "oos_sharpe": 0.9097,
+          "oos_avg_return": 1.5414,
+          "oos_trade_count": 539,
+          "windows_tested": 24
+        },
+        "regime_confirmation": {
+          "oos_win_rate": 56.42,
+          "oos_sharpe": 0.4966,
+          "oos_avg_return": 0.8981,
+          "oos_trade_count": 358,
+          "windows_tested": 24
+        },
+        "rsi_oversold": {
+          "oos_win_rate": 64.81,
+          "oos_sharpe": 0.7023,
+          "oos_avg_return": 2.879,
+          "oos_trade_count": 54,
+          "windows_tested": 24
+        },
+        "mean_reversion": {
+          "oos_win_rate": 60.0,
+          "oos_sharpe": 0.6866,
+          "oos_avg_return": 2.2321,
+          "oos_trade_count": 195,
+          "windows_tested": 24
+        }
+      }
+    },
+    "JPM": {
+      "sector": "Financials",
+      "asset_class": "financials",
+      "strategies": {
+        "fear_greed": {
+          "oos_win_rate": 53.55,
+          "oos_sharpe": 0.7735,
+          "oos_avg_return": 0.549,
+          "oos_trade_count": 760,
+          "windows_tested": 24
+        },
+        "regime_confirmation": {
+          "oos_win_rate": 52.41,
+          "oos_sharpe": 0.7825,
+          "oos_avg_return": 0.6985,
+          "oos_trade_count": 477,
+          "windows_tested": 24
+        },
+        "rsi_oversold": {
+          "oos_win_rate": 65.66,
+          "oos_sharpe": 0.4242,
+          "oos_avg_return": 1.037,
+          "oos_trade_count": 99,
+          "windows_tested": 24
+        },
+        "mean_reversion": {
+          "oos_win_rate": 54.81,
+          "oos_sharpe": 0.4354,
+          "oos_avg_return": 0.7925,
+          "oos_trade_count": 374,
+          "windows_tested": 24
+        }
+      }
+    },
+    "XOM": {
+      "sector": "Energy",
+      "asset_class": "energy",
+      "strategies": {
+        "fear_greed": {
+          "oos_win_rate": 56.11,
+          "oos_sharpe": 0.9993,
+          "oos_avg_return": 0.8778,
+          "oos_trade_count": 524,
+          "windows_tested": 24
+        },
+        "regime_confirmation": {
+          "oos_win_rate": 54.42,
+          "oos_sharpe": 0.5639,
+          "oos_avg_return": 0.4809,
+          "oos_trade_count": 441,
+          "windows_tested": 24
+        },
+        "rsi_oversold": {
+          "oos_win_rate": 67.16,
+          "oos_sharpe": 0.4138,
+          "oos_avg_return": 1.8074,
+          "oos_trade_count": 67,
+          "windows_tested": 24
+        },
+        "mean_reversion": {
+          "oos_win_rate": 60.42,
+          "oos_sharpe": 1.0689,
+          "oos_avg_return": 0.9442,
+          "oos_trade_count": 379,
+          "windows_tested": 24
+        }
+      }
+    },
+    "JNJ": {
+      "sector": "Health Care",
+      "asset_class": "healthcare",
+      "strategies": {
+        "fear_greed": {
+          "oos_win_rate": 54.79,
+          "oos_sharpe": 0.7596,
+          "oos_avg_return": 0.5782,
+          "oos_trade_count": 511,
+          "windows_tested": 24
+        },
+        "regime_confirmation": {
+          "oos_win_rate": 53.3,
+          "oos_sharpe": 0.9912,
+          "oos_avg_return": 0.5477,
+          "oos_trade_count": 409,
+          "windows_tested": 24
+        },
+        "rsi_oversold": {
+          "oos_win_rate": 49.5,
+          "oos_sharpe": 0.2657,
+          "oos_avg_return": 0.5242,
+          "oos_trade_count": 101,
+          "windows_tested": 24
+        },
+        "mean_reversion": {
+          "oos_win_rate": 51.32,
+          "oos_sharpe": 0.3793,
+          "oos_avg_return": 0.2745,
+          "oos_trade_count": 380,
+          "windows_tested": 24
+        }
+      }
+    },
+    "NVDA": {
+      "sector": "Information Technology",
+      "asset_class": "technology",
+      "strategies": {
+        "fear_greed": {
+          "oos_win_rate": 52.06,
+          "oos_sharpe": 0.3352,
+          "oos_avg_return": 0.3459,
+          "oos_trade_count": 534,
+          "windows_tested": 24
+        },
+        "regime_confirmation": {
+          "oos_win_rate": 58.27,
+          "oos_sharpe": 0.7765,
+          "oos_avg_return": 1.0893,
+          "oos_trade_count": 381,
+          "windows_tested": 24
+        },
+        "rsi_oversold": {
+          "oos_win_rate": 71.7,
+          "oos_sharpe": 0.9437,
+          "oos_avg_return": 3.472,
+          "oos_trade_count": 53,
+          "windows_tested": 24
+        },
+        "mean_reversion": {
+          "oos_win_rate": 53.51,
+          "oos_sharpe": 0.3124,
+          "oos_avg_return": 0.7248,
+          "oos_trade_count": 185,
+          "windows_tested": 24
+        }
+      }
+    },
+    "GOOGL": {
+      "sector": "Communication Services",
+      "asset_class": "technology",
+      "strategies": {
+        "fear_greed": {
+          "oos_win_rate": 55.82,
+          "oos_sharpe": 0.8902,
+          "oos_avg_return": 0.8209,
+          "oos_trade_count": 292,
+          "windows_tested": 24
+        },
+        "regime_confirmation": {
+          "oos_win_rate": 61.11,
+          "oos_sharpe": 1.8174,
+          "oos_avg_return": 1.1266,
+          "oos_trade_count": 216,
+          "windows_tested": 24
+        },
+        "rsi_oversold": {
+          "oos_win_rate": 72.09,
+          "oos_sharpe": 1.2687,
+          "oos_avg_return": 1.7873,
+          "oos_trade_count": 43,
+          "windows_tested": 24
+        },
+        "mean_reversion": {
+          "oos_win_rate": 57.69,
+          "oos_sharpe": 2.0864,
+          "oos_avg_return": 1.3224,
+          "oos_trade_count": 156,
+          "windows_tested": 24
+        }
+      }
+    },
+    "META": {
+      "sector": "Communication Services",
+      "asset_class": "technology",
+      "strategies": {
+        "fear_greed": {
+          "oos_win_rate": 52.55,
+          "oos_sharpe": 0.4832,
+          "oos_avg_return": 0.521,
+          "oos_trade_count": 196,
+          "windows_tested": 24
+        },
+        "regime_confirmation": {
+          "oos_win_rate": 57.32,
+          "oos_sharpe": 2.8112,
+          "oos_avg_return": 1.1498,
+          "oos_trade_count": 164,
+          "windows_tested": 24
+        },
+        "rsi_oversold": {
+          "oos_win_rate": 57.14,
+          "oos_sharpe": 1.207,
+          "oos_avg_return": 2.9232,
+          "oos_trade_count": 28,
+          "windows_tested": 24
+        },
+        "mean_reversion": {
+          "oos_win_rate": 48.81,
+          "oos_sharpe": 0.666,
+          "oos_avg_return": 0.679,
+          "oos_trade_count": 84,
+          "windows_tested": 24
+        }
+      }
+    },
+    "TSLA": {
+      "sector": "Consumer Discretionary",
+      "asset_class": "broad_market",
+      "strategies": {
+        "fear_greed": {
+          "oos_win_rate": 51.2,
+          "oos_sharpe": 0.2955,
+          "oos_avg_return": 0.2935,
+          "oos_trade_count": 375,
+          "windows_tested": 24
+        },
+        "regime_confirmation": {
+          "oos_win_rate": 51.46,
+          "oos_sharpe": 0.6591,
+          "oos_avg_return": 0.7593,
+          "oos_trade_count": 206,
+          "windows_tested": 24
+        },
+        "rsi_oversold": {
+          "oos_win_rate": 46.15,
+          "oos_sharpe": 0.9294,
+          "oos_avg_return": 3.0031,
+          "oos_trade_count": 39,
+          "windows_tested": 24
+        },
+        "mean_reversion": {
+          "oos_win_rate": 42.61,
+          "oos_sharpe": 0.2724,
+          "oos_avg_return": 0.5364,
+          "oos_trade_count": 115,
+          "windows_tested": 24
+        }
+      }
+    },
+    "SPY": {
+      "sector": "Broad Market",
+      "asset_class": "broad_market",
+      "strategies": {
+        "fear_greed": {
+          "oos_win_rate": 62.34,
+          "oos_sharpe": 0.7794,
+          "oos_avg_return": 0.791,
+          "oos_trade_count": 239,
+          "windows_tested": 24
+        },
+        "regime_confirmation": {
+          "oos_win_rate": 65.32,
+          "oos_sharpe": 1.0037,
+          "oos_avg_return": 0.8919,
+          "oos_trade_count": 173,
+          "windows_tested": 24
+        },
+        "rsi_oversold": {
+          "oos_win_rate": 72.0,
+          "oos_sharpe": 0.6009,
+          "oos_avg_return": 1.6602,
+          "oos_trade_count": 50,
+          "windows_tested": 24
+        },
+        "mean_reversion": {
+          "oos_win_rate": 60.23,
+          "oos_sharpe": 1.6823,
+          "oos_avg_return": 0.8999,
+          "oos_trade_count": 259,
+          "windows_tested": 24
+        }
+      }
+    },
+    "QQQ": {
+      "sector": "Broad Market",
+      "asset_class": "broad_market",
+      "strategies": {
+        "fear_greed": {
+          "oos_win_rate": 55.52,
+          "oos_sharpe": 0.7781,
+          "oos_avg_return": 0.5805,
+          "oos_trade_count": 308,
+          "windows_tested": 24
+        },
+        "regime_confirmation": {
+          "oos_win_rate": 57.29,
+          "oos_sharpe": 0.8828,
+          "oos_avg_return": 0.6386,
+          "oos_trade_count": 192,
+          "windows_tested": 24
+        },
+        "rsi_oversold": {
+          "oos_win_rate": 78.72,
+          "oos_sharpe": 0.9279,
+          "oos_avg_return": 1.878,
+          "oos_trade_count": 47,
+          "windows_tested": 24
+        },
+        "mean_reversion": {
+          "oos_win_rate": 60.39,
+          "oos_sharpe": 1.2548,
+          "oos_avg_return": 0.8771,
+          "oos_trade_count": 207,
+          "windows_tested": 24
+        }
+      }
+    },
+    "GLD": {
+      "sector": "Commodities",
+      "asset_class": "commodities",
+      "strategies": {
+        "fear_greed": {
+          "oos_win_rate": 59.04,
+          "oos_sharpe": 0.4006,
+          "oos_avg_return": 0.2798,
+          "oos_trade_count": 188,
+          "windows_tested": 24
+        },
+        "regime_confirmation": {
+          "oos_win_rate": 48.51,
+          "oos_sharpe": 0.0136,
+          "oos_avg_return": 0.0077,
+          "oos_trade_count": 134,
+          "windows_tested": 24
+        },
+        "rsi_oversold": {
+          "oos_win_rate": 55.26,
+          "oos_sharpe": 0.182,
+          "oos_avg_return": 0.3396,
+          "oos_trade_count": 38,
+          "windows_tested": 24
+        },
+        "mean_reversion": {
+          "oos_win_rate": 53.57,
+          "oos_sharpe": 0.0466,
+          "oos_avg_return": 0.0271,
+          "oos_trade_count": 168,
+          "windows_tested": 24
+        }
+      }
+    },
+    "TLT": {
+      "sector": "Fixed Income",
+      "asset_class": "bonds",
+      "strategies": {
+        "fear_greed": {
+          "oos_win_rate": 44.51,
+          "oos_sharpe": -0.1308,
+          "oos_avg_return": -0.0719,
+          "oos_trade_count": 173,
+          "windows_tested": 24
+        },
+        "regime_confirmation": {
+          "oos_win_rate": 41.8,
+          "oos_sharpe": -0.3737,
+          "oos_avg_return": -0.1875,
+          "oos_trade_count": 122,
+          "windows_tested": 24
+        },
+        "rsi_oversold": {
+          "oos_win_rate": 30.0,
+          "oos_sharpe": -0.533,
+          "oos_avg_return": -0.7049,
+          "oos_trade_count": 40,
+          "windows_tested": 24
+        },
+        "mean_reversion": {
+          "oos_win_rate": 47.37,
+          "oos_sharpe": 0.0301,
+          "oos_avg_return": 0.0067,
+          "oos_trade_count": 190,
+          "windows_tested": 24
+        }
+      }
+    },
+    "XLK": {
+      "sector": "Information Technology",
+      "asset_class": "technology",
+      "strategies": {
+        "fear_greed": {
+          "oos_win_rate": 55.52,
+          "oos_sharpe": 0.4462,
+          "oos_avg_return": 0.3836,
+          "oos_trade_count": 299,
+          "windows_tested": 24
+        },
+        "regime_confirmation": {
+          "oos_win_rate": 55.61,
+          "oos_sharpe": 1.2654,
+          "oos_avg_return": 0.5802,
+          "oos_trade_count": 214,
+          "windows_tested": 24
+        },
+        "rsi_oversold": {
+          "oos_win_rate": 71.7,
+          "oos_sharpe": 1.2677,
+          "oos_avg_return": 1.8562,
+          "oos_trade_count": 53,
+          "windows_tested": 24
+        },
+        "mean_reversion": {
+          "oos_win_rate": 57.01,
+          "oos_sharpe": 1.3124,
+          "oos_avg_return": 0.8026,
+          "oos_trade_count": 214,
+          "windows_tested": 24
+        }
+      }
+    },
+    "IWM": {
+      "sector": "Broad Market",
+      "asset_class": "broad_market",
+      "strategies": {
+        "fear_greed": {
+          "oos_win_rate": 59.16,
+          "oos_sharpe": 0.4669,
+          "oos_avg_return": 0.3035,
+          "oos_trade_count": 311,
+          "windows_tested": 24
+        },
+        "regime_confirmation": {
+          "oos_win_rate": 63.16,
+          "oos_sharpe": 0.944,
+          "oos_avg_return": 0.7946,
+          "oos_trade_count": 209,
+          "windows_tested": 24
+        },
+        "rsi_oversold": {
+          "oos_win_rate": 57.78,
+          "oos_sharpe": 0.1084,
+          "oos_avg_return": 0.3531,
+          "oos_trade_count": 45,
+          "windows_tested": 24
+        },
+        "mean_reversion": {
+          "oos_win_rate": 52.97,
+          "oos_sharpe": 0.333,
+          "oos_avg_return": 0.2835,
+          "oos_trade_count": 219,
+          "windows_tested": 24
+        }
+      }
+    },
+    "XLE": {
+      "sector": "Energy",
+      "asset_class": "energy",
+      "strategies": {
+        "fear_greed": {
+          "oos_win_rate": 58.02,
+          "oos_sharpe": 1.0619,
+          "oos_avg_return": 0.6292,
+          "oos_trade_count": 405,
+          "windows_tested": 24
+        },
+        "regime_confirmation": {
+          "oos_win_rate": 51.2,
+          "oos_sharpe": 0.488,
+          "oos_avg_return": 0.3811,
+          "oos_trade_count": 250,
+          "windows_tested": 24
+        },
+        "rsi_oversold": {
+          "oos_win_rate": 60.98,
+          "oos_sharpe": 0.2373,
+          "oos_avg_return": 1.1103,
+          "oos_trade_count": 41,
+          "windows_tested": 24
+        },
+        "mean_reversion": {
+          "oos_win_rate": 51.93,
+          "oos_sharpe": 0.5189,
+          "oos_avg_return": 0.5274,
+          "oos_trade_count": 233,
+          "windows_tested": 24
+        }
+      }
+    },
+    "XLF": {
+      "sector": "Financials",
+      "asset_class": "financials",
+      "strategies": {
+        "fear_greed": {
+          "oos_win_rate": 54.98,
+          "oos_sharpe": 0.6998,
+          "oos_avg_return": 0.3395,
+          "oos_trade_count": 311,
+          "windows_tested": 24
+        },
+        "regime_confirmation": {
+          "oos_win_rate": 56.13,
+          "oos_sharpe": 0.7916,
+          "oos_avg_return": 0.6606,
+          "oos_trade_count": 212,
+          "windows_tested": 24
+        },
+        "rsi_oversold": {
+          "oos_win_rate": 67.39,
+          "oos_sharpe": 0.5591,
+          "oos_avg_return": 1.4391,
+          "oos_trade_count": 46,
+          "windows_tested": 24
+        },
+        "mean_reversion": {
+          "oos_win_rate": 65.98,
+          "oos_sharpe": 1.9915,
+          "oos_avg_return": 1.0634,
+          "oos_trade_count": 244,
+          "windows_tested": 24
+        }
+      }
+    },
+    "XLV": {
+      "sector": "Health Care",
+      "asset_class": "healthcare",
+      "strategies": {
+        "fear_greed": {
+          "oos_win_rate": 60.31,
+          "oos_sharpe": 1.2543,
+          "oos_avg_return": 0.6639,
+          "oos_trade_count": 194,
+          "windows_tested": 24
+        },
+        "regime_confirmation": {
+          "oos_win_rate": 58.7,
+          "oos_sharpe": 0.7339,
+          "oos_avg_return": 0.5127,
+          "oos_trade_count": 138,
+          "windows_tested": 24
+        },
+        "rsi_oversold": {
+          "oos_win_rate": 66.07,
+          "oos_sharpe": 0.2022,
+          "oos_avg_return": 0.4999,
+          "oos_trade_count": 56,
+          "windows_tested": 24
+        },
+        "mean_reversion": {
+          "oos_win_rate": 61.16,
+          "oos_sharpe": 0.7214,
+          "oos_avg_return": 0.3976,
+          "oos_trade_count": 224,
+          "windows_tested": 24
+        }
+      }
+    },
+    "VNQ": {
+      "sector": "Real Estate",
+      "asset_class": "real_estate",
+      "strategies": {
+        "fear_greed": {
+          "oos_win_rate": 61.29,
+          "oos_sharpe": 0.6903,
+          "oos_avg_return": 0.698,
+          "oos_trade_count": 248,
+          "windows_tested": 24
+        },
+        "regime_confirmation": {
+          "oos_win_rate": 46.43,
+          "oos_sharpe": 0.0718,
+          "oos_avg_return": 0.0654,
+          "oos_trade_count": 168,
+          "windows_tested": 24
+        },
+        "rsi_oversold": {
+          "oos_win_rate": 43.18,
+          "oos_sharpe": 0.434,
+          "oos_avg_return": 0.9543,
+          "oos_trade_count": 44,
+          "windows_tested": 24
+        },
+        "mean_reversion": {
+          "oos_win_rate": 58.38,
+          "oos_sharpe": 0.6346,
+          "oos_avg_return": 0.5762,
+          "oos_trade_count": 185,
+          "windows_tested": 24
+        }
+      }
+    }
+  }
+}

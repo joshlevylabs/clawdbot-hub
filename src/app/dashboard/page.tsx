@@ -293,8 +293,8 @@ function LiveWeatherCard() {
 function CalendarCard({ data }: { data: CalendarSection }) {
   const [view, setView] = useState<'today' | 'upcoming'>('today');
   
-  const todayItems: CalendarEvent[] = data.today || (data.items?.map(item => ({ title: item })) || []);
-  const upcomingItems: CalendarEvent[] = (data as any).upcoming || data.week || [];
+  const todayItems: CalendarEvent[] = Array.isArray(data.today) ? data.today : (Array.isArray(data.items) ? data.items.map(item => ({ title: item })) : []);
+  const upcomingItems: CalendarEvent[] = Array.isArray((data as any).upcoming) ? (data as any).upcoming : (Array.isArray(data.week) ? data.week : []);
   
   const currentItems = view === 'today' ? todayItems : upcomingItems;
   const hasUpcoming = upcomingItems.length > 0;

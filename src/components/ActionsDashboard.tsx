@@ -186,7 +186,7 @@ interface ActionsDashboardProps {
 
 type SortKey = "symbol" | "action" | "regime" | "confidence" | "currentPrice" | "pnl" | "momentum" | "assetClass" | "sharpe" | "signalStrength";
 type SortDir = "asc" | "desc";
-type SignalFilter = "ALL" | "BUY" | "HOLD" | "WATCH" | "WAIT" | "SELL" | "POSITIONS" | "BROAD_MARKET" | "SECTORS" | "INTERNATIONAL" | "BONDS" | "COMMODITIES" | "CORE" | "UNIVERSE";
+type SignalFilter = "ACTIONABLE" | "ALL" | "BUY" | "HOLD" | "WATCH" | "WAIT" | "SELL" | "POSITIONS" | "BROAD_MARKET" | "SECTORS" | "INTERNATIONAL" | "BONDS" | "COMMODITIES" | "CORE" | "UNIVERSE";
 type GroupBy = "none" | "assetClass" | "regime" | "category";
 
 // ── Action generation ──────────────────────────────────────────────
@@ -396,7 +396,7 @@ export default function ActionsDashboard({
   const [tradingSymbol, setTradingSymbol] = useState<string | null>(null);
 
   // Filter / sort / group state
-  const [signalFilter, setSignalFilter] = useState<SignalFilter>("ALL");
+  const [signalFilter, setSignalFilter] = useState<SignalFilter>("ACTIONABLE");
   const [groupBy, setGroupBy] = useState<GroupBy>("none");
   const [sortKey, setSortKey] = useState<SortKey>("signalStrength");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
@@ -451,7 +451,11 @@ export default function ActionsDashboard({
   // Filter + sort
   const filteredActions = useMemo(() => {
     let items = [...actions];
-    if (signalFilter === "POSITIONS") {
+    
+    if (signalFilter === "ACTIONABLE") {
+      // Only show BUY and SELL signals - the actual actionable plays
+      items = items.filter(a => a.action === "BUY" || a.action === "SELL");
+    } else if (signalFilter === "POSITIONS") {
       items = items.filter(a => {
         const p = getPosition(a.symbol);
         return p && p.qty > 0;
@@ -545,6 +549,7 @@ export default function ActionsDashboard({
 
   const updated = new Date(data.timestamp).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
   const signalCounts = {
+    ACTIONABLE: actions.filter(a => a.action === "BUY" || a.action === "SELL").length,
     ALL: actions.length,
     BUY: actions.filter(a => a.action === "BUY").length,
     HOLD: actions.filter(a => a.action === "HOLD").length,
@@ -691,7 +696,11 @@ export default function ActionsDashboard({
           <div className="flex items-center gap-2">
             <Zap className="w-5 h-5 text-primary-400" />
             <h2 className="font-bold text-lg text-slate-100">Today&apos;s Plays</h2>
-            <span className="text-xs text-slate-500 bg-slate-800 px-2 py-0.5 rounded-full">{filteredActions.length} assets</span>
+            <span className="text-xs text-slate-500 bg-slate-800 px-2 py-0.5 rounded-full">
+              {signalFilter === "ACTIONABLE" && filteredActions.length === 0 ? "No signals" :
+               signalFilter === "ACTIONABLE" ? `${filteredActions.length} signals` :
+               `${filteredActions.length} assets`}
+            </span>
           </div>
           <span className="text-xs text-slate-500">Updated {updated}</span>
         </div>
@@ -708,14 +717,15 @@ export default function ActionsDashboard({
           <Filter className="w-3.5 h-3.5 text-slate-500" />
           
           {/* Signal Filters */}
-          {(["ALL", "BUY", "HOLD", "CORE", "UNIVERSE"] as SignalFilter[]).map(f => (
+          {(["ACTIONABLE", "ALL", "BUY", "UNIVERSE"] as SignalFilter[]).map(f => (
             <button key={f} onClick={() => setSignalFilter(f)}
               className={`px-2.5 py-1 text-xs rounded-lg font-medium transition-colors ${
                 signalFilter === f
                   ? "bg-primary-500/30 text-primary-300 border border-primary-500/50"
                   : "bg-slate-800 text-slate-500 border border-slate-700 hover:text-slate-300"
               }`}>
-              {f === "POSITIONS" ? `📦 Positions (${signalCounts.POSITIONS})` :
+              {f === "ACTIONABLE" ? `⚡ Today's Plays (${signalCounts.ACTIONABLE})` :
+               f === "POSITIONS" ? `📦 Positions (${signalCounts.POSITIONS})` :
                f === "ALL" ? `All (${signalCounts.ALL})` :
                f === "CORE" ? `Core (${signalCounts.CORE})` :
                f === "UNIVERSE" ? `Universe (${signalCounts.UNIVERSE})` :
@@ -758,7 +768,17 @@ export default function ActionsDashboard({
           {filteredActions.length === 0 ? (
             <div className="text-center py-6">
               <Shield className="w-8 h-8 text-slate-600 mx-auto mb-2" />
-              <p className="text-slate-400">No signals match filter.</p>
+              <p className="text-slate-400">
+                {signalFilter === "ACTIONABLE" ? 
+                  "No actionable signals today" : 
+                  "No signals match filter."
+                }
+              </p>
+              {signalFilter === "ACTIONABLE" && (
+                <p className="text-slate-500 text-sm mt-2">
+                  Check back later or view the full Universe for HOLD signals.
+                </p>
+              )}
             </div>
           ) : (
             <div className="overflow-x-auto">

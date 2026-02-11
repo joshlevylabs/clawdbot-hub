@@ -844,10 +844,24 @@ export default function MREDashboard() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const res = await fetch("/data/trading/mre-signals.json?" + Date.now());
-      if (!res.ok) throw new Error("Failed to fetch");
-      const json = await res.json();
-      setData(json);
+      const [coreRes, universeRes] = await Promise.all([
+        fetch("/data/trading/mre-signals.json?" + Date.now()),
+        fetch("/data/trading/mre-signals-universe.json?" + Date.now())
+      ]);
+      
+      if (!coreRes.ok) throw new Error("Failed to fetch core");
+      if (!universeRes.ok) throw new Error("Failed to fetch universe");
+      
+      const coreJson = await coreRes.json();
+      const universeJson = await universeRes.json();
+      
+      // Add universe data to core data
+      const mergedData = {
+        ...coreJson,
+        universeData: universeJson
+      };
+      
+      setData(mergedData);
       setError(null);
     } catch (e) {
       setError("Failed to load MRE signals");
@@ -886,6 +900,7 @@ export default function MREDashboard() {
   if (!data) return null;
 
   const buySignals = data.signals.by_asset_class.filter(s => s.signal === "BUY");
+  const universeBuySignals = data.universeData ? data.universeData.signals.by_asset_class.filter(s => s.signal === "BUY") : [];
   const divergedPairs = data.pairs.pairs.filter(p => p.is_diverged);
 
   return (
@@ -913,7 +928,7 @@ export default function MREDashboard() {
         </div>
 
         {/* Active Signals Alert */}
-        {(buySignals.length > 0 || divergedPairs.length > 0) && (
+        {(buySignals.length > 0 || universeBuySignals.length > 0 || divergedPairs.length > 0) && (
           <div className="bg-green-500/20 border border-green-500/50 rounded-xl p-4 mb-8">
             <div className="flex items-center gap-2 text-green-400 font-semibold mb-2">
               <Zap className="w-5 h-5" />
@@ -921,7 +936,10 @@ export default function MREDashboard() {
             </div>
             <div className="text-sm">
               {buySignals.length > 0 && (
-                <span className="mr-4">🎯 Buy: {buySignals.map(s => s.symbol).join(", ")}</span>
+                <span className="mr-4">🎯 Core Buy: {buySignals.map(s => s.symbol).join(", ")}</span>
+              )}
+              {universeBuySignals.length > 0 && (
+                <span className="mr-4">🌌 Universe Buy: {universeBuySignals.length} signals ({universeBuySignals.slice(0,5).map(s => s.symbol).join(", ")}{universeBuySignals.length > 5 ? ', ...' : ''})</span>
               )}
               {divergedPairs.length > 0 && (
                 <span>🔄 Pairs: {divergedPairs.map(p => `${p.symbol1}/${p.symbol2}`).join(", ")}</span>

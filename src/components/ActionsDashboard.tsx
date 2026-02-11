@@ -47,11 +47,38 @@ interface AssetSignal {
   signal: string;
   price: number;
   regime: string;
-  fibonacci: FibonacciLevels;
-  regime_details: RegimeDetails;
+  fibonacci?: FibonacciLevels;
+  regime_details?: RegimeDetails;
   expected_accuracy: number;
   expected_sharpe: number;
   hold_days: number;
+  // Universe-specific fields
+  signal_source?: string;
+  strategies_agreeing?: number;
+  sector?: string;
+  is_core?: boolean;
+  signal_strength?: number;
+  rsi_14?: number;
+  bb_position?: string;
+  dip_5d_pct?: number;
+  return_5d?: number;
+  momentum_20d?: number;
+  volatility_20d?: number;
+}
+
+interface UniverseData {
+  timestamp: string;
+  universe_size: number;
+  core_size: number;
+  signals: {
+    summary: { total_buy: number; total_hold: number; total_watch?: number; total_failed?: number };
+    by_asset_class: AssetSignal[];
+  };
+  fear_greed: {
+    current: number;
+    rating: string;
+  };
+  regime: { global: string };
 }
 
 interface MREData {
@@ -81,6 +108,9 @@ interface MREData {
     spy_5d_return: number;
     rsp_5d_return: number;
   };
+  // Extended with universe data
+  universeData?: UniverseData;
+  allAssets?: AssetSignal[];
 }
 
 interface Position {
@@ -137,6 +167,13 @@ interface ActionItem {
   holdDays: number;
   rationale: string;
   priority: number;
+  // Universe-specific fields
+  signalSource?: string;
+  signalStrength?: number;
+  isCore?: boolean;
+  rsi14?: number;
+  dipPercent?: number;
+  sector?: string;
 }
 
 interface ActionsDashboardProps {
@@ -147,9 +184,9 @@ interface ActionsDashboardProps {
   onAnalyze?: (symbol: string) => void;
 }
 
-type SortKey = "symbol" | "action" | "regime" | "confidence" | "currentPrice" | "pnl" | "momentum" | "assetClass" | "sharpe";
+type SortKey = "symbol" | "action" | "regime" | "confidence" | "currentPrice" | "pnl" | "momentum" | "assetClass" | "sharpe" | "signalStrength";
 type SortDir = "asc" | "desc";
-type SignalFilter = "ALL" | "BUY" | "HOLD" | "WATCH" | "WAIT" | "SELL" | "POSITIONS" | "BROAD_MARKET" | "SECTORS" | "INTERNATIONAL" | "BONDS" | "COMMODITIES";
+type SignalFilter = "ALL" | "BUY" | "HOLD" | "WATCH" | "WAIT" | "SELL" | "POSITIONS" | "BROAD_MARKET" | "SECTORS" | "INTERNATIONAL" | "BONDS" | "COMMODITIES" | "CORE" | "UNIVERSE";
 type GroupBy = "none" | "assetClass" | "regime" | "category";
 
 // ── Action generation ──────────────────────────────────────────────
@@ -158,9 +195,18 @@ function generateActions(data: MREData): ActionItem[] {
   const actions: ActionItem[] = [];
   const fg = data.fear_greed.current;
 
-  for (const asset of data.signals.by_asset_class) {
+  // Process all assets (core + universe)
+  const allAssets = data.allAssets || data.signals.by_asset_class;
+
+  for (const asset of allAssets) {
     const { symbol, price, fibonacci, regime_details, expected_accuracy, signal, expected_sharpe, hold_days } = asset;
-    const { regime, confidence, momentum_20d, regime_stage, regime_days } = regime_details;
+    
+    // Handle cases where regime_details might not exist (universe data)
+    const regime = regime_details?.regime || asset.regime || "unknown";
+    const confidence = regime_details?.confidence || 50;
+    const momentum_20d = regime_details?.momentum_20d || asset.momentum_20d || 0;
+    const regime_stage = regime_details?.regime_stage || "unknown";
+    const regime_days = regime_details?.regime_days || 0;
     
     // Get category info
     const categoryInfo = getCategoryForAsset(asset.asset_class);
@@ -175,26 +221,30 @@ function generateActions(data: MREData): ActionItem[] {
     let rationale = "";
     let priority = 3;
 
-    const entryZoneParts = fibonacci.entry_zone.split(" - ").map(Number);
-    const entryHigh = entryZoneParts[0];
+    // Handle cases where fibonacci data might not exist (universe assets)
+    const entryHigh = fibonacci?.entry_zone ? 
+      parseFloat(fibonacci.entry_zone.split(" - ")[0]) : 
+      price * 0.98; // Default to 2% below current price
 
     if (signal === "BUY") {
       action = "BUY";
       entry = price;
       entryDisplay = `$${price.toFixed(2)}`;
-      stop = fibonacci.retracements["78.6"];
+      stop = fibonacci?.retracements?.["78.6"] || price * 0.85;
       stopDisplay = `$${stop.toFixed(2)}`;
-      target = fibonacci.profit_targets[0];
+      target = fibonacci?.profit_targets?.[0] || price * 1.15;
       targetDisplay = `$${target.toFixed(2)}`;
-      rationale = `MRE BUY signal. Fear at ${fg.toFixed(0)}, ${regime} regime.`;
+      rationale = asset.signal_source ? 
+        `${asset.signal_source} BUY signal. Fear at ${fg.toFixed(0)}, ${regime} regime.` :
+        `MRE BUY signal. Fear at ${fg.toFixed(0)}, ${regime} regime.`;
       priority = 1;
     } else if (regime === "sideways") {
       action = "WATCH";
-      entry = fibonacci.nearest_resistance;
+      entry = fibonacci?.nearest_resistance || price * 1.02;
       entryDisplay = `>$${entry.toFixed(2)}`;
-      stop = fibonacci.retracements["61.8"];
+      stop = fibonacci?.retracements?.["61.8"] || price * 0.90;
       stopDisplay = `$${stop.toFixed(2)}`;
-      target = fibonacci.profit_targets[0];
+      target = fibonacci?.profit_targets?.[0] || price * 1.15;
       targetDisplay = `$${target.toFixed(2)}`;
       rationale = `Consolidating. Buy breakout above resistance.`;
       priority = 2;
@@ -206,7 +256,7 @@ function generateActions(data: MREData): ActionItem[] {
       action = "HOLD";
       entry = entryHigh;
       entryDisplay = `$${entryHigh.toFixed(2)} (dip)`;
-      target = fibonacci.profit_targets[0];
+      target = fibonacci?.profit_targets?.[0] || price * 1.10;
       targetDisplay = `$${target.toFixed(2)}`;
       rationale = `${regime} regime, ${confidence}% confidence. F&G ${fg.toFixed(0)}.`;
       priority = 3;
@@ -235,6 +285,13 @@ function generateActions(data: MREData): ActionItem[] {
       holdDays: hold_days || 10,
       rationale,
       priority,
+      // Universe-specific fields
+      signalSource: asset.signal_source,
+      signalStrength: asset.signal_strength || 0,
+      isCore: asset.is_core || false,
+      rsi14: asset.rsi_14,
+      dipPercent: asset.dip_5d_pct,
+      sector: asset.sector,
     });
   }
 
@@ -341,15 +398,32 @@ export default function ActionsDashboard({
   // Filter / sort / group state
   const [signalFilter, setSignalFilter] = useState<SignalFilter>("ALL");
   const [groupBy, setGroupBy] = useState<GroupBy>("none");
-  const [sortKey, setSortKey] = useState<SortKey>("confidence");
+  const [sortKey, setSortKey] = useState<SortKey>("signalStrength");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
 
   useEffect(() => {
     async function load() {
       try {
-        const res = await fetch("/data/trading/mre-signals.json");
-        if (!res.ok) throw new Error("Failed to load signals");
-        setData(await res.json());
+        // Load both core and universe data
+        const [coreRes, universeRes] = await Promise.all([
+          fetch("/data/trading/mre-signals.json"),
+          fetch("/data/trading/mre-signals-universe.json")
+        ]);
+        
+        if (!coreRes.ok) throw new Error("Failed to load core signals");
+        if (!universeRes.ok) throw new Error("Failed to load universe signals");
+        
+        const coreData = await coreRes.json();
+        const universeData = await universeRes.json();
+        
+        // Merge the data
+        const mergedData = {
+          ...coreData,
+          universeData,
+          allAssets: universeData.signals.by_asset_class,
+        };
+        
+        setData(mergedData);
       } catch {
         setError("Could not load market signals");
       } finally {
@@ -392,6 +466,10 @@ export default function ActionsDashboard({
       items = items.filter(a => a.category === "Fixed Income");
     } else if (signalFilter === "COMMODITIES") {
       items = items.filter(a => a.category === "Commodities");
+    } else if (signalFilter === "CORE") {
+      items = items.filter(a => a.isCore === true);
+    } else if (signalFilter === "UNIVERSE") {
+      items = items.filter(a => !a.isCore); // Show all non-core assets
     } else if (signalFilter !== "ALL") {
       items = items.filter(a => a.action === signalFilter);
     }
@@ -408,6 +486,7 @@ export default function ActionsDashboard({
         case "momentum": cmp = a.momentum - b.momentum; break;
         case "assetClass": cmp = a.assetClass.localeCompare(b.assetClass); break;
         case "sharpe": cmp = a.sharpe - b.sharpe; break;
+        case "signalStrength": cmp = (a.signalStrength || 0) - (b.signalStrength || 0); break;
       }
       return sortDir === "asc" ? cmp : -cmp;
     });
@@ -478,6 +557,8 @@ export default function ActionsDashboard({
     INTERNATIONAL: actions.filter(a => a.category === "International").length,
     BONDS: actions.filter(a => a.category === "Fixed Income").length,
     COMMODITIES: actions.filter(a => a.category === "Commodities").length,
+    CORE: actions.filter(a => a.isCore === true).length,
+    UNIVERSE: actions.filter(a => !a.isCore).length,
   };
 
   // Portfolio totals
@@ -521,6 +602,26 @@ export default function ActionsDashboard({
           <span className={item.momentum > 0 ? "text-emerald-400" : item.momentum < 0 ? "text-red-400" : "text-slate-400"}>
             {item.momentum > 0 ? "+" : ""}{item.momentum.toFixed(1)}%
           </span>
+        </td>
+        {/* Signal Strength */}
+        <td className="py-2.5 px-2 font-mono text-xs text-slate-300">
+          {item.signalStrength !== undefined ? item.signalStrength : "—"}
+        </td>
+        {/* RSI */}
+        <td className="py-2.5 px-2 font-mono text-xs text-slate-300">
+          {item.rsi14 ? item.rsi14.toFixed(1) : "—"}
+        </td>
+        {/* 5d Dip */}
+        <td className="py-2.5 px-2 font-mono text-xs">
+          {item.dipPercent ? (
+            <span className={item.dipPercent > 0 ? "text-red-400" : "text-emerald-400"}>
+              {item.dipPercent > 0 ? "+" : ""}{item.dipPercent.toFixed(1)}%
+            </span>
+          ) : "—"}
+        </td>
+        {/* Signal Source */}
+        <td className="py-2.5 px-2 text-xs text-slate-400">
+          {item.signalSource || "—"}
         </td>
         {/* Position */}
         <td className="py-2.5 px-2">
@@ -607,7 +708,7 @@ export default function ActionsDashboard({
           <Filter className="w-3.5 h-3.5 text-slate-500" />
           
           {/* Signal Filters */}
-          {(["ALL", "BUY", "POSITIONS"] as SignalFilter[]).map(f => (
+          {(["ALL", "BUY", "HOLD", "CORE", "UNIVERSE"] as SignalFilter[]).map(f => (
             <button key={f} onClick={() => setSignalFilter(f)}
               className={`px-2.5 py-1 text-xs rounded-lg font-medium transition-colors ${
                 signalFilter === f
@@ -616,6 +717,8 @@ export default function ActionsDashboard({
               }`}>
               {f === "POSITIONS" ? `📦 Positions (${signalCounts.POSITIONS})` :
                f === "ALL" ? `All (${signalCounts.ALL})` :
+               f === "CORE" ? `Core (${signalCounts.CORE})` :
+               f === "UNIVERSE" ? `Universe (${signalCounts.UNIVERSE})` :
                `${f} (${signalCounts[f]})`}
             </button>
           ))}
@@ -668,6 +771,10 @@ export default function ActionsDashboard({
                     <SortHeader label="Confidence" sortKey="confidence" currentSort={sortKey} currentDir={sortDir} onSort={handleSort} className="text-left" />
                     <SortHeader label="Price" sortKey="currentPrice" currentSort={sortKey} currentDir={sortDir} onSort={handleSort} className="text-left" />
                     <SortHeader label="Mom 20d" sortKey="momentum" currentSort={sortKey} currentDir={sortDir} onSort={handleSort} className="text-left" />
+                    <SortHeader label="Signal Str" sortKey="signalStrength" currentSort={sortKey} currentDir={sortDir} onSort={handleSort} className="text-left" />
+                    <th className="text-left py-2 px-2">RSI</th>
+                    <th className="text-left py-2 px-2">5d Dip</th>
+                    <th className="text-left py-2 px-2">Source</th>
                     <th className="text-left py-2 px-2">Position</th>
                     <SortHeader label="Total P&L" sortKey="pnl" currentSort={sortKey} currentDir={sortDir} onSort={handleSort} className="text-right" />
                     <th className="text-left py-2 px-2">Entry</th>
@@ -683,7 +790,7 @@ export default function ActionsDashboard({
                   Object.entries(groupedActions).sort().map(([group, items]) => (
                     <tbody key={group}>
                       <tr className="bg-slate-800/60">
-                        <td colSpan={(tradingEnabled ? 12 : 11) + (onAnalyze ? 1 : 0)} className="py-1.5 px-2 text-xs font-bold text-primary-400 uppercase tracking-wider">
+                        <td colSpan={(tradingEnabled ? 16 : 15) + (onAnalyze ? 1 : 0)} className="py-1.5 px-2 text-xs font-bold text-primary-400 uppercase tracking-wider">
                           {groupBy === "regime" && (group === "bull" ? "🟢 " : group === "bear" ? "🔴 " : "🟡 ")}
                           {groupBy === "category" && items.length > 0 && `${items[0].categoryIcon} `}
                           {group} ({items.length})
@@ -697,7 +804,7 @@ export default function ActionsDashboard({
                 {positions.length > 0 && (
                   <tfoot>
                     <tr className="border-t-2 border-slate-600 bg-slate-800/80">
-                      <td className="py-2.5 px-2 font-bold text-slate-100" colSpan={4}>
+                      <td className="py-2.5 px-2 font-bold text-slate-100" colSpan={8}>
                         Portfolio Total — {positions.filter(p => p.qty > 0).length} positions
                       </td>
                       <td className="py-2.5 px-2 font-mono text-sm text-slate-200">

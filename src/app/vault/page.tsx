@@ -163,9 +163,13 @@ export default function VaultPage() {
 
   // Search & filter
   const [search, setSearch] = useState("");
-  const [filterCategory, setFilterCategory] = useState<string>("all");
+  const [filterCategories, setFilterCategories] = useState<string[]>([]);
   const [filterProject, setFilterProject] = useState<string>("all");
-  const [filterApplication, setFilterApplication] = useState<string>("all");
+  const [filterApplications, setFilterApplications] = useState<string[]>([]);
+  const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false);
+  const [appDropdownOpen, setAppDropdownOpen] = useState(false);
+  const categoryDropdownRef = useRef<HTMLDivElement>(null);
+  const appDropdownRef = useRef<HTMLDivElement>(null);
 
   // Modals
   const [showAddModal, setShowAddModal] = useState(false);
@@ -410,9 +414,9 @@ export default function VaultPage() {
     setSecrets([]);
     setProjects([]);
     setSearch("");
-    setFilterCategory("all");
+    setFilterCategories([]);
     setFilterProject("all");
-    setFilterApplication("all");
+    setFilterApplications([]);
     if (idleTimer.current) clearTimeout(idleTimer.current);
     toast("Vault locked", "info");
   };
@@ -638,19 +642,44 @@ export default function VaultPage() {
     new Set(secrets.map((s) => s.application).filter((a): a is string => !!a))
   ).sort();
 
+  // Close dropdowns on outside click
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (categoryDropdownRef.current && !categoryDropdownRef.current.contains(e.target as Node)) {
+        setCategoryDropdownOpen(false);
+      }
+      if (appDropdownRef.current && !appDropdownRef.current.contains(e.target as Node)) {
+        setAppDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Toggle helpers for multi-select
+  const toggleCategory = (cat: string) => {
+    setFilterCategories((prev) =>
+      prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat]
+    );
+  };
+  const toggleApplication = (app: string) => {
+    setFilterApplications((prev) =>
+      prev.includes(app) ? prev.filter((a) => a !== app) : [...prev, app]
+    );
+  };
+
   // Filter secrets
   const filtered = secrets.filter((s) => {
     const matchSearch =
       !search ||
       s.name.toLowerCase().includes(search.toLowerCase()) ||
       (s.notes && s.notes.toLowerCase().includes(search.toLowerCase()));
-    const matchCategory = filterCategory === "all" || s.category === filterCategory;
+    const matchCategory = filterCategories.length === 0 || filterCategories.includes(s.category);
     const matchProject =
       filterProject === "all" ||
       (filterProject === "unassigned" ? !s.project_id : s.project_id === filterProject);
     const matchApplication =
-      filterApplication === "all" ||
-      (filterApplication === "none" ? !s.application : s.application === filterApplication);
+      filterApplications.length === 0 || filterApplications.includes(s.application || "");
     return matchSearch && matchCategory && matchProject && matchApplication;
   });
 
@@ -1136,9 +1165,10 @@ export default function VaultPage() {
         </div>
       </div>
 
-      {/* Search & Category Filters */}
-      <div className="flex flex-col sm:flex-row gap-3">
-        <div className="relative flex-1">
+      {/* Search & Filter Bar */}
+      <div className="flex items-center gap-3 flex-wrap">
+        {/* Search */}
+        <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
           <input
             type="text"
@@ -1148,80 +1178,136 @@ export default function VaultPage() {
             placeholder="Search secrets..."
           />
         </div>
-        <div className="flex gap-1.5 overflow-x-auto pb-1">
-          <button
-            onClick={() => setFilterCategory("all")}
-            className={`px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${
-              filterCategory === "all"
-                ? "bg-blue-600/20 text-blue-400 border border-blue-500/30"
-                : "bg-slate-800/50 text-slate-500 border border-slate-800 hover:text-slate-300"
-            }`}
-          >
-            All
-          </button>
-          {CATEGORIES.map((cat) => (
-            <button
-              key={cat.value}
-              onClick={() => setFilterCategory(cat.value)}
-              className={`px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${
-                filterCategory === cat.value
-                  ? `${cat.color} border border-current/30`
-                  : "bg-slate-800/50 text-slate-500 border border-slate-800 hover:text-slate-300"
-              }`}
-            >
-              {cat.label}
-            </button>
-          ))}
-        </div>
-      </div>
 
-      {/* Application Filter */}
-      {uniqueApplications.length > 0 && (
-        <div className="flex items-center gap-2 flex-wrap">
-          <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 mr-1">App</span>
+        {/* Category Dropdown */}
+        <div className="relative" ref={categoryDropdownRef}>
           <button
-            onClick={() => setFilterApplication("all")}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${
-              filterApplication === "all"
-                ? "bg-teal-600/20 text-teal-400 border border-teal-500/30"
-                : "bg-slate-800/50 text-slate-500 border border-slate-800 hover:text-slate-300"
+            onClick={() => { setCategoryDropdownOpen((v) => !v); setAppDropdownOpen(false); }}
+            className={`flex items-center gap-2 px-3 py-2.5 rounded-lg border text-sm font-medium transition-colors whitespace-nowrap ${
+              filterCategories.length > 0
+                ? "bg-blue-600/15 border-blue-500/30 text-blue-400"
+                : "bg-slate-900/50 border-slate-800 text-slate-400 hover:text-slate-200 hover:border-slate-700"
             }`}
           >
-            All
+            <Key className="w-4 h-4" />
+            Category
+            {filterCategories.length > 0 && (
+              <span className="ml-1 px-1.5 py-0.5 text-[10px] bg-blue-500/20 rounded-full">
+                {filterCategories.length}
+              </span>
+            )}
+            <svg className={`w-3.5 h-3.5 transition-transform ${categoryDropdownOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
           </button>
-          {uniqueApplications.map((app) => (
-            <button
-              key={app}
-              onClick={() => setFilterApplication(app)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${
-                filterApplication === app
-                  ? "bg-teal-600/20 text-teal-400 border border-teal-500/30"
-                  : "bg-slate-800/50 text-slate-500 border border-slate-800 hover:text-slate-300"
-              }`}
-            >
-              {app}
-              <span className="ml-1.5 text-[10px] opacity-60">
-                {secrets.filter((s) => s.application === app).length}
-              </span>
-            </button>
-          ))}
-          {secrets.some((s) => !s.application) && (
-            <button
-              onClick={() => setFilterApplication("none")}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${
-                filterApplication === "none"
-                  ? "bg-slate-600/20 text-slate-400 border border-slate-500/30"
-                  : "bg-slate-800/50 text-slate-600 border border-slate-800 hover:text-slate-400"
-              }`}
-            >
-              No App
-              <span className="ml-1.5 text-[10px] opacity-60">
-                {secrets.filter((s) => !s.application).length}
-              </span>
-            </button>
+
+          {categoryDropdownOpen && (
+            <div className="absolute top-full left-0 mt-1.5 w-56 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl z-50 py-1.5 max-h-72 overflow-y-auto">
+              {filterCategories.length > 0 && (
+                <button
+                  onClick={() => setFilterCategories([])}
+                  className="w-full px-3 py-1.5 text-left text-xs text-slate-500 hover:text-blue-400 transition-colors"
+                >
+                  Clear all
+                </button>
+              )}
+              {CATEGORIES.map((cat) => {
+                const CatIcon = cat.icon;
+                const isSelected = filterCategories.includes(cat.value);
+                const count = secrets.filter((s) => s.category === cat.value).length;
+                return (
+                  <button
+                    key={cat.value}
+                    onClick={() => toggleCategory(cat.value)}
+                    className="w-full flex items-center gap-2.5 px-3 py-2 hover:bg-slate-800/70 transition-colors"
+                  >
+                    <div className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 transition-colors ${
+                      isSelected ? "bg-blue-600 border-blue-500" : "border-slate-600"
+                    }`}>
+                      {isSelected && (
+                        <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                      )}
+                    </div>
+                    <CatIcon className={`w-3.5 h-3.5 shrink-0 ${isSelected ? "text-blue-400" : "text-slate-500"}`} />
+                    <span className={`text-sm flex-1 text-left ${isSelected ? "text-slate-200" : "text-slate-400"}`}>
+                      {cat.label}
+                    </span>
+                    <span className="text-xs text-slate-600">{count}</span>
+                  </button>
+                );
+              })}
+            </div>
           )}
         </div>
-      )}
+
+        {/* Application Dropdown */}
+        {uniqueApplications.length > 0 && (
+          <div className="relative" ref={appDropdownRef}>
+            <button
+              onClick={() => { setAppDropdownOpen((v) => !v); setCategoryDropdownOpen(false); }}
+              className={`flex items-center gap-2 px-3 py-2.5 rounded-lg border text-sm font-medium transition-colors whitespace-nowrap ${
+                filterApplications.length > 0
+                  ? "bg-teal-600/15 border-teal-500/30 text-teal-400"
+                  : "bg-slate-900/50 border-slate-800 text-slate-400 hover:text-slate-200 hover:border-slate-700"
+              }`}
+            >
+              <FolderOpen className="w-4 h-4" />
+              Application
+              {filterApplications.length > 0 && (
+                <span className="ml-1 px-1.5 py-0.5 text-[10px] bg-teal-500/20 rounded-full">
+                  {filterApplications.length}
+                </span>
+              )}
+              <svg className={`w-3.5 h-3.5 transition-transform ${appDropdownOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+            </button>
+
+            {appDropdownOpen && (
+              <div className="absolute top-full left-0 mt-1.5 w-56 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl z-50 py-1.5 max-h-72 overflow-y-auto">
+                {filterApplications.length > 0 && (
+                  <button
+                    onClick={() => setFilterApplications([])}
+                    className="w-full px-3 py-1.5 text-left text-xs text-slate-500 hover:text-teal-400 transition-colors"
+                  >
+                    Clear all
+                  </button>
+                )}
+                {uniqueApplications.map((app) => {
+                  const isSelected = filterApplications.includes(app);
+                  const count = secrets.filter((s) => s.application === app).length;
+                  return (
+                    <button
+                      key={app}
+                      onClick={() => toggleApplication(app)}
+                      className="w-full flex items-center gap-2.5 px-3 py-2 hover:bg-slate-800/70 transition-colors"
+                    >
+                      <div className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 transition-colors ${
+                        isSelected ? "bg-teal-600 border-teal-500" : "border-slate-600"
+                      }`}>
+                        {isSelected && (
+                          <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                        )}
+                      </div>
+                      <span className={`text-sm flex-1 text-left ${isSelected ? "text-slate-200" : "text-slate-400"}`}>
+                        {app}
+                      </span>
+                      <span className="text-xs text-slate-600">{count}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Active filter badges */}
+        {(filterCategories.length > 0 || filterApplications.length > 0) && (
+          <button
+            onClick={() => { setFilterCategories([]); setFilterApplications([]); }}
+            className="flex items-center gap-1.5 px-2.5 py-2 text-xs text-slate-500 hover:text-red-400 transition-colors"
+          >
+            <X className="w-3.5 h-3.5" />
+            Clear filters
+          </button>
+        )}
+      </div>
 
       {/* Secrets Grid */}
       {loading ? (

@@ -3,7 +3,7 @@
 **Episode #:** 3  
 **Title:** I Built an AI Trading Desk (And You Can Too)  
 **Pillar:** AI for Builders  
-**Target Length:** 28-32 minutes  
+**Target Length:** 35-38 minutes  
 **Recording Date:** TBD
 
 ---
@@ -12,6 +12,7 @@
 
 | Version | Date | Changes |
 |---------|------|---------|
+| v8 | 2026-02-13 | Major update: MRE V13 "Universe Edition" — 676 tickers, 5 strategies, overnight optimizer, paper trading status, bug war stories, expanded agent fleet |
 | v7 | 2026-02-07 | Added legal disclaimers + "Today's Plays" newsletter CTAs throughout (after intro, after Section 5, strengthened CTA section) |
 | v6 | 2026-02-07 | Merged "Why I'm Building This" + "How I Got Here" into single cohesive Section 1 |
 
@@ -29,15 +30,15 @@
 
 ## COLD OPEN (45 sec)
 
-> What if I told you that you could build your own trading desk — complete with a team of AI analysts working around the clock — for less than the cost of a Bloomberg terminal subscription?
+> What if I told you that you could build your own trading desk — covering 676 assets, running five independent strategies, with a team of AI analysts optimizing parameters overnight — for less than the cost of a Bloomberg terminal subscription?
 
 *(beat)*
 
-> I'm not talking about some get-rich-quick scheme. I'm talking about a systematic approach to trading that combines quantitative signals, market sentiment, prediction markets, and an actual fleet of AI agents that analyze, recommend, and track every trade.
+> I'm not talking about some get-rich-quick scheme. I'm talking about a systematic approach to trading that combines quantitative signals, market sentiment, prediction markets, thirty-four thousand correlated pairs, and an actual fleet of AI agents that analyze, recommend, and track every trade.
 
-> I built it. It's running right now. It scored enterprise-level results on JP Morgan's analysis framework — capable of managing over 500 million dollars in assets.
+> I built it in eight days. It's running right now. It scored enterprise-level results on JP Morgan's analysis framework — capable of managing over 500 million dollars in assets.
 
-> And today, I'm going to show you exactly how it works.
+> And today, I'm going to show you exactly how it works — including the bugs that almost blew it up.
 
 ---
 
@@ -78,6 +79,10 @@
 > I could bury my head in the sand. Pretend it's not happening. Ride the wave until it crashes.
 
 > Or I could use this window — while I still have a stable income — to build something that replaces that income before I'm forced to.
+
+> And to give you a sense of what that building actually looks like: the system I'm about to show you went through **thirteen versions in eight days.** V6 to V13. Each one a step change. V7 added prediction market data. V10 expanded from 9 assets to 25. And V13 — the "Universe Edition" — covers 676 tickers with five independent strategies and an overnight optimizer.
+
+> Eight days. Thirteen versions. That's what building with urgency looks like.
 
 **Why 60/40 Won't Save Me**
 
@@ -185,29 +190,77 @@
 
 > Think of it like the tide versus the waves. The waves crash in every direction — chaotic, loud, hard to predict. But the tide? The tide tells you whether the water is rising or falling. You can't fight the tide. Daily price action is waves. The regime is the tide.
 
-> Our system calculates regime signals for every major asset class: US stocks, international stocks, bonds, gold, healthcare, energy, real estate, technology. Each one can be in a different regime at the same time.
+> Our system now calculates regime signals for **676 individual tickers.** That's the full S&P 500, the NASDAQ-100, the Dow 30, and 159 ETFs covering every corner of the market. Each one gets its own regime classification.
 
 > For example, right now, gold is in a bull regime — it's been bullish for over 100 days. But small-cap stocks are in a bear regime. If you were blindly buying and holding everything, you'd be holding losers alongside winners. Regime awareness lets you rotate into what's working.
 
+> And here's what's wild: the full pipeline — regime detection, signal generation, all five strategies across all 676 tickers — runs in about **102 seconds.** Under two minutes to analyze the entire investable universe.
+
 ---
 
-## SECTION 3: The MRE Engine — How It Works (6 min)
+## SECTION 3: The MRE Engine — How It Works (8 min)
 
-> So how does the MRE engine actually calculate all of this? Let me walk you through the components.
+> So how does the MRE engine actually calculate all of this? Let me walk you through the components. And fair warning — this section has gotten a LOT bigger since I first built this thing.
 
-**Component 1: Fear and Greed Index**
+> When I started, the MRE had one strategy. One. The Fear and Greed Contrarian. It watched the CNN index, and when people panicked, it said buy. Simple and elegant.
+
+> Here's the problem: **the market isn't always scared or greedy.** Sometimes it's just... neutral. And during neutral markets, the Fear and Greed strategy produces exactly zero signals. I know this because I watched it happen. Days would go by. Nothing. The system was sitting there, fully built, staring at the market, saying "I have no opinion."
+
+> That's when I realized: you can't run a trading desk on a single signal. You need a portfolio of strategies the same way you need a portfolio of assets. Diversify your signals.
+
+> So now the MRE runs **five independent strategies.** Let me walk through each one.
+
+**Strategy 1: Fear and Greed Contrarian (The Original)**
 
 > We pull the CNN Fear & Greed Index daily. This is a composite of seven market indicators — volatility, market momentum, stock price strength, put/call ratio, junk bond demand, market breadth, and safe haven demand.
 
-> When the index is below 30 — extreme fear — that's historically been a buying opportunity. When it's above 70 — extreme greed — that's when you get cautious. We use this as a contrarian indicator.
+> When the index is below 30 — extreme fear — that's historically been a buying opportunity. When it's above 70 — extreme greed — that's when you get cautious. This is the classic contrarian play. It still works. It just can't be the only play.
 
-**Component 2: Regime Detection**
+**Strategy 2: Regime Confirmation**
 
-> For each asset class, we calculate regime using exponential moving averages and momentum over 100+ day windows. A bull regime means price is above key moving averages with positive momentum. Bear means the opposite.
+> This strategy buys dips within established bull regimes. If an asset has been in a confirmed bull regime and pulls back 2-5%, that's not a trend break — that's a discount. The regime confirmation strategy triggers on those dips.
 
-> But we don't just say "bull or bear" — we also calculate **confidence**. How strong is the regime? A regime with 85% confidence is very different from one with 55% confidence. This affects position sizing later.
+> Think of it as the "trust the trend" strategy. The macro environment says up. Price just got cheaper. Buy.
 
-**Component 3: Fibonacci Retracements AND Projections**
+**Strategy 3: RSI Oversold**
+
+> RSI — Relative Strength Index — is a classic technical indicator. When RSI drops below 30, the asset is "oversold." Historically, that's a mean-reversion setup. Price has been pushed too far too fast, and it tends to bounce.
+
+> This strategy catches those bounces. It's purely technical — it doesn't care about the Fear and Greed index. It doesn't care about the news. Just the math of price momentum.
+
+**Strategy 4: Mean Reversion (Bollinger Bands)**
+
+> Similar idea, different math. Bollinger Bands measure how far price has deviated from its moving average. When price touches or breaks below the lower band, it's statistically stretched. This strategy buys the snap-back.
+
+**Strategy 5: Pair Mean Reversion**
+
+> This is the fun one. The system analyzed all 676 tickers against each other and discovered **34,760 correlated pairs.** Of those, **2,654 pairs** have a correlation above 0.95 — meaning they move together more than 95% of the time.
+
+> When two highly correlated assets diverge — one drops while the other holds — that divergence tends to close. This strategy trades the convergence. It's like pairs trading at a hedge fund, except my AI found the pairs for me overnight.
+
+*(beat)*
+
+> Five strategies. Each one independent. Each one looking at the market through a different lens. When multiple strategies agree on the same asset at the same time? That's when you pay attention.
+
+**The Data Stack**
+
+> Now let me talk about what feeds these strategies, because the data layer has expanded massively.
+
+> We still use the core signals: CNN Fear & Greed, regime detection with exponential moving averages, Fibonacci retracements and projections, and prediction market data from Kalshi and Polymarket.
+
+> But we've added:
+
+> **VIX data** — 30 years of volatility history. The VIX tells you how scared the options market is. We use it for crash mode detection. When the VIX spikes above certain thresholds, the system shifts into capital preservation mode.
+
+> **Market breadth** — Two flavors. First, the RSP/SPY ratio with 23 years of history. RSP is the equal-weight S&P 500, SPY is the cap-weight. When RSP outperforms SPY, breadth is healthy — most stocks are participating. When SPY leads, the rally is narrow and fragile.
+
+> Second, **internal breadth.** We calculate what percentage of our 676 tickers are trading above their 50-day moving average. Right now? 465 out of 675 — that's 68.9%. That tells you the market is generally healthy but not euphoric. If that number drops below 40%? Something's wrong.
+
+> **Sector rotation** — We track 10 sector ETFs — technology, healthcare, energy, financials, the works. Where money is flowing between sectors tells you what regime the market is actually in, regardless of what the headlines say.
+
+> **34,760 correlated pairs** — As I mentioned, the system maps the entire correlation matrix of our universe. This isn't just for the pair strategy — it also tells us when correlations are breaking down, which is often an early warning of regime change.
+
+**Fibonacci Retracements AND Projections**
 
 > This is where it gets technical, but stay with me because this is powerful.
 
@@ -217,7 +270,7 @@
 
 > So in a bull regime, we're looking for pullbacks to retracement levels for entry, and projecting extensions for profit targets. It's math, not magic.
 
-**Component 4: Prediction Markets — Kalshi and Polymarket**
+**Prediction Markets — Kalshi and Polymarket**
 
 > Here's something most retail systems don't include: we incorporate data from prediction markets.
 
@@ -227,19 +280,13 @@
 
 > This gives us a probabilistic view of the macro environment that complements our technical analysis. If the prediction markets are pricing in 70% chance of a rate hike but our regime signals are still bullish, that's a yellow flag.
 
-**Component 5: Confidence Models and Expected Accuracy**
+**Confidence Models and Expected Accuracy**
 
 > Every signal we generate comes with a confidence score and expected accuracy — and here's how we got those numbers.
 
 > I used Clawdbot — my AI co-pilot — running cron jobs every five minutes for an **entire week straight**. The system would test a hypothesis, measure the results, identify weaknesses, and improve itself. Then test again. Hundreds of iterations, completely automated.
 
 > By the end, we had expected accuracy numbers for each asset class based on historical performance. When the regime signal for gold is bullish with these specific parameters, it's been correct 65% of the time over the past decade. That's not a guess — that's empirical.
-
-**Component 6: The Research Foundation**
-
-> The AI models powering this aren't just prompting ChatGPT. We incorporated actual quantitative research into the training.
-
-> Papers on momentum factor investing. Research on regime-switching models. Analysis of Fibonacci effectiveness in trending markets. The models understand WHY these signals work, not just what to calculate.
 
 ---
 
@@ -306,19 +353,21 @@
 
 > Now, am I managing $500 million? No. But knowing the system passed institutional-grade scrutiny matters. It's not a toy.
 
+> And since that validation, the system has gotten dramatically more sophisticated. Five strategies instead of one. 676 assets instead of 15. An overnight optimizer running hundreds of thousands of backtests. The JP Morgan framework validated the foundation — and we've built a skyscraper on it.
+
 ---
 
-## SECTION 5: Today's Plays — From Signals to Action (4 min)
+## SECTION 5: Today's Plays — From Signals to Action (5 min)
 
 > Here's the thing most people get wrong about quantitative trading: having data isn't the same as having a decision.
 
-> I've got signals for 15 different asset classes. Do I trade all of them? No. The raw signals aren't actionable — they're inputs.
+> I've got signals for **676 different tickers.** Five strategies per ticker. Do I trade all of them? Obviously not. The raw signals aren't actionable — they're inputs.
 
 > So I built a second layer: **Today's Plays.**
 
 > Today's Plays synthesizes the raw signals into four categories:
 
-> **BUY** — The signal is strong. We're in a bull regime with 70%+ confidence, momentum is positive, and the price is within 3% of our Fibonacci entry zone. Or the Fear index is below 30 and we're buying the fear.
+> **BUY** — The signal is strong. We're in a bull regime with 70%+ confidence, momentum is positive, and the price is within 3% of our Fibonacci entry zone. Or the Fear index is below 30 and we're buying the fear. Or the RSI is oversold. Or Bollinger Bands are stretched. Or a correlated pair has diverged. And ideally — multiple of these agree.
 
 > **WATCH** — Sideways regime. Could break either direction. We're watching for a breakout.
 
@@ -328,17 +377,25 @@
 
 *(beat)*
 
-> Let me give you an example from this week. GLD — the gold ETF — was showing as a BUY.
+> Let me give you an example from how the system actually plays out. GLD — the gold ETF — has been one of our strongest positions.
 
-> Why? Trump had just announced his Fed Chair pick, triggering a 5% selloff in gold. The news felt bad. But here's what the system saw:
+> Gold's regime has been bullish for over 117 days. Confidence at 85%. When Trump announced his Fed Chair pick and gold sold off 5%, the news felt bad. But here's what the system saw:
 
-> The regime had been bullish for 117 days. Confidence was 85%. Momentum was still +9.89% over 20 days. The selloff hadn't broken the trend — it had just created a discount.
-
-> And not just any discount. The price had pulled back exactly to the 38.2% Fibonacci retracement — the first major entry zone in a bull trend. Because the regime was still bullish, we weren't looking for downside targets. We were looking for upside. The Fibonacci extensions gave us clear profit targets at 127.2% and 161.8%.
+> The regime was intact. Momentum was still +9.89% over 20 days. The selloff hadn't broken the trend — it had just created a discount. Price had pulled back exactly to the 38.2% Fibonacci retracement — the first major entry zone in a bull trend.
 
 > The prediction markets confirmed it — still pricing gold-favorable outcomes despite the headline noise.
 
-> News said sell. Regime said buy the dip. We followed the regime.
+> News said sell. The regime said buy the dip. Multiple strategies agreed. We followed the regime.
+
+> GLD is now one of eight positions in the paper portfolio. More on that in a minute.
+
+**Multi-Signal Confirmation**
+
+> Here's something I learned the hard way: a single strategy saying BUY is interesting. Two strategies saying BUY is worth attention. Three or more? That's when you act.
+
+> The system now tracks how many of the five strategies agree on each signal. We call this the confirmation level — 1-of-5, 2-of-5, up to 5-of-5. The overnight optimizer actually tests which confirmation threshold works best for each asset in each regime.
+
+> Some assets trade better on single-strategy signals. Others need three strategies to agree before the edge appears. The system knows which is which.
 
 **Position Sizing**
 
@@ -360,13 +417,13 @@
 
 ---
 
-## SECTION 6: The Agent Fleet — AI That Works for You (5 min)
+## SECTION 6: The Agent Fleet — AI That Works for You (6 min)
 
 > Now here's where it gets interesting. Having a trading system is one thing. Operating it is another.
 
 > I work a full-time job. I have two kids. I can't be staring at charts all day. So I built something better: **a fleet of AI agents that manage the system for me.**
 
-> Four agents, each with a specific job:
+> Four agents, each with a specific job. But fair warning — the fourth one has leveled up dramatically.
 
 **Agent 1: The Updater**
 
@@ -394,15 +451,29 @@
 
 > The output goes to a shared document that all agents can read: "Strategy Issues." If something's broken, the Analyst finds it.
 
-**Agent 4: The Optimizer**
+**Agent 4: The Overnight Optimizer (The Beast)**
 
-> Once a week, the Optimizer takes all the feedback from the Analyst and asks: How can we improve?
+> Okay. This is the one that changed everything.
 
-> Maybe the confidence threshold for energy stocks should be higher. Maybe the Fibonacci entry zone is too tight. Maybe we should weight the prediction market data more heavily.
+> The original Optimizer ran weekly and made incremental adjustments. That was V7.
 
-> The Optimizer proposes changes, tests them against historical data, and logs improvements to a changelog. This is the same continuous improvement loop we used during that week of backtesting — now running forever.
+> The V13 Optimizer is a **five-phase quantitative pipeline** that I set running before bed and wake up to calibrated signals. Let me walk you through the phases because this is where the real engineering lives.
+
+> **Phase 1: Walk-Forward Validation.** This is the antidote to overfitting. Instead of testing on the same data you trained on — which is how you fool yourself into thinking a strategy works — we use rolling train/test windows. Train on 2020-2023. Test on 2024. Slide forward. Train on 2021-2024. Test on 2025. Only out-of-sample results count.
+
+> **Phase 2: Parameter Grid Search.** For each of the five strategies, there are tunable parameters — RSI thresholds, Bollinger Band widths, dip percentages, hold periods. The optimizer searches across all reasonable combinations. We're talking over **300,000 backtests** across the grid. Five strategies times hundreds of parameter combinations times hundreds of assets.
+
+> **Phase 3: Multi-Signal Confirmation.** Remember the 1-of-5 through 5-of-5 confirmation levels? The optimizer tests every threshold for every asset. Maybe SPY trades best when 2 strategies agree. Maybe GLD needs 3. The system figures it out empirically.
+
+> **Phase 4: Regime-Conditional Optimization.** Here's the thing — a strategy that works in a bull market might be terrible in a bear market. So we don't just find the "best" strategy. We find the **best strategy per regime per asset.** RSI Oversold might be your bull-regime play for tech stocks, but Pair Mean Reversion might be better for energy in sideways markets. The optimizer maps this entire landscape.
+
+> **Phase 5: Monte Carlo Robustness.** The final filter. We run 100 randomized trials — shuffled data, perturbed parameters, random noise — and check if the results hold. If a strategy only works with exact parameters and falls apart with small changes? It's fragile. We penalize fragile strategies and reward robust ones.
 
 *(beat)*
+
+> Five phases. 300,000+ backtests. All 676 tickers calibrated in **39 minutes.** I set it before bed. I wake up to fresh, battle-tested parameters.
+
+> That's not me staring at charts. That's a quant team working overnight while I sleep.
 
 > Here's the thing: this isn't science fiction. Every one of these agents is running right now on my Mac Mini, using Claude as the underlying model. They communicate through shared files. They have their own memory. They learn.
 
@@ -410,22 +481,85 @@
 
 ---
 
-## SECTION 7: The Dashboard — Tracking Performance (2 min)
+## SECTION 7: The Dashboard and Paper Trading — Keeping It Real (3 min)
 
 > I'm a visual person. I need to see what's happening.
 
-> So I built a dashboard that shows everything in one place:
+> So I built a dashboard — the Hub — that shows everything in one place:
 
-> - **Market Sentiment**: Fear/Greed index, global regime, prediction market signals, volatility level
-> - **Today's Plays**: The synthesized BUY/HOLD/WATCH/WAIT signals for each asset
-> - **Paper Portfolio**: All open positions, pending orders, cash balance
+> - **Market Sentiment**: Fear/Greed index, global regime, prediction market signals, volatility level, VIX status
+> - **Today's Plays**: The synthesized BUY/HOLD/WATCH/WAIT signals across all 676 tickers
+> - **Universe Table**: Searchable, filterable, sortable. You can find any ticker instantly. Color-coded by category — stocks, ETFs, sectors. Filter bars to slice by regime, strategy, or signal strength.
+> - **Paper Portfolio**: All open positions, live P&L synced with Alpaca every 5 minutes
 > - **Performance Chart**: My equity curve vs. SPY, the benchmark
 
 > One-click trading. I see a BUY signal, I click the button, and the system calculates position size based on confidence, sets the stop-loss and take-profit using Fibonacci levels, and queues the trade.
 
 > Everything persists. Every trade is logged. Every decision is traceable.
 
-> Right now, the system just started — I'm paper trading to validate before going live. But the infrastructure is there. When the paper trades prove out, I flip a switch and it's real money.
+*(beat)*
+
+> Now let me be honest about the paper trading, because I think transparency matters more than ego.
+
+> I started paper trading on February 9th with $100,000. As of right now, the portfolio is at **$99,340.** That's a drawdown of about **6.45%.**
+
+> Eight open positions: SPY, EFA, GLD, TLT, VNQ, XLE, XLF, XLV. That's broad market, international, gold, bonds, real estate, energy, financials, and healthcare. The system diversified across asset classes exactly like it should.
+
+> All positions were opened with 10-day hold targets. The market has been soft since then — a general pullback. So the drawdown is partially market conditions.
+
+> But here's why I'm telling you this: **this is what building in public looks like.** I didn't wait for a perfect month of gains to tell you about the system. I'm telling you about it while it's down 6.45%.
+
+> If I only shared when things were going well, I'd be lying to you. And there are plenty of other podcasts that will lie to you. This isn't one of them.
+
+> The question isn't whether the system has a bad week. Every system does. The question is whether the process is sound and whether the drawdowns are within expected parameters. A 6.45% drawdown with 8 diversified positions in a soft market? That's not a system failure. That's reality.
+
+> When the paper trades prove out over a meaningful sample — months, not weeks — I flip a switch and it's real money.
+
+---
+
+## SECTION 8: The Bug War Stories — What Almost Went Wrong (3 min)
+
+> I want to tell you about some bugs, because this is the part most people building in public skip. They show you the dashboard. They show you the architecture diagram. They don't show you the 2 AM debugging sessions.
+
+*(beat)*
+
+> **Bug Number One: The Five-Minute Hold.**
+
+> In V8, I discovered that the system was counting hold days in **poll cycles** instead of calendar days. The Updater runs every 68 seconds. And the hold days calculation was incrementing by one each time the Updater ran. So when the system said "hold for 5 days," it was actually holding for 5 poll cycles — **five and a half minutes.**
+
+> The result? The system executed **50 rapid trades on QQQ.** Bought, sold, bought, sold, over and over. Lost $5,356 in a single afternoon of churn. And because it executed that many round trips in a day, it triggered the **Pattern Day Trader flag** on the account.
+
+> In a paper trading account, that's embarrassing. In a real account, that's catastrophic. The PDT flag locks you out of trading for 90 days unless you maintain $25,000 minimum equity.
+
+> All because of a unit conversion error. Minutes versus days. The most classic engineering bug there is.
+
+*(beat)*
+
+> **Bug Number Two: The Rogue Dashboard.**
+
+> This one was subtle. The dashboard was supposed to display the signals from the MRE engine. Just display them. Read the data, show the data.
+
+> Except somewhere along the way, the dashboard started generating its own signals. It had its own logic for when to buy and sell — completely separate from the MRE engine. So the MRE would say HOLD, and the dashboard would say BUY, and trades would execute based on the dashboard's logic.
+
+> Two brains, one account. The MRE was being overridden by its own UI. I was debugging the engine looking for problems, and the problem was in the frontend.
+
+*(beat)*
+
+> **Bug Number Three: Cross-Strategy Conflicts.**
+
+> When you go from one strategy to five, you can get situations where Strategy A says BUY on SPY and Strategy B says BUY on SPY — but with different parameters. Different entry prices. Different stop-losses. Different hold periods.
+
+> Both would try to execute. On a shared account. With conflicting stop-losses. So one strategy's stop-loss would trigger the other strategy's position to close prematurely.
+
+> The fix was a position-level deconfliction layer — essentially a referee that says "only one active position per symbol, and the Optimizer decides which strategy owns it."
+
+*(beat)*
+
+> Why am I telling you this? Because **this is what real building looks like.** The architecture diagram is clean. The live system is messy. The gap between those two things is where the learning happens.
+
+> Every one of these bugs made the system better. The hold-days bug taught me to always validate units. The dashboard bug taught me to enforce clear data flow — the engine decides, the dashboard displays, period. The cross-strategy bug taught me that adding capabilities requires adding coordination.
+
+> If you're building anything — a trading system, a SaaS app, a startup — you will hit bugs like these. The question isn't whether you'll hit them. It's whether you'll fix them and keep going.
 
 ---
 
@@ -439,29 +573,35 @@
 
 > Notice what it doesn't say. It doesn't say the plans of the talented. It doesn't say the plans of the lucky. It says the diligent.
 
-> Diligence is showing up every day. It's building systems that work while you sleep. It's not chasing the hot stock tip — it's following a process. It's running backtests for a week straight because you want to get it right.
+> Diligence is showing up every day. It's building systems that work while you sleep. It's not chasing the hot stock tip — it's following a process. It's running 300,000 backtests overnight because you want to get it right. It's counting hold days in actual days, not poll cycles.
 
 > That's what this system is about. Not getting rich quick. Not gambling. But diligently applying wisdom to decisions, removing emotion, and trusting the process.
 
-> Work done in secret has its own reward. The agents run whether I'm watching or not. The system compounds whether I check it or not.
+> Thirteen versions in eight days. Every version better than the last. Each bug found and fixed. Not because I'm talented — because I kept showing up.
+
+> Work done in secret has its own reward. The agents run whether I'm watching or not. The system compounds whether I check it or not. The optimizer calibrates 676 tickers while I sleep.
 
 > That's the goal. Build once. Let it work. Focus on what matters — family, craft, calling.
 
 ---
 
-## RECAP & TAKEAWAYS (1.5 min)
+## RECAP & TAKEAWAYS (2 min)
 
-> Let's bring it home. Five things to remember from today:
+> Let's bring it home. Seven things to remember from today:
 
 1. **Buy and hold isn't always safe.** Asset rotation — moving between what's working — can protect you during downturns and capture upside during recoveries. Chris Vermeulen's work opened my eyes to this.
 
 2. **Regime signals cut through the noise.** Don't react to daily headlines. Read the underlying trend. Bull, bear, or sideways — position accordingly.
 
-3. **Combine technical analysis with prediction markets.** Fibonacci retracements give you entry points. Projections give you targets. Kalshi and Polymarket give you probabilistic views on macro events. Together, they're powerful.
+3. **One strategy isn't enough.** The Fear and Greed Contrarian produced zero signals in neutral markets. Five strategies — technical, contrarian, mean reversion, pairs — give you coverage in all market conditions. Diversify your signals like you diversify your assets.
 
 4. **Validate with institutional-grade frameworks.** We didn't just guess that our system works — we proved it. 4,100 backtests. 65.6% buy accuracy. Sharpe ratio of 1.13. JP Morgan's framework rated it deployable at $100-500 million scale.
 
-5. **AI agents can manage complexity for you.** You don't need to watch the market all day. Build a team of specialized agents — updater, advisor, analyst, optimizer — and let them do the work.
+5. **Bugs are features in disguise.** The five-minute hold bug, the rogue dashboard, the cross-strategy conflicts — every one of them made the system better. Build, break, fix, repeat. That's the process.
+
+6. **AI agents can manage complexity for you.** You don't need to watch the market all day. Build a team of specialized agents — updater, advisor, analyst, optimizer — and let them do the work. The overnight optimizer runs 300,000+ backtests across 676 tickers in 39 minutes. That's a quant team for $50 a month.
+
+7. **Be honest about where you are.** I'm down 6.45% on the paper portfolio. That's real. I didn't wait for a win streak to tell you about this system. Building in public means showing the drawdowns too.
 
 ---
 
@@ -469,17 +609,17 @@
 
 > If you want to follow this experiment in real-time, subscribe to **"Today's Plays"** — my daily newsletter where I publish the MRE system's signals before market open.
 
-> Every day, you'll see: What's showing BUY. What's in HOLD mode. What the confidence levels are. What the Fibonacci entry zones and targets look like.
+> Every day, you'll see: What's showing BUY across 676 tickers. What's in HOLD mode. What the confidence levels are. What the Fibonacci entry zones and targets look like. Which strategies are agreeing.
 
 > And more importantly, you'll see the results. Did the signals work? What's the running accuracy? Am I beating buy-and-hold, or am I fooling myself?
 
-> This is a live experiment. I'm not cherry-picking wins. I'm showing you everything — the good, the bad, and the lessons learned. If this system is going to replace my income in 5-10 years, I need to know if it actually works. And now you can follow along.
+> This is a live experiment. I'm not cherry-picking wins. I'm showing you everything — the good, the bad, and the bugs that made me lose $5,000 in five minutes. If this system is going to replace my income in 5-10 years, I need to know if it actually works. And now you can follow along.
 
 > Link is in the show notes. It's free.
 
 > **One more time for the lawyers:** I am not a financial advisor. This is not financial advice. Everything I'm sharing is experimental and educational. Don't trade based on my signals. Do your own research. Past performance doesn't guarantee anything. You can lose money.
 
-> But if you're curious about the process — the architecture, the code, the agent configurations, the research papers — that's all in the newsletter too. Subscribe and I'll send it to you.
+> But if you're curious about the process — the architecture, the code, the agent configurations, the five strategies, the overnight optimizer — that's all in the newsletter too. Subscribe and I'll send it to you.
 
 > And if you're building something similar — trading, research, operations — I'd love to hear about it. Reply to the newsletter or find me on X. Let's compare notes.
 
@@ -494,24 +634,33 @@
 ## POST-RECORD NOTES
 
 **Clips to extract:**
-- [ ] Cold open (0:00-0:45) — "What if I told you..."
+- [ ] Cold open (0:00-0:45) — "676 assets, five strategies..."
 - [ ] Buy and hold is dangerous — "Thirteen years of waiting"
 - [ ] Chris Vermeulen insight — "You don't need to predict the future"
 - [ ] Regime explanation — "Tide versus waves"
+- [ ] "Zero signals in neutral markets" — Why one strategy isn't enough
+- [ ] Five strategies walkthrough — "Each one looking through a different lens"
+- [ ] 34,760 correlated pairs — "My AI found the pairs for me overnight"
 - [ ] Fibonacci retracements vs projections — "Three points to predict"
 - [ ] JP Morgan stats — "65.6% buy accuracy, Sharpe of 1.13"
 - [ ] Capacity estimate — "$100 million to $500 million deployable"
 - [ ] Kalshi accuracy — "96.6% accurate in directional calls"
-- [ ] The GLD example — "While everyone was panicking..."
+- [ ] The GLD example — "News said sell. The regime said buy the dip."
+- [ ] Five-minute hold bug — "50 rapid QQQ trades, $5,356 lost"
+- [ ] Rogue dashboard bug — "Two brains, one account"
+- [ ] Overnight Optimizer — "300,000 backtests, 39 minutes, while I sleep"
 - [ ] Agent fleet overview — "Four agents, each with a specific job"
 - [ ] The Advisor override — "Here's the key..."
+- [ ] Paper trading honesty — "Down 6.45%. That's real."
 - [ ] Faith tie-in — "The plans of the diligent..."
+- [ ] Version velocity — "Thirteen versions in eight days"
 
 **Keywords for SEO:**
 - AI trading system
 - Asset rotation strategy
 - Chris Vermeulen
 - Regime trading
+- Multi-strategy quantitative trading
 - Fibonacci retracement projection
 - Prediction markets trading
 - Kalshi Polymarket
@@ -519,8 +668,16 @@
 - Institutional trading system
 - AI agents automation
 - Claude AI trading
+- Overnight parameter optimization
+- Walk-forward validation
+- Monte Carlo robustness
+- Pair trading correlation
+- RSI oversold strategy
+- Bollinger Bands mean reversion
+- Paper trading portfolio
+- Building in public
 
-**Estimated runtime:** 32 minutes (4,800 words at 150 wpm)
+**Estimated runtime:** 37 minutes (~5,550 words at 150 wpm)
 
 **Attachments:**
 - jpm_institutional_analysis.json — Full JP Morgan analysis report

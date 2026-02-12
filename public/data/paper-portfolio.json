@@ -13,7 +13,18 @@
       "cash": 100000,
       "spy_price": 690.62,
       "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-02-12",
+      "equity": 100000,
+      "cash": 100000,
+      "spy_price": 681.27,
+      "spy_baseline": 690.62,
+      "spy_return_pct": -1.35,
+      "portfolio_return_pct": 0.0,
+      "alpha_pct": 1.35,
+      "note": "F&G dropped to FEAR (36.8). SPY -1.35% since inception. Cash outperforming."
     }
   ],
-  "updated_at": "2026-02-06T15:17:00-08:00"
+  "updated_at": "2026-02-12T14:04:07.283079"
 }

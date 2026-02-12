@@ -364,8 +364,8 @@ export default function MarriagePage() {
       const checkin = getCheckinForDate(date);
       
       // Calculate interaction stats
-      const interactionPower = dayInteractions.reduce((sum, i) => sum + i.compass.power, 0);
-      const interactionSafety = dayInteractions.reduce((sum, i) => sum + i.compass.safety, 0);
+      const interactionPower = dayInteractions.reduce((sum, i) => sum + (i.compass?.power ?? 0), 0);
+      const interactionSafety = dayInteractions.reduce((sum, i) => sum + (i.compass?.safety ?? 0), 0);
       const interactionCount = dayInteractions.length;
       const positive = dayInteractions.filter(i => i.type === "positive").length;
       const negative = dayInteractions.filter(i => i.type === "negative").length;
@@ -389,8 +389,8 @@ export default function MarriagePage() {
         const prevInteractionCount = prevInteractions.length;
         const prevTotalEntries = prevInteractionCount + (prevCheckin ? 1 : 0);
         if (prevTotalEntries > 0) {
-          const prevTotalPower = prevInteractions.reduce((sum, i) => sum + i.compass.power, 0) + (prevCheckin ? prevCheckin.power : 0);
-          const prevTotalSafety = prevInteractions.reduce((sum, i) => sum + i.compass.safety, 0) + (prevCheckin ? prevCheckin.safety : 0);
+          const prevTotalPower = prevInteractions.reduce((sum, i) => sum + i.compass?.power ?? 0, 0) + (prevCheckin ? prevCheckin.power : 0);
+          const prevTotalSafety = prevInteractions.reduce((sum, i) => sum + i.compass?.safety ?? 0, 0) + (prevCheckin ? prevCheckin.safety : 0);
           prevPower = prevTotalPower / prevTotalEntries;
           prevSafety = prevTotalSafety / prevTotalEntries;
         }
@@ -436,8 +436,8 @@ export default function MarriagePage() {
     
     return weeks.map((weekStart, idx) => {
       const weekInteractions = byWeek[weekStart];
-      const weekPower = weekInteractions.reduce((sum, i) => sum + i.compass.power, 0);
-      const weekSafety = weekInteractions.reduce((sum, i) => sum + i.compass.safety, 0);
+      const weekPower = weekInteractions.reduce((sum, i) => sum + i.compass?.power ?? 0, 0);
+      const weekSafety = weekInteractions.reduce((sum, i) => sum + i.compass?.safety ?? 0, 0);
       const weekCount = weekInteractions.length;
       const positive = weekInteractions.filter(i => i.type === "positive").length;
       const negative = weekInteractions.filter(i => i.type === "negative").length;
@@ -450,8 +450,8 @@ export default function MarriagePage() {
         const prevInteractions = byWeek[prevWeekKey];
         const prevCount = prevInteractions.length;
         if (prevCount > 0) {
-          prevPower = prevInteractions.reduce((sum, i) => sum + i.compass.power, 0) / prevCount;
-          prevSafety = prevInteractions.reduce((sum, i) => sum + i.compass.safety, 0) / prevCount;
+          prevPower = prevInteractions.reduce((sum, i) => sum + i.compass?.power ?? 0, 0) / prevCount;
+          prevSafety = prevInteractions.reduce((sum, i) => sum + i.compass?.safety ?? 0, 0) / prevCount;
         }
       }
       
@@ -495,8 +495,8 @@ export default function MarriagePage() {
     
     return months.map((monthKey, idx) => {
       const monthInteractions = byMonth[monthKey];
-      const monthPower = monthInteractions.reduce((sum, i) => sum + i.compass.power, 0);
-      const monthSafety = monthInteractions.reduce((sum, i) => sum + i.compass.safety, 0);
+      const monthPower = monthInteractions.reduce((sum, i) => sum + i.compass?.power ?? 0, 0);
+      const monthSafety = monthInteractions.reduce((sum, i) => sum + i.compass?.safety ?? 0, 0);
       const monthCount = monthInteractions.length;
       const positive = monthInteractions.filter(i => i.type === "positive").length;
       const negative = monthInteractions.filter(i => i.type === "negative").length;
@@ -509,8 +509,8 @@ export default function MarriagePage() {
         const prevInteractions = byMonth[prevMonthKey];
         const prevCount = prevInteractions.length;
         if (prevCount > 0) {
-          prevPower = prevInteractions.reduce((sum, i) => sum + i.compass.power, 0) / prevCount;
-          prevSafety = prevInteractions.reduce((sum, i) => sum + i.compass.safety, 0) / prevCount;
+          prevPower = prevInteractions.reduce((sum, i) => sum + i.compass?.power ?? 0, 0) / prevCount;
+          prevSafety = prevInteractions.reduce((sum, i) => sum + i.compass?.safety ?? 0, 0) / prevCount;
         }
       }
       
@@ -1457,13 +1457,13 @@ export default function MarriagePage() {
                             </div>
                             <div className="text-right text-xs space-y-1">
                               <div className="text-slate-500">
-                                P: <span className={interaction.compass.power >= 0 ? "text-blue-400" : "text-yellow-400"}>
-                                  {interaction.compass.power > 0 ? "+" : ""}{interaction.compass.power}
+                                P: <span className={interaction.compass?.power ?? 0 >= 0 ? "text-blue-400" : "text-yellow-400"}>
+                                  {interaction.compass?.power ?? 0 > 0 ? "+" : ""}{interaction.compass?.power ?? 0}
                                 </span>
                               </div>
                               <div className="text-slate-500">
-                                S: <span className={interaction.compass.safety >= 0 ? "text-purple-400" : "text-red-400"}>
-                                  {interaction.compass.safety > 0 ? "+" : ""}{interaction.compass.safety}
+                                S: <span className={interaction.compass?.safety ?? 0 >= 0 ? "text-purple-400" : "text-red-400"}>
+                                  {interaction.compass?.safety ?? 0 > 0 ? "+" : ""}{interaction.compass?.safety ?? 0}
                                 </span>
                               </div>
                             </div>
@@ -1588,13 +1588,13 @@ export default function MarriagePage() {
                             </div>
                             <div className="text-right text-xs space-y-1">
                               <div className="text-slate-500">
-                                P: <span className={interaction.compass.power >= 0 ? "text-blue-400" : "text-yellow-400"}>
-                                  {interaction.compass.power > 0 ? "+" : ""}{interaction.compass.power}
+                                P: <span className={interaction.compass?.power ?? 0 >= 0 ? "text-blue-400" : "text-yellow-400"}>
+                                  {interaction.compass?.power ?? 0 > 0 ? "+" : ""}{interaction.compass?.power ?? 0}
                                 </span>
                               </div>
                               <div className="text-slate-500">
-                                S: <span className={interaction.compass.safety >= 0 ? "text-purple-400" : "text-red-400"}>
-                                  {interaction.compass.safety > 0 ? "+" : ""}{interaction.compass.safety}
+                                S: <span className={interaction.compass?.safety ?? 0 >= 0 ? "text-purple-400" : "text-red-400"}>
+                                  {interaction.compass?.safety ?? 0 > 0 ? "+" : ""}{interaction.compass?.safety ?? 0}
                                 </span>
                               </div>
                             </div>
@@ -1719,13 +1719,13 @@ export default function MarriagePage() {
                             </div>
                             <div className="text-right text-xs space-y-1">
                               <div className="text-slate-500">
-                                P: <span className={interaction.compass.power >= 0 ? "text-blue-400" : "text-yellow-400"}>
-                                  {interaction.compass.power > 0 ? "+" : ""}{interaction.compass.power}
+                                P: <span className={interaction.compass?.power ?? 0 >= 0 ? "text-blue-400" : "text-yellow-400"}>
+                                  {interaction.compass?.power ?? 0 > 0 ? "+" : ""}{interaction.compass?.power ?? 0}
                                 </span>
                               </div>
                               <div className="text-slate-500">
-                                S: <span className={interaction.compass.safety >= 0 ? "text-purple-400" : "text-red-400"}>
-                                  {interaction.compass.safety > 0 ? "+" : ""}{interaction.compass.safety}
+                                S: <span className={interaction.compass?.safety ?? 0 >= 0 ? "text-purple-400" : "text-red-400"}>
+                                  {interaction.compass?.safety ?? 0 > 0 ? "+" : ""}{interaction.compass?.safety ?? 0}
                                 </span>
                               </div>
                             </div>

@@ -122,7 +122,12 @@
       "resolution": "neutral - ended without resolution but without escalation",
       "love_language_opportunity": null,
       "notes": "Values/faith discussion. Important to revisit gently. She heard him but may need processing time.",
-      "follow_up": "Give space. Consider a quality time gesture tomorrow without bringing up topic."
+      "follow_up": "Give space. Consider a quality time gesture tomorrow without bringing up topic.",
+      "compass": {
+        "power": 1,
+        "safety": 1
+      },
+      "id": "legacy-c12f4129be67"
     },
     {
       "date": "2026-02-06",
@@ -134,7 +139,12 @@
       "resolution": "none - she went to bed",
       "love_language_opportunity": "Acts of service tomorrow (bring her tea/meds if sick, take load off her)",
       "notes": "Follows earlier values conversation. Could be processing that, could genuinely be sick, could be both. Don't assume causation.",
-      "follow_up": "Morning: check on her health genuinely. If she's sick, serve. If not, gentle presence without pressure."
+      "follow_up": "Morning: check on her health genuinely. If she's sick, serve. If not, gentle presence without pressure.",
+      "compass": {
+        "power": 0,
+        "safety": -1
+      },
+      "id": "legacy-1ff3de11fb6c"
     },
     {
       "date": "2026-02-06",
@@ -146,7 +156,12 @@
       "resolution": "positive connection before sleep",
       "love_language_opportunity": "She gave acts of service. Receive it gratefully. Reciprocate quality time after.",
       "notes": "Good sign after earlier distance. She's reaching out in her way. The distance may have been more about feeling sick than the earlier conversation.",
-      "follow_up": "Accept the gym offer enthusiastically. Come back energized and present for her."
+      "follow_up": "Accept the gym offer enthusiastically. Come back energized and present for her.",
+      "compass": {
+        "power": 1,
+        "safety": 2
+      },
+      "id": "legacy-b1a23ebff2b7"
     }
   ],
   "compassHistory": []

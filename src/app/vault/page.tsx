@@ -165,6 +165,7 @@ export default function VaultPage() {
   const [search, setSearch] = useState("");
   const [filterCategory, setFilterCategory] = useState<string>("all");
   const [filterProject, setFilterProject] = useState<string>("all");
+  const [filterApplication, setFilterApplication] = useState<string>("all");
 
   // Modals
   const [showAddModal, setShowAddModal] = useState(false);
@@ -411,6 +412,7 @@ export default function VaultPage() {
     setSearch("");
     setFilterCategory("all");
     setFilterProject("all");
+    setFilterApplication("all");
     if (idleTimer.current) clearTimeout(idleTimer.current);
     toast("Vault locked", "info");
   };
@@ -631,6 +633,11 @@ export default function VaultPage() {
   const getSecretCountForProject = (projectId: string | null) =>
     secrets.filter((s) => (projectId === null ? !s.project_id : s.project_id === projectId)).length;
 
+  // Unique applications for filter
+  const uniqueApplications = Array.from(
+    new Set(secrets.map((s) => s.application).filter((a): a is string => !!a))
+  ).sort();
+
   // Filter secrets
   const filtered = secrets.filter((s) => {
     const matchSearch =
@@ -641,7 +648,10 @@ export default function VaultPage() {
     const matchProject =
       filterProject === "all" ||
       (filterProject === "unassigned" ? !s.project_id : s.project_id === filterProject);
-    return matchSearch && matchCategory && matchProject;
+    const matchApplication =
+      filterApplication === "all" ||
+      (filterApplication === "none" ? !s.application : s.application === filterApplication);
+    return matchSearch && matchCategory && matchProject && matchApplication;
   });
 
   /* ─── LOADING STATE ─── */
@@ -1164,6 +1174,54 @@ export default function VaultPage() {
           ))}
         </div>
       </div>
+
+      {/* Application Filter */}
+      {uniqueApplications.length > 0 && (
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 mr-1">App</span>
+          <button
+            onClick={() => setFilterApplication("all")}
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${
+              filterApplication === "all"
+                ? "bg-teal-600/20 text-teal-400 border border-teal-500/30"
+                : "bg-slate-800/50 text-slate-500 border border-slate-800 hover:text-slate-300"
+            }`}
+          >
+            All
+          </button>
+          {uniqueApplications.map((app) => (
+            <button
+              key={app}
+              onClick={() => setFilterApplication(app)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${
+                filterApplication === app
+                  ? "bg-teal-600/20 text-teal-400 border border-teal-500/30"
+                  : "bg-slate-800/50 text-slate-500 border border-slate-800 hover:text-slate-300"
+              }`}
+            >
+              {app}
+              <span className="ml-1.5 text-[10px] opacity-60">
+                {secrets.filter((s) => s.application === app).length}
+              </span>
+            </button>
+          ))}
+          {secrets.some((s) => !s.application) && (
+            <button
+              onClick={() => setFilterApplication("none")}
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${
+                filterApplication === "none"
+                  ? "bg-slate-600/20 text-slate-400 border border-slate-500/30"
+                  : "bg-slate-800/50 text-slate-600 border border-slate-800 hover:text-slate-400"
+              }`}
+            >
+              No App
+              <span className="ml-1.5 text-[10px] opacity-60">
+                {secrets.filter((s) => !s.application).length}
+              </span>
+            </button>
+          )}
+        </div>
+      )}
 
       {/* Secrets Grid */}
       {loading ? (

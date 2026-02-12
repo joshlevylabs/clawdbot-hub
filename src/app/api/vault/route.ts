@@ -19,24 +19,37 @@ async function checkAuth(request: NextRequest): Promise<boolean> {
 
 // GET /api/vault — list all secrets (encrypted blobs only, never plaintext)
 export async function GET(request: NextRequest) {
-  if (!(await checkAuth(request))) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  try {
+    const authed = await checkAuth(request);
+    if (!authed) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+  } catch (e) {
+    console.error('[vault] auth error:', e);
+    return NextResponse.json({ error: 'Auth check failed', detail: String(e) }, { status: 500 });
   }
 
   if (!supabase) {
-    return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
+    console.error('[vault] supabase not configured', { url: !!supabaseUrl, key: !!supabaseServiceKey });
+    return NextResponse.json({ error: 'Database not configured', detail: `url=${!!supabaseUrl} key=${!!supabaseServiceKey}` }, { status: 500 });
   }
 
-  const { data, error } = await supabase
-    .from('secrets')
-    .select('id, name, category, encrypted_value, iv, salt, notes, project_id, created_at, updated_at')
-    .order('created_at', { ascending: false });
+  try {
+    const { data, error } = await supabase
+      .from('secrets')
+      .select('id, name, category, encrypted_value, iv, salt, notes, project_id, created_at, updated_at')
+      .order('created_at', { ascending: false });
 
-  if (error) {
-    return NextResponse.json({ error: 'Failed to fetch secrets', detail: error.message }, { status: 500 });
+    if (error) {
+      console.error('[vault] supabase error:', error);
+      return NextResponse.json({ error: 'Failed to fetch secrets', detail: error.message }, { status: 500 });
+    }
+
+    return NextResponse.json({ secrets: data });
+  } catch (e) {
+    console.error('[vault] unexpected error:', e);
+    return NextResponse.json({ error: 'Unexpected error', detail: String(e) }, { status: 500 });
   }
-
-  return NextResponse.json({ secrets: data });
 }
 
 // POST /api/vault — create a new secret (receives already-encrypted data)

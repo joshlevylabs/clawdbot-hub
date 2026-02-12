@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
 
   if (!isSupabaseConfigured()) {
     
-    return NextResponse.json({ error: 'Database not configured', detail: `url=${!!supabaseUrl} key=${!!supabaseServiceKey}` }, { status: 500 });
+    return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
   }
 
   try {

@@ -52,7 +52,7 @@ interface Project {
   updated_at: string;
 }
 
-type Category = "api_key" | "token" | "password" | "ssh_key" | "certificate" | "other";
+type Category = "api_key" | "token" | "password" | "ssh_key" | "certificate" | "secret" | "address" | "id" | "other";
 
 const CATEGORIES: { value: Category; label: string; color: string; icon: typeof Key }[] = [
   { value: "api_key", label: "API Key", color: "bg-blue-500/20 text-blue-400", icon: Key },
@@ -60,6 +60,9 @@ const CATEGORIES: { value: Category; label: string; color: string; icon: typeof 
   { value: "password", label: "Password", color: "bg-amber-500/20 text-amber-400", icon: Lock },
   { value: "ssh_key", label: "SSH Key", color: "bg-emerald-500/20 text-emerald-400", icon: FileKey },
   { value: "certificate", label: "Certificate", color: "bg-rose-500/20 text-rose-400", icon: Award },
+  { value: "secret", label: "Secret", color: "bg-indigo-500/20 text-indigo-400", icon: EyeOff },
+  { value: "address", label: "Address", color: "bg-cyan-500/20 text-cyan-400", icon: FolderOpen },
+  { value: "id", label: "ID", color: "bg-orange-500/20 text-orange-400", icon: Shield },
   { value: "other", label: "Other", color: "bg-slate-500/20 text-slate-400", icon: KeyRound },
 ];
 
@@ -77,7 +80,7 @@ const PRESET_COLORS = [
 const IDLE_TIMEOUT_MS = 5 * 60 * 1000; // 5 minutes
 
 function getCategoryInfo(cat: string) {
-  return CATEGORIES.find((c) => c.value === cat) || CATEGORIES[5];
+  return CATEGORIES.find((c) => c.value === cat) || CATEGORIES[CATEGORIES.length - 1];
 }
 
 function formatDate(iso: string) {

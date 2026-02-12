@@ -13,6 +13,8 @@ import {
   X,
   Search,
   Shield,
+  ShieldCheck,
+  ShieldOff,
   Key,
   KeyRound,
   FileKey,
@@ -22,6 +24,7 @@ import {
   AlertCircle,
   FolderOpen,
   Palette,
+  Loader2,
 } from "lucide-react";
 import { encrypt, decrypt } from "@/lib/vault-crypto";
 
@@ -121,8 +124,31 @@ function ToastContainer({ toasts, dismiss }: { toasts: Toast[]; dismiss: (id: nu
   );
 }
 
+/* ─── TOTP Status ─── */
+interface TOTPStatus {
+  enabled: boolean;
+  setupRequired: boolean;
+  verified: boolean;
+}
+
 /* ─── Main Component ─── */
 export default function VaultPage() {
+  // TOTP state
+  const [totpLoading, setTotpLoading] = useState(true);
+  const [totpStatus, setTotpStatus] = useState<TOTPStatus | null>(null);
+  const [totpSetupUri, setTotpSetupUri] = useState<string | null>(null);
+  const [totpSetupSecret, setTotpSetupSecret] = useState<string | null>(null);
+  const [totpQrDataUrl, setTotpQrDataUrl] = useState<string | null>(null);
+  const [totpCode, setTotpCode] = useState("");
+  const [totpError, setTotpError] = useState("");
+  const [totpSubmitting, setTotpSubmitting] = useState(false);
+  const [totpSetupStarted, setTotpSetupStarted] = useState(false);
+
+  // 2FA settings in unlocked view
+  const [showDisable2FA, setShowDisable2FA] = useState(false);
+  const [disableCode, setDisableCode] = useState("");
+  const [disabling2FA, setDisabling2FA] = useState(false);
+
   // Auth & state
   const [masterPassword, setMasterPassword] = useState<string | null>(null);
   const [passwordInput, setPasswordInput] = useState("");
@@ -175,6 +201,136 @@ export default function VaultPage() {
   const dismissToast = useCallback((id: number) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   }, []);
+
+  // ─── TOTP check on page load ───
+  useEffect(() => {
+    async function checkTOTP() {
+      try {
+        const res = await fetch("/api/vault/totp");
+        if (!res.ok) {
+          // If API fails (e.g. table doesn't exist), skip TOTP
+          setTotpStatus({ enabled: false, setupRequired: false, verified: true });
+          return;
+        }
+        const data = await res.json();
+        setTotpStatus(data);
+      } catch {
+        // Network error — skip TOTP gate
+        setTotpStatus({ enabled: false, setupRequired: false, verified: true });
+      } finally {
+        setTotpLoading(false);
+      }
+    }
+    checkTOTP();
+  }, []);
+
+  // ─── TOTP Setup: Start ───
+  const handleTotpSetup = async () => {
+    setTotpSubmitting(true);
+    setTotpError("");
+    try {
+      const res = await fetch("/api/vault/totp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "setup" }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Setup failed");
+
+      setTotpSetupUri(data.uri);
+      setTotpSetupSecret(data.secret);
+      setTotpSetupStarted(true);
+
+      // Generate QR code client-side
+      const QRCode = (await import("qrcode")).default;
+      const qrUrl = await QRCode.toDataURL(data.uri, {
+        width: 256,
+        margin: 2,
+        color: { dark: "#e2e8f0", light: "#00000000" },
+      });
+      setTotpQrDataUrl(qrUrl);
+    } catch (err: unknown) {
+      setTotpError(err instanceof Error ? err.message : "Failed to start setup");
+    } finally {
+      setTotpSubmitting(false);
+    }
+  };
+
+  // ─── TOTP Setup: Verify first code ───
+  const handleTotpVerify = async () => {
+    if (totpCode.length !== 6) return;
+    setTotpSubmitting(true);
+    setTotpError("");
+    try {
+      const res = await fetch("/api/vault/totp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "verify", token: totpCode }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Verification failed");
+
+      // Success — TOTP is now enabled and verified
+      setTotpStatus({ enabled: true, setupRequired: false, verified: true });
+      setTotpCode("");
+      toast("Two-factor authentication enabled!", "success");
+    } catch (err: unknown) {
+      setTotpError(err instanceof Error ? err.message : "Invalid code");
+      setTotpCode("");
+    } finally {
+      setTotpSubmitting(false);
+    }
+  };
+
+  // ─── TOTP Gate: Validate code ───
+  const handleTotpValidate = async () => {
+    if (totpCode.length !== 6) return;
+    setTotpSubmitting(true);
+    setTotpError("");
+    try {
+      const res = await fetch("/api/vault/totp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "validate", token: totpCode }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Invalid code");
+
+      // Success — proceed to master password
+      setTotpStatus((prev) => prev ? { ...prev, verified: true } : prev);
+      setTotpCode("");
+    } catch (err: unknown) {
+      setTotpError(err instanceof Error ? err.message : "Invalid code");
+      setTotpCode("");
+    } finally {
+      setTotpSubmitting(false);
+    }
+  };
+
+  // ─── Disable 2FA ───
+  const handleDisable2FA = async () => {
+    if (disableCode.length !== 6) return;
+    setDisabling2FA(true);
+    try {
+      const res = await fetch("/api/vault/totp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "disable", token: disableCode }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to disable");
+
+      setTotpStatus({ enabled: false, setupRequired: true, verified: false });
+      setShowDisable2FA(false);
+      setDisableCode("");
+      toast("Two-factor authentication disabled", "info");
+    } catch (err: unknown) {
+      toast(err instanceof Error ? err.message : "Failed to disable 2FA", "error");
+      setDisableCode("");
+    } finally {
+      setDisabling2FA(false);
+    }
+  };
 
   // Reset idle timer on interaction
   const resetIdleTimer = useCallback(() => {
@@ -480,7 +636,261 @@ export default function VaultPage() {
     return matchSearch && matchCategory && matchProject;
   });
 
-  /* ─── LOCKED STATE ─── */
+  /* ─── LOADING STATE ─── */
+  if (totpLoading) {
+    return (
+      <div className="min-h-[80vh] flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-8 h-8 text-slate-500 animate-spin mx-auto mb-4" />
+          <p className="text-slate-500 text-sm">Loading vault security...</p>
+        </div>
+        <ToastContainer toasts={toasts} dismiss={dismissToast} />
+      </div>
+    );
+  }
+
+  /* ─── TOTP SETUP STATE ─── */
+  if (totpStatus?.setupRequired) {
+    return (
+      <div className="min-h-[80vh] flex items-center justify-center">
+        <div className="w-full max-w-md">
+          <div className="text-center mb-8">
+            <div className="w-20 h-20 mx-auto bg-emerald-900/30 rounded-2xl flex items-center justify-center mb-6 border border-emerald-800/50">
+              <ShieldCheck className="w-10 h-10 text-emerald-400" strokeWidth={1.5} />
+            </div>
+            <h1 className="text-2xl font-semibold text-slate-100">Set Up Two-Factor Auth</h1>
+            <p className="text-slate-500 mt-2 text-sm">
+              Protect your vault with Google Authenticator
+            </p>
+          </div>
+
+          <div className="bg-slate-900/50 rounded-xl border border-slate-800 p-6">
+            {!totpSetupStarted ? (
+              /* Step 1: Start setup */
+              <div className="space-y-4">
+                <div className="bg-slate-800/50 rounded-lg p-4 text-sm text-slate-400 space-y-2">
+                  <p>Two-factor authentication adds an extra layer of security to your vault.</p>
+                  <p>You&apos;ll need an authenticator app like:</p>
+                  <ul className="list-disc list-inside text-slate-500 space-y-1">
+                    <li>Google Authenticator</li>
+                    <li>Authy</li>
+                    <li>1Password</li>
+                  </ul>
+                </div>
+                <button
+                  onClick={handleTotpSetup}
+                  disabled={totpSubmitting}
+                  className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-700 disabled:text-slate-500 rounded-lg transition-colors font-medium text-white flex items-center justify-center gap-2"
+                >
+                  {totpSubmitting ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Generating...
+                    </>
+                  ) : (
+                    <>
+                      <ShieldCheck className="w-4 h-4" />
+                      Set Up 2FA
+                    </>
+                  )}
+                </button>
+                <button
+                  onClick={() => {
+                    // Skip setup — mark as not required so user goes to master password
+                    setTotpStatus({ enabled: false, setupRequired: false, verified: true });
+                  }}
+                  className="w-full py-2 text-slate-600 hover:text-slate-400 text-sm transition-colors"
+                >
+                  Skip for now
+                </button>
+                {totpError && (
+                  <p className="text-red-400 text-sm text-center flex items-center justify-center gap-1.5">
+                    <AlertCircle className="w-3.5 h-3.5" />
+                    {totpError}
+                  </p>
+                )}
+              </div>
+            ) : (
+              /* Step 2: QR code + verify */
+              <div className="space-y-5">
+                <div className="text-center">
+                  <p className="text-sm text-slate-400 mb-4">
+                    Scan this QR code with your authenticator app:
+                  </p>
+                  {totpQrDataUrl ? (
+                    <div className="inline-block bg-slate-800/80 rounded-xl p-4 border border-slate-700">
+                      <img
+                        src={totpQrDataUrl}
+                        alt="TOTP QR Code"
+                        className="w-48 h-48 mx-auto"
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-48 h-48 mx-auto bg-slate-800 rounded-xl flex items-center justify-center">
+                      <Loader2 className="w-6 h-6 text-slate-600 animate-spin" />
+                    </div>
+                  )}
+                </div>
+
+                {totpSetupSecret && (
+                  <div className="bg-slate-800/50 rounded-lg p-3">
+                    <p className="text-xs text-slate-500 mb-1.5">Or enter manually:</p>
+                    <div className="flex items-center gap-2">
+                      <code className="text-xs font-mono text-slate-300 break-all flex-1">
+                        {totpSetupSecret.replace(/(.{4})/g, "$1 ").trim()}
+                      </code>
+                      <button
+                        onClick={() => {
+                          navigator.clipboard.writeText(totpSetupSecret);
+                          toast("Secret key copied", "success");
+                        }}
+                        className="p-1.5 text-slate-500 hover:text-slate-300 hover:bg-slate-700 rounded transition-colors shrink-0"
+                        title="Copy secret key"
+                      >
+                        <Copy className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                <div>
+                  <label className="block text-sm text-slate-400 mb-2">
+                    Enter the 6-digit code from your app:
+                  </label>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={6}
+                    value={totpCode}
+                    onChange={(e) => {
+                      const v = e.target.value.replace(/\D/g, "").slice(0, 6);
+                      setTotpCode(v);
+                      setTotpError("");
+                    }}
+                    onKeyDown={(e) => e.key === "Enter" && totpCode.length === 6 && handleTotpVerify()}
+                    className="w-full px-4 py-3 bg-slate-800 rounded-lg border border-slate-700 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500/50 text-slate-200 text-center text-2xl tracking-[0.5em] font-mono placeholder:text-slate-700 placeholder:tracking-normal placeholder:text-base"
+                    placeholder="000000"
+                    autoFocus
+                  />
+                </div>
+
+                {totpError && (
+                  <p className="text-red-400 text-sm text-center flex items-center justify-center gap-1.5">
+                    <AlertCircle className="w-3.5 h-3.5" />
+                    {totpError}
+                  </p>
+                )}
+
+                <button
+                  onClick={handleTotpVerify}
+                  disabled={totpSubmitting || totpCode.length !== 6}
+                  className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-700 disabled:text-slate-500 rounded-lg transition-colors font-medium text-white flex items-center justify-center gap-2"
+                >
+                  {totpSubmitting ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Verifying...
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle className="w-4 h-4" />
+                      Verify &amp; Enable
+                    </>
+                  )}
+                </button>
+
+                <div className="pt-2 border-t border-slate-800">
+                  <div className="flex items-start gap-2 text-xs text-amber-600">
+                    <AlertCircle className="w-3.5 h-3.5 mt-0.5 shrink-0" />
+                    <span>Save your secret key safely. You&apos;ll need it if you lose access to your authenticator app.</span>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <ToastContainer toasts={toasts} dismiss={dismissToast} />
+      </div>
+    );
+  }
+
+  /* ─── TOTP GATE STATE ─── */
+  if (totpStatus?.enabled && !totpStatus?.verified) {
+    return (
+      <div className="min-h-[80vh] flex items-center justify-center">
+        <div className="w-full max-w-md">
+          <div className="text-center mb-8">
+            <div className="w-20 h-20 mx-auto bg-blue-900/30 rounded-2xl flex items-center justify-center mb-6 border border-blue-800/50">
+              <Shield className="w-10 h-10 text-blue-400" strokeWidth={1.5} />
+            </div>
+            <h1 className="text-2xl font-semibold text-slate-100">Two-Factor Authentication</h1>
+            <p className="text-slate-500 mt-2 text-sm">
+              Enter the 6-digit code from your authenticator app
+            </p>
+          </div>
+
+          <div className="bg-slate-900/50 rounded-xl border border-slate-800 p-6">
+            <div className="space-y-4">
+              <div>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={6}
+                  value={totpCode}
+                  onChange={(e) => {
+                    const v = e.target.value.replace(/\D/g, "").slice(0, 6);
+                    setTotpCode(v);
+                    setTotpError("");
+                  }}
+                  onKeyDown={(e) => e.key === "Enter" && totpCode.length === 6 && handleTotpValidate()}
+                  className="w-full px-4 py-4 bg-slate-800 rounded-lg border border-slate-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500/50 text-slate-200 text-center text-3xl tracking-[0.5em] font-mono placeholder:text-slate-700 placeholder:tracking-normal placeholder:text-base"
+                  placeholder="Enter code"
+                  autoFocus
+                />
+              </div>
+
+              {totpError && (
+                <p className="text-red-400 text-sm text-center flex items-center justify-center gap-1.5">
+                  <AlertCircle className="w-3.5 h-3.5" />
+                  {totpError}
+                </p>
+              )}
+
+              <button
+                onClick={handleTotpValidate}
+                disabled={totpSubmitting || totpCode.length !== 6}
+                className="w-full py-3 bg-blue-600 hover:bg-blue-500 disabled:bg-slate-700 disabled:text-slate-500 rounded-lg transition-colors font-medium text-white flex items-center justify-center gap-2"
+              >
+                {totpSubmitting ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Verifying...
+                  </>
+                ) : (
+                  <>
+                    <Unlock className="w-4 h-4" />
+                    Verify
+                  </>
+                )}
+              </button>
+            </div>
+
+            <div className="mt-4 pt-4 border-t border-slate-800">
+              <div className="flex items-start gap-2 text-xs text-slate-600">
+                <Shield className="w-3.5 h-3.5 mt-0.5 shrink-0" />
+                <span>Code refreshes every 30 seconds. The verification is valid for 10 minutes.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <ToastContainer toasts={toasts} dismiss={dismissToast} />
+      </div>
+    );
+  }
+
+  /* ─── LOCKED STATE (Master Password) ─── */
   if (!masterPassword) {
     return (
       <div className="min-h-[80vh] flex items-center justify-center">
@@ -493,6 +903,12 @@ export default function VaultPage() {
             <p className="text-slate-500 mt-2 text-sm">
               Enter your master password to unlock
             </p>
+            {totpStatus?.enabled && (
+              <div className="mt-2 flex items-center justify-center gap-1.5 text-xs text-emerald-500">
+                <ShieldCheck className="w-3.5 h-3.5" />
+                <span>2FA verified</span>
+              </div>
+            )}
           </div>
 
           <div className="bg-slate-900/50 rounded-xl border border-slate-800 p-6">
@@ -560,7 +976,37 @@ export default function VaultPage() {
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
+          {/* 2FA Status Badge */}
+          {totpStatus?.enabled ? (
+            <button
+              onClick={() => setShowDisable2FA(true)}
+              className="flex items-center gap-1.5 px-3 py-2 bg-emerald-900/30 hover:bg-emerald-900/50 border border-emerald-800/50 rounded-lg transition-colors text-emerald-400 text-xs font-medium"
+              title="2FA Settings"
+            >
+              <ShieldCheck className="w-3.5 h-3.5" />
+              2FA On
+            </button>
+          ) : (
+            <button
+              onClick={() => {
+                setTotpStatus({ enabled: false, setupRequired: true, verified: false });
+                setTotpSetupStarted(false);
+                setTotpSetupUri(null);
+                setTotpSetupSecret(null);
+                setTotpQrDataUrl(null);
+                setTotpCode("");
+                setMasterPassword(null);
+                setSecrets([]);
+                setProjects([]);
+              }}
+              className="flex items-center gap-1.5 px-3 py-2 bg-slate-800/50 hover:bg-slate-800 border border-slate-700 rounded-lg transition-colors text-slate-500 hover:text-slate-300 text-xs font-medium"
+              title="Enable 2FA"
+            >
+              <ShieldOff className="w-3.5 h-3.5" />
+              2FA Off
+            </button>
+          )}
           <button
             onClick={openAddModal}
             className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-500 rounded-lg transition-colors text-white text-sm font-medium"
@@ -1144,6 +1590,85 @@ export default function VaultPage() {
               >
                 Delete
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Disable 2FA Modal ── */}
+      {showDisable2FA && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+          <div className="bg-slate-900 rounded-xl border border-slate-800 p-6 w-full max-w-sm shadow-2xl">
+            <div className="flex items-center justify-between mb-5">
+              <h2 className="text-lg font-semibold text-slate-200 flex items-center gap-2">
+                <ShieldCheck className="w-5 h-5 text-emerald-400" />
+                2FA Settings
+              </h2>
+              <button
+                onClick={() => {
+                  setShowDisable2FA(false);
+                  setDisableCode("");
+                }}
+                className="p-2 text-slate-500 hover:text-slate-300 hover:bg-slate-800 rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div className="flex items-center gap-3 bg-emerald-900/20 rounded-lg p-3 border border-emerald-800/30">
+                <ShieldCheck className="w-5 h-5 text-emerald-400 shrink-0" />
+                <div>
+                  <p className="text-sm font-medium text-emerald-300">Two-Factor Authentication</p>
+                  <p className="text-xs text-emerald-500">Currently enabled</p>
+                </div>
+              </div>
+
+              <div className="border-t border-slate-800 pt-4">
+                <p className="text-sm text-slate-400 mb-3">
+                  To disable 2FA, enter your current authenticator code:
+                </p>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={6}
+                  value={disableCode}
+                  onChange={(e) => setDisableCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                  onKeyDown={(e) => e.key === "Enter" && disableCode.length === 6 && handleDisable2FA()}
+                  className="w-full px-4 py-3 bg-slate-800 rounded-lg border border-slate-700 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500/50 text-slate-200 text-center text-2xl tracking-[0.5em] font-mono placeholder:text-slate-700 placeholder:tracking-normal placeholder:text-base"
+                  placeholder="000000"
+                  autoFocus
+                />
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={() => {
+                    setShowDisable2FA(false);
+                    setDisableCode("");
+                  }}
+                  className="flex-1 py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-slate-300 text-sm font-medium transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleDisable2FA}
+                  disabled={disabling2FA || disableCode.length !== 6}
+                  className="flex-1 py-2.5 bg-red-600 hover:bg-red-500 disabled:bg-slate-700 disabled:text-slate-500 rounded-lg text-white text-sm font-medium transition-colors flex items-center justify-center gap-2"
+                >
+                  {disabling2FA ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Disabling...
+                    </>
+                  ) : (
+                    <>
+                      <ShieldOff className="w-4 h-4" />
+                      Disable 2FA
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
           </div>
         </div>

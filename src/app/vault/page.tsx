@@ -164,11 +164,13 @@ export default function VaultPage() {
   // Search & filter
   const [search, setSearch] = useState("");
   const [filterCategories, setFilterCategories] = useState<string[]>([]);
-  const [filterProject, setFilterProject] = useState<string>("all");
+  const [filterProjects, setFilterProjects] = useState<string[]>([]);
   const [filterApplications, setFilterApplications] = useState<string[]>([]);
   const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false);
+  const [projectDropdownOpen, setProjectDropdownOpen] = useState(false);
   const [appDropdownOpen, setAppDropdownOpen] = useState(false);
   const categoryDropdownRef = useRef<HTMLDivElement>(null);
+  const projectDropdownRef = useRef<HTMLDivElement>(null);
   const appDropdownRef = useRef<HTMLDivElement>(null);
 
   // Modals
@@ -415,7 +417,7 @@ export default function VaultPage() {
     setProjects([]);
     setSearch("");
     setFilterCategories([]);
-    setFilterProject("all");
+    setFilterProjects([]);
     setFilterApplications([]);
     if (idleTimer.current) clearTimeout(idleTimer.current);
     toast("Vault locked", "info");
@@ -624,7 +626,7 @@ export default function VaultPage() {
       if (!res.ok) throw new Error("Failed to delete");
       toast("Project deleted — secrets unassigned", "success");
       setDeletingProject(null);
-      if (filterProject === deletingProject.id) setFilterProject("all");
+      setFilterProjects((prev) => prev.filter((p) => p !== deletingProject.id));
       await fetchSecrets();
     } catch {
       toast("Failed to delete project", "error");
@@ -648,6 +650,9 @@ export default function VaultPage() {
       if (categoryDropdownRef.current && !categoryDropdownRef.current.contains(e.target as Node)) {
         setCategoryDropdownOpen(false);
       }
+      if (projectDropdownRef.current && !projectDropdownRef.current.contains(e.target as Node)) {
+        setProjectDropdownOpen(false);
+      }
       if (appDropdownRef.current && !appDropdownRef.current.contains(e.target as Node)) {
         setAppDropdownOpen(false);
       }
@@ -660,6 +665,11 @@ export default function VaultPage() {
   const toggleCategory = (cat: string) => {
     setFilterCategories((prev) =>
       prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat]
+    );
+  };
+  const toggleProject = (projId: string) => {
+    setFilterProjects((prev) =>
+      prev.includes(projId) ? prev.filter((p) => p !== projId) : [...prev, projId]
     );
   };
   const toggleApplication = (app: string) => {
@@ -676,8 +686,9 @@ export default function VaultPage() {
       (s.notes && s.notes.toLowerCase().includes(search.toLowerCase()));
     const matchCategory = filterCategories.length === 0 || filterCategories.includes(s.category);
     const matchProject =
-      filterProject === "all" ||
-      (filterProject === "unassigned" ? !s.project_id : s.project_id === filterProject);
+      filterProjects.length === 0 ||
+      (filterProjects.includes("unassigned") && !s.project_id) ||
+      filterProjects.includes(s.project_id || "");
     const matchApplication =
       filterApplications.length === 0 || filterApplications.includes(s.application || "");
     return matchSearch && matchCategory && matchProject && matchApplication;
@@ -1071,100 +1082,6 @@ export default function VaultPage() {
         </div>
       </div>
 
-      {/* ── Project Pills ── */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-500">Projects</h2>
-          <button
-            onClick={openAddProjectModal}
-            className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-blue-400 transition-colors"
-          >
-            <Plus className="w-3.5 h-3.5" />
-            New Project
-          </button>
-        </div>
-        <div className="flex gap-2 overflow-x-auto pb-1 flex-wrap">
-          <button
-            onClick={() => setFilterProject("all")}
-            className={`px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${
-              filterProject === "all"
-                ? "bg-blue-600/20 text-blue-400 border border-blue-500/30"
-                : "bg-slate-800/50 text-slate-500 border border-slate-800 hover:text-slate-300"
-            }`}
-          >
-            All Secrets
-            <span className="ml-1.5 text-[10px] opacity-60">{secrets.length}</span>
-          </button>
-          {projects.map((proj) => {
-            const count = getSecretCountForProject(proj.id);
-            return (
-              <div key={proj.id} className="relative group/pill">
-                <button
-                  onClick={() => setFilterProject(proj.id)}
-                  className={`px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-all flex items-center gap-2 ${
-                    filterProject === proj.id
-                      ? "border border-opacity-30 text-white"
-                      : "bg-slate-800/50 text-slate-500 border border-slate-800 hover:text-slate-300"
-                  }`}
-                  style={
-                    filterProject === proj.id
-                      ? {
-                          backgroundColor: `${proj.color}20`,
-                          borderColor: `${proj.color}50`,
-                          color: proj.color,
-                        }
-                      : undefined
-                  }
-                >
-                  <span
-                    className="w-2.5 h-2.5 rounded-full shrink-0"
-                    style={{ backgroundColor: proj.color }}
-                  />
-                  {proj.name}
-                  <span className="text-[10px] opacity-60">{count}</span>
-                </button>
-                {/* Edit/Delete on hover */}
-                <div className="absolute -top-1 -right-1 hidden group-hover/pill:flex gap-0.5">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      openEditProjectModal(proj);
-                    }}
-                    className="w-5 h-5 bg-slate-700 hover:bg-slate-600 rounded-full flex items-center justify-center"
-                  >
-                    <Pencil className="w-2.5 h-2.5 text-slate-300" />
-                  </button>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setDeletingProject(proj);
-                    }}
-                    className="w-5 h-5 bg-slate-700 hover:bg-red-900 rounded-full flex items-center justify-center"
-                  >
-                    <Trash2 className="w-2.5 h-2.5 text-slate-300" />
-                  </button>
-                </div>
-              </div>
-            );
-          })}
-          {secrets.some((s) => !s.project_id) && (
-            <button
-              onClick={() => setFilterProject("unassigned")}
-              className={`px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${
-                filterProject === "unassigned"
-                  ? "bg-slate-600/20 text-slate-400 border border-slate-500/30"
-                  : "bg-slate-800/50 text-slate-600 border border-slate-800 hover:text-slate-400"
-              }`}
-            >
-              Unassigned
-              <span className="ml-1.5 text-[10px] opacity-60">
-                {getSecretCountForProject(null)}
-              </span>
-            </button>
-          )}
-        </div>
-      </div>
-
       {/* Search & Filter Bar */}
       <div className="flex items-center gap-3 flex-wrap">
         {/* Search */}
@@ -1182,7 +1099,7 @@ export default function VaultPage() {
         {/* Category Dropdown */}
         <div className="relative" ref={categoryDropdownRef}>
           <button
-            onClick={() => { setCategoryDropdownOpen((v) => !v); setAppDropdownOpen(false); }}
+            onClick={() => { setCategoryDropdownOpen((v) => !v); setProjectDropdownOpen(false); setAppDropdownOpen(false); }}
             className={`flex items-center gap-2 px-3 py-2.5 rounded-lg border text-sm font-medium transition-colors whitespace-nowrap ${
               filterCategories.length > 0
                 ? "bg-blue-600/15 border-blue-500/30 text-blue-400"
@@ -1238,11 +1155,101 @@ export default function VaultPage() {
           )}
         </div>
 
+        {/* Project Dropdown */}
+        {projects.length > 0 && (
+          <div className="relative" ref={projectDropdownRef}>
+            <button
+              onClick={() => { setProjectDropdownOpen((v) => !v); setCategoryDropdownOpen(false); setAppDropdownOpen(false); }}
+              className={`flex items-center gap-2 px-3 py-2.5 rounded-lg border text-sm font-medium transition-colors whitespace-nowrap ${
+                filterProjects.length > 0
+                  ? "bg-purple-600/15 border-purple-500/30 text-purple-400"
+                  : "bg-slate-900/50 border-slate-800 text-slate-400 hover:text-slate-200 hover:border-slate-700"
+              }`}
+            >
+              <FolderOpen className="w-4 h-4" />
+              Project
+              {filterProjects.length > 0 && (
+                <span className="ml-1 px-1.5 py-0.5 text-[10px] bg-purple-500/20 rounded-full">
+                  {filterProjects.length}
+                </span>
+              )}
+              <svg className={`w-3.5 h-3.5 transition-transform ${projectDropdownOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+            </button>
+
+            {projectDropdownOpen && (
+              <div className="absolute top-full left-0 mt-1.5 w-64 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl z-50 py-1.5 max-h-72 overflow-y-auto">
+                {filterProjects.length > 0 && (
+                  <button
+                    onClick={() => setFilterProjects([])}
+                    className="w-full px-3 py-1.5 text-left text-xs text-slate-500 hover:text-purple-400 transition-colors"
+                  >
+                    Clear all
+                  </button>
+                )}
+                {projects.map((proj) => {
+                  const isSelected = filterProjects.includes(proj.id);
+                  const count = getSecretCountForProject(proj.id);
+                  return (
+                    <button
+                      key={proj.id}
+                      onClick={() => toggleProject(proj.id)}
+                      className="w-full flex items-center gap-2.5 px-3 py-2 hover:bg-slate-800/70 transition-colors"
+                    >
+                      <div className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 transition-colors ${
+                        isSelected ? "bg-purple-600 border-purple-500" : "border-slate-600"
+                      }`}>
+                        {isSelected && (
+                          <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                        )}
+                      </div>
+                      <span
+                        className="w-2.5 h-2.5 rounded-full shrink-0"
+                        style={{ backgroundColor: proj.color }}
+                      />
+                      <span className={`text-sm flex-1 text-left ${isSelected ? "text-slate-200" : "text-slate-400"}`}>
+                        {proj.name}
+                      </span>
+                      <span className="text-xs text-slate-600">{count}</span>
+                    </button>
+                  );
+                })}
+                {secrets.some((s) => !s.project_id) && (
+                  <button
+                    onClick={() => toggleProject("unassigned")}
+                    className="w-full flex items-center gap-2.5 px-3 py-2 hover:bg-slate-800/70 transition-colors border-t border-slate-800 mt-1 pt-2"
+                  >
+                    <div className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 transition-colors ${
+                      filterProjects.includes("unassigned") ? "bg-purple-600 border-purple-500" : "border-slate-600"
+                    }`}>
+                      {filterProjects.includes("unassigned") && (
+                        <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                      )}
+                    </div>
+                    <span className={`text-sm flex-1 text-left ${filterProjects.includes("unassigned") ? "text-slate-200" : "text-slate-500"}`}>
+                      Unassigned
+                    </span>
+                    <span className="text-xs text-slate-600">{getSecretCountForProject(null)}</span>
+                  </button>
+                )}
+                <div className="border-t border-slate-800 mt-1.5 pt-1.5">
+                  <button
+                    onClick={() => { setProjectDropdownOpen(false); openAddProjectModal(); }}
+                    className="w-full flex items-center gap-2 px-3 py-2 text-xs text-slate-500 hover:text-blue-400 transition-colors"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    New Project
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Application Dropdown */}
         {uniqueApplications.length > 0 && (
           <div className="relative" ref={appDropdownRef}>
             <button
-              onClick={() => { setAppDropdownOpen((v) => !v); setCategoryDropdownOpen(false); }}
+              onClick={() => { setAppDropdownOpen((v) => !v); setCategoryDropdownOpen(false); setProjectDropdownOpen(false); }}
               className={`flex items-center gap-2 px-3 py-2.5 rounded-lg border text-sm font-medium transition-colors whitespace-nowrap ${
                 filterApplications.length > 0
                   ? "bg-teal-600/15 border-teal-500/30 text-teal-400"
@@ -1298,9 +1305,9 @@ export default function VaultPage() {
         )}
 
         {/* Active filter badges */}
-        {(filterCategories.length > 0 || filterApplications.length > 0) && (
+        {(filterCategories.length > 0 || filterProjects.length > 0 || filterApplications.length > 0) && (
           <button
-            onClick={() => { setFilterCategories([]); setFilterApplications([]); }}
+            onClick={() => { setFilterCategories([]); setFilterProjects([]); setFilterApplications([]); }}
             className="flex items-center gap-1.5 px-2.5 py-2 text-xs text-slate-500 hover:text-red-400 transition-colors"
           >
             <X className="w-3.5 h-3.5" />

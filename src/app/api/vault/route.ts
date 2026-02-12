@@ -1,13 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { isAuthenticated } from '@/lib/auth';
-import { createClient } from '@supabase/supabase-js';
-
-// Use service role key for vault operations (server-side only)
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
-const supabase = supabaseUrl && supabaseServiceKey
-  ? createClient(supabaseUrl, supabaseServiceKey)
-  : null;
+import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 
 async function checkAuth(request: NextRequest): Promise<boolean> {
   try {
@@ -29,8 +22,8 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Auth check failed', detail: String(e) }, { status: 500 });
   }
 
-  if (!supabase) {
-    console.error('[vault] supabase not configured', { url: !!supabaseUrl, key: !!supabaseServiceKey });
+  if (!isSupabaseConfigured()) {
+    
     return NextResponse.json({ error: 'Database not configured', detail: `url=${!!supabaseUrl} key=${!!supabaseServiceKey}` }, { status: 500 });
   }
 
@@ -58,7 +51,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  if (!supabase) {
+  if (!isSupabaseConfigured()) {
     return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
   }
 
@@ -96,7 +89,7 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  if (!supabase) {
+  if (!isSupabaseConfigured()) {
     return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
   }
 
@@ -136,7 +129,7 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  if (!supabase) {
+  if (!isSupabaseConfigured()) {
     return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
   }
 
@@ -158,4 +151,3 @@ export async function DELETE(request: NextRequest) {
 
   return NextResponse.json({ success: true });
 }
-// env refresh 1770923491

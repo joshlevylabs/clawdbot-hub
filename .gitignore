@@ -6,3 +6,10 @@ node_modules
 
 .DS_Store
 **/.DS_Store
+
+# Don't commit env files
+.env.production
+.env.prod
+.env.prod.vercel
+.env.vercel
+.env.supabase

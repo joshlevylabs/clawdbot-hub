@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { isAuthenticated } from '@/lib/auth';
-import { supabase, isSupabaseConfigured } from '@/lib/supabase';
+import { vaultSupabase as supabase, isVaultConfigured as isSupabaseConfigured } from '@/lib/vault-supabase';
 
 async function checkAuth(request: NextRequest): Promise<boolean> {
   try {

@@ -33,6 +33,7 @@ interface Secret {
   id: string;
   name: string;
   category: string;
+  application: string | null;
   encrypted_value: string;
   iv: string;
   salt: string;
@@ -179,6 +180,7 @@ export default function VaultPage() {
   const [formCategory, setFormCategory] = useState<Category>("api_key");
   const [formValue, setFormValue] = useState("");
   const [formNotes, setFormNotes] = useState("");
+  const [formApplication, setFormApplication] = useState("");
   const [formProjectId, setFormProjectId] = useState<string>("");
   const [saving, setSaving] = useState(false);
 
@@ -419,6 +421,7 @@ export default function VaultPage() {
     setFormCategory("api_key");
     setFormValue("");
     setFormNotes("");
+    setFormApplication("");
     setFormProjectId("");
   };
 
@@ -433,6 +436,7 @@ export default function VaultPage() {
     setFormName(secret.name);
     setFormCategory(secret.category as Category);
     setFormNotes(secret.notes || "");
+    setFormApplication(secret.application || "");
     setFormProjectId(secret.project_id || "");
     try {
       const plaintext = await decrypt(
@@ -459,6 +463,7 @@ export default function VaultPage() {
       const payload: Record<string, unknown> = {
         name: formName.trim(),
         category: formCategory,
+        application: formApplication.trim() || null,
         encrypted_value: encrypted,
         iv,
         salt,
@@ -1213,6 +1218,11 @@ export default function VaultPage() {
                         <span className={`inline-block text-xs px-1.5 py-0.5 rounded ${catInfo.color}`}>
                           {catInfo.label}
                         </span>
+                        {secret.application && (
+                          <span className="inline-block text-xs px-1.5 py-0.5 rounded bg-teal-500/15 text-teal-400">
+                            {secret.application}
+                          </span>
+                        )}
                         {project && (
                           <span
                             className="inline-flex items-center gap-1 text-xs px-1.5 py-0.5 rounded"
@@ -1342,6 +1352,17 @@ export default function VaultPage() {
                     ))}
                   </select>
                 </div>
+              </div>
+
+              <div>
+                <label className="block text-sm text-slate-400 mb-1.5">Application (optional)</label>
+                <input
+                  type="text"
+                  value={formApplication}
+                  onChange={(e) => setFormApplication(e.target.value)}
+                  className="w-full px-3 py-2.5 bg-slate-800 rounded-lg border border-slate-700 focus:border-blue-500 focus:outline-none text-slate-200 text-sm"
+                  placeholder="e.g. YouTube, Kalshi, OpenAI..."
+                />
               </div>
 
               <div>

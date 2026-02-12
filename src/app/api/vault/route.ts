@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
   try {
     const { data, error } = await supabase
       .from('secrets')
-      .select('id, name, category, encrypted_value, iv, salt, notes, project_id, created_at, updated_at')
+      .select('id, name, category, application, encrypted_value, iv, salt, notes, project_id, created_at, updated_at')
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json();
-  const { name, category, encrypted_value, iv, salt, notes, project_id } = body;
+  const { name, category, application, encrypted_value, iv, salt, notes, project_id } = body;
 
   if (!name || !encrypted_value || !iv || !salt) {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -67,6 +67,7 @@ export async function POST(request: NextRequest) {
     .insert({
       name,
       category: category || 'api_key',
+      application: application || null,
       encrypted_value,
       iv,
       salt,
@@ -94,7 +95,7 @@ export async function PUT(request: NextRequest) {
   }
 
   const body = await request.json();
-  const { id, name, category, encrypted_value, iv, salt, notes, project_id } = body;
+  const { id, name, category, application, encrypted_value, iv, salt, notes, project_id } = body;
 
   if (!id) {
     return NextResponse.json({ error: 'Missing secret ID' }, { status: 400 });
@@ -107,6 +108,7 @@ export async function PUT(request: NextRequest) {
   if (iv !== undefined) updates.iv = iv;
   if (salt !== undefined) updates.salt = salt;
   if (notes !== undefined) updates.notes = notes;
+  if (application !== undefined) updates.application = application || null;
   if (project_id !== undefined) updates.project_id = project_id || null;
 
   const { data, error } = await supabase

@@ -18,6 +18,7 @@ import {
   Users,
   MessageSquare,
   TrendingUp,
+  Lock,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -31,6 +32,7 @@ const navItems = [
   { href: "/moltbook", icon: MessageSquare, label: "Moltbook 🦞" },
   { href: "/tasks", icon: CheckSquare, label: "Tasks" },
   { href: "/skills", icon: Zap, label: "Skills" },
+  { href: "/vault", icon: Lock, label: "Vault" },
   { href: "/settings", icon: Settings, label: "Settings" },
 ];
 

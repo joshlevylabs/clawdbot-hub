@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { isAuthenticated } from '@/lib/auth';
 import { createClient } from '@supabase/supabase-js';
 
-// Use service role key for vault operations (server-side only)
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 const supabase = supabaseUrl && supabaseServiceKey
@@ -17,7 +16,7 @@ async function checkAuth(request: NextRequest): Promise<boolean> {
   }
 }
 
-// GET /api/vault — list all secrets (encrypted blobs only, never plaintext)
+// GET /api/vault/projects — list all projects
 export async function GET(request: NextRequest) {
   if (!(await checkAuth(request))) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -28,18 +27,18 @@ export async function GET(request: NextRequest) {
   }
 
   const { data, error } = await supabase
-    .from('secrets')
-    .select('id, name, category, encrypted_value, iv, salt, notes, project_id, created_at, updated_at')
-    .order('created_at', { ascending: false });
+    .from('vault_projects')
+    .select('*')
+    .order('created_at', { ascending: true });
 
   if (error) {
-    return NextResponse.json({ error: 'Failed to fetch secrets', detail: error.message }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to fetch projects', detail: error.message }, { status: 500 });
   }
 
-  return NextResponse.json({ secrets: data });
+  return NextResponse.json({ projects: data });
 }
 
-// POST /api/vault — create a new secret (receives already-encrypted data)
+// POST /api/vault/projects — create a project
 export async function POST(request: NextRequest) {
   if (!(await checkAuth(request))) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -50,34 +49,31 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json();
-  const { name, category, encrypted_value, iv, salt, notes, project_id } = body;
+  const { name, description, color, icon } = body;
 
-  if (!name || !encrypted_value || !iv || !salt) {
-    return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+  if (!name?.trim()) {
+    return NextResponse.json({ error: 'Project name is required' }, { status: 400 });
   }
 
   const { data, error } = await supabase
-    .from('secrets')
+    .from('vault_projects')
     .insert({
-      name,
-      category: category || 'api_key',
-      encrypted_value,
-      iv,
-      salt,
-      notes: notes || null,
-      project_id: project_id || null,
+      name: name.trim(),
+      description: description?.trim() || null,
+      color: color || '#3b82f6',
+      icon: icon || 'folder',
     })
     .select()
     .single();
 
   if (error) {
-    return NextResponse.json({ error: 'Failed to create secret', detail: error.message }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to create project', detail: error.message }, { status: 500 });
   }
 
-  return NextResponse.json({ secret: data }, { status: 201 });
+  return NextResponse.json({ project: data }, { status: 201 });
 }
 
-// PUT /api/vault — update a secret
+// PUT /api/vault/projects — update a project
 export async function PUT(request: NextRequest) {
   if (!(await checkAuth(request))) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -88,36 +84,33 @@ export async function PUT(request: NextRequest) {
   }
 
   const body = await request.json();
-  const { id, name, category, encrypted_value, iv, salt, notes, project_id } = body;
+  const { id, name, description, color, icon } = body;
 
   if (!id) {
-    return NextResponse.json({ error: 'Missing secret ID' }, { status: 400 });
+    return NextResponse.json({ error: 'Missing project ID' }, { status: 400 });
   }
 
   const updates: Record<string, unknown> = { updated_at: new Date().toISOString() };
-  if (name !== undefined) updates.name = name;
-  if (category !== undefined) updates.category = category;
-  if (encrypted_value !== undefined) updates.encrypted_value = encrypted_value;
-  if (iv !== undefined) updates.iv = iv;
-  if (salt !== undefined) updates.salt = salt;
-  if (notes !== undefined) updates.notes = notes;
-  if (project_id !== undefined) updates.project_id = project_id || null;
+  if (name !== undefined) updates.name = name.trim();
+  if (description !== undefined) updates.description = description?.trim() || null;
+  if (color !== undefined) updates.color = color;
+  if (icon !== undefined) updates.icon = icon;
 
   const { data, error } = await supabase
-    .from('secrets')
+    .from('vault_projects')
     .update(updates)
     .eq('id', id)
     .select()
     .single();
 
   if (error) {
-    return NextResponse.json({ error: 'Failed to update secret', detail: error.message }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to update project', detail: error.message }, { status: 500 });
   }
 
-  return NextResponse.json({ secret: data });
+  return NextResponse.json({ project: data });
 }
 
-// DELETE /api/vault?id=xxx — delete a secret
+// DELETE /api/vault/projects?id=xxx — delete a project (secrets become unassigned)
 export async function DELETE(request: NextRequest) {
   if (!(await checkAuth(request))) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -131,16 +124,17 @@ export async function DELETE(request: NextRequest) {
   const id = searchParams.get('id');
 
   if (!id) {
-    return NextResponse.json({ error: 'Missing secret ID' }, { status: 400 });
+    return NextResponse.json({ error: 'Missing project ID' }, { status: 400 });
   }
 
+  // ON DELETE SET NULL handles unassigning secrets automatically
   const { error } = await supabase
-    .from('secrets')
+    .from('vault_projects')
     .delete()
     .eq('id', id);
 
   if (error) {
-    return NextResponse.json({ error: 'Failed to delete secret', detail: error.message }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to delete project', detail: error.message }, { status: 500 });
   }
 
   return NextResponse.json({ success: true });

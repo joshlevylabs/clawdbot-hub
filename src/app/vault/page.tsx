@@ -20,6 +20,8 @@ import {
   Hash,
   CheckCircle,
   AlertCircle,
+  FolderOpen,
+  Palette,
 } from "lucide-react";
 import { encrypt, decrypt } from "@/lib/vault-crypto";
 
@@ -32,6 +34,17 @@ interface Secret {
   iv: string;
   salt: string;
   notes: string | null;
+  project_id: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+interface Project {
+  id: string;
+  name: string;
+  description: string | null;
+  color: string;
+  icon: string;
   created_at: string;
   updated_at: string;
 }
@@ -45,6 +58,17 @@ const CATEGORIES: { value: Category; label: string; color: string; icon: typeof 
   { value: "ssh_key", label: "SSH Key", color: "bg-emerald-500/20 text-emerald-400", icon: FileKey },
   { value: "certificate", label: "Certificate", color: "bg-rose-500/20 text-rose-400", icon: Award },
   { value: "other", label: "Other", color: "bg-slate-500/20 text-slate-400", icon: KeyRound },
+];
+
+const PRESET_COLORS = [
+  { name: "Blue", value: "#3b82f6" },
+  { name: "Indigo", value: "#6366f1" },
+  { name: "Purple", value: "#a855f7" },
+  { name: "Rose", value: "#f43f5e" },
+  { name: "Amber", value: "#f59e0b" },
+  { name: "Emerald", value: "#10b981" },
+  { name: "Teal", value: "#14b8a6" },
+  { name: "Slate", value: "#64748b" },
 ];
 
 const IDLE_TIMEOUT_MS = 5 * 60 * 1000; // 5 minutes
@@ -104,24 +128,36 @@ export default function VaultPage() {
   const [passwordInput, setPasswordInput] = useState("");
   const [unlocking, setUnlocking] = useState(false);
   const [secrets, setSecrets] = useState<Secret[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(false);
 
   // Search & filter
   const [search, setSearch] = useState("");
   const [filterCategory, setFilterCategory] = useState<string>("all");
+  const [filterProject, setFilterProject] = useState<string>("all");
 
   // Modals
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingSecret, setEditingSecret] = useState<Secret | null>(null);
   const [viewingSecret, setViewingSecret] = useState<{ name: string; value: string } | null>(null);
   const [deletingSecret, setDeletingSecret] = useState<Secret | null>(null);
+  const [showProjectModal, setShowProjectModal] = useState(false);
+  const [editingProject, setEditingProject] = useState<Project | null>(null);
+  const [deletingProject, setDeletingProject] = useState<Project | null>(null);
 
-  // Form
+  // Secret Form
   const [formName, setFormName] = useState("");
   const [formCategory, setFormCategory] = useState<Category>("api_key");
   const [formValue, setFormValue] = useState("");
   const [formNotes, setFormNotes] = useState("");
+  const [formProjectId, setFormProjectId] = useState<string>("");
   const [saving, setSaving] = useState(false);
+
+  // Project Form
+  const [projName, setProjName] = useState("");
+  const [projDescription, setProjDescription] = useState("");
+  const [projColor, setProjColor] = useState("#3b82f6");
+  const [savingProject, setSavingProject] = useState(false);
 
   // Toast
   const [toasts, setToasts] = useState<Toast[]>([]);
@@ -147,6 +183,7 @@ export default function VaultPage() {
     idleTimer.current = setTimeout(() => {
       setMasterPassword(null);
       setSecrets([]);
+      setProjects([]);
       toast("Vault auto-locked after 5 min idle", "info");
     }, IDLE_TIMEOUT_MS);
   }, [masterPassword, toast]);
@@ -168,12 +205,18 @@ export default function VaultPage() {
   const fetchSecrets = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/vault");
-      if (!res.ok) throw new Error("Failed to fetch");
-      const data = await res.json();
-      setSecrets(data.secrets || []);
+      const [secretsRes, projectsRes] = await Promise.all([
+        fetch("/api/vault"),
+        fetch("/api/vault/projects"),
+      ]);
+      if (!secretsRes.ok) throw new Error("Failed to fetch secrets");
+      if (!projectsRes.ok) throw new Error("Failed to fetch projects");
+      const secretsData = await secretsRes.json();
+      const projectsData = await projectsRes.json();
+      setSecrets(secretsData.secrets || []);
+      setProjects(projectsData.projects || []);
     } catch {
-      toast("Failed to load secrets", "error");
+      toast("Failed to load vault data", "error");
     } finally {
       setLoading(false);
     }
@@ -185,7 +228,6 @@ export default function VaultPage() {
     setUnlocking(true);
 
     try {
-      // Verify the password works by doing a test encrypt/decrypt cycle
       const testData = await encrypt("vault-test", passwordInput);
       const result = await decrypt(testData.encrypted, testData.iv, testData.salt, passwordInput);
       if (result !== "vault-test") throw new Error("Crypto verification failed");
@@ -204,18 +246,21 @@ export default function VaultPage() {
   const handleLock = () => {
     setMasterPassword(null);
     setSecrets([]);
+    setProjects([]);
     setSearch("");
     setFilterCategory("all");
+    setFilterProject("all");
     if (idleTimer.current) clearTimeout(idleTimer.current);
     toast("Vault locked", "info");
   };
 
-  // Add / Edit secret
+  // ─── Secret CRUD ───
   const resetForm = () => {
     setFormName("");
     setFormCategory("api_key");
     setFormValue("");
     setFormNotes("");
+    setFormProjectId("");
   };
 
   const openAddModal = () => {
@@ -229,7 +274,7 @@ export default function VaultPage() {
     setFormName(secret.name);
     setFormCategory(secret.category as Category);
     setFormNotes(secret.notes || "");
-    // Decrypt value for editing
+    setFormProjectId(secret.project_id || "");
     try {
       const plaintext = await decrypt(
         secret.encrypted_value,
@@ -259,6 +304,7 @@ export default function VaultPage() {
         iv,
         salt,
         notes: formNotes.trim() || null,
+        project_id: formProjectId || null,
       };
 
       if (editingSecret) {
@@ -291,7 +337,6 @@ export default function VaultPage() {
     }
   };
 
-  // Copy to clipboard
   const handleCopy = async (secret: Secret) => {
     if (!masterPassword) return;
     try {
@@ -303,21 +348,14 @@ export default function VaultPage() {
       );
       await navigator.clipboard.writeText(plaintext);
       toast("Copied! Clipboard clears in 30s", "success");
-
-      // Auto-clear clipboard after 30s
       setTimeout(async () => {
-        try {
-          await navigator.clipboard.writeText("");
-        } catch {
-          // Clipboard API may fail if page not focused
-        }
+        try { await navigator.clipboard.writeText(""); } catch {}
       }, 30_000);
     } catch {
       toast("Failed to decrypt — wrong master password?", "error");
     }
   };
 
-  // View secret
   const handleView = async (secret: Secret) => {
     if (!masterPassword) return;
     try {
@@ -328,14 +366,12 @@ export default function VaultPage() {
         masterPassword
       );
       setViewingSecret({ name: secret.name, value: plaintext });
-      // Auto-hide after 30s
       setTimeout(() => setViewingSecret(null), 30_000);
     } catch {
       toast("Failed to decrypt — wrong master password?", "error");
     }
   };
 
-  // Delete secret
   const handleDelete = async () => {
     if (!deletingSecret) return;
     try {
@@ -349,6 +385,88 @@ export default function VaultPage() {
     }
   };
 
+  // ─── Project CRUD ───
+  const resetProjectForm = () => {
+    setProjName("");
+    setProjDescription("");
+    setProjColor("#3b82f6");
+  };
+
+  const openAddProjectModal = () => {
+    resetProjectForm();
+    setEditingProject(null);
+    setShowProjectModal(true);
+  };
+
+  const openEditProjectModal = (project: Project) => {
+    setProjName(project.name);
+    setProjDescription(project.description || "");
+    setProjColor(project.color);
+    setEditingProject(project);
+    setShowProjectModal(true);
+  };
+
+  const handleSaveProject = async () => {
+    if (!projName.trim()) return;
+    setSavingProject(true);
+
+    try {
+      const payload = {
+        name: projName.trim(),
+        description: projDescription.trim() || null,
+        color: projColor,
+        icon: "folder",
+      };
+
+      if (editingProject) {
+        const res = await fetch("/api/vault/projects", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ...payload, id: editingProject.id }),
+        });
+        if (!res.ok) throw new Error("Failed to update");
+        toast("Project updated", "success");
+      } else {
+        const res = await fetch("/api/vault/projects", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        if (!res.ok) throw new Error("Failed to create");
+        toast("Project created", "success");
+      }
+
+      setShowProjectModal(false);
+      resetProjectForm();
+      setEditingProject(null);
+      await fetchSecrets();
+    } catch {
+      toast("Failed to save project", "error");
+    } finally {
+      setSavingProject(false);
+    }
+  };
+
+  const handleDeleteProject = async () => {
+    if (!deletingProject) return;
+    try {
+      const res = await fetch(`/api/vault/projects?id=${deletingProject.id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Failed to delete");
+      toast("Project deleted — secrets unassigned", "success");
+      setDeletingProject(null);
+      if (filterProject === deletingProject.id) setFilterProject("all");
+      await fetchSecrets();
+    } catch {
+      toast("Failed to delete project", "error");
+    }
+  };
+
+  // ─── Helpers ───
+  const getProjectById = (id: string | null) => projects.find((p) => p.id === id) || null;
+
+  const getSecretCountForProject = (projectId: string | null) =>
+    secrets.filter((s) => (projectId === null ? !s.project_id : s.project_id === projectId)).length;
+
   // Filter secrets
   const filtered = secrets.filter((s) => {
     const matchSearch =
@@ -356,7 +474,10 @@ export default function VaultPage() {
       s.name.toLowerCase().includes(search.toLowerCase()) ||
       (s.notes && s.notes.toLowerCase().includes(search.toLowerCase()));
     const matchCategory = filterCategory === "all" || s.category === filterCategory;
-    return matchSearch && matchCategory;
+    const matchProject =
+      filterProject === "all" ||
+      (filterProject === "unassigned" ? !s.project_id : s.project_id === filterProject);
+    return matchSearch && matchCategory && matchProject;
   });
 
   /* ─── LOCKED STATE ─── */
@@ -435,7 +556,7 @@ export default function VaultPage() {
           <div>
             <h1 className="text-2xl font-semibold text-slate-100">🔐 Secret Vault</h1>
             <p className="text-slate-500 text-sm">
-              {secrets.length} secret{secrets.length !== 1 ? "s" : ""} stored • Auto-locks in 5 min
+              {secrets.length} secret{secrets.length !== 1 ? "s" : ""} • {projects.length} project{projects.length !== 1 ? "s" : ""} • Auto-locks in 5 min
             </p>
           </div>
         </div>
@@ -457,7 +578,101 @@ export default function VaultPage() {
         </div>
       </div>
 
-      {/* Search & Filters */}
+      {/* ── Project Pills ── */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-500">Projects</h2>
+          <button
+            onClick={openAddProjectModal}
+            className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-blue-400 transition-colors"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            New Project
+          </button>
+        </div>
+        <div className="flex gap-2 overflow-x-auto pb-1 flex-wrap">
+          <button
+            onClick={() => setFilterProject("all")}
+            className={`px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${
+              filterProject === "all"
+                ? "bg-blue-600/20 text-blue-400 border border-blue-500/30"
+                : "bg-slate-800/50 text-slate-500 border border-slate-800 hover:text-slate-300"
+            }`}
+          >
+            All Secrets
+            <span className="ml-1.5 text-[10px] opacity-60">{secrets.length}</span>
+          </button>
+          {projects.map((proj) => {
+            const count = getSecretCountForProject(proj.id);
+            return (
+              <div key={proj.id} className="relative group/pill">
+                <button
+                  onClick={() => setFilterProject(proj.id)}
+                  className={`px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-all flex items-center gap-2 ${
+                    filterProject === proj.id
+                      ? "border border-opacity-30 text-white"
+                      : "bg-slate-800/50 text-slate-500 border border-slate-800 hover:text-slate-300"
+                  }`}
+                  style={
+                    filterProject === proj.id
+                      ? {
+                          backgroundColor: `${proj.color}20`,
+                          borderColor: `${proj.color}50`,
+                          color: proj.color,
+                        }
+                      : undefined
+                  }
+                >
+                  <span
+                    className="w-2.5 h-2.5 rounded-full shrink-0"
+                    style={{ backgroundColor: proj.color }}
+                  />
+                  {proj.name}
+                  <span className="text-[10px] opacity-60">{count}</span>
+                </button>
+                {/* Edit/Delete on hover */}
+                <div className="absolute -top-1 -right-1 hidden group-hover/pill:flex gap-0.5">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      openEditProjectModal(proj);
+                    }}
+                    className="w-5 h-5 bg-slate-700 hover:bg-slate-600 rounded-full flex items-center justify-center"
+                  >
+                    <Pencil className="w-2.5 h-2.5 text-slate-300" />
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setDeletingProject(proj);
+                    }}
+                    className="w-5 h-5 bg-slate-700 hover:bg-red-900 rounded-full flex items-center justify-center"
+                  >
+                    <Trash2 className="w-2.5 h-2.5 text-slate-300" />
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+          {secrets.some((s) => !s.project_id) && (
+            <button
+              onClick={() => setFilterProject("unassigned")}
+              className={`px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${
+                filterProject === "unassigned"
+                  ? "bg-slate-600/20 text-slate-400 border border-slate-500/30"
+                  : "bg-slate-800/50 text-slate-600 border border-slate-800 hover:text-slate-400"
+              }`}
+            >
+              Unassigned
+              <span className="ml-1.5 text-[10px] opacity-60">
+                {getSecretCountForProject(null)}
+              </span>
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Search & Category Filters */}
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
@@ -529,6 +744,7 @@ export default function VaultPage() {
           {filtered.map((secret) => {
             const catInfo = getCategoryInfo(secret.category);
             const CatIcon = catInfo.icon;
+            const project = getProjectById(secret.project_id);
 
             return (
               <div
@@ -544,9 +760,26 @@ export default function VaultPage() {
                       <h3 className="font-medium text-slate-200 text-sm truncate">
                         {secret.name}
                       </h3>
-                      <span className={`inline-block text-xs px-1.5 py-0.5 rounded mt-0.5 ${catInfo.color}`}>
-                        {catInfo.label}
-                      </span>
+                      <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
+                        <span className={`inline-block text-xs px-1.5 py-0.5 rounded ${catInfo.color}`}>
+                          {catInfo.label}
+                        </span>
+                        {project && (
+                          <span
+                            className="inline-flex items-center gap-1 text-xs px-1.5 py-0.5 rounded"
+                            style={{
+                              backgroundColor: `${project.color}15`,
+                              color: project.color,
+                            }}
+                          >
+                            <span
+                              className="w-1.5 h-1.5 rounded-full"
+                              style={{ backgroundColor: project.color }}
+                            />
+                            {project.name}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -597,10 +830,10 @@ export default function VaultPage() {
         </div>
       )}
 
-      {/* ── Add/Edit Modal ── */}
+      {/* ── Add/Edit Secret Modal ── */}
       {showAddModal && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
-          <div className="bg-slate-900 rounded-xl border border-slate-800 p-6 w-full max-w-lg shadow-2xl">
+          <div className="bg-slate-900 rounded-xl border border-slate-800 p-6 w-full max-w-lg shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-5">
               <h2 className="text-lg font-semibold text-slate-200">
                 {editingSecret ? "Edit Secret" : "Add Secret"}
@@ -630,19 +863,36 @@ export default function VaultPage() {
                 />
               </div>
 
-              <div>
-                <label className="block text-sm text-slate-400 mb-1.5">Category</label>
-                <select
-                  value={formCategory}
-                  onChange={(e) => setFormCategory(e.target.value as Category)}
-                  className="w-full px-3 py-2.5 bg-slate-800 rounded-lg border border-slate-700 focus:border-blue-500 focus:outline-none text-slate-200 text-sm"
-                >
-                  {CATEGORIES.map((cat) => (
-                    <option key={cat.value} value={cat.value}>
-                      {cat.label}
-                    </option>
-                  ))}
-                </select>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-sm text-slate-400 mb-1.5">Category</label>
+                  <select
+                    value={formCategory}
+                    onChange={(e) => setFormCategory(e.target.value as Category)}
+                    className="w-full px-3 py-2.5 bg-slate-800 rounded-lg border border-slate-700 focus:border-blue-500 focus:outline-none text-slate-200 text-sm"
+                  >
+                    {CATEGORIES.map((cat) => (
+                      <option key={cat.value} value={cat.value}>
+                        {cat.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm text-slate-400 mb-1.5">Project</label>
+                  <select
+                    value={formProjectId}
+                    onChange={(e) => setFormProjectId(e.target.value)}
+                    className="w-full px-3 py-2.5 bg-slate-800 rounded-lg border border-slate-700 focus:border-blue-500 focus:outline-none text-slate-200 text-sm"
+                  >
+                    <option value="">No Project</option>
+                    {projects.map((proj) => (
+                      <option key={proj.id} value={proj.id}>
+                        {proj.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
 
               <div>
@@ -707,6 +957,103 @@ export default function VaultPage() {
         </div>
       )}
 
+      {/* ── Project Modal ── */}
+      {showProjectModal && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+          <div className="bg-slate-900 rounded-xl border border-slate-800 p-6 w-full max-w-md shadow-2xl">
+            <div className="flex items-center justify-between mb-5">
+              <h2 className="text-lg font-semibold text-slate-200 flex items-center gap-2">
+                <FolderOpen className="w-5 h-5 text-blue-400" />
+                {editingProject ? "Edit Project" : "New Project"}
+              </h2>
+              <button
+                onClick={() => {
+                  setShowProjectModal(false);
+                  setEditingProject(null);
+                  resetProjectForm();
+                }}
+                className="p-2 text-slate-500 hover:text-slate-300 hover:bg-slate-800 rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm text-slate-400 mb-1.5">Name</label>
+                <input
+                  type="text"
+                  value={projName}
+                  onChange={(e) => setProjName(e.target.value)}
+                  className="w-full px-3 py-2.5 bg-slate-800 rounded-lg border border-slate-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500/50 text-slate-200 text-sm"
+                  placeholder="e.g. Clawdbot Hub"
+                  autoFocus
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm text-slate-400 mb-1.5">Description (optional)</label>
+                <input
+                  type="text"
+                  value={projDescription}
+                  onChange={(e) => setProjDescription(e.target.value)}
+                  className="w-full px-3 py-2.5 bg-slate-800 rounded-lg border border-slate-700 focus:border-blue-500 focus:outline-none text-slate-200 text-sm"
+                  placeholder="Brief description of this project"
+                />
+              </div>
+
+              <div>
+                <label className="flex items-center gap-1.5 text-sm text-slate-400 mb-2">
+                  <Palette className="w-3.5 h-3.5" />
+                  Color
+                </label>
+                <div className="flex gap-2 flex-wrap">
+                  {PRESET_COLORS.map((c) => (
+                    <button
+                      key={c.value}
+                      onClick={() => setProjColor(c.value)}
+                      className={`w-8 h-8 rounded-lg transition-all ${
+                        projColor === c.value
+                          ? "ring-2 ring-white ring-offset-2 ring-offset-slate-900 scale-110"
+                          : "hover:scale-105"
+                      }`}
+                      style={{ backgroundColor: c.value }}
+                      title={c.name}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex gap-3 pt-2">
+                <button
+                  onClick={() => {
+                    setShowProjectModal(false);
+                    setEditingProject(null);
+                    resetProjectForm();
+                  }}
+                  className="flex-1 py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-slate-300 text-sm font-medium transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSaveProject}
+                  disabled={savingProject || !projName.trim()}
+                  className="flex-1 py-2.5 bg-blue-600 hover:bg-blue-500 disabled:bg-slate-700 disabled:text-slate-500 rounded-lg text-white text-sm font-medium transition-colors flex items-center justify-center gap-2"
+                >
+                  {savingProject ? (
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : editingProject ? (
+                    "Update Project"
+                  ) : (
+                    "Create Project"
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ── View Modal ── */}
       {viewingSecret && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
@@ -738,7 +1085,7 @@ export default function VaultPage() {
         </div>
       )}
 
-      {/* ── Delete Confirmation ── */}
+      {/* ── Delete Secret Confirmation ── */}
       {deletingSecret && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
           <div className="bg-slate-900 rounded-xl border border-slate-800 p-6 w-full max-w-sm shadow-2xl">
@@ -761,6 +1108,38 @@ export default function VaultPage() {
               </button>
               <button
                 onClick={handleDelete}
+                className="flex-1 py-2.5 bg-red-600 hover:bg-red-500 rounded-lg text-white text-sm font-medium transition-colors"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Delete Project Confirmation ── */}
+      {deletingProject && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+          <div className="bg-slate-900 rounded-xl border border-slate-800 p-6 w-full max-w-sm shadow-2xl">
+            <div className="text-center">
+              <div className="w-12 h-12 mx-auto bg-red-900/30 rounded-xl flex items-center justify-center mb-4">
+                <Trash2 className="w-6 h-6 text-red-400" />
+              </div>
+              <h2 className="text-lg font-semibold text-slate-200 mb-2">Delete Project</h2>
+              <p className="text-slate-500 text-sm">
+                Delete <strong className="text-slate-300">{deletingProject.name}</strong>? Secrets in this project will become unassigned (not deleted).
+              </p>
+            </div>
+
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={() => setDeletingProject(null)}
+                className="flex-1 py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-slate-300 text-sm font-medium transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteProject}
                 className="flex-1 py-2.5 bg-red-600 hover:bg-red-500 rounded-lg text-white text-sm font-medium transition-colors"
               >
                 Delete

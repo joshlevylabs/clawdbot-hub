@@ -17,6 +17,7 @@ import {
   AlertTriangle,
   Zap,
   Database,
+  Shield,
 } from "lucide-react";
 import ActionsDashboard from "@/components/ActionsDashboard";
 import PerformanceChart from "@/components/PerformanceChart";
@@ -329,7 +330,7 @@ function SignalAccuracyPanel({ stats }: { stats: SignalStats }) {
 
 // ===== Unified Trading Page with Single Tab Bar =====
 
-type ActiveTab = "overview" | "plays" | "positions" | "trades" | "signals" | "mre" | "universe" | "optimizer" | "markets";
+type ActiveTab = "overview" | "plays" | "positions" | "trades" | "signals" | "mre" | "universe" | "optimizer" | "markets" | "validation";
 
 export default function TradingPage() {
   const [activeTab, setActiveTab] = useState<ActiveTab>("overview");
@@ -487,6 +488,7 @@ export default function TradingPage() {
     { key: "universe", label: "Universe" },
     { key: "optimizer", label: "Optimizer" },
     { key: "markets", label: "Markets" },
+    { key: "validation", label: "Validation" },
   ];
 
   return (
@@ -1178,8 +1180,295 @@ export default function TradingPage() {
             />
           )}
 
+          {activeTab === "validation" && <ValidationTab />}
+
         </div>
       </div>
+    </div>
+  );
+}
+
+// ===== VALIDATION TAB =====
+
+function ValidationTab() {
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [lastRefresh, setLastRefresh] = useState<string>("");
+
+  const fetchValidation = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const res = await fetch("/api/alpaca-validation");
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || `HTTP ${res.status}`);
+      }
+      const json = await res.json();
+      setData(json);
+      setLastRefresh(new Date().toLocaleTimeString());
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchValidation();
+  }, [fetchValidation]);
+
+  if (loading) {
+    return (
+      <div className="bg-slate-800/50 rounded-xl p-12 border border-slate-700/50 text-center">
+        <div className="w-8 h-8 border-2 border-primary-400/30 border-t-primary-400 rounded-full animate-spin mx-auto mb-3" />
+        <p className="text-sm text-slate-500">Fetching Alpaca & Hub positions…</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-red-900/20 rounded-xl p-6 border border-red-500/30 text-center">
+        <AlertTriangle className="w-8 h-8 text-red-400 mx-auto mb-2" />
+        <p className="text-red-400 font-medium">Validation Error</p>
+        <p className="text-sm text-red-400/70 mt-1">{error}</p>
+        <button onClick={fetchValidation} className="mt-3 px-4 py-1.5 bg-red-500/20 text-red-400 rounded-lg text-sm hover:bg-red-500/30">
+          Retry
+        </button>
+      </div>
+    );
+  }
+
+  if (!data) return null;
+
+  const syncOk = data.sync_status === "IN_SYNC";
+  const accts = data.accounts;
+  const comps = data.comparisons || [];
+
+  return (
+    <div className="space-y-4">
+      {/* Sync Status Banner */}
+      <div className={`rounded-xl p-4 border flex items-center justify-between ${
+        syncOk
+          ? "bg-emerald-900/20 border-emerald-500/30"
+          : "bg-red-900/20 border-red-500/30"
+      }`}>
+        <div className="flex items-center gap-3">
+          <span className="text-2xl">{syncOk ? "✅" : "⚠️"}</span>
+          <div>
+            <h3 className={`font-bold ${syncOk ? "text-emerald-400" : "text-red-400"}`}>
+              {syncOk ? "Positions In Sync" : "Position Mismatch Detected"}
+            </h3>
+            <p className="text-sm text-slate-400">
+              {data.summary.in_both} symbols matched
+              {data.summary.only_alpaca > 0 && ` • ${data.summary.only_alpaca} only in Alpaca`}
+              {data.summary.only_hub > 0 && ` • ${data.summary.only_hub} only in Hub`}
+              {data.summary.qty_mismatches > 0 && ` • ${data.summary.qty_mismatches} qty mismatches`}
+              {data.summary.entry_price_diffs > 0 && ` • ${data.summary.entry_price_diffs} entry price diffs`}
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          <span className="text-xs text-slate-500">Last: {lastRefresh}</span>
+          <button onClick={fetchValidation} className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs border border-slate-600">
+            ↻ Refresh
+          </button>
+        </div>
+      </div>
+
+      {/* Account Comparison */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50">
+          <h4 className="text-xs text-slate-500 uppercase tracking-wide mb-2">Alpaca Account</h4>
+          <div className="space-y-1.5 text-sm">
+            <div className="flex justify-between">
+              <span className="text-slate-400">Equity</span>
+              <span className="font-mono text-slate-200">${accts.alpaca.equity.toLocaleString("en-US", { minimumFractionDigits: 2 })}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-slate-400">Cash</span>
+              <span className="font-mono text-slate-300">${accts.alpaca.cash.toLocaleString("en-US", { minimumFractionDigits: 2 })}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-slate-400">Status</span>
+              <span className={`font-medium ${accts.alpaca.status === "ACTIVE" ? "text-emerald-400" : "text-amber-400"}`}>
+                {accts.alpaca.status}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50">
+          <h4 className="text-xs text-slate-500 uppercase tracking-wide mb-2">Hub Account</h4>
+          <div className="space-y-1.5 text-sm">
+            <div className="flex justify-between">
+              <span className="text-slate-400">Equity</span>
+              <span className="font-mono text-slate-200">${accts.hub.equity.toLocaleString("en-US", { minimumFractionDigits: 2 })}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-slate-400">Cash</span>
+              <span className="font-mono text-slate-300">${accts.hub.cash.toLocaleString("en-US", { minimumFractionDigits: 2 })}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-slate-400">Baseline</span>
+              <span className="font-mono text-slate-300">${accts.hub.starting_capital.toLocaleString()}</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50">
+          <h4 className="text-xs text-slate-500 uppercase tracking-wide mb-2">Variance</h4>
+          <div className="space-y-1.5 text-sm">
+            <div className="flex justify-between">
+              <span className="text-slate-400">Equity Δ</span>
+              <span className={`font-mono font-bold ${Math.abs(accts.equity_diff) < 50 ? "text-emerald-400" : "text-amber-400"}`}>
+                {accts.equity_diff >= 0 ? "+" : ""}${accts.equity_diff.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-slate-400">Equity Δ %</span>
+              <span className={`font-mono ${Math.abs(accts.equity_diff_pct) < 0.1 ? "text-emerald-400" : "text-amber-400"}`}>
+                {accts.equity_diff_pct >= 0 ? "+" : ""}{accts.equity_diff_pct.toFixed(2)}%
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-slate-400">Cash Δ</span>
+              <span className="font-mono text-slate-300">
+                ${(accts.alpaca.cash - accts.hub.cash).toLocaleString("en-US", { minimumFractionDigits: 2 })}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Position-by-Position Comparison */}
+      <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50">
+        <h2 className="text-lg font-semibold text-slate-100 mb-4 flex items-center gap-2">
+          <Shield className="w-5 h-5 text-primary-400" />
+          Position Comparison ({comps.length} symbols)
+        </h2>
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs">
+            <thead>
+              <tr className="text-slate-500 uppercase border-b border-slate-700">
+                <th className="text-left py-2 px-2">Symbol</th>
+                <th className="text-center py-2 px-2">Status</th>
+                <th className="text-right py-2 px-2">Alpaca Qty</th>
+                <th className="text-right py-2 px-2">Hub Qty</th>
+                <th className="text-right py-2 px-2">Alpaca Entry</th>
+                <th className="text-right py-2 px-2">Hub Entry</th>
+                <th className="text-right py-2 px-2">Alpaca Price</th>
+                <th className="text-right py-2 px-2">Hub Price</th>
+                <th className="text-right py-2 px-2">Alpaca P/L</th>
+                <th className="text-right py-2 px-2">Hub P/L</th>
+                <th className="text-right py-2 px-2">P/L Δ</th>
+              </tr>
+            </thead>
+            <tbody>
+              {comps.map((c: any) => {
+                const pnlDiff = Math.abs(c.alpaca.unrealized_pnl - c.hub.unrealized_pnl);
+                const isOk = c.inBoth && c.qtyMatch;
+                return (
+                  <tr key={c.symbol} className={`border-b border-slate-800 ${!isOk ? "bg-red-900/10" : "hover:bg-slate-800/50"}`}>
+                    <td className="py-2 px-2 font-bold text-slate-200">{c.symbol}</td>
+                    <td className="py-2 px-2 text-center">
+                      {c.onlyAlpaca && <span className="px-2 py-0.5 rounded text-[10px] bg-amber-500/20 text-amber-400 border border-amber-500/30">ALPACA ONLY</span>}
+                      {c.onlyHub && <span className="px-2 py-0.5 rounded text-[10px] bg-amber-500/20 text-amber-400 border border-amber-500/30">HUB ONLY</span>}
+                      {c.inBoth && c.qtyMatch && <span className="px-2 py-0.5 rounded text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">✓ MATCH</span>}
+                      {c.inBoth && !c.qtyMatch && <span className="px-2 py-0.5 rounded text-[10px] bg-red-500/20 text-red-400 border border-red-500/30">QTY MISMATCH</span>}
+                    </td>
+                    <td className="py-2 px-2 text-right font-mono text-slate-300">{c.alpaca.qty || "—"}</td>
+                    <td className={`py-2 px-2 text-right font-mono ${c.qtyMatch ? "text-slate-300" : "text-red-400 font-bold"}`}>{c.hub.qty || "—"}</td>
+                    <td className="py-2 px-2 text-right font-mono text-slate-400">${c.alpaca.entry_price ? c.alpaca.entry_price.toFixed(2) : "—"}</td>
+                    <td className={`py-2 px-2 text-right font-mono ${c.entryMatch ? "text-slate-400" : "text-amber-400"}`}>${c.hub.entry_price ? c.hub.entry_price.toFixed(2) : "—"}</td>
+                    <td className="py-2 px-2 text-right font-mono text-slate-300">${c.alpaca.current_price ? c.alpaca.current_price.toFixed(2) : "—"}</td>
+                    <td className="py-2 px-2 text-right font-mono text-slate-300">${c.hub.current_price ? c.hub.current_price.toFixed(2) : "—"}</td>
+                    <td className={`py-2 px-2 text-right font-mono ${c.alpaca.unrealized_pnl >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+                      {c.alpaca.unrealized_pnl >= 0 ? "+" : ""}${c.alpaca.unrealized_pnl.toFixed(2)}
+                    </td>
+                    <td className={`py-2 px-2 text-right font-mono ${c.hub.unrealized_pnl >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+                      {c.hub.unrealized_pnl >= 0 ? "+" : ""}${c.hub.unrealized_pnl.toFixed(2)}
+                    </td>
+                    <td className={`py-2 px-2 text-right font-mono font-bold ${pnlDiff < 10 ? "text-emerald-400" : pnlDiff < 50 ? "text-amber-400" : "text-red-400"}`}>
+                      ${pnlDiff.toFixed(2)}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+            <tfoot>
+              <tr className="border-t-2 border-slate-600 bg-slate-800/80 font-bold">
+                <td className="py-2 px-2 text-slate-100">Total</td>
+                <td></td>
+                <td className="py-2 px-2 text-right font-mono text-slate-300">
+                  {comps.reduce((s: number, c: any) => s + c.alpaca.qty, 0)}
+                </td>
+                <td className="py-2 px-2 text-right font-mono text-slate-300">
+                  {comps.reduce((s: number, c: any) => s + c.hub.qty, 0)}
+                </td>
+                <td></td><td></td><td></td><td></td>
+                <td className={`py-2 px-2 text-right font-mono ${comps.reduce((s: number, c: any) => s + c.alpaca.unrealized_pnl, 0) >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+                  {comps.reduce((s: number, c: any) => s + c.alpaca.unrealized_pnl, 0) >= 0 ? "+" : ""}
+                  ${comps.reduce((s: number, c: any) => s + c.alpaca.unrealized_pnl, 0).toFixed(2)}
+                </td>
+                <td className={`py-2 px-2 text-right font-mono ${comps.reduce((s: number, c: any) => s + c.hub.unrealized_pnl, 0) >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+                  {comps.reduce((s: number, c: any) => s + c.hub.unrealized_pnl, 0) >= 0 ? "+" : ""}
+                  ${comps.reduce((s: number, c: any) => s + c.hub.unrealized_pnl, 0).toFixed(2)}
+                </td>
+                <td className="py-2 px-2 text-right font-mono text-slate-400">
+                  ${Math.abs(comps.reduce((s: number, c: any) => s + c.alpaca.unrealized_pnl, 0) - comps.reduce((s: number, c: any) => s + c.hub.unrealized_pnl, 0)).toFixed(2)}
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+
+      {/* Recent Alpaca Orders */}
+      {data.recent_orders && data.recent_orders.length > 0 && (
+        <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50">
+          <h2 className="text-lg font-semibold text-slate-100 mb-4 flex items-center gap-2">
+            <Clock className="w-5 h-5 text-slate-400" />
+            Recent Alpaca Orders ({data.recent_orders.length})
+          </h2>
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="text-slate-500 uppercase border-b border-slate-700">
+                  <th className="text-left py-2 px-2">Time</th>
+                  <th className="text-left py-2 px-2">Symbol</th>
+                  <th className="text-left py-2 px-2">Side</th>
+                  <th className="text-right py-2 px-2">Qty</th>
+                  <th className="text-right py-2 px-2">Fill Price</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.recent_orders.map((order: any, idx: number) => (
+                  <tr key={idx} className="border-b border-slate-800 hover:bg-slate-800/50">
+                    <td className="py-1.5 px-2 text-slate-400">
+                      {order.filled_at ? new Date(order.filled_at).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) : "—"}
+                    </td>
+                    <td className="py-1.5 px-2 font-medium text-slate-200">{order.symbol}</td>
+                    <td className="py-1.5 px-2">
+                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                        order.side === "buy" ? "bg-emerald-500/20 text-emerald-400" : "bg-red-500/20 text-red-400"
+                      }`}>
+                        {order.side.toUpperCase()}
+                      </span>
+                    </td>
+                    <td className="py-1.5 px-2 text-right font-mono text-slate-300">{order.qty}</td>
+                    <td className="py-1.5 px-2 text-right font-mono text-slate-300">
+                      {order.filled_price ? `$${order.filled_price.toFixed(2)}` : "—"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

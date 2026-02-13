@@ -1,10 +1,10 @@
 {
-  "timestamp": "2026-02-13T13:32:50.740527",
-  "last_updated": "2026-02-13 13:32:50",
+  "timestamp": "2026-02-13T13:57:04.613680",
+  "last_updated": "2026-02-13 13:57:04",
   "universe_size": 676,
   "core_size": 24,
   "data_date": "2026-02-13",
-  "pipeline_runtime_s": 4.5,
+  "pipeline_runtime_s": 4.1,
   "fear_greed": {
     "current": 36.2658385093168,
     "rating": "fear",

@@ -24,7 +24,18 @@
       "portfolio_return_pct": 0.0,
       "alpha_pct": 1.35,
       "note": "F&G dropped to FEAR (36.8). SPY -1.35% since inception. Cash outperforming."
+    },
+    {
+      "date": "2026-02-13",
+      "equity": 100000,
+      "cash": 100000,
+      "spy_price": 681.75,
+      "spy_baseline": 690.62,
+      "spy_return_pct": -1.28,
+      "portfolio_return_pct": 0.0,
+      "alpha_pct": 1.28,
+      "note": "Day 7. F&G 35.7 (FEAR). SPY -1.28% since inception. V13 pipeline fresh. All HOLD. Cash continues outperforming."
     }
   ],
-  "updated_at": "2026-02-12T14:04:07.283079"
+  "updated_at": "2026-02-13T14:00:52.393921"
 }

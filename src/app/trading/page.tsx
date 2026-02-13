@@ -37,6 +37,7 @@ import MarketsOverview from "./MarketsOverview";
 import OptimizerResults from "./OptimizerResults";
 import PositionCharts from "@/components/PositionCharts";
 import SignalAnalysisModal from "@/components/SignalAnalysisModal";
+import MarketCycles from "./MarketCycles";
 
 // ===== Types =====
 
@@ -356,7 +357,7 @@ function SignalAccuracyPanel({ stats }: { stats: SignalStats }) {
 
 // ===== Unified Trading Page with Single Tab Bar =====
 
-type ActiveTab = "overview" | "plays" | "positions" | "trades" | "signals" | "mre" | "universe" | "optimizer" | "markets" | "validation";
+type ActiveTab = "overview" | "plays" | "positions" | "trades" | "signals" | "mre" | "universe" | "optimizer" | "markets" | "cycles" | "validation";
 
 export default function TradingPage() {
   const [activeTab, setActiveTab] = useState<ActiveTab>("overview");
@@ -523,6 +524,7 @@ export default function TradingPage() {
     { key: "universe", label: "Universe" },
     { key: "optimizer", label: "Optimizer" },
     { key: "markets", label: "Markets" },
+    { key: "cycles", label: "Cycles" },
     { key: "validation", label: "Validation" },
   ];
 
@@ -1245,6 +1247,9 @@ export default function TradingPage() {
               onSymbolConsumed={handleAnalyzeConsumed}
             />
           )}
+
+          {/* ===== CYCLES TAB ===== */}
+          {activeTab === "cycles" && <MarketCycles />}
 
           {activeTab === "validation" && <ValidationTab />}
 

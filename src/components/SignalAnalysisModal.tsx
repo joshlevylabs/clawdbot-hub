@@ -415,6 +415,16 @@ export default function SignalAnalysisModal({ symbol, onClose }: SignalAnalysisM
                   )}
 
                   {/* Pit Agent Fleet Recommendation */}
+                  {!pitRec && (
+                    <div className="bg-slate-900/50 rounded-lg p-4 border border-slate-700/50">
+                      <h4 className="text-sm font-medium text-slate-500 mb-2 flex items-center gap-2">
+                        🤖 Pit Agent Fleet — {symbol}
+                      </h4>
+                      <p className="text-sm text-slate-600 italic">
+                        Pit analysis not yet available for {symbol}. The Pit fleet runs nightly against active signals — check back after the next optimization cycle.
+                      </p>
+                    </div>
+                  )}
                   {pitRec && (
                     <div className="bg-slate-900/50 rounded-lg p-4 border border-amber-500/20">
                       <h4 className="text-sm font-medium text-amber-400 mb-3 flex items-center gap-2">

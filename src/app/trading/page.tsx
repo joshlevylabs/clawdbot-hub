@@ -19,6 +19,16 @@ import {
   Database,
   Shield,
 } from "lucide-react";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip as ChartTooltip,
+  ReferenceLine as ChartRefLine,
+  ResponsiveContainer,
+} from "recharts";
 import ActionsDashboard from "@/components/ActionsDashboard";
 import PerformanceChart from "@/components/PerformanceChart";
 import MREDashboard from "./MREDashboard";
@@ -1425,6 +1435,87 @@ function ValidationTab() {
           </table>
         </div>
       </div>
+
+      {/* Equity History Chart */}
+      {data.equity_history && data.equity_history.length > 0 && (
+        <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50">
+          <h2 className="text-lg font-semibold text-slate-100 mb-4 flex items-center gap-2">
+            <TrendingUp className="w-5 h-5 text-primary-400" />
+            Equity History — Hub vs Alpaca
+          </h2>
+          <div className="h-[300px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={data.equity_history} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                <XAxis
+                  dataKey="date"
+                  tickFormatter={(d: string) => {
+                    const dt = new Date(d + "T12:00:00");
+                    return dt.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+                  }}
+                  tick={{ fontSize: 10, fill: "#64748b" }}
+                  axisLine={{ stroke: "#334155" }}
+                  tickLine={false}
+                  minTickGap={40}
+                />
+                <YAxis
+                  tick={{ fontSize: 10, fill: "#64748b" }}
+                  axisLine={false}
+                  tickLine={false}
+                  tickFormatter={(v: number) => `$${(v / 1000).toFixed(0)}k`}
+                  width={55}
+                  domain={["auto", "auto"]}
+                />
+                <ChartTooltip
+                  contentStyle={{ background: "#1e293b", border: "1px solid #475569", borderRadius: "8px", fontSize: "12px" }}
+                  labelFormatter={(d: any) => {
+                    const dt = new Date(String(d) + "T12:00:00");
+                    return dt.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+                  }}
+                  formatter={(value: any, name: any) => [
+                    `$${value?.toLocaleString("en-US", { minimumFractionDigits: 2 }) || "—"}`,
+                    name === "alpaca_equity" ? "Alpaca" : "Hub"
+                  ]}
+                />
+                <ChartRefLine y={100000} stroke="#64748b" strokeDasharray="6 4" strokeOpacity={0.5} />
+                <Line
+                  type="monotone"
+                  dataKey="alpaca_equity"
+                  stroke="#38bdf8"
+                  strokeWidth={2}
+                  dot={false}
+                  name="alpaca_equity"
+                  connectNulls
+                />
+                <Line
+                  type="monotone"
+                  dataKey="hub_equity"
+                  stroke="#a78bfa"
+                  strokeWidth={2}
+                  dot={false}
+                  name="hub_equity"
+                  connectNulls
+                  strokeDasharray="4 2"
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="flex items-center justify-center gap-6 mt-2 text-xs">
+            <div className="flex items-center gap-1.5">
+              <div className="w-4 h-0.5 bg-sky-400 rounded" />
+              <span className="text-slate-400">Alpaca</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="w-4 h-0.5 bg-violet-400 rounded" style={{ borderBottom: "2px dashed" }} />
+              <span className="text-slate-400">Hub</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="w-4 h-0.5 bg-slate-500 rounded" />
+              <span className="text-slate-400">$100K baseline</span>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Recent Alpaca Orders */}
       {data.recent_orders && data.recent_orders.length > 0 && (

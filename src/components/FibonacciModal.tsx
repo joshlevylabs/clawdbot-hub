@@ -21,11 +21,16 @@ interface FibonacciData {
   current_price: number;
   swing_high: number;
   swing_low: number;
+  swing_high_date?: string;     // Actual date from price history
+  swing_low_date?: string;      // Actual date from price history
   trend: string;
   swing_quality?: string;       // "impulse" | "fallback"
   extension_type?: string;      // "3-point (A→B→C)" | "2-point fallback"
-  pullback_low?: number;        // C point for 3-point extensions
+  pullback_low?: number;        // C point for uptrend 3-point extensions
   pullback_low_idx?: number;
+  pullback_high?: number;       // C point for downtrend 3-point extensions
+  pullback_high_idx?: number;
+  pullback_date?: string;       // Actual date of pullback point
   retracements: Record<string, number>;
   extensions: Record<string, number>;
   nearest_support: number;
@@ -248,29 +253,23 @@ export default function FibonacciModal({
   const swingHigh = fib.swing_high;
   const swingLow = fib.swing_low;
   const isUptrend = fib.trend === "uptrend";
-  const has3Point = !!fib.pullback_low;
+  const has3Point = !!(fib.pullback_low || fib.pullback_high);
+  const pullbackPrice = isUptrend ? fib.pullback_low : fib.pullback_high;
 
   // In an uptrend: A = swing low (buyers took over), B = swing high (buyers paused)
   // In a downtrend: A = swing high (sellers took over), B = swing low (sellers paused)
   const pointA = isUptrend ? swingLow : swingHigh;
   const pointB = isUptrend ? swingHigh : swingLow;
-  const pointAField = isUptrend ? "low" : "high";
-  const pointBField = isUptrend ? "high" : "low";
 
-  // Find swing point dates
-  const pointADate = findSwingDate(priceHistory, pointA, pointAField as "high" | "low");
-  const pointBDate = findSwingDate(priceHistory, pointB, pointBField as "high" | "low");
-
-  // Pullback low (C) date — find in price data after B
+  // Use actual dates from exporter when available (much more reliable than price matching)
+  const pointADate = isUptrend
+    ? (fib.swing_low_date || findSwingDate(priceHistory, pointA, "low"))
+    : (fib.swing_high_date || findSwingDate(priceHistory, pointA, "high"));
+  const pointBDate = isUptrend
+    ? (fib.swing_high_date || findSwingDate(priceHistory, pointB, "high"))
+    : (fib.swing_low_date || findSwingDate(priceHistory, pointB, "low"));
   const pullbackDate = has3Point
-    ? findSwingDate(
-        priceHistory.filter((p) => {
-          if (!pointBDate) return true;
-          return p.date >= pointBDate;
-        }),
-        fib.pullback_low!,
-        "low"
-      )
+    ? (fib.pullback_date || null)
     : null;
 
   const lastDate =
@@ -567,13 +566,13 @@ export default function FibonacciModal({
                     />
                   )}
 
-                  {/* Point C — Pullback Low (3-point extension) — amber */}
+                  {/* Point C — Pullback (3-point extension) — amber */}
                   {has3Point && pullbackDate && (
                     <ReferenceDot
                       x={pullbackDate}
                       y={
                         priceHistory.find((p) => p.date === pullbackDate)
-                          ?.close || fib.pullback_low!
+                          ?.close || pullbackPrice || 0
                       }
                       r={8}
                       fill="#fbbf24"
@@ -673,8 +672,8 @@ export default function FibonacciModal({
               <span>🎯</span>
               Extension Levels
               <span className="text-slate-500 font-normal">
-                {has3Point
-                  ? `(projected from pullback C: $${formatCurrency(fib.pullback_low!)})`
+                {has3Point && pullbackPrice
+                  ? `(projected from pullback C: $${formatCurrency(pullbackPrice)})`
                   : "(profit targets)"
                 }
               </span>
@@ -767,16 +766,16 @@ export default function FibonacciModal({
                   {pointBDate ? formatFullDate(pointBDate) : "—"}
                 </p>
               </div>
-              {has3Point ? (
+              {has3Point && pullbackPrice ? (
                 <div>
                   <span className="text-amber-400 font-semibold">
                     C (Pullback)
                   </span>
                   <p className="text-slate-500 text-[10px] mt-0.5">
-                    Retracement low
+                    {isUptrend ? "Retracement low" : "Bounce high"}
                   </p>
                   <p className="text-slate-200 font-mono mt-0.5">
-                    ${formatCurrency(fib.pullback_low!)}
+                    ${formatCurrency(pullbackPrice)}
                   </p>
                   <p className="text-slate-500">
                     {pullbackDate ? formatFullDate(pullbackDate) : "—"}

@@ -59,6 +59,59 @@ async function alpacaFetch<T>(endpoint: string): Promise<T> {
   return res.json();
 }
 
+function buildEquityHistory(alpacaHistory: any, hubSnapshots: any[]): any[] {
+  const result: any[] = [];
+  const hubMap = new Map<string, any>();
+
+  // Build hub lookup by date
+  for (const snap of hubSnapshots) {
+    if (snap.date) {
+      hubMap.set(snap.date.slice(0, 10), snap);
+    }
+  }
+
+  // Alpaca portfolio history returns { timestamp, equity, profit_loss, profit_loss_pct, base_value }[]
+  // or { timestamp[], equity[], ... } format
+  if (alpacaHistory && Array.isArray(alpacaHistory.timestamp)) {
+    // Array format from Alpaca
+    for (let i = 0; i < alpacaHistory.timestamp.length; i++) {
+      const ts = alpacaHistory.timestamp[i];
+      const date = new Date(ts * 1000).toISOString().slice(0, 10);
+      const alpacaEquity = alpacaHistory.equity[i];
+      const hubSnap = hubMap.get(date);
+      result.push({
+        date,
+        alpaca_equity: alpacaEquity ? Math.round(alpacaEquity * 100) / 100 : null,
+        hub_equity: hubSnap ? Math.round(hubSnap.equity * 100) / 100 : null,
+      });
+    }
+  } else if (Array.isArray(alpacaHistory)) {
+    // Object array format
+    for (const item of alpacaHistory) {
+      const date = item.date || new Date(item.timestamp * 1000).toISOString().slice(0, 10);
+      const hubSnap = hubMap.get(date);
+      result.push({
+        date,
+        alpaca_equity: item.equity ? Math.round(item.equity * 100) / 100 : null,
+        hub_equity: hubSnap ? Math.round(hubSnap.equity * 100) / 100 : null,
+      });
+    }
+  }
+
+  // Add any hub-only dates
+  hubMap.forEach((snap, date) => {
+    if (!result.find((r) => r.date === date)) {
+      result.push({
+        date,
+        alpaca_equity: null,
+        hub_equity: Math.round(snap.equity * 100) / 100,
+      });
+    }
+  });
+
+  return result.sort((a, b) => a.date.localeCompare(b.date));
+}
+
 export async function GET() {
   const authenticated = await getSession();
   if (!authenticated) {
@@ -67,20 +120,23 @@ export async function GET() {
 
   try {
     // Fetch from both sources in parallel
-    const [alpacaPositions, alpacaAccount, alpacaOrders, hubData] = await Promise.all([
+    const [alpacaPositions, alpacaAccount, alpacaOrders, alpacaHistory, hubData] = await Promise.all([
       alpacaFetch<AlpacaPosition[]>('/v2/positions'),
       alpacaFetch<AlpacaAccount>('/v2/account'),
       alpacaFetch<AlpacaOrder[]>('/v2/orders?status=all&limit=50'),
+      alpacaFetch<any[]>('/v2/account/portfolio/history?period=1M&timeframe=1D').catch(() => []),
       isPaperSupabaseConfigured()
         ? Promise.all([
             paperSupabase.from('paper_positions').select('*').order('opened_at', { ascending: false }),
             paperSupabase.from('paper_trading_config').select('*').limit(1).single(),
+            paperSupabase.from('paper_portfolio_snapshots').select('date,equity,cash').order('date', { ascending: true }).limit(100),
           ])
-        : Promise.resolve([{ data: [] }, { data: null }]),
+        : Promise.resolve([{ data: [] }, { data: null }, { data: [] }]),
     ]);
 
     const hubPositions = (hubData[0] as any).data || [];
     const hubConfig = (hubData[1] as any).data;
+    const hubSnapshots = (hubData[2] as any)?.data || [];
 
     // Build comparison
     const allSymbols = new Set<string>();
@@ -200,6 +256,7 @@ export async function GET() {
       comparisons,
       mismatches,
       recent_orders: recentOrders,
+      equity_history: buildEquityHistory(alpacaHistory, hubSnapshots),
     });
   } catch (err: any) {
     console.error('Alpaca validation error:', err);

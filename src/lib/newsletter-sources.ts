@@ -94,15 +94,15 @@ export const CONTENT_SOURCES: ContentSourceDef[] = [
   },
   {
     key: 'strategy-improvements',
-    label: 'Strategy Improvements',
-    description: 'Recent Pit optimizations, version changes, and model improvements',
+    label: '🔧 MRE/Pit Model Improvements',
+    description: 'What changed this week: Pit agent optimizations, version bumps across all 5 MRE models, strategy parameter changes, and AI fleet updates',
     category: 'trading',
     availableParams: [],
   },
   {
     key: 'signal-accuracy',
-    label: 'Historical Signal Accuracy',
-    description: 'Signal accuracy by asset class, strategy win rates, and backtest performance',
+    label: '🎯 Signal Accuracy & Track Record',
+    description: "Today's Plays signal hit rates (5d/10d/20d), accuracy by signal type, and strategy backtest win rates",
     category: 'trading',
     availableParams: [
       {
@@ -423,46 +423,65 @@ const fetchers: Record<string, DataFetcher> = {
     };
   },
 
-  'signal-accuracy': (params) => {
+  'signal-accuracy': async (params) => {
     const include = (params.include as string) || 'all';
     const result: Record<string, unknown> = {};
 
-    // Signal-level accuracy from MRE signals
-    if (include === 'all' || include === 'signals') {
+    // Signal accuracy from Supabase signal_history
+    if ((include === 'all' || include === 'signals') && isPaperSupabaseConfigured()) {
+      const { data: signals } = await paperSupabase
+        .from('signal_history')
+        .select('symbol,signal,confidence,regime,price_at_signal,price_after_5d,price_after_10d,price_after_20d,was_correct_5d,was_correct_10d,was_correct_20d,version,generated_at')
+        .order('generated_at', { ascending: false })
+        .limit(200);
+
+      if (signals && signals.length > 0) {
+        const total = signals.length;
+        const correct5d = signals.filter((s: Record<string, unknown>) => s.was_correct_5d === true).length;
+        const correct10d = signals.filter((s: Record<string, unknown>) => s.was_correct_10d === true).length;
+        const correct20d = signals.filter((s: Record<string, unknown>) => s.was_correct_20d === true).length;
+        const evaluated5d = signals.filter((s: Record<string, unknown>) => s.was_correct_5d != null).length;
+        const evaluated10d = signals.filter((s: Record<string, unknown>) => s.was_correct_10d != null).length;
+        const evaluated20d = signals.filter((s: Record<string, unknown>) => s.was_correct_20d != null).length;
+
+        // By signal type
+        const bySignalType: Record<string, { total: number; correct_5d: number; evaluated_5d: number }> = {};
+        for (const s of signals) {
+          const sig = String((s as Record<string, unknown>).signal || 'UNKNOWN');
+          if (!bySignalType[sig]) bySignalType[sig] = { total: 0, correct_5d: 0, evaluated_5d: 0 };
+          bySignalType[sig].total++;
+          if ((s as Record<string, unknown>).was_correct_5d != null) {
+            bySignalType[sig].evaluated_5d++;
+            if ((s as Record<string, unknown>).was_correct_5d === true) bySignalType[sig].correct_5d++;
+          }
+        }
+
+        result.signal_accuracy = {
+          total_signals: total,
+          accuracy_5d: evaluated5d > 0 ? { pct: Number(((correct5d / evaluated5d) * 100).toFixed(1)), correct: correct5d, evaluated: evaluated5d } : null,
+          accuracy_10d: evaluated10d > 0 ? { pct: Number(((correct10d / evaluated10d) * 100).toFixed(1)), correct: correct10d, evaluated: evaluated10d } : null,
+          accuracy_20d: evaluated20d > 0 ? { pct: Number(((correct20d / evaluated20d) * 100).toFixed(1)), correct: correct20d, evaluated: evaluated20d } : null,
+          by_signal_type: bySignalType,
+          latest_version: (signals[0] as Record<string, unknown>)?.version,
+        };
+      }
+    }
+
+    // Fallback: Signal-level accuracy from MRE signals JSON
+    if (!result.signal_accuracy) {
       const signalsData = readDataFile('trading/mre-signals.json') as Record<string, unknown> | null;
       if (signalsData) {
         const signals = signalsData.signals as Record<string, unknown> | undefined;
         const byAssetClass = (signals?.by_asset_class || []) as Array<Record<string, unknown>>;
-        
-        // Extract accuracy data per asset class
         const accuracyByClass: Array<Record<string, unknown>> = [];
         for (const assetClass of byAssetClass) {
           const assets = (assetClass.assets || []) as Array<Record<string, unknown>>;
           const classAccuracies = assets
             .filter((a) => a.expected_accuracy != null || a.historical_accuracy != null)
-            .map((a) => ({
-              symbol: a.symbol,
-              signal: a.signal,
-              expected_accuracy: a.expected_accuracy,
-              historical_accuracy: a.historical_accuracy,
-              confidence: a.confidence,
-            }));
-          if (classAccuracies.length > 0) {
-            accuracyByClass.push({
-              asset_class: assetClass.name || assetClass.asset_class,
-              assets: classAccuracies,
-            });
-          }
+            .map((a) => ({ symbol: a.symbol, signal: a.signal, expected_accuracy: a.expected_accuracy, historical_accuracy: a.historical_accuracy }));
+          if (classAccuracies.length > 0) accuracyByClass.push({ asset_class: assetClass.name || assetClass.asset_class, assets: classAccuracies });
         }
-        
-        // Prediction markets accuracy
-        const predictionMarkets = signalsData.prediction_markets as Record<string, unknown> | undefined;
-        
-        result.signal_accuracy = {
-          by_asset_class: accuracyByClass,
-          prediction_markets: predictionMarkets || null,
-          last_updated: signalsData.last_updated,
-        };
+        result.signal_accuracy = { by_asset_class: accuracyByClass, last_updated: signalsData.last_updated };
       }
     }
 
@@ -478,9 +497,7 @@ const fetchers: Record<string, DataFetcher> = {
       }
     }
 
-    if (Object.keys(result).length === 0) {
-      return { error: 'No accuracy data available' };
-    }
+    if (Object.keys(result).length === 0) return { error: 'No accuracy data available' };
     return result;
   },
 

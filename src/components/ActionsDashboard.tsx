@@ -1010,6 +1010,12 @@ export default function ActionsDashboard({
     UNIVERSE: actions.filter(a => !a.isCore).length,
   };
 
+  // Cash interest calculation (money market ~3.5% APY)
+  const CASH_APY = 0.035;
+  const PORTFOLIO_START = new Date("2026-02-09T00:00:00");
+  const daysSinceStartCalc = Math.max(0, (Date.now() - PORTFOLIO_START.getTime()) / (1000 * 60 * 60 * 24));
+  const interestEarned = cash * CASH_APY * (daysSinceStartCalc / 365);
+
   // Portfolio totals
   const totalPnl = positions.reduce((sum, pos) => {
     const asset = actions.find(a => a.symbol === pos.symbol);
@@ -1326,30 +1332,75 @@ export default function ActionsDashboard({
                     </tbody>
                   ))
                 )}
-                {/* Portfolio Totals */}
-                {positions.length > 0 && (
-                  <tfoot>
+                {/* CASH row + Portfolio Totals */}
+                <tfoot>
+                  {/* CASH row */}
+                  {cash > 0 && (
+                    <tr className="border-b border-slate-800 bg-amber-900/10">
+                      <td className="py-2.5 px-2">
+                        <div className="flex items-center gap-2">
+                          <div>
+                            <span className="font-bold text-slate-100">CASH 💵</span>
+                            <p className="text-[10px] text-slate-500">Money market ~3.5% APY</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="py-2.5 px-2">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg border text-xs font-bold bg-slate-500/20 text-slate-400 border-slate-500/50">
+                          <Minus className="w-3 h-3" />HOLD
+                        </span>
+                      </td>
+                      <td className="py-2.5 px-2"><span className="text-xs text-slate-600">—</span></td>
+                      <td className="py-2.5 px-2"><span className="text-xs text-slate-600">—</span></td>
+                      <td className="py-2.5 px-2"><span className="text-xs text-slate-600">—</span></td>
+                      <td className="py-2.5 px-2"><span className="text-xs text-slate-600">—</span></td>
+                      <td className="py-2.5 px-2"><span className="text-xs text-slate-600">—</span></td>
+                      <td className="py-2.5 px-2"><span className="text-xs text-slate-600">—</span></td>
+                      <td className="py-2.5 px-2"><span className="text-xs text-slate-600">—</span></td>
+                      <td className="py-2.5 px-2"><span className="text-xs text-slate-600">—</span></td>
+                      <td className="py-2.5 px-2"><span className="text-xs text-slate-600">—</span></td>
+                      <td className="py-2.5 px-2"><span className="text-xs text-slate-600">—</span></td>
+                      <td className="py-2.5 px-2">
+                        <div className="text-xs">
+                          <span className="text-amber-400 font-mono">${cash.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                        </div>
+                      </td>
+                      <td className="py-2.5 px-2 text-right">
+                        <div className="text-xs font-mono">
+                          <span className="text-emerald-400">+${interestEarned.toFixed(2)}</span>
+                          <p className="text-emerald-400/70">3.50% APY</p>
+                        </div>
+                      </td>
+                      <td className="py-2.5 px-2 font-mono text-xs text-slate-600">—</td>
+                      <td className="py-2.5 px-2 font-mono text-xs text-slate-600">—</td>
+                      <td className="py-2.5 px-2 font-mono text-xs text-slate-600">—</td>
+                      {onAnalyze && <td className="py-2.5 px-2"></td>}
+                      {tradingEnabled && <td className="py-2.5 px-2"></td>}
+                    </tr>
+                  )}
+                  {/* Portfolio Totals */}
+                  {positions.length > 0 && (
                     <tr className="border-t-2 border-slate-600 bg-slate-800/80">
                       <td className="py-2.5 px-2 font-bold text-slate-100" colSpan={12}>
-                        Portfolio Total — {positions.filter(p => p.qty > 0).length} positions
+                        Portfolio Total — {positions.filter(p => p.qty > 0).length} positions + cash
                       </td>
                       <td className="py-2.5 px-2 text-xs text-slate-400">
-                        ${totalCost.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        ${(totalCost + cash).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </td>
                       <td className="py-2.5 px-2 text-right font-mono font-bold">
-                        <span className={`text-sm ${totalPnl >= 0 ? "text-emerald-400" : "text-red-400"}`}>
-                          {totalPnl >= 0 ? "+" : ""}${totalPnl.toFixed(2)}
+                        <span className={`text-sm ${(totalPnl + interestEarned) >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+                          {(totalPnl + interestEarned) >= 0 ? "+" : ""}${(totalPnl + interestEarned).toFixed(2)}
                         </span>
-                        <p className={`text-xs ${totalPnl >= 0 ? "text-emerald-400/70" : "text-red-400/70"}`}>
-                          {totalPnl >= 0 ? "+" : ""}{totalPnlPct.toFixed(2)}%
+                        <p className={`text-xs ${(totalPnl + interestEarned) >= 0 ? "text-emerald-400/70" : "text-red-400/70"}`}>
+                          incl. ${interestEarned.toFixed(2)} interest
                         </p>
                       </td>
                       <td colSpan={(tradingEnabled ? 4 : 3) + (onAnalyze ? 1 : 0)} className="py-2.5 px-2 text-right text-xs text-slate-500">
                         Cash: ${cash.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </td>
                     </tr>
-                  </tfoot>
-                )}
+                  )}
+                </tfoot>
               </table>
             </div>
           )}

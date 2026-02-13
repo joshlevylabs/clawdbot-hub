@@ -463,7 +463,14 @@ export default function TradingPage() {
   const startingCapital = config?.starting_capital || 100000;
   const cash = config?.current_cash || 100000;
   const positionsValue = positions.reduce((sum, p) => sum + p.qty * (p.current_price || p.entry_price), 0);
-  const equity = cash + positionsValue;
+
+  // Cash interest calculation (money market ~3.5% APY)
+  const CASH_APY = 0.035;
+  const PORTFOLIO_START = new Date("2026-02-09T00:00:00");
+  const daysSinceStart = Math.max(0, (Date.now() - PORTFOLIO_START.getTime()) / (1000 * 60 * 60 * 24));
+  const interestEarned = cash * CASH_APY * (daysSinceStart / 365);
+
+  const equity = cash + positionsValue + interestEarned;
   const totalPnl = equity - startingCapital;
   const totalPnlPct = (totalPnl / startingCapital) * 100;
 
@@ -840,6 +847,37 @@ export default function TradingPage() {
                             </tr>
                           );
                         })}
+                        {/* CASH row */}
+                        {(() => {
+                          const cashValue = cash;
+                          const cashPct = equity > 0 ? (cashValue / equity) * 100 : 0;
+                          return (
+                            <tr className="border-b border-slate-800 bg-amber-900/10">
+                              <td className="py-3 px-2">
+                                <span className="font-bold text-slate-100">💵 CASH</span>
+                                <p className="text-[10px] text-slate-600 mt-0.5">Money market ~3.5% APY</p>
+                              </td>
+                              <td className="py-3 px-2"><span className="text-xs text-slate-600">—</span></td>
+                              <td className="py-3 px-2 text-right font-mono text-slate-300">${formatCurrency(cashValue)}</td>
+                              <td className="py-3 px-2 text-right font-mono text-slate-600">—</td>
+                              <td className="py-3 px-2 text-right font-mono text-slate-600">—</td>
+                              <td className="py-3 px-2 text-right font-mono font-bold text-emerald-400">
+                                +${formatCurrency(interestEarned)}
+                              </td>
+                              <td className="py-3 px-2 text-right font-mono text-emerald-400">
+                                3.50% APY
+                              </td>
+                              <td className="py-3 px-2 text-right font-mono text-slate-300">${formatCurrency(cashValue)}</td>
+                              <td className="py-3 px-2 text-right font-mono text-slate-400">{cashPct.toFixed(1)}%</td>
+                              <td className="py-3 px-2 text-right"><span className="text-xs text-slate-600">—</span></td>
+                              <td className="py-3 px-2 text-right"><span className="text-xs text-slate-600">—</span></td>
+                              <td className="py-3 px-2 text-right font-mono text-slate-600">—</td>
+                              <td className="py-3 px-2 text-right font-mono text-slate-600">—</td>
+                              <td className="py-3 px-2 text-right text-sm text-slate-600">—</td>
+                              <td className="py-3 px-2 text-center"><span className="text-xs text-slate-600">—</span></td>
+                            </tr>
+                          );
+                        })()}
                       </tbody>
                       <tfoot>
                         <tr className="border-t-2 border-slate-600 bg-slate-800/80 font-bold">
@@ -856,12 +894,12 @@ export default function TradingPage() {
                           <td className={`py-3 px-2 text-right font-mono ${totalPnl >= 0 ? "text-emerald-400" : "text-red-400"}`}>
                             {formatPercent(totalPnlPct)}
                           </td>
-                          <td className="py-3 px-2 text-right font-mono text-slate-200">${formatCurrency(positionsValue)}</td>
+                          <td className="py-3 px-2 text-right font-mono text-slate-200">${formatCurrency(equity)}</td>
                           <td className="py-3 px-2 text-right font-mono text-slate-400">
-                            {equity > 0 ? ((positionsValue / equity) * 100).toFixed(1) : "0"}%
+                            100%
                           </td>
                           <td colSpan={6} className="py-3 px-2 text-right text-sm text-slate-500">
-                            Cash: ${formatCurrency(cash)} ({equity > 0 ? ((cash / equity) * 100).toFixed(1) : 100}%)
+                            Positions: ${formatCurrency(positionsValue)} + Cash: ${formatCurrency(cash)} + Interest: ${formatCurrency(interestEarned)}
                           </td>
                         </tr>
                       </tfoot>

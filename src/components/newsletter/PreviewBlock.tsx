@@ -566,12 +566,79 @@ function SignalAccuracy({ data }: { data: Record<string, unknown> }) {
   const signalAcc = data.signal_accuracy as Record<string, unknown> | undefined;
   const backtests = data.backtest_results as Record<string, unknown> | undefined;
 
+  if (!signalAcc && !backtests) {
+    return <div className="text-xs text-slate-500 italic">No accuracy data available yet</div>;
+  }
+
+  // Supabase format: total_signals, accuracy_5d/10d/20d, by_signal_type
+  const totalSignals = signalAcc?.total_signals as number | undefined;
+  const acc5d = signalAcc?.accuracy_5d as Record<string, unknown> | null | undefined;
+  const acc10d = signalAcc?.accuracy_10d as Record<string, unknown> | null | undefined;
+  const acc20d = signalAcc?.accuracy_20d as Record<string, unknown> | null | undefined;
+  const bySignalType = signalAcc?.by_signal_type as Record<string, Record<string, number>> | undefined;
+  // Legacy format: by_asset_class
+  const byAssetClass = (signalAcc?.by_asset_class || []) as Array<Record<string, unknown>>;
+
   return (
     <div className="space-y-3">
-      {signalAcc && (
+      {signalAcc && totalSignals != null && (
+        <div>
+          <div className="text-[10px] text-slate-500 uppercase font-semibold mb-1">
+            Signal Accuracy ({totalSignals} signals tracked)
+          </div>
+          <div className="grid grid-cols-3 gap-2 mb-2">
+            {[
+              { label: '5-Day', data: acc5d },
+              { label: '10-Day', data: acc10d },
+              { label: '20-Day', data: acc20d },
+            ].map(({ label, data: accData }) => (
+              <div key={label} className="text-center p-2 bg-slate-900/50 rounded-lg">
+                <div className="text-[10px] text-slate-500">{label}</div>
+                <div className="text-sm font-semibold mt-0.5">
+                  {accData ? (
+                    <span className={Number(accData.pct) >= 50 ? 'text-emerald-400' : 'text-red-400'}>
+                      {String(accData.pct)}%
+                    </span>
+                  ) : (
+                    <span className="text-slate-600">—</span>
+                  )}
+                </div>
+                <div className="text-[10px] text-slate-600">
+                  {accData ? `${accData.correct}/${accData.evaluated}` : 'pending'}
+                </div>
+              </div>
+            ))}
+          </div>
+          {bySignalType && Object.keys(bySignalType).length > 0 && (
+            <div>
+              <div className="text-[10px] text-slate-500 uppercase font-semibold mb-1">By Signal Type</div>
+              <div className="flex flex-wrap gap-2">
+                {Object.entries(bySignalType).map(([sig, stats]) => {
+                  const pct = stats.evaluated_5d > 0 ? ((stats.correct_5d / stats.evaluated_5d) * 100).toFixed(0) : null;
+                  return (
+                    <span key={sig} className="text-xs bg-slate-800/60 px-2 py-0.5 rounded">
+                      <span className={
+                        sig === 'BUY' ? 'text-emerald-400' : sig === 'SELL' ? 'text-red-400' : 'text-slate-400'
+                      }>{sig}</span>
+                      <span className="text-slate-500 ml-1">
+                        {pct != null ? `${pct}%` : '—'} ({stats.total})
+                      </span>
+                    </span>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+          {signalAcc.latest_version != null && (
+            <div className="text-[10px] text-slate-600 mt-1">Version: {String(signalAcc.latest_version)}</div>
+          )}
+        </div>
+      )}
+      {/* Legacy format: by asset class */}
+      {signalAcc && byAssetClass.length > 0 && !totalSignals && (
         <div>
           <div className="text-[10px] text-slate-500 uppercase font-semibold mb-1">Signal Accuracy by Asset Class</div>
-          {((signalAcc.by_asset_class || []) as Array<Record<string, unknown>>).map((ac, i) => (
+          {byAssetClass.map((ac, i) => (
             <div key={i} className="mb-2">
               <div className="text-xs font-medium text-slate-300 mb-0.5">{String(ac.asset_class)}</div>
               <div className="space-y-0.5">
@@ -582,12 +649,6 @@ function SignalAccuracy({ data }: { data: Record<string, unknown> }) {
                       String(a.signal) === 'BUY' ? 'text-emerald-400' :
                       String(a.signal) === 'SELL' ? 'text-red-400' : 'text-slate-500'
                     }>{String(a.signal)}</span>
-                    {a.expected_accuracy != null && (
-                      <span className="text-slate-500">exp: {String(a.expected_accuracy)}%</span>
-                    )}
-                    {a.historical_accuracy != null && (
-                      <span className="text-blue-400">hist: {String(a.historical_accuracy)}%</span>
-                    )}
                   </div>
                 ))}
               </div>
@@ -629,9 +690,13 @@ function StrategyImprovements({ data }: { data: Record<string, unknown> }) {
   const pit = data.pit_recommendations as Record<string, unknown> | undefined;
   const optim = data.latest_optimization as Record<string, unknown> | undefined;
 
+  if (!versions && !pit && !optim) {
+    return <div className="text-xs text-slate-500 italic">No improvement data available</div>;
+  }
+
   return (
     <div className="space-y-3">
-      {versions && (
+      {versions && Object.keys(versions).length > 0 && (
         <div>
           <div className="text-[10px] text-slate-500 uppercase font-semibold mb-1">System Versions</div>
           <div className="flex flex-wrap gap-2">

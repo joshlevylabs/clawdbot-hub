@@ -11,6 +11,8 @@ import {
   ReferenceDot,
   ResponsiveContainer,
 } from "recharts";
+import { Ruler } from "lucide-react";
+import FibonacciModal from "./FibonacciModal";
 
 // ===== Types =====
 
@@ -36,12 +38,23 @@ interface PricePoint {
   low: number | null;
 }
 
+interface FibonacciData {
+  symbol: string;
+  current_price: number;
+  swing_high: number;
+  swing_low: number;
+  trend: string;
+  retracements: Record<string, number>;
+  extensions: Record<string, number>;
+  nearest_support: number;
+  nearest_resistance: number;
+  entry_zone: string;
+  profit_targets: number[];
+}
+
 interface MRESignal {
   symbol: string;
-  fibonacci?: {
-    retracements?: Record<string, number>;
-    profit_targets?: number[];
-  };
+  fibonacci?: FibonacciData;
 }
 
 interface PositionChartData {
@@ -51,6 +64,7 @@ interface PositionChartData {
   takeProfit: number;
   loading: boolean;
   error: boolean;
+  fibonacci?: FibonacciData;
 }
 
 // ===== Helpers =====
@@ -75,14 +89,24 @@ function formatPercent(value: number): string {
 
 async function fetchMRESignals(): Promise<MRESignal[]> {
   try {
-    const res = await fetch("/data/trading/mre-signals.json");
-    if (!res.ok) return [];
-    const data = await res.json();
-    const signals = data?.signals?.by_asset_class || [];
-    return signals.map((s: any) => ({
-      symbol: s.symbol,
-      fibonacci: s.fibonacci,
-    }));
+    const [coreRes, uniRes] = await Promise.allSettled([
+      fetch("/data/trading/mre-signals.json"),
+      fetch("/data/trading/mre-signals-universe.json"),
+    ]);
+    const results: MRESignal[] = [];
+    for (const res of [coreRes, uniRes]) {
+      if (res.status === "fulfilled" && res.value.ok) {
+        const data = await res.value.json();
+        const signals = data?.signals?.by_asset_class || [];
+        for (const s of signals) {
+          results.push({
+            symbol: s.symbol,
+            fibonacci: s.fibonacci || undefined,
+          });
+        }
+      }
+    }
+    return results;
   } catch {
     return [];
   }
@@ -147,8 +171,9 @@ function ChartTooltip({ active, payload, label }: any) {
 // ===== Single Position Chart Card =====
 
 function PositionChartCard({ chartData }: { chartData: PositionChartData }) {
-  const { position, priceHistory, stopLoss, takeProfit, loading, error } =
+  const { position, priceHistory, stopLoss, takeProfit, loading, error, fibonacci } =
     chartData;
+  const [showFibModal, setShowFibModal] = useState(false);
 
   const currentPrice = position.current_price || position.entry_price;
   const pnl = (currentPrice - position.entry_price) * position.qty;
@@ -220,6 +245,16 @@ function PositionChartCard({ chartData }: { chartData: PositionChartData }) {
             <span className="font-mono">{position.qty}</span> × $
             {formatCurrency(currentPrice)}
           </div>
+          {fibonacci && (
+            <button
+              onClick={() => setShowFibModal(true)}
+              className="flex items-center gap-1 px-2 py-1 rounded-md text-[10px] font-medium bg-slate-700/50 hover:bg-slate-600/50 text-slate-400 hover:text-primary-400 transition-colors"
+              title="Fibonacci Analysis"
+            >
+              <Ruler size={12} />
+              <span>Fib</span>
+            </button>
+          )}
         </div>
       </div>
 
@@ -376,6 +411,15 @@ function PositionChartCard({ chartData }: { chartData: PositionChartData }) {
           </span>
         </div>
       </div>
+
+      {/* Fibonacci Modal */}
+      {showFibModal && fibonacci && (
+        <FibonacciModal
+          symbol={position.symbol}
+          fibonacci={fibonacci}
+          onClose={() => setShowFibModal(false)}
+        />
+      )}
     </div>
   );
 }
@@ -404,6 +448,9 @@ export default function PositionCharts({
       const initial = new Map<string, PositionChartData>();
       positions.forEach((pos) => {
         const { stopLoss, takeProfit } = getStopAndTarget(pos, mreSignals);
+        const mre = mreSignals.find(
+          (s) => s.symbol.toUpperCase() === pos.symbol.toUpperCase()
+        );
         initial.set(pos.id, {
           position: pos,
           priceHistory: [],
@@ -411,6 +458,7 @@ export default function PositionCharts({
           takeProfit,
           loading: true,
           error: false,
+          fibonacci: mre?.fibonacci,
         });
       });
       if (!cancelled) setChartDataMap(new Map(initial));

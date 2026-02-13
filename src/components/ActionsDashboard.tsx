@@ -111,6 +111,13 @@ interface AssetSignal {
   return_5d?: number;
   momentum_20d?: number;
   volatility_20d?: number;
+  strategy_votes?: {
+    fear_greed: boolean;
+    regime_confirmation: boolean;
+    rsi_oversold: boolean;
+    mean_reversion: boolean;
+    momentum: boolean;
+  };
 }
 
 interface UniverseData {
@@ -225,6 +232,10 @@ interface ActionItem {
   sector?: string;
   // Computed composite score (for swap comparison)
   swapScore?: number;
+  // Consensus: how many of 5 strategies agree
+  consensus?: number;
+  // Strategy votes raw
+  strategyVotes?: AssetSignal["strategy_votes"];
 }
 
 interface ActionsDashboardProps {
@@ -356,6 +367,11 @@ function generateActions(data: MREData): ActionItem[] {
         Math.min(100, (expected_sharpe || 0) * 20) * 0.20 +
         (regime === "bull" ? 100 : regime === "sideways" ? 50 : 0) * 0.15
       ),
+      // Consensus: count how many of the 5 strategies agree
+      consensus: asset.strategy_votes
+        ? Object.values(asset.strategy_votes).filter(Boolean).length
+        : (asset.strategies_agreeing ?? 0),
+      strategyVotes: asset.strategy_votes,
     });
   }
 
@@ -760,6 +776,7 @@ export default function ActionsDashboard({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [tradingSymbol, setTradingSymbol] = useState<string | null>(null);
+  const [pitData, setPitData] = useState<Record<string, { pit_verdict: string }>>({});
 
   // Filter / sort / group state
   const [signalFilter, setSignalFilter] = useState<SignalFilter>("ACTIONABLE");
@@ -770,10 +787,11 @@ export default function ActionsDashboard({
   useEffect(() => {
     async function load() {
       try {
-        // Load both core and universe data
-        const [coreRes, universeRes] = await Promise.all([
+        // Load core, universe, and pit data
+        const [coreRes, universeRes, pitRes] = await Promise.all([
           fetch("/data/trading/mre-signals.json"),
-          fetch("/data/trading/mre-signals-universe.json")
+          fetch("/data/trading/mre-signals-universe.json"),
+          fetch("/data/trading/pit-recommendations.json"),
         ]);
         
         if (!coreRes.ok) throw new Error("Failed to load core signals");
@@ -781,6 +799,14 @@ export default function ActionsDashboard({
         
         const coreData = await coreRes.json();
         const universeData = await universeRes.json();
+        
+        // Pit fleet data (optional — don't fail if missing)
+        if (pitRes.ok) {
+          try {
+            const pitJson = await pitRes.json();
+            setPitData(pitJson.assets || {});
+          } catch { /* ignore parse errors */ }
+        }
         
         // Merge the data
         const mergedData = {
@@ -963,6 +989,31 @@ export default function ActionsDashboard({
         </td>
         {/* Signal */}
         <td className="py-2.5 px-2"><ActionBadge action={item.action} /></td>
+        {/* Pit Verdict */}
+        <td className="py-2.5 px-2">
+          {(() => {
+            const pit = pitData[item.symbol];
+            if (!pit?.pit_verdict) return <span className="text-xs text-slate-600">—</span>;
+            const v = pit.pit_verdict.toUpperCase();
+            const color = v.startsWith("BUY") ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/50"
+              : v.startsWith("CAUTIOUS") ? "bg-amber-500/20 text-amber-400 border-amber-500/50"
+              : v.startsWith("SELL") ? "bg-red-500/20 text-red-400 border-red-500/50"
+              : v.startsWith("AVOID") ? "bg-red-500/20 text-red-400 border-red-500/50"
+              : "bg-slate-500/20 text-slate-400 border-slate-500/50";
+            const label = v.split("—")[0].split("–")[0].trim();
+            return <span className={`inline-flex px-1.5 py-0.5 rounded border text-[10px] font-bold ${color}`}>{label}</span>;
+          })()}
+        </td>
+        {/* Consensus */}
+        <td className="py-2.5 px-2">
+          {(() => {
+            const c = item.consensus ?? 0;
+            const color = c >= 4 ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/50"
+              : c === 3 ? "bg-amber-500/20 text-amber-400 border-amber-500/50"
+              : "bg-slate-500/20 text-slate-400 border-slate-500/50";
+            return <span className={`inline-flex px-1.5 py-0.5 rounded border text-[10px] font-bold ${color}`}>{c}/5{c >= 3 ? " ✓" : ""}</span>;
+          })()}
+        </td>
         {/* Regime */}
         <td className="py-2.5 px-2"><RegimeBadge regime={item.regime} /></td>
         {/* Confidence */}
@@ -1108,7 +1159,7 @@ export default function ActionsDashboard({
           <Filter className="w-3.5 h-3.5 text-slate-500" />
           
           {/* Signal Filters */}
-          {(["ACTIONABLE", "ALL", "BUY", "UNIVERSE"] as SignalFilter[]).map(f => (
+          {(["ACTIONABLE", "ALL", "BUY", "POSITIONS", "UNIVERSE"] as SignalFilter[]).map(f => (
             <button key={f} onClick={() => setSignalFilter(f)}
               className={`px-2.5 py-1 text-xs rounded-lg font-medium transition-colors ${
                 signalFilter === f
@@ -1178,6 +1229,8 @@ export default function ActionsDashboard({
                   <tr className="text-[10px] text-slate-500 uppercase border-b border-slate-700">
                     <SortHeader label="Asset" sortKey="symbol" currentSort={sortKey} currentDir={sortDir} onSort={handleSort} className="text-left" />
                     <SortHeader label="Signal" sortKey="action" currentSort={sortKey} currentDir={sortDir} onSort={handleSort} className="text-left" />
+                    <th className="text-left py-2 px-2">Pit</th>
+                    <th className="text-left py-2 px-2">Consensus</th>
                     <SortHeader label="Regime" sortKey="regime" currentSort={sortKey} currentDir={sortDir} onSort={handleSort} className="text-left" />
                     <SortHeader label="Confidence" sortKey="confidence" currentSort={sortKey} currentDir={sortDir} onSort={handleSort} className="text-left" />
                     <SortHeader label="Price" sortKey="currentPrice" currentSort={sortKey} currentDir={sortDir} onSort={handleSort} className="text-left" />
@@ -1202,7 +1255,7 @@ export default function ActionsDashboard({
                   Object.entries(groupedActions).sort().map(([group, items]) => (
                     <tbody key={group}>
                       <tr className="bg-slate-800/60">
-                        <td colSpan={(tradingEnabled ? 16 : 15) + (onAnalyze ? 1 : 0)} className="py-1.5 px-2 text-xs font-bold text-primary-400 uppercase tracking-wider">
+                        <td colSpan={(tradingEnabled ? 18 : 17) + (onAnalyze ? 1 : 0)} className="py-1.5 px-2 text-xs font-bold text-primary-400 uppercase tracking-wider">
                           {groupBy === "regime" && (group === "bull" ? "🟢 " : group === "bear" ? "🔴 " : "🟡 ")}
                           {groupBy === "category" && items.length > 0 && `${items[0].categoryIcon} `}
                           {group} ({items.length})
@@ -1216,7 +1269,7 @@ export default function ActionsDashboard({
                 {positions.length > 0 && (
                   <tfoot>
                     <tr className="border-t-2 border-slate-600 bg-slate-800/80">
-                      <td className="py-2.5 px-2 font-bold text-slate-100" colSpan={8}>
+                      <td className="py-2.5 px-2 font-bold text-slate-100" colSpan={10}>
                         Portfolio Total — {positions.filter(p => p.qty > 0).length} positions
                       </td>
                       <td className="py-2.5 px-2 font-mono text-sm text-slate-200">

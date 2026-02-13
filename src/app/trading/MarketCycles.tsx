@@ -811,8 +811,8 @@ function BullBearTimeline({ periods }: { periods: HistoricPeriod[] }) {
   const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
   const [showAll, setShowAll] = useState(false);
 
-  const CHART_WIDTH = 900;
-  const CHART_HEIGHT = 220;
+  const CHART_WIDTH = 1200;
+  const CHART_HEIGHT = 300;
   const CHART_PADDING_H = 45;
   const CHART_PADDING_R = 12;
   const INNER_WIDTH = CHART_WIDTH - CHART_PADDING_H - CHART_PADDING_R;
@@ -955,9 +955,9 @@ function BullBearTimeline({ periods }: { periods: HistoricPeriod[] }) {
       </div>
 
       {/* SVG Chart */}
-      <div className="overflow-x-auto">
-        <div className="min-w-[900px]">
-          <svg width={svgWidth} height={svgHeight} onClick={handleChartClick} className="cursor-pointer">
+      <div>
+        <div className="w-full">
+          <svg width="100%" viewBox={`0 0 ${svgWidth} ${svgHeight}`} preserveAspectRatio="xMidYMid meet" onClick={handleChartClick} className="cursor-pointer">
             <defs>
               <linearGradient id="bullBearAreaGrad" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0" stopColor={LINE_COLOR} stopOpacity="0.25" />

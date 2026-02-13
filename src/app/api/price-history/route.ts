@@ -22,9 +22,9 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    // Dynamic import to avoid SSR issues
-    const yahooFinanceModule = await import("yahoo-finance2");
-    const yahooFinance = yahooFinanceModule.default;
+    // Dynamic import — yahoo-finance2 v3 requires instantiation
+    const { default: YahooFinance } = await import("yahoo-finance2");
+    const yahooFinance = new YahooFinance();
 
     // Calculate date range from period
     const endDate = new Date();

@@ -54,6 +54,8 @@ function renderSourceData(sourceKey: string, data: Record<string, unknown>) {
       return <Regime data={data} />;
     case "signal-accuracy":
       return <SignalAccuracy data={data} />;
+    case "strategy-improvements":
+      return <StrategyImprovements data={data} />;
     case "compass-state":
       return <CompassState data={data} />;
     case "compass-weekly":
@@ -80,10 +82,54 @@ function PctBadge({ value }: { value: number }) {
   );
 }
 
+function MiniChart({ performance }: { performance: Array<Record<string, unknown>> }) {
+  if (!performance || performance.length < 2) return null;
+  
+  const w = 320;
+  const h = 60;
+  const pad = 2;
+  
+  // Calculate normalized portfolio and SPY returns
+  const firstEquity = Number(performance[0].equity ?? 100000);
+  const firstSpy = Number(performance[0].spy_price ?? 1);
+  
+  const portfolioPoints = performance.map((p) => 
+    ((Number(p.equity ?? firstEquity) / firstEquity) - 1) * 100
+  );
+  const spyPoints = performance.map((p) => 
+    ((Number(p.spy_price ?? firstSpy) / firstSpy) - 1) * 100
+  );
+  
+  const allValues = [...portfolioPoints, ...spyPoints];
+  const minVal = Math.min(...allValues, 0);
+  const maxVal = Math.max(...allValues, 0);
+  const range = maxVal - minVal || 1;
+  
+  const toX = (i: number) => pad + (i / (performance.length - 1)) * (w - pad * 2);
+  const toY = (val: number) => pad + (1 - (val - minVal) / range) * (h - pad * 2);
+  
+  const makePath = (points: number[]) =>
+    points.map((v, i) => `${i === 0 ? 'M' : 'L'}${toX(i).toFixed(1)},${toY(v).toFixed(1)}`).join(' ');
+
+  const zeroY = toY(0);
+
+  return (
+    <svg viewBox={`0 0 ${w} ${h}`} className="w-full h-16 mt-1">
+      {/* Zero line */}
+      <line x1={pad} y1={zeroY} x2={w - pad} y2={zeroY} stroke="#334155" strokeWidth="0.5" strokeDasharray="3,3" />
+      {/* SPY line */}
+      <path d={makePath(spyPoints)} fill="none" stroke="#ef4444" strokeWidth="1.5" opacity="0.6" />
+      {/* Portfolio line */}
+      <path d={makePath(portfolioPoints)} fill="none" stroke="#22c55e" strokeWidth="2" />
+    </svg>
+  );
+}
+
 function PortfolioPerformance({ data }: { data: Record<string, unknown> }) {
   const portfolioReturn = Number(data.portfolio_return_pct ?? 0);
   const spyReturn = Number(data.spy_return_pct ?? 0);
   const alpha = Number(data.alpha_pct ?? 0);
+  const performance = (data.performance || []) as Array<Record<string, unknown>>;
   
   return (
     <div className="space-y-2">
@@ -107,6 +153,21 @@ function PortfolioPerformance({ data }: { data: Record<string, unknown> }) {
           </div>
         </div>
       </div>
+      {performance.length >= 2 && (
+        <div>
+          <MiniChart performance={performance} />
+          <div className="flex justify-between text-[10px] text-slate-600 mt-0.5">
+            <span>
+              <span className="inline-block w-2 h-0.5 bg-emerald-500 mr-1 align-middle rounded" />
+              MRE
+            </span>
+            <span>
+              <span className="inline-block w-2 h-0.5 bg-red-500 mr-1 align-middle rounded opacity-60" />
+              SPY
+            </span>
+          </div>
+        </div>
+      )}
       <div className="text-[11px] text-slate-500">
         Range: {String(data.range || "all")} • {String(data.data_points || 0)} data points
       </div>
@@ -117,22 +178,59 @@ function PortfolioPerformance({ data }: { data: Record<string, unknown> }) {
 function CurrentPositions({ data }: { data: Record<string, unknown> }) {
   const positions = (data.positions || []) as Array<Record<string, unknown>>;
   const cash = Number(data.cash || 0);
+  const snapshot = data.snapshot as Record<string, unknown> | undefined;
+  const source = String(data.source || 'unknown');
   
   return (
     <div>
-      {positions.length === 0 ? (
+      {/* Alpaca snapshot summary */}
+      {snapshot && (
+        <div className="flex items-center gap-4 mb-2 text-xs">
+          <div>
+            <span className="text-slate-500">Equity: </span>
+            <span className="text-slate-200 font-medium">${Number(snapshot.equity).toLocaleString()}</span>
+          </div>
+          <div>
+            <span className="text-slate-500">Positions: </span>
+            <span className="text-slate-200">${Number(snapshot.positions_value).toLocaleString()}</span>
+          </div>
+          <div>
+            <span className="text-slate-500">Open: </span>
+            <span className="text-slate-200">{String(snapshot.open_positions)}</span>
+          </div>
+        </div>
+      )}
+      {positions.length === 0 && !snapshot ? (
         <div className="text-xs text-slate-500 italic">No open positions (100% cash)</div>
+      ) : positions.length === 0 && snapshot ? (
+        <div className="text-xs text-slate-500 italic">
+          {Number(snapshot.open_positions) > 0 
+            ? `${snapshot.open_positions} open positions (details in Alpaca dashboard)`
+            : 'No open positions (100% cash)'}
+        </div>
       ) : (
         <div className="space-y-1">
           {positions.map((pos, i) => (
             <div key={i} className="flex justify-between text-xs">
               <span className="text-slate-300 font-mono">{String(pos.symbol)}</span>
-              <span className="text-slate-400">{String(pos.qty)} shares @ ${String(pos.avg_price)}</span>
+              <div className="flex gap-3">
+                {pos.quantity != null && <span className="text-slate-400">{Number(pos.quantity).toFixed(4)}</span>}
+                {pos.entry_price != null && <span className="text-slate-500">@ ${Number(pos.entry_price).toLocaleString()}</span>}
+                {pos.unrealized_pnl != null && (
+                  <span className={Number(pos.unrealized_pnl) >= 0 ? 'text-emerald-400' : 'text-red-400'}>
+                    {Number(pos.unrealized_pnl) >= 0 ? '+' : ''}{Number(pos.unrealized_pnl).toFixed(2)}
+                  </span>
+                )}
+                {pos.strategy != null && <span className="text-slate-600">{String(pos.strategy)}</span>}
+              </div>
             </div>
           ))}
         </div>
       )}
-      <div className="mt-2 text-xs text-slate-500">Cash: ${cash.toLocaleString()}</div>
+      <div className="mt-2 text-xs text-slate-500">
+        Cash: ${cash.toLocaleString()}
+        {source === 'crypto-bot' && <span className="ml-2 text-slate-600">(crypto bot)</span>}
+      </div>
     </div>
   );
 }
@@ -222,30 +320,76 @@ function FearGreed({ data }: { data: Record<string, unknown> }) {
 }
 
 function Regime({ data }: { data: Record<string, unknown> }) {
+  const regime = data.regime as Record<string, Record<string, unknown>> | undefined;
+  const rotation = data.rotation as Record<string, unknown> | undefined;
+  const breadth = data.breadth as Record<string, unknown> | undefined;
+  const cycle = data.cycle as Record<string, unknown> | undefined;
+
   return (
-    <div className="space-y-1">
-      {data.regime != null && (
-        <div className="flex gap-2 text-xs">
-          <span className="text-slate-500">Regime:</span>
-          <span className="text-slate-300 font-medium">{String(data.regime)}</span>
+    <div className="space-y-3">
+      {regime != null && (
+        <div>
+          <div className="text-[10px] text-slate-500 uppercase font-semibold mb-1">Market Regime</div>
+          <div className="space-y-1">
+            {Object.entries(regime).map(([idx, r]) => (
+              <div key={idx} className="flex items-center gap-2 text-xs">
+                <span className="font-mono text-slate-400 w-8 uppercase">{String(idx)}</span>
+                <span className={
+                  String(r?.regime) === 'bull' ? 'text-emerald-400 font-medium' :
+                  String(r?.regime) === 'bear' ? 'text-red-400 font-medium' : 'text-yellow-400 font-medium'
+                }>{String(r?.regime)}</span>
+                {r?.regime_stage != null && (
+                  <span className="text-slate-600">({String(r.regime_stage)})</span>
+                )}
+                {r?.confidence != null && (
+                  <span className="text-slate-600">{String(r.confidence)}% conf</span>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       )}
-      {data.rotation != null && (
-        <div className="flex gap-2 text-xs">
-          <span className="text-slate-500">Rotation:</span>
-          <span className="text-slate-300">{String(data.rotation)}</span>
+      {rotation != null && (
+        <div>
+          <div className="text-[10px] text-slate-500 uppercase font-semibold mb-1">Sector Rotation</div>
+          {rotation.summary != null && (
+            <div className="text-xs text-slate-400 mb-1">{String(rotation.summary)}</div>
+          )}
+          <div className="flex gap-4 text-xs">
+            {rotation.leaders != null && (
+              <div>
+                <span className="text-emerald-500">Leaders: </span>
+                <span className="text-slate-300 font-mono">{(rotation.leaders as string[]).slice(0, 4).join(', ')}</span>
+              </div>
+            )}
+            {rotation.laggards != null && (
+              <div>
+                <span className="text-red-400">Laggards: </span>
+                <span className="text-slate-300 font-mono">{(rotation.laggards as string[]).slice(0, 4).join(', ')}</span>
+              </div>
+            )}
+          </div>
+          {rotation.cycle_phase != null && (
+            <div className="text-xs text-slate-500 mt-0.5">Phase: {String(rotation.cycle_phase)} ({String(rotation.cycle_confidence)}%)</div>
+          )}
         </div>
       )}
-      {data.breadth != null && (
-        <div className="flex gap-2 text-xs">
-          <span className="text-slate-500">Breadth:</span>
-          <span className="text-slate-300">{String(data.breadth)}</span>
+      {breadth != null && (
+        <div>
+          <div className="text-[10px] text-slate-500 uppercase font-semibold mb-1">Market Breadth</div>
+          <div className="flex items-center gap-3 text-xs">
+            <span className={
+              String(breadth.signal) === 'BULL' ? 'text-emerald-400 font-medium' :
+              String(breadth.signal) === 'BEAR' ? 'text-red-400 font-medium' : 'text-yellow-400 font-medium'
+            }>{String(breadth.signal)}</span>
+            {breadth.trend_5d != null && <span className="text-slate-500">Trend: {String(breadth.trend_5d)}</span>}
+          </div>
         </div>
       )}
-      {data.cycle != null && (
-        <div className="flex gap-2 text-xs">
-          <span className="text-slate-500">Cycle:</span>
-          <span className="text-slate-300">{String(data.cycle)}</span>
+      {cycle != null && (
+        <div>
+          <div className="text-[10px] text-slate-500 uppercase font-semibold mb-1">Market Cycle</div>
+          <div className="text-xs text-slate-400">{String(cycle.summary || cycle.phase)}</div>
         </div>
       )}
     </div>
@@ -462,6 +606,59 @@ function SignalAccuracy({ data }: { data: Record<string, unknown> }) {
           </div>
           <div className="text-[10px] text-slate-600 mt-1">
             Generated {String(backtests.generated_at).split('T')[0]} • {String(backtests.total_tests)} total tests
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function StrategyImprovements({ data }: { data: Record<string, unknown> }) {
+  const versions = data.versions as Record<string, string> | undefined;
+  const pit = data.pit_recommendations as Record<string, unknown> | undefined;
+  const optim = data.latest_optimization as Record<string, unknown> | undefined;
+
+  return (
+    <div className="space-y-3">
+      {versions && (
+        <div>
+          <div className="text-[10px] text-slate-500 uppercase font-semibold mb-1">System Versions</div>
+          <div className="flex flex-wrap gap-2">
+            {Object.entries(versions).map(([key, ver]) => (
+              <span key={key} className="text-xs bg-slate-700/40 px-2 py-0.5 rounded text-slate-300">
+                {key}: <span className="font-mono text-primary-400">v{String(ver)}</span>
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+      {pit && (
+        <div>
+          <div className="text-[10px] text-slate-500 uppercase font-semibold mb-1">Pit Recommendations</div>
+          {pit.thesis != null && (
+            <div className="text-xs text-slate-400 mb-1">{String(pit.thesis)}</div>
+          )}
+          {pit.key_risks != null && (
+            <div className="space-y-0.5">
+              {(pit.key_risks as string[]).slice(0, 3).map((risk, i) => (
+                <div key={i} className="text-xs text-yellow-400/70">⚠ {risk}</div>
+              ))}
+            </div>
+          )}
+          {pit.removed_assets != null && (
+            <div className="text-xs text-red-400/70 mt-1">
+              Removed: {(pit.removed_assets as string[]).join(', ')}
+            </div>
+          )}
+        </div>
+      )}
+      {optim && (
+        <div>
+          <div className="text-[10px] text-slate-500 uppercase font-semibold mb-1">Latest Optimization</div>
+          <div className="text-xs text-slate-400">
+            Calibration run on {String(optim.date)}
+            {optim.total_assets != null && ` • ${String(optim.total_assets)} assets`}
+            {optim.calibrated != null && ` • ${String(optim.calibrated)} calibrated`}
           </div>
         </div>
       )}

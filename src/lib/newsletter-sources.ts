@@ -92,6 +92,13 @@ export const CONTENT_SOURCES: ContentSourceDef[] = [
     availableParams: [],
   },
   {
+    key: 'strategy-improvements',
+    label: 'Strategy Improvements',
+    description: 'Recent Pit optimizations, version changes, and model improvements',
+    category: 'trading',
+    availableParams: [],
+  },
+  {
     key: 'signal-accuracy',
     label: 'Historical Signal Accuracy',
     description: 'Signal accuracy by asset class, strategy win rates, and backtest performance',
@@ -255,11 +262,47 @@ const fetchers: Record<string, DataFetcher> = {
   },
 
   'current-positions': () => {
-    const data = readDataFile('paper-portfolio.json') as Record<string, unknown> | null;
-    if (!data) return { error: 'No portfolio data available' };
+    // Try Alpaca paper portfolio first
+    const paperData = readDataFile('paper-portfolio.json') as Record<string, unknown> | null;
+    const paperPositions = (paperData?.positions || []) as unknown[];
+    
+    // If paper portfolio is empty, check trading/portfolio.json (crypto bot)
+    if (paperPositions.length === 0) {
+      const tradingData = readDataFile('trading/portfolio.json') as Record<string, unknown> | null;
+      if (tradingData?.positions) {
+        const posObj = tradingData.positions as Record<string, Record<string, unknown>>;
+        const positions = Object.values(posObj).map(p => ({
+          symbol: p.symbol,
+          quantity: p.quantity,
+          entry_price: p.entry_price,
+          current_price: p.current_price,
+          unrealized_pnl: p.unrealized_pnl,
+          strategy: p.strategy,
+          entry_time: p.entry_time,
+        }));
+        return {
+          positions,
+          cash: tradingData.cash ?? 0,
+          source: 'crypto-bot',
+        };
+      }
+    }
+
+    // Also check portfolio-snapshots for latest Alpaca snapshot
+    const snapshots = readDataFile('trading/portfolio-snapshots.json') as Array<Record<string, unknown>> | null;
+    const latest = snapshots && snapshots.length > 0 ? snapshots[snapshots.length - 1] : null;
+
     return {
-      positions: data.positions || [],
-      cash: (data.account as Record<string, unknown>)?.cash ?? 0,
+      positions: paperPositions,
+      cash: (paperData?.account as Record<string, unknown>)?.cash ?? 0,
+      source: 'alpaca',
+      snapshot: latest ? {
+        equity: latest.equity,
+        cash: latest.cash,
+        positions_value: latest.positions_value,
+        open_positions: latest.open_positions,
+        date: latest.date,
+      } : null,
     };
   },
 
@@ -298,6 +341,46 @@ const fetchers: Record<string, DataFetcher> = {
       rotation: data.rotation,
       breadth: data.breadth,
       cycle: data.cycle,
+    };
+  },
+
+  'strategy-improvements': () => {
+    const versions = readDataFile('trading/mre-versions.json') as Record<string, unknown> | null;
+    const pitRecs = readDataFile('trading/pit-recommendations.json') as Record<string, unknown> | null;
+    const optimDir = path.join(process.cwd(), 'public', 'data', 'trading', 'optimization');
+    
+    // Read optimization files for recent improvements
+    let optimizationSummary: Record<string, unknown> | null = null;
+    try {
+      const calibrationFile = fs.readdirSync(optimDir)
+        .filter(f => f.startsWith('calibration_'))
+        .sort()
+        .pop();
+      if (calibrationFile) {
+        const raw = fs.readFileSync(path.join(optimDir, calibrationFile), 'utf-8');
+        const cal = JSON.parse(raw) as Record<string, unknown>;
+        optimizationSummary = {
+          file: calibrationFile,
+          date: calibrationFile.replace('calibration_', '').replace('.json', ''),
+          total_assets: cal.total_assets ?? null,
+          calibrated: cal.calibrated ?? null,
+          summary: cal.summary ?? null,
+        };
+      }
+    } catch {
+      // ignore
+    }
+
+    return {
+      versions: versions || {},
+      pit_recommendations: pitRecs ? {
+        generated: pitRecs.generated,
+        version: pitRecs.version,
+        thesis: (pitRecs.global_context as Record<string, unknown>)?.thesis ?? null,
+        key_risks: (pitRecs.global_context as Record<string, unknown>)?.key_risks ?? null,
+        removed_assets: pitRecs.removed_assets ?? null,
+      } : null,
+      latest_optimization: optimizationSummary,
     };
   },
 
@@ -459,7 +542,7 @@ export function fetchSourceData(sourceKey: string, params: Record<string, unknow
 
 // Map newsletter categories/names to suggested source keys
 export const NEWSLETTER_SOURCE_SUGGESTIONS: Record<string, string[]> = {
-  "Today's Plays": ['portfolio-performance', 'current-positions', 'active-signals', 'signal-accuracy', 'fear-greed', 'regime', 'recent-trades'],
+  "Today's Plays": ['portfolio-performance', 'current-positions', 'active-signals', 'signal-accuracy', 'strategy-improvements', 'fear-greed', 'regime', 'recent-trades'],
   'Marriage Compass': ['compass-state', 'compass-weekly', 'compass-nudges', 'family-ideas'],
   "The Builder's Frequency": ['podcast-latest', 'news-highlights'],
   'Prayer & Bible Study': ['prayer-weekly', 'news-highlights'],

@@ -102,27 +102,25 @@ export function ContentSourcePicker({
                   </div>
                   <div className="space-y-1">
                     {categorySources.map((source) => {
-                      const alreadyAdded = existingKeys.includes(source.key);
+                      const addedCount = existingKeys.filter(k => k === source.key).length;
                       return (
                         <button
                           key={source.key}
-                          onClick={() => !alreadyAdded && handleSelect(source)}
-                          disabled={alreadyAdded}
-                          className={`w-full text-left p-3 rounded-lg border transition-colors ${
-                            alreadyAdded
-                              ? "bg-slate-800/30 border-slate-800 opacity-40 cursor-not-allowed"
-                              : "bg-slate-800/60 border-slate-700/50 hover:border-primary-500/50 hover:bg-slate-800 cursor-pointer"
-                          }`}
+                          onClick={() => handleSelect(source)}
+                          className="w-full text-left p-3 rounded-lg border transition-colors bg-slate-800/60 border-slate-700/50 hover:border-primary-500/50 hover:bg-slate-800 cursor-pointer"
                         >
                           <div className="flex items-center justify-between">
                             <span className="text-sm font-medium text-slate-200">
                               {source.label}
                             </span>
-                            {alreadyAdded ? (
-                              <span className="text-[10px] text-slate-600">Added</span>
-                            ) : (
+                            <div className="flex items-center gap-2">
+                              {addedCount > 0 && (
+                                <span className="text-[10px] text-slate-500 bg-slate-700/50 px-1.5 py-0.5 rounded">
+                                  ×{addedCount}
+                                </span>
+                              )}
                               <Plus className="w-4 h-4 text-slate-500" />
-                            )}
+                            </div>
                           </div>
                           <p className="text-xs text-slate-500 mt-0.5">{source.description}</p>
                         </button>

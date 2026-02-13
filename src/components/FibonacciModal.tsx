@@ -25,6 +25,7 @@ interface FibonacciData {
   swing_low_date?: string;      // Actual date from price history
   trend: string;
   swing_quality?: string;       // "impulse" | "fallback"
+  lookback_period?: string;     // "6mo" | "1y" | "2y"
   extension_type?: string;      // "3-point (A→B→C)" | "2-point fallback"
   pullback_low?: number;        // C point for uptrend 3-point extensions
   pullback_low_idx?: number;
@@ -206,7 +207,7 @@ export default function FibonacciModal({
       try {
         setLoading(true);
         const res = await fetch(
-          `/api/price-history?symbol=${encodeURIComponent(symbol)}&period=3mo`
+          `/api/price-history?symbol=${encodeURIComponent(symbol)}&period=${fib.lookback_period || "6mo"}`
         );
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const json = await res.json();
@@ -375,6 +376,11 @@ export default function FibonacciModal({
             <span className={`text-[10px] px-1.5 py-0.5 rounded-md border font-medium uppercase tracking-wide ${extensionBadge.color}`}>
               {extensionBadge.text}
             </span>
+            {fib.lookback_period && fib.lookback_period !== "6mo" && (
+              <span className="text-[10px] px-1.5 py-0.5 rounded-md border font-medium uppercase tracking-wide bg-indigo-500/20 text-indigo-400 border-indigo-500/40">
+                {fib.lookback_period} LOOKBACK
+              </span>
+            )}
           </div>
           <button
             onClick={onClose}

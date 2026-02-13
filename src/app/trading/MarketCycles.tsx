@@ -1455,7 +1455,19 @@ export default function MarketCycles() {
         const histJson = await histRes.json();
 
         setRotationStatus(rotJson);
-        setHistoricPeriods(histJson.periods || []);
+
+        // Deduplicate periods: Visual Capitalist (pre-1993) and MRE (post-1993) overlap.
+        // Trim or remove VC periods that overlap with MRE data.
+        const rawPeriods: HistoricPeriod[] = histJson.periods || [];
+        const mreStart = rawPeriods.find((p) => p.source === "mre_v12")?.start;
+        const deduped = mreStart
+          ? rawPeriods.filter((p) => {
+              if (p.source !== "visual_capitalist") return true;
+              // Keep VC periods that end before MRE starts
+              return p.end <= mreStart;
+            })
+          : rawPeriods;
+        setHistoricPeriods(deduped);
 
         if (regimeRes.ok) {
           const regimeJson = await regimeRes.json();

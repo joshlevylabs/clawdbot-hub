@@ -1,239 +1,128 @@
 {
-  "generated": "2026-02-10T01:15:00",
-  "version": "1.0.0",
+  "generated": "2026-02-13T11:26:59",
+  "version": "2.0.0",
   "global_context": {
-    "regime": "bull",
-    "fear_greed": 48.6,
-    "thesis": "F&G neutral (49). Bull regime intact. V10.2 tightened entries to panic-only (F&G<12-15). No signals until fear deepens. Star performers (XLK, XLV, XLU, INDA) get priority allocation. Energy/SLV/IEF removed or heavily penalized.",
+    "regime": "bear",
+    "fear_greed": 39.6,
+    "thesis": "Fear elevated (39.6), 35% bear. Capitulation entries possible but selective \u2014 favor high signal strength + technical confirmation. Healthcare (BAX, AMGN) and tech (INTC, MPWR) lead signal strength. Energy and financials are lower conviction plays.",
     "key_risks": [
-      "Tighter fear thresholds (12-15) may reduce signal frequency \u2014 monitor for missed entries",
-      "SLV/IEF removed from universe \u2014 no coverage if they become opportunities",
-      "XLE 0.50x confidence may still generate occasional false signals (30% WR)"
+      "Bear regime with 35% of assets in downtrend \u2014 broad rallies unlikely to sustain",
+      "VIX at 19.5 suggests elevated but not extreme vol \u2014 more downside possible before capitulation",
+      "Fear & Greed at 39.6 \u2014 fear present but not extreme, no capitulation washout yet",
+      "Rate uncertainty and macro headwinds weigh on real estate (ARE) and cyclicals (CCL, BLDR)",
+      "Tech sector mixed \u2014 INTC turnaround story vs MPWR growth deceleration risk"
     ]
   },
   "assets": {
-    "SPY": {
-      "pit_verdict": "HOLD \u2014 Confidence penalized to 0.80x (33% WR, but 4.74 PF keeps it in universe)",
-      "accuracy": "33.3% WR (3 trades), but 10.50% avg win vs -1.11% avg loss",
-      "sharpe": 7.93,
-      "best_horizon": "5d (short holds 50% WR, medium 0%)",
-      "sma_period": 100,
-      "confidence_multiplier": 0.8,
-      "notes": "SPY underperforms on WR but has large wins. Kept for tail-gain capture at 0.80x confidence.",
-      "pattern": "Bull regime. Wait for F&G < 15 (extreme panic)."
-    },
-    "QQQ": {
-      "pit_verdict": "HOLD \u2014 Boosted to 1.10x (67% WR, 100% short-hold WR)",
-      "accuracy": "66.7% WR, 100% at short holds (1-5d)",
-      "sharpe": 7.67,
-      "best_horizon": "5d",
-      "sma_period": 100,
-      "confidence_multiplier": 1.1,
-      "notes": "QQQ is reliable on short holds. Medium holds (6-15d) have 0% WR. V10.2 shortened horizon to 5d."
-    },
-    "XLK": {
-      "pit_verdict": "STAR \u2014 Boosted to 1.25x (100% WR, infinite PF, Sharpe 16.68)",
-      "accuracy": "100% WR (3 trades), 5.79% avg return",
-      "sharpe": 16.68,
-      "best_horizon": "5d",
+    "BAX": {
+      "pit_verdict": "HOLD \u2014 strong signal (45.5)",
+      "accuracy": "5d return: -8.6%, 20d return: -2.5%",
+      "sharpe": 1.24,
+      "best_horizon": "10d",
       "sma_period": 50,
-      "confidence_multiplier": 1.25,
-      "notes": "Best tech asset. All wins in panic conditions (F&G 0-10). Short holds dominate."
-    },
-    "XLV": {
-      "pit_verdict": "STAR \u2014 Boosted to 1.25x (100% WR, Sharpe 33.40)",
-      "accuracy": "100% WR (3 trades), 2.93% avg return",
-      "sharpe": 33.4,
-      "best_horizon": "5d",
-      "sma_period": 50,
-      "confidence_multiplier": 1.25,
-      "notes": "Healthcare defensive play. Works in both panic AND greed conditions (unusual)."
-    },
-    "XLU": {
-      "pit_verdict": "STAR \u2014 Boosted to 1.30x (100% WR, Sharpe 122.81 \u2014 BEST in universe)",
-      "accuracy": "100% WR (3 trades), 100% target-hit rate",
-      "sharpe": 122.81,
-      "best_horizon": "5d",
-      "sma_period": 100,
-      "confidence_multiplier": 1.3,
-      "notes": "Highest Sharpe in entire universe. Panic entries only (F&G 0-10). Zero stop-hits."
-    },
-    "INDA": {
-      "pit_verdict": "STAR \u2014 Boosted to 1.30x (100% WR, Sharpe 117.59)",
-      "accuracy": "100% WR (3 trades), 3.51% avg return",
-      "sharpe": 117.59,
-      "best_horizon": "5d",
-      "sma_period": 200,
-      "confidence_multiplier": 1.3,
-      "notes": "Second-highest Sharpe. India ETF benefits from diversification + panic buying."
-    },
-    "EFA": {
-      "pit_verdict": "STAR \u2014 Boosted to 1.30x (100% WR, 7.72% avg return)",
-      "accuracy": "100% WR (1 trade), 7.72% avg return",
-      "sharpe": 0.0,
-      "best_horizon": "5d",
-      "sma_period": 200,
-      "confidence_multiplier": 1.3,
-      "notes": "Highest single-trade return in universe. International priority active."
-    },
-    "EEM": {
-      "pit_verdict": "STAR \u2014 Boosted to 1.30x (100% WR, Sharpe 42.13)",
-      "accuracy": "100% WR (2 trades), 5.03% avg return",
-      "sharpe": 42.13,
-      "best_horizon": "5d",
-      "sma_period": 200,
-      "confidence_multiplier": 1.3,
-      "notes": "EM outperforms on panic entries. Zero stop-hits, 100% target-hit."
-    },
-    "GLD": {
-      "pit_verdict": "STRONG \u2014 Boosted to 1.20x (75% WR, best commodity)",
-      "accuracy": "75% WR (4 trades), 100% at panic F&G",
-      "sharpe": 6.23,
-      "best_horizon": "15d (medium holds optimal)",
-      "sma_period": 200,
       "confidence_multiplier": 1.2,
-      "notes": "Gold benefits from fear. V10.2 extended hold to 15d (medium 100% WR, 4.15% avg)."
+      "notes": "EMA20=$20.45, EMA50=$20.14. Support near $23.97, resistance near $24.68. 6-month range $17.41-$24.68 (currently at 34% of range). Vol ratio 1.32x 20d avg.",
+      "pattern": "RSI neutral at 47, MACD histogram falling (momentum fading), volume surge (1.3x avg), price at 38.2% Fibonacci retracement ($20.19)"
     },
-    "XLE": {
-      "pit_verdict": "WEAK \u2014 Penalized to 0.50x (30% WR, -9.21 Sharpe, 80% stop-hit)",
-      "accuracy": "30% WR (10 trades), worst performer",
-      "sharpe": -9.21,
-      "best_horizon": "5d (still only 50% WR at best)",
-      "sma_period": 100,
-      "confidence_multiplier": 0.5,
-      "notes": "Worst asset in universe. MRE contrarian strategy fundamentally doesn't work for energy."
-    },
-    "FXI": {
-      "pit_verdict": "WEAK \u2014 Penalized to 0.60x (50% WR but -1.40 Sharpe)",
-      "accuracy": "50% WR (10 trades), -0.50% avg return",
-      "sharpe": -1.4,
-      "best_horizon": "10d (medium holds 57% WR)",
-      "sma_period": 200,
-      "confidence_multiplier": 0.6,
-      "notes": "China ETF is noisy. Only medium holds and panic F&G entries are profitable."
-    },
-    "TLT": {
-      "pit_verdict": "WEAK \u2014 Penalized to 0.70x (50% WR, -2.43 Sharpe)",
-      "accuracy": "50% WR (2 trades)",
-      "sharpe": -2.43,
-      "best_horizon": "5d (short holds 100% WR)",
-      "sma_period": 200,
-      "confidence_multiplier": 0.7,
-      "notes": "V10.2 shortened hold from 20d to 5d. Short holds profitable, long holds not."
-    },
-    "XLF": {
-      "pit_verdict": "HOLD \u2014 Slight penalty 0.90x (50% WR, medium holds only)",
-      "accuracy": "50% WR (2 trades)",
-      "sharpe": 9.75,
-      "best_horizon": "10d",
-      "sma_period": 100,
-      "confidence_multiplier": 0.9,
-      "notes": "XLF needs medium holds (100% WR) \u2014 short holds have 0% WR. V10.2 adjusted horizon."
-    },
-    "VNQ": {
-      "pit_verdict": "HOLD \u2014 Penalized to 0.80x (50% WR, medium holds optimal)",
-      "accuracy": "50% WR (4 trades)",
-      "sharpe": 0.58,
-      "best_horizon": "10d",
-      "sma_period": 100,
-      "confidence_multiplier": 0.8,
-      "notes": "REITs need patience. Medium holds 100% WR (3.15% avg), long holds 0%."
-    },
-    "HYG": {
-      "pit_verdict": "CAUTIOUS BUY \u2014 Boosted to 1.15x (100% WR, 1 trade only)",
-      "accuracy": "100% WR (1 trade), 2.38% return",
-      "sharpe": 0.0,
+    "INTC": {
+      "pit_verdict": "HOLD \u2014 strong signal (39.5)",
+      "accuracy": "5d return: -7.0%, 20d return: -2.6%",
+      "sharpe": 2.05,
       "best_horizon": "20d",
-      "sma_period": 200,
-      "confidence_multiplier": 1.15,
-      "notes": "High-yield credit. Only 1 trade in backtest \u2014 promising but insufficient data."
-    },
-    "GDX": {
-      "pit_verdict": "WEAK \u2014 Penalized to 0.70x (46% WR, -1.70 Sharpe)",
-      "accuracy": "46.2% WR (13 trades), highest trade count in universe",
-      "sharpe": -1.7,
-      "best_horizon": "5d (short holds 67% WR)",
-      "sma_period": 200,
-      "confidence_multiplier": 0.7,
-      "notes": "Gold miners are noisy. Short holds are only profitable window. Panic entries best."
-    },
-    "BITO": {
-      "pit_verdict": "HOLD \u2014 Slight boost 1.05x (75% WR but volatile)",
-      "accuracy": "75% WR (4 trades), 50% stop-hit rate",
-      "sharpe": 3.98,
-      "best_horizon": "5d",
-      "sma_period": 200,
-      "confidence_multiplier": 1.05,
-      "notes": "Bitcoin proxy works on fear entries (F&G 10-20 extreme fear has 100% WR). Short holds only."
-    },
-    "IWM": {
-      "pit_verdict": "HOLD \u2014 Penalized to 0.75x (50% WR, 75% stop-hit)",
-      "accuracy": "50% WR (4 trades)",
-      "sharpe": 3.22,
-      "best_horizon": "5d",
-      "sma_period": 100,
-      "confidence_multiplier": 0.75,
-      "notes": "Small caps have high stop-hit rate. Only panic entries (F&G 0-10) profitable."
-    },
-    "XLC": {
-      "pit_verdict": "HOLD \u2014 Boosted to 1.10x (67% WR, 9.33 PF)",
-      "accuracy": "66.7% WR (3 trades)",
-      "sharpe": 9.67,
-      "best_horizon": "5d",
       "sma_period": 50,
       "confidence_multiplier": 1.1,
-      "notes": "Communications tracks tech closely. Short holds 100% WR."
+      "notes": "EMA20=$47.26, EMA50=$44.14. Support near $48.24, resistance near $54.32. 6-month range $22.22-$54.32 (currently at 77% of range). Vol ratio 0.65x 20d avg.",
+      "pattern": "RSI neutral at 51, price between 20 and 50 EMA, MACD histogram falling (momentum fading), volume dry-up (0.6x avg), price at 78.6% Fibonacci retracement ($47.45)"
     },
-    "XLP": {
-      "pit_verdict": "HOLD \u2014 Slight boost 1.05x (67% WR, 5.16 PF)",
-      "accuracy": "66.7% WR (3 trades)",
-      "sharpe": 13.04,
-      "best_horizon": "5d",
+    "CCL": {
+      "pit_verdict": "BUY \u2014 positive MACD momentum, moderate signal (33.6), above 20 EMA",
+      "accuracy": "5d return: -5.5%, 20d return: +9.1%",
+      "sharpe": 2.26,
+      "best_horizon": "20d",
       "sma_period": 50,
-      "confidence_multiplier": 1.05,
-      "notes": "Defensive consumer staples. Short holds 100% WR. Panic entries strongest."
+      "confidence_multiplier": 1.1,
+      "notes": "EMA20=$31.52, EMA50=$30.35. Support near $31.45, resistance near $33.99. 6-month range $24.76-$33.99 (currently at 80% of range). Vol ratio 0.87x 20d avg.",
+      "pattern": "RSI neutral at 55, price above stacked EMAs (bullish), MACD histogram falling (momentum fading), price at 78.6% Fibonacci retracement ($32.01)"
     },
-    "EWJ": {
-      "pit_verdict": "STRONG \u2014 Boosted to 1.20x (100% WR)",
-      "accuracy": "100% WR (2 trades)",
-      "sharpe": 20.58,
-      "best_horizon": "5d",
-      "sma_period": 200,
-      "confidence_multiplier": 1.2,
-      "notes": "Japan ETF solid on panic entries. 50% stop-hit but still 100% WR = recovers from dips."
-    },
-    "XLB": {
-      "pit_verdict": "WEAK \u2014 Penalized to 0.75x (50% WR, ~0 Sharpe)",
-      "accuracy": "50% WR (2 trades)",
-      "sharpe": -0.02,
-      "best_horizon": "10d (medium holds 100% WR, short 0%)",
-      "sma_period": 100,
-      "confidence_multiplier": 0.75,
-      "notes": "Materials need medium holds. Short holds have 0% WR \u2014 V10.2 extended horizon to 10d."
-    },
-    "DBA": {
-      "pit_verdict": "HOLD \u2014 Penalized to 0.80x (50% WR, medium holds needed)",
-      "accuracy": "50% WR (2 trades)",
-      "sharpe": 1.09,
+    "ARE": {
+      "pit_verdict": "HOLD \u2014 moderate signal (34.4), near range lows",
+      "accuracy": "5d return: -5.8%, 20d return: -8.0%",
+      "sharpe": 0.71,
       "best_horizon": "10d",
-      "sma_period": 200,
-      "confidence_multiplier": 0.8,
-      "notes": "Agriculture. Medium holds 100% WR (3.57%), short holds 0%. V10.2 adjusted horizon."
-    }
-  },
-  "removed_assets": {
-    "SLV": {
-      "reason": "33% WR, -4.54 Sharpe, -1.10% avg return, 66.7% stop-hit rate. Negative expectancy.",
-      "win_rate": 0.333,
-      "sharpe": -4.54,
-      "profit_factor": 0.55
+      "sma_period": 50,
+      "confidence_multiplier": 1.1,
+      "notes": "EMA20=$54.44, EMA50=$54.57. Support near $82.59, resistance near $84.83. 6-month range $44.32-$84.83 (currently at 21% of range). Vol ratio 0.69x 20d avg.",
+      "pattern": "RSI neutral at 45, price below stacked EMAs (bearish), MACD histogram falling (momentum fading), volume dry-up (0.7x avg)"
     },
-    "IEF": {
-      "reason": "0% WR (worst in universe), -17.68 Sharpe, -0.70% avg return. No profitable scenario.",
-      "win_rate": 0.0,
-      "sharpe": -17.68,
-      "profit_factor": 0.0
+    "MPWR": {
+      "pit_verdict": "CAUTIOUS BUY \u2014 moderate signal (30.4), above 20 EMA",
+      "accuracy": "5d return: -5.0%, 20d return: +15.8%",
+      "sharpe": 2.89,
+      "best_horizon": "20d",
+      "sma_period": 50,
+      "confidence_multiplier": 1.1,
+      "notes": "EMA20=$1128.48, EMA50=$1056.53. Support near $1142.02, resistance near $1229.82. 6-month range $817.91-$1229.82 (currently at 85% of range). Vol ratio 0.85x 20d avg.",
+      "pattern": "near 6-month high, RSI neutral at 58, price above stacked EMAs (bullish), MACD histogram falling (momentum fading), rising wedge pattern (contracting range)"
+    },
+    "NUE": {
+      "pit_verdict": "HOLD \u2014 moderate signal (29.9), above 20 EMA",
+      "accuracy": "5d return: -4.8%, 20d return: +5.0%",
+      "sharpe": 3.27,
+      "best_horizon": "20d",
+      "sma_period": 20,
+      "confidence_multiplier": 1.0,
+      "notes": "EMA20=$183.28, EMA50=$173.26. Support near $173.18, resistance near $194.42. 6-month range $131.33-$194.42 (currently at 83% of range). Vol ratio 0.83x 20d avg.",
+      "pattern": "RSI neutral at 54, price above stacked EMAs (bullish), MACD histogram falling (momentum fading), MACD bearish crossover, price at 78.6% Fibonacci retracement ($180.92)"
+    },
+    "AMGN": {
+      "pit_verdict": "CAUTIOUS BUY \u2014 positive MACD momentum, weak signal (24.1), above 20 EMA",
+      "accuracy": "5d return: -3.8%, 20d return: +12.0%",
+      "sharpe": 1.31,
+      "best_horizon": "20d",
+      "sma_period": 50,
+      "confidence_multiplier": 1.0,
+      "notes": "EMA20=$355.74, EMA50=$341.58. Support near $364.65, resistance near $384.32. 6-month range $269.26-$384.32 (currently at 87% of range). Vol ratio 0.80x 20d avg.",
+      "pattern": "near 6-month high, RSI neutral at 62, price above stacked EMAs (bullish), MACD histogram falling (momentum fading)"
+    },
+    "BLDR": {
+      "pit_verdict": "HOLD \u2014 moderate signal (28.4)",
+      "accuracy": "5d return: -4.9%, 20d return: -8.2%",
+      "sharpe": 1.7,
+      "best_horizon": "10d",
+      "sma_period": 50,
+      "confidence_multiplier": 1.0,
+      "notes": "EMA20=$120.51, EMA50=$117.39. Support near $140.25, resistance near $149.21. 6-month range $94.85-$149.21 (currently at 43% of range). Vol ratio 1.01x 20d avg.",
+      "pattern": "RSI neutral at 49, price between 20 and 50 EMA, MACD histogram falling (momentum fading), MACD bearish crossover"
+    },
+    "ACGL": {
+      "pit_verdict": "CAUTIOUS BUY \u2014 positive MACD momentum, weak signal (19.7), above 20 EMA",
+      "accuracy": "5d return: -2.6%, 20d return: +8.2%",
+      "sharpe": 1.53,
+      "best_horizon": "20d",
+      "sma_period": 50,
+      "confidence_multiplier": 0.8,
+      "notes": "EMA20=$96.94, EMA50=$95.08. Support near $96.06, resistance near $101.98. 6-month range $84.72-$101.98 (currently at 79% of range). Vol ratio 0.95x 20d avg.",
+      "pattern": "RSI neutral at 56, price above stacked EMAs (bullish), price at 78.6% Fibonacci retracement ($98.29)"
+    },
+    "HAL": {
+      "pit_verdict": "HOLD \u2014 weak signal (14.6), above 20 EMA",
+      "accuracy": "5d return: -2.9%, 20d return: +3.6%",
+      "sharpe": 3.17,
+      "best_horizon": "20d",
+      "sma_period": 20,
+      "confidence_multiplier": 0.8,
+      "notes": "EMA20=$33.59, EMA50=$31.50. Support near $34.02, resistance near $35.03. 6-month range $20.81-$35.03 (currently at 93% of range). Vol ratio 0.78x 20d avg.",
+      "pattern": "near 6-month high, RSI neutral at 56, price above stacked EMAs (bullish), MACD histogram falling (momentum fading)"
+    },
+    "CFG": {
+      "pit_verdict": "HOLD \u2014 moderate signal (29.5), above 20 EMA",
+      "accuracy": "5d return: -4.5%, 20d return: +8.1%",
+      "sharpe": 4.6,
+      "best_horizon": "20d",
+      "sma_period": 20,
+      "confidence_multiplier": 1.0,
+      "notes": "EMA20=$64.43, EMA50=$61.11. Support near $62.08, resistance near $68.12. 6-month range $47.51-$68.12 (currently at 85% of range). Vol ratio 0.84x 20d avg.",
+      "pattern": "near 6-month high, RSI neutral at 57, price above stacked EMAs (bullish), MACD histogram falling (momentum fading), MACD bearish crossover"
     }
-  },
-  "legacy_version": "v10.2"
+  }
 }

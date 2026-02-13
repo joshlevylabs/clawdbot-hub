@@ -353,8 +353,8 @@ function CyclePositionChart({
   onSectorClick: (ticker: string, sectorName: string, score: RotationScore | null) => void;
 }) {
   const [activePage, setActivePage] = useState<OverlayPage>(0);
-  const CHART_WIDTH = 700;
-  const CHART_HEIGHT = 260;
+  const CHART_WIDTH = 1000;
+  const CHART_HEIGHT = 320;
   const WAVE_MID_Y = CHART_HEIGHT / 2;
 
   const scores = rotationStatus.rotation_scores;
@@ -563,8 +563,8 @@ function CyclePositionChart({
 
       {/* SVG Chart */}
       <div className="overflow-x-auto">
-        <div className="min-w-[700px]">
-          <svg width={CHART_WIDTH} height={CHART_HEIGHT} viewBox={`0 0 ${CHART_WIDTH} ${CHART_HEIGHT}`}>
+        <div className="w-full">
+          <svg width="100%" viewBox={`0 0 ${CHART_WIDTH} ${CHART_HEIGHT}`} preserveAspectRatio="xMidYMid meet">
             {/* Economic Cycle Wave (behind, gold dashed) */}
             <path d={economyPath} fill="none" stroke={AMBER} strokeWidth={2} strokeDasharray="8,4" opacity={0.6} />
             {/* Stock Market Cycle Wave (front, indigo) */}

@@ -120,8 +120,8 @@ export async function POST(request: NextRequest) {
         if (config) {
           await paperSupabase
             .from('paper_trading_config')
-            .update({ cash: ((config as Record<string, number>).cash || 100000) - cost })
-            .limit(1);
+            .update({ current_cash: ((config as Record<string, number>).current_cash || 100000) - cost })
+            .eq('id', config.id);
         }
       } catch { /* cash tracking optional */ }
 
@@ -166,6 +166,22 @@ export async function POST(request: NextRequest) {
         .from('paper_positions')
         .delete()
         .eq('id', position.id);
+
+      // Add sell proceeds back to cash
+      const proceeds = price * sellQty;
+      try {
+        const { data: config } = await paperSupabase
+          .from('paper_trading_config')
+          .select('*')
+          .limit(1)
+          .single();
+        if (config) {
+          await paperSupabase
+            .from('paper_trading_config')
+            .update({ current_cash: ((config as Record<string, number>).current_cash || 0) + proceeds })
+            .eq('id', config.id);
+        }
+      } catch { /* cash tracking optional */ }
 
       return NextResponse.json({ success: true, trade, side: 'sell', pnl });
     }

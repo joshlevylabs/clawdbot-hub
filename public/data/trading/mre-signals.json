@@ -1,7 +1,7 @@
 {
   "timestamp": "2026-02-13T06:43:30.872918",
-  "last_updated": "2026-02-13T21:06:18Z",
-  "last_updated_unix": 1771016778,
+  "last_updated": "2026-02-13T21:21:11Z",
+  "last_updated_unix": 1771017671,
   "fear_greed": {
     "current": 35.71966873706,
     "rating": "fear",
@@ -682,7 +682,7 @@
         "hold_days": 5,
         "expected_sharpe": 16.68,
         "expected_accuracy": 83.3,
-        "price": 114.57,
+        "price": 114.58,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -708,7 +708,7 @@
         "version": "2.1.0",
         "fibonacci": {
           "symbol": "XLC",
-          "current_price": 114.57,
+          "current_price": 114.58,
           "swing_high": 118.66999816894531,
           "swing_low": 109.51047067492786,
           "swing_high_idx": 96,
@@ -1537,7 +1537,7 @@
         "hold_days": 5,
         "expected_sharpe": 117.59,
         "expected_accuracy": 90.0,
-        "price": 52.88,
+        "price": 52.89,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -1563,7 +1563,7 @@
         "version": "2.1.0",
         "fibonacci": {
           "symbol": "INDA",
-          "current_price": 52.88,
+          "current_price": 52.89,
           "swing_high": 55.099998474121094,
           "swing_low": 50.939998626708984,
           "swing_high_idx": 70,
@@ -1632,7 +1632,7 @@
         "hold_days": 10,
         "expected_sharpe": 117.59,
         "expected_accuracy": 90.0,
-        "price": 38.34,
+        "price": 38.33,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -1658,7 +1658,7 @@
         "version": "2.1.0",
         "fibonacci": {
           "symbol": "FXI",
-          "current_price": 38.34,
+          "current_price": 38.33,
           "swing_high": 41.16999816894531,
           "swing_low": 37.74033560681721,
           "swing_high_idx": 116,
@@ -1723,7 +1723,7 @@
         "hold_days": 5,
         "expected_sharpe": 117.59,
         "expected_accuracy": 90.0,
-        "price": 93.83,
+        "price": 93.85,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -1749,7 +1749,7 @@
         "version": "2.1.0",
         "fibonacci": {
           "symbol": "EWJ",
-          "current_price": 93.83,
+          "current_price": 93.85,
           "swing_high": 82.23312363611166,
           "swing_low": 75.38920678209396,
           "swing_high_idx": 86,
@@ -1818,7 +1818,7 @@
         "hold_days": 5,
         "expected_sharpe": 18.55,
         "expected_accuracy": 51.8,
-        "price": 89.7,
+        "price": 89.72,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -1844,7 +1844,7 @@
         "version": "2.1.0",
         "fibonacci": {
           "symbol": "TLT",
-          "current_price": 89.7,
+          "current_price": 89.72,
           "swing_high": 89.62452697753906,
           "swing_low": 86.21025038222956,
           "swing_high_idx": 74,
@@ -2198,7 +2198,7 @@
         "hold_days": 5,
         "expected_sharpe": 25.8,
         "expected_accuracy": 61.3,
-        "price": 103.95,
+        "price": 103.94,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -2224,7 +2224,7 @@
         "version": "2.1.0",
         "fibonacci": {
           "symbol": "GDX",
-          "current_price": 103.95,
+          "current_price": 103.94,
           "swing_high": 113.5,
           "swing_low": 67.63875758780028,
           "swing_high_idx": 116,
@@ -2293,7 +2293,7 @@
         "hold_days": 10,
         "expected_sharpe": 25.8,
         "expected_accuracy": 61.3,
-        "price": 25.78,
+        "price": 25.79,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -2319,7 +2319,7 @@
         "version": "2.1.0",
         "fibonacci": {
           "symbol": "DBA",
-          "current_price": 25.78,
+          "current_price": 25.79,
           "swing_high": 26.010000228881836,
           "swing_low": 24.660624550871383,
           "swing_high_idx": 116,
@@ -2388,7 +2388,7 @@
         "hold_days": 5,
         "expected_sharpe": 25.8,
         "expected_accuracy": 61.3,
-        "price": 9.51,
+        "price": 9.5,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -2414,7 +2414,7 @@
         "version": "2.1.0",
         "fibonacci": {
           "symbol": "BITO",
-          "current_price": 9.51,
+          "current_price": 9.5,
           "swing_high": 17.748310862561226,
           "swing_low": 11.740863682943019,
           "swing_high_idx": 37,
@@ -2483,7 +2483,7 @@
         "hold_days": 10,
         "expected_sharpe": 122.81,
         "expected_accuracy": 75.0,
-        "price": 94.58,
+        "price": 94.59,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -2509,7 +2509,7 @@
         "version": "2.1.0",
         "fibonacci": {
           "symbol": "VNQ",
-          "current_price": 94.58,
+          "current_price": 94.59,
           "swing_high": 92.81999969482422,
           "swing_low": 87.3133358153632,
           "swing_high_idx": 108,
@@ -3826,11 +3826,11 @@
     ]
   },
   "capital_rebalancing": {
-    "capital_deployed_pct": 93.7,
-    "available_cash": 6246.21,
-    "total_equity": 99521.42,
-    "threshold_triggered": true,
+    "capital_deployed_pct": 72.3,
+    "available_cash": 27753.63,
+    "total_equity": 100032.32,
+    "threshold_triggered": false,
     "swap_suggestions": [],
-    "no_swap_reason": "No swaps meet minimum improvement threshold (+15pts) or practical constraints"
+    "no_swap_reason": null
   }
 }

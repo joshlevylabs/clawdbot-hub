@@ -210,21 +210,32 @@ function CurrentPositions({ data }: { data: Record<string, unknown> }) {
         </div>
       ) : (
         <div className="space-y-1">
-          {positions.map((pos, i) => (
-            <div key={i} className="flex justify-between text-xs">
-              <span className="text-slate-300 font-mono">{String(pos.symbol)}</span>
-              <div className="flex gap-3">
-                {pos.quantity != null && <span className="text-slate-400">{Number(pos.quantity).toFixed(4)}</span>}
-                {pos.entry_price != null && <span className="text-slate-500">@ ${Number(pos.entry_price).toLocaleString()}</span>}
-                {pos.unrealized_pnl != null && (
-                  <span className={Number(pos.unrealized_pnl) >= 0 ? 'text-emerald-400' : 'text-red-400'}>
-                    {Number(pos.unrealized_pnl) >= 0 ? '+' : ''}{Number(pos.unrealized_pnl).toFixed(2)}
+          {positions.map((pos, i) => {
+            const qty = Number(pos.qty || pos.quantity || 0);
+            const entry = Number(pos.entry_price || 0);
+            const current = Number(pos.current_price || entry);
+            const pnl = qty * (current - entry);
+            const pnlPct = entry > 0 ? ((current / entry) - 1) * 100 : 0;
+            return (
+              <div key={i} className="flex justify-between text-xs items-center">
+                <div className="flex items-center gap-2">
+                  <span className="text-slate-200 font-mono font-medium w-10">{String(pos.symbol)}</span>
+                  {pos.regime != null && (
+                    <span className={`text-[10px] px-1 rounded ${
+                      String(pos.regime) === 'bull' ? 'bg-emerald-900/40 text-emerald-400' : 'bg-red-900/40 text-red-400'
+                    }`}>{String(pos.regime)}</span>
+                  )}
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-slate-400">{qty}</span>
+                  <span className="text-slate-500">${entry.toFixed(2)}</span>
+                  <span className={pnl >= 0 ? 'text-emerald-400' : 'text-red-400'}>
+                    {pnl >= 0 ? '+' : ''}{pnlPct.toFixed(1)}%
                   </span>
-                )}
-                {pos.strategy != null && <span className="text-slate-600">{String(pos.strategy)}</span>}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
       <div className="mt-2 text-xs text-slate-500">

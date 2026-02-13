@@ -34,14 +34,16 @@ export async function GET(
       return NextResponse.json({ preview: [], message: 'No content blocks configured' });
     }
 
-    // Fetch data for each block
-    const preview = blocks.map((block) => ({
-      id: block.id,
-      source_key: block.source_key,
-      label: block.label,
-      params: block.params,
-      data: fetchSourceData(block.source_key, block.params || {}),
-    }));
+    // Fetch data for each block (async)
+    const preview = await Promise.all(
+      blocks.map(async (block) => ({
+        id: block.id,
+        source_key: block.source_key,
+        label: block.label,
+        params: block.params,
+        data: await fetchSourceData(block.source_key, block.params || {}),
+      }))
+    );
 
     return NextResponse.json({
       preview,

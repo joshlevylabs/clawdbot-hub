@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import { paperSupabase, isPaperSupabaseConfigured } from './paper-supabase';
 
 // ---------- Types ----------
 
@@ -228,81 +229,119 @@ function readTextFile(absolutePath: string): string | null {
   }
 }
 
-type DataFetcher = (params: Record<string, unknown>) => unknown;
+type DataFetcher = (params: Record<string, unknown>) => unknown | Promise<unknown>;
 
 const fetchers: Record<string, DataFetcher> = {
-  'portfolio-performance': (params) => {
-    const data = readDataFile('paper-portfolio.json') as Record<string, unknown> | null;
-    if (!data) return { error: 'No portfolio data available' };
-
-    const performance = (data.performance || []) as Array<Record<string, unknown>>;
+  'portfolio-performance': async (params) => {
     const range = (params.range as string) || 'all';
     
-    let filtered = performance;
-    if (range === '1w') {
-      filtered = performance.slice(-7);
-    } else if (range === '1m') {
-      filtered = performance.slice(-30);
-    }
-    
-    const latest = filtered[filtered.length - 1] || {};
-    const first = filtered[0] || {};
+    if (isPaperSupabaseConfigured()) {
+      // Fetch intraday snapshots from Supabase for rich chart data
+      const { data: intraday } = await paperSupabase
+        .from('paper_portfolio_snapshots_intraday')
+        .select('timestamp,equity,cash,spy_price')
+        .order('timestamp', { ascending: true })
+        .limit(2000);
+      
+      const { data: daily } = await paperSupabase
+        .from('paper_portfolio_snapshots')
+        .select('*')
+        .order('date', { ascending: true })
+        .limit(500);
 
+      // Use intraday for 1w, daily for longer ranges
+      let chartData = (daily || []) as Array<Record<string, unknown>>;
+      if (range === '1w' && intraday && intraday.length > 0) {
+        const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+        chartData = intraday.filter((s: Record<string, unknown>) => String(s.timestamp) >= oneWeekAgo);
+      } else if (range === '1m') {
+        const oneMonthAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+        chartData = (daily || []).filter((s: Record<string, unknown>) => String(s.date) >= oneMonthAgo);
+      }
+
+      if (chartData.length === 0) chartData = (daily || []) as Array<Record<string, unknown>>;
+
+      // Calculate returns from first to last
+      const first = chartData[0] || {};
+      const last = chartData[chartData.length - 1] || {};
+      const firstEquity = Number(first.equity || 100000);
+      const lastEquity = Number(last.equity || 100000);
+      const firstSpy = Number(first.spy_price || 1);
+      const lastSpy = Number(last.spy_price || 1);
+      const portfolioReturn = ((lastEquity / firstEquity) - 1) * 100;
+      const spyReturn = ((lastSpy / firstSpy) - 1) * 100;
+
+      // Build performance array for chart (normalize to % returns)
+      const performance = chartData.map((s: Record<string, unknown>) => ({
+        date: s.timestamp || s.date,
+        equity: s.equity,
+        spy_price: s.spy_price,
+        cash: s.cash,
+      }));
+
+      return {
+        range,
+        data_points: performance.length,
+        equity: lastEquity,
+        portfolio_return_pct: Number(portfolioReturn.toFixed(2)),
+        spy_return_pct: Number(spyReturn.toFixed(2)),
+        alpha_pct: Number((portfolioReturn - spyReturn).toFixed(2)),
+        performance,
+      };
+    }
+
+    // Fallback to JSON file
+    const data = readDataFile('paper-portfolio.json') as Record<string, unknown> | null;
+    if (!data) return { error: 'No portfolio data available' };
+    const performance = (data.performance || []) as Array<Record<string, unknown>>;
+    const latest = performance[performance.length - 1] || {};
     return {
       range,
-      latest,
-      first,
-      data_points: filtered.length,
+      data_points: performance.length,
       equity: latest.equity,
       portfolio_return_pct: latest.portfolio_return_pct ?? 0,
       spy_return_pct: latest.spy_return_pct ?? 0,
       alpha_pct: latest.alpha_pct ?? 0,
-      performance: filtered,
+      performance,
     };
   },
 
-  'current-positions': () => {
-    // Try Alpaca paper portfolio first
-    const paperData = readDataFile('paper-portfolio.json') as Record<string, unknown> | null;
-    const paperPositions = (paperData?.positions || []) as unknown[];
-    
-    // If paper portfolio is empty, check trading/portfolio.json (crypto bot)
-    if (paperPositions.length === 0) {
-      const tradingData = readDataFile('trading/portfolio.json') as Record<string, unknown> | null;
-      if (tradingData?.positions) {
-        const posObj = tradingData.positions as Record<string, Record<string, unknown>>;
-        const positions = Object.values(posObj).map(p => ({
+  'current-positions': async () => {
+    if (isPaperSupabaseConfigured()) {
+      const { data: positions } = await paperSupabase
+        .from('paper_positions')
+        .select('symbol,side,qty,entry_price,current_price,signal_confidence,signal_regime,signal_version,notes,opened_at')
+        .order('opened_at', { ascending: false });
+
+      const { data: config } = await paperSupabase
+        .from('paper_trading_config')
+        .select('starting_capital,cash')
+        .limit(1)
+        .single();
+
+      return {
+        positions: (positions || []).map((p: Record<string, unknown>) => ({
           symbol: p.symbol,
-          quantity: p.quantity,
+          side: p.side,
+          qty: p.qty,
           entry_price: p.entry_price,
           current_price: p.current_price,
-          unrealized_pnl: p.unrealized_pnl,
-          strategy: p.strategy,
-          entry_time: p.entry_time,
-        }));
-        return {
-          positions,
-          cash: tradingData.cash ?? 0,
-          source: 'crypto-bot',
-        };
-      }
+          confidence: p.signal_confidence,
+          regime: p.signal_regime,
+          version: p.signal_version,
+          notes: p.notes,
+        })),
+        cash: config?.cash ?? 0,
+        source: 'alpaca',
+      };
     }
 
-    // Also check portfolio-snapshots for latest Alpaca snapshot
-    const snapshots = readDataFile('trading/portfolio-snapshots.json') as Array<Record<string, unknown>> | null;
-    const latest = snapshots && snapshots.length > 0 ? snapshots[snapshots.length - 1] : null;
-
+    // Fallback to JSON files
+    const data = readDataFile('paper-portfolio.json') as Record<string, unknown> | null;
     return {
-      positions: paperPositions,
-      cash: (paperData?.account as Record<string, unknown>)?.cash ?? 0,
-      source: 'alpaca',
-      snapshot: latest ? {
-        equity: latest.equity,
-        cash: latest.cash,
-        positions_value: latest.positions_value,
-        open_positions: latest.open_positions,
-        date: latest.date,
-      } : null,
+      positions: data?.positions || [],
+      cash: (data?.account as Record<string, unknown>)?.cash ?? 0,
+      source: 'json-fallback',
     };
   },
 
@@ -530,11 +569,11 @@ export function getSourcesByCategory(category: string): ContentSourceDef[] {
   return CONTENT_SOURCES.filter(s => s.category === category);
 }
 
-export function fetchSourceData(sourceKey: string, params: Record<string, unknown> = {}): unknown {
+export async function fetchSourceData(sourceKey: string, params: Record<string, unknown> = {}): Promise<unknown> {
   const fetcher = fetchers[sourceKey];
   if (!fetcher) return { error: `Unknown source: ${sourceKey}` };
   try {
-    return fetcher(params);
+    return await fetcher(params);
   } catch (e) {
     return { error: `Failed to fetch ${sourceKey}: ${String(e)}` };
   }

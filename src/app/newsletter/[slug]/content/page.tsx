@@ -9,137 +9,7 @@ import { ContentBlockCard } from "@/components/newsletter/ContentBlockCard";
 import { ContentSourcePicker } from "@/components/newsletter/ContentSourcePicker";
 
 // Source definitions (client-side copy for the picker UI)
-const CONTENT_SOURCES = [
-  {
-    key: "portfolio-performance",
-    label: "Portfolio Performance",
-    description: "MRE portfolio performance vs SPY",
-    category: "trading",
-    availableParams: [
-      {
-        key: "range",
-        label: "Time Range",
-        type: "select",
-        options: [
-          { value: "1w", label: "1 Week" },
-          { value: "1m", label: "1 Month" },
-          { value: "all", label: "All Time" },
-        ],
-        default: "all",
-      },
-    ],
-  },
-  {
-    key: "current-positions",
-    label: "Current Positions",
-    description: "Open positions in the portfolio",
-    category: "trading",
-    availableParams: [],
-  },
-  {
-    key: "active-signals",
-    label: "Active Signals",
-    description: "Current trading signals from MRE",
-    category: "trading",
-    availableParams: [],
-  },
-  {
-    key: "recent-trades",
-    label: "Recent Trades",
-    description: "Trade log with P&L",
-    category: "trading",
-    availableParams: [{ key: "limit", label: "Max Trades", type: "number", default: 10 }],
-  },
-  {
-    key: "fear-greed",
-    label: "Fear & Greed Index",
-    description: "Market sentiment indicator",
-    category: "trading",
-    availableParams: [],
-  },
-  {
-    key: "regime",
-    label: "Market Regime",
-    description: "Current market regime classification",
-    category: "trading",
-    availableParams: [],
-  },
-  {
-    key: "compass-state",
-    label: "Compass State",
-    description: "Marriage compass scores and quadrant",
-    category: "marriage",
-    availableParams: [],
-  },
-  {
-    key: "compass-weekly",
-    label: "Weekly Analysis",
-    description: "Weekly relationship analysis highlights",
-    category: "marriage",
-    availableParams: [],
-  },
-  {
-    key: "compass-nudges",
-    label: "Recent Nudges",
-    description: "Recent nudge history",
-    category: "marriage",
-    availableParams: [{ key: "limit", label: "Max Nudges", type: "number", default: 5 }],
-  },
-  {
-    key: "family-ideas",
-    label: "Date & Activity Ideas",
-    description: "Date night and family activity ideas",
-    category: "marriage",
-    availableParams: [
-      {
-        key: "category",
-        label: "Category",
-        type: "select",
-        options: [
-          { value: "date", label: "Date Ideas" },
-          { value: "activity", label: "Activities" },
-          { value: "conversation", label: "Conversation Starters" },
-        ],
-        default: "date",
-      },
-    ],
-  },
-  {
-    key: "podcast-latest",
-    label: "Latest Episodes",
-    description: "Latest podcast episode summaries",
-    category: "podcast",
-    availableParams: [{ key: "count", label: "Episode Count", type: "number", default: 1 }],
-  },
-  {
-    key: "prayer-weekly",
-    label: "Weekly Prayer",
-    description: "Weekly parsha, psalms, proverbs, and intentions",
-    category: "prayer",
-    availableParams: [],
-  },
-  {
-    key: "news-highlights",
-    label: "News Highlights",
-    description: "Recent news from morning brief",
-    category: "news",
-    availableParams: [
-      {
-        key: "category",
-        label: "Region",
-        type: "select",
-        options: [
-          { value: "all", label: "All News" },
-          { value: "israel", label: "Israel" },
-          { value: "us", label: "United States" },
-          { value: "world", label: "Global" },
-          { value: "ai", label: "AI Intel" },
-        ],
-        default: "all",
-      },
-    ],
-  },
-];
+// Source registry is fetched from the API to stay in sync with newsletter-sources.ts
 
 export default function ContentConfigPage() {
   const params = useParams();
@@ -148,6 +18,7 @@ export default function ContentConfigPage() {
 
   const [newsletter, setNewsletter] = useState<Newsletter | null>(null);
   const [blocks, setBlocks] = useState<ContentConfig[]>([]);
+  const [contentSources, setContentSources] = useState<Array<{key:string;label:string;description:string;category:string;availableParams:Array<{key:string;label:string;type:string;options?:Array<{value:string;label:string}>;default?:string|number}>}>>([]);
   const [loading, setLoading] = useState(true);
   const [showPicker, setShowPicker] = useState(false);
 
@@ -175,7 +46,11 @@ export default function ContentConfigPage() {
 
   useEffect(() => {
     async function load() {
-      const nl = await loadNewsletter();
+      const [nl, sourcesRes] = await Promise.all([
+        loadNewsletter(),
+        fetch('/api/newsletters/sources').then(r => r.json()).catch(() => ({ sources: [] })),
+      ]);
+      setContentSources(sourcesRes.sources || []);
       if (nl) await loadBlocks(nl.id);
       setLoading(false);
     }
@@ -316,7 +191,7 @@ export default function ContentConfigPage() {
       {/* Picker Modal */}
       {showPicker && (
         <ContentSourcePicker
-          sources={CONTENT_SOURCES}
+          sources={contentSources}
           existingKeys={blocks.map((b) => b.source_key)}
           onAdd={handleAdd}
           onClose={() => setShowPicker(false)}

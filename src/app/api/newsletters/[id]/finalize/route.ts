@@ -45,14 +45,17 @@ export async function POST(
       return NextResponse.json({ error: 'No content blocks configured for this newsletter' }, { status: 400 });
     }
 
-    // Snapshot current data
-    const contentData = {
-      blocks: blocks.map((block) => ({
+    // Snapshot current data (async fetchers)
+    const contentBlocks = await Promise.all(
+      blocks.map(async (block) => ({
         source_key: block.source_key,
         label: block.label,
         params: block.params,
-        data: fetchSourceData(block.source_key, block.params || {}),
-      })),
+        data: await fetchSourceData(block.source_key, block.params || {}),
+      }))
+    );
+    const contentData = {
+      blocks: contentBlocks,
       snapshot_at: new Date().toISOString(),
       newsletter_name: newsletter.name,
     };

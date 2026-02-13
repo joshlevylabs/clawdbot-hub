@@ -14,6 +14,8 @@ import {
   Pause,
   Play,
   Trash2,
+  Settings2,
+  Eye,
 } from "lucide-react";
 import { Newsletter, NewsletterIssue, NewsletterSubscriber } from "@/lib/newsletter-types";
 import { StatusBadge } from "@/components/newsletter/StatusBadge";
@@ -146,6 +148,18 @@ export default function NewsletterDetailPage() {
         </div>
 
         <div className="flex items-center gap-2">
+          <Link href={`/newsletter/${slug}/content`}>
+            <button className="btn btn-ghost flex items-center gap-2 text-sm">
+              <Settings2 className="w-4 h-4" />
+              Content
+            </button>
+          </Link>
+          <Link href={`/newsletter/${slug}/preview`}>
+            <button className="btn btn-ghost flex items-center gap-2 text-sm">
+              <Eye className="w-4 h-4" />
+              Preview
+            </button>
+          </Link>
           <button
             onClick={handleToggleStatus}
             disabled={toggling}

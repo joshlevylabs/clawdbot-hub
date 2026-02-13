@@ -46,6 +46,20 @@ export interface NewsletterIssue {
   scheduled_for: string | null;
   created_at: string;
   updated_at: string;
+  content_data?: Record<string, unknown> | null;
+  generation_status?: 'pending' | 'generating' | 'ready' | null;
+}
+
+export interface ContentConfig {
+  id: string;
+  newsletter_id: string;
+  source_key: string;
+  label: string;
+  params: Record<string, unknown>;
+  display_order: number;
+  enabled: boolean;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface NewsletterActivity {

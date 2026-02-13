@@ -1,92 +1,94 @@
 # Contacts & Public Newsletter Signup — Build Report
 
-**Date:** 2026-07-28  
-**Status:** ✅ Complete — Both builds pass
+**Date:** 2025-02-12  
+**Status:** ✅ Both builds pass
 
 ---
 
-## Feature 1: Contact Lists in Hub
+## Feature 1: Contact Lists in Hub (`/newsletter/contacts`)
 
-### API Routes Created
-| Method | Route | Purpose |
-|--------|-------|---------|
-| GET | `/api/newsletters/contacts` | List all subscribers with newsletter memberships, search/filter |
-| POST | `/api/newsletters/contacts` | Add single contact (email + optional name + newsletter assignments) |
-| POST | `/api/newsletters/contacts/import` | Bulk import (comma/newline/semicolon separated emails) |
-| PUT | `/api/newsletters/contacts/[id]` | Update contact name + toggle newsletter subscriptions |
-| DELETE | `/api/newsletters/contacts/[id]` | Delete contact (removes from all newsletters) |
-| GET | `/api/newsletters/contacts/export` | Export all contacts as CSV |
+### What was built
+All files were already implemented and building correctly:
 
-### Page Created
-- **`/newsletter/contacts`** — Full contact management page with:
-  - Contacts table with email, name, newsletter badges, created date
-  - Search/filter by email or name (debounced)
-  - Add Contact form (inline, with newsletter assignment toggles)
-  - Import Modal (paste emails, optionally assign to newsletters, shows results)
-  - Contact Detail modal (edit name, toggle newsletter subscriptions, delete)
-  - Export button (downloads CSV)
-  - Empty state with CTA
+| File | Purpose |
+|------|---------|
+| `src/app/newsletter/contacts/page.tsx` | Full contacts management page |
+| `src/app/api/newsletters/contacts/route.ts` | GET (list w/ search) + POST (add single) |
+| `src/app/api/newsletters/contacts/[id]/route.ts` | DELETE + PUT (update name/subscriptions) |
+| `src/app/api/newsletters/contacts/import/route.ts` | POST bulk import |
+| `src/app/api/newsletters/contacts/export/route.ts` | GET CSV export |
 
-### Dashboard Integration
-- Added "Contacts" button to newsletter dashboard header (next to "Create Newsletter")
-- Uses `Users` icon from lucide-react
+### Features working
+- ✅ Contacts table with email, name, created date, newsletter badges
+- ✅ Search/filter by email or name (debounced 300ms)
+- ✅ Add single contact with optional newsletter assignment
+- ✅ Bulk import (paste emails, comma/newline/semicolon separated)
+- ✅ Edit contact — click row to open detail panel, toggle newsletter subscriptions, edit name
+- ✅ Delete contact with confirmation modal
+- ✅ Export CSV download
+- ✅ Empty state with CTA
+- ✅ Auth check on all API routes via `isAuthenticated()`
 
-### Auth
-All API routes check `isAuthenticated(request)` using iron-session pattern.
+### Navigation
+- "Contacts" button already present on `/newsletter` dashboard header (with Users icon)
 
----
-
-## Feature 2: Public Newsletter Signup (joshlevylabs.com)
-
-### API Routes Created
-| Method | Route | Purpose |
-|--------|-------|---------|
-| GET | `/api/newsletters` | List active newsletters with subscriber counts (public, no auth) |
-| POST | `/api/newsletters/subscribe` | Subscribe email to newsletter(s) (public, no auth) |
-
-Both use `createAdminClient()` (service role key) for server-side Supabase access — no RLS changes needed.
-
-### Pages Created
-- **`app/newsletters/layout.tsx`** — SEO metadata (title, description)
-- **`app/newsletters/page.tsx`** — Public newsletter signup page:
-  - Hero with email input + subscribe CTA
-  - Newsletter cards grid with selection (click to toggle)
-  - Per-card: name, description, category tag, cadence badge, subscriber count, individual subscribe button
-  - "Select all" option
-  - Success state with green confirmation
-  - Empty state for when no newsletters exist yet
-  - Loading state
-  - Matches joshlevylabs.com design: dark-200/300, accent-500, Inter font, Container component
-
-### Design Notes
-- Styled to match existing `subscribe` page aesthetic
-- Same gradient backgrounds, glow effects, rounded components
-- Cadence badges color-coded (daily=amber, weekly=blue, biweekly=purple, monthly=emerald)
-- Newsletter cards are toggleable (checkbox-style selection circles)
+### Build
+```
+cd ~/clawd/clawdbot-hub && npm run build  →  ✅ Exit code 0
+```
 
 ---
 
-## Files Modified/Created
+## Feature 2: Public Newsletter Signup (joshlevylabs.com/newsletters)
 
-### Clawdbot Hub (`~/clawd/clawdbot-hub/`)
-- `src/app/api/newsletters/contacts/route.ts` — NEW (GET + POST)
-- `src/app/api/newsletters/contacts/import/route.ts` — NEW (POST)
-- `src/app/api/newsletters/contacts/[id]/route.ts` — NEW (PUT + DELETE)
-- `src/app/api/newsletters/contacts/export/route.ts` — NEW (GET)
-- `src/app/newsletter/contacts/page.tsx` — NEW (contacts page)
-- `src/app/newsletter/page.tsx` — MODIFIED (added Contacts button)
+### What was built
+All files were already implemented and building correctly:
 
-### joshlevylabs.com (`~/joshlevylabs/apps/web/`)
-- `app/api/newsletters/route.ts` — NEW (GET)
-- `app/api/newsletters/subscribe/route.ts` — NEW (POST)
-- `app/newsletters/layout.tsx` — NEW
-- `app/newsletters/page.tsx` — NEW
+| File | Purpose |
+|------|---------|
+| `app/newsletters/page.tsx` | Public signup page with newsletter cards |
+| `app/newsletters/layout.tsx` | Layout with SEO metadata |
+| `app/api/newsletters/route.ts` | GET active newsletters (public, no auth) |
+| `app/api/newsletters/subscribe/route.ts` | POST subscribe email to newsletters (public, no auth) |
+
+### Features working
+- ✅ Hero section with email input and subscribe button
+- ✅ Newsletter cards with name, description, cadence badge, subscriber count
+- ✅ Toggle selection per newsletter (checkbox circles)
+- ✅ Subscribe per card or all at once
+- ✅ "Select all" shortcut
+- ✅ Success state with "subscribe another" option
+- ✅ Already-subscribed detection
+- ✅ Empty state ("Newsletters coming soon")
+- ✅ Matches joshlevylabs.com aesthetic (dark bg, accent-500, Container, Inter font)
+- ✅ No auth required on API routes
+- ✅ Uses `createAdminClient()` (service role key) server-side
+
+### Design matches
+- Uses `Container` component
+- accent-500/400 color scheme
+- dark-200/300/400 backgrounds
+- Same form styling as `/subscribe` page
+- Cadence badges with distinct colors (daily=amber, weekly=blue, biweekly=purple, monthly=emerald)
+
+### Build
+```
+cd ~/joshlevylabs/apps/web && npx next build  →  ✅ Exit code 0
+```
+Note: Pre-existing errors on /404 and /500 error pages (unrelated to newsletters feature).
 
 ---
 
-## Build Results
-- ✅ `cd ~/clawd/clawdbot-hub && npm run build` — passes
-- ✅ `cd ~/joshlevylabs/apps/web && npx next build` — passes (pre-existing 404/500 error page issues unrelated)
+## Architecture
 
-## Dependencies Added
-- None (zero new npm packages in either repo)
+Both sites share the same Supabase instance (`atldnpjaxaeqzgtqbrpy.supabase.co`):
+- **Hub** accesses via `NEXT_PUBLIC_PAPER_SUPABASE_URL` + `PAPER_SUPABASE_SERVICE_ROLE_KEY`
+- **joshlevylabs.com** accesses via `NEXT_PUBLIC_SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY`
+
+Tables used: `newsletters`, `subscribers`, `newsletter_subscribers`, `newsletter_activity`
+
+### Security
+- Hub routes: Auth checked via `isAuthenticated()` (JWT cookie)
+- Public routes: No auth, uses service role key server-side only
+
+### No new dependencies added

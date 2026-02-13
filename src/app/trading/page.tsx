@@ -24,6 +24,7 @@ import MREDashboard from "./MREDashboard";
 import UniverseTable from "./UniverseTable";
 import MarketsOverview from "./MarketsOverview";
 import OptimizerResults from "./OptimizerResults";
+import PositionCharts from "@/components/PositionCharts";
 
 // ===== Types =====
 
@@ -695,6 +696,11 @@ export default function TradingPage() {
           {/* ===== POSITIONS TAB ===== */}
           {activeTab === "positions" && !loading && !error && (
             <>
+              {/* Position Charts */}
+              {positions.length > 0 && (
+                <PositionCharts positions={positions} />
+              )}
+
               {positions.length === 0 ? (
                 <div className="bg-slate-800/50 rounded-xl p-12 border border-slate-700/50 text-center">
                   <Database className="w-8 h-8 text-slate-600 mx-auto mb-3" />

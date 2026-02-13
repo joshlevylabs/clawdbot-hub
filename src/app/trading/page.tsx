@@ -258,6 +258,21 @@ function SignalAccuracyPanel({ stats }: { stats: SignalStats }) {
     );
   }
 
+  // Check if any signals have been evaluated yet (need 5+ trading days)
+  const hasEvaluatedSignals = overall.correct_5d > 0 || overall.accuracy_5d > 0 || overall.accuracy_10d > 0;
+
+  if (!hasEvaluatedSignals && overall.total > 0) {
+    return (
+      <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700/50 text-center">
+        <Target className="w-8 h-8 text-amber-500 mx-auto mb-2" />
+        <p className="text-slate-300 font-medium">{overall.total} signals generated — awaiting evaluation</p>
+        <p className="text-sm text-slate-500 mt-1">
+          Accuracy scores require 5+ trading days to evaluate. Results will appear automatically.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50">
       <h3 className="font-semibold text-slate-100 flex items-center gap-2 mb-4">

@@ -222,6 +222,8 @@ interface ActionItem {
   rsi14?: number;
   dipPercent?: number;
   sector?: string;
+  // Computed composite score (for swap comparison)
+  swapScore?: number;
 }
 
 interface ActionsDashboardProps {
@@ -232,7 +234,7 @@ interface ActionsDashboardProps {
   onAnalyze?: (symbol: string) => void;
 }
 
-type SortKey = "symbol" | "action" | "regime" | "confidence" | "currentPrice" | "pnl" | "momentum" | "assetClass" | "sharpe" | "signalStrength";
+type SortKey = "symbol" | "action" | "regime" | "confidence" | "currentPrice" | "pnl" | "momentum" | "assetClass" | "sharpe" | "signalStrength" | "swapScore";
 type SortDir = "asc" | "desc";
 type SignalFilter = "ACTIONABLE" | "ALL" | "BUY" | "HOLD" | "WATCH" | "WAIT" | "SELL" | "POSITIONS" | "BROAD_MARKET" | "SECTORS" | "INTERNATIONAL" | "BONDS" | "COMMODITIES" | "CORE" | "UNIVERSE";
 type GroupBy = "none" | "assetClass" | "regime" | "category";
@@ -340,6 +342,13 @@ function generateActions(data: MREData): ActionItem[] {
       rsi14: asset.rsi_14,
       dipPercent: asset.dip_5d_pct,
       sector: asset.sector,
+      // Composite swap score: same formula as _score_new_signal in mre_signal_exporter.py
+      swapScore: Math.round(
+        (asset.signal_strength || 0) * 0.40 +
+        (expected_accuracy || 50) * 0.25 +
+        Math.min(100, (expected_sharpe || 0) * 20) * 0.20 +
+        (regime === "bull" ? 100 : regime === "sideways" ? 50 : 0) * 0.15
+      ),
     });
   }
 
@@ -841,6 +850,7 @@ export default function ActionsDashboard({
         case "assetClass": cmp = a.assetClass.localeCompare(b.assetClass); break;
         case "sharpe": cmp = a.sharpe - b.sharpe; break;
         case "signalStrength": cmp = (a.signalStrength || 0) - (b.signalStrength || 0); break;
+        case "swapScore": cmp = (a.swapScore || 0) - (b.swapScore || 0); break;
       }
       return sortDir === "asc" ? cmp : -cmp;
     });
@@ -961,6 +971,18 @@ export default function ActionsDashboard({
         {/* Signal Strength */}
         <td className="py-2.5 px-2 font-mono text-xs text-slate-300">
           {item.signalStrength !== undefined ? item.signalStrength : "—"}
+        </td>
+        {/* Swap Score (composite) */}
+        <td className="py-2.5 px-2 font-mono text-xs">
+          {item.swapScore !== undefined ? (
+            <span className={`font-bold ${
+              item.swapScore >= 70 ? "text-emerald-400" :
+              item.swapScore >= 50 ? "text-amber-400" :
+              "text-red-400"
+            }`}>
+              {item.swapScore}
+            </span>
+          ) : "—"}
         </td>
         {/* RSI */}
         <td className="py-2.5 px-2 font-mono text-xs text-slate-300">
@@ -1154,6 +1176,7 @@ export default function ActionsDashboard({
                     <SortHeader label="Price" sortKey="currentPrice" currentSort={sortKey} currentDir={sortDir} onSort={handleSort} className="text-left" />
                     <SortHeader label="Mom 20d" sortKey="momentum" currentSort={sortKey} currentDir={sortDir} onSort={handleSort} className="text-left" />
                     <SortHeader label="Signal Str" sortKey="signalStrength" currentSort={sortKey} currentDir={sortDir} onSort={handleSort} className="text-left" />
+                    <SortHeader label="Swap Score" sortKey="swapScore" currentSort={sortKey} currentDir={sortDir} onSort={handleSort} className="text-left" />
                     <th className="text-left py-2 px-2">RSI</th>
                     <th className="text-left py-2 px-2">5d Dip</th>
                     <th className="text-left py-2 px-2">Source</th>

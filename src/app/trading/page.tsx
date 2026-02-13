@@ -726,6 +726,7 @@ export default function TradingPage() {
                           <th className="text-right py-2 px-2">Value</th>
                           <th className="text-right py-2 px-2">% of Portfolio</th>
                           <th className="text-right py-2 px-2">Confidence</th>
+                          <th className="text-right py-2 px-2">Pos Score</th>
                           <th className="text-right py-2 px-2">Stop</th>
                           <th className="text-right py-2 px-2">Target</th>
                           <th className="text-right py-2 px-2">Days</th>
@@ -781,6 +782,33 @@ export default function TradingPage() {
                                   </div>
                                 ) : <span className="text-xs text-slate-600">—</span>}
                               </td>
+                              {/* Position Score — same formula as _score_existing_position in mre_signal_exporter.py */}
+                              <td className="py-3 px-2 text-right">
+                                {(() => {
+                                  const conf = pos.signal_confidence || 50;
+                                  const pnlPct = unrealizedPnlPct;
+                                  const pnlScore = Math.max(0, Math.min(100, 50 + pnlPct * 5));
+                                  const holdTarget = pos.hold_days || 10;
+                                  const daysRemaining = Math.max(0, (holdTarget - holdDays) / holdTarget);
+                                  const regimeStr = (pos.signal_regime || "sideways").toLowerCase();
+                                  const regimeScore = regimeStr === "bull" ? 100 : regimeStr === "bear" ? 0 : 50;
+                                  const posScore = Math.round(
+                                    conf * 0.40 +
+                                    pnlScore * 0.20 +
+                                    daysRemaining * 100 * 0.20 +
+                                    regimeScore * 0.20
+                                  );
+                                  return (
+                                    <span className={`font-mono text-xs font-bold ${
+                                      posScore >= 65 ? "text-emerald-400" :
+                                      posScore >= 45 ? "text-amber-400" :
+                                      "text-red-400"
+                                    }`}>
+                                      {posScore}
+                                    </span>
+                                  );
+                                })()}
+                              </td>
                               <td className="py-3 px-2 text-right font-mono text-red-400/70">
                                 {pos.stop_loss ? `$${formatCurrency(pos.stop_loss)}` : "—"}
                               </td>
@@ -817,7 +845,7 @@ export default function TradingPage() {
                           <td className="py-3 px-2 text-right font-mono text-slate-400">
                             {equity > 0 ? ((positionsValue / equity) * 100).toFixed(1) : "0"}%
                           </td>
-                          <td colSpan={5} className="py-3 px-2 text-right text-sm text-slate-500">
+                          <td colSpan={6} className="py-3 px-2 text-right text-sm text-slate-500">
                             Cash: ${formatCurrency(cash)} ({equity > 0 ? ((cash / equity) * 100).toFixed(1) : 100}%)
                           </td>
                         </tr>

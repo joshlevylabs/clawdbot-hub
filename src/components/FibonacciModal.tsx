@@ -146,17 +146,36 @@ function SwingLabel({
   fill: string;
 }) {
   if (!viewBox) return null;
+  const x = viewBox.cx || 0;
+  const y = (viewBox.cy || 0) - 18;
+  const isC = value.includes("C");
+  const isA = value === "A";
+  // Offset A label to the left and C to the right to avoid overlap
+  const xOffset = isA ? -20 : isC ? 20 : 0;
   return (
-    <text
-      x={viewBox.cx}
-      y={viewBox.cy - 12}
-      fill={fill}
-      fontSize={11}
-      fontWeight={700}
-      textAnchor="middle"
-    >
-      {value}
-    </text>
+    <g>
+      <rect
+        x={x + xOffset - 16}
+        y={y - 10}
+        width={value.length > 2 ? 52 : 24}
+        height={18}
+        rx={4}
+        fill="#0f172a"
+        stroke={fill}
+        strokeWidth={1}
+        opacity={0.9}
+      />
+      <text
+        x={x + xOffset}
+        y={y + 3}
+        fill={fill}
+        fontSize={12}
+        fontWeight={800}
+        textAnchor="middle"
+      >
+        {value}
+      </text>
+    </g>
   );
 }
 
@@ -471,15 +490,15 @@ export default function FibonacciModal({
                     }}
                   />
 
-                  {/* Swing High dot (Point A) */}
+                  {/* Swing High dot (Point A) — cyan */}
                   {swingHighDate && (
                     <ReferenceDot
                       x={swingHighDate}
                       y={
                         priceHistory.find((p) => p.date === swingHighDate)
-                          ?.close || swingHigh
+                          ?.high || swingHigh
                       }
-                      r={6}
+                      r={8}
                       fill="#22d3ee"
                       stroke="#0e7490"
                       strokeWidth={2}
@@ -487,15 +506,15 @@ export default function FibonacciModal({
                     />
                   )}
 
-                  {/* Swing Low dot (Point B) */}
+                  {/* Swing Low dot (Point B) — pink */}
                   {swingLowDate && (
                     <ReferenceDot
                       x={swingLowDate}
                       y={
                         priceHistory.find((p) => p.date === swingLowDate)
-                          ?.close || swingLow
+                          ?.low || swingLow
                       }
-                      r={6}
+                      r={8}
                       fill="#f472b6"
                       stroke="#be185d"
                       strokeWidth={2}
@@ -503,16 +522,16 @@ export default function FibonacciModal({
                     />
                   )}
 
-                  {/* Current price dot (Point C) */}
+                  {/* Current price dot (Point C) — white */}
                   {lastDate && (
                     <ReferenceDot
                       x={lastDate}
                       y={currentPrice}
-                      r={6}
+                      r={8}
                       fill="#ffffff"
                       stroke="#64748b"
                       strokeWidth={2}
-                      label={<SwingLabel value="C (Now)" fill="#ffffff" />}
+                      label={<SwingLabel value="C" fill="#ffffff" />}
                     />
                   )}
                 </AreaChart>

@@ -429,6 +429,137 @@ function SortHeader({ label, sortKey, currentSort, currentDir, onSort, className
   );
 }
 
+// ── Swap Explainer Panel ───────────────────────────────────────────
+
+function SwapExplainer({ capitalRebalancing }: { capitalRebalancing?: CapitalRebalancing }) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="bg-slate-800/30 rounded-xl border border-slate-700/40 overflow-hidden">
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full px-4 py-2.5 flex items-center justify-between text-left hover:bg-slate-800/50 transition-colors"
+      >
+        <div className="flex items-center gap-2">
+          <Info className="w-4 h-4 text-slate-500" />
+          <span className="text-xs font-medium text-slate-400">How Swap Evaluation Works</span>
+        </div>
+        {open ? (
+          <ChevronUp className="w-4 h-4 text-slate-500" />
+        ) : (
+          <ChevronDown className="w-4 h-4 text-slate-500" />
+        )}
+      </button>
+
+      {open && (
+        <div className="px-4 pb-4 pt-1 border-t border-slate-700/30 space-y-3">
+          {/* Pipeline overview */}
+          <div className="space-y-2">
+            <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider">Decision Pipeline</h4>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+              <div className="bg-slate-800/60 rounded-lg p-2.5 border border-slate-700/50">
+                <div className="text-amber-400 font-bold mb-1">1. Trigger Check</div>
+                <p className="text-slate-400">
+                  Capital must be {">"}90% deployed. Below that, cash is available for new BUY signals without selling.
+                </p>
+                {capitalRebalancing && (
+                  <div className={`mt-1.5 font-mono text-[10px] px-1.5 py-0.5 rounded inline-block ${
+                    capitalRebalancing.threshold_triggered
+                      ? "bg-amber-500/20 text-amber-400"
+                      : "bg-emerald-500/20 text-emerald-400"
+                  }`}>
+                    Currently: {capitalRebalancing.capital_deployed_pct.toFixed(1)}% deployed
+                    {capitalRebalancing.threshold_triggered ? " → TRIGGERED" : " → not triggered"}
+                  </div>
+                )}
+              </div>
+              <div className="bg-slate-800/60 rounded-lg p-2.5 border border-slate-700/50">
+                <div className="text-cyan-400 font-bold mb-1">2. Score & Compare</div>
+                <p className="text-slate-400">
+                  Each open position gets a <span className="text-slate-300">weakness score</span> (0-100).
+                  Each new BUY signal gets a <span className="text-slate-300">strength score</span> (0-100).
+                  Weakest positions vs strongest signals.
+                </p>
+              </div>
+              <div className="bg-slate-800/60 rounded-lg p-2.5 border border-slate-700/50">
+                <div className="text-emerald-400 font-bold mb-1">3. Swap Gate</div>
+                <p className="text-slate-400">
+                  New signal must beat existing position by <span className="text-slate-300">+15 points</span>.
+                  Position must be past 20% of its hold period.
+                  Freed capital must cover the new position.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Scoring breakdown */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <h4 className="text-xs font-bold text-red-400 mb-1.5">Position Score (lower = weaker)</h4>
+              <div className="space-y-1 text-[11px]">
+                <div className="flex justify-between text-slate-400">
+                  <span>Signal confidence at entry</span>
+                  <span className="text-slate-500 font-mono">40%</span>
+                </div>
+                <div className="flex justify-between text-slate-400">
+                  <span>Unrealized P/L %</span>
+                  <span className="text-slate-500 font-mono">20%</span>
+                </div>
+                <div className="flex justify-between text-slate-400">
+                  <span>Time remaining vs hold target</span>
+                  <span className="text-slate-500 font-mono">20%</span>
+                </div>
+                <div className="flex justify-between text-slate-400">
+                  <span>Current regime (bull/sideways/bear)</span>
+                  <span className="text-slate-500 font-mono">20%</span>
+                </div>
+              </div>
+            </div>
+            <div>
+              <h4 className="text-xs font-bold text-emerald-400 mb-1.5">Signal Score (higher = stronger)</h4>
+              <div className="space-y-1 text-[11px]">
+                <div className="flex justify-between text-slate-400">
+                  <span>Signal strength from pipeline</span>
+                  <span className="text-slate-500 font-mono">40%</span>
+                </div>
+                <div className="flex justify-between text-slate-400">
+                  <span>Expected accuracy %</span>
+                  <span className="text-slate-500 font-mono">25%</span>
+                </div>
+                <div className="flex justify-between text-slate-400">
+                  <span>Expected Sharpe ratio</span>
+                  <span className="text-slate-500 font-mono">20%</span>
+                </div>
+                <div className="flex justify-between text-slate-400">
+                  <span>Current regime</span>
+                  <span className="text-slate-500 font-mono">15%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Current status */}
+          {capitalRebalancing && (
+            <div className="bg-slate-800/80 rounded-lg p-2.5 border border-slate-700/50 text-[11px]">
+              <span className="text-slate-500 font-medium">Status: </span>
+              {capitalRebalancing.no_swap_reason ? (
+                <span className="text-slate-400">{capitalRebalancing.no_swap_reason}</span>
+              ) : capitalRebalancing.swap_suggestions.length > 0 ? (
+                <span className="text-amber-400">
+                  {capitalRebalancing.swap_suggestions.length} swap(s) suggested —
+                  net improvement: +{capitalRebalancing.swap_suggestions.reduce((s, sw) => s + sw.net_improvement, 0).toFixed(0)} pts
+                </span>
+              ) : (
+                <span className="text-emerald-400">All positions holding strong</span>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ── Swap Suggestions Panel ─────────────────────────────────────────
 
 function SwapSuggestionsPanel({
@@ -917,6 +1048,9 @@ export default function ActionsDashboard({
           tradingEnabled={tradingEnabled}
         />
       )}
+
+      {/* How Swaps Work — collapsible explainer */}
+      <SwapExplainer capitalRebalancing={data.capital_rebalancing} />
 
       <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 rounded-xl border border-primary-500/30 overflow-hidden">
         {/* Header */}

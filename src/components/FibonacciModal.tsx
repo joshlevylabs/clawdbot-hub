@@ -541,12 +541,14 @@ export default function FibonacciModal({
                   />
 
                   {/* Point A — Swing Low in uptrend (where buyers took over) — pink */}
+                  {/* [V13.1 FIX] Use actual low/high value, not close — swing points are intraday extremes */}
                   {pointADate && (
                     <ReferenceDot
                       x={pointADate}
                       y={
-                        priceHistory.find((p) => p.date === pointADate)
-                          ?.close || pointA
+                        isUptrend
+                          ? (priceHistory.find((p) => p.date === pointADate)?.low || pointA)
+                          : (priceHistory.find((p) => p.date === pointADate)?.high || pointA)
                       }
                       r={8}
                       fill="#f472b6"
@@ -557,12 +559,14 @@ export default function FibonacciModal({
                   )}
 
                   {/* Point B — Swing High in uptrend (where buyers paused) — cyan */}
+                  {/* [V13.1 FIX] Use actual high/low value, not close — swing points are intraday extremes */}
                   {pointBDate && (
                     <ReferenceDot
                       x={pointBDate}
                       y={
-                        priceHistory.find((p) => p.date === pointBDate)
-                          ?.close || pointB
+                        isUptrend
+                          ? (priceHistory.find((p) => p.date === pointBDate)?.high || pointB)
+                          : (priceHistory.find((p) => p.date === pointBDate)?.low || pointB)
                       }
                       r={8}
                       fill="#22d3ee"
@@ -573,12 +577,14 @@ export default function FibonacciModal({
                   )}
 
                   {/* Point C — Pullback (3-point extension) — amber */}
+                  {/* [V13.1 FIX] Pullback is opposite of trend: uptrend pullback = low, downtrend pullback = high */}
                   {has3Point && pullbackDate && (
                     <ReferenceDot
                       x={pullbackDate}
                       y={
-                        priceHistory.find((p) => p.date === pullbackDate)
-                          ?.close || pullbackPrice || 0
+                        isUptrend
+                          ? (priceHistory.find((p) => p.date === pullbackDate)?.low || pullbackPrice || 0)
+                          : (priceHistory.find((p) => p.date === pullbackDate)?.high || pullbackPrice || 0)
                       }
                       r={8}
                       fill="#fbbf24"
@@ -588,11 +594,12 @@ export default function FibonacciModal({
                     />
                   )}
 
-                  {/* Current price dot — white, only if no 3-point C */}
+                  {/* Current price dot — white, snapped to last actual close */}
+                  {/* [V13.1 FIX] Use last close from priceHistory, not stale currentPrice from signal data */}
                   {lastDate && (
                     <ReferenceDot
                       x={lastDate}
-                      y={currentPrice}
+                      y={priceHistory[priceHistory.length - 1]?.close ?? currentPrice}
                       r={6}
                       fill="#ffffff"
                       stroke="#64748b"
@@ -1010,20 +1017,21 @@ export function FibonacciAnalysisContent({ symbol, fibData }: FibonacciAnalysisC
               <Area type="monotone" dataKey="close" stroke="#818cf8" strokeWidth={2} fill="url(#fibGradientInline)" dot={false}
                 activeDot={{ r: 4, fill: "#818cf8", stroke: "#1e293b", strokeWidth: 2 }} />
 
+              {/* [V13.1 FIX] Swing dots use actual high/low, not close */}
               {pointADate && (
-                <ReferenceDot x={pointADate} y={priceHistory.find((p) => p.date === pointADate)?.close || pointA} r={8} fill="#f472b6" stroke="#be185d" strokeWidth={2}
+                <ReferenceDot x={pointADate} y={isUptrend ? (priceHistory.find((p) => p.date === pointADate)?.low || pointA) : (priceHistory.find((p) => p.date === pointADate)?.high || pointA)} r={8} fill="#f472b6" stroke="#be185d" strokeWidth={2}
                   label={<SwingLabel value="A" fill="#f472b6" />} />
               )}
               {pointBDate && (
-                <ReferenceDot x={pointBDate} y={priceHistory.find((p) => p.date === pointBDate)?.close || pointB} r={8} fill="#22d3ee" stroke="#0e7490" strokeWidth={2}
+                <ReferenceDot x={pointBDate} y={isUptrend ? (priceHistory.find((p) => p.date === pointBDate)?.high || pointB) : (priceHistory.find((p) => p.date === pointBDate)?.low || pointB)} r={8} fill="#22d3ee" stroke="#0e7490" strokeWidth={2}
                   label={<SwingLabel value="B" fill="#22d3ee" />} />
               )}
               {has3Point && pullbackDate && (
-                <ReferenceDot x={pullbackDate} y={priceHistory.find((p) => p.date === pullbackDate)?.close || pullbackPrice || 0} r={8} fill="#fbbf24" stroke="#b45309" strokeWidth={2}
+                <ReferenceDot x={pullbackDate} y={isUptrend ? (priceHistory.find((p) => p.date === pullbackDate)?.low || pullbackPrice || 0) : (priceHistory.find((p) => p.date === pullbackDate)?.high || pullbackPrice || 0)} r={8} fill="#fbbf24" stroke="#b45309" strokeWidth={2}
                   label={<SwingLabel value="C" fill="#fbbf24" />} />
               )}
               {lastDate && (
-                <ReferenceDot x={lastDate} y={currentPrice} r={6} fill="#ffffff" stroke="#64748b" strokeWidth={2} />
+                <ReferenceDot x={lastDate} y={priceHistory[priceHistory.length - 1]?.close ?? currentPrice} r={6} fill="#ffffff" stroke="#64748b" strokeWidth={2} />
               )}
             </AreaChart>
           </ResponsiveContainer>

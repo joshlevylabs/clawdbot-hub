@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import {
   TrendingUp,
   TrendingDown,
@@ -15,7 +16,49 @@ interface PreviewBlockProps {
   data: Record<string, unknown>;
 }
 
+// Error boundary for individual preview blocks
+class BlockErrorBoundary extends React.Component<
+  { label: string; children: React.ReactNode },
+  { hasError: boolean; error: string }
+> {
+  constructor(props: { label: string; children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false, error: "" };
+  }
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error: error.message };
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="p-4 rounded-xl border border-red-500/30 bg-red-500/5">
+          <h3 className="text-sm font-semibold text-red-400 flex items-center gap-2">
+            <AlertTriangle className="w-4 h-4" />
+            {this.props.label}
+          </h3>
+          <p className="text-xs text-red-400/70 mt-1">
+            Render error: {this.state.error}
+          </p>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 export function PreviewBlock({ label, sourceKey, data }: PreviewBlockProps) {
+  if (!data || typeof data !== 'object') {
+    return (
+      <div className="p-4 rounded-xl border border-amber-500/30 bg-amber-500/5">
+        <h3 className="text-sm font-semibold text-amber-400 flex items-center gap-2">
+          <AlertTriangle className="w-4 h-4" />
+          {label}
+        </h3>
+        <p className="text-xs text-amber-400/70 mt-1">No data available</p>
+      </div>
+    );
+  }
+
   if (data?.error) {
     return (
       <div className="p-4 rounded-xl border border-amber-500/30 bg-amber-500/5">
@@ -29,12 +72,14 @@ export function PreviewBlock({ label, sourceKey, data }: PreviewBlockProps) {
   }
 
   return (
-    <div className="p-4 rounded-xl border border-slate-700 bg-slate-800/60">
-      <h3 className="text-sm font-semibold text-slate-200 mb-3">{label}</h3>
-      <div className="text-sm text-slate-300">
-        {renderSourceData(sourceKey, data)}
+    <BlockErrorBoundary label={label}>
+      <div className="p-4 rounded-xl border border-slate-700 bg-slate-800/60">
+        <h3 className="text-sm font-semibold text-slate-200 mb-3">{label}</h3>
+        <div className="text-sm text-slate-300">
+          {renderSourceData(sourceKey, data)}
+        </div>
       </div>
-    </div>
+    </BlockErrorBoundary>
   );
 }
 
@@ -367,16 +412,16 @@ function Regime({ data }: { data: Record<string, unknown> }) {
             <div className="text-xs text-slate-400 mb-1">{String(rotation.summary)}</div>
           )}
           <div className="flex gap-4 text-xs">
-            {rotation.leaders != null && (
+            {Array.isArray(rotation.leaders) && rotation.leaders.length > 0 && (
               <div>
                 <span className="text-emerald-500">Leaders: </span>
-                <span className="text-slate-300 font-mono">{(rotation.leaders as string[]).slice(0, 4).join(', ')}</span>
+                <span className="text-slate-300 font-mono">{rotation.leaders.slice(0, 4).join(', ')}</span>
               </div>
             )}
-            {rotation.laggards != null && (
+            {Array.isArray(rotation.laggards) && rotation.laggards.length > 0 && (
               <div>
                 <span className="text-red-400">Laggards: </span>
-                <span className="text-slate-300 font-mono">{(rotation.laggards as string[]).slice(0, 4).join(', ')}</span>
+                <span className="text-slate-300 font-mono">{rotation.laggards.slice(0, 4).join(', ')}</span>
               </div>
             )}
           </div>
@@ -530,9 +575,9 @@ function NewsHighlights({ data }: { data: Record<string, unknown> }) {
 
   // Direct category (e.g., data.israel)
   for (const [key, val] of Object.entries(data)) {
-    if (key !== "news" && key !== "ai" && val && typeof val === "object") {
+    if (key !== "news" && key !== "ai" && key !== "error" && val && typeof val === "object" && !Array.isArray(val)) {
       const items = ((val as Record<string, unknown>).items || []) as Array<Record<string, unknown>>;
-      if (items.length > 0) {
+      if (Array.isArray(items) && items.length > 0) {
         sections.push({ key, items });
       }
     }
@@ -609,19 +654,23 @@ function SignalAccuracy({ data }: { data: Record<string, unknown> }) {
               </div>
             ))}
           </div>
-          {bySignalType && Object.keys(bySignalType).length > 0 && (
+          {bySignalType && typeof bySignalType === 'object' && Object.keys(bySignalType).length > 0 && (
             <div>
               <div className="text-[10px] text-slate-500 uppercase font-semibold mb-1">By Signal Type</div>
               <div className="flex flex-wrap gap-2">
                 {Object.entries(bySignalType).map(([sig, stats]) => {
-                  const pct = stats.evaluated_5d > 0 ? ((stats.correct_5d / stats.evaluated_5d) * 100).toFixed(0) : null;
+                  if (!stats || typeof stats !== 'object') return null;
+                  const evaluated = Number(stats.evaluated_5d) || 0;
+                  const correct = Number(stats.correct_5d) || 0;
+                  const total = Number(stats.total) || 0;
+                  const pct = evaluated > 0 ? ((correct / evaluated) * 100).toFixed(0) : null;
                   return (
                     <span key={sig} className="text-xs bg-slate-800/60 px-2 py-0.5 rounded">
                       <span className={
                         sig === 'BUY' ? 'text-emerald-400' : sig === 'SELL' ? 'text-red-400' : 'text-slate-400'
                       }>{sig}</span>
                       <span className="text-slate-500 ml-1">
-                        {pct != null ? `${pct}%` : '—'} ({stats.total})
+                        {pct != null ? `${pct}%` : '—'} ({total})
                       </span>
                     </span>
                   );
@@ -714,16 +763,16 @@ function StrategyImprovements({ data }: { data: Record<string, unknown> }) {
           {pit.thesis != null && (
             <div className="text-xs text-slate-400 mb-1">{String(pit.thesis)}</div>
           )}
-          {pit.key_risks != null && (
+          {Array.isArray(pit.key_risks) && pit.key_risks.length > 0 && (
             <div className="space-y-0.5">
-              {(pit.key_risks as string[]).slice(0, 3).map((risk, i) => (
-                <div key={i} className="text-xs text-yellow-400/70">⚠ {risk}</div>
+              {pit.key_risks.slice(0, 3).map((risk, i) => (
+                <div key={i} className="text-xs text-yellow-400/70">⚠ {String(risk)}</div>
               ))}
             </div>
           )}
-          {pit.removed_assets != null && (
+          {Array.isArray(pit.removed_assets) && pit.removed_assets.length > 0 && (
             <div className="text-xs text-red-400/70 mt-1">
-              Removed: {(pit.removed_assets as string[]).join(', ')}
+              Removed: {pit.removed_assets.map(String).join(', ')}
             </div>
           )}
         </div>

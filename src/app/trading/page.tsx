@@ -36,6 +36,7 @@ import UniverseTable from "./UniverseTable";
 import MarketsOverview from "./MarketsOverview";
 import OptimizerResults from "./OptimizerResults";
 import PositionCharts from "@/components/PositionCharts";
+import SignalAnalysisModal from "@/components/SignalAnalysisModal";
 
 // ===== Types =====
 
@@ -350,12 +351,14 @@ export default function TradingPage() {
   const [dataSource, setDataSource] = useState<"supabase" | "static">("supabase");
   const [marketStatus] = useState(getMarketStatus());
 
-  // Analyze feature: switch to markets tab with a pre-selected symbol
+  // Analyze feature: open signal analysis modal
+  const [analyzeModalSymbol, setAnalyzeModalSymbol] = useState<string | null>(null);
+
+  // Legacy: still support passing symbol to markets tab
   const [analyzeSymbol, setAnalyzeSymbol] = useState<string | null>(null);
 
   const handleAnalyze = (symbol: string) => {
-    setAnalyzeSymbol(symbol);
-    setActiveTab("markets");
+    setAnalyzeModalSymbol(symbol);
   };
 
   // Clear analyzeSymbol after MarketsOverview consumes it
@@ -1194,6 +1197,14 @@ export default function TradingPage() {
 
         </div>
       </div>
+
+      {/* Signal Analysis Modal */}
+      {analyzeModalSymbol && (
+        <SignalAnalysisModal
+          symbol={analyzeModalSymbol}
+          onClose={() => setAnalyzeModalSymbol(null)}
+        />
+      )}
     </div>
   );
 }

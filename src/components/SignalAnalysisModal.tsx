@@ -260,9 +260,10 @@ export default function SignalAnalysisModal({ symbol, onClose }: SignalAnalysisM
                 <div className="p-4 space-y-4">
                   {/* 6 Metric Cards */}
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                    {signal.regime_details ? (
-                      <div className="bg-slate-900/50 rounded-lg p-3">
-                        <p className="text-xs text-slate-500">Confidence</p>
+                    {/* Regime Confidence — how confident the regime detection is */}
+                    <div className="bg-slate-900/50 rounded-lg p-3">
+                      <p className="text-xs text-slate-500">Regime Confidence</p>
+                      {signal.regime_details ? (
                         <div className="flex items-center gap-2 mt-1">
                           <div className="w-full h-1.5 bg-slate-700 rounded-full overflow-hidden">
                             <div
@@ -276,21 +277,19 @@ export default function SignalAnalysisModal({ symbol, onClose }: SignalAnalysisM
                           </div>
                           <span className="text-sm font-bold text-slate-200">{signal.regime_details.confidence}%</span>
                         </div>
-                      </div>
-                    ) : (
-                      <div className="bg-slate-900/50 rounded-lg p-3">
-                        <p className="text-xs text-slate-500">Confidence</p>
+                      ) : (
                         <p className="text-sm text-slate-500 mt-1">—</p>
-                      </div>
-                    )}
+                      )}
+                    </div>
                     <div className="bg-slate-900/50 rounded-lg p-3">
                       <p className="text-xs text-slate-500">Expected Sharpe</p>
                       <p className={`text-lg font-bold ${signal.expected_sharpe >= 1 ? "text-emerald-400" : "text-amber-400"}`}>
                         {signal.expected_sharpe?.toFixed(2) ?? "—"}
                       </p>
                     </div>
+                    {/* Backtest Accuracy — historical win rate */}
                     <div className="bg-slate-900/50 rounded-lg p-3">
-                      <p className="text-xs text-slate-500">Expected Accuracy</p>
+                      <p className="text-xs text-slate-500">Backtest Win Rate</p>
                       <p className={`text-lg font-bold ${signal.expected_accuracy >= 60 ? "text-emerald-400" : "text-amber-400"}`}>
                         {signal.expected_accuracy?.toFixed(1) ?? "—"}%
                       </p>
@@ -301,7 +300,11 @@ export default function SignalAnalysisModal({ symbol, onClose }: SignalAnalysisM
                     </div>
                     <div className="bg-slate-900/50 rounded-lg p-3">
                       <p className="text-xs text-slate-500">Signal Strength</p>
-                      <p className="text-lg font-bold text-slate-200">{signal.signal_strength != null ? `${(signal.signal_strength * 100).toFixed(0)}%` : "—"}</p>
+                      <p className="text-lg font-bold text-slate-200">
+                        {signal.signal_strength != null 
+                          ? `${(signal.signal_strength > 1 ? signal.signal_strength : signal.signal_strength * 100).toFixed(1)}%` 
+                          : "—"}
+                      </p>
                     </div>
                     <div className="bg-slate-900/50 rounded-lg p-3">
                       <p className="text-xs text-slate-500">Regime</p>

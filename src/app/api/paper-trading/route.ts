@@ -100,10 +100,9 @@ export async function POST(request: NextRequest) {
           qty,
           entry_price: price,
           current_price: price,
-          target_price: target || null,
-          stop_price: stop || null,
+          stop_loss: stop || null,
+          take_profit: target || null,
           opened_at: new Date().toISOString(),
-          status: 'open',
         })
         .select()
         .single();
@@ -129,12 +128,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: true, trade: data, side: 'buy' });
 
     } else if (side === 'sell') {
-      // Close position — find open position for this symbol
+      // Close position — find position for this symbol (no status column — rows exist = open)
       const { data: position } = await paperSupabase
         .from('paper_positions')
         .select('*')
         .eq('symbol', symbol)
-        .eq('status', 'open')
         .limit(1)
         .single();
 
@@ -143,13 +141,14 @@ export async function POST(request: NextRequest) {
       }
 
       // Record the trade
-      const pnl = (price - position.entry_price) * position.qty;
+      const sellQty = qty || position.qty;  // Use provided qty or full position
+      const pnl = (price - position.entry_price) * sellQty;
       const { data: trade, error: tradeErr } = await paperSupabase
         .from('paper_trades')
         .insert({
           symbol,
           side: 'sell',
-          qty: position.qty,
+          qty: sellQty,
           entry_price: position.entry_price,
           exit_price: price,
           pnl,
@@ -162,10 +161,10 @@ export async function POST(request: NextRequest) {
 
       if (tradeErr) throw tradeErr;
 
-      // Mark position closed
+      // Delete position row (no status column — deletion = closed)
       await paperSupabase
         .from('paper_positions')
-        .update({ status: 'closed', current_price: price })
+        .delete()
         .eq('id', position.id);
 
       return NextResponse.json({ success: true, trade, side: 'sell', pnl });

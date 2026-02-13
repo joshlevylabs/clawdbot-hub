@@ -255,10 +255,10 @@ export default function PreviewPage() {
               <>
                 <div className="flex items-center gap-2 text-emerald-400 text-sm">
                   <Sparkles className="w-4 h-4" />
-                  Sent to Theo! The HTML newsletter will be generated shortly.
+                  Queued for Theo!
                 </div>
                 <p className="text-sm text-slate-400">
-                  Check the compose page to see and review the generated content.
+                  Tell Theo <span className="font-mono text-slate-300 bg-slate-700/50 px-1.5 py-0.5 rounded">&quot;generate newsletter&quot;</span> on Telegram to start generation. Then check the compose page for the result.
                 </p>
                 <Link
                   href={`/newsletter/${slug}/compose/${finalizedIssueId}`}

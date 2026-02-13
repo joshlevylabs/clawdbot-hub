@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { isAuthenticated } from '@/lib/auth';
 import { newsletterSupabase as supabase, isNewsletterConfigured } from '@/lib/newsletter-supabase';
 
-// POST /api/newsletters/[id]/issues/[issueId]/generate — Send to Theo via Gateway
+// POST /api/newsletters/[id]/issues/[issueId]/generate — Mark issue as pending generation
+// After clicking this, tell Theo "generate newsletter" on Telegram to trigger generation.
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string; issueId: string }> }
@@ -12,13 +13,6 @@ export async function POST(
   }
   if (!isNewsletterConfigured()) {
     return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
-  }
-
-  const gatewayUrl = process.env.CLAWDBOT_GATEWAY_URL || 'http://127.0.0.1:18789';
-  const gatewayToken = process.env.CLAWDBOT_GATEWAY_TOKEN;
-
-  if (!gatewayToken) {
-    return NextResponse.json({ error: 'Gateway token not configured' }, { status: 500 });
   }
 
   try {
@@ -51,62 +45,36 @@ export async function POST(
       return NextResponse.json({ error: 'Issue has no content data. Finalize first.' }, { status: 400 });
     }
 
-    // Update generation status to 'generating'
-    await supabase
+    if (issue.generation_status === 'generating') {
+      return NextResponse.json({ error: 'Generation already in progress' }, { status: 409 });
+    }
+
+    // Set generation status to pending
+    const { error: updateErr } = await supabase
       .from('newsletter_issues')
-      .update({ generation_status: 'generating' })
+      .update({
+        generation_status: 'pending',
+        updated_at: new Date().toISOString(),
+      })
       .eq('id', issueId);
 
-    // Send to Theo via Gateway
-    const payload = {
-      newsletter_id: id,
-      newsletter_name: newsletter.name,
-      newsletter_slug: newsletter.slug,
-      issue_id: issueId,
-      subject: issue.subject,
-      content_data: issue.content_data,
-    };
-
-    const response = await fetch(`${gatewayUrl}/tools/invoke`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${gatewayToken}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        tool: 'sessions_send',
-        args: {
-          message: `NEWSLETTER_GENERATE: ${JSON.stringify(payload)}`,
-        },
-      }),
-    });
-
-    if (!response.ok) {
-      const errText = await response.text();
-      // Revert status
-      await supabase
-        .from('newsletter_issues')
-        .update({ generation_status: 'pending' })
-        .eq('id', issueId);
-
-      return NextResponse.json({
-        error: 'Failed to send to Theo',
-        detail: errText,
-      }, { status: 502 });
+    if (updateErr) {
+      return NextResponse.json({ error: 'Failed to update status', detail: updateErr.message }, { status: 500 });
     }
 
     // Log activity
     await supabase.from('newsletter_activity').insert({
       newsletter_id: id,
       type: 'generation_requested',
-      description: `Sent "${issue.subject}" to Theo for generation`,
+      description: `Queued "${issue.subject}" for Theo to generate`,
       metadata: { issue_id: issueId },
     });
 
     return NextResponse.json({
       success: true,
-      message: 'Sent to Theo for generation. Refresh to check status.',
+      message: 'Queued for generation. Tell Theo "generate newsletter" on Telegram.',
       issue_id: issueId,
+      generation_status: 'pending',
     });
   } catch (e) {
     return NextResponse.json({ error: 'Unexpected error', detail: String(e) }, { status: 500 });

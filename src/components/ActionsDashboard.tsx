@@ -1100,7 +1100,7 @@ export default function ActionsDashboard({
         </div>
         <div className="bg-slate-800/50 rounded-lg p-3 border border-slate-700/50">
           <p className="text-xs text-slate-500">Active Signals</p>
-          <p className="text-xl font-bold text-primary-400">{data.signals.summary.total_buy}</p>
+          <p className="text-xl font-bold text-primary-400">{signalCounts.BUY}</p>
           <p className="text-xs text-slate-500">Buy signals</p>
         </div>
         <div className="bg-slate-800/50 rounded-lg p-3 border border-slate-700/50">

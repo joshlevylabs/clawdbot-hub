@@ -73,6 +73,7 @@ interface FibonacciLevels {
   entry_zone: string;
   profit_targets: number[];
   retracements: Record<string, number>;
+  extensions?: Record<string, number>;
 }
 
 interface RegimeDetails {
@@ -280,9 +281,15 @@ function generateActions(data: MREData): ActionItem[] {
       action = "BUY";
       entry = price;
       entryDisplay = `$${price.toFixed(2)}`;
-      stop = fibonacci?.retracements?.["78.6"] || price * 0.85;
+      // Stop: nearest support or 78.6% retrace (whichever is closer to price but below)
+      const fibStop = fibonacci?.nearest_support || fibonacci?.retracements?.["78.6"];
+      stop = fibStop || price * 0.85;
       stopDisplay = `$${stop.toFixed(2)}`;
-      target = fibonacci?.profit_targets?.[0] || price * 1.15;
+      // Target: first extension above current price, or profit_targets[0]
+      const ext127 = fibonacci?.extensions?.["127.2"];
+      const ext161 = fibonacci?.extensions?.["161.8"];
+      const firstExtAbove = ext127 && ext127 > price ? ext127 : ext161 && ext161 > price ? ext161 : null;
+      target = firstExtAbove || fibonacci?.profit_targets?.[0] || price * 1.15;
       targetDisplay = `$${target.toFixed(2)}`;
       rationale = asset.signal_source ? 
         `${asset.signal_source} BUY signal. Fear at ${fg.toFixed(0)}, ${regime} regime.` :

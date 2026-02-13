@@ -443,15 +443,16 @@ function ConfidenceMeter({ value }: { value: number }) {
   );
 }
 
-function SortHeader({ label, sortKey, currentSort, currentDir, onSort, className = "" }: {
+function SortHeader({ label, sortKey, currentSort, currentDir, onSort, className = "", title }: {
   label: string; sortKey: SortKey; currentSort: SortKey; currentDir: SortDir;
-  onSort: (key: SortKey) => void; className?: string;
+  onSort: (key: SortKey) => void; className?: string; title?: string;
 }) {
   const active = currentSort === sortKey;
   return (
     <th
       className={`py-2 px-2 cursor-pointer hover:text-slate-300 select-none ${className}`}
       onClick={() => onSort(sortKey)}
+      title={title}
     >
       <div className="flex items-center gap-1">
         {label}
@@ -840,13 +841,62 @@ export default function ActionsDashboard({
     return (item.currentPrice - pos.entry_price) * pos.qty;
   };
 
+  // Merge portfolio positions that don't have signals into the actions list
+  const actionsWithPositions = useMemo(() => {
+    const items = [...actions];
+    if (positions && positions.length > 0) {
+      const existingSymbols = new Set(items.map(i => i.symbol));
+      for (const pos of positions) {
+        if (pos.qty > 0 && !existingSymbols.has(pos.symbol)) {
+          items.push({
+            symbol: pos.symbol,
+            assetClass: "portfolio",
+            category: "Portfolio",
+            categoryIcon: "📦",
+            regime: "—",
+            regimeStage: "unknown",
+            regimeDays: 0,
+            momentum: 0,
+            action: "HOLD",
+            entry: null,
+            entryDisplay: "—",
+            stop: null,
+            stopDisplay: "—",
+            target: null,
+            targetDisplay: "—",
+            currentPrice: pos.entry_price,
+            confidence: 0,
+            sharpe: 0,
+            holdDays: 0,
+            rationale: "Portfolio holding — no active MRE signal",
+            priority: 3,
+            signalSource: "portfolio",
+            signalStrength: 0,
+            isCore: false,
+            rsi14: undefined,
+            dipPercent: undefined,
+            sector: undefined,
+            swapScore: 0,
+            consensus: 0,
+            strategyVotes: undefined,
+          });
+        }
+      }
+    }
+    return items;
+  }, [actions, positions]);
+
   // Filter + sort
   const filteredActions = useMemo(() => {
-    let items = [...actions];
+    let items = [...actionsWithPositions];
     
     if (signalFilter === "ACTIONABLE") {
-      // Only show BUY and SELL signals - the actual actionable plays
-      items = items.filter(a => a.action === "BUY" || a.action === "SELL");
+      // Show BUY/SELL signals + portfolio positions
+      items = items.filter(a => {
+        if (a.action === "BUY" || a.action === "SELL") return true;
+        const p = getPosition(a.symbol);
+        return p && p.qty > 0;
+      });
     } else if (signalFilter === "POSITIONS") {
       items = items.filter(a => {
         const p = getPosition(a.symbol);
@@ -889,7 +939,7 @@ export default function ActionsDashboard({
     });
     return items;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [actions, signalFilter, sortKey, sortDir, positions]);
+  }, [actionsWithPositions, signalFilter, sortKey, sortDir, positions]);
 
   // Group
   const groupedActions = useMemo(() => {
@@ -941,15 +991,16 @@ export default function ActionsDashboard({
   }
 
   const updated = new Date(data.timestamp).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+  const positionsWithQty = positions.filter(p => p.qty > 0);
   const signalCounts = {
-    ACTIONABLE: actions.filter(a => a.action === "BUY" || a.action === "SELL").length,
-    ALL: actions.length,
+    ACTIONABLE: actions.filter(a => a.action === "BUY" || a.action === "SELL").length + positionsWithQty.length,
+    ALL: actionsWithPositions.length,
     BUY: actions.filter(a => a.action === "BUY").length,
     HOLD: actions.filter(a => a.action === "HOLD").length,
     WATCH: actions.filter(a => a.action === "WATCH").length,
     WAIT: actions.filter(a => a.action === "WAIT").length,
     SELL: actions.filter(a => a.action === "SELL").length,
-    POSITIONS: positions.filter(p => p.qty > 0).length,
+    POSITIONS: positionsWithQty.length,
     BROAD_MARKET: actions.filter(a => a.category === "Broad Market").length,
     SECTORS: actions.filter(a => a.category === "Sectors").length,
     INTERNATIONAL: actions.filter(a => a.category === "International").length,
@@ -1054,10 +1105,6 @@ export default function ActionsDashboard({
             </span>
           ) : "—"}
         </td>
-        {/* Signal Source */}
-        <td className="py-2.5 px-2 text-xs text-slate-400">
-          {item.signalSource || "—"}
-        </td>
         {/* Position */}
         <td className="py-2.5 px-2">
           {hasPosition ? (
@@ -1101,17 +1148,30 @@ export default function ActionsDashboard({
         {/* Trade */}
         {tradingEnabled && (
           <td className="py-2.5 px-2 text-center">
-            {item.action === "BUY" && !hasPosition && cash > item.currentPrice ? (
-              <button onClick={() => handleTrade(item)} disabled={isTrading}
-                className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg disabled:opacity-50">
-                {isTrading ? <Loader2 className="w-3 h-3 animate-spin" /> : <ShoppingCart className="w-3 h-3" />} Buy
-              </button>
-            ) : hasPosition ? (
-              <button onClick={() => handleTrade(item)} disabled={isTrading}
-                className="inline-flex items-center gap-1 px-2.5 py-1 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-lg disabled:opacity-50">
-                {isTrading ? <Loader2 className="w-3 h-3 animate-spin" /> : <LogOut className="w-3 h-3" />} Sell
-              </button>
-            ) : <span className="text-xs text-slate-600">—</span>}
+            <div className="flex items-center gap-1 justify-center">
+              {item.action === "BUY" && cash > item.currentPrice && (
+                <button onClick={() => handleTrade(item)} disabled={isTrading}
+                  className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg disabled:opacity-50">
+                  {isTrading ? <Loader2 className="w-3 h-3 animate-spin" /> : <ShoppingCart className="w-3 h-3" />} Buy
+                </button>
+              )}
+              {hasPosition && (
+                <button
+                  onClick={() => {
+                    if (!onTrade || !position) return;
+                    setTradingSymbol(item.symbol);
+                    onTrade(item.symbol, "sell", position.qty, item.currentPrice);
+                    setTimeout(() => setTradingSymbol(null), 500);
+                  }}
+                  disabled={isTrading}
+                  className="inline-flex items-center gap-1 px-2.5 py-1 bg-red-500/20 text-red-400 border border-red-500/30 hover:bg-red-500/30 text-xs font-bold rounded-lg disabled:opacity-50 transition-colors">
+                  {isTrading ? <Loader2 className="w-3 h-3 animate-spin" /> : <LogOut className="w-3 h-3" />} Sell
+                </button>
+              )}
+              {!(item.action === "BUY" && cash > item.currentPrice) && !hasPosition && (
+                <span className="text-xs text-slate-600">—</span>
+              )}
+            </div>
           </td>
         )}
       </tr>
@@ -1227,24 +1287,23 @@ export default function ActionsDashboard({
               <table className="w-full text-xs">
                 <thead>
                   <tr className="text-[10px] text-slate-500 uppercase border-b border-slate-700">
-                    <SortHeader label="Asset" sortKey="symbol" currentSort={sortKey} currentDir={sortDir} onSort={handleSort} className="text-left" />
-                    <SortHeader label="Signal" sortKey="action" currentSort={sortKey} currentDir={sortDir} onSort={handleSort} className="text-left" />
-                    <th className="text-left py-2 px-2">Pit</th>
-                    <th className="text-left py-2 px-2">Consensus</th>
-                    <SortHeader label="Regime" sortKey="regime" currentSort={sortKey} currentDir={sortDir} onSort={handleSort} className="text-left" />
-                    <SortHeader label="Confidence" sortKey="confidence" currentSort={sortKey} currentDir={sortDir} onSort={handleSort} className="text-left" />
-                    <SortHeader label="Price" sortKey="currentPrice" currentSort={sortKey} currentDir={sortDir} onSort={handleSort} className="text-left" />
-                    <SortHeader label="Mom 20d" sortKey="momentum" currentSort={sortKey} currentDir={sortDir} onSort={handleSort} className="text-left" />
-                    <SortHeader label="Signal Str" sortKey="signalStrength" currentSort={sortKey} currentDir={sortDir} onSort={handleSort} className="text-left" />
-                    <SortHeader label="Swap Score" sortKey="swapScore" currentSort={sortKey} currentDir={sortDir} onSort={handleSort} className="text-left" />
-                    <th className="text-left py-2 px-2">RSI</th>
-                    <th className="text-left py-2 px-2">5d Dip</th>
-                    <th className="text-left py-2 px-2">Source</th>
-                    <th className="text-left py-2 px-2">Position</th>
-                    <SortHeader label="Total P&L" sortKey="pnl" currentSort={sortKey} currentDir={sortDir} onSort={handleSort} className="text-right" />
-                    <th className="text-left py-2 px-2">Entry</th>
-                    <th className="text-left py-2 px-2">Stop</th>
-                    <th className="text-left py-2 px-2">Target</th>
+                    <SortHeader label="Asset" sortKey="symbol" currentSort={sortKey} currentDir={sortDir} onSort={handleSort} className="text-left" title="Ticker symbol and sector" />
+                    <SortHeader label="Signal" sortKey="action" currentSort={sortKey} currentDir={sortDir} onSort={handleSort} className="text-left" title="MRE engine recommendation: BUY, HOLD, WATCH, or WAIT" />
+                    <th className="text-left py-2 px-2" title="Pit Agent Fleet verdict — independent technical analysis by AI agents">Pit</th>
+                    <th className="text-left py-2 px-2" title="How many of 5 internal strategies agree: Fear/Greed, Regime Confirmation, RSI Oversold, Mean Reversion, Momentum">Consensus</th>
+                    <SortHeader label="Regime" sortKey="regime" currentSort={sortKey} currentDir={sortDir} onSort={handleSort} className="text-left" title="Market regime detected by EMA crossover: Bull, Bear, or Sideways" />
+                    <SortHeader label="Confidence" sortKey="confidence" currentSort={sortKey} currentDir={sortDir} onSort={handleSort} className="text-left" title="Signal confidence score (0-100%) based on regime weight, calibration, and strategy agreement" />
+                    <SortHeader label="Price" sortKey="currentPrice" currentSort={sortKey} currentDir={sortDir} onSort={handleSort} className="text-left" title="Current market price" />
+                    <SortHeader label="Mom 20d" sortKey="momentum" currentSort={sortKey} currentDir={sortDir} onSort={handleSort} className="text-left" title="20-day price momentum (percentage change over last 20 trading days)" />
+                    <SortHeader label="Signal Str" sortKey="signalStrength" currentSort={sortKey} currentDir={sortDir} onSort={handleSort} className="text-left" title="Raw signal strength before regime weighting and calibration adjustments" />
+                    <SortHeader label="Swap Score" sortKey="swapScore" currentSort={sortKey} currentDir={sortDir} onSort={handleSort} className="text-left" title="Position swap ranking — higher score = stronger candidate to replace a weaker holding" />
+                    <th className="text-left py-2 px-2" title="Relative Strength Index (14-day) — below 30 is oversold, above 70 is overbought">RSI</th>
+                    <th className="text-left py-2 px-2" title="5-day return — how much the price has dropped in the last week">5d Dip</th>
+                    <th className="text-left py-2 px-2" title="Current portfolio holding quantity and cost basis">Position</th>
+                    <SortHeader label="Total P&L" sortKey="pnl" currentSort={sortKey} currentDir={sortDir} onSort={handleSort} className="text-right" title="Unrealized profit/loss on the position" />
+                    <th className="text-left py-2 px-2" title="Suggested entry price from Fibonacci analysis">Entry</th>
+                    <th className="text-left py-2 px-2" title="Stop-loss price level">Stop</th>
+                    <th className="text-left py-2 px-2" title="Profit target price level">Target</th>
                     {onAnalyze && <th className="text-center py-2 px-2">Analyze</th>}
                     {tradingEnabled && <th className="text-center py-2 px-2">Trade</th>}
                   </tr>
@@ -1255,7 +1314,7 @@ export default function ActionsDashboard({
                   Object.entries(groupedActions).sort().map(([group, items]) => (
                     <tbody key={group}>
                       <tr className="bg-slate-800/60">
-                        <td colSpan={(tradingEnabled ? 18 : 17) + (onAnalyze ? 1 : 0)} className="py-1.5 px-2 text-xs font-bold text-primary-400 uppercase tracking-wider">
+                        <td colSpan={(tradingEnabled ? 17 : 16) + (onAnalyze ? 1 : 0)} className="py-1.5 px-2 text-xs font-bold text-primary-400 uppercase tracking-wider">
                           {groupBy === "regime" && (group === "bull" ? "🟢 " : group === "bear" ? "🔴 " : "🟡 ")}
                           {groupBy === "category" && items.length > 0 && `${items[0].categoryIcon} `}
                           {group} ({items.length})
@@ -1269,13 +1328,9 @@ export default function ActionsDashboard({
                 {positions.length > 0 && (
                   <tfoot>
                     <tr className="border-t-2 border-slate-600 bg-slate-800/80">
-                      <td className="py-2.5 px-2 font-bold text-slate-100" colSpan={10}>
+                      <td className="py-2.5 px-2 font-bold text-slate-100" colSpan={12}>
                         Portfolio Total — {positions.filter(p => p.qty > 0).length} positions
                       </td>
-                      <td className="py-2.5 px-2 font-mono text-sm text-slate-200">
-                        ${(totalCost + totalPnl).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                      </td>
-                      <td></td>
                       <td className="py-2.5 px-2 text-xs text-slate-400">
                         ${totalCost.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </td>

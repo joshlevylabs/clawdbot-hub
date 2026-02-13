@@ -294,7 +294,7 @@ export default function PerformanceChart({
       </div>
 
       {/* Chart */}
-      <div className={compact ? "h-40" : "h-64"}>
+      <div className={compact ? "h-40" : "h-64 lg:h-96"}>
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={chartData} margin={{ top: 5, right: 5, left: -15, bottom: 0 }}>
             <defs>

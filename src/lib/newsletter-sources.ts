@@ -92,6 +92,25 @@ export const CONTENT_SOURCES: ContentSourceDef[] = [
     availableParams: [],
   },
   {
+    key: 'signal-accuracy',
+    label: 'Historical Signal Accuracy',
+    description: 'Signal accuracy by asset class, strategy win rates, and backtest performance',
+    category: 'trading',
+    availableParams: [
+      {
+        key: 'include',
+        label: 'Include',
+        type: 'select',
+        options: [
+          { value: 'all', label: 'All (Signals + Backtests)' },
+          { value: 'signals', label: 'Signal Accuracy Only' },
+          { value: 'backtests', label: 'Strategy Backtests Only' },
+        ],
+        default: 'all',
+      },
+    ],
+  },
+  {
     key: 'compass-state',
     label: 'Compass State',
     description: 'Marriage compass scores and quadrant',
@@ -282,6 +301,67 @@ const fetchers: Record<string, DataFetcher> = {
     };
   },
 
+  'signal-accuracy': (params) => {
+    const include = (params.include as string) || 'all';
+    const result: Record<string, unknown> = {};
+
+    // Signal-level accuracy from MRE signals
+    if (include === 'all' || include === 'signals') {
+      const signalsData = readDataFile('trading/mre-signals.json') as Record<string, unknown> | null;
+      if (signalsData) {
+        const signals = signalsData.signals as Record<string, unknown> | undefined;
+        const byAssetClass = (signals?.by_asset_class || []) as Array<Record<string, unknown>>;
+        
+        // Extract accuracy data per asset class
+        const accuracyByClass: Array<Record<string, unknown>> = [];
+        for (const assetClass of byAssetClass) {
+          const assets = (assetClass.assets || []) as Array<Record<string, unknown>>;
+          const classAccuracies = assets
+            .filter((a) => a.expected_accuracy != null || a.historical_accuracy != null)
+            .map((a) => ({
+              symbol: a.symbol,
+              signal: a.signal,
+              expected_accuracy: a.expected_accuracy,
+              historical_accuracy: a.historical_accuracy,
+              confidence: a.confidence,
+            }));
+          if (classAccuracies.length > 0) {
+            accuracyByClass.push({
+              asset_class: assetClass.name || assetClass.asset_class,
+              assets: classAccuracies,
+            });
+          }
+        }
+        
+        // Prediction markets accuracy
+        const predictionMarkets = signalsData.prediction_markets as Record<string, unknown> | undefined;
+        
+        result.signal_accuracy = {
+          by_asset_class: accuracyByClass,
+          prediction_markets: predictionMarkets || null,
+          last_updated: signalsData.last_updated,
+        };
+      }
+    }
+
+    // Strategy backtest results
+    if (include === 'all' || include === 'backtests') {
+      const backtestData = readDataFile('trading/backtest-report.json') as Record<string, unknown> | null;
+      if (backtestData) {
+        result.backtest_results = {
+          generated_at: backtestData.generated_at,
+          total_tests: backtestData.total_tests,
+          strategy_rankings: backtestData.strategy_rankings,
+        };
+      }
+    }
+
+    if (Object.keys(result).length === 0) {
+      return { error: 'No accuracy data available' };
+    }
+    return result;
+  },
+
   'compass-state': () => {
     const data = readDataFile('compass-state.json') as Record<string, unknown> | null;
     if (!data) return { error: 'No compass data available' };
@@ -379,7 +459,7 @@ export function fetchSourceData(sourceKey: string, params: Record<string, unknow
 
 // Map newsletter categories/names to suggested source keys
 export const NEWSLETTER_SOURCE_SUGGESTIONS: Record<string, string[]> = {
-  "Today's Plays": ['portfolio-performance', 'current-positions', 'active-signals', 'fear-greed', 'regime', 'recent-trades'],
+  "Today's Plays": ['portfolio-performance', 'current-positions', 'active-signals', 'signal-accuracy', 'fear-greed', 'regime', 'recent-trades'],
   'Marriage Compass': ['compass-state', 'compass-weekly', 'compass-nudges', 'family-ideas'],
   "The Builder's Frequency": ['podcast-latest', 'news-highlights'],
   'Prayer & Bible Study': ['prayer-weekly', 'news-highlights'],

@@ -52,6 +52,8 @@ function renderSourceData(sourceKey: string, data: Record<string, unknown>) {
       return <FearGreed data={data} />;
     case "regime":
       return <Regime data={data} />;
+    case "signal-accuracy":
+      return <SignalAccuracy data={data} />;
     case "compass-state":
       return <CompassState data={data} />;
     case "compass-weekly":
@@ -401,6 +403,68 @@ function NewsHighlights({ data }: { data: Record<string, unknown> }) {
           </div>
         </div>
       ))}
+    </div>
+  );
+}
+
+function SignalAccuracy({ data }: { data: Record<string, unknown> }) {
+  const signalAcc = data.signal_accuracy as Record<string, unknown> | undefined;
+  const backtests = data.backtest_results as Record<string, unknown> | undefined;
+
+  return (
+    <div className="space-y-3">
+      {signalAcc && (
+        <div>
+          <div className="text-[10px] text-slate-500 uppercase font-semibold mb-1">Signal Accuracy by Asset Class</div>
+          {((signalAcc.by_asset_class || []) as Array<Record<string, unknown>>).map((ac, i) => (
+            <div key={i} className="mb-2">
+              <div className="text-xs font-medium text-slate-300 mb-0.5">{String(ac.asset_class)}</div>
+              <div className="space-y-0.5">
+                {((ac.assets || []) as Array<Record<string, unknown>>).slice(0, 5).map((a, j) => (
+                  <div key={j} className="text-xs text-slate-400 flex items-center gap-2">
+                    <span className="font-mono text-slate-300 w-16">{String(a.symbol)}</span>
+                    <span className={
+                      String(a.signal) === 'BUY' ? 'text-emerald-400' :
+                      String(a.signal) === 'SELL' ? 'text-red-400' : 'text-slate-500'
+                    }>{String(a.signal)}</span>
+                    {a.expected_accuracy != null && (
+                      <span className="text-slate-500">exp: {String(a.expected_accuracy)}%</span>
+                    )}
+                    {a.historical_accuracy != null && (
+                      <span className="text-blue-400">hist: {String(a.historical_accuracy)}%</span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+      {backtests && (
+        <div>
+          <div className="text-[10px] text-slate-500 uppercase font-semibold mb-1">Strategy Backtest Rankings</div>
+          <div className="space-y-1">
+            {((backtests.strategy_rankings || []) as Array<Record<string, unknown>>).map((s, i) => {
+              const avgReturn = Number(s.avg_return_pct) || 0;
+              const winRate = Number(s.avg_win_rate) || 0;
+              return (
+                <div key={i} className="text-xs flex items-center gap-3">
+                  <span className="text-slate-500 w-4">#{String(s.rank)}</span>
+                  <span className="text-slate-300 font-medium w-28">{String(s.strategy)}</span>
+                  <span className={avgReturn >= 0 ? 'text-emerald-400' : 'text-red-400'}>
+                    {avgReturn >= 0 ? '+' : ''}{avgReturn.toFixed(1)}%
+                  </span>
+                  <span className="text-slate-500">WR: {winRate.toFixed(1)}%</span>
+                  <span className="text-slate-500">{String(s.test_count)} tests</span>
+                </div>
+              );
+            })}
+          </div>
+          <div className="text-[10px] text-slate-600 mt-1">
+            Generated {String(backtests.generated_at).split('T')[0]} • {String(backtests.total_tests)} total tests
+          </div>
+        </div>
+      )}
     </div>
   );
 }

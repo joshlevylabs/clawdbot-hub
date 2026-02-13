@@ -214,7 +214,7 @@ function PositionChartCard({ chartData }: { chartData: PositionChartData }) {
   return (
     <div className="bg-slate-800/50 rounded-xl border border-slate-700/50 p-4">
       {/* Header */}
-      <div className="flex items-center justify-between mb-3">
+      <div className="flex items-center justify-between mb-1">
         <div className="flex items-center gap-2">
           <span className="text-lg font-bold text-slate-100">
             {position.symbol}
@@ -245,18 +245,21 @@ function PositionChartCard({ chartData }: { chartData: PositionChartData }) {
             <span className="font-mono">{position.qty}</span> × $
             {formatCurrency(currentPrice)}
           </div>
-          {fibonacci && (
-            <button
-              onClick={() => setShowFibModal(true)}
-              className="flex items-center gap-1 px-2 py-1 rounded-md text-[10px] font-medium bg-slate-700/50 hover:bg-slate-600/50 text-slate-400 hover:text-primary-400 transition-colors"
-              title="Fibonacci Analysis"
-            >
-              <Ruler size={12} />
-              <span>Fib</span>
-            </button>
-          )}
         </div>
       </div>
+      {/* Fib button row */}
+      {fibonacci && (
+        <div className="flex justify-end mb-2">
+          <button
+            onClick={() => setShowFibModal(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-amber-500/15 hover:bg-amber-500/25 text-amber-400 hover:text-amber-300 border border-amber-500/30 transition-colors"
+            title="Fibonacci Analysis"
+          >
+            <Ruler size={14} />
+            <span>📐 Fib Levels</span>
+          </button>
+        </div>
+      )}
 
       {/* Chart */}
       {loading ? (

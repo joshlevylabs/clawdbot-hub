@@ -63,10 +63,12 @@ function buildEquityHistory(alpacaHistory: any, hubSnapshots: any[]): any[] {
   const result: any[] = [];
   const hubMap = new Map<string, any>();
 
-  // Build hub lookup by date
+  // Build hub lookup by date — use last snapshot per day (end-of-day equity)
   for (const snap of hubSnapshots) {
     if (snap.date) {
-      hubMap.set(snap.date.slice(0, 10), snap);
+      const dateKey = snap.date.slice(0, 10);
+      // Since snapshots are ordered ascending, later entries overwrite earlier ones → we get the last one
+      hubMap.set(dateKey, snap);
     }
   }
 

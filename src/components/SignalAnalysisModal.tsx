@@ -16,7 +16,7 @@ interface MRESignalData {
   hold_days: number;
   expected_sharpe: number;
   expected_accuracy: number;
-  fibonacci: {
+  fibonacci?: {
     nearest_support: number;
     nearest_resistance: number;
     entry_zone: string;
@@ -36,7 +36,7 @@ interface MRESignalData {
     pullback_date?: string;
     current_price: number;
   };
-  regime_details: {
+  regime_details?: {
     regime: string;
     confidence: number;
     momentum_20d: number;
@@ -106,7 +106,7 @@ export default function SignalAnalysisModal({ symbol, onClose }: SignalAnalysisM
         const [signalsRes, universeRes, pitRes] = await Promise.all([
           fetch("/data/trading/mre-signals.json"),
           fetch("/data/trading/mre-signals-universe.json"),
-          fetch("/data/trading/pit-fleet-recommendations.json"),
+          fetch("/data/trading/pit-recommendations.json"),
         ]);
 
         if (cancelled) return;
@@ -116,14 +116,14 @@ export default function SignalAnalysisModal({ symbol, onClose }: SignalAnalysisM
 
         if (signalsRes.ok) {
           const signalsJson = await signalsRes.json();
-          const signals: MRESignalData[] = signalsJson.signals || signalsJson;
-          matchedSignal = signals.find((s) => s.symbol === symbol) || null;
+          const signals: MRESignalData[] = signalsJson.signals?.by_asset_class || signalsJson.signals || [];
+          matchedSignal = signals.find((s: any) => s.symbol === symbol) || null;
         }
 
         if (!matchedSignal && universeRes.ok) {
           const universeJson = await universeRes.json();
-          const universeSignals: MRESignalData[] = universeJson.signals || universeJson;
-          matchedSignal = universeSignals.find((s) => s.symbol === symbol) || null;
+          const universeSignals: MRESignalData[] = universeJson.signals?.by_asset_class || universeJson.signals || [];
+          matchedSignal = universeSignals.find((s: any) => s.symbol === symbol) || null;
         }
 
         if (!matchedSignal) {
@@ -260,32 +260,39 @@ export default function SignalAnalysisModal({ symbol, onClose }: SignalAnalysisM
                 <div className="p-4 space-y-4">
                   {/* 6 Metric Cards */}
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                    <div className="bg-slate-900/50 rounded-lg p-3">
-                      <p className="text-xs text-slate-500">Confidence</p>
-                      <div className="flex items-center gap-2 mt-1">
-                        <div className="w-full h-1.5 bg-slate-700 rounded-full overflow-hidden">
-                          <div
-                            className={`h-full rounded-full ${
-                              signal.regime_details.confidence >= 70 ? "bg-emerald-500"
-                              : signal.regime_details.confidence >= 50 ? "bg-amber-500"
-                              : "bg-red-500"
-                            }`}
-                            style={{ width: `${signal.regime_details.confidence}%` }}
-                          />
+                    {signal.regime_details ? (
+                      <div className="bg-slate-900/50 rounded-lg p-3">
+                        <p className="text-xs text-slate-500">Confidence</p>
+                        <div className="flex items-center gap-2 mt-1">
+                          <div className="w-full h-1.5 bg-slate-700 rounded-full overflow-hidden">
+                            <div
+                              className={`h-full rounded-full ${
+                                signal.regime_details.confidence >= 70 ? "bg-emerald-500"
+                                : signal.regime_details.confidence >= 50 ? "bg-amber-500"
+                                : "bg-red-500"
+                              }`}
+                              style={{ width: `${signal.regime_details.confidence}%` }}
+                            />
+                          </div>
+                          <span className="text-sm font-bold text-slate-200">{signal.regime_details.confidence}%</span>
                         </div>
-                        <span className="text-sm font-bold text-slate-200">{signal.regime_details.confidence}%</span>
                       </div>
-                    </div>
+                    ) : (
+                      <div className="bg-slate-900/50 rounded-lg p-3">
+                        <p className="text-xs text-slate-500">Confidence</p>
+                        <p className="text-sm text-slate-500 mt-1">—</p>
+                      </div>
+                    )}
                     <div className="bg-slate-900/50 rounded-lg p-3">
                       <p className="text-xs text-slate-500">Expected Sharpe</p>
                       <p className={`text-lg font-bold ${signal.expected_sharpe >= 1 ? "text-emerald-400" : "text-amber-400"}`}>
-                        {signal.expected_sharpe.toFixed(2)}
+                        {signal.expected_sharpe?.toFixed(2) ?? "—"}
                       </p>
                     </div>
                     <div className="bg-slate-900/50 rounded-lg p-3">
                       <p className="text-xs text-slate-500">Expected Accuracy</p>
                       <p className={`text-lg font-bold ${signal.expected_accuracy >= 60 ? "text-emerald-400" : "text-amber-400"}`}>
-                        {signal.expected_accuracy.toFixed(1)}%
+                        {signal.expected_accuracy?.toFixed(1) ?? "—"}%
                       </p>
                     </div>
                     <div className="bg-slate-900/50 rounded-lg p-3">
@@ -294,105 +301,115 @@ export default function SignalAnalysisModal({ symbol, onClose }: SignalAnalysisM
                     </div>
                     <div className="bg-slate-900/50 rounded-lg p-3">
                       <p className="text-xs text-slate-500">Signal Strength</p>
-                      <p className="text-lg font-bold text-slate-200">{(signal.signal_strength * 100).toFixed(0)}%</p>
+                      <p className="text-lg font-bold text-slate-200">{signal.signal_strength != null ? `${(signal.signal_strength * 100).toFixed(0)}%` : "—"}</p>
                     </div>
                     <div className="bg-slate-900/50 rounded-lg p-3">
                       <p className="text-xs text-slate-500">Regime</p>
-                      <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-lg border text-xs font-medium capitalize ${
-                        signal.regime_details.regime === "bull"
-                          ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/40"
-                          : signal.regime_details.regime === "bear"
-                          ? "bg-red-500/20 text-red-400 border-red-500/40"
-                          : "bg-amber-500/20 text-amber-400 border-amber-500/40"
-                      }`}>
-                        {signal.regime_details.regime === "bull" ? "🟢" : signal.regime_details.regime === "bear" ? "🔴" : "🟡"} {signal.regime_details.regime}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* MRE Fibonacci Zones */}
-                  <div className="bg-slate-900/50 rounded-lg p-4">
-                    <h4 className="text-sm font-medium text-blue-400 mb-3 flex items-center gap-2">
-                      <Target className="w-3.5 h-3.5" /> MRE Fibonacci Zones
-                    </h4>
-                    <div className="grid grid-cols-2 gap-3 text-sm">
-                      <div>
-                        <p className="text-xs text-slate-500">Entry Zone</p>
-                        <p className="text-slate-200 font-mono">${signal.fibonacci.entry_zone}</p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-slate-500">Nearest Support</p>
-                        <p className="text-emerald-400 font-mono">${signal.fibonacci.nearest_support.toFixed(2)}</p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-slate-500">Nearest Resistance</p>
-                        <p className="text-red-400 font-mono">${signal.fibonacci.nearest_resistance.toFixed(2)}</p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-slate-500">Profit Targets</p>
-                        <div className="flex flex-wrap gap-1 mt-0.5">
-                          {signal.fibonacci.profit_targets.map((t, i) => (
-                            <span key={i} className="text-emerald-400 font-mono text-xs bg-emerald-500/10 px-1.5 py-0.5 rounded">
-                              ${t.toFixed(2)}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Regime Details */}
-                  <div className="bg-slate-900/50 rounded-lg p-4">
-                    <h4 className="text-sm font-medium text-amber-400 mb-3 flex items-center gap-2">
-                      <TrendingUp className="w-3.5 h-3.5" /> Regime Details
-                    </h4>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm">
-                      <div>
-                        <p className="text-xs text-slate-500">Regime Duration</p>
-                        <p className="text-slate-200">{signal.regime_details.regime_days} days</p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-slate-500">Regime Stage</p>
-                        <p className="text-slate-200 capitalize">{signal.regime_details.regime_stage}</p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-slate-500">Predicted Remaining</p>
-                        <p className="text-slate-200">{signal.regime_details.predicted_remaining_days}d</p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-slate-500">20d Momentum</p>
-                        <p className={`font-mono ${signal.regime_details.momentum_20d >= 0 ? "text-emerald-400" : "text-red-400"}`}>
-                          {signal.regime_details.momentum_20d >= 0 ? "+" : ""}{signal.regime_details.momentum_20d.toFixed(2)}%
-                        </p>
-                      </div>
-                      {signal.regime_details.ema_spread_pct !== undefined && (
-                        <div>
-                          <p className="text-xs text-slate-500">EMA Spread</p>
-                          <p className="text-slate-200 font-mono">{signal.regime_details.ema_spread_pct.toFixed(2)}%</p>
-                        </div>
+                      {signal.regime_details ? (
+                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-lg border text-xs font-medium capitalize ${
+                          signal.regime_details.regime === "bull"
+                            ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/40"
+                            : signal.regime_details.regime === "bear"
+                            ? "bg-red-500/20 text-red-400 border-red-500/40"
+                            : "bg-amber-500/20 text-amber-400 border-amber-500/40"
+                        }`}>
+                          {signal.regime_details.regime === "bull" ? "🟢" : signal.regime_details.regime === "bear" ? "🔴" : "🟡"} {signal.regime_details.regime}
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg border text-xs font-medium capitalize bg-slate-500/20 text-slate-400 border-slate-500/40">
+                          {signal.regime || "—"}
+                        </span>
                       )}
-                      <div>
-                        <p className="text-xs text-slate-500">EMA Position</p>
-                        <div className="flex flex-wrap gap-1 mt-0.5">
-                          {signal.regime_details.above_ema_20 !== undefined && (
-                            <span className={`text-xs px-1.5 py-0.5 rounded ${signal.regime_details.above_ema_20 ? "bg-emerald-500/20 text-emerald-400" : "bg-red-500/20 text-red-400"}`}>
-                              {signal.regime_details.above_ema_20 ? "↑" : "↓"} EMA20
-                            </span>
-                          )}
-                          {signal.regime_details.above_ema_50 !== undefined && (
-                            <span className={`text-xs px-1.5 py-0.5 rounded ${signal.regime_details.above_ema_50 ? "bg-emerald-500/20 text-emerald-400" : "bg-red-500/20 text-red-400"}`}>
-                              {signal.regime_details.above_ema_50 ? "↑" : "↓"} EMA50
-                            </span>
-                          )}
-                          {signal.regime_details.above_ema_200 !== undefined && (
-                            <span className={`text-xs px-1.5 py-0.5 rounded ${signal.regime_details.above_ema_200 ? "bg-emerald-500/20 text-emerald-400" : "bg-red-500/20 text-red-400"}`}>
-                              {signal.regime_details.above_ema_200 ? "↑" : "↓"} EMA200
-                            </span>
-                          )}
+                    </div>
+                  </div>
+
+                  {/* MRE Fibonacci Zones — only if data exists */}
+                  {signal.fibonacci && (
+                    <div className="bg-slate-900/50 rounded-lg p-4">
+                      <h4 className="text-sm font-medium text-blue-400 mb-3 flex items-center gap-2">
+                        <Target className="w-3.5 h-3.5" /> MRE Fibonacci Zones
+                      </h4>
+                      <div className="grid grid-cols-2 gap-3 text-sm">
+                        <div>
+                          <p className="text-xs text-slate-500">Entry Zone</p>
+                          <p className="text-slate-200 font-mono">${signal.fibonacci.entry_zone}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-slate-500">Nearest Support</p>
+                          <p className="text-emerald-400 font-mono">${signal.fibonacci.nearest_support?.toFixed(2) ?? "—"}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-slate-500">Nearest Resistance</p>
+                          <p className="text-red-400 font-mono">${signal.fibonacci.nearest_resistance?.toFixed(2) ?? "—"}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-slate-500">Profit Targets</p>
+                          <div className="flex flex-wrap gap-1 mt-0.5">
+                            {(signal.fibonacci.profit_targets || []).map((t: number, i: number) => (
+                              <span key={i} className="text-emerald-400 font-mono text-xs bg-emerald-500/10 px-1.5 py-0.5 rounded">
+                                ${t.toFixed(2)}
+                              </span>
+                            ))}
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
+                  )}
+
+                  {/* Regime Details — only if data exists */}
+                  {signal.regime_details && (
+                    <div className="bg-slate-900/50 rounded-lg p-4">
+                      <h4 className="text-sm font-medium text-amber-400 mb-3 flex items-center gap-2">
+                        <TrendingUp className="w-3.5 h-3.5" /> Regime Details
+                      </h4>
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm">
+                        <div>
+                          <p className="text-xs text-slate-500">Regime Duration</p>
+                          <p className="text-slate-200">{signal.regime_details.regime_days} days</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-slate-500">Regime Stage</p>
+                          <p className="text-slate-200 capitalize">{signal.regime_details.regime_stage}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-slate-500">Predicted Remaining</p>
+                          <p className="text-slate-200">{signal.regime_details.predicted_remaining_days}d</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-slate-500">20d Momentum</p>
+                          <p className={`font-mono ${signal.regime_details.momentum_20d >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+                            {signal.regime_details.momentum_20d >= 0 ? "+" : ""}{signal.regime_details.momentum_20d.toFixed(2)}%
+                          </p>
+                        </div>
+                        {signal.regime_details.ema_spread_pct !== undefined && (
+                          <div>
+                            <p className="text-xs text-slate-500">EMA Spread</p>
+                            <p className="text-slate-200 font-mono">{signal.regime_details.ema_spread_pct.toFixed(2)}%</p>
+                          </div>
+                        )}
+                        <div>
+                          <p className="text-xs text-slate-500">EMA Position</p>
+                          <div className="flex flex-wrap gap-1 mt-0.5">
+                            {signal.regime_details.above_ema_20 !== undefined && (
+                              <span className={`text-xs px-1.5 py-0.5 rounded ${signal.regime_details.above_ema_20 ? "bg-emerald-500/20 text-emerald-400" : "bg-red-500/20 text-red-400"}`}>
+                                {signal.regime_details.above_ema_20 ? "↑" : "↓"} EMA20
+                              </span>
+                            )}
+                            {signal.regime_details.above_ema_50 !== undefined && (
+                              <span className={`text-xs px-1.5 py-0.5 rounded ${signal.regime_details.above_ema_50 ? "bg-emerald-500/20 text-emerald-400" : "bg-red-500/20 text-red-400"}`}>
+                                {signal.regime_details.above_ema_50 ? "↑" : "↓"} EMA50
+                              </span>
+                            )}
+                            {signal.regime_details.above_ema_200 !== undefined && (
+                              <span className={`text-xs px-1.5 py-0.5 rounded ${signal.regime_details.above_ema_200 ? "bg-emerald-500/20 text-emerald-400" : "bg-red-500/20 text-red-400"}`}>
+                                {signal.regime_details.above_ema_200 ? "↑" : "↓"} EMA200
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
 
                   {/* Pit Agent Fleet Recommendation */}
                   {pitRec && (

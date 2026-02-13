@@ -18,8 +18,54 @@ import {
   Filter,
   Layers,
   BarChart3,
+  ArrowRight,
+  RefreshCw,
+  DollarSign,
+  Info,
 } from "lucide-react";
 import PerformanceChart from "@/components/PerformanceChart";
+
+// ── Capital Rebalancing types ──────────────────────────────────────
+
+interface SwapSell {
+  symbol: string;
+  current_price: number;
+  entry_price: number;
+  unrealized_pnl_pct: number;
+  confidence_score: number;
+  days_held: number;
+  optimal_hold: number;
+  regime: string;
+  score: number;
+  weakness_rationale: string;
+}
+
+interface SwapBuy {
+  symbol: string;
+  current_price: number;
+  signal_strength: number;
+  confidence: number;
+  expected_sharpe: number;
+  regime: string;
+  score: number;
+  strength_rationale: string;
+}
+
+interface SwapSuggestion {
+  sell: SwapSell;
+  buy: SwapBuy;
+  net_improvement: number;
+  capital_freed: number;
+}
+
+interface CapitalRebalancing {
+  capital_deployed_pct: number;
+  available_cash: number;
+  total_equity: number;
+  threshold_triggered: boolean;
+  swap_suggestions: SwapSuggestion[];
+  no_swap_reason: string | null;
+}
 
 interface FibonacciLevels {
   nearest_support: number;
@@ -108,6 +154,8 @@ interface MREData {
     spy_5d_return: number;
     rsp_5d_return: number;
   };
+  // Capital rebalancing
+  capital_rebalancing?: CapitalRebalancing;
   // Extended with universe data
   universeData?: UniverseData;
   allAssets?: AssetSignal[];
@@ -378,6 +426,177 @@ function SortHeader({ label, sortKey, currentSort, currentDir, onSort, className
         {active && (currentDir === "asc" ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />)}
       </div>
     </th>
+  );
+}
+
+// ── Swap Suggestions Panel ─────────────────────────────────────────
+
+function SwapSuggestionsPanel({
+  rebalancing,
+  onTrade,
+  tradingEnabled,
+}: {
+  rebalancing: CapitalRebalancing;
+  onTrade?: (symbol: string, side: "buy" | "sell", qty: number, price: number, target?: number, stop?: number) => void;
+  tradingEnabled?: boolean;
+}) {
+  const [executingSwap, setExecutingSwap] = useState<number | null>(null);
+
+  const handleExecuteSwap = async (swap: SwapSuggestion, index: number) => {
+    if (!onTrade || !tradingEnabled) return;
+    setExecutingSwap(index);
+
+    // Sell first, then buy
+    const sellQty = Math.floor(swap.capital_freed / swap.sell.current_price);
+    if (sellQty > 0) {
+      onTrade(swap.sell.symbol, "sell", sellQty, swap.sell.current_price);
+    }
+
+    // Small delay to let the sell process
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    // Buy with freed capital
+    const buyQty = Math.floor(swap.capital_freed / swap.buy.current_price);
+    if (buyQty > 0) {
+      onTrade(swap.buy.symbol, "buy", buyQty, swap.buy.current_price);
+    }
+
+    setTimeout(() => setExecutingSwap(null), 1000);
+  };
+
+  // No swaps but capital > 90% deployed — info banner
+  if (rebalancing.threshold_triggered && rebalancing.swap_suggestions.length === 0) {
+    return (
+      <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50 flex items-center gap-3">
+        <DollarSign className="w-5 h-5 text-amber-400 shrink-0" />
+        <p className="text-sm text-slate-300">
+          <span className="font-medium text-amber-400">
+            💰 Capital {rebalancing.capital_deployed_pct.toFixed(1)}% deployed
+          </span>
+          {" — "}
+          {rebalancing.no_swap_reason || "no higher-conviction opportunities found. Current positions are strong."}
+        </p>
+      </div>
+    );
+  }
+
+  // Not triggered or no suggestions
+  if (!rebalancing.threshold_triggered || rebalancing.swap_suggestions.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className="bg-gradient-to-br from-amber-900/20 to-orange-900/20 rounded-xl border border-amber-500/40 overflow-hidden">
+      {/* Header */}
+      <div className="bg-amber-500/15 border-b border-amber-500/30 px-4 py-3 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <RefreshCw className="w-5 h-5 text-amber-400" />
+          <h3 className="font-bold text-amber-200">Capital Swap Suggestions</h3>
+          <span className="text-xs bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full border border-amber-500/30">
+            {rebalancing.swap_suggestions.length} swap{rebalancing.swap_suggestions.length !== 1 ? "s" : ""}
+          </span>
+        </div>
+        <div className="flex items-center gap-3 text-xs text-amber-300/70">
+          <span>{rebalancing.capital_deployed_pct.toFixed(1)}% deployed</span>
+          <span>•</span>
+          <span>${rebalancing.available_cash.toLocaleString("en-US", { maximumFractionDigits: 0 })} cash</span>
+        </div>
+      </div>
+
+      {/* Description */}
+      <div className="px-4 py-2 border-b border-amber-500/20">
+        <p className="text-xs text-amber-200/60">
+          Your capital is {rebalancing.capital_deployed_pct.toFixed(1)}% deployed.
+          These swaps could improve portfolio quality by replacing weaker positions with stronger signals.
+        </p>
+      </div>
+
+      {/* Swap Cards */}
+      <div className="p-4 space-y-3">
+        {rebalancing.swap_suggestions.map((swap, idx) => (
+          <div
+            key={`${swap.sell.symbol}-${swap.buy.symbol}`}
+            className="bg-slate-800/60 rounded-lg border border-amber-500/20 p-4 hover:border-amber-500/40 transition-colors"
+          >
+            {/* Main row: SELL → BUY */}
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-3">
+                {/* Sell side */}
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold px-2 py-0.5 rounded bg-red-500/20 text-red-400 border border-red-500/40">
+                    SELL
+                  </span>
+                  <span className="font-bold text-slate-100">{swap.sell.symbol}</span>
+                  <span className="text-xs text-slate-500 font-mono">(score: {swap.sell.score})</span>
+                </div>
+
+                <ArrowRight className="w-4 h-4 text-amber-400" />
+
+                {/* Buy side */}
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">
+                    BUY
+                  </span>
+                  <span className="font-bold text-slate-100">{swap.buy.symbol}</span>
+                  <span className="text-xs text-slate-500 font-mono">(score: {swap.buy.score})</span>
+                </div>
+              </div>
+
+              {/* Execute button */}
+              {tradingEnabled && onTrade && (
+                <button
+                  onClick={() => handleExecuteSwap(swap, idx)}
+                  disabled={executingSwap === idx}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold rounded-lg disabled:opacity-50 transition-colors"
+                >
+                  {executingSwap === idx ? (
+                    <Loader2 className="w-3 h-3 animate-spin" />
+                  ) : (
+                    <ArrowRight className="w-3 h-3" />
+                  )}
+                  Execute
+                </button>
+              )}
+            </div>
+
+            {/* Stats row */}
+            <div className="flex items-center gap-4 mb-2 text-xs">
+              <span className="text-amber-300 font-medium">
+                Frees ${swap.capital_freed.toLocaleString("en-US", { maximumFractionDigits: 0 })}
+              </span>
+              <span className="text-emerald-400 font-mono font-bold">
+                +{swap.net_improvement.toFixed(0)}pts improvement
+              </span>
+              {swap.sell.unrealized_pnl_pct !== 0 && (
+                <span className={`font-mono ${swap.sell.unrealized_pnl_pct >= 0 ? "text-emerald-400/70" : "text-red-400/70"}`}>
+                  {swap.sell.symbol} P&L: {swap.sell.unrealized_pnl_pct >= 0 ? "+" : ""}{swap.sell.unrealized_pnl_pct.toFixed(1)}%
+                </span>
+              )}
+              {swap.buy.expected_sharpe > 0 && (
+                <span className="text-slate-400">
+                  Sharpe: {swap.buy.expected_sharpe.toFixed(1)}
+                </span>
+              )}
+            </div>
+
+            {/* Rationale */}
+            <div className="text-xs text-slate-400">
+              <span className="text-red-400/80">{swap.sell.weakness_rationale}</span>
+              {" → "}
+              <span className="text-emerald-400/80">{swap.buy.strength_rationale}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Footer disclaimer */}
+      <div className="px-4 py-2 border-t border-amber-500/20 flex items-center gap-2">
+        <Info className="w-3 h-3 text-amber-400/50 shrink-0" />
+        <p className="text-[10px] text-amber-200/40">
+          Suggestions based on position scores (confidence, P&L, hold period, regime) vs signal scores (strength, accuracy, Sharpe, regime). Min +15pt improvement required.
+        </p>
+      </div>
+    </div>
   );
 }
 
@@ -690,6 +909,15 @@ export default function ActionsDashboard({
 
   return (
     <div className="space-y-4">
+      {/* Capital Swap Suggestions — shown above signals when triggered */}
+      {data.capital_rebalancing && (
+        <SwapSuggestionsPanel
+          rebalancing={data.capital_rebalancing}
+          onTrade={onTrade}
+          tradingEnabled={tradingEnabled}
+        />
+      )}
+
       <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 rounded-xl border border-primary-500/30 overflow-hidden">
         {/* Header */}
         <div className="bg-primary-600/20 border-b border-primary-500/30 px-4 py-3 flex items-center justify-between">

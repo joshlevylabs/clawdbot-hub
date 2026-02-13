@@ -490,13 +490,13 @@ export default function FibonacciModal({
                     }}
                   />
 
-                  {/* Swing High dot (Point A) — cyan */}
+                  {/* Swing High dot (Point A) — cyan, plotted ON the price line */}
                   {swingHighDate && (
                     <ReferenceDot
                       x={swingHighDate}
                       y={
                         priceHistory.find((p) => p.date === swingHighDate)
-                          ?.high || swingHigh
+                          ?.close || swingHigh
                       }
                       r={8}
                       fill="#22d3ee"
@@ -506,13 +506,13 @@ export default function FibonacciModal({
                     />
                   )}
 
-                  {/* Swing Low dot (Point B) — pink */}
+                  {/* Swing Low dot (Point B) — pink, plotted ON the price line */}
                   {swingLowDate && (
                     <ReferenceDot
                       x={swingLowDate}
                       y={
                         priceHistory.find((p) => p.date === swingLowDate)
-                          ?.low || swingLow
+                          ?.close || swingLow
                       }
                       r={8}
                       fill="#f472b6"

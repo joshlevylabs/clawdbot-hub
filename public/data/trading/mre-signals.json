@@ -1,7 +1,7 @@
 {
   "timestamp": "2026-02-13T06:43:30.872918",
-  "last_updated": "2026-02-13 06:43:30",
-  "last_updated_unix": 1770993810,
+  "last_updated": "2026-02-13T15:16:07Z",
+  "last_updated_unix": 1770995767,
   "fear_greed": {
     "current": 35.71966873706,
     "rating": "fear",
@@ -245,7 +245,7 @@
   "regime": {
     "spy": {
       "regime": "sideways",
-      "price": 678.45,
+      "price": 681.95,
       "ema_20": 688.09,
       "ema_50": 685.06,
       "ema_slow": 674.84,
@@ -263,7 +263,7 @@
     },
     "qqq": {
       "regime": "sideways",
-      "price": 597.4,
+      "price": 601.22,
       "ema_20": 613.36,
       "ema_50": 615.02,
       "ema_slow": 607.38,
@@ -302,7 +302,7 @@
         "hold_days": 5,
         "expected_sharpe": 10.65,
         "expected_accuracy": 70.6,
-        "price": 678.45,
+        "price": 681.95,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -328,12 +328,13 @@
         "version": "2.1.0",
         "fibonacci": {
           "symbol": "SPY",
-          "current_price": 678.6099853515625,
+          "current_price": 681.0300903320312,
           "swing_high": 697.8400268554688,
           "swing_low": 648.9324254696204,
           "swing_high_idx": 115,
           "swing_low_idx": 71,
           "trend": "uptrend",
+          "swing_quality": "impulse",
           "retracements": {
             "0.0": 697.84,
             "23.6": 686.3,
@@ -344,18 +345,22 @@
             "100.0": 648.93
           },
           "extensions": {
-            "127.2": 711.14,
-            "161.8": 728.06,
-            "200.0": 746.75,
-            "261.8": 776.97
+            "100.0": 724.7,
+            "127.2": 738.0,
+            "161.8": 754.92,
+            "200.0": 773.61,
+            "261.8": 803.83
           },
-          "nearest_support": 673.39,
-          "nearest_resistance": 679.16,
+          "nearest_support": 679.16,
+          "nearest_resistance": 686.3,
           "entry_zone": "679.16 - 667.62",
           "profit_targets": [
-            711.14,
-            728.06
-          ]
+            738.0,
+            754.92
+          ],
+          "pullback_low": 675.7899780273438,
+          "pullback_low_idx": 121,
+          "extension_type": "3-point (A\u2192B\u2192C)"
         },
         "regime_details": {
           "regime": "sideways",
@@ -388,7 +393,7 @@
         "hold_days": 5,
         "expected_sharpe": 10.65,
         "expected_accuracy": 70.6,
-        "price": 597.4,
+        "price": 601.22,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -414,12 +419,13 @@
         "version": "2.1.0",
         "fibonacci": {
           "symbol": "QQQ",
-          "current_price": 597.7000122070312,
+          "current_price": 600.6599731445312,
           "swing_high": 636.5999755859375,
           "swing_low": 579.992718365408,
           "swing_high_idx": 115,
           "swing_low_idx": 71,
           "trend": "uptrend",
+          "swing_quality": "impulse",
           "retracements": {
             "0.0": 636.6,
             "23.6": 623.24,
@@ -430,18 +436,22 @@
             "100.0": 579.99
           },
           "extensions": {
-            "127.2": 652.0,
-            "161.8": 671.58,
-            "200.0": 693.21,
-            "261.8": 728.19
+            "100.0": 651.37,
+            "127.2": 666.76,
+            "161.8": 686.35,
+            "200.0": 707.97,
+            "261.8": 742.96
           },
           "nearest_support": 592.11,
           "nearest_resistance": 601.62,
           "entry_zone": "614.98 - 601.62",
           "profit_targets": [
-            652.0,
-            671.58
-          ]
+            666.76,
+            686.35
+          ],
+          "pullback_low": 594.760009765625,
+          "pullback_low_idx": 121,
+          "extension_type": "3-point (A\u2192B\u2192C)"
         },
         "regime_details": {
           "regime": "sideways",
@@ -474,7 +484,7 @@
         "hold_days": 5,
         "expected_sharpe": 10.65,
         "expected_accuracy": 70.6,
-        "price": 258.97,
+        "price": 262.51,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -500,12 +510,13 @@
         "version": "2.1.0",
         "fibonacci": {
           "symbol": "IWM",
-          "current_price": 259.1700134277344,
+          "current_price": 261.6415100097656,
           "swing_high": 271.6000061035156,
           "swing_low": 228.13496396973687,
           "swing_high_idx": 111,
           "swing_low_idx": 70,
           "trend": "uptrend",
+          "swing_quality": "impulse",
           "retracements": {
             "0.0": 271.6,
             "23.6": 261.34,
@@ -516,18 +527,22 @@
             "100.0": 228.13
           },
           "extensions": {
-            "127.2": 283.42,
-            "161.8": 298.46,
-            "200.0": 315.07,
-            "261.8": 341.93
+            "100.0": 298.52,
+            "127.2": 310.34,
+            "161.8": 325.38,
+            "200.0": 341.98,
+            "261.8": 368.84
           },
-          "nearest_support": 255.0,
-          "nearest_resistance": 261.34,
+          "nearest_support": 261.34,
+          "nearest_resistance": 271.6,
           "entry_zone": "255.0 - 244.74",
           "profit_targets": [
-            283.42,
-            298.46
-          ]
+            310.34,
+            325.38
+          ],
+          "pullback_low": 255.0500030517578,
+          "pullback_low_idx": 121,
+          "extension_type": "3-point (A\u2192B\u2192C)"
         },
         "regime_details": {
           "regime": "sideways",
@@ -560,7 +575,7 @@
         "hold_days": 5,
         "expected_sharpe": 16.68,
         "expected_accuracy": 83.3,
-        "price": 138.25,
+        "price": 139.46,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -586,34 +601,36 @@
         "version": "2.1.0",
         "fibonacci": {
           "symbol": "XLK",
-          "current_price": 138.35000610351562,
-          "swing_high": 152.76328574939558,
+          "current_price": 139.30999755859375,
+          "swing_high": 149.89999389648438,
           "swing_low": 133.53745825911813,
-          "swing_high_idx": 54,
+          "swing_high_idx": 115,
           "swing_low_idx": 71,
-          "trend": "downtrend",
+          "trend": "uptrend",
+          "swing_quality": "impulse",
           "retracements": {
-            "0.0": 152.76,
-            "23.6": 148.23,
-            "38.2": 145.42,
-            "50.0": 143.15,
-            "61.8": 140.88,
-            "78.6": 137.65,
+            "0.0": 149.9,
+            "23.6": 146.04,
+            "38.2": 143.65,
+            "50.0": 141.72,
+            "61.8": 139.79,
+            "78.6": 137.04,
             "100.0": 133.54
           },
           "extensions": {
-            "127.2": 157.99,
-            "161.8": 164.64,
-            "200.0": 171.99,
-            "261.8": 183.87
+            "127.2": 154.35,
+            "161.8": 160.01,
+            "200.0": 166.26,
+            "261.8": 176.37
           },
-          "nearest_support": 137.65,
-          "nearest_resistance": 140.88,
-          "entry_zone": "145.42 - 140.88",
+          "nearest_support": 137.04,
+          "nearest_resistance": 139.79,
+          "entry_zone": "143.65 - 139.79",
           "profit_targets": [
-            157.99,
-            164.64
-          ]
+            154.35,
+            160.01
+          ],
+          "extension_type": "2-point fallback"
         },
         "regime_details": {
           "regime": "bear",
@@ -646,7 +663,7 @@
         "hold_days": 5,
         "expected_sharpe": 16.68,
         "expected_accuracy": 83.3,
-        "price": 114.04,
+        "price": 114.46,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -672,34 +689,39 @@
         "version": "2.1.0",
         "fibonacci": {
           "symbol": "XLC",
-          "current_price": 114.08999633789062,
-          "swing_high": 118.87016918268613,
+          "current_price": 114.375,
+          "swing_high": 118.66999816894531,
           "swing_low": 109.51047067492786,
-          "swing_high_idx": 32,
+          "swing_high_idx": 96,
           "swing_low_idx": 70,
-          "trend": "downtrend",
+          "trend": "uptrend",
+          "swing_quality": "impulse",
           "retracements": {
-            "0.0": 118.87,
-            "23.6": 116.66,
-            "38.2": 115.29,
-            "50.0": 114.19,
-            "61.8": 113.09,
-            "78.6": 111.51,
+            "0.0": 118.67,
+            "23.6": 116.51,
+            "38.2": 115.17,
+            "50.0": 114.09,
+            "61.8": 113.01,
+            "78.6": 111.47,
             "100.0": 109.51
           },
           "extensions": {
-            "127.2": 121.42,
-            "161.8": 124.65,
-            "200.0": 128.23,
-            "261.8": 134.01
+            "100.0": 122.34,
+            "127.2": 124.83,
+            "161.8": 128.0,
+            "200.0": 131.5,
+            "261.8": 137.16
           },
-          "nearest_support": 113.09,
-          "nearest_resistance": 114.19,
-          "entry_zone": "115.29 - 113.09",
+          "nearest_support": 114.09,
+          "nearest_resistance": 115.17,
+          "entry_zone": "115.17 - 113.01",
           "profit_targets": [
-            121.42,
-            124.65
-          ]
+            124.83,
+            128.0
+          ],
+          "pullback_low": 113.18000030517578,
+          "pullback_low_idx": 110,
+          "extension_type": "3-point (A\u2192B\u2192C)"
         },
         "regime_details": {
           "regime": "sideways",
@@ -732,7 +754,7 @@
         "hold_days": 10,
         "expected_sharpe": 15.52,
         "expected_accuracy": 65.0,
-        "price": 51.38,
+        "price": 51.58,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -758,12 +780,13 @@
         "version": "2.1.0",
         "fibonacci": {
           "symbol": "XLF",
-          "current_price": 51.40010070800781,
+          "current_price": 51.43000030517578,
           "swing_high": 56.52000045776367,
           "swing_low": 50.90209727943318,
           "swing_high_idx": 100,
           "swing_low_idx": 70,
           "trend": "uptrend",
+          "swing_quality": "impulse",
           "retracements": {
             "0.0": 56.52,
             "23.6": 55.19,
@@ -774,18 +797,22 @@
             "100.0": 50.9
           },
           "extensions": {
-            "127.2": 58.05,
-            "161.8": 59.99,
-            "200.0": 62.14,
-            "261.8": 65.61
+            "100.0": 58.38,
+            "127.2": 59.91,
+            "161.8": 61.85,
+            "200.0": 64.0,
+            "261.8": 67.47
           },
           "nearest_support": 50.9,
           "nearest_resistance": 52.1,
           "entry_zone": "54.37 - 53.05",
           "profit_targets": [
-            58.05,
-            59.99
-          ]
+            59.91,
+            61.85
+          ],
+          "pullback_low": 52.7599983215332,
+          "pullback_low_idx": 115,
+          "extension_type": "3-point (A\u2192B\u2192C)"
         },
         "regime_details": {
           "regime": "bear",
@@ -818,7 +845,7 @@
         "hold_days": 5,
         "expected_sharpe": 33.4,
         "expected_accuracy": 83.3,
-        "price": 157.82,
+        "price": 158.26,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -844,34 +871,39 @@
         "version": "2.1.0",
         "fibonacci": {
           "symbol": "XLV",
-          "current_price": 157.75999450683594,
-          "swing_high": 160.58999633789062,
+          "current_price": 158.00999450683594,
+          "swing_high": 158.2759966493031,
           "swing_low": 133.16293579669355,
-          "swing_high_idx": 101,
+          "swing_high_idx": 74,
           "swing_low_idx": 30,
           "trend": "uptrend",
+          "swing_quality": "impulse",
           "retracements": {
-            "0.0": 160.59,
-            "23.6": 154.12,
-            "38.2": 150.11,
-            "50.0": 146.88,
-            "61.8": 143.64,
-            "78.6": 139.03,
+            "0.0": 158.28,
+            "23.6": 152.35,
+            "38.2": 148.68,
+            "50.0": 145.72,
+            "61.8": 142.76,
+            "78.6": 138.54,
             "100.0": 133.16
           },
           "extensions": {
-            "127.2": 168.05,
-            "161.8": 177.54,
-            "200.0": 188.02,
-            "261.8": 204.97
+            "100.0": 174.33,
+            "127.2": 181.16,
+            "161.8": 189.85,
+            "200.0": 199.44,
+            "261.8": 214.96
           },
-          "nearest_support": 154.12,
-          "nearest_resistance": 160.59,
-          "entry_zone": "150.11 - 143.64",
+          "nearest_support": 152.35,
+          "nearest_resistance": 158.28,
+          "entry_zone": "148.68 - 142.76",
           "profit_targets": [
-            168.05,
-            177.54
-          ]
+            181.16,
+            189.85
+          ],
+          "pullback_low": 149.2145930255097,
+          "pullback_low_idx": 82,
+          "extension_type": "3-point (A\u2192B\u2192C)"
         },
         "regime_details": {
           "regime": "bull",
@@ -904,7 +936,7 @@
         "hold_days": 5,
         "expected_sharpe": 33.4,
         "expected_accuracy": 83.3,
-        "price": 88.96,
+        "price": 89.04,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -930,34 +962,36 @@
         "version": "2.1.0",
         "fibonacci": {
           "symbol": "XLP",
-          "current_price": 88.97000122070312,
+          "current_price": 88.9800033569336,
           "swing_high": 79.61129738364575,
-          "swing_low": 74.56181333345582,
+          "swing_low": 76.51000213623047,
           "swing_high_idx": 49,
-          "swing_low_idx": 60,
+          "swing_low_idx": 102,
           "trend": "downtrend",
+          "swing_quality": "impulse",
           "retracements": {
             "0.0": 79.61,
-            "23.6": 78.42,
-            "38.2": 77.68,
-            "50.0": 77.09,
-            "61.8": 76.49,
-            "78.6": 75.64,
-            "100.0": 74.56
+            "23.6": 78.88,
+            "38.2": 78.43,
+            "50.0": 78.06,
+            "61.8": 77.69,
+            "78.6": 77.17,
+            "100.0": 76.51
           },
           "extensions": {
-            "127.2": 80.98,
-            "161.8": 82.73,
-            "200.0": 84.66,
-            "261.8": 87.78
+            "127.2": 75.67,
+            "161.8": 74.59,
+            "200.0": 73.41,
+            "261.8": 71.49
           },
-          "nearest_support": 87.78,
+          "nearest_support": 79.61,
           "nearest_resistance": 79.61129738364575,
-          "entry_zone": "77.68 - 76.49",
+          "entry_zone": "78.43 - 77.69",
           "profit_targets": [
-            80.98,
-            82.73
-          ]
+            75.67,
+            74.59
+          ],
+          "extension_type": "2-point fallback"
         },
         "regime_details": {
           "regime": "bull",
@@ -990,7 +1024,7 @@
         "hold_days": 5,
         "expected_sharpe": 4.74,
         "expected_accuracy": 40.0,
-        "price": 53.88,
+        "price": 54.29,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -1016,12 +1050,13 @@
         "version": "2.1.0",
         "fibonacci": {
           "symbol": "XLE",
-          "current_price": 53.93000030517578,
+          "current_price": 54.220001220703125,
           "swing_high": 46.26561493376992,
           "swing_low": 41.99204467312608,
           "swing_high_idx": 80,
           "swing_low_idx": 45,
           "trend": "uptrend",
+          "swing_quality": "impulse",
           "retracements": {
             "0.0": 46.27,
             "23.6": 45.26,
@@ -1032,18 +1067,22 @@
             "100.0": 41.99
           },
           "extensions": {
-            "127.2": 47.43,
-            "161.8": 48.91,
-            "200.0": 50.54,
-            "261.8": 53.18
+            "100.0": 47.67,
+            "127.2": 48.84,
+            "161.8": 50.31,
+            "200.0": 51.95,
+            "261.8": 54.59
           },
-          "nearest_support": 53.18,
-          "nearest_resistance": 46.26561493376992,
+          "nearest_support": 51.95,
+          "nearest_resistance": 54.59,
           "entry_zone": "44.63 - 43.62",
           "profit_targets": [
-            47.43,
-            48.91
-          ]
+            48.84,
+            50.31
+          ],
+          "pullback_low": 43.40004208032951,
+          "pullback_low_idx": 87,
+          "extension_type": "3-point (A\u2192B\u2192C)"
         },
         "regime_details": {
           "regime": "bull",
@@ -1076,7 +1115,7 @@
         "hold_days": 10,
         "expected_sharpe": 4.74,
         "expected_accuracy": 40.0,
-        "price": 52.49,
+        "price": 53.09,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -1102,34 +1141,36 @@
         "version": "2.1.0",
         "fibonacci": {
           "symbol": "XLB",
-          "current_price": 52.52000045776367,
-          "swing_high": 45.904078795226866,
-          "swing_low": 41.81912815521221,
-          "swing_high_idx": 12,
-          "swing_low_idx": 58,
+          "current_price": 52.90999984741211,
+          "swing_high": 44.98279685368931,
+          "swing_low": 43.12737337019588,
+          "swing_high_idx": 40,
+          "swing_low_idx": 83,
           "trend": "downtrend",
+          "swing_quality": "impulse",
           "retracements": {
-            "0.0": 45.9,
-            "23.6": 44.94,
-            "38.2": 44.34,
-            "50.0": 43.86,
-            "61.8": 43.38,
-            "78.6": 42.69,
-            "100.0": 41.82
+            "0.0": 44.98,
+            "23.6": 44.54,
+            "38.2": 44.27,
+            "50.0": 44.06,
+            "61.8": 43.84,
+            "78.6": 43.52,
+            "100.0": 43.13
           },
           "extensions": {
-            "127.2": 47.02,
-            "161.8": 48.43,
-            "200.0": 49.99,
-            "261.8": 52.51
+            "127.2": 42.62,
+            "161.8": 41.98,
+            "200.0": 41.27,
+            "261.8": 40.13
           },
-          "nearest_support": 52.51,
-          "nearest_resistance": 45.904078795226866,
-          "entry_zone": "44.34 - 43.38",
+          "nearest_support": 44.98,
+          "nearest_resistance": 44.98279685368931,
+          "entry_zone": "44.27 - 43.84",
           "profit_targets": [
-            47.02,
-            48.43
-          ]
+            42.62,
+            41.98
+          ],
+          "extension_type": "2-point fallback"
         },
         "regime_details": {
           "regime": "bull",
@@ -1162,7 +1203,7 @@
         "hold_days": 5,
         "expected_sharpe": 122.81,
         "expected_accuracy": 75.0,
-        "price": 45.51,
+        "price": 46.1,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -1188,34 +1229,39 @@
         "version": "2.1.0",
         "fibonacci": {
           "symbol": "XLU",
-          "current_price": 45.5099983215332,
-          "swing_high": 46.536356475016035,
-          "swing_low": 40.57091235638342,
-          "swing_high_idx": 45,
-          "swing_low_idx": 17,
+          "current_price": 46.119998931884766,
+          "swing_high": 43.81999969482422,
+          "swing_low": 41.7400016784668,
+          "swing_high_idx": 107,
+          "swing_low_idx": 101,
           "trend": "uptrend",
+          "swing_quality": "impulse",
           "retracements": {
-            "0.0": 46.54,
-            "23.6": 45.13,
-            "38.2": 44.26,
-            "50.0": 43.55,
-            "61.8": 42.85,
-            "78.6": 41.85,
-            "100.0": 40.57
+            "0.0": 43.82,
+            "23.6": 43.33,
+            "38.2": 43.03,
+            "50.0": 42.78,
+            "61.8": 42.53,
+            "78.6": 42.19,
+            "100.0": 41.74
           },
           "extensions": {
-            "127.2": 48.16,
-            "161.8": 50.22,
-            "200.0": 52.5,
-            "261.8": 56.19
+            "100.0": 44.63,
+            "127.2": 45.2,
+            "161.8": 45.92,
+            "200.0": 46.71,
+            "261.8": 48.0
           },
-          "nearest_support": 45.13,
-          "nearest_resistance": 46.54,
-          "entry_zone": "44.26 - 42.85",
+          "nearest_support": 45.92,
+          "nearest_resistance": 46.71,
+          "entry_zone": "43.03 - 42.53",
           "profit_targets": [
-            48.16,
-            50.22
-          ]
+            45.2,
+            45.92
+          ],
+          "pullback_low": 42.54999923706055,
+          "pullback_low_idx": 118,
+          "extension_type": "3-point (A\u2192B\u2192C)"
         },
         "regime_details": {
           "regime": "bull",
@@ -1248,7 +1294,7 @@
         "hold_days": 5,
         "expected_sharpe": 117.59,
         "expected_accuracy": 90.0,
-        "price": 103.51,
+        "price": 103.97,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -1274,34 +1320,36 @@
         "version": "2.1.0",
         "fibonacci": {
           "symbol": "EFA",
-          "current_price": 103.55000305175781,
+          "current_price": 103.81500244140625,
           "swing_high": 94.96912173066355,
-          "swing_low": 88.43747497504265,
+          "swing_low": 89.58664689323894,
           "swing_high_idx": 64,
-          "swing_low_idx": 13,
-          "trend": "uptrend",
+          "swing_low_idx": 70,
+          "trend": "downtrend",
+          "swing_quality": "impulse",
           "retracements": {
             "0.0": 94.97,
-            "23.6": 93.43,
-            "38.2": 92.47,
-            "50.0": 91.7,
-            "61.8": 90.93,
-            "78.6": 89.84,
-            "100.0": 88.44
+            "23.6": 93.7,
+            "38.2": 92.91,
+            "50.0": 92.28,
+            "61.8": 91.64,
+            "78.6": 90.74,
+            "100.0": 89.59
           },
           "extensions": {
-            "127.2": 96.75,
-            "161.8": 99.01,
-            "200.0": 101.5,
-            "261.8": 105.54
+            "127.2": 88.12,
+            "161.8": 86.26,
+            "200.0": 84.2,
+            "261.8": 80.88
           },
-          "nearest_support": 101.5,
-          "nearest_resistance": 105.54,
-          "entry_zone": "92.47 - 90.93",
+          "nearest_support": 94.97,
+          "nearest_resistance": 94.96912173066355,
+          "entry_zone": "92.91 - 91.64",
           "profit_targets": [
-            96.75,
-            99.01
-          ]
+            88.12,
+            86.26
+          ],
+          "extension_type": "2-point fallback"
         },
         "regime_details": {
           "regime": "bull",
@@ -1334,7 +1382,7 @@
         "hold_days": 5,
         "expected_sharpe": 117.59,
         "expected_accuracy": 90.0,
-        "price": 60.22,
+        "price": 60.58,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -1360,34 +1408,36 @@
         "version": "2.1.0",
         "fibonacci": {
           "symbol": "EEM",
-          "current_price": 60.2400016784668,
-          "swing_high": 55.51553891465469,
-          "swing_low": 48.65373346867458,
-          "swing_high_idx": 54,
-          "swing_low_idx": 13,
-          "trend": "uptrend",
+          "current_price": 60.529998779296875,
+          "swing_high": 54.460636673900794,
+          "swing_low": 52.58000183105469,
+          "swing_high_idx": 83,
+          "swing_low_idx": 88,
+          "trend": "downtrend",
+          "swing_quality": "impulse",
           "retracements": {
-            "0.0": 55.52,
-            "23.6": 53.9,
-            "38.2": 52.89,
-            "50.0": 52.08,
-            "61.8": 51.27,
-            "78.6": 50.12,
-            "100.0": 48.65
+            "0.0": 54.46,
+            "23.6": 54.02,
+            "38.2": 53.74,
+            "50.0": 53.52,
+            "61.8": 53.3,
+            "78.6": 52.98,
+            "100.0": 52.58
           },
           "extensions": {
-            "127.2": 57.38,
-            "161.8": 59.76,
-            "200.0": 62.38,
-            "261.8": 66.62
+            "127.2": 52.07,
+            "161.8": 51.42,
+            "200.0": 50.7,
+            "261.8": 49.54
           },
-          "nearest_support": 59.76,
-          "nearest_resistance": 62.38,
-          "entry_zone": "52.89 - 51.27",
+          "nearest_support": 54.46,
+          "nearest_resistance": 54.460636673900794,
+          "entry_zone": "53.74 - 53.3",
           "profit_targets": [
-            57.38,
-            59.76
-          ]
+            52.07,
+            51.42
+          ],
+          "extension_type": "2-point fallback"
         },
         "regime_details": {
           "regime": "bull",
@@ -1420,7 +1470,7 @@
         "hold_days": 5,
         "expected_sharpe": 117.59,
         "expected_accuracy": 90.0,
-        "price": 52.6,
+        "price": 52.71,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -1446,34 +1496,36 @@
         "version": "2.1.0",
         "fibonacci": {
           "symbol": "INDA",
-          "current_price": 52.61000061035156,
-          "swing_high": 55.5,
+          "current_price": 52.70500183105469,
+          "swing_high": 55.099998474121094,
           "swing_low": 50.939998626708984,
-          "swing_high_idx": 49,
+          "swing_high_idx": 70,
           "swing_low_idx": 112,
           "trend": "downtrend",
+          "swing_quality": "impulse",
           "retracements": {
-            "0.0": 55.5,
-            "23.6": 54.42,
-            "38.2": 53.76,
-            "50.0": 53.22,
-            "61.8": 52.68,
-            "78.6": 51.92,
+            "0.0": 55.1,
+            "23.6": 54.12,
+            "38.2": 53.51,
+            "50.0": 53.02,
+            "61.8": 52.53,
+            "78.6": 51.83,
             "100.0": 50.94
           },
           "extensions": {
-            "127.2": 56.74,
-            "161.8": 58.32,
-            "200.0": 60.06,
-            "261.8": 62.88
+            "127.2": 49.81,
+            "161.8": 48.37,
+            "200.0": 46.78,
+            "261.8": 44.21
           },
-          "nearest_support": 51.92,
-          "nearest_resistance": 52.68,
-          "entry_zone": "53.76 - 52.68",
+          "nearest_support": 52.53,
+          "nearest_resistance": 53.02,
+          "entry_zone": "53.51 - 52.53",
           "profit_targets": [
-            56.74,
-            58.32
-          ]
+            49.81,
+            48.37
+          ],
+          "extension_type": "2-point fallback"
         },
         "regime_details": {
           "regime": "bear",
@@ -1506,7 +1558,7 @@
         "hold_days": 10,
         "expected_sharpe": 117.59,
         "expected_accuracy": 90.0,
-        "price": 38.12,
+        "price": 38.33,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -1532,34 +1584,36 @@
         "version": "2.1.0",
         "fibonacci": {
           "symbol": "FXI",
-          "current_price": 38.130001068115234,
+          "current_price": 38.29999923706055,
           "swing_high": 41.16999816894531,
-          "swing_low": 37.6315181530778,
+          "swing_low": 37.74033560681721,
           "swing_high_idx": 116,
-          "swing_low_idx": 10,
+          "swing_low_idx": 71,
           "trend": "uptrend",
+          "swing_quality": "impulse",
           "retracements": {
             "0.0": 41.17,
-            "23.6": 40.33,
-            "38.2": 39.82,
-            "50.0": 39.4,
-            "61.8": 38.98,
-            "78.6": 38.39,
-            "100.0": 37.63
+            "23.6": 40.36,
+            "38.2": 39.86,
+            "50.0": 39.46,
+            "61.8": 39.05,
+            "78.6": 38.47,
+            "100.0": 37.74
           },
           "extensions": {
-            "127.2": 42.13,
-            "161.8": 43.36,
-            "200.0": 44.71,
-            "261.8": 46.9
+            "127.2": 42.1,
+            "161.8": 43.29,
+            "200.0": 44.6,
+            "261.8": 46.72
           },
-          "nearest_support": 37.63,
-          "nearest_resistance": 38.39,
-          "entry_zone": "39.82 - 38.98",
+          "nearest_support": 37.74,
+          "nearest_resistance": 38.47,
+          "entry_zone": "39.86 - 39.05",
           "profit_targets": [
-            42.13,
-            43.36
-          ]
+            42.1,
+            43.29
+          ],
+          "extension_type": "2-point fallback"
         },
         "regime_details": {
           "regime": "sideways",
@@ -1592,7 +1646,7 @@
         "hold_days": 5,
         "expected_sharpe": 117.59,
         "expected_accuracy": 90.0,
-        "price": 93.01,
+        "price": 93.37,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -1618,34 +1672,39 @@
         "version": "2.1.0",
         "fibonacci": {
           "symbol": "EWJ",
-          "current_price": 93.04499816894531,
+          "current_price": 93.25,
           "swing_high": 82.23312363611166,
-          "swing_low": 74.58913494389616,
+          "swing_low": 75.38920678209396,
           "swing_high_idx": 86,
-          "swing_low_idx": 13,
+          "swing_low_idx": 41,
           "trend": "uptrend",
+          "swing_quality": "impulse",
           "retracements": {
             "0.0": 82.23,
-            "23.6": 80.43,
-            "38.2": 79.31,
-            "50.0": 78.41,
-            "61.8": 77.51,
-            "78.6": 76.22,
-            "100.0": 74.59
+            "23.6": 80.62,
+            "38.2": 79.62,
+            "50.0": 78.81,
+            "61.8": 78.0,
+            "78.6": 76.85,
+            "100.0": 75.39
           },
           "extensions": {
-            "127.2": 84.31,
-            "161.8": 86.96,
-            "200.0": 89.88,
-            "261.8": 94.6
+            "100.0": 86.55,
+            "127.2": 88.42,
+            "161.8": 90.78,
+            "200.0": 93.4,
+            "261.8": 97.63
           },
-          "nearest_support": 89.88,
-          "nearest_resistance": 94.6,
-          "entry_zone": "79.31 - 77.51",
+          "nearest_support": 90.78,
+          "nearest_resistance": 93.4,
+          "entry_zone": "79.62 - 78.0",
           "profit_targets": [
-            84.31,
-            86.96
-          ]
+            88.42,
+            90.78
+          ],
+          "pullback_low": 79.70999908447266,
+          "pullback_low_idx": 88,
+          "extension_type": "3-point (A\u2192B\u2192C)"
         },
         "regime_details": {
           "regime": "bull",
@@ -1678,7 +1737,7 @@
         "hold_days": 5,
         "expected_sharpe": 18.55,
         "expected_accuracy": 51.8,
-        "price": 89.74,
+        "price": 89.61,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -1704,34 +1763,36 @@
         "version": "2.1.0",
         "fibonacci": {
           "symbol": "TLT",
-          "current_price": 89.7249984741211,
-          "swing_high": 90.82904322461589,
-          "swing_low": 83.92596756702879,
-          "swing_high_idx": 48,
-          "swing_low_idx": 13,
-          "trend": "uptrend",
+          "current_price": 89.63999938964844,
+          "swing_high": 89.6245346069336,
+          "swing_low": 86.21025038222956,
+          "swing_high_idx": 74,
+          "swing_low_idx": 109,
+          "trend": "downtrend",
+          "swing_quality": "impulse",
           "retracements": {
-            "0.0": 90.83,
-            "23.6": 89.2,
-            "38.2": 88.19,
-            "50.0": 87.38,
-            "61.8": 86.56,
-            "78.6": 85.4,
-            "100.0": 83.93
+            "0.0": 89.62,
+            "23.6": 88.82,
+            "38.2": 88.32,
+            "50.0": 87.92,
+            "61.8": 87.51,
+            "78.6": 86.94,
+            "100.0": 86.21
           },
           "extensions": {
-            "127.2": 92.71,
-            "161.8": 95.1,
-            "200.0": 97.73,
-            "261.8": 102.0
+            "127.2": 85.28,
+            "161.8": 84.1,
+            "200.0": 82.8,
+            "261.8": 80.69
           },
-          "nearest_support": 89.2,
-          "nearest_resistance": 90.83,
-          "entry_zone": "88.19 - 86.56",
+          "nearest_support": 89.62,
+          "nearest_resistance": 89.6245346069336,
+          "entry_zone": "88.32 - 87.51",
           "profit_targets": [
-            92.71,
-            95.1
-          ]
+            85.28,
+            84.1
+          ],
+          "extension_type": "2-point fallback"
         },
         "regime_details": {
           "regime": "bull",
@@ -1764,7 +1825,7 @@
         "hold_days": 5,
         "expected_sharpe": 18.55,
         "expected_accuracy": 51.8,
-        "price": 97.22,
+        "price": 97.12,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -1790,34 +1851,36 @@
         "version": "2.1.0",
         "fibonacci": {
           "symbol": "IEF",
-          "current_price": 97.18499755859375,
-          "swing_high": 96.78057340084138,
-          "swing_low": 94.60758236350614,
+          "current_price": 97.1500015258789,
+          "swing_high": 96.78058103883555,
+          "swing_low": 95.2193338530091,
           "swing_high_idx": 73,
-          "swing_low_idx": 30,
-          "trend": "uptrend",
+          "swing_low_idx": 109,
+          "trend": "downtrend",
+          "swing_quality": "impulse",
           "retracements": {
             "0.0": 96.78,
-            "23.6": 96.27,
-            "38.2": 95.95,
-            "50.0": 95.69,
-            "61.8": 95.44,
-            "78.6": 95.07,
-            "100.0": 94.61
+            "23.6": 96.41,
+            "38.2": 96.18,
+            "50.0": 96.0,
+            "61.8": 95.82,
+            "78.6": 95.55,
+            "100.0": 95.22
           },
           "extensions": {
-            "127.2": 97.37,
-            "161.8": 98.12,
-            "200.0": 98.95,
-            "261.8": 100.3
+            "127.2": 94.79,
+            "161.8": 94.25,
+            "200.0": 93.66,
+            "261.8": 92.69
           },
           "nearest_support": 96.78,
-          "nearest_resistance": 97.37,
-          "entry_zone": "95.95 - 95.44",
+          "nearest_resistance": 96.78058103883555,
+          "entry_zone": "96.18 - 95.82",
           "profit_targets": [
-            97.37,
-            98.12
-          ]
+            94.79,
+            94.25
+          ],
+          "extension_type": "2-point fallback"
         },
         "regime_details": {
           "regime": "bull",
@@ -1850,7 +1913,7 @@
         "hold_days": 20,
         "expected_sharpe": 18.55,
         "expected_accuracy": 51.8,
-        "price": 80.86,
+        "price": 80.85,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -1876,12 +1939,13 @@
         "version": "2.1.0",
         "fibonacci": {
           "symbol": "HYG",
-          "current_price": 80.86000061035156,
+          "current_price": 80.84500122070312,
           "swing_high": 80.8404107675588,
-          "swing_low": 78.41496276855469,
+          "swing_low": 78.41497039794922,
           "swing_high_idx": 111,
           "swing_low_idx": 41,
           "trend": "uptrend",
+          "swing_quality": "impulse",
           "retracements": {
             "0.0": 80.84,
             "23.6": 80.27,
@@ -1903,7 +1967,8 @@
           "profit_targets": [
             81.5,
             82.34
-          ]
+          ],
+          "extension_type": "2-point fallback"
         },
         "regime_details": {
           "regime": "bull",
@@ -1936,7 +2001,7 @@
         "hold_days": 15,
         "expected_sharpe": 25.8,
         "expected_accuracy": 61.3,
-        "price": 457.25,
+        "price": 459.77,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -1962,12 +2027,13 @@
         "version": "2.1.0",
         "fibonacci": {
           "symbol": "GLD",
-          "current_price": 457.4565124511719,
+          "current_price": 459.375,
           "swing_high": 509.70001220703125,
           "swing_low": 360.1199951171875,
           "swing_high_idx": 116,
           "swing_low_idx": 53,
           "trend": "uptrend",
+          "swing_quality": "impulse",
           "retracements": {
             "0.0": 509.7,
             "23.6": 474.4,
@@ -1978,18 +2044,22 @@
             "100.0": 360.12
           },
           "extensions": {
-            "127.2": 550.39,
-            "161.8": 602.14,
-            "200.0": 659.28,
-            "261.8": 751.72
+            "100.0": 572.13,
+            "127.2": 612.82,
+            "161.8": 664.57,
+            "200.0": 721.71,
+            "261.8": 814.15
           },
           "nearest_support": 452.56,
           "nearest_resistance": 474.4,
           "entry_zone": "452.56 - 417.26",
           "profit_targets": [
-            550.39,
-            602.14
-          ]
+            612.82,
+            664.57
+          ],
+          "pullback_low": 422.54998779296875,
+          "pullback_low_idx": 118,
+          "extension_type": "3-point (A\u2192B\u2192C)"
         },
         "regime_details": {
           "regime": "bull",
@@ -2022,7 +2092,7 @@
         "hold_days": 5,
         "expected_sharpe": 25.8,
         "expected_accuracy": 61.3,
-        "price": 99.96,
+        "price": 102.53,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -2048,12 +2118,13 @@
         "version": "2.1.0",
         "fibonacci": {
           "symbol": "GDX",
-          "current_price": 100.11499786376953,
+          "current_price": 102.09349822998047,
           "swing_high": 113.5,
           "swing_low": 67.63875758780028,
           "swing_high_idx": 116,
           "swing_low_idx": 52,
           "trend": "uptrend",
+          "swing_quality": "impulse",
           "retracements": {
             "0.0": 113.5,
             "23.6": 102.68,
@@ -2064,18 +2135,22 @@
             "100.0": 67.64
           },
           "extensions": {
-            "127.2": 125.97,
-            "161.8": 141.84,
-            "200.0": 159.36,
-            "261.8": 187.7
+            "100.0": 137.86,
+            "127.2": 150.34,
+            "161.8": 166.2,
+            "200.0": 183.72,
+            "261.8": 212.06
           },
           "nearest_support": 95.98,
           "nearest_resistance": 102.68,
           "entry_zone": "95.98 - 85.16",
           "profit_targets": [
-            125.97,
-            141.84
-          ]
+            150.34,
+            166.2
+          ],
+          "pullback_low": 92.0,
+          "pullback_low_idx": 118,
+          "extension_type": "3-point (A\u2192B\u2192C)"
         },
         "regime_details": {
           "regime": "bull",
@@ -2108,7 +2183,7 @@
         "hold_days": 10,
         "expected_sharpe": 25.8,
         "expected_accuracy": 61.3,
-        "price": 25.81,
+        "price": 25.83,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -2134,34 +2209,39 @@
         "version": "2.1.0",
         "fibonacci": {
           "symbol": "DBA",
-          "current_price": 25.810699462890625,
-          "swing_high": 27.034996016000214,
+          "current_price": 25.825000762939453,
+          "swing_high": 26.010000228881836,
           "swing_low": 24.660624550871383,
-          "swing_high_idx": 22,
+          "swing_high_idx": 116,
           "swing_low_idx": 72,
-          "trend": "downtrend",
+          "trend": "uptrend",
+          "swing_quality": "impulse",
           "retracements": {
-            "0.0": 27.03,
-            "23.6": 26.47,
-            "38.2": 26.13,
-            "50.0": 25.85,
-            "61.8": 25.57,
-            "78.6": 25.17,
+            "0.0": 26.01,
+            "23.6": 25.69,
+            "38.2": 25.49,
+            "50.0": 25.34,
+            "61.8": 25.18,
+            "78.6": 24.95,
             "100.0": 24.66
           },
           "extensions": {
-            "127.2": 27.68,
-            "161.8": 28.5,
-            "200.0": 29.41,
-            "261.8": 30.88
+            "100.0": 26.89,
+            "127.2": 27.26,
+            "161.8": 27.72,
+            "200.0": 28.24,
+            "261.8": 29.07
           },
-          "nearest_support": 25.57,
-          "nearest_resistance": 25.85,
-          "entry_zone": "26.13 - 25.57",
+          "nearest_support": 25.69,
+          "nearest_resistance": 26.01,
+          "entry_zone": "25.49 - 25.18",
           "profit_targets": [
-            27.68,
-            28.5
-          ]
+            27.26,
+            27.72
+          ],
+          "pullback_low": 25.540000915527344,
+          "pullback_low_idx": 118,
+          "extension_type": "3-point (A\u2192B\u2192C)"
         },
         "regime_details": {
           "regime": "bull",
@@ -2194,7 +2274,7 @@
         "hold_days": 5,
         "expected_sharpe": 25.8,
         "expected_accuracy": 61.3,
-        "price": 9.25,
+        "price": 9.48,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -2220,34 +2300,36 @@
         "version": "2.1.0",
         "fibonacci": {
           "symbol": "BITO",
-          "current_price": 9.260000228881836,
-          "swing_high": 17.748307019184768,
-          "swing_low": 11.4749238200866,
+          "current_price": 9.4350004196167,
+          "swing_high": 17.748308940872995,
+          "swing_low": 11.740863682943019,
           "swing_high_idx": 37,
-          "swing_low_idx": 71,
+          "swing_low_idx": 89,
           "trend": "downtrend",
+          "swing_quality": "impulse",
           "retracements": {
             "0.0": 17.75,
-            "23.6": 16.27,
-            "38.2": 15.35,
-            "50.0": 14.61,
-            "61.8": 13.87,
-            "78.6": 12.82,
-            "100.0": 11.47
+            "23.6": 16.33,
+            "38.2": 15.45,
+            "50.0": 14.74,
+            "61.8": 14.04,
+            "78.6": 13.03,
+            "100.0": 11.74
           },
           "extensions": {
-            "127.2": 19.45,
-            "161.8": 21.63,
-            "200.0": 24.02,
-            "261.8": 27.9
+            "127.2": 10.11,
+            "161.8": 8.03,
+            "200.0": 5.73,
+            "261.8": 2.02
           },
-          "nearest_support": 11.4749238200866,
-          "nearest_resistance": 11.47,
-          "entry_zone": "15.35 - 13.87",
+          "nearest_support": 8.03,
+          "nearest_resistance": 10.11,
+          "entry_zone": "15.45 - 14.04",
           "profit_targets": [
-            19.45,
-            21.63
-          ]
+            10.11,
+            8.03
+          ],
+          "extension_type": "2-point fallback"
         },
         "regime_details": {
           "regime": "bear",
@@ -2280,7 +2362,7 @@
         "hold_days": 10,
         "expected_sharpe": 122.81,
         "expected_accuracy": 75.0,
-        "price": 93.6,
+        "price": 93.68,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -2306,34 +2388,39 @@
         "version": "2.1.0",
         "fibonacci": {
           "symbol": "VNQ",
-          "current_price": 93.58000183105469,
+          "current_price": 93.5250015258789,
           "swing_high": 92.81999969482422,
-          "swing_low": 87.06559969434338,
+          "swing_low": 87.3133358153632,
           "swing_high_idx": 108,
-          "swing_low_idx": 57,
+          "swing_low_idx": 70,
           "trend": "uptrend",
+          "swing_quality": "impulse",
           "retracements": {
             "0.0": 92.82,
-            "23.6": 91.46,
-            "38.2": 90.62,
-            "50.0": 89.94,
-            "61.8": 89.26,
-            "78.6": 88.3,
-            "100.0": 87.07
+            "23.6": 91.52,
+            "38.2": 90.72,
+            "50.0": 90.07,
+            "61.8": 89.42,
+            "78.6": 88.49,
+            "100.0": 87.31
           },
           "extensions": {
-            "127.2": 94.39,
-            "161.8": 96.38,
-            "200.0": 98.57,
-            "261.8": 102.13
+            "100.0": 94.58,
+            "127.2": 96.07,
+            "161.8": 97.98,
+            "200.0": 100.08,
+            "261.8": 103.49
           },
           "nearest_support": 92.82,
-          "nearest_resistance": 94.39,
-          "entry_zone": "90.62 - 89.26",
+          "nearest_resistance": 94.58,
+          "entry_zone": "90.72 - 89.42",
           "profit_targets": [
-            94.39,
-            96.38
-          ]
+            96.07,
+            97.98
+          ],
+          "pullback_low": 89.06999969482422,
+          "pullback_low_idx": 119,
+          "extension_type": "3-point (A\u2192B\u2192C)"
         },
         "regime_details": {
           "regime": "bull",

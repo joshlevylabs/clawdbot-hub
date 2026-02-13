@@ -22,6 +22,10 @@ interface FibonacciData {
   swing_high: number;
   swing_low: number;
   trend: string;
+  swing_quality?: string;       // "impulse" | "fallback"
+  extension_type?: string;      // "3-point (A→B→C)" | "2-point fallback"
+  pullback_low?: number;        // C point for 3-point extensions
+  pullback_low_idx?: number;
   retracements: Record<string, number>;
   extensions: Record<string, number>;
   nearest_support: number;
@@ -150,7 +154,7 @@ function SwingLabel({
   const y = (viewBox.cy || 0) - 18;
   const isC = value.includes("C");
   const isA = value === "A";
-  // Offset A label to the left and C to the right to avoid overlap
+  // Offset labels to avoid overlap
   const xOffset = isA ? -20 : isC ? 20 : 0;
   return (
     <g>
@@ -243,10 +247,32 @@ export default function FibonacciModal({
   const currentPrice = fib.current_price;
   const swingHigh = fib.swing_high;
   const swingLow = fib.swing_low;
+  const isUptrend = fib.trend === "uptrend";
+  const has3Point = !!fib.pullback_low;
+
+  // In an uptrend: A = swing low (buyers took over), B = swing high (buyers paused)
+  // In a downtrend: A = swing high (sellers took over), B = swing low (sellers paused)
+  const pointA = isUptrend ? swingLow : swingHigh;
+  const pointB = isUptrend ? swingHigh : swingLow;
+  const pointAField = isUptrend ? "low" : "high";
+  const pointBField = isUptrend ? "high" : "low";
 
   // Find swing point dates
-  const swingHighDate = findSwingDate(priceHistory, swingHigh, "high");
-  const swingLowDate = findSwingDate(priceHistory, swingLow, "low");
+  const pointADate = findSwingDate(priceHistory, pointA, pointAField as "high" | "low");
+  const pointBDate = findSwingDate(priceHistory, pointB, pointBField as "high" | "low");
+
+  // Pullback low (C) date — find in price data after B
+  const pullbackDate = has3Point
+    ? findSwingDate(
+        priceHistory.filter((p) => {
+          if (!pointBDate) return true;
+          return p.date >= pointBDate;
+        }),
+        fib.pullback_low!,
+        "low"
+      )
+    : null;
+
   const lastDate =
     priceHistory.length > 0 ? priceHistory[priceHistory.length - 1].date : null;
 
@@ -262,7 +288,9 @@ export default function FibonacciModal({
     ...allRetracements,
     // Only include extensions that aren't too far away (within 20% of swing range)
     ...allExtensions.filter(
-      (v) => v <= swingHigh + (swingHigh - swingLow) * 0.8
+      (v) => isUptrend
+        ? v <= swingHigh + (swingHigh - swingLow) * 0.8
+        : v >= swingLow - (swingHigh - swingLow) * 0.8
     ),
   ];
   const dataMin = Math.min(...allValues);
@@ -297,6 +325,15 @@ export default function FibonacciModal({
     (a, b) => parseFloat(a[0]) - parseFloat(b[0])
   );
 
+  // Quality badge
+  const qualityBadge = fib.swing_quality === "impulse"
+    ? { text: "IMPULSE", color: "bg-emerald-500/20 text-emerald-400 border-emerald-500/40" }
+    : { text: "FALLBACK", color: "bg-amber-500/20 text-amber-400 border-amber-500/40" };
+
+  const extensionBadge = has3Point
+    ? { text: "3-POINT A→B→C", color: "bg-cyan-500/20 text-cyan-400 border-cyan-500/40" }
+    : { text: "2-POINT", color: "bg-slate-500/20 text-slate-400 border-slate-500/40" };
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in duration-200"
@@ -312,7 +349,7 @@ export default function FibonacciModal({
       >
         {/* Header */}
         <div className="sticky top-0 z-10 bg-slate-900/95 backdrop-blur-sm border-b border-slate-700/50 px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 flex-wrap">
             <span className="text-lg">📐</span>
             <h2 className="text-xl font-bold text-slate-100">
               {symbol} Fibonacci Analysis
@@ -330,6 +367,14 @@ export default function FibonacciModal({
               }`}
             >
               {fib.trend}
+            </span>
+            {fib.swing_quality && (
+              <span className={`text-[10px] px-1.5 py-0.5 rounded-md border font-medium uppercase tracking-wide ${qualityBadge.color}`}>
+                {qualityBadge.text}
+              </span>
+            )}
+            <span className={`text-[10px] px-1.5 py-0.5 rounded-md border font-medium uppercase tracking-wide ${extensionBadge.color}`}>
+              {extensionBadge.text}
             </span>
           </div>
           <button
@@ -490,48 +535,63 @@ export default function FibonacciModal({
                     }}
                   />
 
-                  {/* Swing High dot (Point A) — cyan, plotted ON the price line */}
-                  {swingHighDate && (
+                  {/* Point A — Swing Low in uptrend (where buyers took over) — pink */}
+                  {pointADate && (
                     <ReferenceDot
-                      x={swingHighDate}
+                      x={pointADate}
                       y={
-                        priceHistory.find((p) => p.date === swingHighDate)
-                          ?.close || swingHigh
-                      }
-                      r={8}
-                      fill="#22d3ee"
-                      stroke="#0e7490"
-                      strokeWidth={2}
-                      label={<SwingLabel value="A" fill="#22d3ee" />}
-                    />
-                  )}
-
-                  {/* Swing Low dot (Point B) — pink, plotted ON the price line */}
-                  {swingLowDate && (
-                    <ReferenceDot
-                      x={swingLowDate}
-                      y={
-                        priceHistory.find((p) => p.date === swingLowDate)
-                          ?.close || swingLow
+                        priceHistory.find((p) => p.date === pointADate)
+                          ?.close || pointA
                       }
                       r={8}
                       fill="#f472b6"
                       stroke="#be185d"
                       strokeWidth={2}
-                      label={<SwingLabel value="B" fill="#f472b6" />}
+                      label={<SwingLabel value="A" fill="#f472b6" />}
                     />
                   )}
 
-                  {/* Current price dot (Point C) — white */}
+                  {/* Point B — Swing High in uptrend (where buyers paused) — cyan */}
+                  {pointBDate && (
+                    <ReferenceDot
+                      x={pointBDate}
+                      y={
+                        priceHistory.find((p) => p.date === pointBDate)
+                          ?.close || pointB
+                      }
+                      r={8}
+                      fill="#22d3ee"
+                      stroke="#0e7490"
+                      strokeWidth={2}
+                      label={<SwingLabel value="B" fill="#22d3ee" />}
+                    />
+                  )}
+
+                  {/* Point C — Pullback Low (3-point extension) — amber */}
+                  {has3Point && pullbackDate && (
+                    <ReferenceDot
+                      x={pullbackDate}
+                      y={
+                        priceHistory.find((p) => p.date === pullbackDate)
+                          ?.close || fib.pullback_low!
+                      }
+                      r={8}
+                      fill="#fbbf24"
+                      stroke="#b45309"
+                      strokeWidth={2}
+                      label={<SwingLabel value="C" fill="#fbbf24" />}
+                    />
+                  )}
+
+                  {/* Current price dot — white, only if no 3-point C */}
                   {lastDate && (
                     <ReferenceDot
                       x={lastDate}
                       y={currentPrice}
-                      r={8}
+                      r={6}
                       fill="#ffffff"
                       stroke="#64748b"
                       strokeWidth={2}
-                      label={<SwingLabel value="C" fill="#ffffff" />}
                     />
                   )}
                 </AreaChart>
@@ -548,7 +608,7 @@ export default function FibonacciModal({
               <span>📊</span>
               Retracement Levels
               <span className="text-slate-500 font-normal">
-                (from swing high ${formatCurrency(swingHigh)})
+                (from {isUptrend ? "swing high" : "swing low"} ${formatCurrency(isUptrend ? swingHigh : swingLow)})
               </span>
             </h3>
             <div className="bg-slate-800/50 rounded-lg border border-slate-700/50 overflow-hidden">
@@ -613,7 +673,10 @@ export default function FibonacciModal({
               <span>🎯</span>
               Extension Levels
               <span className="text-slate-500 font-normal">
-                (profit targets)
+                {has3Point
+                  ? `(projected from pullback C: $${formatCurrency(fib.pullback_low!)})`
+                  : "(profit targets)"
+                }
               </span>
             </h3>
             <div className="bg-slate-800/50 rounded-lg border border-slate-700/50 overflow-hidden">
@@ -638,6 +701,7 @@ export default function FibonacciModal({
                   {extensionEntries.map(([pct, price], idx) => {
                     const diff =
                       ((price - currentPrice) / currentPrice) * 100;
+                    const isAbove = price > currentPrice;
                     return (
                       <tr
                         key={`ext-row-${pct}`}
@@ -649,8 +713,8 @@ export default function FibonacciModal({
                         <td className="px-3 py-1.5 text-right text-slate-200 font-mono">
                           ${formatCurrency(price)}
                         </td>
-                        <td className="px-3 py-1.5 text-right font-mono text-cyan-400">
-                          +{diff.toFixed(1)}%
+                        <td className={`px-3 py-1.5 text-right font-mono ${isAbove ? "text-cyan-400" : "text-red-400"}`}>
+                          {diff >= 0 ? "+" : ""}{diff.toFixed(1)}%
                         </td>
                         <td className="px-3 py-1.5 text-right font-medium text-cyan-400">
                           Target {idx + 1}
@@ -668,35 +732,67 @@ export default function FibonacciModal({
             <h3 className="text-sm font-semibold text-slate-300 mb-2 flex items-center gap-2">
               <span>📐</span>
               Swing Points
+              {has3Point && (
+                <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-cyan-500/15 text-cyan-400 border border-cyan-500/30 font-medium">
+                  A→B→C EXTENSION
+                </span>
+              )}
             </h3>
             <div className="bg-slate-800/50 rounded-lg border border-slate-700/50 p-3 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
               <div>
-                <span className="text-cyan-400 font-semibold">A (High)</span>
+                <span className="text-pink-400 font-semibold">
+                  A ({isUptrend ? "Swing Low" : "Swing High"})
+                </span>
+                <p className="text-slate-500 text-[10px] mt-0.5">
+                  {isUptrend ? "Buyers took over" : "Sellers took over"}
+                </p>
                 <p className="text-slate-200 font-mono mt-0.5">
-                  ${formatCurrency(swingHigh)}
+                  ${formatCurrency(pointA)}
                 </p>
                 <p className="text-slate-500">
-                  {swingHighDate ? formatFullDate(swingHighDate) : "—"}
+                  {pointADate ? formatFullDate(pointADate) : "—"}
                 </p>
               </div>
               <div>
-                <span className="text-pink-400 font-semibold">B (Low)</span>
+                <span className="text-cyan-400 font-semibold">
+                  B ({isUptrend ? "Swing High" : "Swing Low"})
+                </span>
+                <p className="text-slate-500 text-[10px] mt-0.5">
+                  {isUptrend ? "Buyers paused" : "Sellers paused"}
+                </p>
                 <p className="text-slate-200 font-mono mt-0.5">
-                  ${formatCurrency(swingLow)}
+                  ${formatCurrency(pointB)}
                 </p>
                 <p className="text-slate-500">
-                  {swingLowDate ? formatFullDate(swingLowDate) : "—"}
+                  {pointBDate ? formatFullDate(pointBDate) : "—"}
                 </p>
               </div>
-              <div>
-                <span className="text-white font-semibold">C (Now)</span>
-                <p className="text-slate-200 font-mono mt-0.5">
-                  ${formatCurrency(currentPrice)}
-                </p>
-                <p className="text-slate-500">
-                  {lastDate ? formatFullDate(lastDate) : "—"}
-                </p>
-              </div>
+              {has3Point ? (
+                <div>
+                  <span className="text-amber-400 font-semibold">
+                    C (Pullback)
+                  </span>
+                  <p className="text-slate-500 text-[10px] mt-0.5">
+                    Retracement low
+                  </p>
+                  <p className="text-slate-200 font-mono mt-0.5">
+                    ${formatCurrency(fib.pullback_low!)}
+                  </p>
+                  <p className="text-slate-500">
+                    {pullbackDate ? formatFullDate(pullbackDate) : "—"}
+                  </p>
+                </div>
+              ) : (
+                <div>
+                  <span className="text-slate-500 font-semibold">
+                    C (Pullback)
+                  </span>
+                  <p className="text-slate-500 text-[10px] mt-0.5">
+                    No valid pullback found
+                  </p>
+                  <p className="text-slate-400 font-mono mt-0.5">—</p>
+                </div>
+              )}
               <div>
                 <span className="text-slate-400 font-semibold">Trend</span>
                 <p
@@ -711,7 +807,10 @@ export default function FibonacciModal({
                   {fib.trend}
                 </p>
                 <p className="text-slate-500">
-                  Range: ${formatCurrency(swingHigh - swingLow)}
+                  Impulse: ${formatCurrency(swingHigh - swingLow)}
+                </p>
+                <p className="text-slate-500">
+                  ({(((swingHigh - swingLow) / swingLow) * 100).toFixed(1)}% move)
                 </p>
               </div>
             </div>

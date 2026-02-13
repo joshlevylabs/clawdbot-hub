@@ -16,6 +16,9 @@ import {
   Trash2,
   Settings2,
   Eye,
+  ChevronDown,
+  ChevronUp,
+  BookOpen,
 } from "lucide-react";
 import { Newsletter, NewsletterIssue, NewsletterSubscriber } from "@/lib/newsletter-types";
 import { StatusBadge } from "@/components/newsletter/StatusBadge";
@@ -39,6 +42,7 @@ export default function NewsletterDetailPage() {
   const [showImport, setShowImport] = useState(false);
   const [toggling, setToggling] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [instructionsExpanded, setInstructionsExpanded] = useState(false);
 
   const loadNewsletter = useCallback(async () => {
     try {
@@ -191,6 +195,42 @@ export default function NewsletterDetailPage() {
         </div>
       </div>
 
+      {/* Generation Instructions */}
+      <div className="mb-6 bg-slate-800/50 rounded-xl border border-slate-800 p-4">
+        <button
+          onClick={() => setInstructionsExpanded(!instructionsExpanded)}
+          className="flex items-center gap-2 w-full text-left"
+        >
+          <BookOpen className="w-4 h-4 text-slate-400" />
+          <span className="text-sm font-medium text-slate-300">Generation Instructions</span>
+          {instructionsExpanded ? (
+            <ChevronUp className="w-4 h-4 text-slate-500 ml-auto" />
+          ) : (
+            <ChevronDown className="w-4 h-4 text-slate-500 ml-auto" />
+          )}
+        </button>
+        {newsletter.generation_instructions ? (
+          <div className="mt-2">
+            {instructionsExpanded ? (
+              <pre className="text-sm text-slate-400 whitespace-pre-wrap font-mono">{newsletter.generation_instructions}</pre>
+            ) : (
+              <p className="text-sm text-slate-400">
+                {newsletter.generation_instructions.length > 200
+                  ? newsletter.generation_instructions.slice(0, 200) + "…"
+                  : newsletter.generation_instructions}
+              </p>
+            )}
+          </div>
+        ) : (
+          <p className="mt-2 text-sm text-slate-600">
+            No generation instructions set.{" "}
+            <Link href={`/newsletter/${slug}/edit`} className="text-primary-400 hover:text-primary-300">
+              Add instructions
+            </Link>
+          </p>
+        )}
+      </div>
+
       {/* Tabs */}
       <div className="flex items-center gap-1 border-b border-slate-800 mb-6">
         <button
@@ -244,7 +284,13 @@ export default function NewsletterDetailPage() {
           ) : (
             <div className="space-y-2">
               {issues.map((issue) => (
-                <IssueRow key={issue.id} issue={issue} slug={slug} />
+                <IssueRow
+                  key={issue.id}
+                  issue={issue}
+                  slug={slug}
+                  newsletterId={newsletter.id}
+                  onDelete={(issueId) => setIssues((prev) => prev.filter((i) => i.id !== issueId))}
+                />
               ))}
             </div>
           )}

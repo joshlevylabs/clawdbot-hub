@@ -20,6 +20,7 @@ export function NewsletterForm({ newsletter, mode }: NewsletterFormProps) {
   const [category, setCategory] = useState(newsletter?.category || "");
   const [cadence, setCadence] = useState<"daily" | "weekly" | "biweekly" | "monthly">(newsletter?.cadence || "weekly");
   const [senderName, setSenderName] = useState(newsletter?.sender_name || "Joshua Levy");
+  const [generationInstructions, setGenerationInstructions] = useState(newsletter?.generation_instructions || "");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,7 +33,7 @@ export function NewsletterForm({ newsletter, mode }: NewsletterFormProps) {
     setError("");
 
     try {
-      const payload = { name, description, category, cadence, sender_name: senderName };
+      const payload = { name, description, category, cadence, sender_name: senderName, generation_instructions: generationInstructions };
 
       if (mode === "create") {
         const res = await fetch("/api/newsletters", {
@@ -129,6 +130,18 @@ export function NewsletterForm({ newsletter, mode }: NewsletterFormProps) {
           onChange={(e) => setSenderName(e.target.value)}
           className="w-full px-3 py-2.5 bg-slate-800 rounded-lg border border-slate-700 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20 text-sm text-slate-200"
           placeholder="Joshua Levy"
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm text-slate-400 mb-1.5 font-medium">Generation Instructions for Theo</label>
+        <p className="text-xs text-slate-500 mb-2">These instructions guide Theo when generating newsletter HTML. Supports markdown.</p>
+        <textarea
+          value={generationInstructions}
+          onChange={(e) => setGenerationInstructions(e.target.value)}
+          className="w-full px-3 py-2.5 bg-slate-800 rounded-lg border border-slate-700 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20 resize-none text-sm text-slate-200 font-mono"
+          rows={8}
+          placeholder="e.g. Include an inline SVG line chart showing portfolio vs SPY..."
         />
       </div>
 

@@ -7,6 +7,7 @@ export interface Newsletter {
   cadence: 'daily' | 'weekly' | 'biweekly' | 'monthly';
   status: 'draft' | 'active' | 'paused';
   sender_name: string;
+  generation_instructions?: string;
   created_at: string;
   updated_at: string;
   // Computed (joined):

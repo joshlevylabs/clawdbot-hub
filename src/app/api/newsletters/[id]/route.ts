@@ -76,7 +76,7 @@ export async function PUT(
   try {
     const { id } = await params;
     const body = await request.json();
-    const { name, description, category, cadence, sender_name, status } = body;
+    const { name, description, category, cadence, sender_name, status, generation_instructions } = body;
 
     // Resolve the newsletter
     const { data: existing } = await getNewsletter(id);
@@ -91,6 +91,7 @@ export async function PUT(
     if (cadence !== undefined) updates.cadence = cadence;
     if (sender_name !== undefined) updates.sender_name = sender_name;
     if (status !== undefined) updates.status = status;
+    if (generation_instructions !== undefined) updates.generation_instructions = generation_instructions;
 
     const { data, error } = await supabase
       .from('newsletters')

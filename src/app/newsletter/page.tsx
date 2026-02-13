@@ -56,12 +56,20 @@ export default function NewsletterDashboardPage() {
             Manage your newsletters, subscribers, and issues
           </p>
         </div>
-        <Link href="/newsletter/create">
-          <button className="btn btn-primary flex items-center gap-2">
-            <Plus className="w-4 h-4" strokeWidth={1.5} />
-            Create Newsletter
-          </button>
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link href="/newsletter/contacts">
+            <button className="flex items-center gap-2 px-4 py-2 text-sm rounded-lg border border-slate-700 text-slate-300 hover:bg-slate-800 transition-colors">
+              <Users className="w-4 h-4" strokeWidth={1.5} />
+              Contacts
+            </button>
+          </Link>
+          <Link href="/newsletter/create">
+            <button className="btn btn-primary flex items-center gap-2">
+              <Plus className="w-4 h-4" strokeWidth={1.5} />
+              Create Newsletter
+            </button>
+          </Link>
+        </div>
       </div>
 
       {/* Stats Cards */}

@@ -1,9 +1,9 @@
 {
-  "timestamp": "2026-02-13T05:11:02.136159",
-  "last_updated": "2026-02-13 05:11:02",
-  "last_updated_unix": 1770988262,
+  "timestamp": "2026-02-13T05:25:35.892268",
+  "last_updated": "2026-02-13 05:25:35",
+  "last_updated_unix": 1770989135,
   "fear_greed": {
-    "current": 35.7055900621118,
+    "current": 35.8091097308489,
     "rating": "fear",
     "is_fear": false,
     "is_extreme_fear": false,
@@ -159,11 +159,11 @@
       {
         "date": "2026-02-13",
         "score": 45,
-        "vix": 21.1
+        "vix": 21.67
       }
     ],
     "breakdown": {
-      "aggregate_score": 35.4,
+      "aggregate_score": 34.7,
       "rating": "Fear",
       "components": [
         {
@@ -189,10 +189,10 @@
         },
         {
           "name": "Put/Call Ratio",
-          "score": 49.4,
+          "score": 46.3,
           "signal": "NEUTRAL",
-          "description": "VIX at 21.1 (proxy for options sentiment)",
-          "raw_value": 21.1
+          "description": "VIX at 21.7 (proxy for options sentiment)",
+          "raw_value": 21.7
         },
         {
           "name": "Junk Bond Demand",
@@ -203,10 +203,10 @@
         },
         {
           "name": "Market Volatility",
-          "score": 1.9,
+          "score": 0,
           "signal": "FEAR",
-          "description": "VIX 21.1 is +28.9% vs 50-day MA (16.4)",
-          "raw_value": 28.9
+          "description": "VIX 21.7 is +32.2% vs 50-day MA (16.4)",
+          "raw_value": 32.2
         },
         {
           "name": "Safe Haven Demand",
@@ -296,7 +296,7 @@
         "signal": "HOLD",
         "signal_strength": 0,
         "fear_threshold": 15,
-        "current_fg": 35.7055900621118,
+        "current_fg": 35.8091097308489,
         "regime": "sideways",
         "regime_weight": 1.0,
         "hold_days": 5,
@@ -380,7 +380,7 @@
         "signal": "HOLD",
         "signal_strength": 0,
         "fear_threshold": 15,
-        "current_fg": 35.7055900621118,
+        "current_fg": 35.8091097308489,
         "regime": "sideways",
         "regime_weight": 1.0,
         "hold_days": 5,
@@ -464,7 +464,7 @@
         "signal": "HOLD",
         "signal_strength": 0,
         "fear_threshold": 15,
-        "current_fg": 35.7055900621118,
+        "current_fg": 35.8091097308489,
         "regime": "sideways",
         "regime_weight": 1.0,
         "hold_days": 5,
@@ -548,7 +548,7 @@
         "signal": "HOLD",
         "signal_strength": 0,
         "fear_threshold": 15,
-        "current_fg": 35.7055900621118,
+        "current_fg": 35.8091097308489,
         "regime": "bear",
         "regime_weight": 1.0,
         "hold_days": 5,
@@ -632,7 +632,7 @@
         "signal": "HOLD",
         "signal_strength": 0,
         "fear_threshold": 15,
-        "current_fg": 35.7055900621118,
+        "current_fg": 35.8091097308489,
         "regime": "sideways",
         "regime_weight": 1.0,
         "hold_days": 5,
@@ -716,7 +716,7 @@
         "signal": "HOLD",
         "signal_strength": 0,
         "fear_threshold": 15,
-        "current_fg": 35.7055900621118,
+        "current_fg": 35.8091097308489,
         "regime": "sideways",
         "regime_weight": 1.0,
         "hold_days": 10,
@@ -800,7 +800,7 @@
         "signal": "HOLD",
         "signal_strength": 0,
         "fear_threshold": 15,
-        "current_fg": 35.7055900621118,
+        "current_fg": 35.8091097308489,
         "regime": "bull",
         "regime_weight": 1.0,
         "hold_days": 5,
@@ -884,7 +884,7 @@
         "signal": "HOLD",
         "signal_strength": 0,
         "fear_threshold": 15,
-        "current_fg": 35.7055900621118,
+        "current_fg": 35.8091097308489,
         "regime": "bull",
         "regime_weight": 1.0,
         "hold_days": 5,
@@ -968,7 +968,7 @@
         "signal": "HOLD",
         "signal_strength": 0,
         "fear_threshold": 12,
-        "current_fg": 35.7055900621118,
+        "current_fg": 35.8091097308489,
         "regime": "bull",
         "regime_weight": 1.0,
         "hold_days": 5,
@@ -1052,7 +1052,7 @@
         "signal": "HOLD",
         "signal_strength": 0,
         "fear_threshold": 12,
-        "current_fg": 35.7055900621118,
+        "current_fg": 35.8091097308489,
         "regime": "bull",
         "regime_weight": 1.0,
         "hold_days": 10,
@@ -1136,7 +1136,7 @@
         "signal": "HOLD",
         "signal_strength": 0,
         "fear_threshold": 15,
-        "current_fg": 35.7055900621118,
+        "current_fg": 35.8091097308489,
         "regime": "bull",
         "regime_weight": 1.0,
         "hold_days": 5,
@@ -1220,7 +1220,7 @@
         "signal": "HOLD",
         "signal_strength": 0,
         "fear_threshold": 12,
-        "current_fg": 35.7055900621118,
+        "current_fg": 35.8091097308489,
         "regime": "bull",
         "regime_weight": 1.0,
         "hold_days": 5,
@@ -1304,7 +1304,7 @@
         "signal": "HOLD",
         "signal_strength": 0,
         "fear_threshold": 12,
-        "current_fg": 35.7055900621118,
+        "current_fg": 35.8091097308489,
         "regime": "bull",
         "regime_weight": 1.0,
         "hold_days": 5,
@@ -1388,7 +1388,7 @@
         "signal": "HOLD",
         "signal_strength": 0,
         "fear_threshold": 12,
-        "current_fg": 35.7055900621118,
+        "current_fg": 35.8091097308489,
         "regime": "sideways",
         "regime_weight": 1.0,
         "hold_days": 5,
@@ -1472,7 +1472,7 @@
         "signal": "HOLD",
         "signal_strength": 0,
         "fear_threshold": 12,
-        "current_fg": 35.7055900621118,
+        "current_fg": 35.8091097308489,
         "regime": "sideways",
         "regime_weight": 1.0,
         "hold_days": 10,
@@ -1556,7 +1556,7 @@
         "signal": "HOLD",
         "signal_strength": 0,
         "fear_threshold": 12,
-        "current_fg": 35.7055900621118,
+        "current_fg": 35.8091097308489,
         "regime": "bull",
         "regime_weight": 1.0,
         "hold_days": 5,
@@ -1640,7 +1640,7 @@
         "signal": "HOLD",
         "signal_strength": 0,
         "fear_threshold": 12,
-        "current_fg": 35.7055900621118,
+        "current_fg": 35.8091097308489,
         "regime": "bull",
         "regime_weight": 1.0,
         "hold_days": 5,
@@ -1724,7 +1724,7 @@
         "signal": "HOLD",
         "signal_strength": 0,
         "fear_threshold": 12,
-        "current_fg": 35.7055900621118,
+        "current_fg": 35.8091097308489,
         "regime": "bull",
         "regime_weight": 1.0,
         "hold_days": 5,
@@ -1808,7 +1808,7 @@
         "signal": "HOLD",
         "signal_strength": 0,
         "fear_threshold": 12,
-        "current_fg": 35.7055900621118,
+        "current_fg": 35.8091097308489,
         "regime": "bull",
         "regime_weight": 1.0,
         "hold_days": 20,
@@ -1892,7 +1892,7 @@
         "signal": "HOLD",
         "signal_strength": 0,
         "fear_threshold": 15,
-        "current_fg": 35.7055900621118,
+        "current_fg": 35.8091097308489,
         "regime": "bull",
         "regime_weight": 1.0,
         "hold_days": 15,
@@ -1976,7 +1976,7 @@
         "signal": "HOLD",
         "signal_strength": 0,
         "fear_threshold": 15,
-        "current_fg": 35.7055900621118,
+        "current_fg": 35.8091097308489,
         "regime": "sideways",
         "regime_weight": 1.0,
         "hold_days": 5,
@@ -2060,7 +2060,7 @@
         "signal": "HOLD",
         "signal_strength": 0,
         "fear_threshold": 15,
-        "current_fg": 35.7055900621118,
+        "current_fg": 35.8091097308489,
         "regime": "bull",
         "regime_weight": 1.0,
         "hold_days": 10,
@@ -2144,7 +2144,7 @@
         "signal": "HOLD",
         "signal_strength": 0,
         "fear_threshold": 15,
-        "current_fg": 35.7055900621118,
+        "current_fg": 35.8091097308489,
         "regime": "bear",
         "regime_weight": 1.0,
         "hold_days": 5,
@@ -2228,7 +2228,7 @@
         "signal": "HOLD",
         "signal_strength": 0,
         "fear_threshold": 15,
-        "current_fg": 35.7055900621118,
+        "current_fg": 35.8091097308489,
         "regime": "bull",
         "regime_weight": 1.0,
         "hold_days": 10,
@@ -3353,8 +3353,8 @@
     "kalshi": {
       "available": true,
       "signal": "NEUTRAL",
-      "confidence": 14,
-      "expected_price": 6836.217898717949,
+      "confidence": 15,
+      "expected_price": 6835.670681707317,
       "implied_range": [
         6800.0,
         6824.9999
@@ -3363,14 +3363,14 @@
       "top_markets": [
         {
           "ticker": "KXINX-26FEB13H1600-B6812",
-          "yes_bid": 14,
+          "yes_bid": 15,
           "range_low": 6800.0,
           "range_high": 6824.9999,
           "midpoint": 6812.499949999999
         },
         {
           "ticker": "KXINX-26FEB13H1600-B6837",
-          "yes_bid": 13,
+          "yes_bid": 14,
           "range_low": 6825.0,
           "range_high": 6849.9999,
           "midpoint": 6837.499949999999
@@ -3383,7 +3383,7 @@
           "midpoint": 6862.499949999999
         }
       ],
-      "timestamp": "2026-02-13T13:10:48.834734+00:00",
+      "timestamp": "2026-02-13T13:25:21.947043+00:00",
       "historical_accuracy": 96.6,
       "source": "kalshi",
       "cached": false
@@ -3397,40 +3397,40 @@
         {
           "title": "Who will Trump nominate as Fed Chair?",
           "probability": null,
-          "liquidity": 64854702.70371,
-          "volume": 466657567.62011,
+          "liquidity": 64880204.62444,
+          "volume": 466761581.916407,
           "id": "35908"
         },
         {
           "title": "Will China invade Taiwan by end of 2026?",
           "probability": null,
-          "liquidity": 556142.4487,
-          "volume": 8477613.788425,
+          "liquidity": 556194.2045,
+          "volume": 8477644.899525,
           "id": "34044"
         },
         {
           "title": "MegaETH market cap (FDV) one day after launch?",
           "probability": null,
-          "liquidity": 330022.46357,
-          "volume": 11546279.630537,
+          "liquidity": 326048.36513,
+          "volume": 11552796.998805,
           "id": "28999"
         },
         {
           "title": "MicroStrategy sells any Bitcoin by ___ ?",
           "probability": null,
-          "liquidity": 219385.73501,
-          "volume": 20409556.295782,
+          "liquidity": 217680.4,
+          "volume": 20412484.463687,
           "id": "16167"
         },
         {
           "title": "How much revenue will the U.S. raise from tariffs in 2025?",
           "probability": null,
-          "liquidity": 206509.26399,
-          "volume": 7084027.952323,
+          "liquidity": 208399.56548,
+          "volume": 7084159.932323,
           "id": "22862"
         }
       ],
-      "timestamp": "2026-02-13T13:10:49.197084+00:00",
+      "timestamp": "2026-02-13T13:25:22.295781+00:00",
       "source": "polymarket"
     }
   },
@@ -3448,7 +3448,7 @@
     "spy_price": 681.27,
     "rsp_price": 200.79,
     "methodology": "RSP/SPY relative performance as breadth proxy. RSP outperformance = more stocks participating.",
-    "timestamp": "2026-02-13T05:10:49.663176"
+    "timestamp": "2026-02-13T05:25:22.687638"
   },
   "rotation": {
     "available": false
@@ -3572,11 +3572,11 @@
     ]
   },
   "capital_rebalancing": {
-    "capital_deployed_pct": 0,
-    "available_cash": 100000.0,
-    "total_equity": 100000.0,
-    "threshold_triggered": false,
+    "capital_deployed_pct": 93.7,
+    "available_cash": 6246.21,
+    "total_equity": 99345.9,
+    "threshold_triggered": true,
     "swap_suggestions": [],
-    "no_swap_reason": "No positions \u2014 all capital available for new trades"
+    "no_swap_reason": "No BUY signals available for swap"
   }
 }

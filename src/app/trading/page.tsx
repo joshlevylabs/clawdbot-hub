@@ -832,13 +832,127 @@ export default function TradingPage() {
           {/* ===== TRADES TAB ===== */}
           {activeTab === "trades" && !loading && !error && (
             <>
+              {/* Active Trades (from open positions) */}
+              {positions.length > 0 && (
+                <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50 mb-4">
+                  <h2 className="text-lg font-semibold text-slate-100 mb-4 flex items-center gap-2">
+                    <TrendingUp className="w-5 h-5 text-emerald-400" />
+                    Active Trades ({positions.length})
+                  </h2>
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead>
+                        <tr className="text-xs text-slate-500 uppercase border-b border-slate-700">
+                          <th className="text-left py-2 px-2">Opened</th>
+                          <th className="text-left py-2 px-2">Symbol</th>
+                          <th className="text-right py-2 px-2">Qty</th>
+                          <th className="text-right py-2 px-2">Entry</th>
+                          <th className="text-right py-2 px-2">Current</th>
+                          <th className="text-right py-2 px-2">Unrealized P/L</th>
+                          <th className="text-right py-2 px-2">P/L %</th>
+                          <th className="text-right py-2 px-2">Days Held</th>
+                          <th className="text-right py-2 px-2">Hold Target</th>
+                          <th className="text-left py-2 px-2">Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {positions
+                          .sort((a, b) => {
+                            const pnlA = ((a.current_price || a.entry_price) - a.entry_price) * a.qty;
+                            const pnlB = ((b.current_price || b.entry_price) - b.entry_price) * b.qty;
+                            return pnlA - pnlB;
+                          })
+                          .map((pos) => {
+                            const curPrice = pos.current_price || pos.entry_price;
+                            const unrealizedPnl = (curPrice - pos.entry_price) * pos.qty;
+                            const unrealizedPct = ((curPrice - pos.entry_price) / pos.entry_price) * 100;
+                            const isProfit = unrealizedPnl >= 0;
+                            const openedDate = new Date(pos.opened_at);
+                            const daysHeld = Math.floor((Date.now() - openedDate.getTime()) / (1000 * 60 * 60 * 24));
+                            const holdTarget = pos.hold_days || 10;
+                            const holdProgress = Math.min(daysHeld / holdTarget, 1);
+                            const isNearExpiry = daysHeld >= holdTarget - 1;
+                            const isPastExpiry = daysHeld >= holdTarget;
+                            return (
+                              <tr key={pos.id} className="border-b border-slate-800 hover:bg-slate-800/50">
+                                <td className="py-2 px-2 text-sm text-slate-400">{formatDate(pos.opened_at)}</td>
+                                <td className="py-2 px-2 font-medium text-slate-200">{pos.symbol}</td>
+                                <td className="py-2 px-2 text-right font-mono text-slate-300">{pos.qty}</td>
+                                <td className="py-2 px-2 text-right font-mono text-slate-400">${formatCurrency(pos.entry_price)}</td>
+                                <td className="py-2 px-2 text-right font-mono text-slate-300">${formatCurrency(curPrice)}</td>
+                                <td className={`py-2 px-2 text-right font-mono font-bold ${isProfit ? "text-emerald-400" : "text-red-400"}`}>
+                                  {isProfit ? "+" : ""}${formatCurrency(unrealizedPnl)}
+                                </td>
+                                <td className={`py-2 px-2 text-right font-mono ${isProfit ? "text-emerald-400" : "text-red-400"}`}>
+                                  {isProfit ? "+" : ""}{unrealizedPct.toFixed(2)}%
+                                </td>
+                                <td className="py-2 px-2 text-right text-sm text-slate-400">
+                                  <div className="flex items-center justify-end gap-2">
+                                    <span>{daysHeld}d</span>
+                                    <div className="w-12 h-1.5 bg-slate-700 rounded-full overflow-hidden">
+                                      <div
+                                        className={`h-full rounded-full ${
+                                          isPastExpiry ? "bg-red-400" : isNearExpiry ? "bg-amber-400" : "bg-emerald-400"
+                                        }`}
+                                        style={{ width: `${holdProgress * 100}%` }}
+                                      />
+                                    </div>
+                                  </div>
+                                </td>
+                                <td className="py-2 px-2 text-right font-mono text-slate-500">{holdTarget}d</td>
+                                <td className="py-2 px-2 text-sm">
+                                  {isPastExpiry ? (
+                                    <span className="px-2 py-0.5 rounded text-xs bg-red-900/30 text-red-400">Past Hold</span>
+                                  ) : isNearExpiry ? (
+                                    <span className="px-2 py-0.5 rounded text-xs bg-amber-900/30 text-amber-400">Expiring</span>
+                                  ) : (
+                                    <span className="px-2 py-0.5 rounded text-xs bg-emerald-900/30 text-emerald-400">Holding</span>
+                                  )}
+                                </td>
+                              </tr>
+                            );
+                          })}
+                      </tbody>
+                    </table>
+                  </div>
+                  {/* Summary row */}
+                  <div className="mt-3 pt-3 border-t border-slate-700/50 flex gap-6 text-xs">
+                    <div>
+                      <span className="text-slate-500">Total Unrealized:</span>
+                      <span className={`ml-2 font-mono font-bold ${
+                        positions.reduce((s, p) => s + ((p.current_price || p.entry_price) - p.entry_price) * p.qty, 0) >= 0
+                          ? "text-emerald-400" : "text-red-400"
+                      }`}>
+                        {positions.reduce((s, p) => s + ((p.current_price || p.entry_price) - p.entry_price) * p.qty, 0) >= 0 ? "+" : ""}
+                        ${formatCurrency(positions.reduce((s, p) => s + ((p.current_price || p.entry_price) - p.entry_price) * p.qty, 0))}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-slate-500">Deployed:</span>
+                      <span className="ml-2 font-mono text-slate-300">
+                        ${formatCurrency(positions.reduce((s, p) => s + p.entry_price * p.qty, 0))}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-slate-500">Winners:</span>
+                      <span className="ml-2 font-mono text-emerald-400">
+                        {positions.filter(p => (p.current_price || p.entry_price) >= p.entry_price).length}
+                      </span>
+                      <span className="text-slate-600 mx-1">/</span>
+                      <span className="text-slate-500">Losers:</span>
+                      <span className="ml-2 font-mono text-red-400">
+                        {positions.filter(p => (p.current_price || 0) < p.entry_price).length}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Closed Trade History */}
               {trades.length === 0 ? (
-                <div className="bg-slate-800/50 rounded-xl p-12 border border-slate-700/50 text-center">
-                  <Clock className="w-10 h-10 text-slate-600 mx-auto mb-3" />
-                  <p className="text-slate-400 text-lg">No closed trades yet</p>
-                  <p className="text-sm text-slate-600 mt-1">
-                    Trades will appear here once positions are opened and closed
-                  </p>
+                <div className="bg-slate-800/50 rounded-xl p-8 border border-slate-700/50 text-center">
+                  <Clock className="w-8 h-8 text-slate-600 mx-auto mb-2" />
+                  <p className="text-slate-500 text-sm">No closed trades yet — positions will move here when sold</p>
                 </div>
               ) : (
                 <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50">

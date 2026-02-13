@@ -1046,7 +1046,9 @@ export default function ActionsDashboard({
             const pit = pitData[item.symbol];
             if (!pit?.pit_verdict) return <span className="text-xs text-slate-600">—</span>;
             const v = pit.pit_verdict.toUpperCase();
-            const color = v.startsWith("BUY") ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/50"
+            const color = v.startsWith("STRONG BUY") ? "bg-emerald-500/30 text-emerald-300 border-emerald-400/60 shadow-sm shadow-emerald-500/20"
+              : v.startsWith("STRONG SELL") ? "bg-red-500/30 text-red-300 border-red-400/60 shadow-sm shadow-red-500/20"
+              : v.startsWith("BUY") ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/50"
               : v.startsWith("CAUTIOUS") ? "bg-amber-500/20 text-amber-400 border-amber-500/50"
               : v.startsWith("SELL") ? "bg-red-500/20 text-red-400 border-red-500/50"
               : v.startsWith("AVOID") ? "bg-red-500/20 text-red-400 border-red-500/50"

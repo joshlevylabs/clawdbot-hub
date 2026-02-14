@@ -546,7 +546,7 @@ const fetchers: Record<string, DataFetcher> = {
     if (!data) return { error: 'No podcast data available' };
     const episodes = ((data as Record<string, unknown>).episodes || data) as unknown[];
     const count = Number(params.count) || 1;
-    const latest = Array.isArray(episodes) ? episodes.slice(0, count) : [];
+    const latest = Array.isArray(episodes) ? episodes.slice(-count).reverse() : [];
     return { episodes: latest };
   },
 

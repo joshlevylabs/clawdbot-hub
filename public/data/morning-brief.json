@@ -1,246 +1,144 @@
 {
-  "date": "2026-02-13",
+  "date": "2026-02-14",
   "time": "6:00 AM",
   "sections": {
     "prayer": {
-      "title": "\ud83d\udd4a\ufe0f Morning Prayer",
-      "date": "Friday, February 13, 2026",
-      "hebrew_date": "15 Cheshvan",
+      "title": "🕊️ Morning Prayer",
+      "date": "Saturday, February 14, 2026",
+      "hebrew_date": "16 Cheshvan",
       "parsha": "Vayishlach",
       "parsha_theme": "confronting fears, transformation, reconciliation",
-      "modeh_ani": "\u05de\u05d5\u05d3\u05d4 \u05d0\u05e0\u05d9 \u05dc\u05e4\u05e0\u05d9\u05da \u2014 I gratefully thank You, living and eternal King, for returning my soul within me with compassion \u2014 great is Your faithfulness.",
-      "blessing": "Blessed are You who gives strength to the weary and renews the spirit of the exhausted.",
+      "modeh_ani": "מודה אני לפניך — I gratefully thank You, living and eternal King, for returning my soul within me with compassion — great is Your faithfulness.",
+      "blessing": "Blessed are You who clothes the naked — provide for all my needs this day.",
       "psalm": "Psalm 90:17: \"May the favor of the Lord our God rest on us; establish the work of our hands.\"",
-      "proverb": "Proverbs 27:23: \"Know well the condition of your flocks, and give attention to your herds.\"",
-      "intention": "Help me be present with my family. Let my work create margin, not distance.",
-      "closing": "Baruch atah Adonai \u2014 Blessed are You, Lord, who renews creation daily with goodness.",
-      "audio": "/audio/brief-2026-02-13-prayer.ogg"
+      "proverb": "Proverbs 21:5: \"The plans of the diligent lead surely to abundance.\"",
+      "intention": "Give me discernment between opportunities and distractions. Not everything good is good for me right now.",
+      "closing": "The Lord goes before you today. He will be with you; He will never leave you nor forsake you. Do not be afraid; do not be discouraged."
     },
     "weather": {
-      "title": "\u2600\ufe0f Weather \u2014 Temecula, CA",
-      "temperature": "70\u00b0F / 42\u00b0F",
-      "condition": "Sunny & Clear",
-      "wind": "W 6-16 mph",
-      "summary": "Beautiful Friday ahead. High near 70\u00b0F, low 42\u00b0F. Clear skies all day \u2014 perfect weather for the weekend.",
-      "audio": "/audio/brief-2026-02-13-weather.ogg"
+      "title": "☀️ Weather — Temecula",
+      "temperature": "51°F",
+      "feels_like": "51°F",
+      "condition": "Overcast",
+      "high": "66°F",
+      "low": "48°F",
+      "wind": "2 mph",
+      "humidity": "96%",
+      "sunrise": "6:33 AM",
+      "sunset": "5:32 PM",
+      "summary": "Cool overcast morning, high humidity. Clearing to mid-60s by afternoon. Valentine's Day weather — good for an evening out."
     },
     "calendar": {
-      "title": "\ud83d\udcc5 Calendar",
-      "items": [
-        "No events today on josh@joshlevylabs.com"
-      ],
-      "note": "\u26a0\ufe0f OAuth tokens expired for joshua.seth.levy@gmail.com, farbisimo@gmail.com, and josh@thelyceum.io \u2014 need re-auth via `gog auth add`",
-      "audio": "/audio/brief-2026-02-13-calendar.ogg"
+      "title": "📅 Calendar",
+      "today": "No events scheduled (Saturday — Valentine's Day 💕)",
+      "note": "3 accounts have expired OAuth tokens (joshua.seth.levy@gmail.com, farbisimo@gmail.com, josh@thelyceum.io). Re-auth needed.",
+      "items": []
     },
     "email": {
-      "title": "\ud83d\udce7 Email Highlights",
+      "title": "📧 Email Highlights",
       "needs_attention": [
-        {
-          "from": "LinkedIn",
-          "subject": "You have 1 new message",
-          "note": "Check DM"
-        },
-        {
-          "from": "Vercel",
-          "subject": "Failed deployment from joshlevylabs",
-          "note": "Deployment failure \u2014 investigate"
-        }
+        {"from": "GitHub", "subject": "Personal access token about to expire", "note": "Action needed — renew token"},
+        {"from": "Discord", "subject": "davidh mentioned you in Midjourney", "note": "Check mention"},
+        {"from": "Vercel", "subject": "Increased On-Demand Usage for joshlevylabs", "note": "Usage spike — review billing"}
       ],
       "dev_work": [
-        {
-          "from": "Vercel",
-          "subject": "Weekly Usage Summary for joshlevylabs' projects",
-          "note": "Review usage"
-        },
-        {
-          "from": "Supabase (Ant Wilson)",
-          "subject": "Supa Update February 2026",
-          "note": "Platform updates"
-        },
-        {
-          "from": "OpusClip",
-          "subject": "Automatically add transition effects",
-          "note": "New feature for clips"
-        }
+        {"from": "Railway", "subject": "Chat with your Canvas, DB Metrics, Network flows", "note": "Product update"},
+        {"from": "Excalidraw+", "subject": "Invoice for joshlevylabs workspace - Feb 2026", "note": "Monthly billing"}
       ],
-      "good_news": [
-        {
-          "from": "Bluevine",
-          "subject": "Your automatic transfer was successful",
-          "note": "Transfer complete \u2705"
-        }
+      "good_news": [],
+      "note": "joshua.seth.levy@gmail.com OAuth expired — needs re-auth to check."
+    },
+    "markets": {
+      "title": "📈 Markets & Trading Signals",
+      "summary": {
+        "date": "2026-02-14",
+        "market_status": "CLOSED (Saturday)",
+        "spy": {"price": 681.75, "change_pct": 0.07},
+        "vix": 20.6,
+        "sentiment": "NEUTRAL",
+        "volatility": "ELEVATED"
+      },
+      "overview": [
+        {"symbol": "SPY", "price": 681.75, "change_pct": 0.07, "trend": "BEARISH"},
+        {"symbol": "QQQ", "price": 601.92, "change_pct": 0.21, "trend": "NEUTRAL"},
+        {"symbol": "IWM", "price": 262.96, "change_pct": 1.32, "trend": "NEUTRAL"},
+        {"symbol": "DIA", "price": 495.28, "change_pct": 0.12, "trend": "NEUTRAL"}
       ],
-      "other": [
-        {
-          "from": "Discord",
-          "subject": "mikety5963 mentioned you in Quantbase",
-          "note": "Community mention"
-        }
-      ],
-      "audio": "/audio/brief-2026-02-13-email.ogg"
+      "signals": [
+        {"type": "SELL", "symbol": "AAPL", "price": 255.78, "entry": 255.78, "stop": 268.85, "target": 236.18, "confidence": "MEDIUM", "rationale": "BEARISH trend, MACD bearish crossover"}
+      ]
     },
     "mre": {
-      "title": "\ud83d\udcca MRE Trading",
-      "fear_greed": 35,
+      "title": "📊 MRE Trading",
+      "fear_greed": 36,
       "fear_greed_rating": "fear",
       "regime": "sideways",
-      "regime_detail": "SPY sideways (681.27), QQQ sideways (600.64). VIX elevated at 21.84. Only 3/11 sectors advancing.",
+      "regime_stage": "early",
+      "regime_days": 3,
+      "breadth": "STRONG_BULL",
+      "breadth_trend": "expanding",
       "todays_plays": [],
-      "no_plays_reason": "All 24 assets signaling HOLD. Fear at 35 hasn't breached the 25 panic-buy threshold. No BUY triggers today.",
       "pending_triggers": [],
-      "pair_signals": [
-        {
-          "pair": "EEM/SPY",
-          "signal": "PAIR_REVERT",
-          "detail": "EEM overvalued vs SPY (z-score 2.17). Buy SPY, sell EEM. 81.5% confidence."
-        }
-      ],
-      "sector_highlights": [
-        {
-          "sector": "Energy",
-          "symbol": "XLE",
-          "regime": "bull",
-          "note": "Momentum +13.4%, 33 days in bull"
-        },
-        {
-          "sector": "Healthcare",
-          "symbol": "XLV",
-          "regime": "bull",
-          "note": "Defensive strength, $156"
-        },
-        {
-          "sector": "Consumer Staples",
-          "symbol": "XLP",
-          "regime": "bull",
-          "note": "Strong +8.3% momentum"
-        },
-        {
-          "sector": "International",
-          "symbol": "EWJ",
-          "regime": "bull",
-          "note": "Japan +9.3% momentum, 85% confidence"
-        },
-        {
-          "sector": "Technology",
-          "symbol": "XLK",
-          "regime": "bear",
-          "note": "Early bear, -4.3% momentum"
-        },
-        {
-          "sector": "Crypto",
-          "symbol": "BITO",
-          "regime": "bear",
-          "note": "Down -31.5% momentum, bear confirmed"
-        }
-      ],
-      "breadth": "BULL \u2014 RSP outperforming SPY (breadth expanding). 6/10 advancing days.",
-      "kalshi": "Neutral. Implied SPY close ~6812-6825 range.",
-      "polymarket": "Bearish signal. Top events: Trump Fed Chair nomination, China-Taiwan risk, tariff revenue tracking.",
-      "capital": "93.7% deployed, $6,246 cash available.",
-      "thesis": "Fear elevated at 35 but not panic-level. Sideways regime = choppy. Defensives and energy leading, tech lagging. No buys until fear drops below 25 or regime shifts. Watch the EEM/SPY pair revert opportunity.",
-      "pulse": "NEUTRAL \u2014 Models diverge: F&G says fear, cycle says mid-bull. Reduce position sizes, focus on mean-reversion plays.",
-      "audio": "/audio/brief-2026-02-13-mre.ogg"
+      "pulse_outlook": "NEUTRAL",
+      "thesis": "Fear elevated (36), regime sideways (day 3). No active BUY signals — all 24 assets in HOLD. Breadth is strong (RSP outperforming SPY) which is encouraging, but models diverge: F&G says fear while cycle says mid-bull. Reduce position sizes, focus on range-bound plays until direction clears. Markets closed today (Saturday).",
+      "capital_deployed_pct": 72.3,
+      "available_cash": 27753.63,
+      "warnings": ["Models diverge — F&G says fear while cycle says mid_bull"]
     },
     "family": {
-      "title": "\u2764\ufe0f Family Focus",
-      "temperature": "critical",
+      "title": "💕 Family Focus — Valentine's Day",
+      "relationship_temp": "critical",
       "trend": "urgent",
-      "ratio": 1.2,
-      "recommendations": [
-        "PRIORITY: Focus on repair. Acknowledge recent conflicts without defending.",
-        "Increase acts of service dramatically this week.",
-        "Create space for her to express frustrations without fixing."
-      ],
+      "compass": {"power": 0.8, "safety": 2.0},
+      "recent_pattern": "Recent interactions show mixed signals — positive moments of supportive listening and initiative, but stress around timing, intimacy rejection, and nighttime baby duties creating friction.",
+      "todays_action": "🔴 VALENTINE'S DAY PRIORITY: This is a critical repair opportunity. Put the phone away entirely after kids sleep. No building tonight. Give Jillian your full, undivided attention. Acknowledge recent stress without defending. Let her lead the evening.",
       "love_languages": "Quality Time + Acts of Service",
-      "positive_peak_hours": "7-9 PM \u2014 Your best connection window",
-      "action_today": "It's Friday \u2014 perfect for an intentional date night or quality evening together. No screens, no work talk. Just be present."
+      "recommendations": [
+        "Handle bedtime routine solo so she gets time to get ready",
+        "Put phone away completely after 8pm — zero exceptions tonight",
+        "Acknowledge the hard weeks without fixing or defending",
+        "Create space for her to express frustrations without solving",
+        "Increase acts of service dramatically — today especially"
+      ]
     },
     "news": {
-      "title": "\ud83c\udf0d World News",
+      "title": "🌍 World News",
       "subsections": {
         "israel": {
-          "title": "\ud83c\uddee\ud83c\uddf1 Israel",
+          "title": "🇮🇱 Israel & Middle East",
           "items": [
-            {
-              "headline": "Trump tells Herzog he should be 'ashamed' for not pardoning Netanyahu \u2014 political tensions escalate between Washington and Jerusalem"
-            },
-            {
-              "headline": "Israel looks to wean itself off US aid \u2014 PM urges 'maximal independence' while officials warn shift could destabilize region"
-            },
-            {
-              "headline": "Ex-Shin Bet chiefs issue rare joint letter condemning 'unprecedented attacks' on security agency by coalition members"
-            },
-            {
-              "headline": "UK High Court rules banning of anti-Israel Palestine Action group unlawful"
-            },
-            {
-              "headline": "Israeli skier Attila Kertesz makes history as first Israeli Olympic cross-country skier at Milano Cortina 2026"
-            },
-            {
-              "headline": "Iranian Jewish community in Israel protests in support of Iranian people near US Embassy in Tel Aviv"
-            }
+            {"headline": "Rubio says UN plays 'no role' in resolving conflicts at Munich Security Conference", "source": "Times of Israel"},
+            {"headline": "Trump: No 'definitive' agreement with Netanyahu — US-Iran talks to continue", "source": "Reuters"},
+            {"headline": "Hamas delegation in Cairo for disarmament talks; sides wait for US to formalize proposal", "source": "Times of Israel"},
+            {"headline": "80,000 march against Iranian regime in Munich as leaders gather for security conference", "source": "Times of Israel"}
           ]
         },
         "us": {
-          "title": "\ud83c\uddfa\ud83c\uddf8 United States",
+          "title": "🇺🇸 United States",
           "items": [
-            {
-              "headline": "Trump announces 'reciprocal tariffs' on all countries with trade barriers \u2014 April implementation planned, sparking diplomatic scramble"
-            },
-            {
-              "headline": "Religious Liberty Commission's first antisemitism hearing turns contentious over Israel policy \u2014 mostly conservative panel debates campus and cultural antisemitism"
-            },
-            {
-              "headline": "Epstein files: Unredacted documents thrust Les Wexner back into spotlight with looming deposition"
-            }
+            {"headline": "US conducted strikes on 30+ ISIS targets in Syria this month (Feb 3-12)", "source": "CENTCOM"},
+            {"headline": "Rubio: 'UN could not solve the war in Gaza' — US asserting bilateral diplomacy over multilateral", "source": "Times of Israel"},
+            {"headline": "5 European nations confirm Russia poisoned Navalny with lethal frog toxin", "source": "Times of Israel"}
           ]
         },
         "world": {
-          "title": "\ud83c\udf10 Global",
+          "title": "🌐 Global",
           "items": [
-            {
-              "headline": "Sudan RSF committed war crimes in El Fasher capture, UN rights office confirms \u2014 possible crimes against humanity"
-            },
-            {
-              "headline": "Taiwan hikes 2026 economic growth forecast to 7.7% driven by AI demand \u2014 Polymarket tracking China-Taiwan invasion risk"
-            },
-            {
-              "headline": "Capgemini CEO dismisses calls for full European tech autonomy amid fraying transatlantic relations"
-            }
+            {"headline": "Munich Security Conference underway — major geopolitical discussions on Iran, Ukraine, Gaza", "source": "Multiple"},
+            {"headline": "IAEA: Inspectors returned to Iran after strikes but couldn't visit targeted sites", "source": "Times of Israel"}
           ]
         }
-      },
-      "audio": "/audio/brief-2026-02-13-news.ogg"
+      }
     },
     "ai": {
-      "title": "\ud83e\udd16 AI & Tech",
+      "title": "🤖 AI News",
       "items": [
-        {
-          "headline": "Anthropic raises $30B in Series G at $380B valuation \u2014 on track for $14B annual revenue, targeting break-even by 2028 (two years ahead of OpenAI)",
-          "source": "The Guardian"
-        },
-        {
-          "headline": "Claude Sonnet 4.5 sets new benchmark records in coding, reasoning, and computer use \u2014 Agent SDK released for building capable agents",
-          "source": "Anthropic"
-        },
-        {
-          "headline": "Anthropic vs OpenAI: Super Bowl ad war \u2014 Anthropic campaign lampoons targeted advertising in AI products, courting enterprise customers",
-          "source": "The Guardian"
-        },
-        {
-          "headline": "Oracle raising $50B for AI infrastructure expansion \u2014 massive data center buildout despite stock dip from investor caution",
-          "source": "Crescendo AI"
-        },
-        {
-          "headline": "Belgian study warns AI recruitment bias far worse than expected \u2014 'de-biasing' techniques are superficial, proxy variables still penalize women",
-          "source": "Brussels Times"
-        },
-        {
-          "headline": "Taiwan AI Impact Summit 2026 \u2014 indigenous LLM development and data center funding on agenda",
-          "source": "CurrentAffairs"
-        }
-      ],
-      "audio": "/audio/brief-2026-02-13-ai.ogg"
+        {"headline": "Anthropic closes record $30B Series G funding round for Claude AI", "source": "OpenTools", "note": "Largest AI funding round to date"},
+        {"headline": "Elon Musk announces SpaceX-xAI merger — Grok models to be embedded in SpaceX operations", "source": "Crescendo AI"},
+        {"headline": "Samsung adds 'Ask AI' browsing assistant to One UI 9", "source": "OpenTools", "note": "Consumer AI integration accelerating"},
+        {"headline": "Ethiopia launches national AI curriculum — first African nation with AI literacy mandate", "source": "OpenTools"},
+        {"headline": "MIT Tech Review: 2026 is the year AI moves from hype to pragmatism — world models, AI for science, and defense applications", "source": "MIT Technology Review"}
+      ]
     }
   }
 }

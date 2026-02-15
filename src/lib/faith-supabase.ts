@@ -74,6 +74,24 @@ export interface FaithResponse {
   tradition?: FaithTradition;
 }
 
+export interface GuideMessage {
+  role: 'system' | 'user' | 'assistant';
+  content: string;
+  timestamp?: string;
+}
+
+export interface GuideConversation {
+  id: string;
+  user_id: string;
+  lesson_id: string;
+  messages: GuideMessage[];
+  selected_perspectives: string[];
+  committed_tradition_id: string | null;
+  status: 'active' | 'committed' | 'abandoned';
+  created_at: string;
+  updated_at: string;
+}
+
 export interface FaithCompassState {
   id: string;
   user_id: string;

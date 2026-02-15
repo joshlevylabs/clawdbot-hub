@@ -1,12 +1,13 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { BookOpen, Compass, Map, RefreshCw, AlertCircle, Feather, X, Eye, EyeOff } from "lucide-react";
+import { BookOpen, Compass, Map, RefreshCw, AlertCircle, Feather, X, Eye, EyeOff, MessageCircle, Sparkles } from "lucide-react";
 import LessonDisplay from "@/components/faith/LessonDisplay";
 import TraditionCard from "@/components/faith/TraditionCard";
 import CompassDashboard from "@/components/faith/CompassDashboard";
 import JourneyTimeline from "@/components/faith/JourneyTimeline";
 import DailyPrayer from "@/components/faith/DailyPrayer";
+import GuideChat from "@/components/faith/GuideChat";
 import type {
   FaithDimension,
   FaithTradition,
@@ -42,6 +43,12 @@ export default function FaithPage() {
   const [modalTradition, setModalTradition] = useState<FaithTradition | null>(null);
   const [revealNames, setRevealNames] = useState(false);
 
+  // Multi-select resonance state
+  const [resonatingTraditions, setResonatingTraditions] = useState<Set<string>>(new Set());
+  
+  // Guide chat state
+  const [guideChatOpen, setGuideChatOpen] = useState(false);
+
   const loadData = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -75,6 +82,24 @@ export default function FaithPage() {
   useEffect(() => {
     loadData();
   }, [loadData]);
+
+  const toggleResonance = (traditionId: string) => {
+    setResonatingTraditions((prev) => {
+      const next = new Set(prev);
+      if (next.has(traditionId)) {
+        next.delete(traditionId);
+      } else {
+        next.add(traditionId);
+      }
+      return next;
+    });
+  };
+
+  const handleGuideCommit = (traditionId: string) => {
+    handleSelect(traditionId);
+    // Close guide after a brief delay to show success state
+    setTimeout(() => setGuideChatOpen(false), 2000);
+  };
 
   const handleSelect = async (traditionId: string) => {
     if (!lesson || submitting) return;
@@ -217,6 +242,7 @@ export default function FaithPage() {
                           const tradition = persp.tradition || traditions.find(t => t.id === persp.tradition_id);
                           if (!tradition) return null;
                           const isSelected = selectedTradition === tradition.id;
+                          const isResonating = resonatingTraditions.has(tradition.id);
                           const isDisabled = submitting || (submitSuccess && !isSelected);
                           return (
                             <button
@@ -229,6 +255,8 @@ export default function FaithPage() {
                               className={`relative flex flex-col items-center justify-center p-3 rounded-xl border-2 transition-all duration-200 min-h-[80px] ${
                                 isSelected
                                   ? "border-amber-500 bg-amber-900/30 ring-1 ring-amber-500/50"
+                                  : isResonating
+                                  ? "border-amber-500/70 bg-amber-900/20 shadow-[0_0_12px_rgba(245,158,11,0.15)]"
                                   : isDisabled
                                   ? "border-slate-700/30 bg-slate-800/20 opacity-40 cursor-not-allowed"
                                   : "border-slate-700/50 bg-slate-800/40 hover:border-slate-500 hover:bg-slate-800/70 cursor-pointer"
@@ -245,10 +273,43 @@ export default function FaithPage() {
                                   <span className="text-white text-xs">✓</span>
                                 </div>
                               )}
+                              {isResonating && !isSelected && (
+                                <div className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-amber-500/80 rounded-full flex items-center justify-center">
+                                  <Sparkles className="w-3 h-3 text-white" />
+                                </div>
+                              )}
                             </button>
                           );
                         })}
                       </div>
+
+                      {/* Resonance count + action buttons */}
+                      {resonatingTraditions.size > 0 && !submitSuccess && (
+                        <div className="mt-5 flex flex-col items-center gap-3">
+                          <p className="text-sm text-slate-400">
+                            <span className="text-amber-400 font-medium">{resonatingTraditions.size}</span>
+                            {resonatingTraditions.size === 1 ? " perspective resonates" : " perspectives resonate"}
+                          </p>
+                          {resonatingTraditions.size === 1 && (
+                            <button
+                              onClick={() => handleSelect(Array.from(resonatingTraditions)[0])}
+                              disabled={submitting}
+                              className="px-6 py-3 bg-amber-600 hover:bg-amber-700 disabled:opacity-50 rounded-xl text-white font-medium transition-colors"
+                            >
+                              {submitting ? "Saving..." : "Submit to Compass"}
+                            </button>
+                          )}
+                          {resonatingTraditions.size >= 2 && (
+                            <button
+                              onClick={() => setGuideChatOpen(true)}
+                              className="px-6 py-3 bg-amber-600 hover:bg-amber-700 rounded-xl text-white font-medium transition-colors animate-pulse flex items-center gap-2"
+                            >
+                              <MessageCircle className="w-4 h-4" />
+                              Speak to your Guide
+                            </button>
+                          )}
+                        </div>
+                      )}
 
                       {/* Perspective Modal */}
                       {modalPerspective && modalTradition && (
@@ -298,22 +359,29 @@ export default function FaithPage() {
                               )}
                             </div>
 
-                            {/* Modal footer — action */}
+                            {/* Modal footer — resonance toggle */}
                             <div className="sticky bottom-0 bg-slate-900 border-t border-slate-800 p-4 rounded-b-2xl">
                               {selectedTradition === modalTradition.id ? (
-                                <div className="text-center text-amber-400 font-medium text-sm py-2">✓ Selected</div>
+                                <div className="text-center text-amber-400 font-medium text-sm py-2">✓ Committed</div>
                               ) : submitSuccess ? (
                                 <div className="text-center text-slate-500 text-sm py-2">Already responded today</div>
                               ) : (
                                 <button
-                                  onClick={() => {
-                                    handleSelect(modalTradition.id);
-                                    setModalPerspective(null);
-                                  }}
-                                  disabled={submitting}
-                                  className="w-full py-3 bg-amber-600 hover:bg-amber-700 disabled:opacity-50 rounded-xl text-white font-medium transition-colors"
+                                  onClick={() => toggleResonance(modalTradition.id)}
+                                  className={`w-full py-3 rounded-xl font-medium transition-all duration-200 ${
+                                    resonatingTraditions.has(modalTradition.id)
+                                      ? "bg-amber-600 text-white ring-2 ring-amber-400/50"
+                                      : "bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-600"
+                                  }`}
                                 >
-                                  {submitting ? "Saving..." : "This Resonates"}
+                                  {resonatingTraditions.has(modalTradition.id) ? (
+                                    <span className="flex items-center justify-center gap-2">
+                                      <Sparkles className="w-4 h-4" />
+                                      This Resonates
+                                    </span>
+                                  ) : (
+                                    "This Resonates"
+                                  )}
                                 </button>
                               )}
                             </div>
@@ -425,6 +493,20 @@ export default function FaithPage() {
           )}
         </div>
       </div>
+
+      {/* Guide Chat Panel */}
+      {lesson && (
+        <GuideChat
+          open={guideChatOpen}
+          onClose={() => setGuideChatOpen(false)}
+          lesson={lesson}
+          perspectives={perspectives}
+          traditions={traditions}
+          resonatingTraditions={resonatingTraditions}
+          compass={compass}
+          onCommit={handleGuideCommit}
+        />
+      )}
     </div>
   );
 }

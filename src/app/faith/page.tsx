@@ -112,10 +112,10 @@ export default function FaithPage() {
   };
 
   const tabs = [
-    { key: "lesson" as Tab, label: "Daily Lesson", icon: BookOpen },
+    { key: "lesson" as Tab, label: "Lesson", icon: BookOpen },
     { key: "compass" as Tab, label: "Compass", icon: Compass },
     { key: "journey" as Tab, label: "Journey", icon: Map },
-    { key: "prayer" as Tab, label: "🕊️ Prayer", icon: Feather },
+    { key: "prayer" as Tab, label: "Prayer", icon: Feather },
   ];
 
   return (
@@ -137,18 +137,18 @@ export default function FaithPage() {
               Refresh
             </button>
           </div>
-          <div className="flex gap-1 bg-slate-800/60 rounded-lg p-1">
+          <div className="flex gap-0.5 bg-slate-800/60 rounded-lg p-1">
             {tabs.map((tab) => (
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
-                className={`flex items-center gap-2 px-4 py-1.5 rounded-md text-sm font-medium transition-colors flex-1 justify-center ${
+                className={`flex items-center gap-1.5 px-2.5 sm:px-4 py-1.5 rounded-md text-xs sm:text-sm font-medium transition-colors flex-1 justify-center whitespace-nowrap ${
                   activeTab === tab.key
                     ? "bg-amber-600 text-white shadow-sm"
                     : "text-slate-400 hover:text-slate-200 hover:bg-slate-700/50"
                 }`}
               >
-                <tab.icon className="w-4 h-4" />
+                <tab.icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
                 {tab.label}
               </button>
             ))}

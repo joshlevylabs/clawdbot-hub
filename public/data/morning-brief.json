@@ -3,49 +3,67 @@
   "time": "6:00 AM",
   "sections": {
     "prayer": {
-      "title": "🕊️ Morning Prayer",
+      "title": "\ud83d\udd4a\ufe0f Morning Prayer",
       "date": "Sunday, February 15, 2026",
       "hebrew_date": "17 Cheshvan",
       "parsha": "Vayishlach",
       "parsha_theme": "confronting fears, transformation, reconciliation",
-      "modeh_ani": "מודה אני לפניך — I gratefully thank You, living and eternal King, for returning my soul within me with compassion — great is Your faithfulness.",
-      "blessing": "Blessed are You who raises the lowly — lift me to accomplish Your purposes.",
+      "modeh_ani": "\u05de\u05d5\u05d3\u05d4 \u05d0\u05e0\u05d9 \u05dc\u05e4\u05e0\u05d9\u05da \u2014 I gratefully thank You, living and eternal King, for returning my soul within me with compassion \u2014 great is Your faithfulness.",
+      "blessing": "Blessed are You who raises the lowly \u2014 lift me to accomplish Your purposes.",
       "psalm": "Psalm 16:8: \"I have set the Lord always before me; He is at my right hand, I will not be shaken.\"",
       "proverb": "Proverbs 24:27: \"Prepare your work outside; get everything ready, then build your house.\"",
       "intention": "Give me courage to take the risks You've called me to take.",
-      "closing": "Go in peace. Build with purpose. Return with gratitude."
+      "closing": "Go in peace. Build with purpose. Return with gratitude.",
+      "audio": "/audio/brief-2026-02-15-prayer.ogg"
     },
     "weather": {
-      "title": "☀️ Weather — Temecula",
-      "temperature": "63°F",
+      "title": "\u2600\ufe0f Weather \u2014 Temecula",
+      "temperature": "63\u00b0F",
       "condition": "Mostly Cloudy",
       "wind": "SW 5-10 mph, gusts to 20",
-      "summary": "Mostly cloudy today, high near 63. Rain and thunderstorms arriving Monday (90% chance, heavy at times). Wet week ahead through Wednesday. Clears by Friday."
+      "summary": "Mostly cloudy today, high near 63. Rain and thunderstorms arriving Monday (90% chance, heavy at times). Wet week ahead through Wednesday. Clears by Friday.",
+      "audio": "/audio/brief-2026-02-15-weather.ogg"
     },
     "calendar": {
-      "title": "📅 Calendar",
-      "items": ["No events today (Sunday). 🎉 The Builder's Frequency launch day!"],
-      "note": "⚠️ OAuth expired for joshua.seth.levy@gmail.com, farbisimo@gmail.com, and josh@thelyceum.io — re-auth needed."
+      "title": "\ud83d\udcc5 Calendar",
+      "items": [
+        "No events today (Sunday). \ud83c\udf89 The Builder's Frequency launch day!"
+      ],
+      "note": "\u26a0\ufe0f OAuth expired for joshua.seth.levy@gmail.com, farbisimo@gmail.com, and josh@thelyceum.io \u2014 re-auth needed.",
+      "audio": "/audio/brief-2026-02-15-calendar.ogg"
     },
     "email": {
-      "title": "📧 Email Highlights",
+      "title": "\ud83d\udce7 Email Highlights",
       "needs_attention": [
-        {"from": "Discord (crinacle)", "subject": "crinacle mentioned you in Hangout.Audio × CrinEar", "note": "Check Discord notification"},
-        {"from": "LinkedIn", "subject": "You have 1 new message", "note": "Unread DM"}
+        {
+          "from": "Discord (crinacle)",
+          "subject": "crinacle mentioned you in Hangout.Audio \u00d7 CrinEar",
+          "note": "Check Discord notification"
+        },
+        {
+          "from": "LinkedIn",
+          "subject": "You have 1 new message",
+          "note": "Unread DM"
+        }
       ],
       "dev_work": [],
       "good_news": [
-        {"from": "OpusClip", "subject": "Export your clips to XML with ease", "note": "New feature — useful for podcast clips"}
-      ]
+        {
+          "from": "OpusClip",
+          "subject": "Export your clips to XML with ease",
+          "note": "New feature \u2014 useful for podcast clips"
+        }
+      ],
+      "audio": "/audio/brief-2026-02-15-email.ogg"
     },
     "mre": {
-      "title": "📊 MRE Trading",
+      "title": "\ud83d\udcca MRE Trading",
       "fear_greed": 36,
       "fear_greed_rating": "fear",
       "regime": "sideways",
       "todays_plays": [],
       "pending_triggers": [],
-      "thesis": "All 24 assets on HOLD. Fear at 36, sideways regime. Models diverge — F&G says fear while cycle says mid-bull. Reduce position sizes, focus on range-bound plays. No new entries until direction clears.",
+      "thesis": "All 24 assets on HOLD. Fear at 36, sideways regime. Models diverge \u2014 F&G says fear while cycle says mid-bull. Reduce position sizes, focus on range-bound plays. No new entries until direction clears.",
       "portfolio": {
         "capital_deployed_pct": 72.3,
         "available_cash": 27753.63,
@@ -54,13 +72,14 @@
       "breadth": {
         "signal": "STRONG_BULL",
         "trend": "expanding",
-        "note": "RSP outperforming SPY — broad participation despite fear"
+        "note": "RSP outperforming SPY \u2014 broad participation despite fear"
       },
       "pulse_outlook": "NEUTRAL",
-      "pulse_summary": "Mid-cycle bull run with fearful sentiment. Regime is sideways with no clear rotation leader."
+      "pulse_summary": "Mid-cycle bull run with fearful sentiment. Regime is sideways with no clear rotation leader.",
+      "audio": "/audio/brief-2026-02-15-mre.ogg"
     },
     "family": {
-      "title": "💍 Family Focus",
+      "title": "\ud83d\udc8d Family Focus",
       "compass": {
         "power": 1.1,
         "safety": 0.8,
@@ -74,52 +93,93 @@
         "Increase acts of service dramatically this week.",
         "Create space for her to express frustrations without fixing."
       ],
-      "note": "⚠️ Safety at 0.8 (ideal is 3-5). 7-day trend: Safety improving (+2.0) but Power declining (-1.0). Today is Sunday — protected family time. Be fully present."
+      "note": "\u26a0\ufe0f Safety at 0.8 (ideal is 3-5). 7-day trend: Safety improving (+2.0) but Power declining (-1.0). Today is Sunday \u2014 protected family time. Be fully present."
     },
     "news": {
-      "title": "🌍 World News",
+      "title": "\ud83c\udf0d World News",
       "subsections": {
         "israel": {
-          "title": "🇮🇱 Israel",
+          "title": "\ud83c\uddee\ud83c\uddf1 Israel",
           "items": [
-            {"headline": "Haredi mob attacks 2 female IDF soldiers in Bnei Brak — 12 arrested, police car overturned, motorcycle torched. Netanyahu, Katz, Deri, and ex-Chief Rabbi Yosef all condemn. Deri: 'Contrary to the way of Torah.'"},
-            {"headline": "Netanyahu's military aide testifies to police over allegations against PM's chief of staff."},
-            {"headline": "Israel's West Bank sovereignty plans draw global backlash from US, UK, EU and Arab nations. Israeli ministers say plans will 'kill the idea of a Palestinian state.'"},
-            {"headline": "US prepping to send 2nd carrier strike group to Mideast. Vance: 'If Iranian people want to overthrow the regime, that's up to them.'"}
+            {
+              "headline": "Haredi mob attacks 2 female IDF soldiers in Bnei Brak \u2014 12 arrested, police car overturned, motorcycle torched. Netanyahu, Katz, Deri, and ex-Chief Rabbi Yosef all condemn. Deri: 'Contrary to the way of Torah.'"
+            },
+            {
+              "headline": "Netanyahu's military aide testifies to police over allegations against PM's chief of staff."
+            },
+            {
+              "headline": "Israel's West Bank sovereignty plans draw global backlash from US, UK, EU and Arab nations. Israeli ministers say plans will 'kill the idea of a Palestinian state.'"
+            },
+            {
+              "headline": "US prepping to send 2nd carrier strike group to Mideast. Vance: 'If Iranian people want to overthrow the regime, that's up to them.'"
+            }
           ]
         },
         "us": {
-          "title": "🇺🇸 United States",
+          "title": "\ud83c\uddfa\ud83c\uddf8 United States",
           "items": [
-            {"headline": "US military used Anthropic's Claude AI in Venezuela raid via Palantir partnership — first confirmed use of frontier AI in military operation."},
-            {"headline": "Republican split on Israel widens: 'America First' faction growing more skeptical of US-Israel relationship, especially among younger conservatives."},
-            {"headline": "US hoping to announce $1.25B in donations from UAE, Qatar, and Kuwait."}
+            {
+              "headline": "US military used Anthropic's Claude AI in Venezuela raid via Palantir partnership \u2014 first confirmed use of frontier AI in military operation."
+            },
+            {
+              "headline": "Republican split on Israel widens: 'America First' faction growing more skeptical of US-Israel relationship, especially among younger conservatives."
+            },
+            {
+              "headline": "US hoping to announce $1.25B in donations from UAE, Qatar, and Kuwait."
+            }
           ]
         },
         "world": {
-          "title": "🌐 Global",
+          "title": "\ud83c\udf10 Global",
           "items": [
-            {"headline": "Hezbollah, supposedly defeated, is actively rebuilding in southern Lebanon."},
-            {"headline": "12 Dem senators urge Rubio to halt deportation flights to Iran."}
+            {
+              "headline": "Hezbollah, supposedly defeated, is actively rebuilding in southern Lebanon."
+            },
+            {
+              "headline": "12 Dem senators urge Rubio to halt deportation flights to Iran."
+            }
           ]
         }
-      }
+      },
+      "audio": "/audio/brief-2026-02-15-news.ogg"
     },
     "ai": {
-      "title": "🤖 AI & Tech",
+      "title": "\ud83e\udd16 AI & Tech",
       "items": [
-        {"headline": "Anthropic closes record $30B funding round. Annualized revenue surging.", "source": "Yahoo Finance"},
-        {"headline": "Claude Opus 4.6 launched — can scrutinize company data, regulatory filings, and market info for detailed financial analyses.", "source": "Bloomberg"},
-        {"headline": "Claude Sonnet 4.5 sets new benchmark records in coding, reasoning, and computer use. Agent SDK released for building capable agents.", "source": "Anthropic"},
-        {"headline": "Anthropic partners with CodePath to bring Claude to computer science education.", "source": "Anthropic"},
-        {"headline": "MCP (Model Context Protocol) donated to Linux Foundation's Agentic AI Foundation. OpenAI, Microsoft, Google all adopting. 2026 = year agentic workflows go from demos to daily practice.", "source": "TechCrunch"},
-        {"headline": "Apptronik raises $520M to scale humanoid robots for logistics. Inertia Enterprises raises $450M for laser-driven fusion power.", "source": "TechStartups"},
-        {"headline": "New Yorker profile: 'What Is Claude? Anthropic Doesn't Know, Either' — deep dive into Claude's identity and Anthropic's culture.", "source": "The New Yorker"}
-      ]
+        {
+          "headline": "Anthropic closes record $30B funding round. Annualized revenue surging.",
+          "source": "Yahoo Finance"
+        },
+        {
+          "headline": "Claude Opus 4.6 launched \u2014 can scrutinize company data, regulatory filings, and market info for detailed financial analyses.",
+          "source": "Bloomberg"
+        },
+        {
+          "headline": "Claude Sonnet 4.5 sets new benchmark records in coding, reasoning, and computer use. Agent SDK released for building capable agents.",
+          "source": "Anthropic"
+        },
+        {
+          "headline": "Anthropic partners with CodePath to bring Claude to computer science education.",
+          "source": "Anthropic"
+        },
+        {
+          "headline": "MCP (Model Context Protocol) donated to Linux Foundation's Agentic AI Foundation. OpenAI, Microsoft, Google all adopting. 2026 = year agentic workflows go from demos to daily practice.",
+          "source": "TechCrunch"
+        },
+        {
+          "headline": "Apptronik raises $520M to scale humanoid robots for logistics. Inertia Enterprises raises $450M for laser-driven fusion power.",
+          "source": "TechStartups"
+        },
+        {
+          "headline": "New Yorker profile: 'What Is Claude? Anthropic Doesn't Know, Either' \u2014 deep dive into Claude's identity and Anthropic's culture.",
+          "source": "The New Yorker"
+        }
+      ],
+      "audio": "/audio/brief-2026-02-15-ai.ogg"
     },
     "launch": {
-      "title": "🚀 LAUNCH DAY",
-      "message": "The Builder's Frequency launches today, February 15, 2026. This is the day. Everything you've been building toward. Vayishlach — confronting fears, transformation. Jacob wrestled and was renamed Israel. Today you step out."
+      "title": "\ud83d\ude80 LAUNCH DAY",
+      "message": "The Builder's Frequency launches today, February 15, 2026. This is the day. Everything you've been building toward. Vayishlach \u2014 confronting fears, transformation. Jacob wrestled and was renamed Israel. Today you step out."
     }
   }
 }

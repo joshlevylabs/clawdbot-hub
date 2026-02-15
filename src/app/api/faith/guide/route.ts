@@ -15,34 +15,42 @@ function getGuideTitle(primaryAlignment: string | null): string {
   return 'Your Guide';
 }
 
+const TILE_SYMBOLS = ['α', 'β', 'γ', 'δ', 'ε', 'ζ', 'η', 'θ', 'ι'];
+
 function buildSystemPrompt(
   compass: Record<string, unknown> | null,
   responseHistory: Array<Record<string, unknown>>,
   lesson: Record<string, unknown>,
-  selectedPerspectives: Array<{ tradition_name: string; text: string }>,
+  selectedPerspectives: Array<{ tradition_name: string; text: string; symbol: string }>,
   guideTitle: string
 ): string {
   const compassContext = compass
-    ? `The user's compass state: Primary alignment: ${compass.primary_alignment || 'none'} (${compass.alignment_confidence || 0}% confidence). Secondary: ${compass.secondary_alignment || 'none'}. Total responses: ${compass.total_responses || 0}. Streak: ${compass.streak_days || 0} days.`
+    ? `The user's faith compass: ${compass.total_responses || 0} responses so far, ${compass.streak_days || 0} day streak. Their beliefs have been gradually forming but they're still exploring.`
     : 'This user is new — no compass data yet.';
 
   const historyContext = responseHistory.length > 0
-    ? `Recent response history (last ${responseHistory.length}):\n${responseHistory.map((r: Record<string, unknown>) => `- Selected "${(r as Record<string, unknown>).tradition_name || 'unknown'}" on topic "${(r as Record<string, unknown>).topic || 'unknown'}"`).join('\n')}`
+    ? `They've made ${responseHistory.length} recent selections across various topics.`
     : 'No prior response history.';
 
-  const lessonContext = `Today's lesson: "${lesson.topic || 'unknown topic'}"${lesson.scripture_ref ? ` (${lesson.scripture_ref})` : ''}${lesson.calendar_context ? `. Calendar context: ${lesson.calendar_context}` : ''}${lesson.parsha ? `. Parsha: ${lesson.parsha}` : ''}.`;
+  const lessonContext = `Today's lesson: "${lesson.topic || 'unknown topic'}"${lesson.scripture_ref ? ` (${lesson.scripture_ref})` : ''}${lesson.parsha ? `. Torah portion: ${lesson.parsha}` : ''}.`;
 
   const perspectiveTexts = selectedPerspectives
-    .map((p, i) => `Perspective ${i + 1} (${p.tradition_name}):\n"${p.text}"`)
+    .map((p) => `--- Perspective ${p.symbol} ---\n"${p.text}"`)
     .join('\n\n');
 
-  return `You are ${guideTitle}, a spiritual conversation partner in a faith exploration app. The user is exploring different religious traditions through daily lessons. Today they read perspectives from multiple traditions and found ${selectedPerspectives.length} that resonated. Your job is to help them explore WHY these perspectives resonate and ultimately help them choose ONE to commit to for today's compass reading.
+  return `You are ${guideTitle}, a spiritual conversation partner in a faith exploration app. The user reads anonymous perspectives from different traditions on a daily topic. They don't know which religion or denomination each perspective comes from — they're labeled only with Greek letters (${selectedPerspectives.map(p => p.symbol).join(', ')}). Your job is to help them explore WHY these perspectives resonate and ultimately help them choose ONE to commit to.
+
+CRITICAL ANONYMITY RULES:
+- NEVER reveal which religion, denomination, or sect a perspective belongs to
+- Always refer to perspectives by their Greek letter symbol (${selectedPerspectives.map(p => p.symbol).join(', ')})
+- Do NOT use any religious names, tradition names, or identifying language
+- The user should choose based on IDEAS, not on which religion it belongs to
+- You know internally which traditions they are (for commit detection), but NEVER reveal this
 
 PERSONALITY:
 - Warm but intellectually rigorous
 - Socratic — ask probing questions, don't lecture
 - Not preachy, more like a study partner who's further along
-- Speak from the intersection of the user's historical alignments
 - Keep responses concise (2-4 sentences typical, occasionally longer for deep moments)
 
 CONTEXT:
@@ -50,20 +58,29 @@ ${compassContext}
 ${historyContext}
 ${lessonContext}
 
-THE PERSPECTIVES THAT RESONATED:
+THE PERSPECTIVES THAT RESONATED (anonymous):
 ${perspectiveTexts}
+
+YOUR OPENING MESSAGE SHOULD:
+1. Briefly summarize the KEY IDEA of each resonating perspective (1 sentence each, using the symbol)
+2. Highlight what they have in COMMON and where they DIVERGE
+3. Ask the user what specifically drew them to these perspectives
 
 CONVERSATION GOALS:
 1. Help the user articulate WHY each perspective resonated
-2. Explore the tensions and commonalities between them
-3. Gently guide toward choosing ONE that most deeply aligns with their convictions today
-4. When the user clearly commits to one tradition, acknowledge their choice warmly
+2. Explore the tensions and commonalities between the perspectives' ideas
+3. Ask probing questions about which specific claims or values in each perspective the user finds compelling
+4. Gently guide toward choosing ONE that most deeply aligns with their convictions today
+5. When the user clearly commits, acknowledge their choice warmly
 
 COMMITMENT DETECTION:
-When you believe the user has clearly committed to one specific tradition (they say something like "I think X resonates most" or "I'll go with the [tradition] perspective" or express a clear preference), respond with your acknowledgment AND include this exact marker at the very end of your message on its own line:
+When you believe the user has clearly committed to one specific perspective (they say something like "I think ${selectedPerspectives[0]?.symbol || 'α'} resonates most" or express a clear preference), respond with your acknowledgment AND include this exact marker at the very end of your message on its own line:
 [COMMIT:tradition_name_here]
-where tradition_name_here is the exact tradition name (e.g., "Reform Judaism", "Catholicism", etc.).
-Only include this marker when you are confident they have made a clear choice. Do NOT include it if they're still exploring.`;
+where tradition_name_here is the exact tradition name you know internally (e.g., "Reform Judaism", "Catholicism", etc.).
+Only include this marker when you are confident they have made a clear choice. Do NOT include it if they're still exploring.
+
+INTERNAL TRADITION MAPPING (NEVER reveal to user):
+${selectedPerspectives.map(p => `${p.symbol} = ${p.tradition_name}`).join('\n')}`;
 }
 
 // GET: Fetch existing conversation for a lesson
@@ -149,11 +166,21 @@ export async function POST(request: NextRequest) {
     .eq('lesson_id', lesson_id)
     .in('tradition_id', selectedTraditionIds);
 
+  // Get ALL perspectives for this lesson to determine correct symbol indices
+  const { data: allPerspectives } = await faithSupabase
+    .from('faith_perspectives')
+    .select('id, tradition_id, perspective_text')
+    .eq('lesson_id', lesson_id);
+
   const selectedPerspectives = (perspectivesData || []).map((p: Record<string, unknown>) => {
     const trad = traditions.find((t: Record<string, unknown>) => t.id === p.tradition_id);
+    // Find the index of this perspective in the full list to get the correct symbol
+    const allIdx = (allPerspectives || []).findIndex((ap: Record<string, unknown>) => ap.tradition_id === p.tradition_id);
+    const symbol = TILE_SYMBOLS[allIdx >= 0 ? allIdx : 0] || '?';
     return {
       tradition_name: (trad?.name as string) || 'Unknown',
       text: p.perspective_text as string,
+      symbol,
     };
   });
 

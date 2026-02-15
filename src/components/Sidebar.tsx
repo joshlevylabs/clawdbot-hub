@@ -26,13 +26,13 @@ import { useRouter } from "next/navigation";
 
 const navItems = [
   { href: "/dashboard", icon: Sunrise, label: "Dashboard" },
+  { href: "/faith", icon: BookOpen, label: "Faith" },
+  { href: "/family", icon: Users, label: "Family" },
+  { href: "/trading", icon: TrendingUp, label: "Finance" },
   { href: "/morning-brief", icon: Clock, label: "Morning Brief" },
-  { href: "/trading", icon: TrendingUp, label: "Trading" },
   { href: "/podcast", icon: Mic, label: "Podcast" },
   { href: "/newsletter", icon: Mail, label: "Newsletter" },
-  { href: "/family", icon: Users, label: "Family" },
   { href: "/marriage", icon: Heart, label: "Marriage" },
-  { href: "/faith", icon: BookOpen, label: "Faith" },
   { href: "/moltbook", icon: MessageSquare, label: "Moltbook 🦞" },
   { href: "/tasks", icon: CheckSquare, label: "Tasks" },
   { href: "/skills", icon: Zap, label: "Skills" },

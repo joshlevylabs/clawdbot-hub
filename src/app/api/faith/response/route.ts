@@ -73,20 +73,31 @@ export async function POST(request: Request) {
 
   const currentScores: Record<string, number> = currentCompass?.dimension_scores || {};
   const totalResponses = (currentCompass?.total_responses || 0) + 1;
+  const isFirstResponse = totalResponses === 1;
 
-  // 5. Update dimension scores using running average
+  // 5. Update dimension scores
   const lessonDimensions: string[] = lesson.dimensions || [];
   const canonicalScores: Record<string, number> = tradition.canonical_scores || {};
   const newScores = { ...currentScores };
 
-  for (const dim of lessonDimensions) {
-    const canonicalValue = canonicalScores[dim];
-    if (canonicalValue !== undefined) {
-      if (newScores[dim] !== undefined) {
-        // Running average: new = (old * (n-1) + selection) / n
-        newScores[dim] = (newScores[dim] * (totalResponses - 1) + canonicalValue) / totalResponses;
-      } else {
-        newScores[dim] = canonicalValue;
+  if (isFirstResponse) {
+    // FIRST RESPONSE: Seed ALL dimensions with this tradition's canonical scores.
+    // The user's compass starts as an exact copy of their first selected tradition,
+    // then gradually deviates with each subsequent response.
+    for (const [dim, value] of Object.entries(canonicalScores)) {
+      newScores[dim] = value;
+    }
+  } else {
+    // Subsequent responses: running average on the lesson's dimensions only
+    for (const dim of lessonDimensions) {
+      const canonicalValue = canonicalScores[dim];
+      if (canonicalValue !== undefined) {
+        if (newScores[dim] !== undefined) {
+          // Running average: new = (old * (n-1) + selection) / n
+          newScores[dim] = (newScores[dim] * (totalResponses - 1) + canonicalValue) / totalResponses;
+        } else {
+          newScores[dim] = canonicalValue;
+        }
       }
     }
   }

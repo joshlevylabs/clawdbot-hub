@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { BookOpen, Compass, Map, RefreshCw, AlertCircle, Feather, X, Eye, EyeOff, MessageCircle, Sparkles } from "lucide-react";
+import { BookOpen, Compass, Map, RefreshCw, AlertCircle, Feather, X, Eye, EyeOff, MessageCircle, Sparkles, ThumbsDown } from "lucide-react";
 import LessonDisplay from "@/components/faith/LessonDisplay";
 import TraditionCard from "@/components/faith/TraditionCard";
 import CompassDashboard from "@/components/faith/CompassDashboard";
@@ -45,6 +45,7 @@ export default function FaithPage() {
 
   // Multi-select resonance state
   const [resonatingTraditions, setResonatingTraditions] = useState<Set<string>>(new Set());
+  const [rejectedTraditions, setRejectedTraditions] = useState<Set<string>>(new Set());
   
   // Guide chat state
   const [guideChatOpen, setGuideChatOpen] = useState(false);
@@ -84,7 +85,31 @@ export default function FaithPage() {
   }, [loadData]);
 
   const toggleResonance = (traditionId: string) => {
+    // Remove from rejected if it was there
+    setRejectedTraditions((prev) => {
+      const next = new Set(prev);
+      next.delete(traditionId);
+      return next;
+    });
     setResonatingTraditions((prev) => {
+      const next = new Set(prev);
+      if (next.has(traditionId)) {
+        next.delete(traditionId);
+      } else {
+        next.add(traditionId);
+      }
+      return next;
+    });
+  };
+
+  const toggleRejection = (traditionId: string) => {
+    // Remove from resonating if it was there
+    setResonatingTraditions((prev) => {
+      const next = new Set(prev);
+      next.delete(traditionId);
+      return next;
+    });
+    setRejectedTraditions((prev) => {
       const next = new Set(prev);
       if (next.has(traditionId)) {
         next.delete(traditionId);
@@ -243,6 +268,7 @@ export default function FaithPage() {
                           if (!tradition) return null;
                           const isSelected = selectedTradition === tradition.id;
                           const isResonating = resonatingTraditions.has(tradition.id);
+                          const isRejected = rejectedTraditions.has(tradition.id);
                           const isDisabled = submitting || (submitSuccess && !isSelected);
                           return (
                             <button
@@ -257,12 +283,14 @@ export default function FaithPage() {
                                   ? "border-amber-500 bg-amber-900/30 ring-1 ring-amber-500/50"
                                   : isResonating
                                   ? "border-amber-500/70 bg-amber-900/20 shadow-[0_0_12px_rgba(245,158,11,0.15)]"
+                                  : isRejected
+                                  ? "border-red-500/30 bg-red-900/10 opacity-50"
                                   : isDisabled
                                   ? "border-slate-700/30 bg-slate-800/20 opacity-40 cursor-not-allowed"
                                   : "border-slate-700/50 bg-slate-800/40 hover:border-slate-500 hover:bg-slate-800/70 cursor-pointer"
                               }`}
                             >
-                              <span className="text-2xl font-light text-slate-300 mb-1">
+                              <span className={`text-2xl font-light mb-1 ${isRejected ? "text-slate-500" : "text-slate-300"}`}>
                                 {revealNames ? tradition.icon : TILE_SYMBOLS[idx] || `${idx + 1}`}
                               </span>
                               <span className="text-[10px] text-slate-500 text-center leading-tight">
@@ -276,6 +304,11 @@ export default function FaithPage() {
                               {isResonating && !isSelected && (
                                 <div className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-amber-500/80 rounded-full flex items-center justify-center">
                                   <Sparkles className="w-3 h-3 text-white" />
+                                </div>
+                              )}
+                              {isRejected && (
+                                <div className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-red-500/70 rounded-full flex items-center justify-center">
+                                  <ThumbsDown className="w-3 h-3 text-white" />
                                 </div>
                               )}
                             </button>
@@ -339,8 +372,8 @@ export default function FaithPage() {
                                 {modalPerspective.perspective_text}
                               </p>
 
-                              {/* Citations */}
-                              {modalPerspective.source_citations && modalPerspective.source_citations.length > 0 && (
+                              {/* Citations — only shown when names are revealed */}
+                              {revealNames && modalPerspective.source_citations && modalPerspective.source_citations.length > 0 && (
                                 <div className="mt-4 space-y-2">
                                   <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Sources</p>
                                   {modalPerspective.source_citations.map((cite: { ref?: string; text?: string } | string, i: number) => (
@@ -359,30 +392,52 @@ export default function FaithPage() {
                               )}
                             </div>
 
-                            {/* Modal footer — resonance toggle */}
+                            {/* Modal footer — resonance + rejection toggles */}
                             <div className="sticky bottom-0 bg-slate-900 border-t border-slate-800 p-4 rounded-b-2xl">
                               {selectedTradition === modalTradition.id ? (
                                 <div className="text-center text-amber-400 font-medium text-sm py-2">✓ Committed</div>
                               ) : submitSuccess ? (
                                 <div className="text-center text-slate-500 text-sm py-2">Already responded today</div>
                               ) : (
-                                <button
-                                  onClick={() => toggleResonance(modalTradition.id)}
-                                  className={`w-full py-3 rounded-xl font-medium transition-all duration-200 ${
-                                    resonatingTraditions.has(modalTradition.id)
-                                      ? "bg-amber-600 text-white ring-2 ring-amber-400/50"
-                                      : "bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-600"
-                                  }`}
-                                >
-                                  {resonatingTraditions.has(modalTradition.id) ? (
-                                    <span className="flex items-center justify-center gap-2">
-                                      <Sparkles className="w-4 h-4" />
-                                      This Resonates
-                                    </span>
-                                  ) : (
-                                    "This Resonates"
-                                  )}
-                                </button>
+                                <div className="flex gap-3">
+                                  <button
+                                    onClick={() => toggleRejection(modalTradition.id)}
+                                    className={`flex-1 py-3 rounded-xl font-medium transition-all duration-200 ${
+                                      rejectedTraditions.has(modalTradition.id)
+                                        ? "bg-red-600/80 text-white ring-2 ring-red-400/50"
+                                        : "bg-slate-800 text-slate-400 hover:bg-slate-700 border border-slate-600"
+                                    }`}
+                                  >
+                                    {rejectedTraditions.has(modalTradition.id) ? (
+                                      <span className="flex items-center justify-center gap-2">
+                                        <ThumbsDown className="w-4 h-4" />
+                                        Doesn&apos;t Resonate
+                                      </span>
+                                    ) : (
+                                      <span className="flex items-center justify-center gap-2">
+                                        <ThumbsDown className="w-4 h-4" />
+                                        Doesn&apos;t Resonate
+                                      </span>
+                                    )}
+                                  </button>
+                                  <button
+                                    onClick={() => toggleResonance(modalTradition.id)}
+                                    className={`flex-1 py-3 rounded-xl font-medium transition-all duration-200 ${
+                                      resonatingTraditions.has(modalTradition.id)
+                                        ? "bg-amber-600 text-white ring-2 ring-amber-400/50"
+                                        : "bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-600"
+                                    }`}
+                                  >
+                                    {resonatingTraditions.has(modalTradition.id) ? (
+                                      <span className="flex items-center justify-center gap-2">
+                                        <Sparkles className="w-4 h-4" />
+                                        This Resonates
+                                      </span>
+                                    ) : (
+                                      "This Resonates"
+                                    )}
+                                  </button>
+                                </div>
                               )}
                             </div>
                           </div>

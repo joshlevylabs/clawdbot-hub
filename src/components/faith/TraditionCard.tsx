@@ -73,10 +73,17 @@ export default function TraditionCard({
             </button>
             {showCitations && (
               <div className="mt-2 space-y-1">
-                {citations.map((cite, i) => (
-                  <p key={i} className="text-xs text-slate-500 italic pl-3 border-l border-slate-700">
-                    {cite}
-                  </p>
+                {citations.map((cite: { ref?: string; text?: string } | string, i: number) => (
+                  <div key={i} className="pl-3 border-l border-slate-700">
+                    {typeof cite === 'string' ? (
+                      <p className="text-xs text-slate-500 italic">{cite}</p>
+                    ) : (
+                      <>
+                        <p className="text-xs text-slate-400 font-medium">{cite.ref}</p>
+                        {cite.text && <p className="text-xs text-slate-500 italic">{cite.text}</p>}
+                      </>
+                    )}
+                  </div>
                 ))}
               </div>
             )}

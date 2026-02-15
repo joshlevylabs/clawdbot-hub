@@ -1,18 +1,18 @@
 {
   "current": {
-    "power": 1.14,
-    "safety": 1.0,
-    "quadrant": "topRight",
-    "quadrantName": "Secure Leadership",
+    "power": 1.0,
+    "safety": -2.0,
+    "quadrant": "bottomRight",
+    "quadrantName": "Authoritarian",
     "inIdealZone": false,
-    "count": 7,
-    "calculatedAt": "2026-02-13T06:00:11.568790"
+    "count": 1,
+    "calculatedAt": "2026-02-14T06:00:11.884022"
   },
   "trend": {
-    "power": 0.05,
-    "safety": 0.18
+    "power": -0.14,
+    "safety": -3.0
   },
-  "recentCount": 7,
+  "recentCount": 1,
   "totalCount": 11,
   "quadrants": {
     "topRight": {

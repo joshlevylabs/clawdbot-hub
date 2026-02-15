@@ -83,17 +83,28 @@ INTERNAL TRADITION MAPPING (NEVER reveal to user):
 ${selectedPerspectives.map(p => `${p.symbol} = ${p.tradition_name}`).join('\n')}`;
 }
 
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type',
+};
+
+// OPTIONS: CORS preflight
+export async function OPTIONS() {
+  return new NextResponse(null, { status: 204, headers: corsHeaders });
+}
+
 // GET: Fetch existing conversation for a lesson
 export async function GET(request: NextRequest) {
   if (!isFaithSupabaseConfigured()) {
-    return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
+    return NextResponse.json({ error: 'Database not configured' }, { status: 500, headers: corsHeaders });
   }
 
   const { searchParams } = new URL(request.url);
   const lessonId = searchParams.get('lesson_id');
 
   if (!lessonId) {
-    return NextResponse.json({ error: 'lesson_id required' }, { status: 400 });
+    return NextResponse.json({ error: 'lesson_id required' }, { status: 400, headers: corsHeaders });
   }
 
   const { data, error } = await faithSupabase
@@ -104,10 +115,10 @@ export async function GET(request: NextRequest) {
     .single();
 
   if (error && error.code !== 'PGRST116') {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: error.message }, { status: 500, headers: corsHeaders });
   }
 
-  return NextResponse.json({ conversation: data || null });
+  return NextResponse.json({ conversation: data || null }, { headers: corsHeaders });
 }
 
 // POST: Send message and get streaming response
@@ -122,7 +133,7 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json();
-  const { lesson_id, message, selected_tradition_ids } = body;
+  const { lesson_id, message, selected_tradition_ids, stream: streamMode = true } = body;
 
   if (!lesson_id || !message) {
     return NextResponse.json({ error: 'lesson_id and message required' }, { status: 400 });
@@ -197,7 +208,85 @@ export async function POST(request: NextRequest) {
   // Add the new user message
   chatMessages.push({ role: 'user', content: message });
 
-  // Call Anthropic with streaming
+  // ── NON-STREAMING MODE (for React Native / mobile) ──────────────────
+  if (streamMode === false) {
+    const anthropicResponse = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1024,
+        system: systemPrompt,
+        messages: chatMessages,
+      }),
+    });
+
+    if (!anthropicResponse.ok) {
+      const errText = await anthropicResponse.text();
+      console.error('Anthropic API error:', errText);
+      return NextResponse.json({ error: 'Guide AI error' }, { status: 502 });
+    }
+
+    const result = await anthropicResponse.json();
+    let fullText = '';
+    for (const block of result.content || []) {
+      if (block.type === 'text') fullText += block.text;
+    }
+
+    // Check for commit marker
+    let commitAction: { tradition_id: string; tradition_name: string } | null = null;
+    const commitMatch = fullText.match(/\[COMMIT:(.+?)\]/);
+    if (commitMatch) {
+      const commitTraditionName = commitMatch[1].trim();
+      const committedTradition = traditions.find(
+        (t: Record<string, unknown>) => (t.name as string).toLowerCase() === commitTraditionName.toLowerCase()
+      );
+      if (committedTradition) {
+        commitAction = { tradition_id: committedTradition.id as string, tradition_name: committedTradition.name as string };
+      }
+    }
+
+    const cleanText = fullText.replace(/\[COMMIT:.+?\]/g, '').trim();
+
+    // Save conversation to DB
+    const now = new Date().toISOString();
+    const updatedMessages = [
+      ...existingMessages.filter((m: { role: string }) => m.role !== 'system'),
+      { role: 'user', content: message, timestamp: now },
+      { role: 'assistant', content: cleanText, timestamp: now },
+    ];
+
+    await faithSupabase
+      .from('faith_guide_conversations')
+      .upsert({
+        user_id: JOSHUA_USER_ID,
+        lesson_id,
+        messages: updatedMessages,
+        selected_perspectives: selectedTraditionIds,
+        committed_tradition_id: commitAction?.tradition_id || null,
+        status: commitAction ? 'committed' : 'active',
+        updated_at: now,
+      }, {
+        onConflict: 'user_id,lesson_id',
+      });
+
+    return NextResponse.json({
+      text: cleanText,
+      commit: commitAction,
+    }, {
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type',
+      },
+    });
+  }
+
+  // ── STREAMING MODE (for web) ───────────────────────────────────────
   const anthropicResponse = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: {

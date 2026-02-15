@@ -274,21 +274,44 @@ export default function GuideChat({
             <>
               {/* Welcome message if no messages */}
               {messages.length === 0 && !streaming && (
-                <div className="bg-slate-800/60 rounded-xl p-4 border border-slate-700/50">
-                  <p className="text-slate-300 text-sm leading-relaxed">
-                    I see {resonatingNames.length} perspectives resonated with
-                    you today
-                    {resonatingNames.length > 0 && (
-                      <>
-                        {" "}— from{" "}
-                        <span className="text-amber-400">
-                          {resonatingNames.join(" and ")}
-                        </span>
-                      </>
-                    )}
-                    . Tell me what drew you to them, and
-                    let&apos;s explore together.
-                  </p>
+                <div className="flex flex-col items-center justify-center py-8 gap-6">
+                  <div className="w-16 h-16 rounded-full bg-amber-600/20 flex items-center justify-center">
+                    <MessageCircle className="w-8 h-8 text-amber-400" />
+                  </div>
+                  <div className="bg-slate-800/60 rounded-xl p-5 border border-slate-700/50 max-w-sm">
+                    <p className="text-slate-300 text-sm leading-relaxed text-center">
+                      I see {resonatingNames.length} perspectives resonated with
+                      you today
+                      {resonatingNames.length > 0 && (
+                        <>
+                          {" "}— from{" "}
+                          <span className="text-amber-400 font-medium">
+                            {resonatingNames.join(" and ")}
+                          </span>
+                        </>
+                      )}
+                      . Tell me what drew you to them, and
+                      let&apos;s explore together.
+                    </p>
+                  </div>
+                  <div className="flex flex-wrap gap-2 justify-center max-w-sm">
+                    {[
+                      "What makes these perspectives different?",
+                      "I liked the emphasis on...",
+                      "Help me understand the tension between them",
+                    ].map((suggestion) => (
+                      <button
+                        key={suggestion}
+                        onClick={() => {
+                          setInput(suggestion);
+                          inputRef.current?.focus();
+                        }}
+                        className="px-3 py-1.5 rounded-full bg-slate-800 border border-slate-700 text-slate-400 text-xs hover:border-amber-500/50 hover:text-slate-300 transition-colors"
+                      >
+                        {suggestion}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               )}
 

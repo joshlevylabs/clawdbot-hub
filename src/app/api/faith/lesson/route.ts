@@ -55,8 +55,9 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: perspError.message }, { status: 500 });
   }
 
-  // Randomize perspective order deterministically per day
-  const shuffled = seededShuffle(perspectives || [], dateSeed(date));
+  // Randomize perspective order deterministically per day + lesson
+  const seed = dateSeed(date) ^ dateSeed(lesson.id);
+  const shuffled = seededShuffle(perspectives || [], seed);
 
   return NextResponse.json({ lesson, perspectives: shuffled });
 }

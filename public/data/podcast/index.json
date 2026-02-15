@@ -21,7 +21,7 @@
       "filename": "episode-002-2026-02-02-invisible-entrepreneur.md",
       "created": "2026-02-02",
       "finalized": "2026-02-06",
-      "status": "published",
+      "status": "finalized",
       "links": {
         "youtube": "https://youtu.be/drK1_xyZ7Yk",
         "spotify": "https://open.spotify.com/episode/4u6SCrXUmvc3WNYi1jpBTq",
@@ -34,9 +34,11 @@
       "pillar": "ai",
       "filename": "episode-003-2026-02-06-mre-trading-system.md",
       "created": "2026-02-06",
-      "finalized": null,
-      "status": "draft",
-      "links": {}
+      "finalized": "2026-02-15",
+      "status": "finalized",
+      "links": {
+        "youtube": "https://youtube.com/watch?v=ayxpkLdnztc"
+      }
     }
   ],
   "lastEpisodeNumber": 3,
@@ -48,5 +50,5 @@
     "legacy": 0,
     "all": 1
   },
-  "lastUpdated": "2026-02-06"
+  "lastUpdated": "2026-02-15"
 }

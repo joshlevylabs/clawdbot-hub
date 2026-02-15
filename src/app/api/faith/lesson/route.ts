@@ -1,6 +1,27 @@
 import { NextResponse } from 'next/server';
 import { faithSupabase, isFaithSupabaseConfigured } from '@/lib/faith-supabase';
 
+// Deterministic shuffle using a simple seeded PRNG (date-based)
+function seededShuffle<T>(arr: T[], seed: number): T[] {
+  const shuffled = [...arr];
+  let s = seed;
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    s = (s * 1664525 + 1013904223) & 0xffffffff;
+    const j = ((s >>> 0) % (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
+function dateSeed(dateStr: string): number {
+  // Simple hash from date string "YYYY-MM-DD"
+  let hash = 0;
+  for (let i = 0; i < dateStr.length; i++) {
+    hash = ((hash << 5) - hash + dateStr.charCodeAt(i)) | 0;
+  }
+  return hash;
+}
+
 export async function GET(request: Request) {
   if (!isFaithSupabaseConfigured()) {
     return NextResponse.json({ error: 'Faith Supabase not configured' }, { status: 500 });
@@ -34,5 +55,8 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: perspError.message }, { status: 500 });
   }
 
-  return NextResponse.json({ lesson, perspectives: perspectives || [] });
+  // Randomize perspective order deterministically per day
+  const shuffled = seededShuffle(perspectives || [], dateSeed(date));
+
+  return NextResponse.json({ lesson, perspectives: shuffled });
 }

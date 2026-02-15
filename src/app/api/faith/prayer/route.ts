@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { faithSupabase, isFaithSupabaseConfigured } from '@/lib/faith-supabase';
 import { generatePrayer } from '@/lib/prayer-templates';
 
-const JOSHUA_USER_ID = '00000000-0000-0000-0000-000000000001';
+const JOSHUA_USER_ID = '2255450f-a3c8-4006-9aef-4bfc4afcda61';
 
 function getTodayPT(): string {
   return new Date().toLocaleDateString('en-CA', { timeZone: 'America/Los_Angeles' });

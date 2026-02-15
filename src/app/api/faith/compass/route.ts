@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { faithSupabase, isFaithSupabaseConfigured } from '@/lib/faith-supabase';
 
 // Hard-coded user_id for Joshua (single-user app, no auth needed)
-const JOSHUA_USER_ID = '00000000-0000-0000-0000-000000000001';
+const JOSHUA_USER_ID = '2255450f-a3c8-4006-9aef-4bfc4afcda61';
 
 export async function GET() {
   if (!isFaithSupabaseConfigured()) {

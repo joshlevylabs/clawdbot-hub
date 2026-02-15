@@ -28,7 +28,11 @@ export async function GET(request: Request) {
   }
 
   const { searchParams } = new URL(request.url);
-  const date = searchParams.get('date') || new Date().toISOString().split('T')[0];
+  // Use PT timezone for date calculation (matches content generation schedule)
+  const now = new Date();
+  const ptDate = new Date(now.toLocaleString('en-US', { timeZone: 'America/Los_Angeles' }));
+  const defaultDate = ptDate.getFullYear() + '-' + String(ptDate.getMonth() + 1).padStart(2, '0') + '-' + String(ptDate.getDate()).padStart(2, '0');
+  const date = searchParams.get('date') || defaultDate;
 
   // Fetch today's lesson
   const { data: lesson, error: lessonError } = await faithSupabase

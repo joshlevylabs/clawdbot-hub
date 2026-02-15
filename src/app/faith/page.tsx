@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { BookOpen, Compass, Map, RefreshCw, AlertCircle, Feather } from "lucide-react";
+import { BookOpen, Compass, Map, RefreshCw, AlertCircle, Feather, X, Eye, EyeOff } from "lucide-react";
 import LessonDisplay from "@/components/faith/LessonDisplay";
 import TraditionCard from "@/components/faith/TraditionCard";
 import CompassDashboard from "@/components/faith/CompassDashboard";
@@ -16,6 +16,9 @@ import type {
 } from "@/lib/faith-supabase";
 
 type Tab = "lesson" | "compass" | "journey" | "prayer";
+
+// Symbols for anonymous tiles (neutral, non-religious)
+const TILE_SYMBOLS = ["α", "β", "γ", "δ", "ε", "ζ", "η", "θ", "ι"];
 
 export default function FaithPage() {
   const [activeTab, setActiveTab] = useState<Tab>("lesson");
@@ -33,6 +36,11 @@ export default function FaithPage() {
   const [selectedTradition, setSelectedTradition] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
+
+  // Modal + reveal state
+  const [modalPerspective, setModalPerspective] = useState<FaithPerspective | null>(null);
+  const [modalTradition, setModalTradition] = useState<FaithTradition | null>(null);
+  const [revealNames, setRevealNames] = useState(false);
 
   const loadData = useCallback(async () => {
     setLoading(true);
@@ -186,28 +194,132 @@ export default function FaithPage() {
                 <>
                   <LessonDisplay lesson={lesson} />
 
-                  {/* Perspectives Grid */}
+                  {/* Perspectives — Anonymous Tiles */}
                   {perspectives.length > 0 && (
                     <div>
-                      <h3 className="text-lg font-semibold text-slate-100 mb-4">
-                        How do different traditions see this?
-                      </h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {perspectives.map((persp) => {
+                      <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-lg font-semibold text-slate-100">
+                          {submitSuccess ? "Your selection" : "Which perspective resonates?"}
+                        </h3>
+                        <button
+                          onClick={() => setRevealNames(!revealNames)}
+                          className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-300 transition-colors px-2 py-1 rounded-md hover:bg-slate-800"
+                        >
+                          {revealNames ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                          {revealNames ? "Hide names" : "Reveal names"}
+                        </button>
+                      </div>
+                      <p className="text-sm text-slate-500 mb-4">
+                        Tap a tile to read the perspective. Names are hidden to remove bias.
+                      </p>
+                      <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-9 gap-3">
+                        {perspectives.map((persp, idx) => {
                           const tradition = persp.tradition || traditions.find(t => t.id === persp.tradition_id);
                           if (!tradition) return null;
+                          const isSelected = selectedTradition === tradition.id;
+                          const isDisabled = submitting || (submitSuccess && !isSelected);
                           return (
-                            <TraditionCard
+                            <button
                               key={persp.id}
-                              tradition={tradition}
-                              perspective={persp}
-                              isSelected={selectedTradition === tradition.id}
-                              onSelect={() => handleSelect(tradition.id)}
-                              disabled={submitting || (submitSuccess && selectedTradition !== tradition.id)}
-                            />
+                              onClick={() => {
+                                setModalPerspective(persp);
+                                setModalTradition(tradition);
+                              }}
+                              disabled={isDisabled}
+                              className={`relative flex flex-col items-center justify-center p-3 rounded-xl border-2 transition-all duration-200 min-h-[80px] ${
+                                isSelected
+                                  ? "border-amber-500 bg-amber-900/30 ring-1 ring-amber-500/50"
+                                  : isDisabled
+                                  ? "border-slate-700/30 bg-slate-800/20 opacity-40 cursor-not-allowed"
+                                  : "border-slate-700/50 bg-slate-800/40 hover:border-slate-500 hover:bg-slate-800/70 cursor-pointer"
+                              }`}
+                            >
+                              <span className="text-2xl font-light text-slate-300 mb-1">
+                                {revealNames ? tradition.icon : TILE_SYMBOLS[idx] || `${idx + 1}`}
+                              </span>
+                              <span className="text-[10px] text-slate-500 text-center leading-tight">
+                                {revealNames ? tradition.name : `View ${TILE_SYMBOLS[idx] || idx + 1}`}
+                              </span>
+                              {isSelected && (
+                                <div className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-amber-500 rounded-full flex items-center justify-center">
+                                  <span className="text-white text-xs">✓</span>
+                                </div>
+                              )}
+                            </button>
                           );
                         })}
                       </div>
+
+                      {/* Perspective Modal */}
+                      {modalPerspective && modalTradition && (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm" onClick={() => setModalPerspective(null)}>
+                          <div className="bg-slate-900 border border-slate-700 rounded-2xl max-w-lg w-full max-h-[80vh] overflow-y-auto shadow-2xl" onClick={e => e.stopPropagation()}>
+                            {/* Modal header */}
+                            <div className="sticky top-0 bg-slate-900 border-b border-slate-800 p-4 flex items-center justify-between rounded-t-2xl">
+                              <div className="flex items-center gap-3">
+                                <span className="text-2xl">{revealNames ? modalTradition.icon : TILE_SYMBOLS[perspectives.indexOf(modalPerspective)] || "?"}</span>
+                                <div>
+                                  <h3 className="font-semibold text-slate-100">
+                                    {revealNames ? modalTradition.name : `Perspective ${TILE_SYMBOLS[perspectives.indexOf(modalPerspective)] || "?"}`}
+                                  </h3>
+                                  {revealNames && (
+                                    <p className="text-xs text-slate-500">{modalTradition.description?.slice(0, 80)}...</p>
+                                  )}
+                                </div>
+                              </div>
+                              <button onClick={() => setModalPerspective(null)} className="p-1 hover:bg-slate-800 rounded-lg transition-colors">
+                                <X className="w-5 h-5 text-slate-400" />
+                              </button>
+                            </div>
+
+                            {/* Modal body */}
+                            <div className="p-5">
+                              <p className="text-slate-200 leading-relaxed text-[15px]">
+                                {modalPerspective.perspective_text}
+                              </p>
+
+                              {/* Citations */}
+                              {modalPerspective.source_citations && modalPerspective.source_citations.length > 0 && (
+                                <div className="mt-4 space-y-2">
+                                  <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Sources</p>
+                                  {modalPerspective.source_citations.map((cite: { ref?: string; text?: string } | string, i: number) => (
+                                    <div key={i} className="pl-3 border-l-2 border-slate-700">
+                                      {typeof cite === 'string' ? (
+                                        <p className="text-xs text-slate-500 italic">{cite}</p>
+                                      ) : (
+                                        <>
+                                          <p className="text-xs text-slate-400 font-medium">{cite.ref}</p>
+                                          {cite.text && <p className="text-xs text-slate-500 italic">{cite.text}</p>}
+                                        </>
+                                      )}
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Modal footer — action */}
+                            <div className="sticky bottom-0 bg-slate-900 border-t border-slate-800 p-4 rounded-b-2xl">
+                              {selectedTradition === modalTradition.id ? (
+                                <div className="text-center text-amber-400 font-medium text-sm py-2">✓ Selected</div>
+                              ) : submitSuccess ? (
+                                <div className="text-center text-slate-500 text-sm py-2">Already responded today</div>
+                              ) : (
+                                <button
+                                  onClick={() => {
+                                    handleSelect(modalTradition.id);
+                                    setModalPerspective(null);
+                                  }}
+                                  disabled={submitting}
+                                  className="w-full py-3 bg-amber-600 hover:bg-amber-700 disabled:opacity-50 rounded-xl text-white font-medium transition-colors"
+                                >
+                                  {submitting ? "Saving..." : "This Resonates"}
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      )}
 
                       {/* Compass impact preview after selection */}
                       {submitSuccess && compass && (

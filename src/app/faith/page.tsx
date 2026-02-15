@@ -1,11 +1,12 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { BookOpen, Compass, Map, RefreshCw, AlertCircle } from "lucide-react";
+import { BookOpen, Compass, Map, RefreshCw, AlertCircle, Feather } from "lucide-react";
 import LessonDisplay from "@/components/faith/LessonDisplay";
 import TraditionCard from "@/components/faith/TraditionCard";
 import CompassDashboard from "@/components/faith/CompassDashboard";
 import JourneyTimeline from "@/components/faith/JourneyTimeline";
+import DailyPrayer from "@/components/faith/DailyPrayer";
 import type {
   FaithDimension,
   FaithTradition,
@@ -14,7 +15,7 @@ import type {
   FaithCompassState,
 } from "@/lib/faith-supabase";
 
-type Tab = "lesson" | "compass" | "journey";
+type Tab = "lesson" | "compass" | "journey" | "prayer";
 
 export default function FaithPage() {
   const [activeTab, setActiveTab] = useState<Tab>("lesson");
@@ -114,6 +115,7 @@ export default function FaithPage() {
     { key: "lesson" as Tab, label: "Daily Lesson", icon: BookOpen },
     { key: "compass" as Tab, label: "Compass", icon: Compass },
     { key: "journey" as Tab, label: "Journey", icon: Map },
+    { key: "prayer" as Tab, label: "🕊️ Prayer", icon: Feather },
   ];
 
   return (
@@ -303,6 +305,11 @@ export default function FaithPage() {
               traditions={traditions}
               dimensions={dimensions}
             />
+          )}
+
+          {/* ===== DAILY PRAYER TAB ===== */}
+          {!loading && !error && activeTab === "prayer" && (
+            <DailyPrayer />
           )}
         </div>
       </div>

@@ -20,6 +20,7 @@ import {
   MessageSquare,
   TrendingUp,
   Lock,
+  BookOpen,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -31,6 +32,7 @@ const navItems = [
   { href: "/newsletter", icon: Mail, label: "Newsletter" },
   { href: "/family", icon: Users, label: "Family" },
   { href: "/marriage", icon: Heart, label: "Marriage" },
+  { href: "/faith", icon: BookOpen, label: "Faith" },
   { href: "/moltbook", icon: MessageSquare, label: "Moltbook 🦞" },
   { href: "/tasks", icon: CheckSquare, label: "Tasks" },
   { href: "/skills", icon: Zap, label: "Skills" },

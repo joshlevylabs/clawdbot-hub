@@ -2872,10 +2872,35 @@ function WorkspacePanel({
       // Update the original identity to reflect new state
       setOriginalIdentity({ ...formData.data });
 
-      // Helper to persist an agent's IDENTITY.md to disk using IDs for reportsTo/directReports
+      // Helper to persist an agent to both Supabase (structured) and filesystem (IDENTITY.md)
       const persistAgentIdentity = async (aid: string, agentState: Record<string, AgentState>) => {
         const a = agentState[aid];
         if (!a) return;
+
+        // Persist structured agent data to Supabase via PUT /api/agents/[name]
+        try {
+          await fetch(
+            `/api/agents/${encodeURIComponent(agentIdToDir(aid))}`,
+            {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                id: aid,
+                name: a.name,
+                title: a.title,
+                model: a.model,
+                emoji: a.emoji,
+                department: a.department,
+                status: a.status,
+                description: a.description,
+                reportsTo: a.reportsTo,
+                directReports: a.directReports,
+              }),
+            }
+          );
+        } catch { /* fire and forget */ }
+
+        // Also persist IDENTITY.md file content
         const idFields: IdentityFields = {
           name: a.name,
           title: a.title,
@@ -3143,8 +3168,31 @@ function WorkspacePanel({
 
             onAgentsUpdate(updated);
 
-            // Persist to disk
+            // Persist to Supabase (structured agent data)
             const a = updated[agentId];
+            try {
+              await fetch(
+                `/api/agents/${encodeURIComponent(agentIdToDir(agentId))}`,
+                {
+                  method: "PUT",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    id: agentId,
+                    name: a.name,
+                    title: a.title,
+                    model: a.model,
+                    emoji: a.emoji,
+                    department: a.department,
+                    status: a.status,
+                    description: a.description,
+                    reportsTo: a.reportsTo,
+                    directReports: a.directReports,
+                  }),
+                }
+              );
+            } catch { /* fire and forget */ }
+
+            // Also persist IDENTITY.md file content
             const idFields: IdentityFields = {
               name: a.name,
               title: a.title,
@@ -3639,7 +3687,35 @@ export default function OrgChartPage() {
               if (typeof agentData !== "object" || agentData === null) continue;
               const ad = agentData as Record<string, unknown>;
               const base = merged[id] || defaults[id];
-              if (!base) continue; // skip agents not in our org chart
+              if (!base) {
+                // Agent from Supabase not in defaults — include it if it has required fields
+                if (ad.name && ad.id) {
+                  merged[id] = {
+                    id: id,
+                    name: (ad.name as string),
+                    title: (ad.title as string) || "",
+                    model: (ad.model as string) || "",
+                    emoji: (ad.emoji as string) || "🤖",
+                    department: ((ad.department as string) || "Engineering") as DepartmentKey,
+                    status: ((ad.status as string) || "standby") as Status,
+                    description: (ad.description as string) || "",
+                    reportsTo: (ad.reportsTo as string | null) ?? (ad.reports_to as string | null) ?? null,
+                    directReports: Array.isArray(ad.directReports) ? (ad.directReports as string[])
+                      : Array.isArray(ad.direct_reports) ? (ad.direct_reports as string[])
+                      : [],
+                  };
+                }
+                continue;
+              }
+              // Supabase data takes precedence — handle both camelCase and snake_case
+              const reportsTo = ad.reportsTo !== undefined ? (ad.reportsTo as string | null)
+                : ad.reports_to !== undefined ? (ad.reports_to as string | null)
+                : base.reportsTo;
+              const directReports = Array.isArray(ad.directReports) && ad.directReports.length > 0
+                ? (ad.directReports as string[])
+                : Array.isArray(ad.direct_reports) && (ad.direct_reports as string[]).length > 0
+                  ? (ad.direct_reports as string[])
+                  : base.directReports;
               merged[id] = {
                 ...base,
                 name: (ad.name as string) || base.name,
@@ -3649,10 +3725,8 @@ export default function OrgChartPage() {
                 department: ((ad.department as string) || base.department) as DepartmentKey,
                 status: ((ad.status as string) || base.status) as Status,
                 description: (ad.description as string) || base.description,
-                reportsTo: ad.reportsTo !== undefined ? (ad.reportsTo as string | null) : base.reportsTo,
-                directReports: Array.isArray(ad.directReports) && ad.directReports.length > 0
-                  ? (ad.directReports as string[])
-                  : base.directReports,
+                reportsTo,
+                directReports,
               };
             }
             setAgents(merged);

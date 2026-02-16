@@ -58,64 +58,6 @@
     }
   },
   {
-    "id": "e6b5453d-4e34-4ea3-81ce-655b99f19987",
-    "name": "MRE Strategy Analyst",
-    "enabled": true,
-    "schedule": {
-      "kind": "cron",
-      "expr": "0 14 * * 1-5",
-      "tz": "America/Los_Angeles"
-    },
-    "agent": {
-      "id": "ticker",
-      "name": "Ticker",
-      "emoji": "\ud83d\udcca",
-      "title": "Trading Lead"
-    },
-    "payload": {
-      "kind": "agentTurn",
-      "message": "MRE Strategy Analyst - Daily Review (after market close).\n\nRead your SOUL.md: ~/clawd/agents/mre-analyst/SOUL.md\n\n**ANALYSIS TASKS:**\n\n1. Load today's trading data:\n```bash\ncat ~/clawd/clawdbot-hub/public/data/paper-portfolio.json\ncat ~/clawd/clawdbot-hub/public/data/trading/mre-signals.json\n```\n\n2. Review today's performance:\n- Any trades executed?\n- P&L changes\n- Signal accuracy (did BUY signals go up? HOLD signals stay flat?)\n\n3. Check for issues:\n- False signals (BUY that led to loss)\n- Miss",
-      "deliver": false,
-      "channel": "telegram",
-      "model": "anthropic/claude-sonnet-4-20250514"
-    },
-    "state": {
-      "nextRunAtMs": 1771365600000,
-      "lastRunAtMs": 1771279200136,
-      "lastStatus": "ok",
-      "lastDurationMs": 108890
-    }
-  },
-  {
-    "id": "d61c848a-320a-46c0-9336-f237a3511f44",
-    "name": "MRE Strategy Optimizer",
-    "enabled": true,
-    "schedule": {
-      "kind": "cron",
-      "expr": "0 10 * * 0",
-      "tz": "America/Los_Angeles"
-    },
-    "agent": {
-      "id": "ticker",
-      "name": "Ticker",
-      "emoji": "\ud83d\udcca",
-      "title": "Trading Lead"
-    },
-    "payload": {
-      "kind": "agentTurn",
-      "message": "MRE Strategy Optimizer - Weekly Improvement Cycle.\n\nRead your SOUL.md: ~/clawd/agents/mre-optimizer/SOUL.md\n\n**OPTIMIZATION TASKS:**\n\n1. Review analyst findings:\n```bash\nls -la ~/clawd/agents/mre-analyst/reports/\ncat ~/clawd/agents/shared/strategy-issues.md\ncat ~/clawd/agents/mre-analyst/reports/weekly-*.md 2>/dev/null | tail -100\n```\n\n2. Prioritize issues by:\n- Frequency (how often it happens)\n- Impact ($ lost or missed)\n- Fixability (how hard to change)\n\n3. For top 1-2 issues, create proposals",
-      "deliver": true,
-      "channel": "telegram",
-      "model": "anthropic/claude-sonnet-4-20250514"
-    },
-    "state": {
-      "nextRunAtMs": 1771783200000,
-      "lastRunAtMs": 1771178400000,
-      "lastStatus": "ok",
-      "lastDurationMs": 359405
-    }
-  },
-  {
     "id": "e3dc2402-6e04-42ed-8420-5f410bc606a3",
     "name": "MRE Pit: Signal Accuracy",
     "enabled": true,

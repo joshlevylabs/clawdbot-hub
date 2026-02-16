@@ -1,6 +1,6 @@
 {
   "date": "2026-02-16",
-  "generatedAt": "2026-02-16T15:34:00.598714",
+  "generatedAt": "2026-02-16T15:35:15.728710",
   "topic": "Daily Standup \u2014 Monday Feb 16",
   "status": "completed",
   "participants": [
@@ -9,7 +9,7 @@
       "role": "COO"
     },
     {
-      "name": "Atlas",
+      "name": "Elon",
       "role": "CTO"
     },
     {
@@ -24,10 +24,10 @@
   "duration": "~3 min",
   "reports": {
     "cto": {
-      "agent": "Atlas",
+      "agent": "Elon",
       "highlights": [
-        "216 commits this week across both repos",
-        "Hub latest: cfcac42 data: fleet usage update",
+        "217 commits this week across both repos",
+        "Hub latest: 620825a fix: update standup agent names \u2014 Venture\u2192Dave, Muse\u2192Alex",
         "Build status: healthy"
       ],
       "concerns": [
@@ -37,7 +37,7 @@
         "83 TODOs/FIXMEs in codebase"
       ],
       "metrics": {
-        "recentCommits": 216,
+        "recentCommits": 217,
         "openIssues": 2,
         "buildHealthy": true,
         "todosFixmes": 83,
@@ -94,9 +94,9 @@
       "message": "Morning team. It's Monday, Feb 16. Let's run through today's standup."
     },
     {
-      "speaker": "Atlas",
+      "speaker": "Elon",
       "role": "CTO",
-      "message": "We had 216 commits across both repos this week. Hub build is healthy. A few things to flag: uncommitted changes: hub (1 files), monorepo (16 files). Also, 1 critical sync gaps in ecosystem-map."
+      "message": "We had 217 commits across both repos this week. Hub build is healthy. A few things to flag: uncommitted changes: hub (1 files), monorepo (16 files). Also, 1 critical sync gaps in ecosystem-map."
     },
     {
       "speaker": "Dave",
@@ -118,7 +118,7 @@
     {
       "text": "Sync podcast episodes 2-3 to website",
       "priority": "high",
-      "assignee": "Atlas",
+      "assignee": "Elon",
       "completed": false
     },
     {
@@ -130,13 +130,13 @@
     {
       "text": "Commit uncommitted changes in repos",
       "priority": "low",
-      "assignee": "Atlas",
+      "assignee": "Elon",
       "completed": false
     },
     {
       "text": "Address 1 critical ecosystem sync gaps",
       "priority": "high",
-      "assignee": "Atlas",
+      "assignee": "Elon",
       "completed": false
     }
   ],

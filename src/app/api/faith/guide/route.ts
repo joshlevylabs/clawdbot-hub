@@ -3,6 +3,24 @@ import { faithSupabase, isFaithSupabaseConfigured } from '@/lib/faith-supabase';
 
 const JOSHUA_USER_ID = '2255450f-a3c8-4006-9aef-4bfc4afcda61';
 
+// Haiku 3.5 pricing (per 1K tokens)
+const HAIKU_PRICING = { input: 0.001, output: 0.005 };
+const COST_MULTIPLIER = 3.0;
+const WATT_UNIT_VALUE = 1.0;
+const MIN_WATT_CHARGE = 0.001;
+
+function calculateGuideWattCost(inputTokens: number, outputTokens: number): {
+  apiCostUsd: number;
+  watts: number;
+} {
+  const inputCost = (inputTokens / 1000) * HAIKU_PRICING.input;
+  const outputCost = (outputTokens / 1000) * HAIKU_PRICING.output;
+  const apiCostUsd = inputCost + outputCost;
+  const raw = (apiCostUsd * COST_MULTIPLIER) / WATT_UNIT_VALUE;
+  const watts = Math.max(MIN_WATT_CHARGE, Math.ceil(raw * 10000) / 10000);
+  return { apiCostUsd, watts };
+}
+
 function getGuideTitle(primaryAlignment: string | null): string {
   if (!primaryAlignment) return 'Your Guide';
   const name = primaryAlignment.toLowerCase();
@@ -226,6 +244,27 @@ export async function POST(request: NextRequest) {
 
   // ── NON-STREAMING MODE (for React Native / mobile) ──────────────────
   if (streamMode === false) {
+    // Check watt balance before calling Anthropic
+    const { data: profileData, error: profileError } = await faithSupabase
+      .from('profiles')
+      .select('watt_balance')
+      .eq('id', JOSHUA_USER_ID)
+      .single();
+
+    if (profileError) {
+      console.error('Profile fetch error:', profileError);
+      return NextResponse.json({ error: 'Failed to check watt balance' }, { status: 500, headers: corsHeaders });
+    }
+
+    const currentBalance = profileData?.watt_balance ?? 0;
+    if (currentBalance < MIN_WATT_CHARGE) {
+      return NextResponse.json({
+        error: 'insufficient_watts',
+        message: 'Your watt balance is too low. Please buy more watts to continue using the guide.',
+        balance: currentBalance,
+      }, { status: 402, headers: corsHeaders });
+    }
+
     const anthropicResponse = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -245,7 +284,7 @@ export async function POST(request: NextRequest) {
     if (!anthropicResponse.ok) {
       const errText = await anthropicResponse.text();
       console.error('Anthropic API error:', errText);
-      return NextResponse.json({ error: 'Guide AI error' }, { status: 502 });
+      return NextResponse.json({ error: 'Guide AI error' }, { status: 502, headers: corsHeaders });
     }
 
     const result = await anthropicResponse.json();
@@ -253,6 +292,32 @@ export async function POST(request: NextRequest) {
     for (const block of result.content || []) {
       if (block.type === 'text') fullText += block.text;
     }
+
+    // Calculate watt cost from actual token usage
+    const usage = result.usage || { input_tokens: 0, output_tokens: 0 };
+    const { apiCostUsd, watts: wattCost } = calculateGuideWattCost(usage.input_tokens, usage.output_tokens);
+
+    // Deduct watts from profile balance
+    const newBalance = Math.max(0, currentBalance - wattCost);
+    await faithSupabase
+      .from('profiles')
+      .update({ watt_balance: newBalance })
+      .eq('id', JOSHUA_USER_ID);
+
+    // Log watt usage
+    await faithSupabase
+      .from('watt_usage')
+      .insert({
+        user_id: JOSHUA_USER_ID,
+        watts_used: wattCost,
+        action: 'faith_guide_message',
+        feature: 'Faith Guide',
+        input_tokens: usage.input_tokens,
+        output_tokens: usage.output_tokens,
+        model: 'claude-3-5-haiku-20241022',
+        api_cost_usd: apiCostUsd,
+        description: `Guide conversation for lesson: ${lesson.topic || lesson_id}`,
+      });
 
     // Check for commit marker
     let commitAction: { tradition_id: string; tradition_name: string } | null = null;
@@ -294,12 +359,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       text: cleanText,
       commit: commitAction,
-    }, {
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type',
+      watt_cost: wattCost,
+      watt_balance: newBalance,
+      usage: {
+        input_tokens: usage.input_tokens,
+        output_tokens: usage.output_tokens,
       },
+    }, {
+      headers: corsHeaders,
     });
   }
 

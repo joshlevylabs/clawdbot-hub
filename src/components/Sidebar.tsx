@@ -4,38 +4,31 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  CheckSquare,
-  Link2,
-  Zap,
   Settings,
   Menu,
   X,
   LogOut,
   Clock,
   Sunrise,
-  Heart,
   Mic,
   Mail,
-  Users,
   MessageSquare,
   TrendingUp,
   Lock,
-  BookOpen,
+  Network,
+  Cpu,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 const navItems = [
   { href: "/dashboard", icon: Sunrise, label: "Dashboard" },
-  { href: "/faith", icon: BookOpen, label: "Faith" },
-  { href: "/family", icon: Users, label: "Family" },
+  { href: "/org-chart", icon: Network, label: "Org Chart" },
+  { href: "/fleet", icon: Cpu, label: "Fleet" },
+  { href: "/standups", icon: MessageSquare, label: "Standups" },
   { href: "/trading", icon: TrendingUp, label: "Finance" },
   { href: "/morning-brief", icon: Clock, label: "Morning Brief" },
   { href: "/podcast", icon: Mic, label: "Podcast" },
   { href: "/newsletter", icon: Mail, label: "Newsletter" },
-  { href: "/marriage", icon: Heart, label: "Marriage" },
-  { href: "/moltbook", icon: MessageSquare, label: "Moltbook 🦞" },
-  { href: "/tasks", icon: CheckSquare, label: "Tasks" },
-  { href: "/skills", icon: Zap, label: "Skills" },
   { href: "/vault", icon: Lock, label: "Vault" },
   { href: "/settings", icon: Settings, label: "Settings" },
 ];

@@ -1,0 +1,87 @@
+{
+  "generated_at": "2026-02-16T09:36:26.258953",
+  "active_sessions": 3,
+  "summary": {
+    "today": 38.1159,
+    "week": 917.6459,
+    "month": 2207.8444,
+    "tokens_today": 46553671
+  },
+  "by_model": {
+    "Claude Opus 4": {
+      "cost_today": 38.1159,
+      "cost_week": 917.6459,
+      "cost_month": 2207.8444,
+      "tokens_today": 46553671,
+      "tokens_week": 1036906505,
+      "tokens_month": 2240788053,
+      "calls_today": 1523
+    }
+  },
+  "by_agent": {
+    "unknown": {
+      "cost_today": 22.9415,
+      "cost_week": 887.852,
+      "cost_month": 2161.6906,
+      "tokens_today": 29194766,
+      "primary_model": "Claude Opus 4",
+      "department": "other"
+    },
+    "theo": {
+      "cost_today": 6.5439,
+      "cost_week": 6.5439,
+      "cost_month": 6.5439,
+      "tokens_today": 8705655,
+      "primary_model": "Claude Opus 4",
+      "department": "executive"
+    },
+    "cron": {
+      "cost_today": 3.9928,
+      "cost_week": 18.6123,
+      "cost_month": 34.9722,
+      "tokens_today": 3576917,
+      "primary_model": "Claude Opus 4",
+      "department": "other"
+    },
+    "atlas": {
+      "cost_today": 3.0209,
+      "cost_week": 3.0209,
+      "cost_month": 3.0209,
+      "tokens_today": 3719483,
+      "primary_model": "Claude Opus 4",
+      "department": "engineering"
+    },
+    "forge": {
+      "cost_today": 1.6168,
+      "cost_week": 1.6168,
+      "cost_month": 1.6168,
+      "tokens_today": 1356850,
+      "primary_model": "Claude Opus 4",
+      "department": "engineering"
+    }
+  },
+  "daily_costs": {
+    "2026-01-26": 102.10320474999996,
+    "2026-01-27": 47.67594300000004,
+    "2026-01-28": 46.04344750000002,
+    "2026-01-29": 81.51844200000004,
+    "2026-01-30": 68.72106050000005,
+    "2026-01-31": 149.65476624999985,
+    "2026-02-01": 118.81693225,
+    "2026-02-02": 86.91783600000002,
+    "2026-02-03": 63.22368949999995,
+    "2026-02-04": 93.29549625000001,
+    "2026-02-05": 88.22325625000018,
+    "2026-02-06": 134.56400700000006,
+    "2026-02-07": 93.89863750000002,
+    "2026-02-08": 115.54178175000004,
+    "2026-02-09": 163.065032,
+    "2026-02-10": 184.62744124999986,
+    "2026-02-11": 40.55901050000005,
+    "2026-02-12": 134.2916677500002,
+    "2026-02-13": 193.85957824999974,
+    "2026-02-14": 50.32515399999998,
+    "2026-02-15": 112.80211575000006,
+    "2026-02-16": 38.11594899999996
+  }
+}

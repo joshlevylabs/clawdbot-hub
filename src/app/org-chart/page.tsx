@@ -2558,7 +2558,7 @@ function WorkspacePanel({
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`relative flex items-center gap-1.5 px-3 py-2.5 text-xs font-medium whitespace-nowrap border-b-2 transition-all flex-shrink-0 ${
+              className={`relative flex items-center gap-1 px-2.5 py-2.5 text-xs font-medium whitespace-nowrap border-b-2 transition-all flex-shrink-0 ${
                 isActive
                   ? "text-violet-300 border-violet-400 bg-slate-950/50"
                   : "text-slate-500 border-transparent hover:text-slate-300 hover:bg-slate-800/30"
@@ -2728,7 +2728,7 @@ function DrawerOverlay({ open, onClose, children }: { open: boolean; onClose: ()
         onClick={onClose}
       />
       <div
-        className={`fixed top-0 right-0 z-50 h-full w-[540px] max-w-[90vw] hidden lg:flex transition-transform duration-300 ease-in-out ${
+        className={`fixed top-0 right-0 z-50 h-full w-[600px] max-w-[90vw] hidden lg:flex transition-transform duration-300 ease-in-out ${
           visible ? "translate-x-0" : "translate-x-full"
         }`}
         style={{ boxShadow: visible ? "-8px 0 30px rgba(0,0,0,0.5)" : "none" }}

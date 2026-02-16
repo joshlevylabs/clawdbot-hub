@@ -348,35 +348,6 @@
     }
   },
   {
-    "id": "4514e39a-e307-4917-8d55-4efd7c113006",
-    "name": "alpaca-sync-check",
-    "enabled": true,
-    "schedule": {
-      "kind": "cron",
-      "expr": "35 6 11 2 *",
-      "tz": "America/Los_Angeles"
-    },
-    "agent": {
-      "id": "ticker",
-      "name": "Ticker",
-      "emoji": "\ud83d\udcca",
-      "title": "Trading Lead"
-    },
-    "payload": {
-      "kind": "systemEvent",
-      "message": "",
-      "deliver": false,
-      "channel": "",
-      "model": ""
-    },
-    "state": {
-      "nextRunAtMs": 1802356500000,
-      "lastRunAtMs": 1770820669325,
-      "lastStatus": "ok",
-      "lastDurationMs": 0
-    }
-  },
-  {
     "id": "60eee590-f9b8-44da-a9d6-05c778e2ef0f",
     "name": "MRE V13 Weekly Optimizer",
     "enabled": true,
@@ -403,64 +374,6 @@
       "lastRunAtMs": 1771221826074,
       "lastStatus": "ok",
       "lastDurationMs": 612994
-    }
-  },
-  {
-    "id": "1cdca149-3de7-4715-a532-937cb25344b9",
-    "name": "Universe Backtest (tonight)",
-    "enabled": true,
-    "schedule": {
-      "kind": "cron",
-      "expr": "0 22 10 2 *",
-      "tz": "America/Los_Angeles"
-    },
-    "agent": {
-      "id": "ticker",
-      "name": "Ticker",
-      "emoji": "\ud83d\udcca",
-      "title": "Trading Lead"
-    },
-    "payload": {
-      "kind": "agentTurn",
-      "message": "Run the MRE V13 Overnight Optimizer \u2014 full quant research pipeline.\n\n```bash\ncd ~/clawd/trading-bot && bash run_optimizer.sh 2>&1\n```\n\nThis runs 5 phases: walk-forward validation, parameter grid search, multi-signal confirmation, regime-conditional optimization, Monte Carlo robustness. Expected runtime: 5-8 hours.\n\nAfter completion, read the calibration summary and send to Joshua via Telegram:\n```bash\ncat ~/clawd/trading-bot/data/universe_calibration.json | python3 -c \"import json,sys; d=json.lo",
-      "deliver": true,
-      "channel": "telegram",
-      "model": ""
-    },
-    "state": {
-      "nextRunAtMs": 1802325600000,
-      "lastRunAtMs": 1770789875628,
-      "lastStatus": "ok",
-      "lastDurationMs": 97366
-    }
-  },
-  {
-    "id": "b86f374b-16df-445e-aa73-09c170138fc8",
-    "name": "Universe Signal Generator Upgrade",
-    "enabled": true,
-    "schedule": {
-      "kind": "cron",
-      "expr": "0 5 11 2 *",
-      "tz": "America/Los_Angeles"
-    },
-    "agent": {
-      "id": "ticker",
-      "name": "Ticker",
-      "emoji": "\ud83d\udcca",
-      "title": "Trading Lead"
-    },
-    "payload": {
-      "kind": "agentTurn",
-      "message": "CRITICAL TASK: Upgrade the MRE Universe Signal Generator to use ALL 4 strategies for daily signal generation.\n\n**Context:**\nThe overnight backtest ran at 10 PM and produced calibration data at:\n`~/clawd/trading-bot/data/universe_calibration.json`\n\nCurrently `universe_signals.py` only fires BUY signals based on Fear/Greed thresholds (Strategy 1). This means 0 BUY signals when F&G is neutral (46). Joshua wants individual technical signals firing daily.\n\n**Step 1: Read the backtest calibration data",
-      "deliver": true,
-      "channel": "telegram",
-      "model": ""
-    },
-    "state": {
-      "nextRunAtMs": 1802350800000,
-      "lastRunAtMs": 1770814800097,
-      "lastStatus": "ok",
-      "lastDurationMs": 267495
     }
   },
   {

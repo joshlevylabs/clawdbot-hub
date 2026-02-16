@@ -672,9 +672,9 @@ function getDefaultAgents(): Record<string, AgentState> {
       reportsTo: "cto", directReports: [],
     },
     cmo: {
-      id: "cmo", name: "Muse", title: "CMO", emoji: "🎨",
+      id: "cmo", name: "Alex", title: "CMO", emoji: "🦍",
       model: "Claude Sonnet 4", status: "active", department: "Marketing",
-      description: "Content, creative direction, brand.",
+      description: "Content, creative direction, brand. Obsessed with offers, value equations, and volume.",
       reportsTo: "coo", directReports: ["scriptbot", "echo"],
     },
     scriptbot: {
@@ -690,9 +690,9 @@ function getDefaultAgents(): Record<string, AgentState> {
       reportsTo: "cmo", directReports: [],
     },
     cro: {
-      id: "cro", name: "Venture", title: "CRO", emoji: "💰",
+      id: "cro", name: "Dave", title: "CRO", emoji: "💵",
       model: "Claude Sonnet 4", status: "active", department: "Revenue",
-      description: "Growth strategy, monetization.",
+      description: "Growth strategy, monetization. Gazelle-intense focus on revenue, proven frameworks, every dollar has a purpose.",
       reportsTo: "coo", directReports: ["builder", "scout", "ticker"],
     },
     builder: {
@@ -3587,9 +3587,9 @@ function ExecutionTiers() {
 
 const ROUTES = [
   { task: "Build / Fix code", agents: ["Atlas", "CTO"], color: "text-cyan-400" },
-  { task: "Write content", agents: ["Muse", "ScriptBot"], color: "text-rose-400" },
-  { task: "Post social", agents: ["Muse", "Echo"], color: "text-rose-400" },
-  { task: "Trading / optimize", agents: ["Venture", "Ticker"], color: "text-emerald-400" },
+  { task: "Write content", agents: ["Alex", "ScriptBot"], color: "text-rose-400" },
+  { task: "Post social", agents: ["Alex", "Echo"], color: "text-rose-400" },
+  { task: "Trading / optimize", agents: ["Dave", "Ticker"], color: "text-emerald-400" },
   { task: "Test / audit", agents: ["Atlas", "Sentinel"], color: "text-cyan-400" },
   { task: "Design / UI", agents: ["Atlas", "Pixel"], color: "text-cyan-400" },
   { task: "Research / question", agents: ["Theo (direct)"], color: "text-violet-400" },
@@ -3672,7 +3672,7 @@ const PROTOCOLS: ProtocolData[] = [
     icon: "🎨",
     description: "Marketing & Content Protocol",
     countLabel: "14 roles",
-    activates: ["Muse (CMO)", "ScriptBot (Content)", "Echo (Social)"],
+    activates: ["Alex (CMO)", "ScriptBot (Content)", "Echo (Social)"],
     roles: ["CMO", "Brand Strategist", "Creative Director", "Show Runner", "ScriptBot", "Copywriter", "Visual Designer", "Motion Designer", "Distribution Lead", "Analytics Lead", "Community Manager", "Newsletter Editor", "SEO Specialist", "Brand DA"],
   },
   {
@@ -3680,7 +3680,7 @@ const PROTOCOLS: ProtocolData[] = [
     icon: "🏛️",
     description: "Trading Team Protocol",
     countLabel: "11 roles",
-    activates: ["Venture (CRO)", "Ticker (Trading)"],
+    activates: ["Dave (CRO)", "Ticker (Trading)"],
     roles: ["Strategist", "Quant Researcher", "Data Engineer", "Algorithm Dev", "Risk Manager", "Backtester", "Portfolio Manager", "Market Monitor", "Infrastructure Dev", "Compliance Auditor", "Performance Analyst"],
   },
   {

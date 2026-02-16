@@ -72,7 +72,8 @@ type FileTab =
   | "TOOLS.md"
   | "AGENTS.md"
   | "MEMORY.md"
-  | "HEARTBEAT.md";
+  | "HEARTBEAT.md"
+  | "EDIT_AGENT";
 
 const ALL_FILE_TABS: FileTab[] = [
   "IDENTITY.md",
@@ -82,6 +83,7 @@ const ALL_FILE_TABS: FileTab[] = [
   "AGENTS.md",
   "MEMORY.md",
   "HEARTBEAT.md",
+  "EDIT_AGENT",
 ];
 
 const FILE_TAB_META: Record<FileTab, { emoji: string; label: string; icon: typeof FileText }> = {
@@ -92,11 +94,26 @@ const FILE_TAB_META: Record<FileTab, { emoji: string; label: string; icon: typeo
   "AGENTS.md": { emoji: "📋", label: "Agents", icon: Users },
   "MEMORY.md": { emoji: "🧠", label: "Memory", icon: BookOpen },
   "HEARTBEAT.md": { emoji: "💓", label: "Heartbeat", icon: Heart },
+  "EDIT_AGENT": { emoji: "✨", label: "Edit", icon: Zap },
 };
 
 const MODEL_OPTIONS = ["Claude Opus 4", "Claude Sonnet 4", "Haiku 3.5", "Gemini 2 Flash"];
 const STATUS_OPTIONS: Status[] = ["active", "idle", "standby"];
 const DEPARTMENT_OPTIONS: DepartmentKey[] = ["Executive", "Engineering", "Marketing", "Revenue"];
+
+// Map org-chart agent id → disk directory name
+const ID_TO_DIR: Record<string, string> = {
+  cto: "atlas",
+  coo: "theo",
+  cmo: "muse",
+  cro: "venture",
+  "the-pit": "pit",
+  // All others use the same name: forge, pixel, sentinel, scriptbot, echo, builder, scout
+};
+
+function agentIdToDir(id: string): string {
+  return ID_TO_DIR[id] || id;
+}
 
 /* ═══════════════════════════════════════════════════════════════
    Markdown Parse/Serialize Helpers
@@ -174,6 +191,7 @@ interface IdentityFields {
   model: string;
   emoji: string;
   department: string;
+  status: string;
   reportsTo: string;
   directReports: string;
   roleDescription: string;
@@ -187,6 +205,7 @@ function parseIdentityMd(content: string): IdentityFields {
     model: kv["Model"] || "",
     emoji: kv["Emoji"] || "",
     department: kv["Department"] || "",
+    status: kv["Status"] || "",
     reportsTo: kv["Reports To"] || kv["Reports to"] || "",
     directReports: kv["Direct Reports"] || kv["Direct reports"] || "",
     roleDescription: kv["Role Description"] || kv["Description"] || "",
@@ -194,17 +213,19 @@ function parseIdentityMd(content: string): IdentityFields {
 }
 
 function serializeIdentityMd(f: IdentityFields): string {
-  const lines = ["# Identity", ""];
+  const lines = [`# ${f.name || "Agent"} — ${f.title || "Role"}`, ""];
   if (f.name) lines.push(`- **Name:** ${f.name}`);
   if (f.title) lines.push(`- **Title:** ${f.title}`);
   if (f.model) lines.push(`- **Model:** ${f.model}`);
   if (f.emoji) lines.push(`- **Emoji:** ${f.emoji}`);
   if (f.department) lines.push(`- **Department:** ${f.department}`);
+  if (f.status) lines.push(`- **Status:** ${f.status}`);
+  if (f.roleDescription) lines.push(`- **Description:** ${f.roleDescription}`);
   if (f.reportsTo) lines.push(`- **Reports To:** ${f.reportsTo}`);
-  if (f.directReports) lines.push(`- **Direct Reports:** ${f.directReports}`);
+  lines.push(`- **Direct Reports:** ${f.directReports || ""}`);
   if (f.roleDescription) {
     lines.push("");
-    lines.push("## Role Description");
+    lines.push("## Role");
     lines.push("");
     lines.push(f.roleDescription);
   }
@@ -1035,6 +1056,7 @@ function getFallbackContent(agentId: string, tab: FileTab, agents: Record<string
     case "AGENTS.md": return buildFallbackAgents(agent, agents);
     case "MEMORY.md": return buildFallbackMemory();
     case "HEARTBEAT.md": return buildFallbackHeartbeat(agent);
+    case "EDIT_AGENT": return "";
   }
 }
 
@@ -1860,8 +1882,8 @@ function IdentityForm({ data, onChange, agents, currentAgentId }: {
       </div>
       <FormSelect
         label="Status"
-        value={agents[currentAgentId]?.status || "active"}
-        onChange={() => {/* status handled via agent state */}}
+        value={data.status || agents[currentAgentId]?.status || "active"}
+        onChange={(v) => onChange({ ...data, status: v })}
         options={STATUS_OPTIONS}
       />
       <MultiSelectChips
@@ -2182,6 +2204,331 @@ type FormData =
   | { type: "MEMORY.md"; data: MemoryFields }
   | { type: "HEARTBEAT.md"; data: HeartbeatFields };
 
+/* ═══════════════════════════════════════════════════════════════
+   EditAgentChat — Natural language agent editor
+   ═══════════════════════════════════════════════════════════════ */
+
+interface ChatMessage {
+  id: number;
+  role: "user" | "system";
+  text: string;
+  changes?: Array<{ field: string; oldValue: string; newValue: string }>;
+}
+
+let chatMsgId = 0;
+
+function parseEditInstruction(
+  input: string,
+  agent: AgentState,
+  agents: Record<string, AgentState>,
+): { changes: Array<{ field: keyof AgentState; value: string | string[] | null }>; response: string } | { changes: null; response: string } {
+  const lower = input.toLowerCase().trim();
+
+  // "Tell me about" / "show" / "info" → show current config
+  if (/^(tell me about|show|info|describe|what|who is|current|config)/.test(lower)) {
+    const parentName = agent.reportsTo ? agents[agent.reportsTo]?.name || agent.reportsTo : "None";
+    const drNames = agent.directReports.map(id => agents[id]?.name || id).join(", ") || "None";
+    return {
+      changes: null,
+      response: `Here's the current config for **${agent.name}**:\n\n` +
+        `• **Name:** ${agent.name}\n` +
+        `• **Title:** ${agent.title}\n` +
+        `• **Emoji:** ${agent.emoji}\n` +
+        `• **Model:** ${agent.model}\n` +
+        `• **Department:** ${agent.department}\n` +
+        `• **Status:** ${agent.status}\n` +
+        `• **Description:** ${agent.description}\n` +
+        `• **Reports To:** ${parentName}\n` +
+        `• **Direct Reports:** ${drNames}`,
+    };
+  }
+
+  const changes: Array<{ field: keyof AgentState; value: string | string[] | null }> = [];
+  const parts: string[] = [];
+
+  // Helper: extract value after keyword patterns
+  const extractValue = (pattern: RegExp): string | null => {
+    const m = input.match(pattern);
+    return m ? m[1].trim().replace(/^["']|["']$/g, "") : null;
+  };
+
+  // Name
+  const nameVal = extractValue(/(?:change|set|update|make)\s+(?:the\s+)?name\s+to\s+(.+?)(?:\s+and\s+|$)/i)
+    || extractValue(/name\s*(?::|=|to)\s*(.+?)(?:\s+and\s+|$)/i);
+  if (nameVal) {
+    changes.push({ field: "name", value: nameVal });
+    parts.push(`**Name** → ${nameVal}`);
+  }
+
+  // Title / Role
+  const titleVal = extractValue(/(?:change|set|update|make)\s+(?:the\s+)?(?:title|role)\s+to\s+(.+?)(?:\s+and\s+|$)/i)
+    || extractValue(/(?:title|role)\s*(?::|=|to)\s*(.+?)(?:\s+and\s+|$)/i);
+  if (titleVal) {
+    changes.push({ field: "title", value: titleVal });
+    parts.push(`**Title** → ${titleVal}`);
+  }
+
+  // Emoji — look for emoji characters or "emoji to X"
+  const emojiVal = extractValue(/(?:change|set|update|make)\s+(?:the\s+)?emoji\s+to\s+(.+?)(?:\s+and\s+|$)/i)
+    || extractValue(/emoji\s*(?::|=|to)\s*(.+?)(?:\s+and\s+|$)/i);
+  if (emojiVal) {
+    changes.push({ field: "emoji", value: emojiVal });
+    parts.push(`**Emoji** → ${emojiVal}`);
+  }
+  // Also detect standalone emoji at the end like "make emoji 🚀"
+  if (!emojiVal) {
+    // Match common emoji patterns (surrogate pairs, variation selectors, ZWJ sequences)
+    const emojiMatch = input.match(/emoji\s+([^\s\w]{1,4})/);
+    if (emojiMatch) {
+      changes.push({ field: "emoji", value: emojiMatch[1] });
+      parts.push(`**Emoji** → ${emojiMatch[1]}`);
+    }
+  }
+
+  // Model
+  const modelVal = extractValue(/(?:change|set|update|make|switch)\s+(?:the\s+)?model\s+to\s+(.+?)(?:\s+and\s+|$)/i)
+    || extractValue(/model\s*(?::|=|to)\s*(.+?)(?:\s+and\s+|$)/i);
+  if (modelVal) {
+    changes.push({ field: "model", value: modelVal });
+    parts.push(`**Model** → ${modelVal}`);
+  }
+
+  // Department
+  const deptVal = extractValue(/(?:change|set|update|move)\s+(?:the\s+)?(?:department|dept)\s+to\s+(.+?)(?:\s+and\s+|$)/i)
+    || extractValue(/(?:department|dept)\s*(?::|=|to)\s*(.+?)(?:\s+and\s+|$)/i);
+  if (deptVal) {
+    const matched = DEPARTMENT_OPTIONS.find(d => d.toLowerCase() === deptVal.toLowerCase()) || deptVal;
+    changes.push({ field: "department", value: matched });
+    parts.push(`**Department** → ${matched}`);
+  }
+
+  // Status
+  const statusVal = extractValue(/(?:change|set|update|make)\s+(?:the\s+)?status\s+to\s+(.+?)(?:\s+and\s+|$)/i)
+    || extractValue(/status\s*(?::|=|to)\s*(.+?)(?:\s+and\s+|$)/i);
+  if (statusVal) {
+    const matched = STATUS_OPTIONS.find(s => s === statusVal.toLowerCase()) || statusVal;
+    changes.push({ field: "status", value: matched });
+    parts.push(`**Status** → ${matched}`);
+  }
+
+  // Description
+  const descVal = extractValue(/(?:change|set|update)\s+(?:the\s+)?(?:description|desc|role description)\s+to\s+(.+?)$/i)
+    || extractValue(/(?:description|desc)\s*(?::|=|to)\s*(.+?)$/i);
+  if (descVal) {
+    changes.push({ field: "description", value: descVal });
+    parts.push(`**Description** → ${descVal.slice(0, 60)}${descVal.length > 60 ? "..." : ""}`);
+  }
+
+  // Reports To
+  const reportsVal = extractValue(/(?:change|set|update|make)\s+(?:the\s+)?(?:reports?\s*to|parent)\s+(?:to\s+)?(.+?)(?:\s+and\s+|$)/i)
+    || extractValue(/(?:reports?\s*to|parent)\s*(?::|=|to)\s*(.+?)(?:\s+and\s+|$)/i);
+  if (reportsVal) {
+    // Find agent by name
+    const found = Object.values(agents).find(a => a.name.toLowerCase() === reportsVal.toLowerCase());
+    if (found) {
+      changes.push({ field: "reportsTo", value: found.id });
+      parts.push(`**Reports To** → ${found.name}`);
+    } else {
+      parts.push(`⚠️ Could not find agent "${reportsVal}" for Reports To`);
+    }
+  }
+
+  if (changes.length === 0) {
+    return {
+      changes: null,
+      response: "I couldn't detect any changes from that. Try something like:\n\n" +
+        '• "Change the name to Elon"\n' +
+        '• "Set emoji to 🚀 and title to Chief Rocket Officer"\n' +
+        '• "Update the model to Claude Opus 4"\n' +
+        '• "Move department to Revenue"\n' +
+        '• "Set status to idle"\n' +
+        '• "Tell me about this agent"',
+    };
+  }
+
+  return {
+    changes,
+    response: `I detected these changes:\n\n${parts.join("\n")}\n\nClick **Apply** below to save, or keep typing to adjust.`,
+  };
+}
+
+function EditAgentChat({
+  agent,
+  agents,
+  onApplyChanges,
+  addToast,
+}: {
+  agent: AgentState;
+  agents: Record<string, AgentState>;
+  onApplyChanges: (changes: Partial<AgentState>) => void;
+  addToast: (message: string, type: "success" | "error") => void;
+}) {
+  const [messages, setMessages] = useState<ChatMessage[]>([
+    {
+      id: ++chatMsgId,
+      role: "system",
+      text: `I can help you edit **${agent.name}**. Try:\n\n• "Change the name to Elon"\n• "Set the emoji to 🚀"\n• "Update title to Chief Rocket Officer"\n• "Tell me about this agent"`,
+    },
+  ]);
+  const [input, setInput] = useState("");
+  const [pendingChanges, setPendingChanges] = useState<Array<{ field: keyof AgentState; value: string | string[] | null }>>([]);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  const handleSend = () => {
+    if (!input.trim()) return;
+    const userMsg: ChatMessage = { id: ++chatMsgId, role: "user", text: input.trim() };
+    setMessages(prev => [...prev, userMsg]);
+
+    const result = parseEditInstruction(input.trim(), agent, agents);
+    const sysMsg: ChatMessage = { id: ++chatMsgId, role: "system", text: result.response };
+
+    if (result.changes) {
+      setPendingChanges(prev => {
+        // Merge: newer changes override older ones for the same field
+        const merged = [...prev];
+        for (const c of result.changes!) {
+          const idx = merged.findIndex(m => m.field === c.field);
+          if (idx >= 0) merged[idx] = c;
+          else merged.push(c);
+        }
+        return merged;
+      });
+
+      // Add change preview to the message
+      sysMsg.changes = result.changes.map(c => ({
+        field: c.field,
+        oldValue: String((agent as unknown as Record<string, unknown>)[c.field] || ""),
+        newValue: String(c.value || ""),
+      }));
+    }
+
+    setMessages(prev => [...prev, sysMsg]);
+    setInput("");
+  };
+
+  const handleApply = () => {
+    if (pendingChanges.length === 0) return;
+    const patch: Partial<AgentState> = {};
+    for (const c of pendingChanges) {
+      (patch as Record<string, unknown>)[c.field] = c.value;
+    }
+    onApplyChanges(patch);
+    setPendingChanges([]);
+    setMessages(prev => [
+      ...prev,
+      { id: ++chatMsgId, role: "system", text: "✅ Changes applied and saved!" },
+    ]);
+    addToast(`${agent.name} updated via chat`, "success");
+  };
+
+  const handleClear = () => {
+    setPendingChanges([]);
+    setMessages(prev => [
+      ...prev,
+      { id: ++chatMsgId, role: "system", text: "Pending changes cleared. Start fresh!" },
+    ]);
+  };
+
+  return (
+    <div className="flex flex-col h-full">
+      {/* Messages */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-3">
+        {messages.map(msg => (
+          <div key={msg.id} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
+            <div
+              className={`max-w-[85%] px-4 py-3 rounded-2xl text-sm leading-relaxed ${
+                msg.role === "user"
+                  ? "bg-violet-600/30 border border-violet-500/30 text-violet-100 rounded-br-md"
+                  : "bg-slate-800/80 border border-slate-700/50 text-slate-200 rounded-bl-md"
+              }`}
+            >
+              {msg.text.split("\n").map((line, i) => (
+                <p key={i} className={i > 0 ? "mt-1" : ""}>
+                  {line.split(/(\*\*.*?\*\*)/).map((part, j) =>
+                    part.startsWith("**") && part.endsWith("**")
+                      ? <strong key={j} className="text-violet-300 font-semibold">{part.slice(2, -2)}</strong>
+                      : <span key={j}>{part}</span>
+                  )}
+                </p>
+              ))}
+              {msg.changes && msg.changes.length > 0 && (
+                <div className="mt-3 space-y-1.5 border-t border-slate-700/50 pt-2">
+                  {msg.changes.map((c, i) => (
+                    <div key={i} className="flex items-center gap-2 text-xs">
+                      <span className="text-slate-400 font-medium capitalize">{c.field}:</span>
+                      <span className="text-red-400/70 line-through">{c.oldValue || "(empty)"}</span>
+                      <ArrowRight className="w-3 h-3 text-slate-600" />
+                      <span className="text-emerald-400">{c.newValue}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
+        <div ref={messagesEndRef} />
+      </div>
+
+      {/* Pending changes bar */}
+      {pendingChanges.length > 0 && (
+        <div className="px-4 py-3 border-t border-slate-800/60 bg-violet-950/20">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-semibold text-violet-300">
+              {pendingChanges.length} pending change{pendingChanges.length > 1 ? "s" : ""}
+            </span>
+            <div className="flex gap-2">
+              <button
+                onClick={handleClear}
+                className="px-3 py-1.5 text-xs font-medium text-slate-300 bg-slate-700 hover:bg-slate-600 rounded-lg transition-colors"
+              >
+                Clear
+              </button>
+              <button
+                onClick={handleApply}
+                className="px-3 py-1.5 text-xs font-medium text-white bg-gradient-to-r from-violet-600 to-violet-500 hover:from-violet-500 hover:to-violet-400 rounded-lg transition-all"
+              >
+                Apply Changes
+              </button>
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            {pendingChanges.map((c, i) => (
+              <span key={i} className="inline-flex items-center gap-1 px-2 py-1 bg-violet-900/40 border border-violet-600/30 rounded-full text-[11px] text-violet-300">
+                {c.field}: {String(c.value).slice(0, 20)}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Input */}
+      <div className="px-4 py-3 border-t border-slate-800/60">
+        <div className="flex gap-2">
+          <input
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSend(); } }}
+            placeholder={`Edit ${agent.name}...`}
+            className="flex-1 px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-violet-500 transition-colors"
+          />
+          <button
+            onClick={handleSend}
+            disabled={!input.trim()}
+            className="px-4 py-2.5 bg-violet-600 hover:bg-violet-500 disabled:bg-slate-700 disabled:text-slate-500 text-white rounded-xl text-sm font-medium transition-colors"
+          >
+            Send
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function WorkspacePanel({
   agentId,
   agents,
@@ -2227,7 +2574,7 @@ function WorkspacePanel({
     setUsingFallback(false);
 
     try {
-      const res = await fetch(`/api/agents/${encodeURIComponent(agentId)}/files/${encodeURIComponent(tab)}`);
+      const res = await fetch(`/api/agents/${encodeURIComponent(agentIdToDir(agentId))}/files/${encodeURIComponent(tab)}`);
       if (res.ok) {
         const data = await res.json();
         const content = data.content as string;
@@ -2253,6 +2600,21 @@ function WorkspacePanel({
     switch (tab) {
       case "IDENTITY.md": {
         const parsed = parseIdentityMd(content);
+        // Convert IDs to names for the form display
+        // reportsTo on disk is an agent ID — convert to name for the form
+        if (parsed.reportsTo && agents[parsed.reportsTo]) {
+          parsed.reportsTo = agents[parsed.reportsTo].name;
+        }
+        // directReports on disk are comma-separated IDs — convert to names
+        if (parsed.directReports) {
+          const drIds = parsed.directReports.split(",").map(s => s.trim()).filter(Boolean);
+          const drNames = drIds.map(id => agents[id]?.name || id);
+          parsed.directReports = drNames.join(", ");
+        }
+        // Fill status from agent state if not in file
+        if (!parsed.status && agents[agentId]) {
+          parsed.status = agents[agentId].status;
+        }
         setFormData({ type: "IDENTITY.md", data: parsed });
         setOriginalIdentity(parsed);
         break;
@@ -2279,7 +2641,9 @@ function WorkspacePanel({
   };
 
   useEffect(() => {
-    fetchFile(activeTab);
+    if (activeTab !== "EDIT_AGENT") {
+      fetchFile(activeTab);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab, agentId]);
 
@@ -2344,6 +2708,10 @@ function WorkspacePanel({
         directChanges.push({ field: "Description", oldValue: o.roleDescription.slice(0, 50) + "...", newValue: d.roleDescription.slice(0, 50) + "..." });
         pendingAgentChanges.description = d.roleDescription;
       }
+      if (d.status && d.status !== o.status) {
+        directChanges.push({ field: "Status", oldValue: o.status || agent.status, newValue: d.status });
+        pendingAgentChanges.status = d.status as Status;
+      }
     }
 
     // Calculate cascades
@@ -2368,6 +2736,7 @@ function WorkspacePanel({
       if (d.model !== originalIdentity.model) pendingAgentChanges.model = d.model;
       if (d.emoji !== originalIdentity.emoji) pendingAgentChanges.emoji = d.emoji;
       if (d.department !== originalIdentity.department) pendingAgentChanges.department = d.department as DepartmentKey;
+      if (d.status && d.status !== originalIdentity.status) pendingAgentChanges.status = d.status as Status;
       if (d.reportsTo !== originalIdentity.reportsTo) {
         const newParentId = Object.values(agents).find(a => a.name === d.reportsTo)?.id || null;
         pendingAgentChanges.reportsTo = newParentId;
@@ -2388,21 +2757,48 @@ function WorkspacePanel({
 
       // Update the original identity to reflect new state
       setOriginalIdentity({ ...formData.data });
-    }
 
-    // Try API save
-    const content = serializeFormData();
-    try {
-      await fetch(
-        `/api/agents/${encodeURIComponent(agentId)}/files/${encodeURIComponent(activeTab)}`,
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ content }),
-        }
-      );
-    } catch {
-      // fire and forget
+      // Helper to persist an agent's IDENTITY.md to disk using IDs for reportsTo/directReports
+      const persistAgentIdentity = async (aid: string, agentState: Record<string, AgentState>) => {
+        const a = agentState[aid];
+        if (!a) return;
+        const idFields: IdentityFields = {
+          name: a.name,
+          title: a.title,
+          model: a.model,
+          emoji: a.emoji,
+          department: a.department,
+          status: a.status,
+          reportsTo: a.reportsTo || "",
+          directReports: a.directReports.join(","),
+          roleDescription: a.description,
+        };
+        const md = serializeIdentityMd(idFields);
+        try {
+          await fetch(
+            `/api/agents/${encodeURIComponent(agentIdToDir(aid))}/files/${encodeURIComponent("IDENTITY.md")}`,
+            { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ content: md }) }
+          );
+        } catch { /* fire and forget */ }
+      };
+
+      // Save the main agent
+      await persistAgentIdentity(agentId, updated);
+
+      // Also persist any cascaded agents
+      const affectedIds = Array.from(new Set(cascades.map(c => c.agentId)));
+      for (let i = 0; i < affectedIds.length; i++) {
+        await persistAgentIdentity(affectedIds[i], updated);
+      }
+    } else {
+      // Non-identity tab: save directly
+      const content = serializeFormData();
+      try {
+        await fetch(
+          `/api/agents/${encodeURIComponent(agentIdToDir(agentId))}/files/${encodeURIComponent(activeTab)}`,
+          { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ content }) }
+        );
+      } catch { /* fire and forget */ }
     }
 
     setHasChanges(false);
@@ -2423,7 +2819,7 @@ function WorkspacePanel({
     const content = serializeFormData();
     try {
       const res = await fetch(
-        `/api/agents/${encodeURIComponent(agentId)}/files/${encodeURIComponent(activeTab)}`,
+        `/api/agents/${encodeURIComponent(agentIdToDir(agentId))}/files/${encodeURIComponent(activeTab)}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -2604,59 +3000,115 @@ function WorkspacePanel({
       )}
 
       {/* Content Area */}
-      <div className="flex-1 overflow-y-auto p-5">
-        {loading ? (
-          <WorkspaceSkeleton />
-        ) : formData ? (
-          <div>
-            {formData.type === "IDENTITY.md" && (
-              <IdentityForm data={formData.data} onChange={(d) => updateFormData({ type: "IDENTITY.md", data: d })} agents={agents} currentAgentId={agentId} />
-            )}
-            {formData.type === "SOUL.md" && (
-              <SoulForm data={formData.data} onChange={(d) => updateFormData({ type: "SOUL.md", data: d })} />
-            )}
-            {formData.type === "USER.md" && (
-              <UserForm data={formData.data} onChange={(d) => updateFormData({ type: "USER.md", data: d })} />
-            )}
-            {formData.type === "TOOLS.md" && (
-              <ToolsForm data={formData.data} onChange={(d) => updateFormData({ type: "TOOLS.md", data: d })} />
-            )}
-            {formData.type === "AGENTS.md" && (
-              <AgentsForm data={formData.data} onChange={(d) => updateFormData({ type: "AGENTS.md", data: d })} />
-            )}
-            {formData.type === "MEMORY.md" && (
-              <MemoryForm data={formData.data} onChange={(d) => updateFormData({ type: "MEMORY.md", data: d })} />
-            )}
-            {formData.type === "HEARTBEAT.md" && (
-              <HeartbeatForm data={formData.data} onChange={(d) => updateFormData({ type: "HEARTBEAT.md", data: d })} />
-            )}
-          </div>
-        ) : null}
-      </div>
+      {activeTab === "EDIT_AGENT" ? (
+        <EditAgentChat
+          agent={agent}
+          agents={agents}
+          onApplyChanges={async (patch) => {
+            // Apply changes to agent state
+            const updated = { ...agents };
+            updated[agentId] = { ...agent, ...patch };
 
-      {/* Save Bar */}
-      {formData && (
-        <div className="px-5 py-3 border-t border-slate-800/60 flex items-center justify-between flex-shrink-0">
-          <div className="text-xs text-slate-500">
-            {hasChanges && <span className="text-amber-400">Unsaved changes</span>}
+            // Handle reportsTo cascades manually
+            if (patch.reportsTo !== undefined && patch.reportsTo !== agent.reportsTo) {
+              // Remove from old parent
+              if (agent.reportsTo && updated[agent.reportsTo]) {
+                updated[agent.reportsTo] = {
+                  ...updated[agent.reportsTo],
+                  directReports: updated[agent.reportsTo].directReports.filter(id => id !== agentId),
+                };
+              }
+              // Add to new parent
+              if (patch.reportsTo && updated[patch.reportsTo]) {
+                updated[patch.reportsTo] = {
+                  ...updated[patch.reportsTo],
+                  directReports: [...updated[patch.reportsTo].directReports.filter(id => id !== agentId), agentId],
+                };
+              }
+            }
+
+            onAgentsUpdate(updated);
+
+            // Persist to disk
+            const a = updated[agentId];
+            const idFields: IdentityFields = {
+              name: a.name,
+              title: a.title,
+              model: a.model,
+              emoji: a.emoji,
+              department: a.department,
+              status: a.status,
+              reportsTo: a.reportsTo || "",
+              directReports: a.directReports.join(","),
+              roleDescription: a.description,
+            };
+            const md = serializeIdentityMd(idFields);
+            try {
+              await fetch(
+                `/api/agents/${encodeURIComponent(agentIdToDir(agentId))}/files/${encodeURIComponent("IDENTITY.md")}`,
+                { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ content: md }) }
+              );
+            } catch { /* fire and forget */ }
+          }}
+          addToast={addToast}
+        />
+      ) : (
+        <>
+          <div className="flex-1 overflow-y-auto p-5">
+            {loading ? (
+              <WorkspaceSkeleton />
+            ) : formData ? (
+              <div>
+                {formData.type === "IDENTITY.md" && (
+                  <IdentityForm data={formData.data} onChange={(d) => updateFormData({ type: "IDENTITY.md", data: d })} agents={agents} currentAgentId={agentId} />
+                )}
+                {formData.type === "SOUL.md" && (
+                  <SoulForm data={formData.data} onChange={(d) => updateFormData({ type: "SOUL.md", data: d })} />
+                )}
+                {formData.type === "USER.md" && (
+                  <UserForm data={formData.data} onChange={(d) => updateFormData({ type: "USER.md", data: d })} />
+                )}
+                {formData.type === "TOOLS.md" && (
+                  <ToolsForm data={formData.data} onChange={(d) => updateFormData({ type: "TOOLS.md", data: d })} />
+                )}
+                {formData.type === "AGENTS.md" && (
+                  <AgentsForm data={formData.data} onChange={(d) => updateFormData({ type: "AGENTS.md", data: d })} />
+                )}
+                {formData.type === "MEMORY.md" && (
+                  <MemoryForm data={formData.data} onChange={(d) => updateFormData({ type: "MEMORY.md", data: d })} />
+                )}
+                {formData.type === "HEARTBEAT.md" && (
+                  <HeartbeatForm data={formData.data} onChange={(d) => updateFormData({ type: "HEARTBEAT.md", data: d })} />
+                )}
+              </div>
+            ) : null}
           </div>
-          <button
-            onClick={handleSave}
-            disabled={saving || !hasChanges}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-              hasChanges
-                ? "bg-gradient-to-r from-violet-600 to-violet-500 text-white hover:from-violet-500 hover:to-violet-400"
-                : "bg-slate-700 text-slate-400 cursor-not-allowed opacity-40"
-            }`}
-          >
-            {saving ? (
-              <Loader2 className="w-3.5 h-3.5 animate-spin" />
-            ) : (
-              <Save className="w-3.5 h-3.5" />
-            )}
-            Save
-          </button>
-        </div>
+
+          {/* Save Bar */}
+          {formData && (
+            <div className="px-5 py-3 border-t border-slate-800/60 flex items-center justify-between flex-shrink-0">
+              <div className="text-xs text-slate-500">
+                {hasChanges && <span className="text-amber-400">Unsaved changes</span>}
+              </div>
+              <button
+                onClick={handleSave}
+                disabled={saving || !hasChanges}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                  hasChanges
+                    ? "bg-gradient-to-r from-violet-600 to-violet-500 text-white hover:from-violet-500 hover:to-violet-400"
+                    : "bg-slate-700 text-slate-400 cursor-not-allowed opacity-40"
+                }`}
+              >
+                {saving ? (
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                ) : (
+                  <Save className="w-3.5 h-3.5" />
+                )}
+                Save
+              </button>
+            </div>
+          )}
+        </>
       )}
 
       {/* Modals */}
@@ -3059,23 +3511,35 @@ export default function OrgChartPage() {
   const [toasts, setToasts] = useState<ToastData[]>([]);
   const [isNewAgent, setIsNewAgent] = useState(false);
 
-  // Try to fetch from API on mount
+  // Try to fetch from API on mount — API returns keyed object by agent id
   useEffect(() => {
     async function fetchAgents() {
       try {
         const res = await fetch("/api/agents");
         if (res.ok) {
           const data = await res.json();
-          if (data && typeof data === "object" && Object.keys(data).length > 0) {
-            // Merge with defaults
-            const merged = { ...getDefaultAgents() };
+          if (data && typeof data === "object" && !Array.isArray(data) && Object.keys(data).length > 0) {
+            const defaults = getDefaultAgents();
+            const merged = { ...defaults };
             for (const [id, agentData] of Object.entries(data)) {
-              if (typeof agentData === "object" && agentData !== null) {
-                const ad = agentData as Partial<AgentState>;
-                if (merged[id]) {
-                  merged[id] = { ...merged[id], ...ad };
-                }
-              }
+              if (typeof agentData !== "object" || agentData === null) continue;
+              const ad = agentData as Record<string, unknown>;
+              const base = merged[id] || defaults[id];
+              if (!base) continue; // skip agents not in our org chart
+              merged[id] = {
+                ...base,
+                name: (ad.name as string) || base.name,
+                title: (ad.title as string) || base.title,
+                model: (ad.model as string) || base.model,
+                emoji: (ad.emoji as string) || base.emoji,
+                department: ((ad.department as string) || base.department) as DepartmentKey,
+                status: ((ad.status as string) || base.status) as Status,
+                description: (ad.description as string) || base.description,
+                reportsTo: ad.reportsTo !== undefined ? (ad.reportsTo as string | null) : base.reportsTo,
+                directReports: Array.isArray(ad.directReports) && ad.directReports.length > 0
+                  ? (ad.directReports as string[])
+                  : base.directReports,
+              };
             }
             setAgents(merged);
           }

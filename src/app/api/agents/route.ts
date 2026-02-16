@@ -15,22 +15,45 @@ const ALLOWED_FILES = [
   "HEARTBEAT.md",
 ];
 
-interface AgentMeta {
+// Map directory name → org-chart agent id
+const DIR_TO_ID: Record<string, string> = {
+  atlas: "cto",
+  theo: "coo",
+  muse: "cmo",
+  venture: "cro",
+  pit: "the-pit",
+  // All others use dir name as id: forge, pixel, sentinel, scriptbot, echo, builder, scout
+};
+
+interface AgentData {
+  id: string;
   name: string;
   title: string;
   model: string;
   emoji: string;
   department: string;
+  status: string;
+  description: string;
+  reportsTo: string | null;
+  directReports: string[];
   files: string[];
+  dirName: string;
 }
 
-function parseIdentity(content: string, dirName: string): Omit<AgentMeta, "files"> {
-  const meta: Omit<AgentMeta, "files"> = {
+function parseIdentity(content: string, dirName: string): Omit<AgentData, "files"> {
+  const id = DIR_TO_ID[dirName] || dirName;
+  const data: Omit<AgentData, "files"> = {
+    id,
     name: dirName,
     title: "",
     model: "",
     emoji: "",
     department: "",
+    status: "active",
+    description: "",
+    reportsTo: null,
+    directReports: [],
+    dirName,
   };
 
   for (const line of content.split("\n")) {
@@ -40,21 +63,31 @@ function parseIdentity(content: string, dirName: string): Omit<AgentMeta, "files
     if (kvMatch) {
       const key = kvMatch[1].trim().toLowerCase();
       const val = kvMatch[2].trim();
-      if (key === "name") meta.name = val;
-      else if (key === "title" || key === "role") meta.title = val;
-      else if (key === "model") meta.model = val;
-      else if (key === "emoji") meta.emoji = val;
-      else if (key === "department") meta.department = val;
+      if (key === "name") data.name = val;
+      else if (key === "title" || key === "role") data.title = val;
+      else if (key === "model") data.model = val;
+      else if (key === "emoji") data.emoji = val;
+      else if (key === "department") data.department = val;
+      else if (key === "status") data.status = val.toLowerCase();
+      else if (key === "description") data.description = val;
+      else if (key === "reports to") {
+        // Store the raw value — could be an id like "coo" or a name like "Theo"
+        data.reportsTo = val || null;
+      }
+      else if (key === "direct reports") {
+        // Comma-separated ids
+        data.directReports = val ? val.split(",").map(s => s.trim()).filter(Boolean) : [];
+      }
     }
   }
 
-  return meta;
+  return data;
 }
 
 export async function GET() {
   try {
     const entries = await readdir(AGENTS_DIR, { withFileTypes: true });
-    const agents: AgentMeta[] = [];
+    const result: Record<string, AgentData> = {};
 
     for (const entry of entries) {
       if (!entry.isDirectory()) continue;
@@ -62,24 +95,32 @@ export async function GET() {
       if (entry.name.startsWith(".") || entry.name === "shared") continue;
 
       const agentDir = join(AGENTS_DIR, entry.name);
+      const agentId = DIR_TO_ID[entry.name] || entry.name;
 
       // Read IDENTITY.md if it exists
-      let meta: Omit<AgentMeta, "files"> = {
-        name: entry.name,
-        title: "",
-        model: "",
-        emoji: "",
-        department: "",
-      };
+      let data: Omit<AgentData, "files">;
 
       try {
         const identityContent = await readFile(
           join(agentDir, "IDENTITY.md"),
           "utf-8"
         );
-        meta = parseIdentity(identityContent, entry.name);
+        data = parseIdentity(identityContent, entry.name);
       } catch {
         // No IDENTITY.md — use defaults
+        data = {
+          id: agentId,
+          name: entry.name,
+          title: "",
+          model: "",
+          emoji: "",
+          department: "",
+          status: "active",
+          description: "",
+          reportsTo: null,
+          directReports: [],
+          dirName: entry.name,
+        };
       }
 
       // List allowed files that exist
@@ -93,13 +134,10 @@ export async function GET() {
         }
       }
 
-      agents.push({ ...meta, files });
+      result[agentId] = { ...data, files };
     }
 
-    // Sort alphabetically by name
-    agents.sort((a, b) => a.name.localeCompare(b.name));
-
-    return NextResponse.json(agents);
+    return NextResponse.json(result);
   } catch (error) {
     return NextResponse.json(
       { error: "Failed to list agents", detail: String(error) },

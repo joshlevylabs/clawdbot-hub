@@ -34,8 +34,25 @@ import {
   Heart,
   Info,
   AlertTriangle,
+  Clock,
+  Send,
+  Play,
+  Calendar,
 } from "lucide-react";
 import { useEffect, useRef, useState, useCallback, useMemo, type ReactNode } from "react";
+
+/* ═══════════════════════════════════════════════════════════════
+   Page-level Tab Types
+   ═══════════════════════════════════════════════════════════════ */
+
+type PageTab = "org-chart" | "protocols" | "cron-jobs" | "how-it-works";
+
+const PAGE_TABS: { id: PageTab; label: string; emoji: string }[] = [
+  { id: "org-chart", label: "Org Chart", emoji: "🏢" },
+  { id: "protocols", label: "Protocols", emoji: "⚡" },
+  { id: "cron-jobs", label: "Cron Jobs", emoji: "⏰" },
+  { id: "how-it-works", label: "How It Works", emoji: "📘" },
+];
 
 /* ═══════════════════════════════════════════════════════════════
    Types
@@ -3844,6 +3861,719 @@ function PlaybookSection() {
 }
 
 /* ═══════════════════════════════════════════════════════════════
+   Cron Jobs Tab
+   ═══════════════════════════════════════════════════════════════ */
+
+interface CronJob {
+  id: string;
+  name: string;
+  enabled: boolean;
+  schedule: { kind: string; expr: string; tz?: string };
+  payload: {
+    kind: string;
+    message: string;
+    deliver?: boolean;
+    channel?: string;
+    model?: string;
+  };
+  state?: {
+    nextRunAtMs?: number;
+    lastRunAtMs?: number;
+    lastStatus?: string;
+    lastDurationMs?: number;
+  };
+}
+
+function cronToHuman(expr: string, tz?: string): string {
+  const parts = expr.split(/\s+/);
+  if (parts.length < 5) return expr;
+  const [minute, hour, dom, month, dow] = parts;
+
+  const tzLabel = tz ? (tz.includes("Los_Angeles") ? " PT" : ` ${tz.split("/").pop()}`) : "";
+
+  const formatHour = (h: number): string => {
+    const ampm = h >= 12 ? "PM" : "AM";
+    const h12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
+    return `${h12}:${minute.padStart(2, "0")} ${ampm}`;
+  };
+
+  const formatHourShort = (h: number): string => {
+    const ampm = h >= 12 ? "PM" : "AM";
+    const h12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
+    return `${h12}${ampm}`;
+  };
+
+  const dayNames: Record<string, string> = {
+    "0": "Sun", "1": "Mon", "2": "Tue", "3": "Wed", "4": "Thu", "5": "Fri", "6": "Sat", "7": "Sun",
+  };
+
+  const dowToText = (d: string): string => {
+    if (d === "*") return "";
+    if (d === "1-5") return "Mon–Fri";
+    if (d === "0-6" || d === "*") return "";
+    const mapped = d.split(",").map(x => dayNames[x] || x).join(", ");
+    return mapped;
+  };
+
+  // "*/N ..." patterns
+  if (minute.startsWith("*/")) {
+    const interval = parseInt(minute.slice(2));
+    const label = interval === 1 ? "Every min" : `Every ${interval} min`;
+
+    if (hour === "*" && dow === "*") return label;
+
+    if (hour.includes("-")) {
+      const [hStart, hEnd] = hour.split("-").map(Number);
+      const dayLabel = dowToText(dow);
+      const prefix = dayLabel ? `${dayLabel} ` : "";
+      return `${label}, ${prefix}${formatHourShort(hStart)}–${formatHourShort(hEnd + 1)}${tzLabel}`;
+    }
+
+    if (hour.includes(",")) {
+      const ranges = hour.split(",").map(r => {
+        if (r.includes("-")) {
+          const [s, e] = r.split("-").map(Number);
+          return `${formatHourShort(s)}–${formatHourShort(e + 1)}`;
+        }
+        return formatHourShort(Number(r));
+      });
+      const dayLabel = dowToText(dow);
+      const prefix = dayLabel ? `${dayLabel} ` : "";
+      return `${label}, ${prefix}${ranges.join(" & ")}${tzLabel}`;
+    }
+
+    const dayLabel = dowToText(dow);
+    return dayLabel ? `${label}, ${dayLabel}${tzLabel}` : `${label}${tzLabel}`;
+  }
+
+  // Fixed time patterns: "M H * * DOW"
+  if (!minute.includes("*") && !minute.includes("/") && !hour.includes("*") && !hour.includes("/")) {
+    const h = parseInt(hour);
+    const time = formatHour(h);
+
+    if (hour.includes("-")) {
+      const [hStart, hEnd] = hour.split("-").map(Number);
+      const dayLabel = dowToText(dow);
+      const prefix = dayLabel ? `${dayLabel} ` : "Daily ";
+      return `${prefix}hourly ${formatHourShort(hStart)}–${formatHourShort(hEnd)}${tzLabel}`;
+    }
+
+    if (dow === "*" && dom === "*" && month === "*") {
+      return `Daily at ${time}${tzLabel}`;
+    }
+
+    if (dow === "0") return `Sundays at ${time}${tzLabel}`;
+    if (dow === "6") return `Saturdays at ${time}${tzLabel}`;
+    if (dow === "1-5") return `Mon–Fri at ${time}${tzLabel}`;
+
+    const dayLabel = dowToText(dow);
+    if (dayLabel) return `${dayLabel} at ${time}${tzLabel}`;
+
+    return `At ${time}${tzLabel}`;
+  }
+
+  // Hourly: "0 H-H * * DOW"
+  if (minute === "0" && hour.includes("-") && !hour.includes("/") && !hour.includes(",")) {
+    const [hStart, hEnd] = hour.split("-").map(Number);
+    const dayLabel = dowToText(dow);
+    const prefix = dayLabel ? `${dayLabel} ` : "";
+    return `${prefix}Hourly ${formatHourShort(hStart)}–${formatHourShort(hEnd)}${tzLabel}`;
+  }
+
+  return expr;
+}
+
+function relativeTime(ms: number): string {
+  const now = Date.now();
+  const diff = now - ms;
+  if (diff < 0) {
+    // Future
+    const absDiff = Math.abs(diff);
+    if (absDiff < 60000) return `in ${Math.round(absDiff / 1000)}s`;
+    if (absDiff < 3600000) return `in ${Math.round(absDiff / 60000)}m`;
+    if (absDiff < 86400000) return `in ${Math.round(absDiff / 3600000)}h`;
+    return `in ${Math.round(absDiff / 86400000)}d`;
+  }
+  if (diff < 60000) return `${Math.round(diff / 1000)}s ago`;
+  if (diff < 3600000) return `${Math.round(diff / 60000)}m ago`;
+  if (diff < 86400000) return `${Math.round(diff / 3600000)}h ago`;
+  return `${Math.round(diff / 86400000)}d ago`;
+}
+
+function formatDuration(ms: number): string {
+  if (ms < 1000) return `${ms}ms`;
+  const secs = Math.floor(ms / 1000);
+  if (secs < 60) return `${secs}s`;
+  const mins = Math.floor(secs / 60);
+  const remSecs = secs % 60;
+  return `${mins}m ${remSecs}s`;
+}
+
+function categorizeJob(name: string, enabled: boolean): string {
+  if (!enabled) return "Disabled / Legacy";
+  if (name === "Morning Brief") return "Morning";
+  if (name.startsWith("MRE Pit:")) return "MRE Pit (Nightly)";
+  if (name.startsWith("Studio:")) return "Studio";
+  if (name === "Fleet Tracker") return "Fleet";
+  if (["Paper Trading Auto-Tracker", "Price Refresh (Hub + Supabase)", "MRE Strategy Analyst", "MRE Strategy Optimizer", "MRE V13 Weekly Optimizer"].includes(name)) return "Trading";
+  if (enabled) return "Other Active";
+  return "Disabled / Legacy";
+}
+
+const CATEGORY_ORDER = ["Morning", "Trading", "MRE Pit (Nightly)", "Studio", "Fleet", "Other Active", "Disabled / Legacy"];
+const CATEGORY_ICONS: Record<string, string> = {
+  "Morning": "🌅",
+  "Trading": "📈",
+  "MRE Pit (Nightly)": "🏛️",
+  "Studio": "🎨",
+  "Fleet": "🚀",
+  "Other Active": "⚙️",
+  "Disabled / Legacy": "🗄️",
+};
+
+function CronModelBadge({ model }: { model?: string }) {
+  if (!model) return <span className="text-[10px] text-slate-600">—</span>;
+  let label = model;
+  let classes = "bg-slate-800/60 text-slate-300 border-slate-700/50";
+
+  if (model.includes("opus")) {
+    label = "Opus 4";
+    classes = "bg-violet-900/40 text-violet-300 border-violet-700/40";
+  } else if (model.includes("sonnet")) {
+    label = "Sonnet 4";
+    classes = "bg-blue-900/40 text-blue-300 border-blue-700/40";
+  } else if (model.includes("haiku")) {
+    label = "Haiku 3.5";
+    classes = "bg-teal-900/40 text-teal-300 border-teal-700/40";
+  } else if (model.includes("flash") || model.includes("gemini")) {
+    label = "Flash";
+    classes = "bg-orange-900/40 text-orange-300 border-orange-700/40";
+  }
+
+  return (
+    <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-semibold tracking-wide border ${classes}`}>
+      {label}
+    </span>
+  );
+}
+
+function CronJobCard({ job }: { job: CronJob }) {
+  const [expanded, setExpanded] = useState(false);
+  const schedule = cronToHuman(job.schedule.expr, job.schedule.tz);
+  const taskPreview = job.payload.message.slice(0, 200);
+
+  return (
+    <div className={`rounded-xl border ${job.enabled ? "border-slate-800/60 bg-slate-900/60" : "border-slate-800/30 bg-slate-950/40 opacity-70"} overflow-hidden transition-all hover:border-slate-700/60`}>
+      <div className="px-4 py-3">
+        {/* Row 1: Name + status */}
+        <div className="flex items-center gap-2 mb-2">
+          <span className={`w-2 h-2 rounded-full flex-shrink-0 ${job.enabled ? "bg-emerald-500" : "bg-slate-600"}`} />
+          <h4 className="text-sm font-semibold text-slate-200 flex-1 min-w-0 truncate">{job.name}</h4>
+          <CronModelBadge model={job.payload.model} />
+        </div>
+
+        {/* Row 2: Schedule */}
+        <div className="flex items-center gap-2 mb-2">
+          <Clock className="w-3.5 h-3.5 text-slate-500 flex-shrink-0" />
+          <span className="text-xs text-slate-400">{schedule}</span>
+        </div>
+
+        {/* Row 3: Last run + duration + next run */}
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-slate-500">
+          {job.state?.lastRunAtMs && (
+            <span className="flex items-center gap-1">
+              <Play className="w-3 h-3" />
+              Last: <span className="text-slate-400">{relativeTime(job.state.lastRunAtMs)}</span>
+              {job.state.lastDurationMs !== undefined && (
+                <span className="text-slate-600">({formatDuration(job.state.lastDurationMs)})</span>
+              )}
+            </span>
+          )}
+          {job.state?.nextRunAtMs && (
+            <span className="flex items-center gap-1">
+              <Calendar className="w-3 h-3" />
+              Next: <span className="text-slate-400">{relativeTime(job.state.nextRunAtMs)}</span>
+            </span>
+          )}
+          {job.payload.deliver && (
+            <span className="flex items-center gap-1 text-blue-400/70">
+              <Send className="w-3 h-3" />
+              Telegram
+            </span>
+          )}
+        </div>
+
+        {/* Expandable task description */}
+        <button
+          onClick={() => setExpanded(!expanded)}
+          className="mt-2 flex items-center gap-1 text-[11px] text-slate-600 hover:text-slate-400 transition-colors"
+        >
+          {expanded ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
+          Task details
+        </button>
+        {expanded && (
+          <div className="mt-2 px-3 py-2 rounded-lg bg-slate-950/60 border border-slate-800/40">
+            <p className="text-[11px] text-slate-500 leading-relaxed whitespace-pre-wrap font-mono">
+              {taskPreview}{job.payload.message.length > 200 ? "…" : ""}
+            </p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function CronJobsTab() {
+  const [jobs, setJobs] = useState<CronJob[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [collapsedCategories, setCollapsedCategories] = useState<Set<string>>(new Set(["Disabled / Legacy"]));
+
+  useEffect(() => {
+    async function fetchJobs() {
+      try {
+        const res = await fetch("/api/cron");
+        if (res.ok) {
+          const data = await res.json();
+          setJobs(data);
+        }
+      } catch {
+        // silent
+      }
+      setLoading(false);
+    }
+    fetchJobs();
+  }, []);
+
+  const grouped = useMemo(() => {
+    const groups: Record<string, CronJob[]> = {};
+    for (const job of jobs) {
+      const cat = categorizeJob(job.name, job.enabled);
+      if (!groups[cat]) groups[cat] = [];
+      groups[cat].push(job);
+    }
+    return groups;
+  }, [jobs]);
+
+  const toggleCategory = (cat: string) => {
+    setCollapsedCategories(prev => {
+      const next = new Set(prev);
+      if (next.has(cat)) next.delete(cat);
+      else next.add(cat);
+      return next;
+    });
+  };
+
+  const enabledCount = jobs.filter(j => j.enabled).length;
+  const disabledCount = jobs.filter(j => !j.enabled).length;
+
+  if (loading) {
+    return (
+      <div className="max-w-5xl mx-auto space-y-4">
+        <div className="animate-pulse space-y-4">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="h-24 bg-slate-800/30 rounded-xl" />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="max-w-5xl mx-auto space-y-6">
+      {/* Stats bar */}
+      <div className="flex flex-wrap items-center gap-x-6 gap-y-2 px-5 py-3 bg-slate-950/60 rounded-xl border border-slate-800/60 backdrop-blur-sm">
+        <div className="flex items-center gap-1.5">
+          <span className="text-sm font-bold text-slate-100 tabular-nums">{jobs.length}</span>
+          <span className="text-[11px] text-slate-500 font-medium uppercase tracking-wider">Total Jobs</span>
+        </div>
+        <div className="w-px h-4 bg-slate-700/60" />
+        <div className="flex items-center gap-1.5">
+          <span className="w-2 h-2 rounded-full bg-emerald-500" />
+          <span className="text-sm font-bold text-emerald-400 tabular-nums">{enabledCount}</span>
+          <span className="text-[11px] text-slate-500 font-medium">Enabled</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <span className="w-2 h-2 rounded-full bg-slate-600" />
+          <span className="text-sm font-bold text-slate-400 tabular-nums">{disabledCount}</span>
+          <span className="text-[11px] text-slate-500 font-medium">Disabled</span>
+        </div>
+      </div>
+
+      {/* Grouped jobs */}
+      {CATEGORY_ORDER.filter(cat => grouped[cat] && grouped[cat].length > 0).map(cat => {
+        const isCollapsed = collapsedCategories.has(cat);
+        const catJobs = grouped[cat];
+        return (
+          <div key={cat} className="space-y-3">
+            <button
+              onClick={() => toggleCategory(cat)}
+              className="flex items-center gap-2 w-full text-left group"
+            >
+              <span className="text-lg">{CATEGORY_ICONS[cat] || "📦"}</span>
+              <h3 className="text-sm font-bold text-slate-300 tracking-tight">{cat}</h3>
+              <span className="text-[11px] text-slate-600 font-medium">{catJobs.length} job{catJobs.length !== 1 ? "s" : ""}</span>
+              <div className="h-px flex-1 bg-slate-800/60" />
+              {isCollapsed ? (
+                <ChevronRight className="w-4 h-4 text-slate-600 group-hover:text-slate-400 transition-colors" />
+              ) : (
+                <ChevronDown className="w-4 h-4 text-slate-600 group-hover:text-slate-400 transition-colors" />
+              )}
+            </button>
+            {!isCollapsed && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {catJobs.map(job => (
+                  <CronJobCard key={job.id} job={job} />
+                ))}
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   How It Works Tab
+   ═══════════════════════════════════════════════════════════════ */
+
+function FlowStep({ number, title, description, accent = "violet" }: { number: number; title: string; description: string; accent?: string }) {
+  const colorMap: Record<string, { bg: string; text: string; border: string }> = {
+    violet: { bg: "bg-violet-500/10", text: "text-violet-400", border: "border-violet-500/20" },
+    cyan: { bg: "bg-cyan-500/10", text: "text-cyan-400", border: "border-cyan-500/20" },
+    amber: { bg: "bg-amber-500/10", text: "text-amber-400", border: "border-amber-500/20" },
+    emerald: { bg: "bg-emerald-500/10", text: "text-emerald-400", border: "border-emerald-500/20" },
+    rose: { bg: "bg-rose-500/10", text: "text-rose-400", border: "border-rose-500/20" },
+  };
+  const c = colorMap[accent] || colorMap.violet;
+
+  return (
+    <div className="flex gap-4">
+      <div className={`flex-shrink-0 w-8 h-8 rounded-lg ${c.bg} border ${c.border} flex items-center justify-center`}>
+        <span className={`text-sm font-bold ${c.text}`}>{number}</span>
+      </div>
+      <div className="flex-1 min-w-0">
+        <h4 className="text-sm font-semibold text-slate-200 mb-1">{title}</h4>
+        <p className="text-xs text-slate-400 leading-relaxed">{description}</p>
+      </div>
+    </div>
+  );
+}
+
+function FlowDiagram({ steps, accent = "violet" }: { steps: Array<{ label: string; sub?: string }>; accent?: string }) {
+  const colorMap: Record<string, { bg: string; text: string; border: string; line: string }> = {
+    violet: { bg: "bg-violet-950/40", text: "text-violet-300", border: "border-violet-500/30", line: "bg-violet-500/30" },
+    cyan: { bg: "bg-cyan-950/40", text: "text-cyan-300", border: "border-cyan-500/30", line: "bg-cyan-500/30" },
+    amber: { bg: "bg-amber-950/40", text: "text-amber-300", border: "border-amber-500/30", line: "bg-amber-500/30" },
+    emerald: { bg: "bg-emerald-950/40", text: "text-emerald-300", border: "border-emerald-500/30", line: "bg-emerald-500/30" },
+  };
+  const c = colorMap[accent] || colorMap.violet;
+
+  return (
+    <div className="flex flex-wrap items-center gap-2 my-4">
+      {steps.map((step, i) => (
+        <span key={i} className="flex items-center gap-2">
+          <div className={`px-3 py-2 rounded-lg ${c.bg} border ${c.border}`}>
+            <span className={`text-xs font-semibold ${c.text}`}>{step.label}</span>
+            {step.sub && <span className="block text-[10px] text-slate-500 mt-0.5">{step.sub}</span>}
+          </div>
+          {i < steps.length - 1 && (
+            <ArrowRight className="w-4 h-4 text-slate-600 flex-shrink-0" />
+          )}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+function HowItWorksTab() {
+  return (
+    <div className="max-w-4xl mx-auto space-y-10">
+
+      {/* Section 1: Task Delegation Flow */}
+      <section>
+        <div className="flex items-center gap-3 mb-6">
+          <div className="p-2.5 rounded-xl bg-violet-500/10 border border-violet-500/20">
+            <ArrowRight className="w-5 h-5 text-violet-400" />
+          </div>
+          <div>
+            <h2 className="text-lg font-bold text-slate-100">Task Delegation Flow</h2>
+            <p className="text-sm text-slate-500">How work moves through the org</p>
+          </div>
+        </div>
+
+        <FlowDiagram
+          steps={[
+            { label: "👑 Joshua", sub: "gives instruction" },
+            { label: "🔺 Theo (COO)", sub: "evaluates & routes" },
+            { label: "🤖 Agent / Protocol", sub: "executes task" },
+            { label: "✅ Report Back", sub: "results delivered" },
+          ]}
+          accent="violet"
+        />
+
+        <div className="space-y-4 mt-6">
+          <FlowStep
+            number={1}
+            title="Joshua tells Theo what he needs"
+            description="Natural language instruction via Telegram or direct chat. &quot;Build me a dashboard for trading signals&quot; or &quot;Draft this week's newsletter&quot;."
+            accent="violet"
+          />
+          <FlowStep
+            number={2}
+            title="Theo evaluates and routes"
+            description="Quick tasks get handled directly in the main session. Domain work spawns a sub-agent with the appropriate agent's SOUL and IDENTITY files loaded. Complex projects activate a full Protocol."
+            accent="cyan"
+          />
+          <FlowStep
+            number={3}
+            title="Sub-agents complete work and terminate"
+            description="Each sub-agent operates in an isolated session, has access to the full toolset, and reports back when finished. They write results to files, push code, or send messages — then self-terminate."
+            accent="emerald"
+          />
+        </div>
+
+        <div className="mt-6 p-4 rounded-xl bg-slate-900/60 border border-slate-800/50">
+          <h4 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">Routing Logic</h4>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="px-3 py-2.5 rounded-lg bg-violet-950/30 border border-violet-500/20">
+              <p className="text-xs font-semibold text-violet-300 mb-1">Quick Tasks</p>
+              <p className="text-[11px] text-slate-500">Questions, lookups, edits — handled in main session</p>
+            </div>
+            <div className="px-3 py-2.5 rounded-lg bg-cyan-950/30 border border-cyan-500/20">
+              <p className="text-xs font-semibold text-cyan-300 mb-1">Domain Work</p>
+              <p className="text-[11px] text-slate-500">Spawns sub-agent with specific agent identity</p>
+            </div>
+            <div className="px-3 py-2.5 rounded-lg bg-amber-950/30 border border-amber-500/20">
+              <p className="text-xs font-semibold text-amber-300 mb-1">Complex Projects</p>
+              <p className="text-[11px] text-slate-500">Activates a Protocol (Forge, Studio, Pit, Tower)</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Divider */}
+      <div className="h-px bg-gradient-to-r from-transparent via-slate-700 to-transparent" />
+
+      {/* Section 2: Standing Agents vs Protocols */}
+      <section>
+        <div className="flex items-center gap-3 mb-6">
+          <div className="p-2.5 rounded-xl bg-cyan-500/10 border border-cyan-500/20">
+            <Users className="w-5 h-5 text-cyan-400" />
+          </div>
+          <div>
+            <h2 className="text-lg font-bold text-slate-100">Standing Agents vs Protocols</h2>
+            <p className="text-sm text-slate-500">Persistent identities meet on-demand teams</p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="rounded-xl border border-cyan-500/20 bg-gradient-to-br from-cyan-950/30 to-slate-900/60 p-5">
+            <div className="flex items-center gap-2 mb-3">
+              <User className="w-4 h-4 text-cyan-400" />
+              <h3 className="text-sm font-bold text-cyan-300">Standing Agents</h3>
+            </div>
+            <ul className="space-y-2 text-xs text-slate-400 leading-relaxed">
+              <li className="flex gap-2"><span className="text-cyan-500">•</span>Persistent identities with specific domains</li>
+              <li className="flex gap-2"><span className="text-cyan-500">•</span>Each has SOUL, IDENTITY, TOOLS, MEMORY files</li>
+              <li className="flex gap-2"><span className="text-cyan-500">•</span>Atlas owns code, Alex owns content, Dave owns revenue</li>
+              <li className="flex gap-2"><span className="text-cyan-500">•</span>Can be spawned independently for domain tasks</li>
+              <li className="flex gap-2"><span className="text-cyan-500">•</span>Accumulate context and lessons across sessions</li>
+            </ul>
+          </div>
+
+          <div className="rounded-xl border border-indigo-500/20 bg-gradient-to-br from-indigo-950/30 to-slate-900/60 p-5">
+            <div className="flex items-center gap-2 mb-3">
+              <Zap className="w-4 h-4 text-indigo-400" />
+              <h3 className="text-sm font-bold text-indigo-300">Protocols</h3>
+            </div>
+            <ul className="space-y-2 text-xs text-slate-400 leading-relaxed">
+              <li className="flex gap-2"><span className="text-indigo-500">•</span>Multi-agent team blueprints activated on demand</li>
+              <li className="flex gap-2"><span className="text-indigo-500">•</span>Define roles, phases, and coordination rules</li>
+              <li className="flex gap-2"><span className="text-indigo-500">•</span>The Forge (13 roles), Studio (14), Pit (11), Tower (6 stages)</li>
+              <li className="flex gap-2"><span className="text-indigo-500">•</span>Standing agents anchor protocol roles</li>
+              <li className="flex gap-2"><span className="text-indigo-500">•</span>e.g., Nexus anchors The Forge&apos;s Backend Dev role</li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="mt-4 p-4 rounded-xl bg-slate-900/40 border border-slate-800/40">
+          <p className="text-xs text-slate-500 leading-relaxed">
+            <span className="text-slate-300 font-semibold">How they connect: </span>
+            When &quot;Deploy The Forge&quot; is activated, standing agents like Atlas, Nexus, and Pixel load into their protocol roles. The Forge adds additional roles (PM, Architect, DevOps, QA specialists) that don&apos;t have standing agents — they&apos;re instantiated fresh each sprint.
+          </p>
+        </div>
+      </section>
+
+      {/* Divider */}
+      <div className="h-px bg-gradient-to-r from-transparent via-slate-700 to-transparent" />
+
+      {/* Section 3: 24/7 Operations */}
+      <section>
+        <div className="flex items-center gap-3 mb-6">
+          <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20">
+            <Clock className="w-5 h-5 text-amber-400" />
+          </div>
+          <div>
+            <h2 className="text-lg font-bold text-slate-100">24/7 Operations</h2>
+            <p className="text-sm text-slate-500">Cron jobs keep agents working around the clock</p>
+          </div>
+        </div>
+
+        <div className="relative">
+          {/* Timeline */}
+          <div className="space-y-3">
+            {[
+              { time: "6:00 AM", label: "Morning Brief", desc: "Daily briefing with prayer, weather, calendar, trading signals, family focus, and news", color: "amber", icon: "🌅" },
+              { time: "6:30 AM – 1:00 PM", label: "Paper Trading", desc: "Auto-tracking positions, price refreshes, and sync with Alpaca during market hours", color: "emerald", icon: "📈" },
+              { time: "2:00 PM", label: "MRE Strategy Analyst", desc: "Weekday analysis of market regime and trading opportunities", color: "cyan", icon: "🧠" },
+              { time: "Weekends", label: "Studio Sessions", desc: "Writer's Room creates content, Review Room polishes and schedules it", color: "rose", icon: "🎨" },
+              { time: "Every 30 min", label: "Fleet Tracker", desc: "Monitors API usage, token costs, and agent activity across all sessions", color: "violet", icon: "🚀" },
+              { time: "10:00 PM – 5:30 AM", label: "MRE Pit (7 phases)", desc: "Signal Accuracy → Correlation Scan → Regime & Markets → Param Sweep → Synthesis → Deep Test → Morning Report", color: "indigo", icon: "🏛️" },
+            ].map((item, i) => {
+              const colorMap: Record<string, string> = {
+                amber: "border-amber-500/30 bg-amber-950/20",
+                emerald: "border-emerald-500/30 bg-emerald-950/20",
+                cyan: "border-cyan-500/30 bg-cyan-950/20",
+                rose: "border-rose-500/30 bg-rose-950/20",
+                violet: "border-violet-500/30 bg-violet-950/20",
+                indigo: "border-indigo-500/30 bg-indigo-950/20",
+              };
+              const textMap: Record<string, string> = {
+                amber: "text-amber-300",
+                emerald: "text-emerald-300",
+                cyan: "text-cyan-300",
+                rose: "text-rose-300",
+                violet: "text-violet-300",
+                indigo: "text-indigo-300",
+              };
+              return (
+                <div key={i} className={`flex gap-4 p-4 rounded-xl border ${colorMap[item.color]}`}>
+                  <span className="text-xl flex-shrink-0">{item.icon}</span>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className={`text-xs font-bold ${textMap[item.color]}`}>{item.time}</span>
+                      <span className="text-sm font-semibold text-slate-200">{item.label}</span>
+                    </div>
+                    <p className="text-xs text-slate-400 leading-relaxed">{item.desc}</p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Divider */}
+      <div className="h-px bg-gradient-to-r from-transparent via-slate-700 to-transparent" />
+
+      {/* Section 4: Three Ways to Engage */}
+      <section>
+        <div className="flex items-center gap-3 mb-6">
+          <div className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
+            <Zap className="w-5 h-5 text-emerald-400" />
+          </div>
+          <div>
+            <h2 className="text-lg font-bold text-slate-100">Three Ways to Engage</h2>
+            <p className="text-sm text-slate-500">Every interaction pattern, covered</p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="rounded-xl border border-violet-500/20 bg-gradient-to-b from-violet-950/30 to-slate-900/60 p-5">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-7 h-7 rounded-lg bg-violet-500/10 border border-violet-500/20 flex items-center justify-center">
+                <span className="text-xs font-bold text-violet-400">1</span>
+              </div>
+              <h3 className="text-sm font-bold text-violet-300">Direct Command</h3>
+            </div>
+            <p className="text-xs text-slate-400 leading-relaxed mb-3">
+              &quot;Tell Alex to draft a content calendar&quot;
+            </p>
+            <FlowDiagram
+              steps={[
+                { label: "Command" },
+                { label: "Theo" },
+                { label: "Sub-agent" },
+              ]}
+              accent="violet"
+            />
+            <p className="text-[11px] text-slate-500">Theo spawns the right agent with loaded identity and context.</p>
+          </div>
+
+          <div className="rounded-xl border border-amber-500/20 bg-gradient-to-b from-amber-950/30 to-slate-900/60 p-5">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-7 h-7 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center">
+                <span className="text-xs font-bold text-amber-400">2</span>
+              </div>
+              <h3 className="text-sm font-bold text-amber-300">Scheduled Work</h3>
+            </div>
+            <p className="text-xs text-slate-400 leading-relaxed mb-3">
+              Cron jobs run domain-specific tasks automatically, 24/7.
+            </p>
+            <FlowDiagram
+              steps={[
+                { label: "Cron" },
+                { label: "Agent" },
+                { label: "Deliver" },
+              ]}
+              accent="amber"
+            />
+            <p className="text-[11px] text-slate-500">Morning Brief, nightly trading optimization, market-hour tracking.</p>
+          </div>
+
+          <div className="rounded-xl border border-cyan-500/20 bg-gradient-to-b from-cyan-950/30 to-slate-900/60 p-5">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-7 h-7 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center">
+                <span className="text-xs font-bold text-cyan-400">3</span>
+              </div>
+              <h3 className="text-sm font-bold text-cyan-300">Protocol Activation</h3>
+            </div>
+            <p className="text-xs text-slate-400 leading-relaxed mb-3">
+              &quot;Deploy The Forge&quot; → full multi-agent sprint.
+            </p>
+            <FlowDiagram
+              steps={[
+                { label: "Activate" },
+                { label: "Team" },
+                { label: "Sprint" },
+              ]}
+              accent="cyan"
+            />
+            <p className="text-[11px] text-slate-500">13+ agents working in parallel with PM coordination.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Page-level Tab Bar
+   ═══════════════════════════════════════════════════════════════ */
+
+function PageTabBar({ activeTab, onTabChange }: { activeTab: PageTab; onTabChange: (tab: PageTab) => void }) {
+  return (
+    <div className="flex border-b border-slate-800/60 bg-slate-950/30 rounded-t-xl overflow-x-auto scrollbar-none">
+      {PAGE_TABS.map((tab) => (
+        <button
+          key={tab.id}
+          onClick={() => onTabChange(tab.id)}
+          className={`relative flex items-center gap-2 px-5 py-3.5 text-sm font-medium whitespace-nowrap border-b-2 transition-all flex-shrink-0 ${
+            activeTab === tab.id
+              ? "text-violet-300 border-violet-400 bg-slate-900/40"
+              : "text-slate-500 border-transparent hover:text-slate-300 hover:bg-slate-800/20"
+          }`}
+        >
+          <span>{tab.emoji}</span>
+          <span>{tab.label}</span>
+        </button>
+      ))}
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════
    Main Page — REACTIVE STATE
    ═══════════════════════════════════════════════════════════════ */
 
@@ -3853,6 +4583,7 @@ export default function OrgChartPage() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [toasts, setToasts] = useState<ToastData[]>([]);
   const [isNewAgent, setIsNewAgent] = useState(false);
+  const [activePageTab, setActivePageTab] = useState<PageTab>("org-chart");
 
   // Try to fetch from API on mount — API returns keyed object by agent id
   useEffect(() => {
@@ -4028,61 +4759,75 @@ export default function OrgChartPage() {
         </div>
       </div>
 
-      {/* Stats */}
+      {/* Page Tab Bar */}
       <div className="max-w-6xl mx-auto">
-        <StatsAndLegendBar agents={agents} />
+        <PageTabBar activeTab={activePageTab} onTabChange={setActivePageTab} />
       </div>
 
-      {/* Org Chart */}
-      <div className="max-w-6xl mx-auto">
-        <DesktopTree agents={agents} selectedId={selectedId} onSelect={handleSelect} />
-        <MobileTree agents={agents} selectedId={selectedId} onSelect={handleSelect} />
+      {/* Tab Content */}
+      {activePageTab === "org-chart" && (
+        <>
+          {/* Stats */}
+          <div className="max-w-6xl mx-auto">
+            <StatsAndLegendBar agents={agents} />
+          </div>
 
-        {/* Add Agent Button */}
-        <div className="flex justify-center mt-8">
-          <button
-            onClick={() => setShowAddModal(true)}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium text-violet-300 bg-violet-950/30 border border-violet-700/30 hover:bg-violet-900/30 hover:border-violet-600/50 transition-all"
-          >
-            <Plus className="w-4 h-4" />
-            Add Agent
-          </button>
-        </div>
-      </div>
+          {/* Org Chart */}
+          <div className="max-w-6xl mx-auto">
+            <DesktopTree agents={agents} selectedId={selectedId} onSelect={handleSelect} />
+            <MobileTree agents={agents} selectedId={selectedId} onSelect={handleSelect} />
 
-      {/* Drawer */}
-      <DrawerOverlay open={selectedId !== null} onClose={handleClose}>
-        {selectedId && agents[selectedId] && (
-          <WorkspacePanel
-            agentId={selectedId}
-            agents={agents}
-            onClose={handleClose}
-            onAgentsUpdate={handleAgentsUpdate}
-            onDeleteAgent={handleDeleteAgent}
-            addToast={addToast}
-            isNewAgent={isNewAgent}
-          />
-        )}
-      </DrawerOverlay>
+            {/* Add Agent Button */}
+            <div className="flex justify-center mt-8">
+              <button
+                onClick={() => setShowAddModal(true)}
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium text-violet-300 bg-violet-950/30 border border-violet-700/30 hover:bg-violet-900/30 hover:border-violet-600/50 transition-all"
+              >
+                <Plus className="w-4 h-4" />
+                Add Agent
+              </button>
+            </div>
+          </div>
 
-      {/* Add Agent Modal */}
-      {showAddModal && (
-        <AddAgentModal
-          agents={agents}
-          onAdd={handleAddAgent}
-          onCancel={() => setShowAddModal(false)}
-        />
+          {/* Drawer */}
+          <DrawerOverlay open={selectedId !== null} onClose={handleClose}>
+            {selectedId && agents[selectedId] && (
+              <WorkspacePanel
+                agentId={selectedId}
+                agents={agents}
+                onClose={handleClose}
+                onAgentsUpdate={handleAgentsUpdate}
+                onDeleteAgent={handleDeleteAgent}
+                addToast={addToast}
+                isNewAgent={isNewAgent}
+              />
+            )}
+          </DrawerOverlay>
+
+          {/* Add Agent Modal */}
+          {showAddModal && (
+            <AddAgentModal
+              agents={agents}
+              onAdd={handleAddAgent}
+              onCancel={() => setShowAddModal(false)}
+            />
+          )}
+        </>
       )}
 
-      {/* Protocols */}
-      <div className="max-w-6xl mx-auto">
-        <ProtocolsSection />
-      </div>
+      {activePageTab === "protocols" && (
+        <div className="max-w-6xl mx-auto">
+          <ProtocolsSection />
+        </div>
+      )}
 
-      {/* Playbook */}
-      <div className="max-w-6xl mx-auto">
-        <PlaybookSection />
-      </div>
+      {activePageTab === "cron-jobs" && (
+        <CronJobsTab />
+      )}
+
+      {activePageTab === "how-it-works" && (
+        <HowItWorksTab />
+      )}
     </div>
   );
 }

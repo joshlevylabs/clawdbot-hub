@@ -4131,7 +4131,7 @@ function CronJobsTab() {
   useEffect(() => {
     async function fetchJobs() {
       try {
-        const res = await fetch("/api/cron");
+        const res = await fetch("/data/cron-jobs.json");
         if (res.ok) {
           const data = await res.json();
           setJobs(data);

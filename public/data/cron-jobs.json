@@ -1,0 +1,902 @@
+[
+  {
+    "id": "28c654c7-a297-421d-9a04-018f6acc9c0c",
+    "name": "Morning Brief",
+    "enabled": true,
+    "schedule": {
+      "kind": "cron",
+      "expr": "0 6 * * *",
+      "tz": "America/Los_Angeles"
+    },
+    "payload": {
+      "kind": "agentTurn",
+      "message": "Morning brief for Joshua at 6am.\n\n**STEP 1 - RUN TOOLS**\n1. Run prayer generator: `python3 ~/clawd/tools/morning-prayer/daily_prayer.py`\n2. Run MRE signals: `cd ~/clawd/tools/cgs-trader && source venv/bin/activate && python mre_signals.py`\n3. Run relationship analysis: `python3 ~/clawd/tools/jillian/analyze.py analyze`\n\n**STEP 2 - GATHER DATA**\n1. Weather forecast for Los Angeles/Temecula area\n2. **CALENDAR** - From ALL 4 accounts:\n   - `today`: Events happening today (with time, title, location",
+      "deliver": true,
+      "channel": "telegram",
+      "model": "anthropic/claude-sonnet-4-20250514"
+    },
+    "state": {
+      "nextRunAtMs": 1771336800000,
+      "lastRunAtMs": 1771250400108,
+      "lastStatus": "ok",
+      "lastDurationMs": 190863
+    }
+  },
+  {
+    "id": "876a95bd-afec-4452-be50-409d54304685",
+    "name": "Regime Backtest Suite",
+    "enabled": false,
+    "schedule": {
+      "kind": "cron",
+      "expr": "*/5 22-23,0-5 * * *",
+      "tz": "America/Los_Angeles"
+    },
+    "payload": {
+      "kind": "agentTurn",
+      "message": "Run the regime-adaptive backtest suite with optimization.\n\n**RUN THE BACKTEST:**\n```bash\ncd ~/clawd/tools/paper-trader && ./regime_cron_runner.sh 2>&1\n```\n\n**THEN:**\n1. Read the output to find:\n   - Which period was tested\n   - Regime vs CGS avg returns\n   - Any parameter optimizations made\n   - PDF report path\n2. Send Joshua a brief Telegram summary (max 8 lines):\n   - Period tested\n   - Regime vs CGS avg return\n   - Best performer this run\n   - Any parameter changes\n   - PDF report generated (",
+      "deliver": true,
+      "channel": "telegram",
+      "model": ""
+    },
+    "state": {
+      "lastRunAtMs": 1770299700003,
+      "lastStatus": "ok",
+      "lastDurationMs": 51113
+    }
+  },
+  {
+    "id": "33b0ebb3-0d95-44ac-b502-28b5f6a17fa2",
+    "name": "Portfolio Tracker",
+    "enabled": false,
+    "schedule": {
+      "kind": "cron",
+      "expr": "0 7-14 * * 1-5",
+      "tz": "America/Los_Angeles"
+    },
+    "payload": {
+      "kind": "agentTurn",
+      "message": "Update portfolio tracker and save to Hub.\n\n1. Run: `cd ~/clawd/trading-bot && source venv/bin/activate && python ~/clawd/tools/paper-trader/portfolio_tracker.py`\n\n2. If there are significant changes (>2% P&L), send Joshua a Telegram update with current positions and P&L.\n\nKeep it brief - just the key numbers.",
+      "deliver": true,
+      "channel": "telegram",
+      "model": ""
+    },
+    "state": {
+      "lastRunAtMs": 1770415200012,
+      "lastStatus": "ok",
+      "lastDurationMs": 23029
+    }
+  },
+  {
+    "id": "0b39d180-097c-45f6-86ce-93f8997df989",
+    "name": "MRE V5 Overnight Backtest",
+    "enabled": false,
+    "schedule": {
+      "kind": "cron",
+      "expr": "*/10 22-23 * * *",
+      "tz": "America/Los_Angeles"
+    },
+    "payload": {
+      "kind": "agentTurn",
+      "message": "Run the next batch of MRE V2 overnight backtests.\n\n**STEP 1: Check batch state**\n```bash\ncat ~/clawd/trading-bot/regime-detector/backtest/overnight_results/batch_state.json 2>/dev/null || echo '{\"next_batch\": 0}'\n```\n\n**STEP 2: Run the batch**\n```bash\ncd ~/clawd/trading-bot/regime-detector && source venv/bin/activate && python backtest/overnight_backtest_suite.py --batch BATCH_NUM --output-dir backtest/overnight_results 2>&1\n```\n(Replace BATCH_NUM with the next_batch value from step 1)\n\n**STEP 3",
+      "deliver": false,
+      "channel": "telegram",
+      "model": ""
+    },
+    "state": {
+      "lastRunAtMs": 1770532800057,
+      "lastStatus": "ok",
+      "lastDurationMs": 15854
+    }
+  },
+  {
+    "id": "0f18424b-31c2-44b6-937c-9f987bbb245f",
+    "name": "MRE V5 Overnight Backtest (Night)",
+    "enabled": false,
+    "schedule": {
+      "kind": "cron",
+      "expr": "*/10 0-4 * * *",
+      "tz": "America/Los_Angeles"
+    },
+    "payload": {
+      "kind": "agentTurn",
+      "message": "Run the next batch of MRE V2 overnight backtests (night hours).\n\n**STEP 1: Check batch state**\n```bash\ncat ~/clawd/trading-bot/regime-detector/backtest/overnight_results/batch_state.json 2>/dev/null || echo '{\"next_batch\": 0}'\n```\n\n**STEP 2: Run the batch**\n```bash\ncd ~/clawd/trading-bot/regime-detector && source venv/bin/activate && python backtest/overnight_backtest_suite.py --batch BATCH_NUM --output-dir backtest/overnight_results 2>&1\n```\n(Replace BATCH_NUM with the next_batch value from ste",
+      "deliver": false,
+      "channel": "telegram",
+      "model": ""
+    },
+    "state": {
+      "lastRunAtMs": 1770468600007,
+      "lastStatus": "ok",
+      "lastDurationMs": 17046
+    }
+  },
+  {
+    "id": "76a35597-aa66-449f-9c46-66117089b0b4",
+    "name": "MRE V5\u2192V6 Final Report",
+    "enabled": false,
+    "schedule": {
+      "kind": "cron",
+      "expr": "10 5 * * *",
+      "tz": "America/Los_Angeles"
+    },
+    "payload": {
+      "kind": "agentTurn",
+      "message": "Generate the final MRE V2\u2192V3 overnight backtest report.\n\n**STEP 1: Run the report generator**\n```bash\ncd ~/clawd/trading-bot/regime-detector && source venv/bin/activate && python backtest/generate_final_report.py 2>&1\n```\n\n**STEP 2: Read the generated files**\n```bash\ncat ~/clawd/trading-bot/regime-detector/backtest/overnight_results/telegram_report.txt\ncat ~/clawd/trading-bot/regime-detector/backtest/overnight_results/MRE_V3_DESCRIPTION.md\n```\n\n**STEP 3: Send comprehensive Telegram report to Jos",
+      "deliver": true,
+      "channel": "telegram",
+      "model": ""
+    },
+    "state": {
+      "lastRunAtMs": 1770469800001,
+      "lastStatus": "ok",
+      "lastDurationMs": 128555
+    }
+  },
+  {
+    "id": "c80b992c-23d1-42af-92a6-60de11591d9d",
+    "name": "MRE V5 Correlation Analysis",
+    "enabled": false,
+    "schedule": {
+      "kind": "cron",
+      "expr": "0 3 * * *",
+      "tz": "America/Los_Angeles"
+    },
+    "payload": {
+      "kind": "agentTurn",
+      "message": "Run cross-asset correlation analysis for MRE V3.\n\n```bash\ncd ~/clawd/trading-bot/regime-detector && source venv/bin/activate && python backtest/correlation_analyzer.py 2>&1\n```\n\nThis finds:\n1. Lead/lag relationships between assets\n2. Divergence signals (mean reversion)\n3. Confirmation clusters\n4. Cross-asset predictive signals\n\nSave results silently - will be included in 5:10 AM report.",
+      "deliver": false,
+      "channel": "telegram",
+      "model": ""
+    },
+    "state": {
+      "lastRunAtMs": 1770462018379,
+      "lastStatus": "ok",
+      "lastDurationMs": 22111
+    }
+  },
+  {
+    "id": "72b34921-f25f-47a0-8d2f-e4673a94f177",
+    "name": "Paper Trading Auto-Tracker",
+    "enabled": true,
+    "schedule": {
+      "kind": "cron",
+      "expr": "*/5 6-13 * * 1-5",
+      "tz": "America/Los_Angeles"
+    },
+    "payload": {
+      "kind": "agentTurn",
+      "message": "Run the paper trading auto-tracker (replaces Alpaca bot).\n\n```bash\ncd ~/clawd/tools/paper-trader && bash auto_tracker.sh 2>&1\n```\n\nAfter the tracker runs, sync Alpaca paper account using the sync script:\n```bash\ncd ~/clawd/tools/paper-trader && source venv/bin/activate && python sync_alpaca.py 2>&1\n```\n\nIMPORTANT: The Supabase paper_positions table uses column `qty` (NOT `quantity`). Do NOT write custom Supabase queries \u2014 always use sync_alpaca.py which handles the schema correctly.\n\nOnly notify",
+      "deliver": false,
+      "channel": "telegram",
+      "model": "anthropic/claude-sonnet-4-20250514"
+    },
+    "state": {
+      "nextRunAtMs": 1771336800000,
+      "lastRunAtMs": 1771278900071,
+      "lastStatus": "ok",
+      "lastDurationMs": 13772
+    }
+  },
+  {
+    "id": "e6b5453d-4e34-4ea3-81ce-655b99f19987",
+    "name": "MRE Strategy Analyst",
+    "enabled": true,
+    "schedule": {
+      "kind": "cron",
+      "expr": "0 14 * * 1-5",
+      "tz": "America/Los_Angeles"
+    },
+    "payload": {
+      "kind": "agentTurn",
+      "message": "MRE Strategy Analyst - Daily Review (after market close).\n\nRead your SOUL.md: ~/clawd/agents/mre-analyst/SOUL.md\n\n**ANALYSIS TASKS:**\n\n1. Load today's trading data:\n```bash\ncat ~/clawd/clawdbot-hub/public/data/paper-portfolio.json\ncat ~/clawd/clawdbot-hub/public/data/trading/mre-signals.json\n```\n\n2. Review today's performance:\n- Any trades executed?\n- P&L changes\n- Signal accuracy (did BUY signals go up? HOLD signals stay flat?)\n\n3. Check for issues:\n- False signals (BUY that led to loss)\n- Miss",
+      "deliver": false,
+      "channel": "telegram",
+      "model": "anthropic/claude-sonnet-4-20250514"
+    },
+    "state": {
+      "nextRunAtMs": 1771365600000,
+      "lastRunAtMs": 1771279200136,
+      "lastStatus": "ok",
+      "lastDurationMs": 108890
+    }
+  },
+  {
+    "id": "d61c848a-320a-46c0-9336-f237a3511f44",
+    "name": "MRE Strategy Optimizer",
+    "enabled": true,
+    "schedule": {
+      "kind": "cron",
+      "expr": "0 10 * * 0",
+      "tz": "America/Los_Angeles"
+    },
+    "payload": {
+      "kind": "agentTurn",
+      "message": "MRE Strategy Optimizer - Weekly Improvement Cycle.\n\nRead your SOUL.md: ~/clawd/agents/mre-optimizer/SOUL.md\n\n**OPTIMIZATION TASKS:**\n\n1. Review analyst findings:\n```bash\nls -la ~/clawd/agents/mre-analyst/reports/\ncat ~/clawd/agents/shared/strategy-issues.md\ncat ~/clawd/agents/mre-analyst/reports/weekly-*.md 2>/dev/null | tail -100\n```\n\n2. Prioritize issues by:\n- Frequency (how often it happens)\n- Impact ($ lost or missed)\n- Fixability (how hard to change)\n\n3. For top 1-2 issues, create proposals",
+      "deliver": true,
+      "channel": "telegram",
+      "model": "anthropic/claude-sonnet-4-20250514"
+    },
+    "state": {
+      "nextRunAtMs": 1771783200000,
+      "lastRunAtMs": 1771178400000,
+      "lastStatus": "ok",
+      "lastDurationMs": 359405
+    }
+  },
+  {
+    "id": "6f3f5e03-8f97-4a5b-a596-f24e7ad907e3",
+    "name": "MRE Overnight Optimizer",
+    "enabled": false,
+    "schedule": {
+      "kind": "cron",
+      "expr": "*/30 22-23 * * *",
+      "tz": "America/Los_Angeles"
+    },
+    "payload": {
+      "kind": "agentTurn",
+      "message": "MRE Overnight Optimizer - Parameter Sweep Phase (Evening)\n\n**Read instructions:** ~/clawd/agents/mre-optimizer/overnight/INSTRUCTIONS.md\n\n**YOUR TASK:**\n1. Read current state:\n```bash\ncat ~/clawd/agents/mre-optimizer/overnight-state.json\n```\n\n2. If this is first run tonight (started=null), initialize:\n- Set started to current timestamp\n- Set current_phase to 'param_sweep'\n- Record baseline metrics from current mre_signals.py\n\n3. Run parameter sweep iteration:\n```bash\ncd ~/clawd/trading-bot/regim",
+      "deliver": false,
+      "channel": "telegram",
+      "model": ""
+    },
+    "state": {
+      "lastRunAtMs": 1770532216796,
+      "lastStatus": "ok",
+      "lastDurationMs": 21610
+    }
+  },
+  {
+    "id": "4be5bb7d-85fa-46f9-a347-c30ffe0b2063",
+    "name": "MRE Overnight - Signal Analysis",
+    "enabled": false,
+    "schedule": {
+      "kind": "cron",
+      "expr": "0 0 * * *",
+      "tz": "America/Los_Angeles"
+    },
+    "payload": {
+      "kind": "agentTurn",
+      "message": "MRE Overnight Optimizer - Signal Accuracy Analysis (Midnight)\n\n**YOUR TASK:**\n\n1. Update phase in state:\n```bash\ncat ~/clawd/agents/mre-optimizer/overnight-state.json\n# Update current_phase to 'signal_accuracy'\n```\n\n2. Analyze recent signal performance:\n```bash\ncat ~/clawd/clawdbot-hub/public/data/trading/mre-signals.json\ncat ~/clawd/clawdbot-hub/public/data/paper-portfolio.json\n```\n\n3. For each signal from the past 30 days:\n- Was it accurate? (price moved in predicted direction)\n- How much prof",
+      "deliver": false,
+      "channel": "telegram",
+      "model": ""
+    },
+    "state": {
+      "lastRunAtMs": 1770451223212,
+      "lastStatus": "ok",
+      "lastDurationMs": 135888
+    }
+  },
+  {
+    "id": "4aca89fe-c97a-4254-8a72-50e5222b247e",
+    "name": "MRE Overnight - Correlation Scan",
+    "enabled": false,
+    "schedule": {
+      "kind": "cron",
+      "expr": "30 0 * * *",
+      "tz": "America/Los_Angeles"
+    },
+    "payload": {
+      "kind": "agentTurn",
+      "message": "MRE Overnight Optimizer - Cross-Asset Correlation Scan\n\n**YOUR TASK:**\n\n1. Run correlation analyzer:\n```bash\ncd ~/clawd/trading-bot/regime-detector && source venv/bin/activate\npython backtest/correlation_analyzer.py --deep 2>&1\n```\n\n2. Analyze lead/lag relationships:\n- Does GLD lead SPY? (1-5 day lag)\n- Does VIX spike predict regime changes?\n- Do bonds lead equities in transitions?\n\n3. Find confirmation signals:\n- When 3+ asset classes are bullish, what's the win rate?\n- When regimes diverge (so",
+      "deliver": false,
+      "channel": "telegram",
+      "model": ""
+    },
+    "state": {
+      "lastRunAtMs": 1770453018175,
+      "lastStatus": "ok",
+      "lastDurationMs": 72575
+    }
+  },
+  {
+    "id": "9f55b8bf-04d1-4236-9fd5-068f2bc79d7e",
+    "name": "MRE Overnight - Regime Tuning",
+    "enabled": false,
+    "schedule": {
+      "kind": "cron",
+      "expr": "0 1 * * *",
+      "tz": "America/Los_Angeles"
+    },
+    "payload": {
+      "kind": "agentTurn",
+      "message": "MRE Overnight Optimizer - Regime Detection Tuning\n\n**YOUR TASK:**\n\n1. Read current regime detection logic:\n```bash\ncat ~/clawd/tools/cgs-trader/mre_signals.py | grep -A 50 'def calculate_regime'\n```\n\n2. Test different EMA periods:\n- Current: 100 day\n- Test: 50, 75, 100, 150, 200 days\n- For each, backtest regime accuracy over 1 year\n\n3. Test confidence calculation variations:\n- Current method vs alternatives\n- Should momentum weight more or less?\n- Should we add volatility adjustment?\n\n4. Test tr",
+      "deliver": false,
+      "channel": "telegram",
+      "model": ""
+    },
+    "state": {
+      "lastRunAtMs": 1770454819347,
+      "lastStatus": "ok",
+      "lastDurationMs": 178603
+    }
+  },
+  {
+    "id": "d60230c8-5ef0-4470-ba5f-83744d217201",
+    "name": "MRE Overnight - Kalshi Analysis",
+    "enabled": false,
+    "schedule": {
+      "kind": "cron",
+      "expr": "30 1 * * *",
+      "tz": "America/Los_Angeles"
+    },
+    "payload": {
+      "kind": "agentTurn",
+      "message": "MRE Overnight Optimizer - Prediction Market Analysis\n\n**YOUR TASK:**\n\n1. Analyze Kalshi/Polymarket integration:\n```bash\ncat ~/clawd/tools/cgs-trader/kalshi_data.json 2>/dev/null\ncat ~/clawd/clawdbot-hub/public/data/trading/mre-signals.json | jq '.prediction_markets'\n```\n\n2. Evaluate current accuracy:\n- Our JP Morgan analysis showed 96.6% directional accuracy\n- Is this holding up in recent data?\n- Which prediction market questions are most useful?\n\n3. Test different weightings:\n- Current weight i",
+      "deliver": false,
+      "channel": "telegram",
+      "model": ""
+    },
+    "state": {
+      "lastRunAtMs": 1770456620011,
+      "lastStatus": "ok",
+      "lastDurationMs": 205907
+    }
+  },
+  {
+    "id": "b4e496c1-1cf1-4fcb-ba56-56edc5a3ce38",
+    "name": "MRE Overnight - Synthesis",
+    "enabled": false,
+    "schedule": {
+      "kind": "cron",
+      "expr": "0 2 * * *",
+      "tz": "America/Los_Angeles"
+    },
+    "payload": {
+      "kind": "agentTurn",
+      "message": "MRE Overnight Optimizer - Synthesis & Apply Improvements\n\n**YOUR TASK:**\n\n1. Read all overnight results:\n```bash\ncat ~/clawd/agents/mre-optimizer/overnight/results/$(date +%Y-%m-%d)/param_sweep.json\ncat ~/clawd/agents/mre-optimizer/overnight/results/$(date +%Y-%m-%d)/signal_accuracy.json\ncat ~/clawd/agents/mre-optimizer/overnight/results/$(date +%Y-%m-%d)/correlation.json\ncat ~/clawd/agents/mre-optimizer/overnight/results/$(date +%Y-%m-%d)/regime_tuning.json\ncat ~/clawd/agents/mre-optimizer/over",
+      "deliver": false,
+      "channel": "telegram",
+      "model": ""
+    },
+    "state": {
+      "lastRunAtMs": 1770458418147,
+      "lastStatus": "ok",
+      "lastDurationMs": 232178
+    }
+  },
+  {
+    "id": "bd016084-55cc-4757-a613-309780cfc628",
+    "name": "MRE Overnight - Continuation",
+    "enabled": false,
+    "schedule": {
+      "kind": "cron",
+      "expr": "*/30 2-4 * * *",
+      "tz": "America/Los_Angeles"
+    },
+    "payload": {
+      "kind": "agentTurn",
+      "message": "MRE Overnight Optimizer - Continuation Iterations\n\n**YOUR TASK:**\n\nThis runs every 30 minutes from 2:30 AM - 4:30 AM to continue optimization.\n\n1. Check current state:\n```bash\ncat ~/clawd/agents/mre-optimizer/overnight-state.json\n```\n\n2. Based on findings so far, run ADDITIONAL tests:\n- If param sweep found promising combos, test variations\n- If signal analysis found weak spots, test fixes\n- If correlation found patterns, test trading rules\n\n3. Each iteration should:\n- Pick ONE hypothesis to tes",
+      "deliver": false,
+      "channel": "telegram",
+      "model": ""
+    },
+    "state": {
+      "lastRunAtMs": 1770467418961,
+      "lastStatus": "ok",
+      "lastDurationMs": 9583
+    }
+  },
+  {
+    "id": "52a4d080-2f75-491e-b1e8-2b55f75fda8a",
+    "name": "MRE Overnight Report",
+    "enabled": false,
+    "schedule": {
+      "kind": "cron",
+      "expr": "30 5 * * *",
+      "tz": "America/Los_Angeles"
+    },
+    "payload": {
+      "kind": "agentTurn",
+      "message": "MRE Overnight Optimization - FULL ANALYSIS REPORT\n\n**Send Joshua a comprehensive Telegram report of overnight findings.**\n\n1. Read all results:\n```bash\ncat ~/clawd/agents/mre-optimizer/overnight-state.json\nls -la ~/clawd/agents/mre-optimizer/overnight/results/$(date +%Y-%m-%d)/\ncat ~/clawd/agents/mre-optimizer/overnight/results/$(date +%Y-%m-%d)/*.json\ncat ~/clawd/agents/mre-optimizer/CHANGELOG.md | tail -50\n```\n\n2. Generate report with these sections:\n\n\ud83d\udcca **OVERNIGHT OPTIMIZATION REPORT**\n*(Date",
+      "deliver": true,
+      "channel": "telegram",
+      "model": ""
+    },
+    "state": {
+      "lastRunAtMs": 1770471000084,
+      "lastStatus": "ok",
+      "lastDurationMs": 108837
+    }
+  },
+  {
+    "id": "dad835de-d641-4c45-8ed1-d030c384b686",
+    "name": "MRE V7 Phase 3 - Backtest",
+    "enabled": false,
+    "schedule": {
+      "kind": "cron",
+      "expr": "30 0 8 2 *",
+      "tz": "America/Los_Angeles"
+    },
+    "payload": {
+      "kind": "agentTurn",
+      "message": "MRE V7 Overnight Sprint \u2014 Phase 3: Backtest V7 vs V6.\n\nRead ~/clawd/agents/mre-optimizer/overnight/v7-phase1-results.md to see what Phase 1-2 changed.\nRead ~/clawd/trading-bot/mre_strategies.py for the V7 config.\nFind V6 backup at ~/clawd/trading-bot/mre_strategies.py.v6.bak or check git history.\n\nRun backtests comparing V6 vs V7 across all asset classes:\n1. cd ~/clawd/tools/paper-trader && source venv/bin/activate\n2. Test SPY, QQQ, GLD, TLT, XLF, XLV with both old and new params using backtest.",
+      "deliver": false,
+      "channel": "telegram",
+      "model": ""
+    },
+    "state": {}
+  },
+  {
+    "id": "406652d0-dc49-48fc-b901-2d96af7d9eee",
+    "name": "MRE V7 Phase 4 - Todays Picks",
+    "enabled": false,
+    "schedule": {
+      "kind": "cron",
+      "expr": "30 2 8 2 *",
+      "tz": "America/Los_Angeles"
+    },
+    "payload": {
+      "kind": "agentTurn",
+      "message": "MRE V7 Overnight Sprint \u2014 Phase 4: Improve Today's Picks.\n\nRead ~/clawd/agents/mre-optimizer/overnight/v7-backtest-comparison.md for backtest results.\nRead ~/clawd/trading-bot/mre_signal_exporter.py to understand how picks are generated.\n\nImprove the Today's Picks signal quality:\n1. Add risk/reward ratio calculation to each pick (target price / stop distance)\n2. Add historical accuracy display per asset class (pull from config in mre_strategies.py)\n3. Add sector diversification warning: flag if ",
+      "deliver": false,
+      "channel": "telegram",
+      "model": ""
+    },
+    "state": {}
+  },
+  {
+    "id": "ec328bf2-374a-4e5e-829a-0c6ef9db6c9e",
+    "name": "MRE V7 Phase 5 - Agent Fleet",
+    "enabled": false,
+    "schedule": {
+      "kind": "cron",
+      "expr": "0 4 8 2 *",
+      "tz": "America/Los_Angeles"
+    },
+    "payload": {
+      "kind": "agentTurn",
+      "message": "MRE V7 Overnight Sprint \u2014 Phase 5: Update Agent Fleet Knowledge.\n\nRead all phase results:\n- ~/clawd/agents/mre-optimizer/overnight/v7-phase1-results.md\n- ~/clawd/agents/mre-optimizer/overnight/v7-backtest-comparison.md\n- ~/clawd/agents/mre-optimizer/overnight/v7-phase4-results.md\n\n1. Update ~/clawd/agents/mre-advisor/knowledge/ \u2014 Create v7-parameters.md with all V7 config values, per-asset-class accuracy rates, override rules, Kalshi integration details\n2. Update ~/clawd/agents/mre-advisor/memor",
+      "deliver": false,
+      "channel": "telegram",
+      "model": ""
+    },
+    "state": {}
+  },
+  {
+    "id": "72c1926b-8afb-4a74-8280-cc0c6d2bcc86",
+    "name": "MRE V7 Final Report",
+    "enabled": false,
+    "schedule": {
+      "kind": "cron",
+      "expr": "30 5 8 2 *",
+      "tz": "America/Los_Angeles"
+    },
+    "payload": {
+      "kind": "agentTurn",
+      "message": "MRE V7 Overnight Sprint \u2014 Phase 6: FINAL REPORT for Joshua.\n\nThis is the culmination of an all-night sprint. Joshua asked for this before bed and wants a comprehensive report when he wakes up at 6 AM.\n\nRead ALL phase results:\n- ~/clawd/agents/mre-optimizer/overnight/v7-sprint-plan.md\n- ~/clawd/agents/mre-optimizer/overnight/v7-phase1-results.md\n- ~/clawd/agents/mre-optimizer/overnight/v7-backtest-comparison.md\n- ~/clawd/agents/mre-optimizer/overnight/v7-phase4-results.md\n- ~/clawd/agents/mre-opt",
+      "deliver": true,
+      "channel": "telegram",
+      "model": ""
+    },
+    "state": {}
+  },
+  {
+    "id": "e3dc2402-6e04-42ed-8420-5f410bc606a3",
+    "name": "MRE Pit: Signal Accuracy",
+    "enabled": true,
+    "schedule": {
+      "kind": "cron",
+      "expr": "0 22 * * *",
+      "tz": "America/Los_Angeles"
+    },
+    "payload": {
+      "kind": "agentTurn",
+      "message": "MRE Overnight Pit \u2014 Phase 1: Signal Accuracy Analysis\n\nRead the pipeline doc: ~/clawd/agents/mre-optimizer/overnight/PIPELINE.md\n\n**Initialize tonight's state:**\n```bash\ncat > ~/clawd/agents/mre-optimizer/overnight/pipeline-state.json << 'INIT'\n{\"date\": \"$(date +%Y-%m-%d)\", \"version\": \"v7\", \"phases_completed\": [], \"current_phase\": \"signal_accuracy\", \"findings\": {}, \"changes_applied\": [], \"metrics_before\": {}, \"metrics_after\": {}}\nINIT\n```\n\n**Analyze signal performance:**\n1. Read current signals:",
+      "deliver": false,
+      "channel": "telegram",
+      "model": "anthropic/claude-sonnet-4-20250514"
+    },
+    "state": {
+      "nextRunAtMs": 1771308000000,
+      "lastRunAtMs": 1771221600020,
+      "lastStatus": "ok",
+      "lastDurationMs": 226038
+    }
+  },
+  {
+    "id": "0a119de4-9066-4556-90ef-388a60fccf92",
+    "name": "MRE Pit: Correlation Scan",
+    "enabled": true,
+    "schedule": {
+      "kind": "cron",
+      "expr": "0 23 * * *",
+      "tz": "America/Los_Angeles"
+    },
+    "payload": {
+      "kind": "agentTurn",
+      "message": "MRE Overnight Pit \u2014 Phase 2: Correlation & Cross-Asset Analysis\n\nRead pipeline state: `cat ~/clawd/agents/mre-optimizer/overnight/pipeline-state.json`\nRead Phase 1 results: `cat ~/clawd/agents/mre-optimizer/overnight/results/$(date +%Y-%m-%d)/signal_accuracy.json`\n\n**Run correlation analysis:**\n```bash\ncd ~/clawd/trading-bot/regime-detector && source venv/bin/activate\npython backtest/correlation_analyzer.py --deep 2>&1\n```\n\n**Analyze:**\n1. Lead/lag relationships (GLD\u2192SPY, VIX\u2192regime changes, bon",
+      "deliver": false,
+      "channel": "telegram",
+      "model": "anthropic/claude-sonnet-4-20250514"
+    },
+    "state": {
+      "nextRunAtMs": 1771311600000,
+      "lastRunAtMs": 1771225200176,
+      "lastStatus": "ok",
+      "lastDurationMs": 120685
+    }
+  },
+  {
+    "id": "fc61664b-2637-425b-a2ea-6bba2c89e137",
+    "name": "MRE Pit: Regime & Markets",
+    "enabled": true,
+    "schedule": {
+      "kind": "cron",
+      "expr": "0 0 * * *",
+      "tz": "America/Los_Angeles"
+    },
+    "payload": {
+      "kind": "agentTurn",
+      "message": "MRE Overnight Pit \u2014 Phase 3: Regime Detection & Prediction Markets\n\nRead pipeline state + prior phases:\n```bash\ncat ~/clawd/agents/mre-optimizer/overnight/pipeline-state.json\ncat ~/clawd/agents/mre-optimizer/overnight/results/$(date +%Y-%m-%d)/signal_accuracy.json\ncat ~/clawd/agents/mre-optimizer/overnight/results/$(date +%Y-%m-%d)/correlation.json\n```\n\n**Regime Detection:**\n1. Read current regime logic from ~/clawd/trading-bot/mre_signal_exporter.py (detect_regime functions)\n2. Test current SMA",
+      "deliver": false,
+      "channel": "telegram",
+      "model": "anthropic/claude-sonnet-4-20250514"
+    },
+    "state": {
+      "nextRunAtMs": 1771315200000,
+      "lastRunAtMs": 1771228800509,
+      "lastStatus": "ok",
+      "lastDurationMs": 193468
+    }
+  },
+  {
+    "id": "81a1dc54-43b7-438d-bf0a-a611341cf03f",
+    "name": "MRE Pit: Param Sweep",
+    "enabled": true,
+    "schedule": {
+      "kind": "cron",
+      "expr": "0 1 * * *",
+      "tz": "America/Los_Angeles"
+    },
+    "payload": {
+      "kind": "agentTurn",
+      "message": "MRE Overnight Pit \u2014 Phase 4: Targeted Parameter Sweep\n\nRead pipeline state + all prior phases:\n```bash\ncat ~/clawd/agents/mre-optimizer/overnight/pipeline-state.json\nfor f in ~/clawd/agents/mre-optimizer/overnight/results/$(date +%Y-%m-%d)/*.json; do echo \"=== $f ===\"; cat \"$f\" | python3 -c 'import json,sys; print(json.dumps(json.load(sys.stdin), indent=2))' 2>/dev/null | head -50; done\n```\n\n**Targeted sweep based on prior findings:**\n1. Focus on weak areas identified in Phase 1 (signal accuracy",
+      "deliver": false,
+      "channel": "telegram",
+      "model": "anthropic/claude-sonnet-4-20250514"
+    },
+    "state": {
+      "nextRunAtMs": 1771318800000,
+      "lastRunAtMs": 1771146000076,
+      "lastStatus": "ok",
+      "lastDurationMs": 600784
+    }
+  },
+  {
+    "id": "a853e675-27cf-4c28-a7f4-1ac96b9544ef",
+    "name": "MRE Pit: Synthesis & Apply",
+    "enabled": true,
+    "schedule": {
+      "kind": "cron",
+      "expr": "30 2 * * *",
+      "tz": "America/Los_Angeles"
+    },
+    "payload": {
+      "kind": "agentTurn",
+      "message": "MRE Overnight Pit \u2014 Phase 5: Synthesis & Apply Improvements\n\nRead ALL phase results:\n```bash\ncat ~/clawd/agents/mre-optimizer/overnight/pipeline-state.json\nfor f in ~/clawd/agents/mre-optimizer/overnight/results/$(date +%Y-%m-%d)/*.json; do echo \"=== $(basename $f) ===\"; cat \"$f\" | python3 -c 'import json,sys; print(json.dumps(json.load(sys.stdin), indent=2))' 2>/dev/null | head -80; done\n```\n\nRead current strategy: `cat ~/clawd/trading-bot/mre_strategies.py | head -200`\nRead current exporter: `",
+      "deliver": false,
+      "channel": "telegram",
+      "model": "anthropic/claude-sonnet-4-20250514"
+    },
+    "state": {
+      "nextRunAtMs": 1771324200000,
+      "lastRunAtMs": 1771237800164,
+      "lastStatus": "ok",
+      "lastDurationMs": 140995
+    }
+  },
+  {
+    "id": "ed2e5d43-3d67-45e4-9d98-a6e9317ae650",
+    "name": "MRE Pit: Deep Test & Picks",
+    "enabled": true,
+    "schedule": {
+      "kind": "cron",
+      "expr": "30 3 * * *",
+      "tz": "America/Los_Angeles"
+    },
+    "payload": {
+      "kind": "agentTurn",
+      "message": "MRE Overnight Pit \u2014 Phase 6: Deep Testing & Today's Picks Validation\n\nRead pipeline state + synthesis: `cat ~/clawd/agents/mre-optimizer/overnight/pipeline-state.json`\nRead synthesis results: `cat ~/clawd/agents/mre-optimizer/overnight/results/$(date +%Y-%m-%d)/synthesis.json`\n\n**Deep Testing (if changes were applied in Phase 5):**\n1. Run extended backtests on changed parameters\n2. Test edge cases: high volatility periods, regime transitions, flash crashes\n3. Validate cross-asset confirmation ru",
+      "deliver": false,
+      "channel": "telegram",
+      "model": "anthropic/claude-sonnet-4-20250514"
+    },
+    "state": {
+      "nextRunAtMs": 1771327800000,
+      "lastRunAtMs": 1771241400166,
+      "lastStatus": "ok",
+      "lastDurationMs": 113362
+    }
+  },
+  {
+    "id": "d43c5e51-dcd5-45d9-a925-b2b5a69e27c2",
+    "name": "MRE Pit: Morning Report",
+    "enabled": true,
+    "schedule": {
+      "kind": "cron",
+      "expr": "30 5 * * *",
+      "tz": "America/Los_Angeles"
+    },
+    "payload": {
+      "kind": "agentTurn",
+      "message": "MRE Overnight Pit \u2014 Phase 7: Morning Report (V7 INAUGURAL RUN)\n\nThis is the FIRST run of the unified Pit pipeline AND the V7 deployment night. Joshua asked for a comprehensive V7 vs V6 report.\n\nRead ALL results:\n```bash\ncat ~/clawd/agents/mre-optimizer/overnight/pipeline-state.json\nfor f in ~/clawd/agents/mre-optimizer/overnight/results/$(date +%Y-%m-%d)/*.json; do echo \"=== $(basename $f) ===\"; cat \"$f\" | python3 -c 'import json,sys; print(json.dumps(json.load(sys.stdin), indent=2))' 2>/dev/nul",
+      "deliver": true,
+      "channel": "telegram",
+      "model": "anthropic/claude-sonnet-4-20250514"
+    },
+    "state": {
+      "nextRunAtMs": 1771335000000,
+      "lastRunAtMs": 1771248600119,
+      "lastStatus": "ok",
+      "lastDurationMs": 172301
+    }
+  },
+  {
+    "id": "e66040e6-ad43-489e-b888-23d0f0453236",
+    "name": "Studio: Writer's Room",
+    "enabled": true,
+    "schedule": {
+      "kind": "cron",
+      "expr": "0 9 * * 0",
+      "tz": "America/Los_Angeles"
+    },
+    "payload": {
+      "kind": "agentTurn",
+      "message": "Studio Writer's Room \u2014 Weekly Script Creation Session\n\nThis is an INTERACTIVE session with Joshua. You are facilitating a multi-agent creative room.\n\n**Read these SOUL.md files to embody each role:**\n- ~/clawd/agents/studio/cmo/SOUL.md\n- ~/clawd/agents/studio/show-runner/SOUL.md\n- ~/clawd/agents/studio/script-producer/SOUL.md\n- ~/clawd/agents/studio/brand-da/SOUL.md\n\n**Read shared context:**\n- ~/clawd/agents/studio/shared/brand-bible.md\n- ~/clawd/agents/studio/shared/content-calendar.md\n- ~/claw",
+      "deliver": true,
+      "channel": "telegram",
+      "model": "anthropic/claude-sonnet-4-20250514"
+    },
+    "state": {
+      "nextRunAtMs": 1771779600000,
+      "lastRunAtMs": 1771174800008,
+      "lastStatus": "ok",
+      "lastDurationMs": 59700
+    }
+  },
+  {
+    "id": "95c5dfc5-a730-44c5-bcbc-e2ca3293acb7",
+    "name": "Studio: Review Room",
+    "enabled": true,
+    "schedule": {
+      "kind": "cron",
+      "expr": "0 9 * * 5",
+      "tz": "America/Los_Angeles"
+    },
+    "payload": {
+      "kind": "agentTurn",
+      "message": "Studio Review Room \u2014 Weekly Episode Review & Campaign Deploy\n\nThis is an INTERACTIVE session with Joshua. You are facilitating a multi-agent review and deployment room.\n\n**Read these SOUL.md files to embody each role:**\n- ~/clawd/agents/studio/production-critic/SOUL.md\n- ~/clawd/agents/studio/post-production-director/SOUL.md\n- ~/clawd/agents/studio/content-repurposer/SOUL.md\n- ~/clawd/agents/studio/copywriter/SOUL.md\n- ~/clawd/agents/studio/growth-marketer/SOUL.md\n- ~/clawd/agents/studio/campaig",
+      "deliver": true,
+      "channel": "telegram",
+      "model": "anthropic/claude-sonnet-4-20250514"
+    },
+    "state": {
+      "nextRunAtMs": 1771606800000,
+      "lastRunAtMs": 1771002093663,
+      "lastStatus": "ok",
+      "lastDurationMs": 54374
+    }
+  },
+  {
+    "id": "8a51ec3d-5e1f-42c6-9717-b74bbbfd952b",
+    "name": "forge-design-implementation",
+    "enabled": false,
+    "schedule": {
+      "expr": "55 6 9 2 *",
+      "kind": "cron"
+    },
+    "payload": {
+      "kind": "systemEvent",
+      "message": "",
+      "deliver": false,
+      "channel": "",
+      "model": ""
+    },
+    "state": {
+      "lastRunAtMs": 1770648910973,
+      "lastStatus": "ok",
+      "lastDurationMs": 0
+    }
+  },
+  {
+    "id": "a2580e29-838d-4dec-b871-ae1d4b80aa58",
+    "name": "Price Refresh (Hub + Supabase)",
+    "enabled": true,
+    "schedule": {
+      "kind": "cron",
+      "expr": "*/5 6-13 * * 1-5",
+      "tz": "America/Los_Angeles"
+    },
+    "payload": {
+      "kind": "agentTurn",
+      "message": "Refresh live prices for the Hub and Supabase paper trading, then run the Universe pipeline.\n\n```bash\n# Step 1: Existing price refresh\nbash ~/clawd/tools/paper-trader/refresh_prices.sh 2>&1\n```\n\n```bash\n# Step 2: Universe signals (676 assets, ~50s)\nbash ~/clawd/trading-bot/run_universe.sh 2>&1\n```\n\nComplete silently unless error occurs.",
+      "deliver": false,
+      "channel": "telegram",
+      "model": "anthropic/claude-sonnet-4-20250514"
+    },
+    "state": {
+      "nextRunAtMs": 1771336800000,
+      "lastRunAtMs": 1771278913855,
+      "lastStatus": "ok",
+      "lastDurationMs": 67279
+    }
+  },
+  {
+    "id": "d76e772c-4797-4d92-ab06-3ba7811d76e4",
+    "name": "V12 Forge Phase 2 Monitor",
+    "enabled": false,
+    "schedule": {
+      "kind": "cron",
+      "expr": "*/5 * * * *",
+      "tz": "America/Los_Angeles"
+    },
+    "payload": {
+      "kind": "agentTurn",
+      "message": "V12 Forge Phase 2 (Architect + DA) Progress Monitor.\n\nCheck the forge-v12-architect-da sub-agent status.\n\n1. Check for ADR output files:\n```bash\nls -la ~/clawd/agents/mre-optimizer/overnight/results/v12/adrs/ 2>/dev/null\n```\n\n2. Check agent heartbeat:\n```bash\ntail -3 ~/clawd/memory/agent-heartbeats/forge-v12-architect.log 2>/dev/null\n```\n\n3. Check sessions_history for label 'forge-v12-architect-da' \u2014 is it still active? Last activity within 10 min? If >10 min idle, flag as STALLED.\n\n4. Send Josh",
+      "deliver": true,
+      "channel": "telegram",
+      "model": ""
+    },
+    "state": {
+      "lastRunAtMs": 1770735330838,
+      "lastStatus": "ok",
+      "lastDurationMs": 74895
+    }
+  },
+  {
+    "id": "4514e39a-e307-4917-8d55-4efd7c113006",
+    "name": "alpaca-sync-check",
+    "enabled": true,
+    "schedule": {
+      "kind": "cron",
+      "expr": "35 6 11 2 *",
+      "tz": "America/Los_Angeles"
+    },
+    "payload": {
+      "kind": "systemEvent",
+      "message": "",
+      "deliver": false,
+      "channel": "",
+      "model": ""
+    },
+    "state": {
+      "nextRunAtMs": 1802356500000,
+      "lastRunAtMs": 1770820669325,
+      "lastStatus": "ok",
+      "lastDurationMs": 0
+    }
+  },
+  {
+    "id": "60eee590-f9b8-44da-a9d6-05c778e2ef0f",
+    "name": "MRE V13 Weekly Optimizer",
+    "enabled": true,
+    "schedule": {
+      "kind": "cron",
+      "expr": "0 22 * * 0",
+      "tz": "America/Los_Angeles"
+    },
+    "payload": {
+      "kind": "agentTurn",
+      "message": "Run the MRE V13 Overnight Optimizer \u2014 weekly recalibration.\n\n```bash\ncd ~/clawd/trading-bot && bash run_optimizer.sh 2>&1\n```\n\nAfter completion, send calibration summary to Joshua via Telegram. Include top 10 assets, confidence distribution, and any significant changes from last week.",
+      "deliver": true,
+      "channel": "telegram",
+      "model": "anthropic/claude-sonnet-4-20250514"
+    },
+    "state": {
+      "nextRunAtMs": 1771826400000,
+      "lastRunAtMs": 1771221826074,
+      "lastStatus": "ok",
+      "lastDurationMs": 612994
+    }
+  },
+  {
+    "id": "1cdca149-3de7-4715-a532-937cb25344b9",
+    "name": "Universe Backtest (tonight)",
+    "enabled": true,
+    "schedule": {
+      "kind": "cron",
+      "expr": "0 22 10 2 *",
+      "tz": "America/Los_Angeles"
+    },
+    "payload": {
+      "kind": "agentTurn",
+      "message": "Run the MRE V13 Overnight Optimizer \u2014 full quant research pipeline.\n\n```bash\ncd ~/clawd/trading-bot && bash run_optimizer.sh 2>&1\n```\n\nThis runs 5 phases: walk-forward validation, parameter grid search, multi-signal confirmation, regime-conditional optimization, Monte Carlo robustness. Expected runtime: 5-8 hours.\n\nAfter completion, read the calibration summary and send to Joshua via Telegram:\n```bash\ncat ~/clawd/trading-bot/data/universe_calibration.json | python3 -c \"import json,sys; d=json.lo",
+      "deliver": true,
+      "channel": "telegram",
+      "model": ""
+    },
+    "state": {
+      "nextRunAtMs": 1802325600000,
+      "lastRunAtMs": 1770789875628,
+      "lastStatus": "ok",
+      "lastDurationMs": 97366
+    }
+  },
+  {
+    "id": "b86f374b-16df-445e-aa73-09c170138fc8",
+    "name": "Universe Signal Generator Upgrade",
+    "enabled": true,
+    "schedule": {
+      "kind": "cron",
+      "expr": "0 5 11 2 *",
+      "tz": "America/Los_Angeles"
+    },
+    "payload": {
+      "kind": "agentTurn",
+      "message": "CRITICAL TASK: Upgrade the MRE Universe Signal Generator to use ALL 4 strategies for daily signal generation.\n\n**Context:**\nThe overnight backtest ran at 10 PM and produced calibration data at:\n`~/clawd/trading-bot/data/universe_calibration.json`\n\nCurrently `universe_signals.py` only fires BUY signals based on Fear/Greed thresholds (Strategy 1). This means 0 BUY signals when F&G is neutral (46). Joshua wants individual technical signals firing daily.\n\n**Step 1: Read the backtest calibration data",
+      "deliver": true,
+      "channel": "telegram",
+      "model": ""
+    },
+    "state": {
+      "nextRunAtMs": 1802350800000,
+      "lastRunAtMs": 1770814800097,
+      "lastStatus": "ok",
+      "lastDurationMs": 267495
+    }
+  },
+  {
+    "id": "2f9bf46f-5927-4267-bd80-030f05c90ab2",
+    "name": "Backtest Monitor (tonight)",
+    "enabled": false,
+    "schedule": {
+      "kind": "cron",
+      "expr": "*/5 22-23 10 2 *",
+      "tz": "America/Los_Angeles"
+    },
+    "payload": {
+      "kind": "systemEvent",
+      "message": "",
+      "deliver": false,
+      "channel": "",
+      "model": ""
+    },
+    "state": {
+      "lastRunAtMs": 1770794100017,
+      "lastStatus": "ok",
+      "lastDurationMs": 159
+    }
+  },
+  {
+    "id": "d88331f3-6e04-47e3-87d0-3357254683cf",
+    "name": "Backtest Monitor (late)",
+    "enabled": false,
+    "schedule": {
+      "kind": "cron",
+      "expr": "*/5 0-4 11 2 *",
+      "tz": "America/Los_Angeles"
+    },
+    "payload": {
+      "kind": "systemEvent",
+      "message": "",
+      "deliver": false,
+      "channel": "",
+      "model": ""
+    },
+    "state": {}
+  },
+  {
+    "id": "a441f404-50db-48ed-bdbd-feee5cff6633",
+    "name": "Fleet Tracker",
+    "enabled": true,
+    "schedule": {
+      "kind": "cron",
+      "expr": "*/30 * * * *",
+      "tz": "America/Los_Angeles"
+    },
+    "payload": {
+      "kind": "agentTurn",
+      "message": "Run the fleet usage tracker to collect real cost data:\n\n```bash\n~/clawd/tools/fleet-tracker.sh\n```\n\nThen commit and push the updated data:\n```bash\ncd ~/clawd/clawdbot-hub && git add public/data/fleet-usage.json && git commit -m \"data: fleet usage update\" && git push origin main 2>&1\n```\n\nComplete silently.",
+      "deliver": false,
+      "channel": "telegram",
+      "model": "anthropic/claude-sonnet-4-20250514"
+    },
+    "state": {
+      "nextRunAtMs": 1771281000000,
+      "lastRunAtMs": 1771279309049,
+      "lastStatus": "ok",
+      "lastDurationMs": 12549
+    }
+  }
+]

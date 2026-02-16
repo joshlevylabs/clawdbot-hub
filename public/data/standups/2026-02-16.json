@@ -1,58 +1,84 @@
 {
   "date": "2026-02-16",
-  "generatedAt": "2026-02-16T15:35:15.728710",
+  "generatedAt": "2026-02-16T15:43:11-08:00",
   "topic": "Daily Standup \u2014 Monday Feb 16",
   "status": "completed",
   "participants": [
     {
       "name": "Theo",
-      "role": "COO"
+      "role": "COO",
+      "emoji": "\ud83d\udd3a",
+      "description": "Orchestrates all operations. The right hand."
     },
     {
       "name": "Elon",
-      "role": "CTO"
+      "role": "CTO",
+      "emoji": "\ud83d\ude80",
+      "description": "Revolutionary technologist pushing humanity toward a sustainable, multi-planetary future. Owns all code, infrastructure, and moonshot engineering projects. First principles thinker who moves fast and breaks things to build the impossible."
     },
     {
       "name": "Dave",
-      "role": "CRO"
+      "role": "CRO",
+      "emoji": "\ud83d\udcb5",
+      "description": "Growth strategy, monetization. Gazelle-intense focus on revenue, zero debt thinking, proven frameworks for building wealth through business."
     },
     {
       "name": "Alex",
-      "role": "CMO"
+      "role": "CMO",
+      "emoji": "\ud83e\udd8d",
+      "description": "Content, creative direction, brand. Obsessed with offers, value equations, and volume. Every piece of content must generate leads or it does not ship."
     }
   ],
   "duration": "~3 min",
   "reports": {
     "cto": {
       "agent": "Elon",
+      "role": "CTO",
+      "emoji": "\ud83d\ude80",
+      "description": "Revolutionary technologist pushing humanity toward a sustainable, multi-planetary future. Owns all code, infrastructure, and moonshot engineering projects. First principles thinker who moves fast and breaks things to build the impossible.",
+      "department": "Engineering",
+      "directReports": [
+        "Nexus",
+        "Pixel",
+        "Sentinel"
+      ],
       "highlights": [
         "217 commits this week across both repos",
-        "Hub latest: 620825a fix: update standup agent names \u2014 Venture\u2192Dave, Muse\u2192Alex",
+        "Hub latest: bdf9e05 fix: CTO name Atlas\u2192Elon in standups (matches Supabase agent_configs)",
         "Build status: healthy"
       ],
       "concerns": [
-        "Uncommitted changes: Hub (1 files), Monorepo (16 files)",
+        "Uncommitted changes: Hub (4 files), Monorepo (16 files)",
         "1 critical sync gaps in ECOSYSTEM-MAP",
         "1 items needing attention in ECOSYSTEM-MAP",
-        "83 TODOs/FIXMEs in codebase"
+        "6 TODOs/FIXMEs in codebase"
       ],
       "metrics": {
         "recentCommits": 217,
         "openIssues": 2,
         "buildHealthy": true,
-        "todosFixmes": 83,
-        "uncommittedHub": 1,
+        "todosFixmes": 6,
+        "uncommittedHub": 4,
         "uncommittedMono": 16
       }
     },
     "cro": {
       "agent": "Dave",
+      "role": "CRO",
+      "emoji": "\ud83d\udcb5",
+      "description": "Growth strategy, monetization. Gazelle-intense focus on revenue, zero debt thinking, proven frameworks for building wealth through business.",
+      "department": "Revenue",
+      "directReports": [
+        "Builder",
+        "Scout",
+        "Ticker"
+      ],
       "highlights": [
         "Paper portfolio equity: $100,000",
         "Fear & Greed Index: 36 (fear)",
         "SPY regime: sideways",
         "No active BUY signals \u2014 24 assets in HOLD",
-        "Crypto positions: BTC/USD, ETH/USD"
+        "Positions: BTC/USD, ETH/USD"
       ],
       "concerns": [
         "Fear & Greed at 36 \u2014 market fearful, watch for dip buys",
@@ -69,6 +95,14 @@
     },
     "cmo": {
       "agent": "Alex",
+      "role": "CMO",
+      "emoji": "\ud83e\udd8d",
+      "description": "Content, creative direction, brand. Obsessed with offers, value equations, and volume. Every piece of content must generate leads or it does not ship.",
+      "department": "Marketing",
+      "directReports": [
+        "ScriptBot",
+        "Echo"
+      ],
       "highlights": [
         "3 podcast episodes produced",
         "1 episode(s) on website",
@@ -96,17 +130,17 @@
     {
       "speaker": "Elon",
       "role": "CTO",
-      "message": "We had 217 commits across both repos this week. Hub build is healthy. A few things to flag: uncommitted changes: hub (1 files), monorepo (16 files). Also, 1 critical sync gaps in ecosystem-map."
+      "message": "We had 217 commits across both repos this week. Hub build is healthy. Flagging: uncommitted changes: hub (4 files), monorepo (16 files). Also, 1 critical sync gaps in ecosystem-map."
     },
     {
       "speaker": "Dave",
       "role": "CRO",
-      "message": "Paper portfolio is at $100,000. Fear & Greed is at 36, rated fear. SPY is in a sideways regime. No active BUY signals. 24 assets in HOLD. Market's in wait mode. Crypto positions active: BTC/USD, ETH/USD."
+      "message": "Paper portfolio is at $100,000. Fear & Greed is at 36, rated fear. SPY is in a sideways regime. No active BUY signals. 24 assets in HOLD. Market's in wait mode. Positions active: BTC/USD, ETH/USD."
     },
     {
       "speaker": "Alex",
       "role": "CMO",
-      "message": "We have 3 podcast episodes produced. Only 1 synced to the website though \u2014 we need to get the rest up on joshlevylabs.com. 1 blog post on /writing. We really need to publish more written content to build SEO and credibility. Last content was published 2026-02-12."
+      "message": "We have 3 podcast episodes produced. Only 1 synced to the website \u2014 we need to get the rest up on joshlevylabs.com. 1 blog post on /writing. We need to publish more written content to build SEO and credibility. Last content was published 2026-02-12."
     },
     {
       "speaker": "Theo",
@@ -145,5 +179,58 @@
     "Monitor market \u2014 SPY sideways, F&G at 36",
     "Draft next blog post for /writing"
   ],
-  "ceoDirectives": []
+  "ceoDirectives": [],
+  "agentContext": {
+    "coo": {
+      "name": "Theo",
+      "title": "COO",
+      "emoji": "\ud83d\udd3a",
+      "description": "Orchestrates all operations. The right hand.",
+      "department": "Executive",
+      "model": "Claude Opus 4",
+      "directReports": [
+        "Elon",
+        "Alex",
+        "Dave"
+      ]
+    },
+    "cto": {
+      "name": "Elon",
+      "title": "CTO",
+      "emoji": "\ud83d\ude80",
+      "description": "Revolutionary technologist pushing humanity toward a sustainable, multi-planetary future. Owns all code, infrastructure, and moonshot engineering projects. First principles thinker who moves fast and breaks things to build the impossible.",
+      "department": "Engineering",
+      "model": "Claude Sonnet 4",
+      "directReports": [
+        "Nexus",
+        "Pixel",
+        "Sentinel"
+      ]
+    },
+    "cro": {
+      "name": "Dave",
+      "title": "CRO",
+      "emoji": "\ud83d\udcb5",
+      "description": "Growth strategy, monetization. Gazelle-intense focus on revenue, zero debt thinking, proven frameworks for building wealth through business.",
+      "department": "Revenue",
+      "model": "Claude Sonnet 4",
+      "directReports": [
+        "Builder",
+        "Scout",
+        "Ticker"
+      ]
+    },
+    "cmo": {
+      "name": "Alex",
+      "title": "CMO",
+      "emoji": "\ud83e\udd8d",
+      "description": "Content, creative direction, brand. Obsessed with offers, value equations, and volume. Every piece of content must generate leads or it does not ship.",
+      "department": "Marketing",
+      "model": "Claude Sonnet 4",
+      "directReports": [
+        "ScriptBot",
+        "Echo"
+      ]
+    }
+  }
 }

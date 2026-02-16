@@ -40,6 +40,11 @@ interface ReportMetrics {
 
 interface Report {
   agent: string;
+  role?: string;
+  emoji?: string;
+  description?: string;
+  department?: string;
+  directReports?: string[];
   highlights: string[];
   concerns: string[];
   metrics: ReportMetrics;
@@ -73,13 +78,20 @@ interface StandupIndex {
   standups: { date: string; topic: string; file: string }[];
 }
 
-// ---- Agent Color Map ----
-const agentColors: Record<string, { bg: string; text: string; border: string }> = {
-  Theo: { bg: "bg-violet-500/20", text: "text-violet-400", border: "border-violet-500/30" },
-  Elon: { bg: "bg-blue-500/20", text: "text-blue-400", border: "border-blue-500/30" },
-  Dave: { bg: "bg-emerald-500/20", text: "text-emerald-400", border: "border-emerald-500/30" },
-  Alex: { bg: "bg-amber-500/20", text: "text-amber-400", border: "border-amber-500/30" },
+// ---- Agent Color Map (by ROLE, not name — survives renames) ----
+const roleColors: Record<string, { bg: string; text: string; border: string }> = {
+  COO: { bg: "bg-violet-500/20", text: "text-violet-400", border: "border-violet-500/30" },
+  CTO: { bg: "bg-blue-500/20", text: "text-blue-400", border: "border-blue-500/30" },
+  CRO: { bg: "bg-emerald-500/20", text: "text-emerald-400", border: "border-emerald-500/30" },
+  CMO: { bg: "bg-amber-500/20", text: "text-amber-400", border: "border-amber-500/30" },
 };
+const defaultColor = { bg: "bg-slate-500/20", text: "text-slate-400", border: "border-slate-500/30" };
+
+// Lookup: try role first, then name, then default
+function getAgentColors(name: string, role?: string) {
+  if (role && roleColors[role]) return roleColors[role];
+  return defaultColor;
+}
 
 const roleIcons: Record<string, string> = {
   COO: "🏛️",
@@ -150,7 +162,7 @@ function DirectivesCard({ directives }: { directives: CEODirective[] }) {
 
 function ReportCard({ title, icon, report }: { title: string; icon: string; report: Report }) {
   const [expanded, setExpanded] = useState(false);
-  const colors = agentColors[report.agent] || agentColors.Theo;
+  const colors = getAgentColors(report.agent, report.role || title);
 
   return (
     <div className={`bg-slate-900/50 rounded-xl border border-slate-800 overflow-hidden`}>
@@ -270,7 +282,7 @@ function StandupDetail({ standup }: { standup: Standup }) {
       {/* Participants */}
       <div className="flex items-center gap-2 flex-wrap">
         {standup.participants.map((p) => {
-          const colors = agentColors[p.name] || agentColors.Theo;
+          const colors = getAgentColors(p.name, p.role);
           return (
             <span
               key={p.name}
@@ -366,7 +378,7 @@ function StandupDetail({ standup }: { standup: Standup }) {
         {showTranscript && (
           <div className="border-t border-slate-800 px-4 py-3 space-y-3">
             {standup.transcript.map((entry, i) => {
-              const colors = agentColors[entry.speaker] || agentColors.Theo;
+              const colors = getAgentColors(entry.speaker, entry.role);
               return (
                 <div key={i} className="flex items-start gap-3">
                   <div

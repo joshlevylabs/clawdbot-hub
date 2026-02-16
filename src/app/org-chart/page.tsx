@@ -26,15 +26,15 @@ import {
   Save,
   Loader2,
   Check,
-  WifiOff,
   User,
   Brain,
   Wrench,
   Users,
   BookOpen,
   Heart,
+  Info,
 } from "lucide-react";
-import { useEffect, useRef, useState, useCallback, useMemo, type ReactNode } from "react";
+import { useEffect, useRef, useState, useCallback, type ReactNode } from "react";
 
 /* ═══════════════════════════════════════════════════════════════
    Types
@@ -231,7 +231,6 @@ function parseSoulMd(content: string): SoulFields {
     }
   }
 
-  // fallback: if no sections, treat all as personality
   if (!personalitySummary && sectionKeys.length === 0) {
     personalitySummary = content;
   }
@@ -761,6 +760,164 @@ function flattenAgents(node: OrgAgent): OrgAgent[] {
 const ALL_ORG_AGENTS = flattenAgents(orgTree);
 
 /* ═══════════════════════════════════════════════════════════════
+   Fallback Data — used when API is offline (e.g. Vercel)
+   ═══════════════════════════════════════════════════════════════ */
+
+function getDeptLabel(dept: Department): string {
+  switch (dept) {
+    case "ceo": return "Executive";
+    case "coo": return "Operations";
+    case "cto": return "Engineering";
+    case "cmo": return "Marketing";
+    case "cro": return "Revenue";
+  }
+}
+
+function getReportsTo(agentId: string): string {
+  const mapping: Record<string, string> = {
+    ceo: "—",
+    coo: "Joshua",
+    cto: "Theo",
+    cmo: "Theo",
+    cro: "Theo",
+    forge: "Atlas",
+    pixel: "Atlas",
+    sentinel: "Atlas",
+    scriptbot: "Muse",
+    echo: "Muse",
+    builder: "Venture",
+    scout: "Venture",
+    "the-pit": "Venture",
+  };
+  return mapping[agentId] || "";
+}
+
+function getDirectReports(agent: OrgAgent): string {
+  if (!agent.children || agent.children.length === 0) return "None";
+  return agent.children.map((c) => c.name).join(", ");
+}
+
+function buildFallbackIdentity(agent: OrgAgent): string {
+  return [
+    "# Identity",
+    "",
+    `- **Name:** ${agent.name}`,
+    `- **Title:** ${agent.title}`,
+    `- **Model:** ${agent.model}`,
+    `- **Emoji:** ${agent.emoji || ""}`,
+    `- **Department:** ${getDeptLabel(agent.department)}`,
+    `- **Reports To:** ${getReportsTo(agent.id)}`,
+    `- **Direct Reports:** ${getDirectReports(agent)}`,
+    "",
+    "## Role Description",
+    "",
+    agent.description,
+    "",
+  ].join("\n");
+}
+
+function buildFallbackSoul(agent: OrgAgent): string {
+  return [
+    "# Soul",
+    "",
+    "## Personality",
+    "",
+    `${agent.name} is a dedicated ${agent.title.toLowerCase()} focused on delivering excellence. Works closely with the team to achieve organizational goals.`,
+    "",
+    "## Communication Style",
+    "",
+    "Direct and professional. Prefers concise, actionable communication.",
+    "",
+    "## Core Values",
+    "",
+    "- Excellence in execution",
+    "- Team collaboration",
+    "- Continuous improvement",
+    "",
+  ].join("\n");
+}
+
+function buildFallbackUser(): string {
+  return [
+    "# User",
+    "",
+    "- **Serves:** Joshua",
+    "- **Timezone:** America/Los_Angeles",
+    "- **Location:** Los Angeles, CA",
+    "",
+  ].join("\n");
+}
+
+function buildFallbackTools(agent: OrgAgent): string {
+  const tools = ["read", "write", "edit", "exec", "web_search", "web_fetch"];
+  if (agent.department === "cmo") tools.push("tts", "message", "image");
+  if (agent.department === "cto") tools.push("browser", "canvas");
+  if (agent.id === "coo") tools.push("message", "nodes", "tts", "browser", "canvas", "image");
+  return [
+    "# Tools",
+    "",
+    "## Available Tools",
+    "",
+    ...tools.map((t) => `- ${t}`),
+    "",
+  ].join("\n");
+}
+
+function buildFallbackAgents(agent: OrgAgent): string {
+  const children = agent.children?.map((c) => c.name) || [];
+  return [
+    "# Agents",
+    "",
+    "## Delegation Rules",
+    "",
+    children.length > 0
+      ? `Delegates work to: ${children.join(", ")}. Routes tasks based on domain expertise.`
+      : "Individual contributor. No sub-agents.",
+    "",
+  ].join("\n");
+}
+
+function buildFallbackMemory(): string {
+  return [
+    "# Memory",
+    "",
+    `_Last Updated: ${new Date().toISOString().split("T")[0]}_`,
+    "",
+    "## Notes",
+    "",
+    "No memory entries yet.",
+    "",
+  ].join("\n");
+}
+
+function buildFallbackHeartbeat(agent: OrgAgent): string {
+  return [
+    "# Heartbeat",
+    "",
+    `Active: ${agent.status === "active" ? "true" : "false"}`,
+    "",
+    "## Current Status",
+    "",
+    `${agent.status === "active" ? "Online and operational." : agent.status === "idle" ? "Idle — waiting for tasks." : "On standby."}`,
+    "",
+  ].join("\n");
+}
+
+function getFallbackContent(agentId: string, tab: FileTab): string {
+  const agent = ALL_ORG_AGENTS.find((a) => a.id === agentId);
+  if (!agent) return "";
+  switch (tab) {
+    case "IDENTITY.md": return buildFallbackIdentity(agent);
+    case "SOUL.md": return buildFallbackSoul(agent);
+    case "USER.md": return buildFallbackUser();
+    case "TOOLS.md": return buildFallbackTools(agent);
+    case "AGENTS.md": return buildFallbackAgents(agent);
+    case "MEMORY.md": return buildFallbackMemory();
+    case "HEARTBEAT.md": return buildFallbackHeartbeat(agent);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
    Helper: Model Badge
    ═══════════════════════════════════════════════════════════════ */
 
@@ -804,7 +961,7 @@ function StatusDot({ status, size = "sm" }: { status: Status; size?: "sm" | "md"
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   Card Components — Now Clickable
+   Card Components
    ═══════════════════════════════════════════════════════════════ */
 
 function ExecutiveCard({ agent, selected, onClick }: { agent: OrgAgent; selected: boolean; onClick: () => void }) {
@@ -917,7 +1074,7 @@ function ConnectorOverlay({ lines }: { lines: LineSegment[] }) {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   Desktop Tree Layout
+   Desktop Tree Layout — ALWAYS full width
    ═══════════════════════════════════════════════════════════════ */
 
 function DesktopTree({ selectedId, onSelect }: { selectedId: string | null; onSelect: (id: string) => void }) {
@@ -1091,53 +1248,38 @@ function MobileTree({ selectedId, onSelect }: { selectedId: string | null; onSel
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   Status Legend & Stats Bar
+   Status Legend & Compact Stats Bar
    ═══════════════════════════════════════════════════════════════ */
 
-function StatusLegend() {
-  return (
-    <div className="flex flex-wrap items-center gap-6 px-5 py-3 bg-slate-950/60 rounded-xl border border-slate-800/60 backdrop-blur-sm">
-      <span className="text-[11px] text-slate-500 font-semibold uppercase tracking-widest">
-        Status
-      </span>
-      {(Object.entries(STATUS_CONFIG) as [Status, typeof STATUS_CONFIG.active][]).map(
-        ([key, cfg]) => (
-          <div key={key} className="flex items-center gap-2">
-            <StatusDot status={key} />
-            <span className="text-xs text-slate-400 font-medium">{cfg.label}</span>
-          </div>
-        )
-      )}
-    </div>
-  );
-}
-
-function StatsBar() {
+function StatsAndLegendBar() {
   const allAgents = ALL_ORG_AGENTS;
   const activeCount = allAgents.filter((a) => a.status === "active").length;
   const idleCount = allAgents.filter((a) => a.status === "idle").length;
   const standbyCount = allAgents.filter((a) => a.status === "standby").length;
 
-  const stats = [
-    { label: "Total Agents", value: allAgents.length, color: "text-slate-100" },
-    { label: "Active", value: activeCount, color: "text-emerald-400" },
-    { label: "Idle", value: idleCount, color: "text-amber-400" },
-    { label: "Standby", value: standbyCount, color: "text-slate-400" },
-  ];
-
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-      {stats.map((s) => (
-        <div
-          key={s.label}
-          className="bg-slate-950/60 rounded-xl border border-slate-800/60 px-4 py-3 text-center"
-        >
-          <div className={`text-2xl font-bold ${s.color} tabular-nums`}>{s.value}</div>
-          <div className="text-[11px] text-slate-500 font-medium uppercase tracking-wider mt-0.5">
-            {s.label}
-          </div>
-        </div>
-      ))}
+    <div className="flex flex-wrap items-center gap-x-6 gap-y-2 px-5 py-3 bg-slate-950/60 rounded-xl border border-slate-800/60 backdrop-blur-sm">
+      {/* Stats inline */}
+      <div className="flex items-center gap-1.5">
+        <span className="text-sm font-bold text-slate-100 tabular-nums">{allAgents.length}</span>
+        <span className="text-[11px] text-slate-500 font-medium uppercase tracking-wider">Agents</span>
+      </div>
+      <div className="w-px h-4 bg-slate-700/60" />
+      <div className="flex items-center gap-1.5">
+        <StatusDot status="active" />
+        <span className="text-sm font-bold text-emerald-400 tabular-nums">{activeCount}</span>
+        <span className="text-[11px] text-slate-500 font-medium">Active</span>
+      </div>
+      <div className="flex items-center gap-1.5">
+        <StatusDot status="idle" />
+        <span className="text-sm font-bold text-amber-400 tabular-nums">{idleCount}</span>
+        <span className="text-[11px] text-slate-500 font-medium">Idle</span>
+      </div>
+      <div className="flex items-center gap-1.5">
+        <StatusDot status="standby" />
+        <span className="text-sm font-bold text-slate-400 tabular-nums">{standbyCount}</span>
+        <span className="text-[11px] text-slate-500 font-medium">Standby</span>
+      </div>
     </div>
   );
 }
@@ -1570,7 +1712,7 @@ function WorkspaceSkeleton() {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   Workspace Panel
+   Workspace Panel (Overlay/Drawer)
    ═══════════════════════════════════════════════════════════════ */
 
 type FormData =
@@ -1588,7 +1730,7 @@ function WorkspacePanel({ agentId, onClose }: { agentId: string; onClose: () => 
 
   const [activeTab, setActiveTab] = useState<FileTab>("IDENTITY.md");
   const [loading, setLoading] = useState(false);
-  const [apiOffline, setApiOffline] = useState(false);
+  const [usingFallback, setUsingFallback] = useState(false);
   const [rawContent, setRawContent] = useState("");
   const [formData, setFormData] = useState<FormData | null>(null);
   const [originalContent, setOriginalContent] = useState("");
@@ -1596,10 +1738,10 @@ function WorkspacePanel({ agentId, onClose }: { agentId: string; onClose: () => 
   const [saveStatus, setSaveStatus] = useState<"idle" | "saved" | "error">("idle");
   const [hasChanges, setHasChanges] = useState(false);
 
-  // Fetch file content
+  // Fetch file content with fallback
   const fetchFile = useCallback(async (tab: FileTab) => {
     setLoading(true);
-    setApiOffline(false);
+    setUsingFallback(false);
     setSaveStatus("idle");
     setHasChanges(false);
 
@@ -1615,12 +1757,15 @@ function WorkspacePanel({ agentId, onClose }: { agentId: string; onClose: () => 
         return;
       }
     } catch {
-      // API offline
+      // API offline — use fallback
     }
-    setApiOffline(true);
-    setRawContent("");
-    setOriginalContent("");
-    setFormData(null);
+
+    // Fallback: generate content from org data
+    const fallback = getFallbackContent(agentId, tab);
+    setRawContent(fallback);
+    setOriginalContent(fallback);
+    setUsingFallback(true);
+    parseIntoForm(tab, fallback);
     setLoading(false);
   }, [agentId]);
 
@@ -1705,15 +1850,18 @@ function WorkspacePanel({ agentId, onClose }: { agentId: string; onClose: () => 
   if (!agent) return null;
 
   return (
-    <div className={`bg-slate-900 border-l-2 ${dept.selectedBorder} flex flex-col h-full`}>
-      {/* Header */}
-      <div className="px-5 py-4 border-b border-slate-800/60 flex-shrink-0">
+    <div className="flex flex-col h-full bg-slate-900/95 backdrop-blur-md">
+      {/* Header with department accent */}
+      <div
+        className="px-5 py-4 border-b border-slate-800/60 flex-shrink-0"
+        style={{ borderTopColor: dept.accentHex, borderTopWidth: "3px", borderTopStyle: "solid" }}
+      >
         <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center gap-3">
-            <span className="text-2xl">{agent.emoji}</span>
-            <div>
+          <div className="flex items-center gap-3 min-w-0">
+            <span className="text-2xl flex-shrink-0">{agent.emoji}</span>
+            <div className="min-w-0">
               <div className="flex items-center gap-2">
-                <h2 className="text-lg font-bold text-slate-100">{agent.name}</h2>
+                <h2 className="text-lg font-bold text-slate-100 truncate">{agent.name}</h2>
                 <StatusDot status={agent.status} size="md" />
               </div>
               <p className={`text-sm ${dept.accent}`}>{agent.title}</p>
@@ -1721,16 +1869,24 @@ function WorkspacePanel({ agentId, onClose }: { agentId: string; onClose: () => 
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg hover:bg-slate-800 transition-colors text-slate-400 hover:text-slate-200 lg:block hidden"
+            className="p-2 rounded-lg hover:bg-slate-800 transition-colors text-slate-400 hover:text-slate-200 flex-shrink-0"
           >
-            <X className="w-4 h-4" />
+            <X className="w-5 h-5" />
           </button>
         </div>
-        <ModelBadge model={agent.model} />
+        <div className="flex items-center gap-2">
+          <ModelBadge model={agent.model} />
+          {usingFallback && (
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-medium bg-amber-900/30 text-amber-400/80 border border-amber-700/30" title="Data loaded from local defaults — API unreachable">
+              <Info className="w-3 h-3" />
+              local data
+            </span>
+          )}
+        </div>
       </div>
 
-      {/* Tab Bar */}
-      <div className="flex border-b border-slate-800/60 overflow-x-auto flex-shrink-0">
+      {/* Tab Bar — icon+emoji with tooltips, scrollable */}
+      <div className="flex border-b border-slate-800/60 overflow-x-auto flex-shrink-0 scrollbar-none">
         {ALL_FILE_TABS.map((tab) => {
           const meta = FILE_TAB_META[tab];
           const isActive = activeTab === tab;
@@ -1738,7 +1894,7 @@ function WorkspacePanel({ agentId, onClose }: { agentId: string; onClose: () => 
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`flex items-center gap-1.5 px-3 py-2.5 text-xs font-medium whitespace-nowrap border-b-2 transition-all ${
+              className={`flex items-center gap-1.5 px-3 py-2.5 text-xs font-medium whitespace-nowrap border-b-2 transition-all flex-shrink-0 ${
                 isActive
                   ? "text-violet-300 border-violet-400 bg-slate-950/50"
                   : "text-slate-500 border-transparent hover:text-slate-300 hover:bg-slate-800/30"
@@ -1746,7 +1902,7 @@ function WorkspacePanel({ agentId, onClose }: { agentId: string; onClose: () => 
               title={meta.label}
             >
               <span className="text-sm">{meta.emoji}</span>
-              <span className="hidden xl:inline">{meta.label}</span>
+              <span className="text-[11px]">{meta.label}</span>
             </button>
           );
         })}
@@ -1756,14 +1912,6 @@ function WorkspacePanel({ agentId, onClose }: { agentId: string; onClose: () => 
       <div className="flex-1 overflow-y-auto p-5">
         {loading ? (
           <WorkspaceSkeleton />
-        ) : apiOffline ? (
-          <div className="flex flex-col items-center justify-center h-full text-center p-8">
-            <WifiOff className="w-10 h-10 text-amber-500/60 mb-3" />
-            <p className="text-sm text-amber-400 font-medium">API Offline</p>
-            <p className="text-xs text-slate-500 mt-1">
-              Cannot load workspace files. Check that the API is running.
-            </p>
-          </div>
         ) : formData ? (
           <div>
             {formData.type === "IDENTITY.md" && (
@@ -1792,7 +1940,7 @@ function WorkspacePanel({ agentId, onClose }: { agentId: string; onClose: () => 
       </div>
 
       {/* Save Bar */}
-      {formData && !apiOffline && (
+      {formData && (
         <div className="px-5 py-3 border-t border-slate-800/60 flex items-center justify-between flex-shrink-0">
           <div className="text-xs text-slate-500">
             {hasChanges && "Unsaved changes"}
@@ -1819,22 +1967,81 @@ function WorkspacePanel({ agentId, onClose }: { agentId: string; onClose: () => 
           </button>
         </div>
       )}
-
-      {/* Mobile close */}
-      <div className="lg:hidden px-5 py-3 border-t border-slate-800/60">
-        <button
-          onClick={onClose}
-          className="w-full py-2 rounded-lg text-sm font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition-colors"
-        >
-          Close Panel
-        </button>
-      </div>
     </div>
   );
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   Playbook Section (same as before, extracted)
+   Drawer Wrapper — Overlay pattern with backdrop
+   ═══════════════════════════════════════════════════════════════ */
+
+function DrawerOverlay({ open, onClose, children }: { open: boolean; onClose: () => void; children: ReactNode }) {
+  const [mounted, setMounted] = useState(false);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    if (open) {
+      setMounted(true);
+      // Trigger animation after mount
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setVisible(true);
+        });
+      });
+    } else {
+      setVisible(false);
+      const timer = setTimeout(() => setMounted(false), 300);
+      return () => clearTimeout(timer);
+    }
+  }, [open]);
+
+  if (!mounted) return null;
+
+  return (
+    <>
+      {/* Backdrop */}
+      <div
+        className={`fixed inset-0 z-40 bg-black/40 backdrop-blur-sm transition-opacity duration-300 ${
+          visible ? "opacity-100" : "opacity-0"
+        }`}
+        onClick={onClose}
+      />
+
+      {/* Desktop Drawer — slides from right */}
+      <div
+        className={`fixed top-0 right-0 z-50 h-full w-[540px] max-w-[90vw] hidden lg:flex transition-transform duration-300 ease-in-out ${
+          visible ? "translate-x-0" : "translate-x-full"
+        }`}
+        style={{ boxShadow: visible ? "-8px 0 30px rgba(0,0,0,0.5)" : "none" }}
+      >
+        {children}
+      </div>
+
+      {/* Mobile Drawer — slides up from bottom */}
+      <div
+        className={`fixed bottom-0 left-0 right-0 z-50 lg:hidden transition-transform duration-300 ease-in-out ${
+          visible ? "translate-y-0" : "translate-y-full"
+        }`}
+        style={{
+          height: "85vh",
+          borderTopLeftRadius: "1rem",
+          borderTopRightRadius: "1rem",
+          overflow: "hidden",
+          boxShadow: visible ? "0 -8px 30px rgba(0,0,0,0.5)" : "none",
+        }}
+      >
+        {/* Drag handle */}
+        <div className="flex justify-center py-2 bg-slate-900/95">
+          <div className="w-10 h-1 rounded-full bg-slate-700" />
+        </div>
+        {children}
+      </div>
+    </>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Playbook Section
    ═══════════════════════════════════════════════════════════════ */
 
 function CollapsibleSection({
@@ -2046,7 +2253,7 @@ export default function OrgChartPage() {
   }, []);
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center gap-4 max-w-6xl mx-auto">
         <div className="w-11 h-11 bg-primary-600/20 rounded-xl flex items-center justify-center border border-primary-500/10">
@@ -2062,41 +2269,25 @@ export default function OrgChartPage() {
         </div>
       </div>
 
-      {/* Legend + Stats */}
-      <div className="space-y-4 max-w-6xl mx-auto">
-        <StatusLegend />
-        <StatsBar />
+      {/* Compact Stats + Legend in one row */}
+      <div className="max-w-6xl mx-auto">
+        <StatsAndLegendBar />
       </div>
 
-      {/* Main Split Layout */}
-      <div className={`flex flex-col lg:flex-row gap-0 lg:gap-0 transition-all duration-300 ${selectedId ? "max-w-full" : "max-w-6xl mx-auto"}`}>
-        {/* Left: Org Chart */}
-        <div className={`transition-all duration-300 ${selectedId ? "lg:w-[62%] lg:pr-4" : "w-full"} ${selectedId ? "max-w-none mx-auto lg:mx-0" : "max-w-6xl mx-auto"}`}>
-          <DesktopTree selectedId={selectedId} onSelect={handleSelect} />
-          <MobileTree selectedId={selectedId} onSelect={handleSelect} />
-        </div>
+      {/* Org Chart — ALWAYS full width */}
+      <div className="max-w-6xl mx-auto">
+        <DesktopTree selectedId={selectedId} onSelect={handleSelect} />
+        <MobileTree selectedId={selectedId} onSelect={handleSelect} />
+      </div>
 
-        {/* Right: Workspace Panel */}
+      {/* Overlay Drawer for Workspace Panel */}
+      <DrawerOverlay open={selectedId !== null} onClose={handleClose}>
         {selectedId && (
-          <>
-            {/* Desktop: side panel */}
-            <div className="hidden lg:block lg:w-[38%] sticky top-0 h-[calc(100vh-2rem)] rounded-xl overflow-hidden border border-slate-800/60">
-              <WorkspacePanel agentId={selectedId} onClose={handleClose} />
-            </div>
-            {/* Mobile: stacked below */}
-            <div className="lg:hidden mt-6 rounded-xl overflow-hidden border border-slate-800/60" style={{ minHeight: "60vh" }}>
-              <WorkspacePanel agentId={selectedId} onClose={handleClose} />
-            </div>
-          </>
+          <WorkspacePanel agentId={selectedId} onClose={handleClose} />
         )}
+      </DrawerOverlay>
 
-        {/* Empty State */}
-        {!selectedId && (
-          <div className="hidden" />
-        )}
-      </div>
-
-      {/* Playbook Section — Below the split */}
+      {/* Playbook Section */}
       <div className="max-w-6xl mx-auto">
         <PlaybookSection />
       </div>

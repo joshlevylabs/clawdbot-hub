@@ -9,6 +9,8 @@ import {
   BarChart3,
   RefreshCw,
   TrendingUp,
+  CheckCircle,
+  Shield,
 } from "lucide-react";
 
 /* ------------------------------------------------------------------ */
@@ -20,6 +22,13 @@ interface FleetSummary {
   week: number;
   month: number;
   tokens_today: number;
+  api_equivalent_today?: number;
+  api_equivalent_week?: number;
+  api_equivalent_month?: number;
+  savings_today?: number;
+  savings_month?: number;
+  subscription_daily?: number;
+  subscription_monthly?: number;
 }
 
 interface ModelEntry {
@@ -41,10 +50,20 @@ interface AgentEntry {
   department: string;
 }
 
+interface SubscriptionEntry {
+  cost_monthly: number;
+  cost_daily: number;
+  provider: string;
+  description: string;
+  covers_api: boolean;
+}
+
 interface FleetData {
   generated_at: string;
   active_sessions: number;
+  billing_model?: string;
   summary: FleetSummary;
+  subscriptions?: Record<string, SubscriptionEntry>;
   by_model: Record<string, ModelEntry>;
   by_agent: Record<string, AgentEntry>;
   daily_costs: Record<string, number>;
@@ -126,7 +145,7 @@ function SummaryCard({
   );
 }
 
-function CostTrendChart({ dailyCosts }: { dailyCosts: Record<string, number> }) {
+function CostTrendChart({ dailyCosts, subscriptionDaily }: { dailyCosts: Record<string, number>; subscriptionDaily?: number }) {
   const entries = Object.entries(dailyCosts)
     .sort(([a], [b]) => a.localeCompare(b))
     .slice(-14);
@@ -134,14 +153,21 @@ function CostTrendChart({ dailyCosts }: { dailyCosts: Record<string, number> }) 
   if (entries.length === 0) return null;
 
   const maxCost = Math.max(...entries.map(([, c]) => c), 1);
+  const isSubscription = subscriptionDaily != null && subscriptionDaily > 0;
 
   return (
     <div className="bg-slate-900/50 rounded-xl border border-slate-800 p-5">
-      <div className="flex items-center gap-2 mb-4">
+      <div className="flex items-center gap-2 mb-1">
         <TrendingUp className="w-4 h-4 text-teal-400" strokeWidth={1.5} />
         <h2 className="text-sm font-semibold text-slate-200">Daily Cost Trend</h2>
         <span className="ml-auto text-xs text-slate-500">Last {entries.length} days</span>
       </div>
+
+      {isSubscription && (
+        <p className="text-[11px] text-emerald-400/80 mb-3 ml-6">
+          API Equivalent (covered by subscription)
+        </p>
+      )}
 
       {/* Legend */}
       <div className="flex gap-4 mb-3 text-[10px] text-slate-500">
@@ -154,6 +180,11 @@ function CostTrendChart({ dailyCosts }: { dailyCosts: Record<string, number> }) 
         <span className="flex items-center gap-1">
           <span className="w-2 h-2 rounded-sm bg-red-500 inline-block" /> &gt;$80
         </span>
+        {isSubscription && (
+          <span className="flex items-center gap-1">
+            <span className="w-4 border-t-2 border-dashed border-emerald-400 inline-block" /> Subscription daily
+          </span>
+        )}
       </div>
 
       {/* Bar chart (SVG) */}
@@ -163,6 +194,34 @@ function CostTrendChart({ dailyCosts }: { dailyCosts: Record<string, number> }) 
           className="w-full min-w-[400px]"
           preserveAspectRatio="xMidYMid meet"
         >
+          {/* Subscription daily cost dashed line */}
+          {isSubscription && (() => {
+            const lineY = 150 - Math.max((subscriptionDaily / maxCost) * 140, 2);
+            const chartWidth = entries.length * 50;
+            return (
+              <g>
+                <line
+                  x1={0}
+                  y1={lineY}
+                  x2={chartWidth}
+                  y2={lineY}
+                  stroke="#34d399"
+                  strokeWidth={1.5}
+                  strokeDasharray="6 4"
+                  opacity={0.7}
+                />
+                <text
+                  x={chartWidth - 4}
+                  y={lineY - 4}
+                  textAnchor="end"
+                  fontSize="8"
+                  fill="#34d399"
+                >
+                  ${formatCost(subscriptionDaily)}/day
+                </text>
+              </g>
+            );
+          })()}
           {entries.map(([date, cost], i) => {
             const barH = Math.max((cost / maxCost) * 140, 2);
             const x = i * 50 + 10;
@@ -206,7 +265,7 @@ function CostTrendChart({ dailyCosts }: { dailyCosts: Record<string, number> }) 
   );
 }
 
-function ModelBreakdown({ byModel }: { byModel: Record<string, ModelEntry> }) {
+function ModelBreakdown({ byModel, isSubscription }: { byModel: Record<string, ModelEntry>; isSubscription?: boolean }) {
   const providerFromName = (name: string): string => {
     if (/claude/i.test(name) || /opus/i.test(name) || /sonnet/i.test(name) || /haiku/i.test(name))
       return "Anthropic";
@@ -229,6 +288,11 @@ function ModelBreakdown({ byModel }: { byModel: Record<string, ModelEntry> }) {
       <div className="flex items-center gap-2 mb-4">
         <Cpu className="w-4 h-4 text-violet-400" strokeWidth={1.5} />
         <h2 className="text-sm font-semibold text-slate-200">Model Breakdown</h2>
+        {isSubscription && (
+          <span className="px-2 py-0.5 rounded text-[10px] font-medium border border-emerald-500/30 bg-emerald-500/10 text-emerald-400">
+            API equivalent
+          </span>
+        )}
       </div>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {Object.entries(byModel).map(([name, m]) => {
@@ -294,7 +358,7 @@ function ModelBreakdown({ byModel }: { byModel: Record<string, ModelEntry> }) {
   );
 }
 
-function AgentBreakdown({ byAgent }: { byAgent: Record<string, AgentEntry> }) {
+function AgentBreakdown({ byAgent, isSubscription }: { byAgent: Record<string, AgentEntry>; isSubscription?: boolean }) {
   // Group by department for subtotals
   const deptTotals: Record<string, { cost_today: number; cost_week: number; cost_month: number }> = {};
   Object.values(byAgent).forEach((a) => {
@@ -312,6 +376,11 @@ function AgentBreakdown({ byAgent }: { byAgent: Record<string, AgentEntry> }) {
       <div className="flex items-center gap-2 mb-4">
         <Activity className="w-4 h-4 text-teal-400" strokeWidth={1.5} />
         <h2 className="text-sm font-semibold text-slate-200">Agent Breakdown</h2>
+        {isSubscription && (
+          <span className="px-2 py-0.5 rounded text-[10px] font-medium border border-emerald-500/30 bg-emerald-500/10 text-emerald-400">
+            API equivalent
+          </span>
+        )}
       </div>
 
       {/* Agent cards */}
@@ -395,65 +464,143 @@ function AgentBreakdown({ byAgent }: { byAgent: Record<string, AgentEntry> }) {
   );
 }
 
+function SubscriptionBanner({ data }: { data: FleetData }) {
+  if (data.billing_model !== "subscription" || !data.subscriptions) return null;
+
+  const subEntries = Object.entries(data.subscriptions);
+  if (subEntries.length === 0) return null;
+
+  const [name, sub] = subEntries[0];
+  const savingsMonth = data.summary.savings_month ?? 0;
+
+  return (
+    <div className="rounded-xl border border-emerald-500/30 bg-gradient-to-br from-emerald-950/60 via-emerald-900/30 to-slate-900/50 p-5">
+      <div className="flex items-center gap-3 mb-2">
+        <CheckCircle className="w-5 h-5 text-emerald-400" strokeWidth={2} />
+        <h2 className="text-base font-semibold text-emerald-300">{name} — ${formatCost(sub.cost_monthly)}/mo</h2>
+      </div>
+      <div className="ml-8 space-y-1">
+        <p className="text-sm text-emerald-400/80">Covers all {sub.provider} API usage</p>
+        {savingsMonth > 0 && (
+          <p className="text-sm text-emerald-300 font-medium">
+            Saving ${formatCost(savingsMonth)}/month vs pay-per-token API
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function CostInsights({ data }: { data: FleetData }) {
   const insights: { icon: string; text: string }[] = [];
+  const isSub = data.billing_model === "subscription";
 
-  // Check Opus concentration
-  const opusEntry = Object.entries(data.by_model).find(([name]) => /opus/i.test(name));
-  if (opusEntry) {
-    const [opusName, opusModel] = opusEntry;
-    const totalMonth = data.summary.month;
-    if (totalMonth > 0) {
-      const pct = Math.round((opusModel.cost_month / totalMonth) * 100);
-      if (pct > 70) {
+  if (isSub) {
+    // Subscription-aware insights
+    const savingsMonth = data.summary.savings_month ?? 0;
+    const apiEquivMonth = data.summary.api_equivalent_month ?? 0;
+    const subMonthly = data.summary.subscription_monthly ?? 200;
+
+    if (savingsMonth > 0) {
+      insights.push({
+        icon: "💰",
+        text: `Your Claude Max subscription saved $${formatCost(savingsMonth)} this month vs API rates`,
+      });
+    }
+
+    if (apiEquivMonth > 0 && apiEquivMonth < subMonthly) {
+      insights.push({
+        icon: "⚠️",
+        text: `API usage ($${formatCost(apiEquivMonth)}) is below subscription value ($${formatCost(subMonthly)}) — consider if Max is still worth it`,
+      });
+    }
+
+    // Token distribution: which agents use most
+    const sortedAgents = Object.entries(data.by_agent)
+      .sort(([, a], [, b]) => b.tokens_today - a.tokens_today);
+    if (sortedAgents.length > 0) {
+      const topAgent = sortedAgents[0];
+      const totalTokens = data.summary.tokens_today;
+      if (totalTokens > 0) {
+        const pct = Math.round((topAgent[1].tokens_today / totalTokens) * 100);
         insights.push({
-          icon: "⚡",
-          text: `${pct}% of monthly spend ($${formatCost(opusModel.cost_month)}) is on ${opusName} — consider delegating routine tasks to Sonnet/Haiku`,
+          icon: "🤖",
+          text: `${capitalize(topAgent[0])} is your top consumer today: ${formatTokens(topAgent[1].tokens_today)} tokens (${pct}% of total)`,
         });
       }
     }
-  }
 
-  // Check cron cost
-  const cronAgent = data.by_agent["cron"];
-  if (cronAgent && cronAgent.cost_today > 2) {
-    insights.push({
-      icon: "🔄",
-      text: `Cron jobs spent $${formatCost(cronAgent.cost_today)} today on ${cronAgent.primary_model} — consider switching batch jobs to Haiku for ~90% savings`,
-    });
-  }
+    // Opus concentration (still useful info even under subscription)
+    const opusEntry = Object.entries(data.by_model).find(([n]) => /opus/i.test(n));
+    if (opusEntry) {
+      const apiEquivToday = data.summary.api_equivalent_today ?? data.summary.today;
+      if (apiEquivToday > 0) {
+        const pct = Math.round((opusEntry[1].cost_today / apiEquivToday) * 100);
+        if (pct > 60) {
+          insights.push({
+            icon: "⚡",
+            text: `${pct}% of API-equivalent spend is on ${opusEntry[0]} — all covered by your subscription`,
+          });
+        }
+      }
+    }
+  } else {
+    // Legacy API billing insights
+    const opusEntry = Object.entries(data.by_model).find(([name]) => /opus/i.test(name));
+    if (opusEntry) {
+      const [opusName, opusModel] = opusEntry;
+      const totalMonth = data.summary.month;
+      if (totalMonth > 0) {
+        const pct = Math.round((opusModel.cost_month / totalMonth) * 100);
+        if (pct > 70) {
+          insights.push({
+            icon: "⚡",
+            text: `${pct}% of monthly spend ($${formatCost(opusModel.cost_month)}) is on ${opusName} — consider delegating routine tasks to Sonnet/Haiku`,
+          });
+        }
+      }
+    }
 
-  // Check "unknown" agent
-  const unknownAgent = data.by_agent["unknown"];
-  if (unknownAgent && unknownAgent.cost_today > 5) {
-    const totalToday = data.summary.today;
-    const pct = totalToday > 0 ? Math.round((unknownAgent.cost_today / totalToday) * 100) : 0;
-    insights.push({
-      icon: "🔍",
-      text: `${pct}% of today's spend ($${formatCost(unknownAgent.cost_today)}) is from untagged sessions — tag agents for better cost attribution`,
-    });
-  }
-
-  // High daily spend
-  const dailyEntries = Object.values(data.daily_costs);
-  if (dailyEntries.length >= 7) {
-    const last7 = dailyEntries.slice(-7);
-    const avg7 = last7.reduce((s, c) => s + c, 0) / last7.length;
-    if (avg7 > 100) {
+    const cronAgent = data.by_agent["cron"];
+    if (cronAgent && cronAgent.cost_today > 2) {
       insights.push({
-        icon: "📈",
-        text: `7-day avg is $${Math.round(avg7)}/day (~$${Math.round(avg7 * 30)}/mo projected) — review high-cost days for optimization`,
+        icon: "🔄",
+        text: `Cron jobs spent $${formatCost(cronAgent.cost_today)} today on ${cronAgent.primary_model} — consider switching batch jobs to Haiku for ~90% savings`,
       });
+    }
+
+    const unknownAgent = data.by_agent["unknown"];
+    if (unknownAgent && unknownAgent.cost_today > 5) {
+      const totalToday = data.summary.today;
+      const pct = totalToday > 0 ? Math.round((unknownAgent.cost_today / totalToday) * 100) : 0;
+      insights.push({
+        icon: "🔍",
+        text: `${pct}% of today's spend ($${formatCost(unknownAgent.cost_today)}) is from untagged sessions — tag agents for better cost attribution`,
+      });
+    }
+
+    const dailyEntries = Object.values(data.daily_costs);
+    if (dailyEntries.length >= 7) {
+      const last7 = dailyEntries.slice(-7);
+      const avg7 = last7.reduce((s, c) => s + c, 0) / last7.length;
+      if (avg7 > 100) {
+        insights.push({
+          icon: "📈",
+          text: `7-day avg is $${Math.round(avg7)}/day (~$${Math.round(avg7 * 30)}/mo projected) — review high-cost days for optimization`,
+        });
+      }
     }
   }
 
   if (insights.length === 0) return null;
 
   return (
-    <div className="bg-slate-900/50 rounded-xl border border-amber-900/30 p-5">
+    <div className={`bg-slate-900/50 rounded-xl border ${isSub ? "border-emerald-900/30" : "border-amber-900/30"} p-5`}>
       <div className="flex items-center gap-2 mb-3">
-        <Zap className="w-4 h-4 text-amber-400" strokeWidth={1.5} />
-        <h2 className="text-sm font-semibold text-slate-200">Cost Optimization Insights</h2>
+        <Zap className={`w-4 h-4 ${isSub ? "text-emerald-400" : "text-amber-400"}`} strokeWidth={1.5} />
+        <h2 className="text-sm font-semibold text-slate-200">
+          {isSub ? "Subscription Insights" : "Cost Optimization Insights"}
+        </h2>
       </div>
       <div className="space-y-2">
         {insights.map((ins, i) => (
@@ -552,6 +699,8 @@ export default function FleetPage() {
   /* Computed values */
   const modelCount = Object.keys(data.by_model).length;
   const agentCount = Object.keys(data.by_agent).length;
+  const isSub = data.billing_model === "subscription";
+  const s = data.summary;
 
   return (
     <div className="space-y-6 max-w-6xl">
@@ -595,40 +744,71 @@ export default function FleetPage() {
           value={String(data.active_sessions)}
           sub={`${modelCount} model${modelCount !== 1 ? "s" : ""} in fleet`}
         />
-        <SummaryCard
-          icon={<DollarSign className="w-4 h-4" strokeWidth={1.5} />}
-          iconColor="text-amber-400"
-          label="Cost Today"
-          value={`$${formatCost(data.summary.today)}`}
-          sub={`${formatTokens(data.summary.tokens_today)} tokens`}
-        />
-        <SummaryCard
-          icon={<BarChart3 className="w-4 h-4" strokeWidth={1.5} />}
-          iconColor="text-violet-400"
-          label="Cost This Week"
-          value={`$${formatCost(data.summary.week)}`}
-          sub={`~$${Math.round(data.summary.week / 7)}/day avg`}
-        />
-        <SummaryCard
-          icon={<TrendingUp className="w-4 h-4" strokeWidth={1.5} />}
-          iconColor="text-teal-400"
-          label="Cost This Month"
-          value={`$${formatCost(data.summary.month)}`}
-          sub={`~$${Math.round((data.summary.month / new Date().getDate()) * 30)}/mo projected`}
-        />
+        {isSub ? (
+          <>
+            <SummaryCard
+              icon={<Shield className="w-4 h-4" strokeWidth={1.5} />}
+              iconColor="text-emerald-400"
+              label="Actual Cost Today"
+              value={`$${formatCost(s.today)}`}
+              sub={`Claude Max ($${formatCost(s.subscription_monthly ?? 200)}/mo)`}
+            />
+            <SummaryCard
+              icon={<BarChart3 className="w-4 h-4" strokeWidth={1.5} />}
+              iconColor="text-violet-400"
+              label="API Equivalent"
+              value={`$${formatCost(s.api_equivalent_today ?? 0)}`}
+              sub={`saved $${formatCost(s.savings_today ?? 0)} today`}
+            />
+            <SummaryCard
+              icon={<TrendingUp className="w-4 h-4" strokeWidth={1.5} />}
+              iconColor="text-teal-400"
+              label="Monthly Cost"
+              value={`$${formatCost(s.subscription_monthly ?? 200)}`}
+              sub={`vs $${formatCost(s.api_equivalent_month ?? 0)} API · saved $${formatCost(s.savings_month ?? 0)}`}
+            />
+          </>
+        ) : (
+          <>
+            <SummaryCard
+              icon={<DollarSign className="w-4 h-4" strokeWidth={1.5} />}
+              iconColor="text-amber-400"
+              label="Cost Today"
+              value={`$${formatCost(s.today)}`}
+              sub={`${formatTokens(s.tokens_today)} tokens`}
+            />
+            <SummaryCard
+              icon={<BarChart3 className="w-4 h-4" strokeWidth={1.5} />}
+              iconColor="text-violet-400"
+              label="Cost This Week"
+              value={`$${formatCost(s.week)}`}
+              sub={`~$${Math.round(s.week / 7)}/day avg`}
+            />
+            <SummaryCard
+              icon={<TrendingUp className="w-4 h-4" strokeWidth={1.5} />}
+              iconColor="text-teal-400"
+              label="Cost This Month"
+              value={`$${formatCost(s.month)}`}
+              sub={`~$${Math.round((s.month / new Date().getDate()) * 30)}/mo projected`}
+            />
+          </>
+        )}
       </div>
 
+      {/* Subscription Banner */}
+      <SubscriptionBanner data={data} />
+
       {/* Cost Trend Chart */}
-      <CostTrendChart dailyCosts={data.daily_costs} />
+      <CostTrendChart dailyCosts={data.daily_costs} subscriptionDaily={isSub ? s.subscription_daily : undefined} />
 
       {/* Cost Optimization Insights */}
       <CostInsights data={data} />
 
       {/* Model Breakdown */}
-      <ModelBreakdown byModel={data.by_model} />
+      <ModelBreakdown byModel={data.by_model} isSubscription={isSub} />
 
       {/* Agent Breakdown */}
-      <AgentBreakdown byAgent={data.by_agent} />
+      <AgentBreakdown byAgent={data.by_agent} isSubscription={isSub} />
 
       {/* Footer timestamp */}
       <div className="text-center text-xs text-slate-600 pb-4">

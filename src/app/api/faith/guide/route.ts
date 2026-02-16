@@ -21,7 +21,7 @@ function buildSystemPrompt(
   compass: Record<string, unknown> | null,
   responseHistory: Array<Record<string, unknown>>,
   lesson: Record<string, unknown>,
-  selectedPerspectives: Array<{ tradition_name: string; text: string; symbol: string }>,
+  selectedPerspectives: Array<{ tradition_name: string; text: string; symbol: string; citations?: Array<{ ref: string; text: string }> }>,
   guideTitle: string
 ): string {
   const compassContext = compass
@@ -35,7 +35,16 @@ function buildSystemPrompt(
   const lessonContext = `Today's lesson: "${lesson.topic || 'unknown topic'}"${lesson.scripture_ref ? ` (${lesson.scripture_ref})` : ''}${lesson.parsha ? `. Torah portion: ${lesson.parsha}` : ''}.`;
 
   const perspectiveTexts = selectedPerspectives
-    .map((p) => `--- Perspective ${p.symbol} ---\n"${p.text}"`)
+    .map((p) => {
+      let block = `--- Perspective ${p.symbol} ---\n"${p.text}"`;
+      if (p.citations && p.citations.length > 0) {
+        block += '\n\nSource Texts:';
+        for (const c of p.citations) {
+          block += `\n  ${c.ref}: "${c.text}"`;
+        }
+      }
+      return block;
+    })
     .join('\n\n');
 
   return `You are ${guideTitle}, a spiritual conversation partner in a faith exploration app. The user reads anonymous perspectives from different traditions on a daily topic. They don't know which religion or denomination each perspective comes from — they're labeled only with Greek letters (${selectedPerspectives.map(p => p.symbol).join(', ')}). Your job is to help them explore WHY these perspectives resonate and ultimately help them choose ONE to commit to.
@@ -48,9 +57,9 @@ CRITICAL ANONYMITY RULES:
 - You know internally which traditions they are (for commit detection), but NEVER reveal this
 
 DEEP KNOWLEDGE RULE:
-You have full, deep knowledge of each tradition's theology, sacred texts, history, scholars, practices, and intellectual traditions. The short perspective text below is just a SUMMARY — when the user asks questions about a perspective, draw on your COMPLETE knowledge of that tradition to answer holistically. Reference relevant scriptures, theological concepts, historical debates, and scholarly positions from that tradition — just describe them without naming the tradition itself. For example, instead of saying "The Talmud teaches..." say "The tradition's central legal commentary teaches..." or "Ancient sages in this tradition debated..."
+Each perspective below includes the actual SOURCE TEXTS (scriptures, sacred writings) that ground that tradition's view. Use these source texts as your primary authority when answering questions — quote them directly when relevant. The perspective summary gives the tradition's interpretation; the source texts are the foundational evidence.
 
-When the user asks "Does perspective α believe X?" — don't just analyze the 2-3 sentences. Answer from the FULL depth of that tradition's thought on the topic, as a knowledgeable scholar of that tradition would.
+When the user asks about a perspective, ground your answer in the provided source texts first, then draw on the tradition's broader interpretive framework. For example, instead of saying "The Talmud teaches..." say "The tradition's central legal commentary teaches..." or "Ancient sages in this tradition debated..."
 
 PERSONALITY:
 - Warm but intellectually rigorous
@@ -179,7 +188,7 @@ export async function POST(request: NextRequest) {
   const selectedTraditionIds: string[] = selected_tradition_ids || [];
   const { data: perspectivesData } = await faithSupabase
     .from('faith_perspectives')
-    .select('tradition_id, perspective_text')
+    .select('tradition_id, perspective_text, source_citations')
     .eq('lesson_id', lesson_id)
     .in('tradition_id', selectedTraditionIds);
 
@@ -198,6 +207,7 @@ export async function POST(request: NextRequest) {
       tradition_name: (trad?.name as string) || 'Unknown',
       text: p.perspective_text as string,
       symbol,
+      citations: (p.source_citations as Array<{ ref: string; text: string }>) || [],
     };
   });
 
@@ -222,11 +232,12 @@ export async function POST(request: NextRequest) {
         'Content-Type': 'application/json',
         'x-api-key': apiKey,
         'anthropic-version': '2023-06-01',
+        'anthropic-beta': 'prompt-caching-2024-07-31',
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1024,
-        system: systemPrompt,
+        model: 'claude-3-5-haiku-20241022',
+        max_tokens: 512,
+        system: [{ type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } }],
         messages: chatMessages,
       }),
     });
@@ -299,11 +310,12 @@ export async function POST(request: NextRequest) {
       'Content-Type': 'application/json',
       'x-api-key': apiKey,
       'anthropic-version': '2023-06-01',
+      'anthropic-beta': 'prompt-caching-2024-07-31',
     },
     body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 1024,
-      system: systemPrompt,
+      model: 'claude-3-5-haiku-20241022',
+      max_tokens: 512,
+      system: [{ type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } }],
       messages: chatMessages,
       stream: true,
     }),

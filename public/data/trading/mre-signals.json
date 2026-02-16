@@ -1,7 +1,7 @@
 {
-  "timestamp": "2026-02-14T03:32:06.923290",
-  "last_updated": "2026-02-14 03:32:06",
-  "last_updated_unix": 1771068726,
+  "timestamp": "2026-02-15T03:30:29.019021",
+  "last_updated": "2026-02-15 03:30:29",
+  "last_updated_unix": 1771155029,
   "fear_greed": {
     "current": 36.2658385093168,
     "rating": "fear",
@@ -1933,7 +1933,7 @@
           "symbol": "IEF",
           "current_price": 97.20999908447266,
           "swing_high": 96.78057340084138,
-          "swing_low": 93.26831903464593,
+          "swing_low": 93.26831141246832,
           "swing_high_idx": 196,
           "swing_low_idx": 126,
           "swing_high_date": "2025-11-25",
@@ -2028,7 +2028,7 @@
           "symbol": "HYG",
           "current_price": 80.8499984741211,
           "swing_high": 80.8404107675588,
-          "swing_low": 78.41496276855469,
+          "swing_low": 78.41497039794922,
           "swing_high_idx": 234,
           "swing_low_idx": 164,
           "swing_high_date": "2026-01-22",
@@ -2407,7 +2407,7 @@
         "fibonacci": {
           "symbol": "BITO",
           "current_price": 9.5,
-          "swing_high": 17.748310862561226,
+          "swing_high": 17.748308940872995,
           "swing_low": 11.740863682943019,
           "swing_high_idx": 36,
           "swing_low_idx": 88,
@@ -3643,40 +3643,40 @@
         {
           "title": "Who will Trump nominate as Fed Chair?",
           "probability": null,
-          "liquidity": 70174306.55336,
-          "volume": 476023384.282383,
+          "liquidity": 70256741.1648,
+          "volume": 480633576.046057,
           "id": "35908"
         },
         {
           "title": "Will China invade Taiwan by end of 2026?",
           "probability": null,
-          "liquidity": 551332.3889,
-          "volume": 8525581.488718,
+          "liquidity": 566194.4081,
+          "volume": 8703662.345543,
           "id": "34044"
         },
         {
           "title": "MegaETH market cap (FDV) one day after launch?",
           "probability": null,
-          "liquidity": 385970.63218,
-          "volume": 11613608.733171,
+          "liquidity": 415356.90232,
+          "volume": 11638859.815271,
           "id": "28999"
         },
         {
           "title": "How much revenue will the U.S. raise from tariffs in 2025?",
           "probability": null,
-          "liquidity": 212149.32389,
-          "volume": 7128033.467782,
+          "liquidity": 203694.60786,
+          "volume": 7263709.987826,
           "id": "22862"
         },
         {
           "title": "MicroStrategy sells any Bitcoin by ___ ?",
           "probability": null,
-          "liquidity": 211611.74817,
-          "volume": 20432372.153842,
+          "liquidity": 126455.74903,
+          "volume": 20446742.7962,
           "id": "16167"
         }
       ],
-      "timestamp": "2026-02-14T11:31:49.383262+00:00",
+      "timestamp": "2026-02-15T11:30:15.448925+00:00",
       "source": "polymarket"
     }
   },
@@ -3694,7 +3694,7 @@
     "spy_price": 681.75,
     "rsp_price": 202.87,
     "methodology": "RSP/SPY relative performance as breadth proxy. RSP outperformance = more stocks participating.",
-    "timestamp": "2026-02-14T03:31:49.822412"
+    "timestamp": "2026-02-15T03:30:15.854766"
   },
   "rotation": {
     "available": false

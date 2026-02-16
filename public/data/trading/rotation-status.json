@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-02-10T23:43:54.721703+00:00",
+  "timestamp": "2026-02-15T18:02:08.961393+00:00",
   "cycle_phase": "late_bull",
   "cycle_confidence": 65.0,
   "phase_duration_days": 0,
@@ -393,7 +393,7 @@
     "bear_assets": 1
   },
   "version": "1.0.0",
-  "config_version": "1.0.0",
+  "config_version": "2.1.1",
   "legacy_version": "v12.0",
   "summary": "GDX, GLD, XLB leading \u2014 late-cycle commodities pattern. XLK, INDA lagging.",
   "phase_summary": "Late cycle \u2014 commodities and defensives starting to outperform growth."

@@ -4137,9 +4137,21 @@ function CronJobCard({ job }: { job: CronJob }) {
   );
 }
 
+type CronGroupBy = "category" | "agent";
+
+const AGENT_ORDER = ["Theo", "Ticker", "Alex", "Atlas"];
+const AGENT_ICONS: Record<string, string> = {
+  "Theo": "🔺",
+  "Ticker": "📊",
+  "Alex": "🦍",
+  "Atlas": "🗺️",
+  "Unknown": "❓",
+};
+
 function CronJobsTab() {
   const [jobs, setJobs] = useState<CronJob[]>([]);
   const [loading, setLoading] = useState(true);
+  const [groupBy, setGroupBy] = useState<CronGroupBy>("category");
   const [collapsedCategories, setCollapsedCategories] = useState<Set<string>>(new Set(["Disabled / Legacy"]));
 
   useEffect(() => {
@@ -4164,6 +4176,16 @@ function CronJobsTab() {
       const cat = categorizeJob(job.name, job.enabled);
       if (!groups[cat]) groups[cat] = [];
       groups[cat].push(job);
+    }
+    return groups;
+  }, [jobs]);
+
+  const groupedByAgent = useMemo(() => {
+    const groups: Record<string, CronJob[]> = {};
+    for (const job of jobs) {
+      const agentName = job.agent?.name || "Unknown";
+      if (!groups[agentName]) groups[agentName] = [];
+      groups[agentName].push(job);
     }
     return groups;
   }, [jobs]);
@@ -4194,7 +4216,7 @@ function CronJobsTab() {
 
   return (
     <div className="max-w-5xl mx-auto space-y-6">
-      {/* Stats bar */}
+      {/* Stats bar + group toggle */}
       <div className="flex flex-wrap items-center gap-x-6 gap-y-2 px-5 py-3 bg-slate-950/60 rounded-xl border border-slate-800/60 backdrop-blur-sm">
         <div className="flex items-center gap-1.5">
           <span className="text-sm font-bold text-slate-100 tabular-nums">{jobs.length}</span>
@@ -4211,10 +4233,33 @@ function CronJobsTab() {
           <span className="text-sm font-bold text-slate-400 tabular-nums">{disabledCount}</span>
           <span className="text-[11px] text-slate-500 font-medium">Disabled</span>
         </div>
+        <div className="w-px h-4 bg-slate-700/60" />
+        <div className="flex items-center gap-1 bg-slate-800/60 rounded-lg p-0.5">
+          <button
+            onClick={() => setGroupBy("category")}
+            className={`px-3 py-1 rounded-md text-[11px] font-semibold tracking-wide transition-all ${
+              groupBy === "category"
+                ? "bg-violet-600/80 text-violet-100 shadow-sm"
+                : "text-slate-500 hover:text-slate-300"
+            }`}
+          >
+            By App
+          </button>
+          <button
+            onClick={() => setGroupBy("agent")}
+            className={`px-3 py-1 rounded-md text-[11px] font-semibold tracking-wide transition-all ${
+              groupBy === "agent"
+                ? "bg-violet-600/80 text-violet-100 shadow-sm"
+                : "text-slate-500 hover:text-slate-300"
+            }`}
+          >
+            By Agent
+          </button>
+        </div>
       </div>
 
-      {/* Grouped jobs */}
-      {CATEGORY_ORDER.filter(cat => grouped[cat] && grouped[cat].length > 0).map(cat => {
+      {/* Grouped by category */}
+      {groupBy === "category" && CATEGORY_ORDER.filter(cat => grouped[cat] && grouped[cat].length > 0).map(cat => {
         const isCollapsed = collapsedCategories.has(cat);
         const catJobs = grouped[cat];
         return (
@@ -4236,6 +4281,40 @@ function CronJobsTab() {
             {!isCollapsed && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {catJobs.map(job => (
+                  <CronJobCard key={job.id} job={job} />
+                ))}
+              </div>
+            )}
+          </div>
+        );
+      })}
+
+      {/* Grouped by agent */}
+      {groupBy === "agent" && [...AGENT_ORDER, ...Object.keys(groupedByAgent).filter(a => !AGENT_ORDER.includes(a))].filter(agent => groupedByAgent[agent] && groupedByAgent[agent].length > 0).map(agent => {
+        const isCollapsed = collapsedCategories.has(agent);
+        const agentJobs = groupedByAgent[agent];
+        const enabledInGroup = agentJobs.filter(j => j.enabled).length;
+        const agentData = agentJobs[0]?.agent;
+        return (
+          <div key={agent} className="space-y-3">
+            <button
+              onClick={() => toggleCategory(agent)}
+              className="flex items-center gap-2 w-full text-left group"
+            >
+              <span className="text-lg">{AGENT_ICONS[agent] || agentData?.emoji || "❓"}</span>
+              <h3 className="text-sm font-bold text-slate-300 tracking-tight">{agent}</h3>
+              <span className="text-[10px] text-slate-500 font-medium">{agentData?.title || ""}</span>
+              <span className="text-[11px] text-slate-600 font-medium">{enabledInGroup} active / {agentJobs.length} total</span>
+              <div className="h-px flex-1 bg-slate-800/60" />
+              {isCollapsed ? (
+                <ChevronRight className="w-4 h-4 text-slate-600 group-hover:text-slate-400 transition-colors" />
+              ) : (
+                <ChevronDown className="w-4 h-4 text-slate-600 group-hover:text-slate-400 transition-colors" />
+              )}
+            </button>
+            {!isCollapsed && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {agentJobs.map(job => (
                   <CronJobCard key={job.id} job={job} />
                 ))}
               </div>

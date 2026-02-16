@@ -3864,11 +3864,19 @@ function PlaybookSection() {
    Cron Jobs Tab
    ═══════════════════════════════════════════════════════════════ */
 
+interface CronJobAgent {
+  id: string;
+  name: string;
+  emoji: string;
+  title: string;
+}
+
 interface CronJob {
   id: string;
   name: string;
   enabled: boolean;
   schedule: { kind: string; expr: string; tz?: string };
+  agent?: CronJobAgent;
   payload: {
     kind: string;
     message: string;
@@ -4065,10 +4073,16 @@ function CronJobCard({ job }: { job: CronJob }) {
   return (
     <div className={`rounded-xl border ${job.enabled ? "border-slate-800/60 bg-slate-900/60" : "border-slate-800/30 bg-slate-950/40 opacity-70"} overflow-hidden transition-all hover:border-slate-700/60`}>
       <div className="px-4 py-3">
-        {/* Row 1: Name + status */}
+        {/* Row 1: Name + agent + status */}
         <div className="flex items-center gap-2 mb-2">
           <span className={`w-2 h-2 rounded-full flex-shrink-0 ${job.enabled ? "bg-emerald-500" : "bg-slate-600"}`} />
           <h4 className="text-sm font-semibold text-slate-200 flex-1 min-w-0 truncate">{job.name}</h4>
+          {job.agent && (
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold tracking-wide border bg-slate-800/60 border-slate-700/50 text-slate-300 flex-shrink-0">
+              <span>{job.agent.emoji}</span>
+              <span>{job.agent.name}</span>
+            </span>
+          )}
           <CronModelBadge model={job.payload.model} />
         </div>
 

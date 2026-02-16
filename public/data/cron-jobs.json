@@ -8,6 +8,12 @@
       "expr": "0 6 * * *",
       "tz": "America/Los_Angeles"
     },
+    "agent": {
+      "id": "coo",
+      "name": "Theo",
+      "emoji": "\ud83d\udd3a",
+      "title": "COO"
+    },
     "payload": {
       "kind": "agentTurn",
       "message": "Morning brief for Joshua at 6am.\n\n**STEP 1 - RUN TOOLS**\n1. Run prayer generator: `python3 ~/clawd/tools/morning-prayer/daily_prayer.py`\n2. Run MRE signals: `cd ~/clawd/tools/cgs-trader && source venv/bin/activate && python mre_signals.py`\n3. Run relationship analysis: `python3 ~/clawd/tools/jillian/analyze.py analyze`\n\n**STEP 2 - GATHER DATA**\n1. Weather forecast for Los Angeles/Temecula area\n2. **CALENDAR** - From ALL 4 accounts:\n   - `today`: Events happening today (with time, title, location",
@@ -31,6 +37,12 @@
       "expr": "*/5 22-23,0-5 * * *",
       "tz": "America/Los_Angeles"
     },
+    "agent": {
+      "id": "ticker",
+      "name": "Ticker",
+      "emoji": "\ud83d\udcca",
+      "title": "Trading Lead"
+    },
     "payload": {
       "kind": "agentTurn",
       "message": "Run the regime-adaptive backtest suite with optimization.\n\n**RUN THE BACKTEST:**\n```bash\ncd ~/clawd/tools/paper-trader && ./regime_cron_runner.sh 2>&1\n```\n\n**THEN:**\n1. Read the output to find:\n   - Which period was tested\n   - Regime vs CGS avg returns\n   - Any parameter optimizations made\n   - PDF report path\n2. Send Joshua a brief Telegram summary (max 8 lines):\n   - Period tested\n   - Regime vs CGS avg return\n   - Best performer this run\n   - Any parameter changes\n   - PDF report generated (",
@@ -52,6 +64,12 @@
       "kind": "cron",
       "expr": "0 7-14 * * 1-5",
       "tz": "America/Los_Angeles"
+    },
+    "agent": {
+      "id": "ticker",
+      "name": "Ticker",
+      "emoji": "\ud83d\udcca",
+      "title": "Trading Lead"
     },
     "payload": {
       "kind": "agentTurn",
@@ -75,6 +93,12 @@
       "expr": "*/10 22-23 * * *",
       "tz": "America/Los_Angeles"
     },
+    "agent": {
+      "id": "ticker",
+      "name": "Ticker",
+      "emoji": "\ud83d\udcca",
+      "title": "Trading Lead"
+    },
     "payload": {
       "kind": "agentTurn",
       "message": "Run the next batch of MRE V2 overnight backtests.\n\n**STEP 1: Check batch state**\n```bash\ncat ~/clawd/trading-bot/regime-detector/backtest/overnight_results/batch_state.json 2>/dev/null || echo '{\"next_batch\": 0}'\n```\n\n**STEP 2: Run the batch**\n```bash\ncd ~/clawd/trading-bot/regime-detector && source venv/bin/activate && python backtest/overnight_backtest_suite.py --batch BATCH_NUM --output-dir backtest/overnight_results 2>&1\n```\n(Replace BATCH_NUM with the next_batch value from step 1)\n\n**STEP 3",
@@ -96,6 +120,12 @@
       "kind": "cron",
       "expr": "*/10 0-4 * * *",
       "tz": "America/Los_Angeles"
+    },
+    "agent": {
+      "id": "ticker",
+      "name": "Ticker",
+      "emoji": "\ud83d\udcca",
+      "title": "Trading Lead"
     },
     "payload": {
       "kind": "agentTurn",
@@ -119,6 +149,12 @@
       "expr": "10 5 * * *",
       "tz": "America/Los_Angeles"
     },
+    "agent": {
+      "id": "ticker",
+      "name": "Ticker",
+      "emoji": "\ud83d\udcca",
+      "title": "Trading Lead"
+    },
     "payload": {
       "kind": "agentTurn",
       "message": "Generate the final MRE V2\u2192V3 overnight backtest report.\n\n**STEP 1: Run the report generator**\n```bash\ncd ~/clawd/trading-bot/regime-detector && source venv/bin/activate && python backtest/generate_final_report.py 2>&1\n```\n\n**STEP 2: Read the generated files**\n```bash\ncat ~/clawd/trading-bot/regime-detector/backtest/overnight_results/telegram_report.txt\ncat ~/clawd/trading-bot/regime-detector/backtest/overnight_results/MRE_V3_DESCRIPTION.md\n```\n\n**STEP 3: Send comprehensive Telegram report to Jos",
@@ -141,6 +177,12 @@
       "expr": "0 3 * * *",
       "tz": "America/Los_Angeles"
     },
+    "agent": {
+      "id": "ticker",
+      "name": "Ticker",
+      "emoji": "\ud83d\udcca",
+      "title": "Trading Lead"
+    },
     "payload": {
       "kind": "agentTurn",
       "message": "Run cross-asset correlation analysis for MRE V3.\n\n```bash\ncd ~/clawd/trading-bot/regime-detector && source venv/bin/activate && python backtest/correlation_analyzer.py 2>&1\n```\n\nThis finds:\n1. Lead/lag relationships between assets\n2. Divergence signals (mean reversion)\n3. Confirmation clusters\n4. Cross-asset predictive signals\n\nSave results silently - will be included in 5:10 AM report.",
@@ -162,6 +204,12 @@
       "kind": "cron",
       "expr": "*/5 6-13 * * 1-5",
       "tz": "America/Los_Angeles"
+    },
+    "agent": {
+      "id": "ticker",
+      "name": "Ticker",
+      "emoji": "\ud83d\udcca",
+      "title": "Trading Lead"
     },
     "payload": {
       "kind": "agentTurn",
@@ -186,6 +234,12 @@
       "expr": "0 14 * * 1-5",
       "tz": "America/Los_Angeles"
     },
+    "agent": {
+      "id": "ticker",
+      "name": "Ticker",
+      "emoji": "\ud83d\udcca",
+      "title": "Trading Lead"
+    },
     "payload": {
       "kind": "agentTurn",
       "message": "MRE Strategy Analyst - Daily Review (after market close).\n\nRead your SOUL.md: ~/clawd/agents/mre-analyst/SOUL.md\n\n**ANALYSIS TASKS:**\n\n1. Load today's trading data:\n```bash\ncat ~/clawd/clawdbot-hub/public/data/paper-portfolio.json\ncat ~/clawd/clawdbot-hub/public/data/trading/mre-signals.json\n```\n\n2. Review today's performance:\n- Any trades executed?\n- P&L changes\n- Signal accuracy (did BUY signals go up? HOLD signals stay flat?)\n\n3. Check for issues:\n- False signals (BUY that led to loss)\n- Miss",
@@ -208,6 +262,12 @@
       "kind": "cron",
       "expr": "0 10 * * 0",
       "tz": "America/Los_Angeles"
+    },
+    "agent": {
+      "id": "ticker",
+      "name": "Ticker",
+      "emoji": "\ud83d\udcca",
+      "title": "Trading Lead"
     },
     "payload": {
       "kind": "agentTurn",
@@ -232,6 +292,12 @@
       "expr": "*/30 22-23 * * *",
       "tz": "America/Los_Angeles"
     },
+    "agent": {
+      "id": "ticker",
+      "name": "Ticker",
+      "emoji": "\ud83d\udcca",
+      "title": "Trading Lead"
+    },
     "payload": {
       "kind": "agentTurn",
       "message": "MRE Overnight Optimizer - Parameter Sweep Phase (Evening)\n\n**Read instructions:** ~/clawd/agents/mre-optimizer/overnight/INSTRUCTIONS.md\n\n**YOUR TASK:**\n1. Read current state:\n```bash\ncat ~/clawd/agents/mre-optimizer/overnight-state.json\n```\n\n2. If this is first run tonight (started=null), initialize:\n- Set started to current timestamp\n- Set current_phase to 'param_sweep'\n- Record baseline metrics from current mre_signals.py\n\n3. Run parameter sweep iteration:\n```bash\ncd ~/clawd/trading-bot/regim",
@@ -253,6 +319,12 @@
       "kind": "cron",
       "expr": "0 0 * * *",
       "tz": "America/Los_Angeles"
+    },
+    "agent": {
+      "id": "ticker",
+      "name": "Ticker",
+      "emoji": "\ud83d\udcca",
+      "title": "Trading Lead"
     },
     "payload": {
       "kind": "agentTurn",
@@ -276,6 +348,12 @@
       "expr": "30 0 * * *",
       "tz": "America/Los_Angeles"
     },
+    "agent": {
+      "id": "ticker",
+      "name": "Ticker",
+      "emoji": "\ud83d\udcca",
+      "title": "Trading Lead"
+    },
     "payload": {
       "kind": "agentTurn",
       "message": "MRE Overnight Optimizer - Cross-Asset Correlation Scan\n\n**YOUR TASK:**\n\n1. Run correlation analyzer:\n```bash\ncd ~/clawd/trading-bot/regime-detector && source venv/bin/activate\npython backtest/correlation_analyzer.py --deep 2>&1\n```\n\n2. Analyze lead/lag relationships:\n- Does GLD lead SPY? (1-5 day lag)\n- Does VIX spike predict regime changes?\n- Do bonds lead equities in transitions?\n\n3. Find confirmation signals:\n- When 3+ asset classes are bullish, what's the win rate?\n- When regimes diverge (so",
@@ -297,6 +375,12 @@
       "kind": "cron",
       "expr": "0 1 * * *",
       "tz": "America/Los_Angeles"
+    },
+    "agent": {
+      "id": "ticker",
+      "name": "Ticker",
+      "emoji": "\ud83d\udcca",
+      "title": "Trading Lead"
     },
     "payload": {
       "kind": "agentTurn",
@@ -320,6 +404,12 @@
       "expr": "30 1 * * *",
       "tz": "America/Los_Angeles"
     },
+    "agent": {
+      "id": "ticker",
+      "name": "Ticker",
+      "emoji": "\ud83d\udcca",
+      "title": "Trading Lead"
+    },
     "payload": {
       "kind": "agentTurn",
       "message": "MRE Overnight Optimizer - Prediction Market Analysis\n\n**YOUR TASK:**\n\n1. Analyze Kalshi/Polymarket integration:\n```bash\ncat ~/clawd/tools/cgs-trader/kalshi_data.json 2>/dev/null\ncat ~/clawd/clawdbot-hub/public/data/trading/mre-signals.json | jq '.prediction_markets'\n```\n\n2. Evaluate current accuracy:\n- Our JP Morgan analysis showed 96.6% directional accuracy\n- Is this holding up in recent data?\n- Which prediction market questions are most useful?\n\n3. Test different weightings:\n- Current weight i",
@@ -341,6 +431,12 @@
       "kind": "cron",
       "expr": "0 2 * * *",
       "tz": "America/Los_Angeles"
+    },
+    "agent": {
+      "id": "ticker",
+      "name": "Ticker",
+      "emoji": "\ud83d\udcca",
+      "title": "Trading Lead"
     },
     "payload": {
       "kind": "agentTurn",
@@ -364,6 +460,12 @@
       "expr": "*/30 2-4 * * *",
       "tz": "America/Los_Angeles"
     },
+    "agent": {
+      "id": "ticker",
+      "name": "Ticker",
+      "emoji": "\ud83d\udcca",
+      "title": "Trading Lead"
+    },
     "payload": {
       "kind": "agentTurn",
       "message": "MRE Overnight Optimizer - Continuation Iterations\n\n**YOUR TASK:**\n\nThis runs every 30 minutes from 2:30 AM - 4:30 AM to continue optimization.\n\n1. Check current state:\n```bash\ncat ~/clawd/agents/mre-optimizer/overnight-state.json\n```\n\n2. Based on findings so far, run ADDITIONAL tests:\n- If param sweep found promising combos, test variations\n- If signal analysis found weak spots, test fixes\n- If correlation found patterns, test trading rules\n\n3. Each iteration should:\n- Pick ONE hypothesis to tes",
@@ -385,6 +487,12 @@
       "kind": "cron",
       "expr": "30 5 * * *",
       "tz": "America/Los_Angeles"
+    },
+    "agent": {
+      "id": "ticker",
+      "name": "Ticker",
+      "emoji": "\ud83d\udcca",
+      "title": "Trading Lead"
     },
     "payload": {
       "kind": "agentTurn",
@@ -408,6 +516,12 @@
       "expr": "30 0 8 2 *",
       "tz": "America/Los_Angeles"
     },
+    "agent": {
+      "id": "ticker",
+      "name": "Ticker",
+      "emoji": "\ud83d\udcca",
+      "title": "Trading Lead"
+    },
     "payload": {
       "kind": "agentTurn",
       "message": "MRE V7 Overnight Sprint \u2014 Phase 3: Backtest V7 vs V6.\n\nRead ~/clawd/agents/mre-optimizer/overnight/v7-phase1-results.md to see what Phase 1-2 changed.\nRead ~/clawd/trading-bot/mre_strategies.py for the V7 config.\nFind V6 backup at ~/clawd/trading-bot/mre_strategies.py.v6.bak or check git history.\n\nRun backtests comparing V6 vs V7 across all asset classes:\n1. cd ~/clawd/tools/paper-trader && source venv/bin/activate\n2. Test SPY, QQQ, GLD, TLT, XLF, XLV with both old and new params using backtest.",
@@ -425,6 +539,12 @@
       "kind": "cron",
       "expr": "30 2 8 2 *",
       "tz": "America/Los_Angeles"
+    },
+    "agent": {
+      "id": "ticker",
+      "name": "Ticker",
+      "emoji": "\ud83d\udcca",
+      "title": "Trading Lead"
     },
     "payload": {
       "kind": "agentTurn",
@@ -444,6 +564,12 @@
       "expr": "0 4 8 2 *",
       "tz": "America/Los_Angeles"
     },
+    "agent": {
+      "id": "ticker",
+      "name": "Ticker",
+      "emoji": "\ud83d\udcca",
+      "title": "Trading Lead"
+    },
     "payload": {
       "kind": "agentTurn",
       "message": "MRE V7 Overnight Sprint \u2014 Phase 5: Update Agent Fleet Knowledge.\n\nRead all phase results:\n- ~/clawd/agents/mre-optimizer/overnight/v7-phase1-results.md\n- ~/clawd/agents/mre-optimizer/overnight/v7-backtest-comparison.md\n- ~/clawd/agents/mre-optimizer/overnight/v7-phase4-results.md\n\n1. Update ~/clawd/agents/mre-advisor/knowledge/ \u2014 Create v7-parameters.md with all V7 config values, per-asset-class accuracy rates, override rules, Kalshi integration details\n2. Update ~/clawd/agents/mre-advisor/memor",
@@ -462,6 +588,12 @@
       "expr": "30 5 8 2 *",
       "tz": "America/Los_Angeles"
     },
+    "agent": {
+      "id": "ticker",
+      "name": "Ticker",
+      "emoji": "\ud83d\udcca",
+      "title": "Trading Lead"
+    },
     "payload": {
       "kind": "agentTurn",
       "message": "MRE V7 Overnight Sprint \u2014 Phase 6: FINAL REPORT for Joshua.\n\nThis is the culmination of an all-night sprint. Joshua asked for this before bed and wants a comprehensive report when he wakes up at 6 AM.\n\nRead ALL phase results:\n- ~/clawd/agents/mre-optimizer/overnight/v7-sprint-plan.md\n- ~/clawd/agents/mre-optimizer/overnight/v7-phase1-results.md\n- ~/clawd/agents/mre-optimizer/overnight/v7-backtest-comparison.md\n- ~/clawd/agents/mre-optimizer/overnight/v7-phase4-results.md\n- ~/clawd/agents/mre-opt",
@@ -479,6 +611,12 @@
       "kind": "cron",
       "expr": "0 22 * * *",
       "tz": "America/Los_Angeles"
+    },
+    "agent": {
+      "id": "ticker",
+      "name": "Ticker",
+      "emoji": "\ud83d\udcca",
+      "title": "Trading Lead"
     },
     "payload": {
       "kind": "agentTurn",
@@ -503,6 +641,12 @@
       "expr": "0 23 * * *",
       "tz": "America/Los_Angeles"
     },
+    "agent": {
+      "id": "ticker",
+      "name": "Ticker",
+      "emoji": "\ud83d\udcca",
+      "title": "Trading Lead"
+    },
     "payload": {
       "kind": "agentTurn",
       "message": "MRE Overnight Pit \u2014 Phase 2: Correlation & Cross-Asset Analysis\n\nRead pipeline state: `cat ~/clawd/agents/mre-optimizer/overnight/pipeline-state.json`\nRead Phase 1 results: `cat ~/clawd/agents/mre-optimizer/overnight/results/$(date +%Y-%m-%d)/signal_accuracy.json`\n\n**Run correlation analysis:**\n```bash\ncd ~/clawd/trading-bot/regime-detector && source venv/bin/activate\npython backtest/correlation_analyzer.py --deep 2>&1\n```\n\n**Analyze:**\n1. Lead/lag relationships (GLD\u2192SPY, VIX\u2192regime changes, bon",
@@ -525,6 +669,12 @@
       "kind": "cron",
       "expr": "0 0 * * *",
       "tz": "America/Los_Angeles"
+    },
+    "agent": {
+      "id": "ticker",
+      "name": "Ticker",
+      "emoji": "\ud83d\udcca",
+      "title": "Trading Lead"
     },
     "payload": {
       "kind": "agentTurn",
@@ -549,6 +699,12 @@
       "expr": "0 1 * * *",
       "tz": "America/Los_Angeles"
     },
+    "agent": {
+      "id": "ticker",
+      "name": "Ticker",
+      "emoji": "\ud83d\udcca",
+      "title": "Trading Lead"
+    },
     "payload": {
       "kind": "agentTurn",
       "message": "MRE Overnight Pit \u2014 Phase 4: Targeted Parameter Sweep\n\nRead pipeline state + all prior phases:\n```bash\ncat ~/clawd/agents/mre-optimizer/overnight/pipeline-state.json\nfor f in ~/clawd/agents/mre-optimizer/overnight/results/$(date +%Y-%m-%d)/*.json; do echo \"=== $f ===\"; cat \"$f\" | python3 -c 'import json,sys; print(json.dumps(json.load(sys.stdin), indent=2))' 2>/dev/null | head -50; done\n```\n\n**Targeted sweep based on prior findings:**\n1. Focus on weak areas identified in Phase 1 (signal accuracy",
@@ -571,6 +727,12 @@
       "kind": "cron",
       "expr": "30 2 * * *",
       "tz": "America/Los_Angeles"
+    },
+    "agent": {
+      "id": "ticker",
+      "name": "Ticker",
+      "emoji": "\ud83d\udcca",
+      "title": "Trading Lead"
     },
     "payload": {
       "kind": "agentTurn",
@@ -595,6 +757,12 @@
       "expr": "30 3 * * *",
       "tz": "America/Los_Angeles"
     },
+    "agent": {
+      "id": "ticker",
+      "name": "Ticker",
+      "emoji": "\ud83d\udcca",
+      "title": "Trading Lead"
+    },
     "payload": {
       "kind": "agentTurn",
       "message": "MRE Overnight Pit \u2014 Phase 6: Deep Testing & Today's Picks Validation\n\nRead pipeline state + synthesis: `cat ~/clawd/agents/mre-optimizer/overnight/pipeline-state.json`\nRead synthesis results: `cat ~/clawd/agents/mre-optimizer/overnight/results/$(date +%Y-%m-%d)/synthesis.json`\n\n**Deep Testing (if changes were applied in Phase 5):**\n1. Run extended backtests on changed parameters\n2. Test edge cases: high volatility periods, regime transitions, flash crashes\n3. Validate cross-asset confirmation ru",
@@ -617,6 +785,12 @@
       "kind": "cron",
       "expr": "30 5 * * *",
       "tz": "America/Los_Angeles"
+    },
+    "agent": {
+      "id": "ticker",
+      "name": "Ticker",
+      "emoji": "\ud83d\udcca",
+      "title": "Trading Lead"
     },
     "payload": {
       "kind": "agentTurn",
@@ -641,6 +815,12 @@
       "expr": "0 9 * * 0",
       "tz": "America/Los_Angeles"
     },
+    "agent": {
+      "id": "cmo",
+      "name": "Alex",
+      "emoji": "\ud83e\udd8d",
+      "title": "CMO"
+    },
     "payload": {
       "kind": "agentTurn",
       "message": "Studio Writer's Room \u2014 Weekly Script Creation Session\n\nThis is an INTERACTIVE session with Joshua. You are facilitating a multi-agent creative room.\n\n**Read these SOUL.md files to embody each role:**\n- ~/clawd/agents/studio/cmo/SOUL.md\n- ~/clawd/agents/studio/show-runner/SOUL.md\n- ~/clawd/agents/studio/script-producer/SOUL.md\n- ~/clawd/agents/studio/brand-da/SOUL.md\n\n**Read shared context:**\n- ~/clawd/agents/studio/shared/brand-bible.md\n- ~/clawd/agents/studio/shared/content-calendar.md\n- ~/claw",
@@ -664,6 +844,12 @@
       "expr": "0 9 * * 5",
       "tz": "America/Los_Angeles"
     },
+    "agent": {
+      "id": "cmo",
+      "name": "Alex",
+      "emoji": "\ud83e\udd8d",
+      "title": "CMO"
+    },
     "payload": {
       "kind": "agentTurn",
       "message": "Studio Review Room \u2014 Weekly Episode Review & Campaign Deploy\n\nThis is an INTERACTIVE session with Joshua. You are facilitating a multi-agent review and deployment room.\n\n**Read these SOUL.md files to embody each role:**\n- ~/clawd/agents/studio/production-critic/SOUL.md\n- ~/clawd/agents/studio/post-production-director/SOUL.md\n- ~/clawd/agents/studio/content-repurposer/SOUL.md\n- ~/clawd/agents/studio/copywriter/SOUL.md\n- ~/clawd/agents/studio/growth-marketer/SOUL.md\n- ~/clawd/agents/studio/campaig",
@@ -686,6 +872,12 @@
       "expr": "55 6 9 2 *",
       "kind": "cron"
     },
+    "agent": {
+      "id": "cto",
+      "name": "Atlas",
+      "emoji": "\ud83d\uddfa\ufe0f",
+      "title": "CTO"
+    },
     "payload": {
       "kind": "systemEvent",
       "message": "",
@@ -707,6 +899,12 @@
       "kind": "cron",
       "expr": "*/5 6-13 * * 1-5",
       "tz": "America/Los_Angeles"
+    },
+    "agent": {
+      "id": "ticker",
+      "name": "Ticker",
+      "emoji": "\ud83d\udcca",
+      "title": "Trading Lead"
     },
     "payload": {
       "kind": "agentTurn",
@@ -731,6 +929,12 @@
       "expr": "*/5 * * * *",
       "tz": "America/Los_Angeles"
     },
+    "agent": {
+      "id": "cto",
+      "name": "Atlas",
+      "emoji": "\ud83d\uddfa\ufe0f",
+      "title": "CTO"
+    },
     "payload": {
       "kind": "agentTurn",
       "message": "V12 Forge Phase 2 (Architect + DA) Progress Monitor.\n\nCheck the forge-v12-architect-da sub-agent status.\n\n1. Check for ADR output files:\n```bash\nls -la ~/clawd/agents/mre-optimizer/overnight/results/v12/adrs/ 2>/dev/null\n```\n\n2. Check agent heartbeat:\n```bash\ntail -3 ~/clawd/memory/agent-heartbeats/forge-v12-architect.log 2>/dev/null\n```\n\n3. Check sessions_history for label 'forge-v12-architect-da' \u2014 is it still active? Last activity within 10 min? If >10 min idle, flag as STALLED.\n\n4. Send Josh",
@@ -752,6 +956,12 @@
       "kind": "cron",
       "expr": "35 6 11 2 *",
       "tz": "America/Los_Angeles"
+    },
+    "agent": {
+      "id": "ticker",
+      "name": "Ticker",
+      "emoji": "\ud83d\udcca",
+      "title": "Trading Lead"
     },
     "payload": {
       "kind": "systemEvent",
@@ -776,6 +986,12 @@
       "expr": "0 22 * * 0",
       "tz": "America/Los_Angeles"
     },
+    "agent": {
+      "id": "ticker",
+      "name": "Ticker",
+      "emoji": "\ud83d\udcca",
+      "title": "Trading Lead"
+    },
     "payload": {
       "kind": "agentTurn",
       "message": "Run the MRE V13 Overnight Optimizer \u2014 weekly recalibration.\n\n```bash\ncd ~/clawd/trading-bot && bash run_optimizer.sh 2>&1\n```\n\nAfter completion, send calibration summary to Joshua via Telegram. Include top 10 assets, confidence distribution, and any significant changes from last week.",
@@ -798,6 +1014,12 @@
       "kind": "cron",
       "expr": "0 22 10 2 *",
       "tz": "America/Los_Angeles"
+    },
+    "agent": {
+      "id": "ticker",
+      "name": "Ticker",
+      "emoji": "\ud83d\udcca",
+      "title": "Trading Lead"
     },
     "payload": {
       "kind": "agentTurn",
@@ -822,6 +1044,12 @@
       "expr": "0 5 11 2 *",
       "tz": "America/Los_Angeles"
     },
+    "agent": {
+      "id": "ticker",
+      "name": "Ticker",
+      "emoji": "\ud83d\udcca",
+      "title": "Trading Lead"
+    },
     "payload": {
       "kind": "agentTurn",
       "message": "CRITICAL TASK: Upgrade the MRE Universe Signal Generator to use ALL 4 strategies for daily signal generation.\n\n**Context:**\nThe overnight backtest ran at 10 PM and produced calibration data at:\n`~/clawd/trading-bot/data/universe_calibration.json`\n\nCurrently `universe_signals.py` only fires BUY signals based on Fear/Greed thresholds (Strategy 1). This means 0 BUY signals when F&G is neutral (46). Joshua wants individual technical signals firing daily.\n\n**Step 1: Read the backtest calibration data",
@@ -845,6 +1073,12 @@
       "expr": "*/5 22-23 10 2 *",
       "tz": "America/Los_Angeles"
     },
+    "agent": {
+      "id": "ticker",
+      "name": "Ticker",
+      "emoji": "\ud83d\udcca",
+      "title": "Trading Lead"
+    },
     "payload": {
       "kind": "systemEvent",
       "message": "",
@@ -867,6 +1101,12 @@
       "expr": "*/5 0-4 11 2 *",
       "tz": "America/Los_Angeles"
     },
+    "agent": {
+      "id": "ticker",
+      "name": "Ticker",
+      "emoji": "\ud83d\udcca",
+      "title": "Trading Lead"
+    },
     "payload": {
       "kind": "systemEvent",
       "message": "",
@@ -884,6 +1124,12 @@
       "kind": "cron",
       "expr": "*/30 * * * *",
       "tz": "America/Los_Angeles"
+    },
+    "agent": {
+      "id": "coo",
+      "name": "Theo",
+      "emoji": "\ud83d\udd3a",
+      "title": "COO"
     },
     "payload": {
       "kind": "agentTurn",

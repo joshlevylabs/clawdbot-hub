@@ -1,0 +1,149 @@
+{
+  "date": "2026-02-16",
+  "generatedAt": "2026-02-16T15:24:29.039680",
+  "topic": "Daily Standup \u2014 Monday Feb 16",
+  "status": "completed",
+  "participants": [
+    {
+      "name": "Theo",
+      "role": "COO"
+    },
+    {
+      "name": "Atlas",
+      "role": "CTO"
+    },
+    {
+      "name": "Venture",
+      "role": "CRO"
+    },
+    {
+      "name": "Muse",
+      "role": "CMO"
+    }
+  ],
+  "duration": "~3 min",
+  "reports": {
+    "cto": {
+      "agent": "Atlas",
+      "highlights": [
+        "214 commits this week across both repos",
+        "Hub latest: cb4ac65 data: fleet usage update",
+        "Build status: healthy"
+      ],
+      "concerns": [
+        "Uncommitted changes: Hub (1 files), Monorepo (16 files)",
+        "1 critical sync gaps in ECOSYSTEM-MAP",
+        "1 items needing attention in ECOSYSTEM-MAP",
+        "83 TODOs/FIXMEs in codebase"
+      ],
+      "metrics": {
+        "recentCommits": 214,
+        "openIssues": 2,
+        "buildHealthy": true,
+        "todosFixmes": 83,
+        "uncommittedHub": 1,
+        "uncommittedMono": 16
+      }
+    },
+    "cro": {
+      "agent": "Venture",
+      "highlights": [
+        "Paper portfolio equity: $100,000",
+        "Fear & Greed Index: 36 (fear)",
+        "SPY regime: sideways",
+        "No active BUY signals \u2014 24 assets in HOLD",
+        "Crypto positions: BTC/USD, ETH/USD"
+      ],
+      "concerns": [
+        "Fear & Greed at 36 \u2014 market fearful, watch for dip buys",
+        "SPY in sideways regime \u2014 momentum weakening"
+      ],
+      "metrics": {
+        "equity": 100000,
+        "positionCount": 2,
+        "signalsToday": 0,
+        "fearGreed": 36,
+        "fearGreedRating": "fear",
+        "regime": "sideways"
+      }
+    },
+    "cmo": {
+      "agent": "Muse",
+      "highlights": [
+        "3 podcast episodes produced",
+        "1 episode(s) on website",
+        "1 blog post(s) on website",
+        "Last content: 2026-02-12"
+      ],
+      "concerns": [
+        "2 podcast episode(s) not synced to website",
+        "Only 1 blog post on /writing \u2014 needs more content"
+      ],
+      "metrics": {
+        "podcastEpisodes": 3,
+        "podcastOnWebsite": 1,
+        "blogPosts": 1,
+        "lastContentDate": "2026-02-12"
+      }
+    }
+  },
+  "transcript": [
+    {
+      "speaker": "Theo",
+      "role": "COO",
+      "message": "Morning team. It's Monday, Feb 16. Let's run through today's standup."
+    },
+    {
+      "speaker": "Atlas",
+      "role": "CTO",
+      "message": "We had 214 commits across both repos this week. Hub build is healthy. A few things to flag: uncommitted changes: hub (1 files), monorepo (16 files). Also, 1 critical sync gaps in ecosystem-map."
+    },
+    {
+      "speaker": "Venture",
+      "role": "CRO",
+      "message": "Paper portfolio is at $100,000. Fear & Greed is at 36, rated fear. SPY is in a sideways regime. No active BUY signals. 24 assets in HOLD. Market's in wait mode. Crypto positions active: BTC/USD, ETH/USD."
+    },
+    {
+      "speaker": "Muse",
+      "role": "CMO",
+      "message": "We have 3 podcast episodes produced. Only 1 synced to the website though \u2014 we need to get the rest up on joshlevylabs.com. 1 blog post on /writing. We really need to publish more written content to build SEO and credibility. Last content was published 2026-02-12."
+    },
+    {
+      "speaker": "Theo",
+      "role": "COO",
+      "message": "Got it. Here's today's priority list: 1. Sync 2 podcast episode(s) to joshlevylabs.com. 2. Monitor market \u2014 SPY sideways, F&G at 36. 3. Draft next blog post for /writing. Let's execute. Good standup, team."
+    }
+  ],
+  "actionItems": [
+    {
+      "text": "Sync podcast episodes 2-3 to website",
+      "priority": "high",
+      "assignee": "Atlas",
+      "completed": false
+    },
+    {
+      "text": "Write next blog post for /writing",
+      "priority": "medium",
+      "assignee": "Muse",
+      "completed": false
+    },
+    {
+      "text": "Commit uncommitted changes in repos",
+      "priority": "low",
+      "assignee": "Atlas",
+      "completed": false
+    },
+    {
+      "text": "Address 1 critical ecosystem sync gaps",
+      "priority": "high",
+      "assignee": "Atlas",
+      "completed": false
+    }
+  ],
+  "topPriorities": [
+    "Sync 2 podcast episode(s) to joshlevylabs.com",
+    "Monitor market \u2014 SPY sideways, F&G at 36",
+    "Draft next blog post for /writing"
+  ],
+  "ceoDirectives": []
+}

@@ -2367,10 +2367,11 @@ function EditAgentChat({
     {
       id: ++chatMsgId,
       role: "system",
-      text: `I can help you edit **${agent.name}**. Try:\n\n• "Change the name to Elon"\n• "Set the emoji to 🚀"\n• "Update title to Chief Rocket Officer"\n• "Tell me about this agent"`,
+      text: `I can help you edit **${agent.name}**. Tell me what you'd like to change — I understand natural language.\n\nExamples:\n• "Make this agent match Elon Musk's persona"\n• "Change the name to Atlas and emoji to 🗺️"\n• "Set the title to Chief Architect, department to Engineering"\n• "Tell me about this agent"`,
     },
   ]);
   const [input, setInput] = useState("");
+  const [sending, setSending] = useState(false);
   const [pendingChanges, setPendingChanges] = useState<Array<{ field: keyof AgentState; value: string | string[] | null }>>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -2378,36 +2379,148 @@ function EditAgentChat({
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const handleSend = () => {
-    if (!input.trim()) return;
-    const userMsg: ChatMessage = { id: ++chatMsgId, role: "user", text: input.trim() };
+  const handleSend = async () => {
+    if (!input.trim() || sending) return;
+    const userText = input.trim();
+    const userMsg: ChatMessage = { id: ++chatMsgId, role: "user", text: userText };
     setMessages(prev => [...prev, userMsg]);
+    setInput("");
+    setSending(true);
 
-    const result = parseEditInstruction(input.trim(), agent, agents);
-    const sysMsg: ChatMessage = { id: ++chatMsgId, role: "system", text: result.response };
-
-    if (result.changes) {
+    // First try the local regex parser for simple commands
+    const localResult = parseEditInstruction(userText, agent, agents);
+    if (localResult.changes) {
+      // Local parser found changes — use them directly (fast path)
+      const sysMsg: ChatMessage = { id: ++chatMsgId, role: "system", text: localResult.response };
+      sysMsg.changes = localResult.changes.map(c => ({
+        field: c.field,
+        oldValue: String((agent as unknown as Record<string, unknown>)[c.field] || ""),
+        newValue: String(c.value || ""),
+      }));
       setPendingChanges(prev => {
-        // Merge: newer changes override older ones for the same field
         const merged = [...prev];
-        for (const c of result.changes!) {
+        for (const c of localResult.changes!) {
           const idx = merged.findIndex(m => m.field === c.field);
           if (idx >= 0) merged[idx] = c;
           else merged.push(c);
         }
         return merged;
       });
-
-      // Add change preview to the message
-      sysMsg.changes = result.changes.map(c => ({
-        field: c.field,
-        oldValue: String((agent as unknown as Record<string, unknown>)[c.field] || ""),
-        newValue: String(c.value || ""),
-      }));
+      setMessages(prev => [...prev, sysMsg]);
+      setSending(false);
+      return;
     }
 
-    setMessages(prev => [...prev, sysMsg]);
-    setInput("");
+    // Local parser couldn't handle it — use LLM
+    // Add "thinking" indicator
+    const thinkingId = ++chatMsgId;
+    setMessages(prev => [...prev, { id: thinkingId, role: "system", text: "🤔 Thinking..." }]);
+
+    try {
+      const allAgents: Record<string, { name: string; title: string }> = {};
+      for (const [id, a] of Object.entries(agents)) {
+        allAgents[id] = { name: a.name, title: a.title };
+      }
+
+      const res = await fetch("/api/agents/edit-chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          instruction: userText,
+          agent: {
+            id: agent.id,
+            name: agent.name,
+            title: agent.title,
+            emoji: agent.emoji,
+            model: agent.model,
+            department: agent.department,
+            status: agent.status,
+            description: agent.description,
+            reportsTo: agent.reportsTo,
+            directReports: agent.directReports,
+          },
+          allAgents,
+        }),
+      });
+
+      // Remove thinking message
+      setMessages(prev => prev.filter(m => m.id !== thinkingId));
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ error: "Unknown error" }));
+        setMessages(prev => [...prev, {
+          id: ++chatMsgId,
+          role: "system",
+          text: `⚠️ Error: ${err.error || "Failed to process"}. Try a simpler instruction like "Change the name to X".`,
+        }]);
+        setSending(false);
+        return;
+      }
+
+      const data = await res.json();
+
+      // Handle info response (no changes)
+      if (data.infoResponse) {
+        setMessages(prev => [...prev, {
+          id: ++chatMsgId,
+          role: "system",
+          text: data.infoResponse,
+        }]);
+        setSending(false);
+        return;
+      }
+
+      // Handle changes
+      if (data.changes && data.changes.length > 0) {
+        const newChanges: Array<{ field: keyof AgentState; value: string | string[] | null }> = data.changes.map(
+          (c: { field: string; value: string }) => ({ field: c.field as keyof AgentState, value: c.value })
+        );
+
+        const changeParts = newChanges.map(c => {
+          const oldVal = String((agent as unknown as Record<string, unknown>)[c.field] || "(empty)");
+          return `**${c.field}**: ${oldVal} → ${String(c.value)}`;
+        });
+
+        const sysMsg: ChatMessage = {
+          id: ++chatMsgId,
+          role: "system",
+          text: `${data.summary || "Detected changes:"}\n\n${changeParts.join("\n")}\n\nClick **Apply** to save.`,
+          changes: newChanges.map(c => ({
+            field: c.field,
+            oldValue: String((agent as unknown as Record<string, unknown>)[c.field] || ""),
+            newValue: String(c.value || ""),
+          })),
+        };
+
+        setPendingChanges(prev => {
+          const merged = [...prev];
+          for (const c of newChanges) {
+            const idx = merged.findIndex(m => m.field === c.field);
+            if (idx >= 0) merged[idx] = c;
+            else merged.push(c);
+          }
+          return merged;
+        });
+
+        setMessages(prev => [...prev, sysMsg]);
+      } else {
+        setMessages(prev => [...prev, {
+          id: ++chatMsgId,
+          role: "system",
+          text: data.summary || "I couldn't determine specific changes from that. Try being more specific about what fields to update.",
+        }]);
+      }
+    } catch (err) {
+      // Remove thinking message on error
+      setMessages(prev => prev.filter(m => m.id !== thinkingId));
+      setMessages(prev => [...prev, {
+        id: ++chatMsgId,
+        role: "system",
+        text: `⚠️ Error connecting to AI. Try a simpler instruction like "Change the name to X".`,
+      }]);
+    }
+
+    setSending(false);
   };
 
   const handleApply = () => {
@@ -2513,15 +2626,16 @@ function EditAgentChat({
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSend(); } }}
-            placeholder={`Edit ${agent.name}...`}
-            className="flex-1 px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-violet-500 transition-colors"
+            placeholder={sending ? "Thinking..." : `Edit ${agent.name}...`}
+            disabled={sending}
+            className="flex-1 px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-violet-500 transition-colors disabled:opacity-50"
           />
           <button
             onClick={handleSend}
-            disabled={!input.trim()}
+            disabled={!input.trim() || sending}
             className="px-4 py-2.5 bg-violet-600 hover:bg-violet-500 disabled:bg-slate-700 disabled:text-slate-500 text-white rounded-xl text-sm font-medium transition-colors"
           >
-            Send
+            {sending ? "..." : "Send"}
           </button>
         </div>
       </div>

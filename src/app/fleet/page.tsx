@@ -11,6 +11,14 @@ import {
   TrendingUp,
   CheckCircle,
   Shield,
+  Key,
+  Plug,
+  Check,
+  X,
+  Eye,
+  EyeOff,
+  ChevronDown,
+  Loader2,
 } from "lucide-react";
 
 /* ------------------------------------------------------------------ */
@@ -615,10 +623,653 @@ function CostInsights({ data }: { data: FleetData }) {
 }
 
 /* ------------------------------------------------------------------ */
+/*  Model Registry — Types & Data                                      */
+/* ------------------------------------------------------------------ */
+
+interface ProviderModel {
+  id: string;
+  name: string;
+  costTier: 1 | 2 | 3;
+  costLabel: string;
+  available: boolean;
+}
+
+interface Provider {
+  id: string;
+  name: string;
+  status: "connected" | "not_connected";
+  authMethod: string | null;
+  note?: string;
+  models: ProviderModel[];
+}
+
+interface AgentModelAssignment {
+  agent: string;
+  role: string;
+  model: string;
+  provider: string;
+}
+
+const PROVIDERS: Provider[] = [
+  {
+    id: "anthropic",
+    name: "Anthropic",
+    status: "connected",
+    authMethod: "Claude Max subscription ($200/mo)",
+    models: [
+      { id: "opus-4", name: "Claude Opus 4", costTier: 3, costLabel: "$15/$75 per 1M tokens", available: true },
+      { id: "sonnet-4", name: "Claude Sonnet 4", costTier: 2, costLabel: "$3/$15 per 1M tokens", available: true },
+      { id: "haiku-3.5", name: "Haiku 3.5", costTier: 1, costLabel: "$0.25/$1.25 per 1M tokens", available: true },
+    ],
+  },
+  {
+    id: "openai",
+    name: "OpenAI",
+    status: "not_connected",
+    authMethod: null,
+    note: "Required for Codex agent coding capabilities",
+    models: [
+      { id: "codex", name: "Codex", costTier: 2, costLabel: "~$3/$15 per 1M tokens", available: false },
+      { id: "gpt-5-mini", name: "GPT-5 Mini", costTier: 1, costLabel: "~$0.50/$2 per 1M tokens", available: false },
+      { id: "o3", name: "o3", costTier: 3, costLabel: "~$10/$40 per 1M tokens", available: false },
+    ],
+  },
+  {
+    id: "google",
+    name: "Google",
+    status: "not_connected",
+    authMethod: null,
+    note: "Low-cost option for bulk processing and cron jobs",
+    models: [
+      { id: "gemini-2-flash", name: "Gemini 2 Flash", costTier: 1, costLabel: "$0.075/$0.30 per 1M tokens", available: false },
+      { id: "gemini-2-pro", name: "Gemini 2 Pro", costTier: 2, costLabel: "$1.25/$5 per 1M tokens", available: false },
+    ],
+  },
+  {
+    id: "meta",
+    name: "Meta",
+    status: "not_connected",
+    authMethod: null,
+    note: "Open-source option, self-hosted or via API",
+    models: [
+      { id: "llama-4-scout", name: "Llama 4 Scout", costTier: 1, costLabel: "Free (self-hosted) or ~$0.10/$0.40", available: false },
+      { id: "llama-4-maverick", name: "Llama 4 Maverick", costTier: 2, costLabel: "Free (self-hosted) or ~$0.50/$2", available: false },
+    ],
+  },
+];
+
+const INITIAL_AGENT_MODELS: AgentModelAssignment[] = [
+  { agent: "Theo", role: "COO", model: "Claude Opus 4", provider: "Anthropic" },
+  { agent: "Atlas", role: "CTO", model: "Claude Sonnet 4", provider: "Anthropic" },
+  { agent: "Muse", role: "CMO", model: "Claude Sonnet 4", provider: "Anthropic" },
+  { agent: "Venture", role: "CRO", model: "Claude Sonnet 4", provider: "Anthropic" },
+  { agent: "Forge", role: "Backend Lead", model: "Claude Sonnet 4", provider: "Anthropic" },
+  { agent: "Pixel", role: "Frontend Lead", model: "Claude Sonnet 4", provider: "Anthropic" },
+  { agent: "Sentinel", role: "QA Lead", model: "Haiku 3.5", provider: "Anthropic" },
+  { agent: "ScriptBot", role: "Content Lead", model: "Claude Sonnet 4", provider: "Anthropic" },
+  { agent: "Echo", role: "Social Lead", model: "Haiku 3.5", provider: "Anthropic" },
+  { agent: "Builder", role: "Products Lead", model: "Claude Sonnet 4", provider: "Anthropic" },
+  { agent: "Scout", role: "Growth Lead", model: "Haiku 3.5", provider: "Anthropic" },
+  { agent: "The Pit", role: "Trading Lead", model: "Claude Sonnet 4", provider: "Anthropic" },
+];
+
+const PROVIDER_BORDER_COLORS: Record<string, string> = {
+  anthropic: "border-l-violet-500",
+  openai: "border-l-emerald-500",
+  google: "border-l-blue-500",
+  meta: "border-l-indigo-500",
+};
+
+const PROVIDER_ICON_COLORS: Record<string, string> = {
+  anthropic: "text-violet-400",
+  openai: "text-emerald-400",
+  google: "text-blue-400",
+  meta: "text-indigo-400",
+};
+
+function costTierBadge(tier: 1 | 2 | 3) {
+  if (tier === 1)
+    return (
+      <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-green-500/15 text-green-400 border border-green-500/30">
+        $
+      </span>
+    );
+  if (tier === 2)
+    return (
+      <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30">
+        $$
+      </span>
+    );
+  return (
+    <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-red-500/15 text-red-400 border border-red-500/30">
+      $$$
+    </span>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Model Registry — Components                                        */
+/* ------------------------------------------------------------------ */
+
+function ProviderCard({
+  provider,
+  agentAssignments,
+  enabledModels,
+  onToggleModel,
+  apiKeys,
+  onSaveApiKey,
+}: {
+  provider: Provider;
+  agentAssignments: AgentModelAssignment[];
+  enabledModels: Record<string, boolean>;
+  onToggleModel: (providerId: string, modelId: string) => void;
+  apiKeys: Record<string, string>;
+  onSaveApiKey: (providerId: string, key: string) => void;
+}) {
+  const [showApiInput, setShowApiInput] = useState(false);
+  const [apiKeyDraft, setApiKeyDraft] = useState("");
+  const [showKey, setShowKey] = useState(false);
+  const [testState, setTestState] = useState<"idle" | "testing" | "success" | "error">("idle");
+
+  const isConnected = provider.status === "connected";
+  const storedKey = apiKeys[provider.id] || "";
+  const hasKey = storedKey.length > 0;
+
+  const maskedKey = hasKey
+    ? `sk-...${ storedKey.slice(-4) }`
+    : "";
+
+  function handleTest() {
+    setTestState("testing");
+    setTimeout(() => {
+      if (isConnected || hasKey) {
+        setTestState("success");
+      } else {
+        setTestState("error");
+      }
+      setTimeout(() => setTestState("idle"), 3000);
+    }, 1200);
+  }
+
+  function handleSaveKey() {
+    if (apiKeyDraft.trim()) {
+      onSaveApiKey(provider.id, apiKeyDraft.trim());
+      setApiKeyDraft("");
+      setShowApiInput(false);
+    }
+  }
+
+  const borderColor = PROVIDER_BORDER_COLORS[provider.id] || "border-l-slate-500";
+  const iconColor = PROVIDER_ICON_COLORS[provider.id] || "text-slate-400";
+
+  return (
+    <div
+      className={`bg-slate-900/50 rounded-xl border border-slate-800 border-l-4 ${borderColor} overflow-hidden hover:border-slate-700 transition-colors`}
+    >
+      {/* Header */}
+      <div className="p-5 pb-3">
+        <div className="flex items-center justify-between mb-1">
+          <div className="flex items-center gap-2.5">
+            <Plug className={`w-5 h-5 ${iconColor}`} strokeWidth={1.5} />
+            <h3 className="text-base font-semibold text-slate-100">{provider.name}</h3>
+          </div>
+          {isConnected ? (
+            <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-green-500/10 text-green-400 border border-green-500/25">
+              <Check className="w-3 h-3" strokeWidth={2.5} />
+              Connected
+            </span>
+          ) : hasKey ? (
+            <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-500/10 text-amber-400 border border-amber-500/25">
+              <Key className="w-3 h-3" strokeWidth={2} />
+              Key Saved
+            </span>
+          ) : (
+            <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-slate-500/10 text-slate-500 border border-slate-500/25">
+              <X className="w-3 h-3" strokeWidth={2.5} />
+              Not Connected
+            </span>
+          )}
+        </div>
+        {provider.authMethod && (
+          <p className="text-xs text-slate-500 ml-[30px]">
+            Auth: {provider.authMethod}
+          </p>
+        )}
+      </div>
+
+      {/* Models Table */}
+      <div className="px-5 pb-3">
+        <p className="text-[11px] font-medium text-slate-500 uppercase tracking-wider mb-2">
+          Available Models{!isConnected && !hasKey ? " (requires API key)" : ""}
+        </p>
+        <div className="rounded-lg border border-slate-800 overflow-hidden">
+          {provider.models.map((model, idx) => {
+            const isAvailable = isConnected || hasKey;
+            const modelEnabled = enabledModels[`${provider.id}:${model.id}`] !== false;
+            const usedBy = agentAssignments
+              .filter((a) => a.model === model.name)
+              .map((a) => a.agent);
+
+            return (
+              <div
+                key={model.id}
+                className={`flex items-center gap-3 px-3 py-2.5 ${
+                  idx % 2 === 0 ? "bg-slate-900/30" : "bg-slate-800/20"
+                } ${!isAvailable ? "opacity-50" : ""}`}
+              >
+                {/* Status dot */}
+                <span
+                  className={`w-2 h-2 rounded-full flex-shrink-0 ${
+                    isAvailable && modelEnabled ? "bg-green-400" : "bg-slate-600"
+                  }`}
+                />
+
+                {/* Model name */}
+                <span className={`text-sm font-medium flex-1 min-w-0 ${isAvailable ? "text-slate-200" : "text-slate-500"}`}>
+                  {model.name}
+                </span>
+
+                {/* Cost tier */}
+                <div className="flex-shrink-0 group relative">
+                  {costTierBadge(model.costTier)}
+                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2 py-1 rounded bg-slate-700 text-[10px] text-slate-300 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                    {model.costLabel}
+                  </div>
+                </div>
+
+                {/* Used by */}
+                <div className="flex-shrink-0 w-28 text-right">
+                  {usedBy.length > 0 ? (
+                    <span className="text-[11px] text-slate-400">
+                      {usedBy.length <= 2 ? usedBy.join(", ") : `${usedBy[0]} +${usedBy.length - 1}`}
+                    </span>
+                  ) : (
+                    <span className="text-[11px] text-slate-600">—</span>
+                  )}
+                </div>
+
+                {/* Toggle */}
+                <button
+                  onClick={() => onToggleModel(provider.id, model.id)}
+                  disabled={!isAvailable}
+                  className="flex-shrink-0"
+                  aria-label={`Toggle ${model.name}`}
+                >
+                  <div
+                    className={`w-8 h-[18px] rounded-full relative transition-colors ${
+                      isAvailable && modelEnabled
+                        ? "bg-green-500/40"
+                        : "bg-slate-700"
+                    }`}
+                  >
+                    <div
+                      className={`absolute top-[2px] w-[14px] h-[14px] rounded-full transition-all ${
+                        isAvailable && modelEnabled
+                          ? "left-[15px] bg-green-400"
+                          : "left-[2px] bg-slate-500"
+                      }`}
+                    />
+                  </div>
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* API Key / Actions */}
+      <div className="px-5 pb-5 pt-2">
+        {/* API key section for non-connected providers */}
+        {!isConnected && (
+          <div className="mb-3">
+            {hasKey && !showApiInput ? (
+              <div className="flex items-center gap-2">
+                <div className="flex-1 flex items-center gap-2 bg-slate-800 rounded-lg px-3 py-2 font-mono text-xs text-slate-400">
+                  <Key className="w-3.5 h-3.5 text-slate-500 flex-shrink-0" strokeWidth={1.5} />
+                  <span>{showKey ? storedKey : maskedKey}</span>
+                  <button
+                    onClick={() => setShowKey(!showKey)}
+                    className="ml-auto text-slate-500 hover:text-slate-300 transition-colors"
+                    aria-label={showKey ? "Hide key" : "Show key"}
+                  >
+                    {showKey ? (
+                      <EyeOff className="w-3.5 h-3.5" strokeWidth={1.5} />
+                    ) : (
+                      <Eye className="w-3.5 h-3.5" strokeWidth={1.5} />
+                    )}
+                  </button>
+                </div>
+                <button
+                  onClick={() => { setShowApiInput(true); setApiKeyDraft(storedKey); }}
+                  className="px-3 py-2 rounded-lg text-xs font-medium bg-slate-800 text-slate-400 hover:text-slate-200 border border-slate-700 hover:border-slate-600 transition-colors"
+                >
+                  Change
+                </button>
+              </div>
+            ) : showApiInput ? (
+              <div className="flex items-center gap-2">
+                <input
+                  type={showKey ? "text" : "password"}
+                  value={apiKeyDraft}
+                  onChange={(e) => setApiKeyDraft(e.target.value)}
+                  placeholder="sk-..."
+                  className="flex-1 bg-slate-800 rounded-lg px-3 py-2 font-mono text-xs text-slate-300 border border-slate-700 focus:border-slate-500 focus:outline-none placeholder:text-slate-600"
+                />
+                <button
+                  onClick={() => setShowKey(!showKey)}
+                  className="p-2 text-slate-500 hover:text-slate-300 transition-colors"
+                  aria-label={showKey ? "Hide key" : "Show key"}
+                >
+                  {showKey ? (
+                    <EyeOff className="w-3.5 h-3.5" strokeWidth={1.5} />
+                  ) : (
+                    <Eye className="w-3.5 h-3.5" strokeWidth={1.5} />
+                  )}
+                </button>
+                <button
+                  onClick={handleSaveKey}
+                  disabled={!apiKeyDraft.trim()}
+                  className="px-3 py-2 rounded-lg text-xs font-medium bg-violet-600 text-white hover:bg-violet-500 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                >
+                  Save
+                </button>
+                <button
+                  onClick={() => { setShowApiInput(false); setApiKeyDraft(""); }}
+                  className="px-3 py-2 rounded-lg text-xs font-medium bg-slate-800 text-slate-400 hover:text-slate-200 border border-slate-700 transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => setShowApiInput(true)}
+                className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:text-white border border-slate-700 hover:border-slate-600 transition-colors"
+              >
+                <Key className="w-3.5 h-3.5" strokeWidth={1.5} />
+                Add API Key
+              </button>
+            )}
+            {(hasKey || showApiInput) && (
+              <p className="text-[10px] text-slate-600 mt-1.5 ml-1">
+                Stored in browser localStorage · To permanently configure, add to Clawdbot gateway config
+              </p>
+            )}
+          </div>
+        )}
+
+        {/* Action buttons */}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleTest}
+            disabled={testState === "testing"}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:text-white border border-slate-700 hover:border-slate-600 transition-colors disabled:opacity-60"
+          >
+            {testState === "testing" ? (
+              <>
+                <Loader2 className="w-3.5 h-3.5 animate-spin" strokeWidth={1.5} />
+                Testing…
+              </>
+            ) : testState === "success" ? (
+              <>
+                <Check className="w-3.5 h-3.5 text-green-400" strokeWidth={2} />
+                <span className="text-green-400">Connected</span>
+              </>
+            ) : testState === "error" ? (
+              <>
+                <X className="w-3.5 h-3.5 text-red-400" strokeWidth={2} />
+                <span className="text-red-400">Failed</span>
+              </>
+            ) : (
+              <>
+                <RefreshCw className="w-3.5 h-3.5" strokeWidth={1.5} />
+                Test Connection
+              </>
+            )}
+          </button>
+        </div>
+
+        {/* Provider note */}
+        {provider.note && (
+          <p className="text-[11px] text-slate-500 mt-3 flex items-start gap-1.5">
+            <span className="text-slate-600 mt-px">ⓘ</span>
+            {provider.note}
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function AgentModelTable({
+  assignments,
+  availableModels,
+  onChangeModel,
+}: {
+  assignments: AgentModelAssignment[];
+  availableModels: { name: string; provider: string }[];
+  onChangeModel: (agentName: string, modelName: string, providerName: string) => void;
+}) {
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+
+  return (
+    <div>
+      <div className="flex items-center gap-2 mb-4">
+        <Activity className="w-4 h-4 text-teal-400" strokeWidth={1.5} />
+        <h2 className="text-sm font-semibold text-slate-200">Agent → Model Assignments</h2>
+      </div>
+
+      <div className="rounded-xl border border-slate-800 overflow-hidden">
+        {/* Table header */}
+        <div className="grid grid-cols-[1fr_1fr_100px_80px_140px] gap-2 px-4 py-2.5 bg-slate-800/40 text-[11px] font-medium text-slate-500 uppercase tracking-wider">
+          <span>Agent</span>
+          <span>Current Model</span>
+          <span>Provider</span>
+          <span>Status</span>
+          <span>Change</span>
+        </div>
+
+        {/* Table rows */}
+        {assignments.map((a, idx) => {
+          const isOpen = openDropdown === a.agent;
+          return (
+            <div
+              key={a.agent}
+              className={`grid grid-cols-[1fr_1fr_100px_80px_140px] gap-2 px-4 py-2.5 items-center text-sm ${
+                idx % 2 === 0 ? "bg-slate-900/30" : "bg-slate-800/10"
+              } border-t border-slate-800/50`}
+            >
+              <div>
+                <span className="text-slate-200 font-medium">{a.agent}</span>
+                <span className="text-slate-600 text-xs ml-1.5">{a.role}</span>
+              </div>
+              <span className="text-slate-300">{a.model}</span>
+              <span className="text-slate-500 text-xs">{a.provider}</span>
+              <span>
+                <span className="w-2 h-2 rounded-full bg-green-400 inline-block" />
+              </span>
+              <div className="relative">
+                <button
+                  onClick={() => setOpenDropdown(isOpen ? null : a.agent)}
+                  className="flex items-center gap-1 w-full px-2 py-1 rounded-md text-xs bg-slate-800 text-slate-400 hover:text-slate-200 border border-slate-700 hover:border-slate-600 transition-colors"
+                >
+                  <span className="truncate flex-1 text-left">Select</span>
+                  <ChevronDown className={`w-3 h-3 flex-shrink-0 transition-transform ${isOpen ? "rotate-180" : ""}`} strokeWidth={2} />
+                </button>
+                {isOpen && (
+                  <>
+                    {/* Backdrop */}
+                    <div
+                      className="fixed inset-0 z-10"
+                      onClick={() => setOpenDropdown(null)}
+                    />
+                    {/* Dropdown */}
+                    <div className="absolute right-0 top-full mt-1 z-20 w-52 py-1 rounded-lg bg-slate-800 border border-slate-700 shadow-xl max-h-56 overflow-y-auto">
+                      {availableModels.map((m) => (
+                        <button
+                          key={`${m.provider}:${m.name}`}
+                          onClick={() => {
+                            onChangeModel(a.agent, m.name, m.provider);
+                            setOpenDropdown(null);
+                          }}
+                          className={`w-full text-left px-3 py-1.5 text-xs hover:bg-slate-700/60 transition-colors ${
+                            a.model === m.name
+                              ? "text-violet-400 font-medium"
+                              : "text-slate-300"
+                          }`}
+                        >
+                          <span>{m.name}</span>
+                          <span className="text-slate-600 ml-1.5">({m.provider})</span>
+                        </button>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function ModelRegistryTab() {
+  const [enabledModels, setEnabledModels] = useState<Record<string, boolean>>({});
+  const [apiKeys, setApiKeys] = useState<Record<string, string>>({});
+  const [agentAssignments, setAgentAssignments] = useState<AgentModelAssignment[]>(INITIAL_AGENT_MODELS);
+
+  // Load from localStorage on mount
+  useEffect(() => {
+    try {
+      const storedKeys = localStorage.getItem("clawdbot-model-api-keys");
+      if (storedKeys) setApiKeys(JSON.parse(storedKeys));
+      const storedEnabled = localStorage.getItem("clawdbot-model-enabled");
+      if (storedEnabled) setEnabledModels(JSON.parse(storedEnabled));
+      const storedAssignments = localStorage.getItem("clawdbot-agent-models");
+      if (storedAssignments) setAgentAssignments(JSON.parse(storedAssignments));
+    } catch {
+      // Ignore parse errors
+    }
+  }, []);
+
+  function handleToggleModel(providerId: string, modelId: string) {
+    setEnabledModels((prev) => {
+      const key = `${providerId}:${modelId}`;
+      const next = { ...prev, [key]: prev[key] === false ? true : false };
+      try { localStorage.setItem("clawdbot-model-enabled", JSON.stringify(next)); } catch { /* */ }
+      return next;
+    });
+  }
+
+  function handleSaveApiKey(providerId: string, key: string) {
+    setApiKeys((prev) => {
+      const next = { ...prev, [providerId]: key };
+      try { localStorage.setItem("clawdbot-model-api-keys", JSON.stringify(next)); } catch { /* */ }
+      return next;
+    });
+  }
+
+  function handleChangeModel(agentName: string, modelName: string, providerName: string) {
+    setAgentAssignments((prev) => {
+      const next = prev.map((a) =>
+        a.agent === agentName ? { ...a, model: modelName, provider: providerName } : a
+      );
+      try { localStorage.setItem("clawdbot-agent-models", JSON.stringify(next)); } catch { /* */ }
+      return next;
+    });
+  }
+
+  // Compute available models for dropdown (connected providers only)
+  const availableModels: { name: string; provider: string }[] = [];
+  for (const p of PROVIDERS) {
+    const isAvailable = p.status === "connected" || (apiKeys[p.id] && apiKeys[p.id].length > 0);
+    if (isAvailable) {
+      for (const m of p.models) {
+        if (enabledModels[`${p.id}:${m.id}`] !== false) {
+          availableModels.push({ name: m.name, provider: p.name });
+        }
+      }
+    }
+  }
+
+  // Count stats
+  const connectedProviders = PROVIDERS.filter(
+    (p) => p.status === "connected" || (apiKeys[p.id] && apiKeys[p.id].length > 0)
+  ).length;
+  const totalModels = PROVIDERS.reduce((sum, p) => sum + p.models.length, 0);
+  const activeModels = availableModels.length;
+
+  return (
+    <div className="space-y-6">
+      {/* Summary row */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <SummaryCard
+          icon={<Plug className="w-4 h-4" strokeWidth={1.5} />}
+          iconColor="text-violet-400"
+          label="Providers"
+          value={`${connectedProviders} / ${PROVIDERS.length}`}
+          sub="connected"
+        />
+        <SummaryCard
+          icon={<Cpu className="w-4 h-4" strokeWidth={1.5} />}
+          iconColor="text-teal-400"
+          label="Models Available"
+          value={String(activeModels)}
+          sub={`of ${totalModels} total`}
+        />
+        <SummaryCard
+          icon={<Activity className="w-4 h-4" strokeWidth={1.5} />}
+          iconColor="text-emerald-400"
+          label="Agents Configured"
+          value={String(agentAssignments.length)}
+          sub="model assignments"
+        />
+        <SummaryCard
+          icon={<Shield className="w-4 h-4" strokeWidth={1.5} />}
+          iconColor="text-amber-400"
+          label="Primary Provider"
+          value="Anthropic"
+          sub="Claude Max subscription"
+        />
+      </div>
+
+      {/* Provider Cards */}
+      <div>
+        <div className="flex items-center gap-2 mb-4">
+          <Key className="w-4 h-4 text-violet-400" strokeWidth={1.5} />
+          <h2 className="text-sm font-semibold text-slate-200">Model Providers</h2>
+        </div>
+        <div className="grid gap-4 md:grid-cols-2">
+          {PROVIDERS.map((p) => (
+            <ProviderCard
+              key={p.id}
+              provider={p}
+              agentAssignments={agentAssignments}
+              enabledModels={enabledModels}
+              onToggleModel={handleToggleModel}
+              apiKeys={apiKeys}
+              onSaveApiKey={handleSaveApiKey}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Agent assignment table */}
+      <AgentModelTable
+        assignments={agentAssignments}
+        availableModels={availableModels}
+        onChangeModel={handleChangeModel}
+      />
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
 /*  Main Page                                                          */
 /* ------------------------------------------------------------------ */
 
 export default function FleetPage() {
+  const [activeTab, setActiveTab] = useState<"usage" | "models">("usage");
   const [data, setData] = useState<FleetData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -735,6 +1386,38 @@ export default function FleetPage() {
         </div>
       </div>
 
+      {/* Tab Bar */}
+      <div className="flex gap-0 border-b border-slate-800">
+        <button
+          onClick={() => setActiveTab("usage")}
+          className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px ${
+            activeTab === "usage"
+              ? "border-violet-500 text-slate-100"
+              : "border-transparent text-slate-500 hover:text-slate-300"
+          }`}
+        >
+          <BarChart3 className="w-4 h-4" strokeWidth={1.5} />
+          Usage
+        </button>
+        <button
+          onClick={() => setActiveTab("models")}
+          className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px ${
+            activeTab === "models"
+              ? "border-violet-500 text-slate-100"
+              : "border-transparent text-slate-500 hover:text-slate-300"
+          }`}
+        >
+          <Plug className="w-4 h-4" strokeWidth={1.5} />
+          Models
+        </button>
+      </div>
+
+      {/* Models Tab */}
+      {activeTab === "models" && <ModelRegistryTab />}
+
+      {/* Usage Tab */}
+      {activeTab === "usage" && <>
+
       {/* Summary Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <SummaryCard
@@ -820,6 +1503,8 @@ export default function FleetPage() {
           refresh
         </button>
       </div>
+
+      </>}
     </div>
   );
 }

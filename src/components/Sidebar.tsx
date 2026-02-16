@@ -17,14 +17,12 @@ import {
   Lock,
   Network,
   Cpu,
-  FolderCode,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 const navItems = [
   { href: "/dashboard", icon: Sunrise, label: "Dashboard" },
   { href: "/org-chart", icon: Network, label: "Org Chart" },
-  { href: "/workspaces", icon: FolderCode, label: "Workspaces" },
   { href: "/fleet", icon: Cpu, label: "Fleet" },
   { href: "/standups", icon: MessageSquare, label: "Standups" },
   { href: "/trading", icon: TrendingUp, label: "Finance" },

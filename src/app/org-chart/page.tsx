@@ -107,8 +107,9 @@ const ID_TO_DIR: Record<string, string> = {
   coo: "theo",
   cmo: "muse",
   cro: "venture",
-  "the-pit": "pit",
-  // All others use the same name: forge, pixel, sentinel, scriptbot, echo, builder, scout
+  nexus: "forge",
+  ticker: "pit",
+  // All others use the same name: pixel, sentinel, scriptbot, echo, builder, scout
 };
 
 function agentIdToDir(id: string): string {
@@ -650,10 +651,10 @@ function getDefaultAgents(): Record<string, AgentState> {
       id: "cto", name: "Atlas", title: "CTO", emoji: "🗺️",
       model: "Claude Sonnet 4", status: "active", department: "Engineering",
       description: "Owns all code and infrastructure.",
-      reportsTo: "coo", directReports: ["forge", "pixel", "sentinel"],
+      reportsTo: "coo", directReports: ["nexus", "pixel", "sentinel"],
     },
-    forge: {
-      id: "forge", name: "Forge", title: "Backend Lead", emoji: "🔨",
+    nexus: {
+      id: "nexus", name: "Nexus", title: "Backend Lead", emoji: "🔗",
       model: "Sonnet 4", status: "active", department: "Engineering",
       description: "APIs, databases, security",
       reportsTo: "cto", directReports: [],
@@ -692,7 +693,7 @@ function getDefaultAgents(): Record<string, AgentState> {
       id: "cro", name: "Venture", title: "CRO", emoji: "💰",
       model: "Claude Sonnet 4", status: "active", department: "Revenue",
       description: "Growth strategy, monetization.",
-      reportsTo: "coo", directReports: ["builder", "scout", "the-pit"],
+      reportsTo: "coo", directReports: ["builder", "scout", "ticker"],
     },
     builder: {
       id: "builder", name: "Builder", title: "Products Lead", emoji: "🏗️",
@@ -706,8 +707,8 @@ function getDefaultAgents(): Record<string, AgentState> {
       description: "User acquisition, community, analytics",
       reportsTo: "cro", directReports: [],
     },
-    "the-pit": {
-      id: "the-pit", name: "The Pit", title: "Trading Lead", emoji: "📈",
+    ticker: {
+      id: "ticker", name: "Ticker", title: "Trading Lead", emoji: "📊",
       model: "Sonnet 4", status: "active", department: "Revenue",
       description: "MRE pipeline, nightly optimization, signals",
       reportsTo: "cro", directReports: [],
@@ -733,14 +734,14 @@ function getAgentIcon(agent: AgentState, isCLevel: boolean): ReactNode {
     cto: <Shield className={iconClass} />,
     cmo: <Palette className={iconClass} />,
     cro: <DollarSign className={iconClass} />,
-    forge: <Code className={iconClass} />,
+    nexus: <Code className={iconClass} />,
     pixel: <Layout className={iconClass} />,
     sentinel: <TestTube className={iconClass} />,
     scriptbot: <FileText className={iconClass} />,
     echo: <Share2 className={iconClass} />,
     builder: <Rocket className={iconClass} />,
     scout: <Search className={iconClass} />,
-    "the-pit": <BarChart3 className={iconClass} />,
+    ticker: <BarChart3 className={iconClass} />,
   };
 
   return iconMap[agent.id] || <Bot className={iconClass} />;
@@ -1378,18 +1379,38 @@ function DesktopTree({ agents, selectedId, onSelect }: { agents: Record<string, 
         </div>
       )}
 
-      {/* Team leads (children of C-levels) */}
+      {/* Team leads (children of C-levels) — grouped under column headers */}
       {cLevelNodes.length > 0 && (
         <div className="grid gap-6 relative z-10" style={{ gridTemplateColumns: `repeat(${cLevelNodes.length}, 1fr)` }}>
-          {cLevelNodes.map(node => (
-            <div key={node.agent.id} className="space-y-3">
-              {node.children.map(leaf => (
-                <div key={leaf.agent.id} data-node={leaf.agent.id}>
-                  <TeamLeadCard agent={leaf.agent} selected={selectedId === leaf.agent.id} onClick={() => onSelect(leaf.agent.id)} />
+          {cLevelNodes.map(node => {
+            const colors = getAgentColors(node.agent);
+            const deptLabel = node.agent.department === "Engineering" ? "Engineering"
+              : node.agent.department === "Marketing" ? "Marketing"
+              : node.agent.department === "Revenue" ? "Revenue"
+              : node.agent.department;
+            return (
+              <div key={node.agent.id} className={`rounded-xl border border-slate-800/40 bg-slate-950/30 p-3 space-y-3`}>
+                {/* Column header label */}
+                <div className="flex items-center gap-2 px-2 pb-2 border-b border-slate-800/40">
+                  <div className={`w-1.5 h-1.5 rounded-full ${colors.accent.replace("text-", "bg-")}`} />
+                  <span className={`text-[11px] font-semibold uppercase tracking-wider ${colors.accent} opacity-70`}>
+                    {deptLabel}
+                  </span>
+                  <span className="text-[10px] text-slate-600">
+                    {node.children.length} agent{node.children.length !== 1 ? "s" : ""}
+                  </span>
                 </div>
-              ))}
-            </div>
-          ))}
+                {node.children.map(leaf => (
+                  <div key={leaf.agent.id} data-node={leaf.agent.id}>
+                    <TeamLeadCard agent={leaf.agent} selected={selectedId === leaf.agent.id} onClick={() => onSelect(leaf.agent.id)} />
+                  </div>
+                ))}
+                {node.children.length === 0 && (
+                  <div className="text-xs text-slate-600 italic px-2 py-4 text-center">No team leads</div>
+                )}
+              </div>
+            );
+          })}
         </div>
       )}
     </div>
@@ -3568,7 +3589,7 @@ const ROUTES = [
   { task: "Build / Fix code", agents: ["Atlas", "CTO"], color: "text-cyan-400" },
   { task: "Write content", agents: ["Muse", "ScriptBot"], color: "text-rose-400" },
   { task: "Post social", agents: ["Muse", "Echo"], color: "text-rose-400" },
-  { task: "Trading / optimize", agents: ["Venture", "The Pit"], color: "text-emerald-400" },
+  { task: "Trading / optimize", agents: ["Venture", "Ticker"], color: "text-emerald-400" },
   { task: "Test / audit", agents: ["Atlas", "Sentinel"], color: "text-cyan-400" },
   { task: "Design / UI", agents: ["Atlas", "Pixel"], color: "text-cyan-400" },
   { task: "Research / question", agents: ["Theo (direct)"], color: "text-violet-400" },
@@ -3619,6 +3640,166 @@ function ModelStrategy() {
           <p className="text-[10px] text-slate-600 mt-1 text-right">Relative cost</p>
         </div>
       ))}
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Protocols Section — Multi-agent team blueprints
+   ═══════════════════════════════════════════════════════════════ */
+
+interface ProtocolData {
+  name: string;
+  icon: string;
+  description: string;
+  countLabel: string;
+  activates: string[];
+  roles: string[];
+  isStages?: boolean;
+}
+
+const PROTOCOLS: ProtocolData[] = [
+  {
+    name: "The Forge",
+    icon: "🔨",
+    description: "Engineering Sprint Protocol",
+    countLabel: "13 roles",
+    activates: ["Atlas (CTO)", "Nexus (Backend)", "Pixel (Frontend)", "Sentinel (QA)"],
+    roles: ["PM", "Architect", "UI/UX Designer", "Frontend Dev", "Backend Dev", "DevOps", "Security Engineer", "Performance Engineer", "QA Auth", "QA Backend", "QA Frontend", "QA Integration", "QA DevOps", "Tech Writer", "Scribe", "Integrator", "Devil's Advocate"],
+  },
+  {
+    name: "The Studio",
+    icon: "🎨",
+    description: "Marketing & Content Protocol",
+    countLabel: "14 roles",
+    activates: ["Muse (CMO)", "ScriptBot (Content)", "Echo (Social)"],
+    roles: ["CMO", "Brand Strategist", "Creative Director", "Show Runner", "ScriptBot", "Copywriter", "Visual Designer", "Motion Designer", "Distribution Lead", "Analytics Lead", "Community Manager", "Newsletter Editor", "SEO Specialist", "Brand DA"],
+  },
+  {
+    name: "The Pit",
+    icon: "🏛️",
+    description: "Trading Team Protocol",
+    countLabel: "11 roles",
+    activates: ["Venture (CRO)", "Ticker (Trading)"],
+    roles: ["Strategist", "Quant Researcher", "Data Engineer", "Algorithm Dev", "Risk Manager", "Backtester", "Portfolio Manager", "Market Monitor", "Infrastructure Dev", "Compliance Auditor", "Performance Analyst"],
+  },
+  {
+    name: "The Tower",
+    icon: "🗼",
+    description: "Deployment Pipeline",
+    countLabel: "6 stages",
+    activates: ["Any agent pushing to hub"],
+    roles: ["Pre-Flight", "Commit", "Push", "Vercel Verify", "Live Verify", "Change QA"],
+    isStages: true,
+  },
+  {
+    name: "The Compass",
+    icon: "🧭",
+    description: "Relationship Advisory",
+    countLabel: "5 roles",
+    activates: ["Personal advisory team"],
+    roles: ["Pattern Analyst", "Daily Nudge", "Conflict Coach", "Routine Breaker", "Integration Advisor"],
+  },
+];
+
+function ProtocolCard({ protocol }: { protocol: ProtocolData }) {
+  const [expanded, setExpanded] = useState(false);
+
+  return (
+    <div className="group relative rounded-xl overflow-hidden transition-all duration-200 hover:scale-[1.01]">
+      {/* Gradient border effect */}
+      <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-indigo-500/20 via-slate-600/10 to-violet-500/20 p-px">
+        <div className="w-full h-full rounded-xl bg-slate-900/95" />
+      </div>
+
+      <div className="relative">
+        {/* Main card content */}
+        <button
+          onClick={() => setExpanded(!expanded)}
+          className="w-full text-left px-5 py-4 cursor-pointer"
+        >
+          <div className="flex items-start gap-3">
+            <span className="text-2xl flex-shrink-0 mt-0.5">{protocol.icon}</span>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-1">
+                <h3 className="text-sm font-bold text-slate-100">{protocol.name}</h3>
+                <span className="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-indigo-900/40 text-indigo-300 border border-indigo-700/30">
+                  {protocol.countLabel}
+                </span>
+              </div>
+              <p className="text-xs text-slate-400 mb-2">{protocol.description}</p>
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">Activates:</span>
+                {protocol.activates.map((a, i) => (
+                  <span key={i} className="px-1.5 py-0.5 rounded text-[10px] bg-slate-800/80 text-slate-300 border border-slate-700/50">
+                    {a}
+                  </span>
+                ))}
+              </div>
+            </div>
+            <div className="flex-shrink-0 mt-1">
+              {expanded ? (
+                <ChevronDown className="w-4 h-4 text-slate-500" />
+              ) : (
+                <ChevronRight className="w-4 h-4 text-slate-500" />
+              )}
+            </div>
+          </div>
+        </button>
+
+        {/* Expanded role list */}
+        {expanded && (
+          <div className="px-5 pb-4 pt-1 border-t border-slate-800/40 mx-3">
+            <p className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider mb-2 mt-2">
+              {protocol.isStages ? "Stages" : "Roles"}
+            </p>
+            {protocol.isStages ? (
+              <div className="flex flex-wrap items-center gap-1">
+                {protocol.roles.map((role, i) => (
+                  <span key={i} className="flex items-center gap-1">
+                    <span className="px-2 py-1 rounded-lg text-xs bg-indigo-950/40 text-indigo-300 border border-indigo-800/30 font-medium">
+                      {role}
+                    </span>
+                    {i < protocol.roles.length - 1 && (
+                      <ArrowRight className="w-3 h-3 text-slate-600" />
+                    )}
+                  </span>
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-wrap gap-1.5">
+                {protocol.roles.map((role, i) => (
+                  <span key={i} className="px-2 py-1 rounded-lg text-[11px] bg-slate-800/60 text-slate-300 border border-slate-700/40">
+                    {role}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function ProtocolsSection() {
+  return (
+    <div className="space-y-4 mt-8">
+      <div className="flex items-center gap-3 mb-2">
+        <div className="h-px flex-1 bg-gradient-to-r from-transparent via-slate-700 to-transparent" />
+        <h2 className="text-lg font-bold text-slate-300 tracking-tight whitespace-nowrap">
+          ⚡ Protocols
+        </h2>
+        <div className="h-px flex-1 bg-gradient-to-r from-transparent via-slate-700 to-transparent" />
+      </div>
+      <p className="text-sm text-slate-500 text-center -mt-2 mb-4">
+        Multi-agent team blueprints activated on demand
+      </p>
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        {PROTOCOLS.map(protocol => (
+          <ProtocolCard key={protocol.name} protocol={protocol} />
+        ))}
+      </div>
     </div>
   );
 }
@@ -3892,6 +4073,11 @@ export default function OrgChartPage() {
           onCancel={() => setShowAddModal(false)}
         />
       )}
+
+      {/* Protocols */}
+      <div className="max-w-6xl mx-auto">
+        <ProtocolsSection />
+      </div>
 
       {/* Playbook */}
       <div className="max-w-6xl mx-auto">

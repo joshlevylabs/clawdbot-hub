@@ -1,185 +1,123 @@
 {
-  "date": "2026-02-15",
+  "date": "2026-02-16",
   "time": "6:00 AM",
   "sections": {
     "prayer": {
-      "title": "\ud83d\udd4a\ufe0f Morning Prayer",
-      "date": "Sunday, February 15, 2026",
-      "hebrew_date": "17 Cheshvan",
-      "parsha": "Vayishlach",
-      "parsha_theme": "confronting fears, transformation, reconciliation",
-      "modeh_ani": "\u05de\u05d5\u05d3\u05d4 \u05d0\u05e0\u05d9 \u05dc\u05e4\u05e0\u05d9\u05da \u2014 I gratefully thank You, living and eternal King, for returning my soul within me with compassion \u2014 great is Your faithfulness.",
-      "blessing": "Blessed are You who raises the lowly \u2014 lift me to accomplish Your purposes.",
-      "psalm": "Psalm 16:8: \"I have set the Lord always before me; He is at my right hand, I will not be shaken.\"",
-      "proverb": "Proverbs 24:27: \"Prepare your work outside; get everything ready, then build your house.\"",
-      "intention": "Give me courage to take the risks You've called me to take.",
-      "closing": "Go in peace. Build with purpose. Return with gratitude.",
-      "audio": "/audio/brief-2026-02-15-prayer.ogg"
+      "title": "🕊️ Morning Prayer",
+      "date": "Monday, February 16, 2026",
+      "hebrew_date": "18 Cheshvan",
+      "parsha": "Vayeshev",
+      "parsha_theme": "setbacks as setups, patience, providence",
+      "modeh_ani": "מודה אני לפניך — I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
+      "blessing": "Blessed are You who guides the steps of man — direct my path today.",
+      "psalm": "Psalm 20:4: \"May He give you the desire of your heart and make all your plans succeed.\"",
+      "proverb": "Proverbs 11:1: \"Dishonest scales are an abomination to the Lord, but accurate weights are His delight.\"",
+      "intention": "Help me lead with integrity. Let my yes be yes and my no be no.",
+      "closing": "The Lord goes before you today. He will be with you; He will never leave you nor forsake you. Do not be afraid; do not be discouraged."
     },
     "weather": {
-      "title": "\u2600\ufe0f Weather \u2014 Temecula",
-      "temperature": "63\u00b0F",
-      "condition": "Mostly Cloudy",
-      "wind": "SW 5-10 mph, gusts to 20",
-      "summary": "Mostly cloudy today, high near 63. Rain and thunderstorms arriving Monday (90% chance, heavy at times). Wet week ahead through Wednesday. Clears by Friday.",
-      "audio": "/audio/brief-2026-02-15-weather.ogg"
+      "title": "🌧️ Weather — Temecula",
+      "temperature": "57°F",
+      "condition": "Showers, heavy at times",
+      "detail": "100% chance of rain today. South winds 10-20 mph, gusts to 35 mph. Tonight: showers and possible thunderstorms, low 43°F. Tuesday: more showers likely. Wednesday clears partially. Weekend looks sunny with highs near 64-70°F.",
+      "advisory": "Washington's Birthday storm — heavy rain all day. Keep an umbrella handy."
     },
     "calendar": {
-      "title": "\ud83d\udcc5 Calendar",
-      "items": [
-        "No events today (Sunday). \ud83c\udf89 The Builder's Frequency launch day!"
-      ],
-      "note": "\u26a0\ufe0f OAuth expired for joshua.seth.levy@gmail.com, farbisimo@gmail.com, and josh@thelyceum.io \u2014 re-auth needed.",
-      "audio": "/audio/brief-2026-02-15-calendar.ogg"
+      "title": "📅 Calendar",
+      "today": "Presidents' Day (Washington's Birthday) — Federal holiday. Markets closed.",
+      "week": "Calendar sync unavailable this morning. Check Google Calendar for this week's events.",
+      "month": "Calendar sync unavailable this morning."
     },
     "email": {
-      "title": "\ud83d\udce7 Email Highlights",
-      "needs_attention": [
-        {
-          "from": "Discord (crinacle)",
-          "subject": "crinacle mentioned you in Hangout.Audio \u00d7 CrinEar",
-          "note": "Check Discord notification"
-        },
-        {
-          "from": "LinkedIn",
-          "subject": "You have 1 new message",
-          "note": "Unread DM"
-        }
-      ],
-      "dev_work": [],
-      "good_news": [
-        {
-          "from": "OpusClip",
-          "subject": "Export your clips to XML with ease",
-          "note": "New feature \u2014 useful for podcast clips"
-        }
-      ],
-      "audio": "/audio/brief-2026-02-15-email.ogg"
+      "title": "📧 Email",
+      "summary": "Email sync unavailable this morning. Check inboxes manually."
     },
     "mre": {
-      "title": "\ud83d\udcca MRE Trading",
+      "title": "📊 MRE Trading",
       "fear_greed": 36,
       "fear_greed_rating": "fear",
       "regime": "sideways",
+      "regime_detail": "SPY sideways (3 days), QQQ sideways (10 days). Momentum weakening. Both below EMA-20 and EMA-50 but above EMA-200.",
       "todays_plays": [],
+      "sector_strength": [
+        {"sector": "Energy (XLE)", "regime": "bull", "momentum": "+14.0%", "confidence": 85},
+        {"sector": "Materials (XLB)", "regime": "bull", "momentum": "+9.5%", "confidence": 70},
+        {"sector": "Commodities (GLD)", "regime": "bull", "momentum": "+9.8%", "confidence": 85},
+        {"sector": "Gold Miners (GDX)", "regime": "bull", "momentum": "+6.9%", "confidence": 85},
+        {"sector": "Japan (EWJ)", "regime": "bull", "momentum": "+9.8%", "confidence": 85},
+        {"sector": "EM (EEM)", "regime": "bull", "momentum": "+5.6%", "confidence": 85}
+      ],
+      "bear_sectors": [
+        {"sector": "Tech (XLK)", "regime": "bear", "momentum": "-4.2%"},
+        {"sector": "Financials (XLF)", "regime": "bear", "momentum": "-5.1%"},
+        {"sector": "Crypto (BITO)", "regime": "bear", "momentum": "-28.3%"},
+        {"sector": "India (INDA)", "regime": "bear", "momentum": "flat"}
+      ],
       "pending_triggers": [],
-      "thesis": "All 24 assets on HOLD. Fear at 36, sideways regime. Models diverge \u2014 F&G says fear while cycle says mid-bull. Reduce position sizes, focus on range-bound plays. No new entries until direction clears.",
-      "portfolio": {
-        "capital_deployed_pct": 72.3,
-        "available_cash": 27753.63,
-        "total_equity": 100083.69
-      },
-      "breadth": {
-        "signal": "STRONG_BULL",
-        "trend": "expanding",
-        "note": "RSP outperforming SPY \u2014 broad participation despite fear"
-      },
-      "pulse_outlook": "NEUTRAL",
-      "pulse_summary": "Mid-cycle bull run with fearful sentiment. Regime is sideways with no clear rotation leader.",
-      "audio": "/audio/brief-2026-02-15-mre.ogg"
+      "thesis": "Fear at 36, sideways regime. No BUY signals today — MRE waiting for deeper fear (<15). Rotation into commodities, energy, and international continues. Tech and financials weakening. Markets closed today (Presidents' Day)."
     },
     "family": {
-      "title": "\ud83d\udc8d Family Focus",
-      "compass": {
-        "power": 1.1,
-        "safety": 0.8,
-        "quadrant": "Secure Leadership Partnership",
-        "status": "Outside ideal zone"
-      },
+      "title": "💛 Family Focus",
       "temperature": "critical",
       "trend": "urgent",
+      "ratio": "1.2 (barely positive)",
+      "potency_action": "Give her space if she needs it, then come back with a genuine apology",
       "recommendations": [
         "PRIORITY: Focus on repair. Acknowledge recent conflicts without defending.",
         "Increase acts of service dramatically this week.",
         "Create space for her to express frustrations without fixing."
       ],
-      "note": "\u26a0\ufe0f Safety at 0.8 (ideal is 3-5). 7-day trend: Safety improving (+2.0) but Power declining (-1.0). Today is Sunday \u2014 protected family time. Be fully present."
+      "reminder": "Jones turns 3 on Feb 22 — 6 days away! 🎂"
     },
     "news": {
-      "title": "\ud83c\udf0d World News",
-      "subsections": {
-        "israel": {
-          "title": "\ud83c\uddee\ud83c\uddf1 Israel",
-          "items": [
-            {
-              "headline": "Haredi mob attacks 2 female IDF soldiers in Bnei Brak \u2014 12 arrested, police car overturned, motorcycle torched. Netanyahu, Katz, Deri, and ex-Chief Rabbi Yosef all condemn. Deri: 'Contrary to the way of Torah.'"
-            },
-            {
-              "headline": "Netanyahu's military aide testifies to police over allegations against PM's chief of staff."
-            },
-            {
-              "headline": "Israel's West Bank sovereignty plans draw global backlash from US, UK, EU and Arab nations. Israeli ministers say plans will 'kill the idea of a Palestinian state.'"
-            },
-            {
-              "headline": "US prepping to send 2nd carrier strike group to Mideast. Vance: 'If Iranian people want to overthrow the regime, that's up to them.'"
-            }
-          ]
+      "title": "🌍 World News",
+      "stories": [
+        {
+          "headline": "Israel economy rebounds — 3.1% growth in 2025",
+          "detail": "Official data shows Israel GDP grew 3.1% in 2025, rebounding from 1% in 2024 despite ongoing Gaza operations. Resilient economy."
         },
-        "us": {
-          "title": "\ud83c\uddfa\ud83c\uddf8 United States",
-          "items": [
-            {
-              "headline": "US military used Anthropic's Claude AI in Venezuela raid via Palantir partnership \u2014 first confirmed use of frontier AI in military operation."
-            },
-            {
-              "headline": "Republican split on Israel widens: 'America First' faction growing more skeptical of US-Israel relationship, especially among younger conservatives."
-            },
-            {
-              "headline": "US hoping to announce $1.25B in donations from UAE, Qatar, and Kuwait."
-            }
-          ]
+        {
+          "headline": "Israel cabinet tightens West Bank control",
+          "detail": "Security cabinet approved measures to increase Israeli sovereignty over West Bank, ease settler land purchases. Palestinians call it 'de facto annexation.'"
         },
-        "world": {
-          "title": "\ud83c\udf10 Global",
-          "items": [
-            {
-              "headline": "Hezbollah, supposedly defeated, is actively rebuilding in southern Lebanon."
-            },
-            {
-              "headline": "12 Dem senators urge Rubio to halt deportation flights to Iran."
-            }
-          ]
+        {
+          "headline": "IRGC starts naval drills in Strait of Hormuz",
+          "detail": "Iran's Revolutionary Guard conducting naval exercises ahead of second round of US-Iran talks. Pressure tactic."
+        },
+        {
+          "headline": "Netanyahu: Trump determined to exhaust deal options with Iran before force",
+          "detail": "At Conference of Presidents, Netanyahu says Trump learned lessons from June 2025 war, believes Iran won't miss deal opportunity."
+        },
+        {
+          "headline": "Israeli elections heating up",
+          "detail": "2026 legislative election taking shape — Eisenkot potentially joining Yesh Atid or Bennett's party. Political realignment underway."
         }
-      },
-      "audio": "/audio/brief-2026-02-15-news.ogg"
+      ]
     },
-    "ai": {
-      "title": "\ud83e\udd16 AI & Tech",
-      "items": [
+    "ai_news": {
+      "title": "🤖 AI News",
+      "stories": [
         {
-          "headline": "Anthropic closes record $30B funding round. Annualized revenue surging.",
-          "source": "Yahoo Finance"
+          "headline": "Anthropic raises $30B at $380B valuation",
+          "detail": "Second-largest venture funding deal of all time. Claude maker continues massive fundraising as AI competition intensifies."
         },
         {
-          "headline": "Claude Opus 4.6 launched \u2014 can scrutinize company data, regulatory filings, and market info for detailed financial analyses.",
-          "source": "Bloomberg"
+          "headline": "Coinbase launches 'Agentic Wallets'",
+          "detail": "AI agents can now autonomously spend, earn, and trade with programmable guardrails. Financial autonomy for AI agents is here."
         },
         {
-          "headline": "Claude Sonnet 4.5 sets new benchmark records in coding, reasoning, and computer use. Agent SDK released for building capable agents.",
-          "source": "Anthropic"
+          "headline": "Humans& raises $480M seed round",
+          "detail": "Largest seed in history. AI lab focused on human-centered AI and relationships. Market for mega-rounds continues."
         },
         {
-          "headline": "Anthropic partners with CodePath to bring Claude to computer science education.",
-          "source": "Anthropic"
+          "headline": "Gemini Deep Think for scientific research",
+          "detail": "Google's Gemini Deep Think solving professional research problems across math, physics, and CS. Reasoning models maturing."
         },
         {
-          "headline": "MCP (Model Context Protocol) donated to Linux Foundation's Agentic AI Foundation. OpenAI, Microsoft, Google all adopting. 2026 = year agentic workflows go from demos to daily practice.",
-          "source": "TechCrunch"
-        },
-        {
-          "headline": "Apptronik raises $520M to scale humanoid robots for logistics. Inertia Enterprises raises $450M for laser-driven fusion power.",
-          "source": "TechStartups"
-        },
-        {
-          "headline": "New Yorker profile: 'What Is Claude? Anthropic Doesn't Know, Either' \u2014 deep dive into Claude's identity and Anthropic's culture.",
-          "source": "The New Yorker"
+          "headline": "AI industry shifts to monetization",
+          "detail": "OpenAI adds ads to ChatGPT. Industry moving from model releases to sustainable business models. Enterprise integration accelerating."
         }
-      ],
-      "audio": "/audio/brief-2026-02-15-ai.ogg"
-    },
-    "launch": {
-      "title": "\ud83d\ude80 LAUNCH DAY",
-      "message": "The Builder's Frequency launches today, February 15, 2026. This is the day. Everything you've been building toward. Vayishlach \u2014 confronting fears, transformation. Jacob wrestled and was renamed Israel. Today you step out."
+      ]
     }
   }
 }

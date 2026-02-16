@@ -1,6 +1,6 @@
 {
   "date": "2026-02-16",
-  "generatedAt": "2026-02-16T15:24:29.039680",
+  "generatedAt": "2026-02-16T15:34:00.598714",
   "topic": "Daily Standup \u2014 Monday Feb 16",
   "status": "completed",
   "participants": [
@@ -13,11 +13,11 @@
       "role": "CTO"
     },
     {
-      "name": "Venture",
+      "name": "Dave",
       "role": "CRO"
     },
     {
-      "name": "Muse",
+      "name": "Alex",
       "role": "CMO"
     }
   ],
@@ -26,8 +26,8 @@
     "cto": {
       "agent": "Atlas",
       "highlights": [
-        "214 commits this week across both repos",
-        "Hub latest: cb4ac65 data: fleet usage update",
+        "216 commits this week across both repos",
+        "Hub latest: cfcac42 data: fleet usage update",
         "Build status: healthy"
       ],
       "concerns": [
@@ -37,7 +37,7 @@
         "83 TODOs/FIXMEs in codebase"
       ],
       "metrics": {
-        "recentCommits": 214,
+        "recentCommits": 216,
         "openIssues": 2,
         "buildHealthy": true,
         "todosFixmes": 83,
@@ -46,7 +46,7 @@
       }
     },
     "cro": {
-      "agent": "Venture",
+      "agent": "Dave",
       "highlights": [
         "Paper portfolio equity: $100,000",
         "Fear & Greed Index: 36 (fear)",
@@ -68,7 +68,7 @@
       }
     },
     "cmo": {
-      "agent": "Muse",
+      "agent": "Alex",
       "highlights": [
         "3 podcast episodes produced",
         "1 episode(s) on website",
@@ -96,15 +96,15 @@
     {
       "speaker": "Atlas",
       "role": "CTO",
-      "message": "We had 214 commits across both repos this week. Hub build is healthy. A few things to flag: uncommitted changes: hub (1 files), monorepo (16 files). Also, 1 critical sync gaps in ecosystem-map."
+      "message": "We had 216 commits across both repos this week. Hub build is healthy. A few things to flag: uncommitted changes: hub (1 files), monorepo (16 files). Also, 1 critical sync gaps in ecosystem-map."
     },
     {
-      "speaker": "Venture",
+      "speaker": "Dave",
       "role": "CRO",
       "message": "Paper portfolio is at $100,000. Fear & Greed is at 36, rated fear. SPY is in a sideways regime. No active BUY signals. 24 assets in HOLD. Market's in wait mode. Crypto positions active: BTC/USD, ETH/USD."
     },
     {
-      "speaker": "Muse",
+      "speaker": "Alex",
       "role": "CMO",
       "message": "We have 3 podcast episodes produced. Only 1 synced to the website though \u2014 we need to get the rest up on joshlevylabs.com. 1 blog post on /writing. We really need to publish more written content to build SEO and credibility. Last content was published 2026-02-12."
     },
@@ -124,7 +124,7 @@
     {
       "text": "Write next blog post for /writing",
       "priority": "medium",
-      "assignee": "Muse",
+      "assignee": "Alex",
       "completed": false
     },
     {

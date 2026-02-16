@@ -77,8 +77,8 @@ interface StandupIndex {
 const agentColors: Record<string, { bg: string; text: string; border: string }> = {
   Theo: { bg: "bg-violet-500/20", text: "text-violet-400", border: "border-violet-500/30" },
   Atlas: { bg: "bg-blue-500/20", text: "text-blue-400", border: "border-blue-500/30" },
-  Venture: { bg: "bg-emerald-500/20", text: "text-emerald-400", border: "border-emerald-500/30" },
-  Muse: { bg: "bg-amber-500/20", text: "text-amber-400", border: "border-amber-500/30" },
+  Dave: { bg: "bg-emerald-500/20", text: "text-emerald-400", border: "border-emerald-500/30" },
+  Alex: { bg: "bg-amber-500/20", text: "text-amber-400", border: "border-amber-500/30" },
 };
 
 const roleIcons: Record<string, string> = {

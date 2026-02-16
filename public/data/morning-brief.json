@@ -3,61 +3,112 @@
   "time": "6:00 AM",
   "sections": {
     "prayer": {
-      "title": "🕊️ Morning Prayer",
+      "title": "\ud83d\udd4a\ufe0f Morning Prayer",
       "date": "Monday, February 16, 2026",
       "hebrew_date": "18 Cheshvan",
       "parsha": "Vayeshev",
       "parsha_theme": "setbacks as setups, patience, providence",
-      "modeh_ani": "מודה אני לפניך — I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
-      "blessing": "Blessed are You who guides the steps of man — direct my path today.",
+      "modeh_ani": "\u05de\u05d5\u05d3\u05d4 \u05d0\u05e0\u05d9 \u05dc\u05e4\u05e0\u05d9\u05da \u2014 I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
+      "blessing": "Blessed are You who guides the steps of man \u2014 direct my path today.",
       "psalm": "Psalm 20:4: \"May He give you the desire of your heart and make all your plans succeed.\"",
       "proverb": "Proverbs 11:1: \"Dishonest scales are an abomination to the Lord, but accurate weights are His delight.\"",
       "intention": "Help me lead with integrity. Let my yes be yes and my no be no.",
-      "closing": "The Lord goes before you today. He will be with you; He will never leave you nor forsake you. Do not be afraid; do not be discouraged."
+      "closing": "The Lord goes before you today. He will be with you; He will never leave you nor forsake you. Do not be afraid; do not be discouraged.",
+      "audio": "/audio/brief-2026-02-16-prayer.ogg"
     },
     "weather": {
-      "title": "🌧️ Weather — Temecula",
-      "temperature": "57°F",
+      "title": "\ud83c\udf27\ufe0f Weather \u2014 Temecula",
+      "temperature": "57\u00b0F",
       "condition": "Showers, heavy at times",
-      "detail": "100% chance of rain today. South winds 10-20 mph, gusts to 35 mph. Tonight: showers and possible thunderstorms, low 43°F. Tuesday: more showers likely. Wednesday clears partially. Weekend looks sunny with highs near 64-70°F.",
-      "advisory": "Washington's Birthday storm — heavy rain all day. Keep an umbrella handy."
+      "detail": "100% chance of rain today. South winds 10-20 mph, gusts to 35 mph. Tonight: showers and possible thunderstorms, low 43\u00b0F. Tuesday: more showers likely. Wednesday clears partially. Weekend looks sunny with highs near 64-70\u00b0F.",
+      "advisory": "Washington's Birthday storm \u2014 heavy rain all day. Keep an umbrella handy.",
+      "audio": "/audio/brief-2026-02-16-weather.ogg"
     },
     "calendar": {
-      "title": "📅 Calendar",
-      "today": "Presidents' Day (Washington's Birthday) — Federal holiday. Markets closed.",
+      "title": "\ud83d\udcc5 Calendar",
+      "today": "Presidents' Day (Washington's Birthday) \u2014 Federal holiday. Markets closed.",
       "week": "Calendar sync unavailable this morning. Check Google Calendar for this week's events.",
-      "month": "Calendar sync unavailable this morning."
+      "month": "Calendar sync unavailable this morning.",
+      "audio": "/audio/brief-2026-02-16-calendar.ogg"
     },
     "email": {
-      "title": "📧 Email",
-      "summary": "Email sync unavailable this morning. Check inboxes manually."
+      "title": "\ud83d\udce7 Email",
+      "summary": "Email sync unavailable this morning. Check inboxes manually.",
+      "audio": "/audio/brief-2026-02-16-email.ogg"
     },
     "mre": {
-      "title": "📊 MRE Trading",
+      "title": "\ud83d\udcca MRE Trading",
       "fear_greed": 36,
       "fear_greed_rating": "fear",
       "regime": "sideways",
       "regime_detail": "SPY sideways (3 days), QQQ sideways (10 days). Momentum weakening. Both below EMA-20 and EMA-50 but above EMA-200.",
       "todays_plays": [],
       "sector_strength": [
-        {"sector": "Energy (XLE)", "regime": "bull", "momentum": "+14.0%", "confidence": 85},
-        {"sector": "Materials (XLB)", "regime": "bull", "momentum": "+9.5%", "confidence": 70},
-        {"sector": "Commodities (GLD)", "regime": "bull", "momentum": "+9.8%", "confidence": 85},
-        {"sector": "Gold Miners (GDX)", "regime": "bull", "momentum": "+6.9%", "confidence": 85},
-        {"sector": "Japan (EWJ)", "regime": "bull", "momentum": "+9.8%", "confidence": 85},
-        {"sector": "EM (EEM)", "regime": "bull", "momentum": "+5.6%", "confidence": 85}
+        {
+          "sector": "Energy (XLE)",
+          "regime": "bull",
+          "momentum": "+14.0%",
+          "confidence": 85
+        },
+        {
+          "sector": "Materials (XLB)",
+          "regime": "bull",
+          "momentum": "+9.5%",
+          "confidence": 70
+        },
+        {
+          "sector": "Commodities (GLD)",
+          "regime": "bull",
+          "momentum": "+9.8%",
+          "confidence": 85
+        },
+        {
+          "sector": "Gold Miners (GDX)",
+          "regime": "bull",
+          "momentum": "+6.9%",
+          "confidence": 85
+        },
+        {
+          "sector": "Japan (EWJ)",
+          "regime": "bull",
+          "momentum": "+9.8%",
+          "confidence": 85
+        },
+        {
+          "sector": "EM (EEM)",
+          "regime": "bull",
+          "momentum": "+5.6%",
+          "confidence": 85
+        }
       ],
       "bear_sectors": [
-        {"sector": "Tech (XLK)", "regime": "bear", "momentum": "-4.2%"},
-        {"sector": "Financials (XLF)", "regime": "bear", "momentum": "-5.1%"},
-        {"sector": "Crypto (BITO)", "regime": "bear", "momentum": "-28.3%"},
-        {"sector": "India (INDA)", "regime": "bear", "momentum": "flat"}
+        {
+          "sector": "Tech (XLK)",
+          "regime": "bear",
+          "momentum": "-4.2%"
+        },
+        {
+          "sector": "Financials (XLF)",
+          "regime": "bear",
+          "momentum": "-5.1%"
+        },
+        {
+          "sector": "Crypto (BITO)",
+          "regime": "bear",
+          "momentum": "-28.3%"
+        },
+        {
+          "sector": "India (INDA)",
+          "regime": "bear",
+          "momentum": "flat"
+        }
       ],
       "pending_triggers": [],
-      "thesis": "Fear at 36, sideways regime. No BUY signals today — MRE waiting for deeper fear (<15). Rotation into commodities, energy, and international continues. Tech and financials weakening. Markets closed today (Presidents' Day)."
+      "thesis": "Fear at 36, sideways regime. No BUY signals today \u2014 MRE waiting for deeper fear (<15). Rotation into commodities, energy, and international continues. Tech and financials weakening. Markets closed today (Presidents' Day).",
+      "audio": "/audio/brief-2026-02-16-mre.ogg"
     },
     "family": {
-      "title": "💛 Family Focus",
+      "title": "\ud83d\udc9b Family Focus",
       "temperature": "critical",
       "trend": "urgent",
       "ratio": "1.2 (barely positive)",
@@ -67,13 +118,13 @@
         "Increase acts of service dramatically this week.",
         "Create space for her to express frustrations without fixing."
       ],
-      "reminder": "Jones turns 3 on Feb 22 — 6 days away! 🎂"
+      "reminder": "Jones turns 3 on Feb 22 \u2014 6 days away! \ud83c\udf82"
     },
     "news": {
-      "title": "🌍 World News",
+      "title": "\ud83c\udf0d World News",
       "stories": [
         {
-          "headline": "Israel economy rebounds — 3.1% growth in 2025",
+          "headline": "Israel economy rebounds \u2014 3.1% growth in 2025",
           "detail": "Official data shows Israel GDP grew 3.1% in 2025, rebounding from 1% in 2024 despite ongoing Gaza operations. Resilient economy."
         },
         {
@@ -90,12 +141,13 @@
         },
         {
           "headline": "Israeli elections heating up",
-          "detail": "2026 legislative election taking shape — Eisenkot potentially joining Yesh Atid or Bennett's party. Political realignment underway."
+          "detail": "2026 legislative election taking shape \u2014 Eisenkot potentially joining Yesh Atid or Bennett's party. Political realignment underway."
         }
-      ]
+      ],
+      "audio": "/audio/brief-2026-02-16-news.ogg"
     },
     "ai_news": {
-      "title": "🤖 AI News",
+      "title": "\ud83e\udd16 AI News",
       "stories": [
         {
           "headline": "Anthropic raises $30B at $380B valuation",

@@ -6,11 +6,11 @@
     "quadrantName": "Authoritarian",
     "inIdealZone": false,
     "count": 1,
-    "calculatedAt": "2026-02-15T06:00:10.614403"
+    "calculatedAt": "2026-02-16T06:00:12.231951"
   },
   "trend": {
-    "power": 0.0,
-    "safety": 0.0
+    "power": -0.09,
+    "safety": -2.8
   },
   "recentCount": 1,
   "totalCount": 11,

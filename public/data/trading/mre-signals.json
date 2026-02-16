@@ -1,7 +1,7 @@
 {
-  "timestamp": "2026-02-15T03:30:29.019021",
-  "last_updated": "2026-02-15 03:30:29",
-  "last_updated_unix": 1771155029,
+  "timestamp": "2026-02-16T03:30:39.743808",
+  "last_updated": "2026-02-16T19:30:35Z",
+  "last_updated_unix": 1771270235,
   "fear_greed": {
     "current": 36.2658385093168,
     "rating": "fear",
@@ -11,11 +11,6 @@
     "is_extreme_greed": false,
     "source": "cnn",
     "history": [
-      {
-        "date": "2026-01-02",
-        "score": 85,
-        "vix": 14.51
-      },
       {
         "date": "2026-01-05",
         "score": 85,
@@ -160,10 +155,15 @@
         "date": "2026-02-13",
         "score": 45,
         "vix": 20.6
+      },
+      {
+        "date": "2026-02-16",
+        "score": 45,
+        "vix": 20.57
       }
     ],
     "breakdown": {
-      "aggregate_score": 41.4,
+      "aggregate_score": 41.7,
       "rating": "Fear",
       "components": [
         {
@@ -189,10 +189,10 @@
         },
         {
           "name": "Put/Call Ratio",
-          "score": 52.2,
+          "score": 52.6,
           "signal": "NEUTRAL",
-          "description": "VIX at 20.6 (proxy for options sentiment)",
-          "raw_value": 20.6
+          "description": "VIX at 20.5 (proxy for options sentiment)",
+          "raw_value": 20.5
         },
         {
           "name": "Junk Bond Demand",
@@ -203,10 +203,10 @@
         },
         {
           "name": "Market Volatility",
-          "score": 6.9,
+          "score": 8.7,
           "signal": "FEAR",
-          "description": "VIX 20.6 is +25.8% vs 50-day MA (16.4)",
-          "raw_value": 25.8
+          "description": "VIX 20.5 is +24.8% vs 50-day MA (16.5)",
+          "raw_value": 24.8
         },
         {
           "name": "Safe Haven Demand",
@@ -423,7 +423,7 @@
         "version": "2.1.1",
         "fibonacci": {
           "symbol": "QQQ",
-          "current_price": 601.9199829101562,
+          "current_price": 601.92,
           "swing_high": 636.5999755859375,
           "swing_low": 579.992718365408,
           "swing_high_idx": 114,
@@ -518,7 +518,7 @@
         "version": "2.1.1",
         "fibonacci": {
           "symbol": "IWM",
-          "current_price": 262.9599914550781,
+          "current_price": 262.96,
           "swing_high": 271.6000061035156,
           "swing_low": 228.13496396973687,
           "swing_high_idx": 110,
@@ -613,7 +613,7 @@
         "version": "2.1.1",
         "fibonacci": {
           "symbol": "XLK",
-          "current_price": 139.55999755859375,
+          "current_price": 139.56,
           "swing_high": 152.76328574939558,
           "swing_low": 85.84163713098569,
           "swing_high_idx": 177,
@@ -708,7 +708,7 @@
         "version": "2.1.1",
         "fibonacci": {
           "symbol": "XLC",
-          "current_price": 114.58000183105469,
+          "current_price": 114.58,
           "swing_high": 118.66999816894531,
           "swing_low": 109.51047067492786,
           "swing_high_idx": 95,
@@ -803,7 +803,7 @@
         "version": "2.1.1",
         "fibonacci": {
           "symbol": "XLF",
-          "current_price": 51.650001525878906,
+          "current_price": 51.65,
           "swing_high": 56.52000045776367,
           "swing_low": 50.90209727943318,
           "swing_high_idx": 99,
@@ -898,7 +898,7 @@
         "version": "2.1.1",
         "fibonacci": {
           "symbol": "XLV",
-          "current_price": 157.6699981689453,
+          "current_price": 157.67,
           "swing_high": 158.2759966493031,
           "swing_low": 133.16293579669355,
           "swing_high_idx": 73,
@@ -984,7 +984,7 @@
         "sell_signals_enabled": false,
         "bear_regime_buy_suppress": true,
         "role": "Cyclical",
-        "role_action": "cyclical_adjacent",
+        "role_action": "cyclical_favorable",
         "rotation_modifier": 1.0,
         "crash_mode_active": false,
         "crash_action": "no_crash",
@@ -993,7 +993,7 @@
         "version": "2.1.1",
         "fibonacci": {
           "symbol": "XLP",
-          "current_price": 89.51000213623047,
+          "current_price": 89.51,
           "swing_high": 90.05999755859375,
           "swing_low": 76.51000213623047,
           "swing_high_idx": 125,
@@ -1084,7 +1084,7 @@
         "version": "2.1.1",
         "fibonacci": {
           "symbol": "XLE",
-          "current_price": 54.349998474121094,
+          "current_price": 54.35,
           "swing_high": 46.26561493376992,
           "swing_low": 41.99204467312608,
           "swing_high_idx": 79,
@@ -1179,7 +1179,7 @@
         "version": "2.1.1",
         "fibonacci": {
           "symbol": "XLB",
-          "current_price": 53.310001373291016,
+          "current_price": 53.31,
           "swing_high": 54.13999938964844,
           "swing_low": 43.12737337019588,
           "swing_high_idx": 125,
@@ -1261,7 +1261,7 @@
         "sell_signals_enabled": false,
         "bear_regime_buy_suppress": true,
         "role": "Cyclical",
-        "role_action": "cyclical_favorable",
+        "role_action": "cyclical_adjacent",
         "rotation_modifier": 1.0,
         "crash_mode_active": false,
         "crash_action": "no_crash",
@@ -1365,7 +1365,7 @@
         "version": "2.1.1",
         "fibonacci": {
           "symbol": "EFA",
-          "current_price": 104.23999786376953,
+          "current_price": 104.24,
           "swing_high": 94.96912173066355,
           "swing_low": 69.65949896486606,
           "swing_high_idx": 438,
@@ -1451,7 +1451,7 @@
         "sell_signals_enabled": false,
         "bear_regime_buy_suppress": true,
         "role": "Cyclical",
-        "role_action": "cyclical_favorable",
+        "role_action": "cyclical_adjacent",
         "rotation_modifier": 1.0,
         "crash_mode_active": false,
         "crash_action": "no_crash",
@@ -1460,7 +1460,7 @@
         "version": "2.1.1",
         "fibonacci": {
           "symbol": "EEM",
-          "current_price": 61.119998931884766,
+          "current_price": 61.12,
           "swing_high": 55.51553891465469,
           "swing_low": 48.65373346867458,
           "swing_high_idx": 177,
@@ -1555,7 +1555,7 @@
         "version": "2.1.1",
         "fibonacci": {
           "symbol": "INDA",
-          "current_price": 52.88999938964844,
+          "current_price": 52.89,
           "swing_high": 55.099998474121094,
           "swing_low": 50.939998626708984,
           "swing_high_idx": 69,
@@ -1650,7 +1650,7 @@
         "version": "2.1.1",
         "fibonacci": {
           "symbol": "FXI",
-          "current_price": 38.33000183105469,
+          "current_price": 38.33,
           "swing_high": 41.16999816894531,
           "swing_low": 37.74033560681721,
           "swing_high_idx": 115,
@@ -1741,7 +1741,7 @@
         "version": "2.1.1",
         "fibonacci": {
           "symbol": "EWJ",
-          "current_price": 93.8499984741211,
+          "current_price": 93.85,
           "swing_high": 82.23312363611166,
           "swing_low": 75.38920678209396,
           "swing_high_idx": 85,
@@ -1836,7 +1836,7 @@
         "version": "2.1.1",
         "fibonacci": {
           "symbol": "TLT",
-          "current_price": 89.72000122070312,
+          "current_price": 89.72,
           "swing_high": 89.62452697753906,
           "swing_low": 86.21025038222956,
           "swing_high_idx": 73,
@@ -1931,7 +1931,7 @@
         "version": "2.1.1",
         "fibonacci": {
           "symbol": "IEF",
-          "current_price": 97.20999908447266,
+          "current_price": 97.21,
           "swing_high": 96.78057340084138,
           "swing_low": 93.26831141246832,
           "swing_high_idx": 196,
@@ -2017,7 +2017,7 @@
         "sell_signals_enabled": false,
         "bear_regime_buy_suppress": true,
         "role": "Cyclical",
-        "role_action": "cyclical_favorable",
+        "role_action": "cyclical_adjacent",
         "rotation_modifier": 1.0,
         "crash_mode_active": false,
         "crash_action": "no_crash",
@@ -2026,9 +2026,9 @@
         "version": "2.1.1",
         "fibonacci": {
           "symbol": "HYG",
-          "current_price": 80.8499984741211,
+          "current_price": 80.85,
           "swing_high": 80.8404107675588,
-          "swing_low": 78.41497039794922,
+          "swing_low": 78.41496276855469,
           "swing_high_idx": 234,
           "swing_low_idx": 164,
           "swing_high_date": "2026-01-22",
@@ -2112,7 +2112,7 @@
         "sell_signals_enabled": false,
         "bear_regime_buy_suppress": true,
         "role": "Cyclical",
-        "role_action": "cyclical_favorable",
+        "role_action": "cyclical_adjacent",
         "rotation_modifier": 1.0,
         "crash_mode_active": false,
         "crash_action": "no_crash",
@@ -2121,7 +2121,7 @@
         "version": "2.1.1",
         "fibonacci": {
           "symbol": "GLD",
-          "current_price": 462.6199951171875,
+          "current_price": 462.62,
           "swing_high": 509.70001220703125,
           "swing_low": 360.1199951171875,
           "swing_high_idx": 115,
@@ -2207,7 +2207,7 @@
         "sell_signals_enabled": false,
         "bear_regime_buy_suppress": true,
         "role": "Cyclical",
-        "role_action": "cyclical_adjacent",
+        "role_action": "cyclical_unfavorable",
         "rotation_modifier": 1.0,
         "crash_mode_active": false,
         "crash_action": "no_crash",
@@ -2216,7 +2216,7 @@
         "version": "2.1.1",
         "fibonacci": {
           "symbol": "GDX",
-          "current_price": 103.94000244140625,
+          "current_price": 103.94,
           "swing_high": 113.5,
           "swing_low": 67.63875758780028,
           "swing_high_idx": 115,
@@ -2311,7 +2311,7 @@
         "version": "2.1.1",
         "fibonacci": {
           "symbol": "DBA",
-          "current_price": 25.790000915527344,
+          "current_price": 25.79,
           "swing_high": 26.010000228881836,
           "swing_low": 24.660624550871383,
           "swing_high_idx": 115,
@@ -2407,7 +2407,7 @@
         "fibonacci": {
           "symbol": "BITO",
           "current_price": 9.5,
-          "swing_high": 17.748308940872995,
+          "swing_high": 17.748310862561226,
           "swing_low": 11.740863682943019,
           "swing_high_idx": 36,
           "swing_low_idx": 88,
@@ -2501,7 +2501,7 @@
         "version": "2.1.1",
         "fibonacci": {
           "symbol": "VNQ",
-          "current_price": 94.58999633789062,
+          "current_price": 94.59,
           "swing_high": 92.81999969482422,
           "swing_low": 87.3133358153632,
           "swing_high_idx": 107,
@@ -3643,40 +3643,40 @@
         {
           "title": "Who will Trump nominate as Fed Chair?",
           "probability": null,
-          "liquidity": 70256741.1648,
-          "volume": 480633576.046057,
+          "liquidity": 69832943.39868,
+          "volume": 484453982.455786,
           "id": "35908"
         },
         {
           "title": "Will China invade Taiwan by end of 2026?",
           "probability": null,
-          "liquidity": 566194.4081,
-          "volume": 8703662.345543,
+          "liquidity": 518517.6565,
+          "volume": 8852921.71168,
           "id": "34044"
         },
         {
           "title": "MegaETH market cap (FDV) one day after launch?",
           "probability": null,
-          "liquidity": 415356.90232,
-          "volume": 11638859.815271,
+          "liquidity": 365704.99743,
+          "volume": 11689101.096988,
           "id": "28999"
         },
         {
           "title": "How much revenue will the U.S. raise from tariffs in 2025?",
           "probability": null,
-          "liquidity": 203694.60786,
-          "volume": 7263709.987826,
+          "liquidity": 207590.24742,
+          "volume": 7398724.978555,
           "id": "22862"
         },
         {
           "title": "MicroStrategy sells any Bitcoin by ___ ?",
           "probability": null,
-          "liquidity": 126455.74903,
-          "volume": 20446742.7962,
+          "liquidity": 128924.89593,
+          "volume": 20462932.101367,
           "id": "16167"
         }
       ],
-      "timestamp": "2026-02-15T11:30:15.448925+00:00",
+      "timestamp": "2026-02-16T11:30:21.001449+00:00",
       "source": "polymarket"
     }
   },
@@ -3694,12 +3694,34 @@
     "spy_price": 681.75,
     "rsp_price": 202.87,
     "methodology": "RSP/SPY relative performance as breadth proxy. RSP outperformance = more stocks participating.",
-    "timestamp": "2026-02-15T03:30:15.854766"
+    "timestamp": "2026-02-16T03:30:21.573603"
   },
   "rotation": {
-    "available": false
+    "available": true,
+    "summary": "GDX, GLD, XLB leading \u2014 late-cycle commodities pattern. XLK, INDA lagging.",
+    "leaders": [
+      "GDX",
+      "GLD",
+      "XLB",
+      "XLE",
+      "XLP"
+    ],
+    "laggards": [
+      "XLK",
+      "INDA",
+      "TLT",
+      "XLU",
+      "BITO"
+    ],
+    "pattern": "late_cycle_commodities",
+    "cycle_phase": "late_bull",
+    "cycle_confidence": 65.0
   },
-  "cycle": {},
+  "cycle": {
+    "phase": "late_bull",
+    "confidence": 65.0,
+    "summary": "Late-stage bull cycle (65% confidence). Historically lasts 6-18 months before transitioning."
+  },
   "meta": {
     "version": "2.1.1",
     "config_version": "2.1.1",
@@ -3774,24 +3796,24 @@
     ]
   },
   "pulse": {
-    "outlook": "NEUTRAL",
-    "summary": "The market is in a mid-cycle bull run with fearful sentiment. Regime is sideways with no clear rotation leader.",
+    "outlook": "CAUTIOUSLY_BEARISH",
+    "summary": "The market is in a late-stage bull run with fearful sentiment. GDX leading rotation \u2014 a classic late-cycle signal.",
     "model_agreement": {
-      "count": 1,
+      "count": 2,
       "total": 4,
-      "direction": "mixed",
+      "direction": "bearish",
       "models": {
         "fear_greed": {
           "verdict": "fear",
           "detail": "Score: 36"
         },
         "cycle": {
-          "verdict": "mid_bull",
-          "detail": "50% confidence"
+          "verdict": "late_bull",
+          "detail": "65% confidence"
         },
         "rotation": {
-          "verdict": "mixed",
-          "detail": "Mixed sector leadership"
+          "verdict": "defensive_rotation",
+          "detail": "GDX leading rotation"
         },
         "regime": {
           "verdict": "sideways",
@@ -3814,7 +3836,7 @@
       }
     ],
     "warnings": [
-      "Models diverge \u2014 F&G says fear while cycle says mid_bull"
+      "Defensive rotation while market not bearish \u2014 watch for cycle transition"
     ]
   },
   "capital_rebalancing": {

@@ -7,7 +7,11 @@
       "typeEmoji": "\ud83c\udf05",
       "topic": "Morning Priorities \u2014 Tuesday Feb 17",
       "file": "2026-02-17-morning-priorities.json",
-      "tokenCost": 0
+      "tokenCost": 0,
+      "verticals": [
+        "ecosystem"
+      ],
+      "initiatives": []
     },
     {
       "date": "2026-02-16",
@@ -16,7 +20,11 @@
       "typeEmoji": "\ud83c\udf05",
       "topic": "Morning Priorities \u2014 Monday Feb 16",
       "file": "2026-02-16-morning-priorities.json",
-      "tokenCost": 0.1081
+      "tokenCost": 0.1081,
+      "verticals": [
+        "ecosystem"
+      ],
+      "initiatives": []
     },
     {
       "date": "2026-02-16",
@@ -25,7 +33,11 @@
       "typeEmoji": "\ud83c\udf19",
       "topic": "Midnight Prep \u2014 Monday Feb 16",
       "file": "2026-02-16-midnight-prep.json",
-      "tokenCost": 0.0877
+      "tokenCost": 0.0877,
+      "verticals": [
+        "ecosystem"
+      ],
+      "initiatives": []
     }
   ]
 }

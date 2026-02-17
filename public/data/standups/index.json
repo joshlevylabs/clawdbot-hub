@@ -2,8 +2,21 @@
   "standups": [
     {
       "date": "2026-02-16",
-      "topic": "Daily Standup \u2014 Monday Feb 16",
-      "file": "2026-02-16.json"
+      "type": "trading-review",
+      "typeName": "Trading Review",
+      "typeEmoji": "\ud83d\udcc8",
+      "topic": "Trading Review \u2014 Monday Feb 16",
+      "file": "2026-02-16-trading-review.json",
+      "tokenCost": 0.0036
+    },
+    {
+      "date": "2026-02-16",
+      "type": "daily-priorities",
+      "typeName": "Daily Priorities",
+      "typeEmoji": "\ud83d\udccb",
+      "topic": "Daily Priorities \u2014 Monday Feb 16",
+      "file": "2026-02-16-daily-priorities.json",
+      "tokenCost": 0.0038
     }
   ]
 }

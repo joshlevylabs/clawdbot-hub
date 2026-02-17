@@ -1,0 +1,43 @@
+{
+  "date": "2026-02-16",
+  "generatedAt": "2026-02-16T17:29:32.908644-08:00",
+  "priorities": [
+    {
+      "text": "Review Ecosystem Map podcast narrative",
+      "source": "daily-priorities",
+      "urgency": "high"
+    },
+    {
+      "text": "Publish pending podcast episodes",
+      "source": "daily-priorities",
+      "urgency": "medium"
+    },
+    {
+      "text": "Adjust crypto position stop-loss parameters",
+      "source": "trading-review",
+      "urgency": "high"
+    }
+  ],
+  "agentHandled": [
+    {
+      "text": "Resolve inter-system communication bottlenecks",
+      "assignee": "Elon",
+      "status": "pending"
+    },
+    {
+      "text": "Monitor market fear index for potential repositioning",
+      "assignee": "Dave",
+      "status": "pending"
+    },
+    {
+      "text": "Allocate 20% cash reserve to short-term treasuries",
+      "assignee": "Theo",
+      "status": "pending"
+    },
+    {
+      "text": "Monitor Fear & Greed index for sentiment shift",
+      "assignee": "System",
+      "status": "pending"
+    }
+  ]
+}

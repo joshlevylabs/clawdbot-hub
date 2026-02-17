@@ -714,6 +714,8 @@ interface ScheduleData {
 function ScheduledView() {
   const [scheduleData, setScheduleData] = useState<ScheduleData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showOneTimeForm, setShowOneTimeForm] = useState(false);
+  const [oneTimeData, setOneTimeData] = useState<any>({});
 
   useEffect(() => {
     async function fetchData() {
@@ -847,6 +849,44 @@ function ScheduledView() {
     );
   }
 
+  const handleAddOneTime = async (data: any) => {
+    try {
+      // Generate a unique key for one-time standups
+      const key = `onetime-${Date.now()}`;
+      const today = new Date().toLocaleDateString('en-US', { timeZone: 'America/Los_Angeles', weekday: 'long' }).toLowerCase();
+      const payload = {
+        key,
+        name: data.name || 'Ad-hoc Standup',
+        emoji: data.emoji || '📋',
+        schedule: today,
+        time: data.time || '14:00',
+        participants: data.participants || ['COO'],
+        agenda: data.agenda || '',
+        autoExecute: false,
+      };
+
+      const response = await fetch('/api/standup-schedules', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        setScheduleData(prev => prev ? {
+          ...prev,
+          types: [...prev.types, result.schedule]
+        } : { types: [result.schedule] });
+        setShowOneTimeForm(false);
+        setOneTimeData({});
+      } else {
+        console.error('Failed to create one-time standup');
+      }
+    } catch (err) {
+      console.error('Error creating one-time standup:', err);
+    }
+  };
+
   const remainingToday = getRemainingTodayStandups();
   const next30Days = getNext30Days();
 
@@ -855,6 +895,16 @@ function ScheduledView() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-medium text-slate-200">Scheduled Standups</h2>
+        <button
+          onClick={() => {
+            setOneTimeData({});
+            setShowOneTimeForm(true);
+          }}
+          className="btn btn-primary flex items-center gap-2 text-sm"
+        >
+          <Plus className="w-4 h-4" />
+          Add Standup
+        </button>
       </div>
 
       {/* Today's Remaining Standups */}
@@ -963,9 +1013,121 @@ function ScheduledView() {
         </div>
       </div>
 
-    </div>
-  );
-}
+      {/* One-Time Standup Form Modal */}
+      {showOneTimeForm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-slate-800 rounded-xl p-6 w-full max-w-md mx-4">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-medium text-slate-100">Add One-Time Standup</h3>
+              <button
+                onClick={() => {
+                  setShowOneTimeForm(false);
+                  setOneTimeData({});
+                }}
+                className="p-1 hover:bg-slate-700 rounded"
+              >
+                <X className="w-4 h-4 text-slate-400" />
+              </button>
+            </div>
+            <p className="text-xs text-slate-500 mb-4">Schedule a single standup for today to discuss specific topics.</p>
+            
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleAddOneTime(oneTimeData);
+              }}
+              className="space-y-4"
+            >
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-1">Topic / Name</label>
+                <input
+                  type="text"
+                  value={oneTimeData.name || ''}
+                  onChange={(e) => setOneTimeData({ ...oneTimeData, name: e.target.value })}
+                  className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-slate-200"
+                  placeholder="MRE V14 Review"
+                  required
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-1">Time (PT)</label>
+                  <input
+                    type="time"
+                    value={oneTimeData.time || ''}
+                    onChange={(e) => setOneTimeData({ ...oneTimeData, time: e.target.value })}
+                    className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-slate-200"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-1">Emoji</label>
+                  <input
+                    type="text"
+                    value={oneTimeData.emoji || ''}
+                    onChange={(e) => setOneTimeData({ ...oneTimeData, emoji: e.target.value })}
+                    className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-slate-200"
+                    placeholder="📋"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-1">Agenda / Topics</label>
+                <textarea
+                  value={oneTimeData.agenda || ''}
+                  onChange={(e) => setOneTimeData({ ...oneTimeData, agenda: e.target.value })}
+                  className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-slate-200"
+                  rows={3}
+                  placeholder="Discuss MRE V14 performance, review 48hr monitoring results..."
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-1">Participants</label>
+                <div className="flex flex-wrap gap-2">
+                  {['COO', 'CTO', 'CRO', 'CMO'].map((role) => (
+                    <label key={role} className="flex items-center gap-1.5 bg-slate-900 border border-slate-700 rounded px-3 py-1.5 cursor-pointer hover:border-slate-600">
+                      <input
+                        type="checkbox"
+                        checked={oneTimeData.participants?.includes(role) || false}
+                        onChange={(e) => {
+                          const current = oneTimeData.participants || [];
+                          if (e.target.checked) {
+                            setOneTimeData({ ...oneTimeData, participants: [...current, role] });
+                          } else {
+                            setOneTimeData({ ...oneTimeData, participants: current.filter((r: string) => r !== role) });
+                          }
+                        }}
+                        className="rounded"
+                      />
+                      <span className="text-sm text-slate-300">{roleIcons[role] || '👤'} {role}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+              
+              <div className="flex gap-2 pt-4">
+                <button type="submit" className="btn btn-primary flex-1">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Schedule
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowOneTimeForm(false);
+                    setOneTimeData({});
+                  }}
+                  className="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded text-slate-200"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -1605,6 +1767,222 @@ function ManageView() {
                   onClick={() => {
                     setShowInitiativeForm(false);
                     setEditingInitiative(null);
+                    setFormData({});
+                  }}
+                  className="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded text-slate-200"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Recurring Standup Form Modal */}
+      {showRecurringForm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-slate-800 rounded-xl p-6 w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-medium text-slate-100">
+                {editingRecurring ? 'Edit Recurring Standup' : 'Add Recurring Standup'}
+              </h3>
+              <button
+                onClick={() => {
+                  setShowRecurringForm(false);
+                  setEditingRecurring(null);
+                  setFormData({});
+                }}
+                className="p-1 hover:bg-slate-700 rounded"
+              >
+                <X className="w-4 h-4 text-slate-400" />
+              </button>
+            </div>
+            
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleSaveRecurring({
+                  ...formData,
+                  participants: formData.participants || [],
+                  verticals: formData.verticals || [],
+                  initiatives: formData.initiatives || [],
+                });
+              }}
+              className="space-y-4"
+            >
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-1">Key</label>
+                <input
+                  type="text"
+                  value={formData.key || ''}
+                  onChange={(e) => setFormData({ ...formData, key: e.target.value })}
+                  className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-slate-200"
+                  placeholder="morning-priorities"
+                  required
+                  disabled={!!editingRecurring}
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-1">Name</label>
+                  <input
+                    type="text"
+                    value={formData.name || ''}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-slate-200"
+                    placeholder="Morning Priorities"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-1">Emoji</label>
+                  <input
+                    type="text"
+                    value={formData.emoji || ''}
+                    onChange={(e) => setFormData({ ...formData, emoji: e.target.value })}
+                    className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-slate-200"
+                    placeholder="🌅"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-1">Schedule</label>
+                  <select
+                    value={formData.schedule || ''}
+                    onChange={(e) => setFormData({ ...formData, schedule: e.target.value })}
+                    className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-slate-200"
+                    required
+                  >
+                    <option value="">Select schedule</option>
+                    <option value="daily">Daily</option>
+                    <option value="monday">Monday</option>
+                    <option value="tuesday">Tuesday</option>
+                    <option value="wednesday">Wednesday</option>
+                    <option value="thursday">Thursday</option>
+                    <option value="friday">Friday</option>
+                    <option value="saturday">Saturday</option>
+                    <option value="sunday">Sunday</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-1">Time (PT)</label>
+                  <input
+                    type="time"
+                    value={formData.time || ''}
+                    onChange={(e) => setFormData({ ...formData, time: e.target.value })}
+                    className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-slate-200"
+                    required
+                  />
+                </div>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-1">Agenda</label>
+                <textarea
+                  value={formData.agenda || ''}
+                  onChange={(e) => setFormData({ ...formData, agenda: e.target.value })}
+                  className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-slate-200"
+                  rows={3}
+                  placeholder="Review daily priorities, check signal updates..."
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-1">Participants</label>
+                <div className="flex flex-wrap gap-2">
+                  {['COO', 'CTO', 'CRO', 'CMO'].map((role) => (
+                    <label key={role} className="flex items-center gap-1.5 bg-slate-900 border border-slate-700 rounded px-3 py-1.5 cursor-pointer hover:border-slate-600">
+                      <input
+                        type="checkbox"
+                        checked={formData.participants?.includes(role) || false}
+                        onChange={(e) => {
+                          const current = formData.participants || [];
+                          if (e.target.checked) {
+                            setFormData({ ...formData, participants: [...current, role] });
+                          } else {
+                            setFormData({ ...formData, participants: current.filter((r: string) => r !== role) });
+                          }
+                        }}
+                        className="rounded"
+                      />
+                      <span className="text-sm text-slate-300">{roleIcons[role] || '👤'} {role}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-1">Verticals</label>
+                <div className="space-y-2 max-h-32 overflow-y-auto">
+                  {verticals.map((vertical) => (
+                    <label key={vertical.key} className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={formData.verticals?.includes(vertical.key) || false}
+                        onChange={(e) => {
+                          const current = formData.verticals || [];
+                          if (e.target.checked) {
+                            setFormData({ ...formData, verticals: [...current, vertical.key] });
+                          } else {
+                            setFormData({ ...formData, verticals: current.filter((v: string) => v !== vertical.key) });
+                          }
+                        }}
+                        className="rounded"
+                      />
+                      <span className="text-sm text-slate-300">{vertical.emoji} {vertical.name}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-1">Initiatives</label>
+                <div className="space-y-2 max-h-32 overflow-y-auto">
+                  {initiatives.map((initiative) => (
+                    <label key={initiative.key} className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={formData.initiatives?.includes(initiative.key) || false}
+                        onChange={(e) => {
+                          const current = formData.initiatives || [];
+                          if (e.target.checked) {
+                            setFormData({ ...formData, initiatives: [...current, initiative.key] });
+                          } else {
+                            setFormData({ ...formData, initiatives: current.filter((i: string) => i !== initiative.key) });
+                          }
+                        }}
+                        className="rounded"
+                      />
+                      <span className="text-sm text-slate-300">{initiative.name}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={formData.autoExecute || false}
+                  onChange={(e) => setFormData({ ...formData, autoExecute: e.target.checked })}
+                  className="rounded"
+                />
+                <label className="text-sm text-slate-300">Auto-Execute (agents run this standup automatically)</label>
+              </div>
+              
+              <div className="flex gap-2 pt-4">
+                <button type="submit" className="btn btn-primary flex-1">
+                  <Save className="w-4 h-4 mr-2" />
+                  {editingRecurring ? 'Update' : 'Create'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowRecurringForm(false);
+                    setEditingRecurring(null);
                     setFormData({});
                   }}
                   className="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded text-slate-200"

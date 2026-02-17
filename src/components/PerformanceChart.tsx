@@ -126,9 +126,12 @@ export default function PerformanceChart({
 
     const cutoff = Date.now() - TIME_RANGE_MS[timeRange];
     
-    // For 1D view, show intraday snapshots but anchor to previous day's close
+    // For 1D view, show intraday snapshots from last 24h, anchored to previous day's close
     if (timeRange === "1D") {
-      const intradayOnly = snapshots.filter(isIntraday);
+      const oneDayAgo = Date.now() - 24 * 60 * 60 * 1000;
+      const intradayOnly = snapshots
+        .filter(isIntraday)
+        .filter((s) => new Date(s.date).getTime() >= oneDayAgo);
       if (intradayOnly.length >= 2) {
         // Find last non-intraday (daily) snapshot to use as starting anchor
         const dailySnapshots = snapshots.filter((s) => !isIntraday(s));

@@ -239,36 +239,60 @@ function InitiativeBadge({ initiative }: { initiative: InitiativeDef }) {
   );
 }
 
-function JoshuaPrioritiesCard({ priorities }: { priorities: JoshuaPriorities | null }) {
+function JoshuaPrioritiesCard({ priorities, onToggle }: { priorities: JoshuaPriorities | null; onToggle?: (type: string, index: number, completed: boolean) => void }) {
   if (!priorities || (!priorities.priorities.length && !priorities.agentHandled.length)) return null;
+
+  const completedPriorities = priorities.priorities.filter((p: Record<string, unknown>) => p.completed).length;
+  const totalPriorities = priorities.priorities.length;
 
   return (
     <div className="space-y-4">
       {/* Joshua's Items */}
       {priorities.priorities.length > 0 && (
         <div className="bg-gradient-to-br from-purple-600/10 to-purple-800/5 rounded-xl border border-purple-500/20 p-5">
-          <div className="flex items-center gap-2 mb-4">
-            <Target className="w-5 h-5 text-purple-400" strokeWidth={1.5} />
-            <h2 className="font-semibold text-slate-100 text-sm">Joshua&apos;s Priorities</h2>
-            <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-purple-500/20 text-purple-400 border border-purple-500/30">
-              NEEDS YOUR ACTION
-            </span>
-          </div>
-          <div className="space-y-3">
-            {priorities.priorities.map((p, i) => (
-              <div key={i} className="flex items-start gap-3">
-                <div className="w-6 h-6 bg-purple-500/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <span className="text-xs font-bold text-purple-400">{i + 1}</span>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <Target className="w-5 h-5 text-purple-400" strokeWidth={1.5} />
+              <h2 className="font-semibold text-slate-100 text-sm">Joshua&apos;s Priorities</h2>
+              {completedPriorities < totalPriorities && (
+                <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-purple-500/20 text-purple-400 border border-purple-500/30">
+                  NEEDS YOUR ACTION
+                </span>
+              )}
+            </div>
+            {totalPriorities > 0 && (
+              <div className="flex items-center gap-2">
+                <div className="w-16 h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                  <div className="h-full bg-purple-500 rounded-full transition-all" style={{ width: `${(completedPriorities / totalPriorities) * 100}%` }} />
                 </div>
-                <div className="flex-1">
-                  <p className="text-sm text-slate-200 leading-relaxed">{p.text}</p>
-                  <div className="flex items-center gap-2 mt-1">
-                    <PriorityBadge priority={p.urgency} />
-                    <span className="text-[10px] text-slate-600">from {p.source}</span>
-                  </div>
-                </div>
+                <span className="text-xs text-slate-500">{completedPriorities}/{totalPriorities}</span>
               </div>
-            ))}
+            )}
+          </div>
+          <div className="space-y-2">
+            {priorities.priorities.map((p, i) => {
+              const isCompleted = !!(p as Record<string, unknown>).completed;
+              return (
+                <button
+                  key={i}
+                  onClick={() => onToggle?.("priority", i, !isCompleted)}
+                  className={`w-full text-left flex items-start gap-3 p-2.5 rounded-lg transition-colors ${isCompleted ? "bg-emerald-500/5" : "bg-purple-500/5 hover:bg-purple-500/10"}`}
+                >
+                  {isCompleted ? (
+                    <CheckCircle className="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
+                  ) : (
+                    <Circle className="w-5 h-5 text-purple-400/50 flex-shrink-0 mt-0.5 hover:text-purple-400" />
+                  )}
+                  <div className="flex-1">
+                    <p className={`text-sm leading-relaxed ${isCompleted ? "text-slate-500 line-through" : "text-slate-200"}`}>{p.text}</p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <PriorityBadge priority={p.urgency} />
+                      <span className="text-[10px] text-slate-600">from {p.source}</span>
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
           </div>
         </div>
       )}
@@ -281,21 +305,28 @@ function JoshuaPrioritiesCard({ priorities }: { priorities: JoshuaPriorities | n
             <h2 className="font-semibold text-slate-100 text-sm">Auto-Handled by Agents</h2>
           </div>
           <div className="space-y-2">
-            {priorities.agentHandled.map((a, i) => (
-              <div key={i} className="flex items-center gap-3 p-2 rounded-lg bg-cyan-500/5">
-                {a.status === "done" ? (
-                  <CheckCircle className="w-4 h-4 text-emerald-500 flex-shrink-0" />
-                ) : (
-                  <Circle className="w-4 h-4 text-cyan-400/50 flex-shrink-0" />
-                )}
-                <div className="flex-1">
-                  <p className={`text-sm ${a.status === "done" ? "text-slate-500 line-through" : "text-slate-300"}`}>
-                    {a.text}
-                  </p>
-                  <p className="text-xs text-slate-600 mt-0.5">→ {a.assignee} · {a.status}</p>
-                </div>
-              </div>
-            ))}
+            {priorities.agentHandled.map((a, i) => {
+              const isDone = a.status === "done";
+              return (
+                <button
+                  key={i}
+                  onClick={() => onToggle?.("agent", i, !isDone)}
+                  className={`w-full text-left flex items-center gap-3 p-2 rounded-lg transition-colors ${isDone ? "bg-emerald-500/5" : "bg-cyan-500/5 hover:bg-cyan-500/10"}`}
+                >
+                  {isDone ? (
+                    <CheckCircle className="w-4 h-4 text-emerald-500 flex-shrink-0" />
+                  ) : (
+                    <Circle className="w-4 h-4 text-cyan-400/50 flex-shrink-0 hover:text-cyan-400" />
+                  )}
+                  <div className="flex-1">
+                    <p className={`text-sm ${isDone ? "text-slate-500 line-through" : "text-slate-300"}`}>
+                      {a.text}
+                    </p>
+                    <p className="text-xs text-slate-600 mt-0.5">→ {a.assignee} · {a.status}</p>
+                  </div>
+                </button>
+              );
+            })}
           </div>
         </div>
       )}
@@ -971,6 +1002,34 @@ export default function StandupsPage() {
     }
   };
 
+  const handleTogglePriority = async (type: string, index: number, completed: boolean) => {
+    // Optimistic update
+    if (joshuaPriorities) {
+      const updated = JSON.parse(JSON.stringify(joshuaPriorities));
+      if (type === "priority") {
+        updated.priorities[index].completed = completed;
+      } else if (type === "agent") {
+        updated.agentHandled[index].status = completed ? "done" : "done_but_unverified";
+      }
+      setJoshuaPriorities(updated);
+    }
+
+    // Persist to API
+    try {
+      const res = await fetch("/api/priorities", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type, index, completed }),
+      });
+      if (res.ok) {
+        const fresh = await res.json();
+        setJoshuaPriorities(fresh);
+      }
+    } catch (err) {
+      console.error("Failed to toggle priority:", err);
+    }
+  };
+
   // Filtered index entries (type + vertical)
   const filteredEntries = useMemo(() => {
     if (!standupIndex) return [];
@@ -1105,7 +1164,7 @@ export default function StandupsPage() {
       {activeTab === "history" ? (
         <>
           {/* Joshua's Priorities (top — most important) */}
-          <JoshuaPrioritiesCard priorities={joshuaPriorities} />
+          <JoshuaPrioritiesCard priorities={joshuaPriorities} onToggle={handleTogglePriority} />
 
           {/* CEO Directives */}
           {selectedStandup?.ceoDirectives && selectedStandup.ceoDirectives.length > 0 && (

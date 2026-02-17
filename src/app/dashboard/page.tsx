@@ -382,7 +382,7 @@ function CalendarCard({ data }: { data: CalendarSection }) {
 }
 
 // Joshua's Outstanding Priorities Card
-function PrioritiesCard({ data }: { data: JoshuaPrioritiesData | null }) {
+function PrioritiesCard({ data, onToggle }: { data: JoshuaPrioritiesData | null; onToggle?: (type: string, index: number, completed: boolean) => void }) {
   if (!data || data.priorities.length === 0) return null;
 
   const urgencyColors: Record<string, string> = {
@@ -403,29 +403,38 @@ function PrioritiesCard({ data }: { data: JoshuaPrioritiesData | null }) {
         </div>
       </div>
       <div className="space-y-2 max-h-64 overflow-auto">
-        {data.priorities.map((p, i) => (
-          <div key={i} className="flex items-start gap-3 p-2.5 bg-purple-500/5 rounded-lg">
-            <div className="w-6 h-6 bg-purple-500/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-              <span className="text-xs font-bold text-purple-400">{i + 1}</span>
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm text-slate-200 leading-relaxed">{p.text}</p>
-              <div className="flex items-center gap-2 mt-1">
-                <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium border ${urgencyColors[p.urgency] || urgencyColors.medium}`}>
-                  {p.urgency.toUpperCase()}
-                </span>
-                <span className="text-[10px] text-slate-600">from {p.source}</span>
+        {data.priorities.map((p, i) => {
+          const isCompleted = !!(p as JoshuaPriority & { completed?: boolean }).completed;
+          return (
+            <button
+              key={i}
+              onClick={() => onToggle?.("priority", i, !isCompleted)}
+              className={`w-full text-left flex items-start gap-3 p-2.5 rounded-lg transition-colors ${isCompleted ? "bg-emerald-500/5" : "bg-purple-500/5 hover:bg-purple-500/10"}`}
+            >
+              {isCompleted ? (
+                <CheckCircle2 className="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
+              ) : (
+                <Circle className="w-5 h-5 text-purple-400/50 flex-shrink-0 mt-0.5 hover:text-purple-400" />
+              )}
+              <div className="flex-1 min-w-0">
+                <p className={`text-sm leading-relaxed ${isCompleted ? "text-slate-500 line-through" : "text-slate-200"}`}>{p.text}</p>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium border ${urgencyColors[p.urgency] || urgencyColors.medium}`}>
+                    {p.urgency.toUpperCase()}
+                  </span>
+                  <span className="text-[10px] text-slate-600">from {p.source}</span>
+                </div>
               </div>
-            </div>
-          </div>
-        ))}
+            </button>
+          );
+        })}
       </div>
     </div>
   );
 }
 
 // Agent Completed Tasks Card
-function AgentTasksCard({ data }: { data: JoshuaPrioritiesData | null }) {
+function AgentTasksCard({ data, onToggle }: { data: JoshuaPrioritiesData | null; onToggle?: (type: string, index: number, completed: boolean) => void }) {
   if (!data || data.agentHandled.length === 0) return null;
 
   const completedCount = data.agentHandled.filter(t => t.status === "done").length;
@@ -456,32 +465,40 @@ function AgentTasksCard({ data }: { data: JoshuaPrioritiesData | null }) {
         )}
       </div>
       <div className="space-y-1.5 max-h-64 overflow-auto">
-        {data.agentHandled.map((task, i) => (
-          <div key={i} className={`flex items-start gap-3 p-2 rounded-lg ${task.status === "done" ? "bg-emerald-500/5" : task.status === "failed" ? "bg-red-500/5" : "bg-cyan-500/5"}`}>
-            {task.status === "done" ? (
-              <CheckCircle2 className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" />
-            ) : task.status === "failed" ? (
-              <AlertTriangle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
-            ) : (
-              <Circle className="w-4 h-4 text-cyan-400/50 flex-shrink-0 mt-0.5" />
-            )}
-            <div className="flex-1 min-w-0">
-              <p className={`text-sm ${task.status === "done" ? "text-slate-400" : "text-slate-300"}`}>
-                {task.text}
-              </p>
-              <div className="flex items-center gap-2 mt-0.5">
-                <span className="text-[10px] text-slate-600">
-                  <ArrowRight className="w-2.5 h-2.5 inline" /> {task.assignee}
-                </span>
-                <span className={`text-[10px] font-medium ${
-                  task.status === "done" ? "text-emerald-500" : task.status === "failed" ? "text-red-400" : "text-cyan-400/50"
-                }`}>
-                  {task.status}
-                </span>
+        {data.agentHandled.map((task, i) => {
+          const isDone = task.status === "done";
+          const isFailed = task.status === "failed";
+          return (
+            <button
+              key={i}
+              onClick={() => onToggle?.("agent", i, !isDone)}
+              className={`w-full text-left flex items-start gap-3 p-2 rounded-lg transition-colors ${isDone ? "bg-emerald-500/5" : isFailed ? "bg-red-500/5" : "bg-cyan-500/5 hover:bg-cyan-500/10"}`}
+            >
+              {isDone ? (
+                <CheckCircle2 className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" />
+              ) : isFailed ? (
+                <AlertTriangle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
+              ) : (
+                <Circle className="w-4 h-4 text-cyan-400/50 flex-shrink-0 mt-0.5 hover:text-cyan-400" />
+              )}
+              <div className="flex-1 min-w-0">
+                <p className={`text-sm ${isDone ? "text-slate-500 line-through" : "text-slate-300"}`}>
+                  {task.text}
+                </p>
+                <div className="flex items-center gap-2 mt-0.5">
+                  <span className="text-[10px] text-slate-600">
+                    <ArrowRight className="w-2.5 h-2.5 inline" /> {task.assignee}
+                  </span>
+                  <span className={`text-[10px] font-medium ${
+                    isDone ? "text-emerald-500" : isFailed ? "text-red-400" : "text-cyan-400/50"
+                  }`}>
+                    {task.status}
+                  </span>
+                </div>
               </div>
-            </div>
-          </div>
-        ))}
+            </button>
+          );
+        })}
       </div>
     </div>
   );
@@ -520,6 +537,36 @@ export default function DashboardPage() {
   useEffect(() => {
     fetchBrief();
   }, []);
+
+  const handleTogglePriority = async (type: string, index: number, completed: boolean) => {
+    // Optimistic update
+    if (prioritiesData) {
+      const updated = JSON.parse(JSON.stringify(prioritiesData));
+      if (type === "priority") {
+        updated.priorities[index].completed = completed;
+      } else if (type === "agent") {
+        updated.agentHandled[index].status = completed ? "done" : "done_but_unverified";
+      }
+      setPrioritiesData(updated);
+    }
+
+    // Persist to API
+    try {
+      const res = await fetch("/api/priorities", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type, index, completed }),
+      });
+      if (res.ok) {
+        const fresh = await res.json();
+        setPrioritiesData(fresh);
+      }
+    } catch (err) {
+      console.error("Failed to toggle priority:", err);
+      // Revert on error
+      fetchBrief();
+    }
+  };
 
   const formatDate = (dateStr: string) => {
     try {
@@ -590,8 +637,8 @@ export default function DashboardPage() {
       {/* Priorities Row — always show if data exists, even without brief */}
       {!loading && prioritiesData && (prioritiesData.priorities.length > 0 || prioritiesData.agentHandled.length > 0) && (
         <div className="grid gap-4 md:grid-cols-2">
-          <PrioritiesCard data={prioritiesData} />
-          <AgentTasksCard data={prioritiesData} />
+          <PrioritiesCard data={prioritiesData} onToggle={handleTogglePriority} />
+          <AgentTasksCard data={prioritiesData} onToggle={handleTogglePriority} />
         </div>
       )}
 

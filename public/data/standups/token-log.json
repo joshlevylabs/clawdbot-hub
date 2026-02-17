@@ -29,12 +29,22 @@
       "estimatedCost": 0.0877,
       "model": "claude-opus-4-6",
       "duration": "21.9s"
+    },
+    {
+      "date": "2026-02-17",
+      "type": "afternoon-checkpoint",
+      "inputTokens": 1234,
+      "outputTokens": 1042,
+      "totalTokens": 2276,
+      "estimatedCost": 0.0967,
+      "model": "claude-opus-4-6",
+      "duration": "24.5s"
     }
   ],
   "totals": {
-    "today": 0.3033,
-    "week": 0.3033,
-    "month": 0.3033,
-    "standupCount": 3
+    "today": 0.0967,
+    "week": 0.4,
+    "month": 0.4,
+    "standupCount": 4
   }
 }

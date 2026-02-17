@@ -14,6 +14,19 @@
       "initiatives": []
     },
     {
+      "date": "2026-02-17",
+      "type": "afternoon-checkpoint",
+      "typeName": "Afternoon Checkpoint",
+      "typeEmoji": "\ud83c\udf1e",
+      "topic": "Afternoon Checkpoint \u2014 Tuesday Feb 17",
+      "file": "2026-02-17-afternoon-checkpoint.json",
+      "tokenCost": 0.0967,
+      "verticals": [
+        "ecosystem"
+      ],
+      "initiatives": []
+    },
+    {
       "date": "2026-02-16",
       "type": "morning-priorities",
       "typeName": "Morning Priorities",

@@ -126,18 +126,28 @@ export default function PerformanceChart({
 
     const cutoff = Date.now() - TIME_RANGE_MS[timeRange];
     
-    // For 1D view, show intraday snapshots from last 24h, anchored to previous day's close
+    // For 1D view, show only TODAY's intraday snapshots, anchored to previous day's close
     if (timeRange === "1D") {
-      const oneDayAgo = Date.now() - 24 * 60 * 60 * 1000;
-      const intradayOnly = snapshots
+      const todayStr = new Date().toISOString().slice(0, 10); // "YYYY-MM-DD"
+      const todayOnly = snapshots
         .filter(isIntraday)
-        .filter((s) => new Date(s.date).getTime() >= oneDayAgo);
-      if (intradayOnly.length >= 2) {
-        // Find last non-intraday (daily) snapshot to use as starting anchor
+        .filter((s) => s.date.startsWith(todayStr));
+      if (todayOnly.length >= 2) {
+        // Find last non-intraday (daily) snapshot as the previous close anchor
         const dailySnapshots = snapshots.filter((s) => !isIntraday(s));
         const lastDaily = dailySnapshots.length > 0 ? dailySnapshots[dailySnapshots.length - 1] : null;
-        // Prepend the previous day's close so chart starts from correct baseline
-        return lastDaily ? [lastDaily, ...intradayOnly] : intradayOnly;
+        // Prepend previous day's close so chart starts at 0% baseline
+        return lastDaily ? [lastDaily, ...todayOnly] : todayOnly;
+      }
+      // If no today intraday data yet, fall back to last 24h of any intraday
+      const oneDayAgo = Date.now() - 24 * 60 * 60 * 1000;
+      const recentIntraday = snapshots
+        .filter(isIntraday)
+        .filter((s) => new Date(s.date).getTime() >= oneDayAgo);
+      if (recentIntraday.length >= 2) {
+        const dailySnapshots = snapshots.filter((s) => !isIntraday(s));
+        const lastDaily = dailySnapshots.length > 0 ? dailySnapshots[dailySnapshots.length - 1] : null;
+        return lastDaily ? [lastDaily, ...recentIntraday] : recentIntraday;
       }
     }
     

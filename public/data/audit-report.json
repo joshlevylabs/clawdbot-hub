@@ -1,10 +1,10 @@
 {
-  "timestamp": "2026-02-17T23:00:17.371679+00:00",
+  "timestamp": "2026-02-17T23:15:07.085813+00:00",
   "summary": {
-    "total_tasks": 10,
-    "verified_done": 10,
-    "done_but_unverified": 0,
-    "pending": 0,
+    "total_tasks": 11,
+    "verified_done": 7,
+    "done_but_unverified": 3,
+    "pending": 1,
     "stale": 0
   },
   "items": [
@@ -22,9 +22,9 @@
     },
     {
       "text": "Commit 1 uncommitted hub change(s)",
-      "status": "verified_done",
+      "status": "done_but_unverified",
       "assignee": "Elon",
-      "verification": "PASSED: Verify hub has no uncommitted changes"
+      "verification": "FAILED: Verify hub has no uncommitted changes (output: 1)"
     },
     {
       "text": "Review 1 ecosystem attention item(s)",
@@ -46,9 +46,9 @@
     },
     {
       "text": "Commit 2 uncommitted hub changes",
-      "status": "verified_done",
+      "status": "done_but_unverified",
       "assignee": "Elon",
-      "verification": "PASSED: Verify hub has no uncommitted changes"
+      "verification": "FAILED: Verify hub has no uncommitted changes (output: 1)"
     },
     {
       "text": "Commit uncommitted changes",
@@ -64,10 +64,20 @@
     },
     {
       "text": "Commit 4 uncommitted hub change(s)",
-      "status": "verified_done",
+      "status": "done_but_unverified",
       "assignee": "Elon",
-      "verification": "PASSED: Verify hub has no uncommitted changes"
+      "verification": "FAILED: Verify hub has no uncommitted changes (output: 1)"
+    },
+    {
+      "text": "Commit 3 uncommitted hub change(s)",
+      "status": "pending",
+      "assignee": "Elon",
+      "verification": "NOT DONE: Verify hub has no uncommitted changes (output: 1)"
     }
   ],
-  "escalations": []
+  "escalations": [
+    "Commit 1 uncommitted hub change(s) \u2014 marked done but verification FAILED",
+    "Commit 2 uncommitted hub changes \u2014 marked done but verification FAILED",
+    "Commit 4 uncommitted hub change(s) \u2014 marked done but verification FAILED"
+  ]
 }

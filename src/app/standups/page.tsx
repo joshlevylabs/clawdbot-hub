@@ -36,6 +36,7 @@ interface ActionItem {
   assignee: string;
   priority: string;
   tag?: string; // "JOSHUA" | "AGENT"
+  completedAt?: string;
 }
 
 interface TranscriptEntry {
@@ -141,8 +142,8 @@ interface StandupIndex {
 interface JoshuaPriorities {
   date: string;
   generatedAt: string;
-  priorities: { text: string; source: string; urgency: string }[];
-  agentHandled: { text: string; assignee: string; status: string }[];
+  priorities: { text: string; source: string; urgency: string; completed?: boolean; completedAt?: string }[];
+  agentHandled: { text: string; assignee: string; status: string; completed?: boolean; completedAt?: string }[];
 }
 
 interface TokenLog {

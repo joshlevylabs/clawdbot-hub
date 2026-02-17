@@ -8,6 +8,15 @@
       "topic": "Morning Priorities \u2014 Monday Feb 16",
       "file": "2026-02-16-morning-priorities.json",
       "tokenCost": 0.1081
+    },
+    {
+      "date": "2026-02-16",
+      "type": "midnight-prep",
+      "typeName": "Midnight Prep",
+      "typeEmoji": "\ud83c\udf19",
+      "topic": "Midnight Prep \u2014 Monday Feb 16",
+      "file": "2026-02-16-midnight-prep.json",
+      "tokenCost": 0.0877
     }
   ]
 }

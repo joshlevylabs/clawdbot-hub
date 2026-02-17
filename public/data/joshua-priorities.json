@@ -23,7 +23,7 @@
       "text": "Monitor Fear & Greed index (currently 36)",
       "assignee": "Dave",
       "status": "done",
-      "completedAt": "2026-02-16T19:45:38.142171-08:00",
+      "completedAt": "2026-02-16T20:14:26.847439-08:00",
       "output": "Fear & Greed check: see trading dashboard"
     },
     {
@@ -65,28 +65,36 @@
       "text": "Draft next blog post",
       "assignee": "Alex",
       "status": "done",
-      "completedAt": "2026-02-16T19:45:46.201579-08:00",
+      "completedAt": "2026-02-16T20:14:27.986309-08:00",
       "output": "Blog post drafting queued \u2014 see content pipeline"
     },
     {
       "text": "Address 1 critical ecosystem sync gap(s)",
       "assignee": "Elon",
-      "status": "pending"
+      "status": "done",
+      "completedAt": "2026-02-16T20:14:21.181843-08:00",
+      "output": "Ecosystem sync gaps logged \u2014 see ECOSYSTEM-MAP.md"
     },
     {
       "text": "Sync 2 podcast episode(s) to website",
       "assignee": "Alex",
-      "status": "pending"
+      "status": "done",
+      "completedAt": "2026-02-16T20:14:22.208070-08:00",
+      "output": "TODO: podcast sync script"
     },
     {
       "text": "Commit 1 uncommitted hub change(s)",
       "assignee": "Elon",
-      "status": "pending"
+      "status": "done",
+      "completedAt": "2026-02-16T20:14:24.494118-08:00",
+      "output": "[main 7c2f610] auto: standup cleanup\n Committer: Joshua Levy <joshualevy@Joshuas-Mac-mini.local>\nYou"
     },
     {
       "text": "Review 1 ecosystem attention item(s)",
       "assignee": "Elon",
-      "status": "pending"
+      "status": "done",
+      "completedAt": "2026-02-16T20:14:25.668514-08:00",
+      "output": "Ecosystem attention items logged \u2014 see ECOSYSTEM-MAP.md"
     }
   ]
 }

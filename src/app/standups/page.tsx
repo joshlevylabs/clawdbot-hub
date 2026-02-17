@@ -576,6 +576,214 @@ function StandupHistoryItem({
   );
 }
 
+// ---- Tab Types ----
+type TabType = "history" | "scheduled";
+
+// ---- Scheduled Standup Types ----
+interface ScheduledStandupType {
+  key: string;
+  name: string;
+  emoji: string;
+  schedule: string;
+  time: string;
+  participants: string[];
+  agenda: string;
+  autoExecute?: boolean;
+}
+
+interface ScheduleData {
+  types: ScheduledStandupType[];
+}
+
+// ---- Scheduled View Component ----
+function ScheduledView() {
+  const [scheduleData, setScheduleData] = useState<ScheduleData | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchSchedule() {
+      try {
+        const res = await fetch("/data/standups/schedule.json");
+        if (res.ok) {
+          setScheduleData(await res.json());
+        }
+      } catch (err) {
+        console.error("Failed to load schedule data:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchSchedule();
+  }, []);
+
+  const getScheduledStandups = () => {
+    if (!scheduleData) return { today: [], tomorrow: [] };
+    
+    // Get current time in PT timezone
+    const now = new Date();
+    const ptTime = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'America/Los_Angeles',
+      weekday: 'long',
+      year: 'numeric',
+      month: '2-digit',  
+      day: '2-digit'
+    }).formatToParts(now);
+    
+    const today = ptTime.find(p => p.type === 'weekday')?.value.toLowerCase() || '';
+    
+    // Get tomorrow
+    const tomorrow = new Date(now);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const tomorrowPt = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'America/Los_Angeles',
+      weekday: 'long'
+    }).format(tomorrow).toLowerCase();
+
+    const todayStandups = scheduleData.types.filter(type => {
+      return type.schedule === 'daily' || type.schedule === today;
+    }).sort((a, b) => a.time.localeCompare(b.time));
+
+    const tomorrowStandups = scheduleData.types.filter(type => {
+      return type.schedule === 'daily' || type.schedule === tomorrowPt;
+    }).sort((a, b) => a.time.localeCompare(b.time));
+
+    return { today: todayStandups, tomorrow: tomorrowStandups };
+  };
+
+  const formatTime = (time: string) => {
+    const [hours, minutes] = time.split(':').map(Number);
+    const date = new Date();
+    date.setHours(hours, minutes);
+    return date.toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+      timeZone: 'America/Los_Angeles'
+    });
+  };
+
+  const getScheduleLabel = (schedule: string) => {
+    if (schedule === 'daily') return 'Daily';
+    return schedule.charAt(0).toUpperCase() + schedule.slice(1);
+  };
+
+  if (loading) {
+    return (
+      <div className="space-y-4">
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="bg-slate-900/50 rounded-xl border border-slate-800 p-4 h-24 animate-pulse" />
+        ))}
+      </div>
+    );
+  }
+
+  const { today, tomorrow } = getScheduledStandups();
+
+  return (
+    <div className="space-y-6">
+      {/* Today Section */}
+      <div>
+        <h3 className="text-sm font-medium text-slate-300 mb-3 flex items-center gap-2">
+          <Calendar className="w-4 h-4" />
+          Today
+        </h3>
+        {today.length === 0 ? (
+          <p className="text-sm text-slate-500 bg-slate-900/30 rounded-lg p-4 border border-slate-800">
+            No standups scheduled for today.
+          </p>
+        ) : (
+          <div className="space-y-3">
+            {today.map((standup) => (
+              <div key={standup.key} className="bg-slate-900/50 rounded-xl border border-slate-800 p-4">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-lg">{standup.emoji}</span>
+                      <h4 className="font-medium text-slate-100">{standup.name}</h4>
+                      <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-primary-500/20 text-primary-400 border border-primary-500/30">
+                        {formatTime(standup.time)} PT
+                      </span>
+                    </div>
+                    <p className="text-sm text-slate-400 mb-3 leading-relaxed">{standup.agenda}</p>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      {standup.participants.map((role) => {
+                        const colors = getAgentColors("", role);
+                        return (
+                          <span key={role} className={`px-2 py-1 rounded-lg text-xs border ${colors.bg} ${colors.text} ${colors.border}`}>
+                            {roleIcons[role] || "👤"} {role}
+                          </span>
+                        );
+                      })}
+                      <span className="px-2 py-0.5 rounded text-xs bg-slate-700/50 text-slate-500 border border-slate-600/30">
+                        {getScheduleLabel(standup.schedule)}
+                      </span>
+                      {standup.autoExecute && (
+                        <span className="px-2 py-0.5 rounded text-xs bg-green-500/20 text-green-400 border border-green-500/30">
+                          Auto-Execute
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Tomorrow Section */}
+      <div>
+        <h3 className="text-sm font-medium text-slate-300 mb-3 flex items-center gap-2">
+          <Calendar className="w-4 h-4" />
+          Tomorrow
+        </h3>
+        {tomorrow.length === 0 ? (
+          <p className="text-sm text-slate-500 bg-slate-900/30 rounded-lg p-4 border border-slate-800">
+            No standups scheduled for tomorrow.
+          </p>
+        ) : (
+          <div className="space-y-3">
+            {tomorrow.map((standup) => (
+              <div key={standup.key} className="bg-slate-900/50 rounded-xl border border-slate-800 p-4">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-lg">{standup.emoji}</span>
+                      <h4 className="font-medium text-slate-100">{standup.name}</h4>
+                      <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-slate-600/20 text-slate-400 border border-slate-600/30">
+                        {formatTime(standup.time)} PT
+                      </span>
+                    </div>
+                    <p className="text-sm text-slate-400 mb-3 leading-relaxed">{standup.agenda}</p>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      {standup.participants.map((role) => {
+                        const colors = getAgentColors("", role);
+                        return (
+                          <span key={role} className={`px-2 py-1 rounded-lg text-xs border ${colors.bg} ${colors.text} ${colors.border}`}>
+                            {roleIcons[role] || "👤"} {role}
+                          </span>
+                        );
+                      })}
+                      <span className="px-2 py-0.5 rounded text-xs bg-slate-700/50 text-slate-500 border border-slate-600/30">
+                        {getScheduleLabel(standup.schedule)}
+                      </span>
+                      {standup.autoExecute && (
+                        <span className="px-2 py-0.5 rounded text-xs bg-green-500/20 text-green-400 border border-green-500/30">
+                          Auto-Execute
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // ---- Main Page ----
 
 export default function StandupsPage() {
@@ -585,6 +793,7 @@ export default function StandupsPage() {
   const [tokenLog, setTokenLog] = useState<TokenLog | null>(null);
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
   const [typeFilter, setTypeFilter] = useState<string>("all");
+  const [activeTab, setActiveTab] = useState<TabType>("history");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -703,107 +912,140 @@ export default function StandupsPage() {
         </button>
       </div>
 
-      {/* Type Filter Tabs */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1 flex-nowrap">
-        {TYPE_FILTERS.map((f) => (
-          <button
-            key={f.key}
-            onClick={() => setTypeFilter(f.key)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap ${
-              typeFilter === f.key
-                ? "bg-primary-600/20 text-primary-400 border border-primary-500/30"
-                : "bg-slate-900/30 text-slate-500 border border-slate-800 hover:border-slate-700 hover:text-slate-400"
-            }`}
-          >
-            {f.emoji} {f.label}
-          </button>
-        ))}
+      {/* Tab Navigation */}
+      <div className="flex items-center gap-2 border-b border-slate-800">
+        <button
+          onClick={() => setActiveTab("history")}
+          className={`px-4 py-2 rounded-t-lg text-sm font-medium transition-colors ${
+            activeTab === "history"
+              ? "bg-primary-600/20 text-primary-400 border-t border-l border-r border-primary-500/30 border-b-transparent"
+              : "text-slate-500 hover:text-slate-400"
+          }`}
+        >
+          📋 History
+        </button>
+        <button
+          onClick={() => setActiveTab("scheduled")}
+          className={`px-4 py-2 rounded-t-lg text-sm font-medium transition-colors ${
+            activeTab === "scheduled"
+              ? "bg-primary-600/20 text-primary-400 border-t border-l border-r border-primary-500/30 border-b-transparent"
+              : "text-slate-500 hover:text-slate-400"
+          }`}
+        >
+          📅 Scheduled
+        </button>
       </div>
 
-      {/* Joshua's Priorities (top — most important) */}
-      <JoshuaPrioritiesCard priorities={joshuaPriorities} />
-
-      {/* CEO Directives */}
-      {selectedStandup?.ceoDirectives && selectedStandup.ceoDirectives.length > 0 && (
-        <DirectivesCard directives={selectedStandup.ceoDirectives} />
+      {/* Type Filter Tabs - Only show on History tab */}
+      {activeTab === "history" && (
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 flex-nowrap">
+          {TYPE_FILTERS.map((f) => (
+            <button
+              key={f.key}
+              onClick={() => setTypeFilter(f.key)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap ${
+                typeFilter === f.key
+                  ? "bg-primary-600/20 text-primary-400 border border-primary-500/30"
+                  : "bg-slate-900/30 text-slate-500 border border-slate-800 hover:border-slate-700 hover:text-slate-400"
+              }`}
+            >
+              {f.emoji} {f.label}
+            </button>
+          ))}
+        </div>
       )}
 
-      {/* Summary Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-        <div className="bg-slate-900/50 rounded-xl border border-slate-800 p-3 text-center">
-          <p className="text-xl font-bold text-slate-100">{standupIndex?.standups?.length || 0}</p>
-          <p className="text-[10px] text-slate-500 mt-0.5">Standups</p>
-        </div>
-        <div className="bg-slate-900/50 rounded-xl border border-slate-800 p-3 text-center">
-          <p className="text-xl font-bold text-purple-400">{joshuaActions}</p>
-          <p className="text-[10px] text-slate-500 mt-0.5">👤 Joshua</p>
-        </div>
-        <div className="bg-slate-900/50 rounded-xl border border-slate-800 p-3 text-center">
-          <p className="text-xl font-bold text-cyan-400">{agentActions}</p>
-          <p className="text-[10px] text-slate-500 mt-0.5">🤖 Agent</p>
-        </div>
-        <div className="bg-slate-900/50 rounded-xl border border-slate-800 p-3 text-center">
-          <p className="text-xl font-bold text-emerald-400">{completedActions}</p>
-          <p className="text-[10px] text-slate-500 mt-0.5">Done</p>
-        </div>
-        <div className="bg-slate-900/50 rounded-xl border border-slate-800 p-3 text-center">
-          <p className="text-xl font-bold text-red-400">{totalConcerns}</p>
-          <p className="text-[10px] text-slate-500 mt-0.5">Concerns</p>
-        </div>
-      </div>
+      {/* Tab Content */}
+      {activeTab === "history" ? (
+        <>
+          {/* Joshua's Priorities (top — most important) */}
+          <JoshuaPrioritiesCard priorities={joshuaPriorities} />
 
-      {/* Main Content */}
-      <div className="flex flex-col lg:flex-row gap-4">
-        {/* History Sidebar */}
-        <div className="w-full lg:w-48 flex-shrink-0 space-y-2 lg:space-y-2 flex lg:flex-col gap-2 lg:gap-0 overflow-x-auto lg:overflow-x-visible">
-          <p className="text-xs text-slate-500 uppercase tracking-wide font-medium px-1 mb-2 lg:mb-2 hidden lg:block">History</p>
-          {filteredEntries.length === 0 ? (
-            <p className="text-xs text-slate-600 px-1">No standups found</p>
-          ) : (
-            filteredEntries.map((entry) => (
-              <StandupHistoryItem
-                key={entry.file || entry.date}
-                entry={entry}
-                isSelected={selectedFile === entry.file}
-                onClick={() => loadStandup(entry.file)}
-              />
-            ))
+          {/* CEO Directives */}
+          {selectedStandup?.ceoDirectives && selectedStandup.ceoDirectives.length > 0 && (
+            <DirectivesCard directives={selectedStandup.ceoDirectives} />
           )}
 
-          {/* Token Usage Widget */}
-          {tokenLog && (
-            <div className="mt-4">
-              <TokenUsageWidget tokenLog={tokenLog} />
+          {/* Summary Stats */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+            <div className="bg-slate-900/50 rounded-xl border border-slate-800 p-3 text-center">
+              <p className="text-xl font-bold text-slate-100">{standupIndex?.standups?.length || 0}</p>
+              <p className="text-[10px] text-slate-500 mt-0.5">Standups</p>
             </div>
-          )}
-        </div>
+            <div className="bg-slate-900/50 rounded-xl border border-slate-800 p-3 text-center">
+              <p className="text-xl font-bold text-purple-400">{joshuaActions}</p>
+              <p className="text-[10px] text-slate-500 mt-0.5">👤 Joshua</p>
+            </div>
+            <div className="bg-slate-900/50 rounded-xl border border-slate-800 p-3 text-center">
+              <p className="text-xl font-bold text-cyan-400">{agentActions}</p>
+              <p className="text-[10px] text-slate-500 mt-0.5">🤖 Agent</p>
+            </div>
+            <div className="bg-slate-900/50 rounded-xl border border-slate-800 p-3 text-center">
+              <p className="text-xl font-bold text-emerald-400">{completedActions}</p>
+              <p className="text-[10px] text-slate-500 mt-0.5">Done</p>
+            </div>
+            <div className="bg-slate-900/50 rounded-xl border border-slate-800 p-3 text-center">
+              <p className="text-xl font-bold text-red-400">{totalConcerns}</p>
+              <p className="text-[10px] text-slate-500 mt-0.5">Concerns</p>
+            </div>
+          </div>
 
-        {/* Detail View */}
-        <div className="flex-1 min-w-0 w-full">
-          {selectedStandup ? (
-            <>
-              <h2 className="text-lg font-semibold text-slate-100 mb-4">{selectedStandup.topic}</h2>
-              <StandupDetail standup={selectedStandup} />
-            </>
-          ) : error ? (
-            <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-6 text-center">
-              <AlertTriangle className="w-8 h-8 text-red-400 mx-auto mb-2" />
-              <p className="text-red-300 text-sm">{error}</p>
-              <p className="text-slate-500 text-xs mt-2">
-                Run <code className="text-slate-400">~/clawd/tools/standup/run-standup.sh</code> to generate standup data.
-              </p>
+          {/* Main Content */}
+          <div className="flex flex-col lg:flex-row gap-4">
+            {/* History Sidebar */}
+            <div className="w-full lg:w-48 flex-shrink-0 space-y-2 lg:space-y-2 flex lg:flex-col gap-2 lg:gap-0 overflow-x-auto lg:overflow-x-visible">
+              <p className="text-xs text-slate-500 uppercase tracking-wide font-medium px-1 mb-2 lg:mb-2 hidden lg:block">History</p>
+              {filteredEntries.length === 0 ? (
+                <p className="text-xs text-slate-600 px-1">No standups found</p>
+              ) : (
+                filteredEntries.map((entry) => (
+                  <StandupHistoryItem
+                    key={entry.file || entry.date}
+                    entry={entry}
+                    isSelected={selectedFile === entry.file}
+                    onClick={() => loadStandup(entry.file)}
+                  />
+                ))
+              )}
+
+              {/* Token Usage Widget */}
+              {tokenLog && (
+                <div className="mt-4">
+                  <TokenUsageWidget tokenLog={tokenLog} />
+                </div>
+              )}
             </div>
-          ) : (
-            <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-6 text-center">
-              <MessageSquare className="w-8 h-8 text-slate-600 mx-auto mb-2" />
-              <p className="text-slate-400 text-sm">No standup data available yet.</p>
-              <p className="text-slate-500 text-xs mt-2">
-                Run <code className="text-slate-400">~/clawd/tools/standup/run-standup.sh</code> to generate your first standup.
-              </p>
+
+            {/* Detail View */}
+            <div className="flex-1 min-w-0 w-full">
+              {selectedStandup ? (
+                <>
+                  <h2 className="text-lg font-semibold text-slate-100 mb-4">{selectedStandup.topic}</h2>
+                  <StandupDetail standup={selectedStandup} />
+                </>
+              ) : error ? (
+                <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-6 text-center">
+                  <AlertTriangle className="w-8 h-8 text-red-400 mx-auto mb-2" />
+                  <p className="text-red-300 text-sm">{error}</p>
+                  <p className="text-slate-500 text-xs mt-2">
+                    Run <code className="text-slate-400">~/clawd/tools/standup/run-standup.sh</code> to generate standup data.
+                  </p>
+                </div>
+              ) : (
+                <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-6 text-center">
+                  <MessageSquare className="w-8 h-8 text-slate-600 mx-auto mb-2" />
+                  <p className="text-slate-400 text-sm">No standup data available yet.</p>
+                  <p className="text-slate-500 text-xs mt-2">
+                    Run <code className="text-slate-400">~/clawd/tools/standup/run-standup.sh</code> to generate your first standup.
+                  </p>
+                </div>
+              )}
             </div>
-          )}
-        </div>
-      </div>
+          </div>
+        </>
+      ) : (
+        <ScheduledView />
+      )}
     </div>
   );
 }

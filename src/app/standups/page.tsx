@@ -1300,20 +1300,41 @@ function ScheduledView() {
 function ManageView() {
   const [verticals, setVerticals] = useState<VerticalDef[]>([]);
   const [initiatives, setInitiatives] = useState<InitiativeDef[]>([]);
+  const [recurringStandups, setRecurringStandups] = useState<ScheduledStandupType[]>([]);
   const [loading, setLoading] = useState(true);
   const [showVerticalForm, setShowVerticalForm] = useState(false);
   const [showInitiativeForm, setShowInitiativeForm] = useState(false);
+  const [showRecurringForm, setShowRecurringForm] = useState(false);
   const [editingVertical, setEditingVertical] = useState<VerticalDef | null>(null);
   const [editingInitiative, setEditingInitiative] = useState<InitiativeDef | null>(null);
-  const [deleteConfirm, setDeleteConfirm] = useState<{ type: 'vertical' | 'initiative', key: string } | null>(null);
+  const [editingRecurring, setEditingRecurring] = useState<ScheduledStandupType | null>(null);
+  const [deleteConfirm, setDeleteConfirm] = useState<{ type: 'vertical' | 'initiative' | 'recurring', key: string } | null>(null);
   const [formData, setFormData] = useState<any>({});
+
+  const formatTime = (time: string) => {
+    const [hours, minutes] = time.split(':').map(Number);
+    const date = new Date();
+    date.setHours(hours, minutes);
+    return date.toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+      timeZone: 'America/Los_Angeles'
+    });
+  };
+
+  const getScheduleLabel = (schedule: string) => {
+    if (schedule === 'daily') return 'Daily';
+    return schedule.charAt(0).toUpperCase() + schedule.slice(1);
+  };
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const [verticalsRes, initiativesRes] = await Promise.all([
+        const [verticalsRes, initiativesRes, recurringRes] = await Promise.all([
           fetch('/api/verticals', { cache: 'no-store' }),
-          fetch('/api/initiatives', { cache: 'no-store' })
+          fetch('/api/initiatives', { cache: 'no-store' }),
+          fetch('/api/standup-schedules', { cache: 'no-store' })
         ]);
 
         if (verticalsRes.ok) {
@@ -1324,6 +1345,11 @@ function ManageView() {
         if (initiativesRes.ok) {
           const initiativesData = await initiativesRes.json();
           setInitiatives(initiativesData.initiatives || []);
+        }
+
+        if (recurringRes.ok) {
+          const recurringData = await recurringRes.json();
+          setRecurringStandups(recurringData.schedules || []);
         }
       } catch (err) {
         console.error('Failed to load manage data:', err);
@@ -1388,9 +1414,40 @@ function ManageView() {
     }
   };
 
-  const handleDelete = async (type: 'vertical' | 'initiative', key: string) => {
+  const handleSaveRecurring = async (data: any) => {
     try {
-      const endpoint = type === 'vertical' ? 'verticals' : 'initiatives';
+      const method = editingRecurring ? 'PATCH' : 'POST';
+      const response = await fetch('/api/standup-schedules', {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        if (editingRecurring) {
+          setRecurringStandups(prev => prev.map(r => r.key === data.key ? result.schedule : r));
+        } else {
+          setRecurringStandups(prev => [...prev, result.schedule]);
+        }
+        setShowRecurringForm(false);
+        setEditingRecurring(null);
+        setFormData({});
+      } else {
+        console.error('Failed to save recurring standup');
+      }
+    } catch (err) {
+      console.error('Error saving recurring standup:', err);
+    }
+  };
+
+  const handleDelete = async (type: 'vertical' | 'initiative' | 'recurring', key: string) => {
+    try {
+      let endpoint: string;
+      if (type === 'vertical') endpoint = 'verticals';
+      else if (type === 'initiative') endpoint = 'initiatives';
+      else endpoint = 'standup-schedules';
+      
       const response = await fetch(`/api/${endpoint}?key=${encodeURIComponent(key)}`, {
         method: 'DELETE'
       });
@@ -1398,8 +1455,10 @@ function ManageView() {
       if (response.ok) {
         if (type === 'vertical') {
           setVerticals(prev => prev.filter(v => v.key !== key));
-        } else {
+        } else if (type === 'initiative') {
           setInitiatives(prev => prev.filter(i => i.key !== key));
+        } else if (type === 'recurring') {
+          setRecurringStandups(prev => prev.filter(r => r.key !== key));
         }
         setDeleteConfirm(null);
       } else {
@@ -1422,6 +1481,92 @@ function ManageView() {
 
   return (
     <div className="space-y-8">
+      {/* Recurring Standups Section */}
+      <div>
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-medium text-slate-200">Recurring Standups</h3>
+          <button
+            onClick={() => {
+              setFormData({});
+              setEditingRecurring(null);
+              setShowRecurringForm(true);
+            }}
+            className="btn btn-primary flex items-center gap-2 text-sm"
+          >
+            <Plus className="w-4 h-4" />
+            Add Recurring Standup
+          </button>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {recurringStandups.map((standup) => (
+            <div key={standup.key} className="bg-slate-900/50 rounded-xl border border-slate-800 p-4">
+              <div className="flex items-start justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <span className="text-lg">{standup.emoji}</span>
+                  <h4 className="font-medium text-slate-100">{standup.name}</h4>
+                </div>
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={() => {
+                      setFormData(standup);
+                      setEditingRecurring(standup);
+                      setShowRecurringForm(true);
+                    }}
+                    className="p-1.5 hover:bg-slate-800 rounded"
+                  >
+                    <Pencil className="w-3 h-3 text-slate-400" />
+                  </button>
+                  <button
+                    onClick={() => setDeleteConfirm({ type: 'recurring', key: standup.key })}
+                    className="p-1.5 hover:bg-slate-800 rounded"
+                  >
+                    <Trash2 className="w-3 h-3 text-red-400" />
+                  </button>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-2 mb-2">
+                <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-primary-500/20 text-primary-400 border border-primary-500/30">
+                  {formatTime(standup.time)} PT
+                </span>
+                <span className="px-2 py-0.5 rounded text-xs bg-slate-700/50 text-slate-500 border border-slate-600/30">
+                  {getScheduleLabel(standup.schedule)}
+                </span>
+                {standup.autoExecute && (
+                  <span className="px-2 py-0.5 rounded text-xs bg-green-500/20 text-green-400 border border-green-500/30">
+                    Auto-Execute
+                  </span>
+                )}
+              </div>
+              
+              {standup.agenda && (
+                <p className="text-sm text-slate-400 mb-3 leading-relaxed">{standup.agenda}</p>
+              )}
+              
+              <div className="flex items-center gap-2 flex-wrap mb-2">
+                {standup.participants.map((role) => {
+                  const colors = getAgentColors("", role);
+                  return (
+                    <span key={role} className={`px-2 py-1 rounded-lg text-xs border ${colors.bg} ${colors.text} ${colors.border}`}>
+                      {roleIcons[role] || "👤"} {role}
+                    </span>
+                  );
+                })}
+              </div>
+              
+              {standup.verticals && standup.verticals.length > 0 && (
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  {standup.verticals.map((vk) => (
+                    <VerticalBadge key={vk} verticalKey={vk} />
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* Verticals Section */}
       <div>
         <div className="flex items-center justify-between mb-4">

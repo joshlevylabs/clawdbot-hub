@@ -1089,7 +1089,7 @@ function ScheduledView() {
                     className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-slate-200"
                     placeholder="morning-priorities"
                     required
-                    disabled={editingSchedule}
+                    disabled={!!editingSchedule}
                   />
                 </div>
                 
@@ -1174,7 +1174,7 @@ function ScheduledView() {
                           if (e.target.checked) {
                             setScheduleFormData({ ...scheduleFormData, participants: [...currentParticipants, role] });
                           } else {
-                            setScheduleFormData({ ...scheduleFormData, participants: currentParticipants.filter(p => p !== role) });
+                            setScheduleFormData({ ...scheduleFormData, participants: currentParticipants.filter((p: string) => p !== role) });
                           }
                         }}
                         className="rounded"
@@ -1210,7 +1210,7 @@ function ScheduledView() {
                           if (e.target.checked) {
                             setScheduleFormData({ ...scheduleFormData, verticals: [...currentVerticals, vertical.key] });
                           } else {
-                            setScheduleFormData({ ...scheduleFormData, verticals: currentVerticals.filter(v => v !== vertical.key) });
+                            setScheduleFormData({ ...scheduleFormData, verticals: currentVerticals.filter((v: string) => v !== vertical.key) });
                           }
                         }}
                         className="rounded"
@@ -1234,7 +1234,7 @@ function ScheduledView() {
                           if (e.target.checked) {
                             setScheduleFormData({ ...scheduleFormData, initiatives: [...currentInitiatives, initiative.key] });
                           } else {
-                            setScheduleFormData({ ...scheduleFormData, initiatives: currentInitiatives.filter(i => i !== initiative.key) });
+                            setScheduleFormData({ ...scheduleFormData, initiatives: currentInitiatives.filter((i: string) => i !== initiative.key) });
                           }
                         }}
                         className="rounded"
@@ -1584,7 +1584,7 @@ function ManageView() {
                   className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-slate-200"
                   placeholder="ecosystem"
                   required
-                  disabled={editingVertical}
+                  disabled={!!editingVertical}
                 />
               </div>
               
@@ -1697,7 +1697,7 @@ function ManageView() {
                   className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-slate-200"
                   placeholder="app-store-submit"
                   required
-                  disabled={editingInitiative}
+                  disabled={!!editingInitiative}
                 />
               </div>
               
@@ -1765,7 +1765,7 @@ function ManageView() {
                           if (e.target.checked) {
                             setFormData({ ...formData, verticals: [...currentVerticals, vertical.key] });
                           } else {
-                            setFormData({ ...formData, verticals: currentVerticals.filter(v => v !== vertical.key) });
+                            setFormData({ ...formData, verticals: currentVerticals.filter((v: string) => v !== vertical.key) });
                           }
                         }}
                         className="rounded"

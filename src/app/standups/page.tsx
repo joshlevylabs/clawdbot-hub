@@ -750,8 +750,8 @@ function ScheduledView() {
     fetchData();
   }, []);
 
-  const getRemainingTodayStandups = () => {
-    if (!scheduleData) return [];
+  const getTodayStandups = () => {
+    if (!scheduleData) return { upcoming: [], past: [] };
     
     // Get current time in PT timezone
     const now = new Date();
@@ -772,19 +772,20 @@ function ScheduledView() {
     const currentTimeMinutes = currentHour * 60 + currentMinute;
 
     const todayStandups = scheduleData.types.filter(type => {
-      const isScheduledToday = type.schedule === 'daily' || type.schedule === today;
-      
-      if (!isScheduledToday) return false;
-      
-      // Check if the standup time has passed
-      const [standupHour, standupMinute] = type.time.split(':').map(Number);
-      const standupTimeMinutes = standupHour * 60 + standupMinute;
-      
-      // Only include standups that haven't passed yet
-      return standupTimeMinutes > currentTimeMinutes;
+      return type.schedule === 'daily' || type.schedule === today || type.schedule === `once-${today}`;
     }).sort((a, b) => a.time.localeCompare(b.time));
 
-    return todayStandups;
+    const upcoming = todayStandups.filter(type => {
+      const [h, m] = type.time.split(':').map(Number);
+      return h * 60 + m > currentTimeMinutes;
+    });
+
+    const past = todayStandups.filter(type => {
+      const [h, m] = type.time.split(':').map(Number);
+      return h * 60 + m <= currentTimeMinutes;
+    });
+
+    return { upcoming, past };
   };
 
   const formatTime = (time: string) => {
@@ -801,6 +802,7 @@ function ScheduledView() {
 
   const getScheduleLabel = (schedule: string) => {
     if (schedule === 'daily') return 'Daily';
+    if (schedule.startsWith('once-')) return 'One-time';
     return schedule.charAt(0).toUpperCase() + schedule.slice(1);
   };
 
@@ -820,9 +822,15 @@ function ScheduledView() {
         weekday: 'long'
       }).format(date).toLowerCase();
       
-      const standupsCount = scheduleData.types.filter(type => {
-        return type.schedule === 'daily' || type.schedule === dayName;
-      }).length;
+      const matchesDay = (type: ScheduledStandupType) => {
+        if (type.schedule === 'daily') return true;
+        if (type.schedule === dayName) return true;
+        // One-time standups only show on their specific day (today only for simplicity)
+        if (type.schedule === `once-${dayName}` && i === 0) return true;
+        return false;
+      };
+      
+      const standupsCount = scheduleData.types.filter(matchesDay).length;
       
       days.push({
         date: date,
@@ -830,9 +838,7 @@ function ScheduledView() {
         isToday: i === 0,
         dayName: dayName,
         standupsCount: standupsCount,
-        standups: scheduleData.types.filter(type => {
-          return type.schedule === 'daily' || type.schedule === dayName;
-        }).sort((a, b) => a.time.localeCompare(b.time))
+        standups: scheduleData.types.filter(matchesDay).sort((a, b) => a.time.localeCompare(b.time))
       });
     }
     
@@ -858,7 +864,7 @@ function ScheduledView() {
         key,
         name: data.name || 'Ad-hoc Standup',
         emoji: data.emoji || '📋',
-        schedule: today,
+        schedule: `once-${today}`,
         time: data.time || '14:00',
         participants: data.participants || ['COO'],
         agenda: data.agenda || '',
@@ -887,7 +893,7 @@ function ScheduledView() {
     }
   };
 
-  const remainingToday = getRemainingTodayStandups();
+  const { upcoming, past } = getTodayStandups();
   const next30Days = getNext30Days();
 
   return (
@@ -907,20 +913,20 @@ function ScheduledView() {
         </button>
       </div>
 
-      {/* Today's Remaining Standups */}
+      {/* Upcoming Standups */}
       <div>
         <h3 className="text-sm font-medium text-slate-300 mb-3 flex items-center gap-2">
           <Calendar className="w-4 h-4" />
-          Today's Remaining Standups
+          Upcoming Today
         </h3>
-        {remainingToday.length === 0 ? (
+        {upcoming.length === 0 ? (
           <div className="text-sm text-slate-400 bg-slate-900/30 rounded-lg p-4 border border-slate-800 flex items-center gap-2">
             <CheckCircle className="w-4 h-4 text-green-400" />
             All standups completed for today ✅
           </div>
         ) : (
           <div className="space-y-3">
-            {remainingToday.map((standup) => (
+            {upcoming.map((standup) => (
               <div key={standup.key} className="bg-slate-900/50 rounded-xl border border-slate-800 p-4">
                 <div className="flex items-start">
                   <div className="flex-1">
@@ -957,6 +963,30 @@ function ScheduledView() {
           </div>
         )}
       </div>
+
+      {/* Past Standups (Today) */}
+      {past.length > 0 && (
+        <div>
+          <h3 className="text-sm font-medium text-slate-500 mb-3 flex items-center gap-2">
+            <CheckCircle className="w-4 h-4 text-green-500/50" />
+            Earlier Today
+          </h3>
+          <div className="space-y-2">
+            {past.map((standup) => (
+              <div key={standup.key} className="bg-slate-900/30 rounded-xl border border-slate-800/50 p-3 opacity-60">
+                <div className="flex items-center gap-2">
+                  <span className="text-base">{standup.emoji}</span>
+                  <h4 className="font-medium text-slate-400 text-sm">{standup.name}</h4>
+                  <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-slate-700/30 text-slate-500 border border-slate-700/30 line-through">
+                    {formatTime(standup.time)} PT
+                  </span>
+                  <CheckCircle className="w-3.5 h-3.5 text-green-500/50 ml-auto" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* 30-Day Calendar View */}
       <div>
@@ -1161,6 +1191,7 @@ function ManageView() {
 
   const getScheduleLabel = (schedule: string) => {
     if (schedule === 'daily') return 'Daily';
+    if (schedule.startsWith('once-')) return 'One-time';
     return schedule.charAt(0).toUpperCase() + schedule.slice(1);
   };
 

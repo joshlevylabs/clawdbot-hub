@@ -12,7 +12,7 @@ const DIR_TO_ID: Record<string, string> = {
   theo: "coo",
   muse: "cmo",
   venture: "cro",
-  pit: "the-pit",
+  pit: "ticker",
 };
 
 function dirToAgentId(dirName: string): string {

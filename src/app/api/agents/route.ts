@@ -22,7 +22,7 @@ const DIR_TO_ID: Record<string, string> = {
   theo: "coo",
   muse: "cmo",
   venture: "cro",
-  pit: "the-pit",
+  pit: "ticker",
   // All others use dir name as id: forge, pixel, sentinel, scriptbot, echo, builder, scout
 };
 
@@ -95,10 +95,10 @@ function getDefaultAgentSeeds(): (Partial<AgentRow> & { id: string })[] {
     { id: "cmo", name: "Muse", title: "CMO", emoji: "🎨", model: "Claude Sonnet 4", department: "Marketing", status: "active", description: "Content, creative direction, brand.", reports_to: "coo", direct_reports: ["scriptbot", "echo"], files: {} },
     { id: "scriptbot", name: "ScriptBot", title: "Content Lead", emoji: "📝", model: "Sonnet 4", department: "Marketing", status: "active", description: "Podcast scripts, newsletter, blog posts", reports_to: "cmo", direct_reports: [], files: {} },
     { id: "echo", name: "Echo", title: "Social Lead", emoji: "📣", model: "Haiku 3.5", department: "Marketing", status: "idle", description: "Social scheduling, engagement, community", reports_to: "cmo", direct_reports: [], files: {} },
-    { id: "cro", name: "Venture", title: "CRO", emoji: "💰", model: "Claude Sonnet 4", department: "Revenue", status: "active", description: "Growth strategy, monetization.", reports_to: "coo", direct_reports: ["builder", "scout", "the-pit"], files: {} },
+    { id: "cro", name: "Venture", title: "CRO", emoji: "💰", model: "Claude Sonnet 4", department: "Revenue", status: "active", description: "Growth strategy, monetization.", reports_to: "coo", direct_reports: ["builder", "scout", "ticker"], files: {} },
     { id: "builder", name: "Builder", title: "Products Lead", emoji: "🏗️", model: "Sonnet 4", department: "Revenue", status: "active", description: "Product ideation, feature dev, market fit", reports_to: "cro", direct_reports: [], files: {} },
     { id: "scout", name: "Scout", title: "Growth Lead", emoji: "🔍", model: "Haiku 3.5", department: "Revenue", status: "idle", description: "User acquisition, community, analytics", reports_to: "cro", direct_reports: [], files: {} },
-    { id: "the-pit", name: "Chris", title: "Trading Strategist", emoji: "📈", model: "Sonnet 4", department: "Revenue", status: "active", description: "Chris Vermeulen — 25+ year veteran trader. ETF specialist focused on capital preservation and riding only rising assets. Owns the MRE improvement system.", reports_to: "cro", direct_reports: [], files: {} },
+    { id: "ticker", name: "Chris", title: "Trading Strategist", emoji: "📈", model: "Sonnet 4", department: "Revenue", status: "active", description: "Chris Vermeulen — 25+ year veteran trader. ETF specialist focused on capital preservation and riding only rising assets. Owns the MRE improvement system.", reports_to: "cro", direct_reports: [], files: {} },
     { id: "auditor", name: "Auditor", title: "Task Auditor", emoji: "🔎", model: "Sonnet 4", department: "Executive", status: "active", description: "Verifies agent tasks by checking actual world state. Trust but verify.", reports_to: "coo", direct_reports: [], files: {} },
   ];
 }

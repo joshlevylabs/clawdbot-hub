@@ -17,6 +17,7 @@ import {
   Lock,
   Network,
   Cpu,
+  Layers,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -29,6 +30,7 @@ const navItems = [
   { href: "/morning-brief", icon: Clock, label: "Morning Brief" },
   { href: "/podcast", icon: Mic, label: "Podcast" },
   { href: "/newsletter", icon: Mail, label: "Newsletter" },
+  { href: "/ecosystem", icon: Layers, label: "Ecosystem" },
   { href: "/vault", icon: Lock, label: "Vault" },
   { href: "/settings", icon: Settings, label: "Settings" },
 ];

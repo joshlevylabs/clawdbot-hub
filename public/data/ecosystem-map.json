@@ -1,0 +1,209 @@
+{
+  "lastUpdated": "2026-02-16",
+  "programs": {
+    "website": {
+      "name": "joshlevylabs.com",
+      "emoji": "🌐",
+      "description": "The brand — personal website, portfolio, podcast, newsletter, products",
+      "repo": "~/joshlevylabs/apps/web/",
+      "stack": ["Next.js 14", "Tailwind CSS", "Contentlayer (MDX)", "Supabase", "Stripe"],
+      "deploy": "Vercel",
+      "url": "https://joshlevylabs.com",
+      "routes": [
+        { "path": "/", "name": "Homepage", "status": "live" },
+        { "path": "/about", "name": "About", "status": "live" },
+        { "path": "/products", "name": "Products", "status": "live" },
+        { "path": "/projects", "name": "Portfolio", "status": "live", "detail": "8 MDX project pages" },
+        { "path": "/podcast", "name": "Podcast Hub", "status": "live", "detail": "1 episode on site (3 produced)" },
+        { "path": "/writing", "name": "Blog", "status": "needs-content", "detail": "Only 1 post" },
+        { "path": "/newsletters", "name": "Newsletter Archive", "status": "live" },
+        { "path": "/plays", "name": "Today's Plays", "status": "live", "detail": "Landing + dashboard + pricing" },
+        { "path": "/plays/dashboard", "name": "Signals Dashboard", "status": "live", "detail": "Auth-gated premium" },
+        { "path": "/compass", "name": "Marriage Compass", "status": "live", "detail": "Onboarding + dashboard + counselor" },
+        { "path": "/dashboard", "name": "User Dashboard", "status": "live" },
+        { "path": "/subscribe", "name": "Newsletter Subscribe", "status": "live" },
+        { "path": "/timeline", "name": "Career Timeline", "status": "live" },
+        { "path": "/content", "name": "Content Hub", "status": "live" },
+        { "path": "/contact", "name": "Contact", "status": "live" },
+        { "path": "/terms", "name": "Terms", "status": "live" }
+      ],
+      "apis": [
+        { "path": "/api/auth/callback", "purpose": "Supabase auth" },
+        { "path": "/api/checkout", "purpose": "Stripe checkout" },
+        { "path": "/api/webhooks/stripe", "purpose": "Payment webhooks" },
+        { "path": "/api/signals", "purpose": "Trading signals" },
+        { "path": "/api/advisor", "purpose": "AI advisor" },
+        { "path": "/api/compass/*", "purpose": "Marriage Compass CRUD" },
+        { "path": "/api/newsletter*", "purpose": "Newsletter operations" }
+      ],
+      "content": {
+        "podcastEpisodes": { "onSite": 1, "produced": 3 },
+        "blogPosts": 1,
+        "projects": 8
+      },
+      "components": ["Hero", "Navigation", "Footer", "Container", "ProjectCard", "PodcastCard", "NewsletterSignup", "TimelineItem", "MDXComponents", "BackgroundAnimation", "ProofTile"]
+    },
+    "hub": {
+      "name": "The Hub",
+      "emoji": "🎛️",
+      "description": "Operations center — agent management, trading, morning briefs, newsletters, standups",
+      "repo": "~/clawd/clawdbot-hub/",
+      "stack": ["Next.js 14", "Tailwind CSS", "Supabase", "Zustand", "Recharts", "Yahoo Finance"],
+      "deploy": "Vercel (auto-deploy on push)",
+      "url": "https://clawdbot-hub.vercel.app",
+      "routes": [
+        { "path": "/", "name": "Hub Home", "status": "live" },
+        { "path": "/dashboard", "name": "Dashboard", "status": "live" },
+        { "path": "/morning-brief", "name": "Morning Brief", "status": "live", "detail": "Daily + history" },
+        { "path": "/trading", "name": "Trading Dashboard", "status": "live", "detail": "MRE signals, cycles, universe, optimizer" },
+        { "path": "/markets", "name": "Markets", "status": "live" },
+        { "path": "/mre", "name": "MRE Engine", "status": "live", "detail": "+ /rotation" },
+        { "path": "/podcast", "name": "Podcast Manager", "status": "live" },
+        { "path": "/newsletter", "name": "Newsletter CMS", "status": "live", "detail": "Create, contacts, compose, preview" },
+        { "path": "/org-chart", "name": "Agent Org Chart", "status": "live", "detail": "Editable hierarchy + protocols + cron" },
+        { "path": "/fleet", "name": "Fleet Management", "status": "live", "detail": "Agent billing + usage" },
+        { "path": "/workspaces", "name": "Workspaces", "status": "live" },
+        { "path": "/standups", "name": "Standups", "status": "live", "detail": "Agent standup conversations" },
+        { "path": "/connections", "name": "Connections", "status": "live" },
+        { "path": "/schedules", "name": "Schedules", "status": "live" },
+        { "path": "/vault", "name": "Vault", "status": "live", "detail": "Secrets + TOTP" },
+        { "path": "/usage", "name": "Usage Tracking", "status": "live" },
+        { "path": "/settings", "name": "Settings", "status": "live" }
+      ],
+      "apis": [
+        { "path": "/api/agents", "purpose": "Agent config CRUD" },
+        { "path": "/api/briefs", "purpose": "Morning brief data" },
+        { "path": "/api/markets", "purpose": "Market data proxy" },
+        { "path": "/api/newsletters", "purpose": "Newsletter management" },
+        { "path": "/api/paper-trading", "purpose": "Paper trading" },
+        { "path": "/api/podcast", "purpose": "Podcast data" },
+        { "path": "/api/price-history", "purpose": "Historical prices" },
+        { "path": "/api/vault", "purpose": "Vault operations" },
+        { "path": "/api/cron", "purpose": "Cron management" }
+      ],
+      "dataFiles": [
+        { "file": "morning-brief.json", "source": "6 AM cron" },
+        { "file": "trading/mre-signals.json", "source": "MRE engine" },
+        { "file": "trading/portfolio.json", "source": "Alpaca sync" },
+        { "file": "standups/latest.json", "source": "Standup engine" },
+        { "file": "podcast/index.json", "source": "Podcast pipeline" },
+        { "file": "fleet-usage.json", "source": "Fleet tracker" },
+        { "file": "joshua-priorities.json", "source": "Daily standup" }
+      ],
+      "components": ["Sidebar", "MREWidget", "PerformanceChart", "PositionCharts", "FibonacciModal", "SignalAnalysisModal", "Newsletter suite (14)"]
+    },
+    "lever": {
+      "name": "Lever App",
+      "emoji": "📱",
+      "description": "Consumer mobile app — finance, faith, family, compass. Freemium with Watts + Premium.",
+      "repo": "~/joshlevylabs/apps/mobile/",
+      "stack": ["Expo (React Native)", "NativeWind", "Supabase", "Expo Router"],
+      "deploy": "EAS Build → App Store / Google Play",
+      "url": null,
+      "routes": [
+        { "path": "/(tabs)/index", "name": "Home", "status": "built", "detail": "Dashboard + customizable cards" },
+        { "path": "/(tabs)/plays", "name": "Today's Plays", "status": "built", "detail": "Signals, trade of day" },
+        { "path": "/(tabs)/portfolio", "name": "Portfolio", "status": "built" },
+        { "path": "/(tabs)/cycle", "name": "Market Cycle", "status": "built" },
+        { "path": "/(tabs)/compass", "name": "Marriage Compass", "status": "built" },
+        { "path": "/(tabs)/faith", "name": "Faith Guide", "status": "built", "detail": "Prayer, traditions, lessons" },
+        { "path": "/(tabs)/family", "name": "Family", "status": "built", "detail": "Events, soul notes, members" },
+        { "path": "/(tabs)/profile", "name": "Profile", "status": "built" },
+        { "path": "/onboarding/*", "name": "Onboarding", "status": "built" },
+        { "path": "/buy-watts", "name": "Buy Watts", "status": "built" },
+        { "path": "/upgrade", "name": "Upgrade", "status": "built" }
+      ],
+      "components": {
+        "trading": ["TradeOfTheDay", "MarketPulseCard", "UniverseList", "PerformanceChart", "CyclePositionChart", "RotationCard", "WeekInReview"],
+        "faith": ["DailyPrayer", "GuideChat", "ConversationHistory", "JourneyTimeline", "LessonView", "TraditionCard", "RadarChart"],
+        "family": ["FamilyOverview", "FamilyMemberCard", "FamilyEventCard", "MarriageCompassEmbed", "SoulNotes"],
+        "ui": ["Button", "Card", "Badge", "Chip", "Skeleton", "EmptyState", "ProgressBar"]
+      },
+      "hooks": ["useSignals", "useMarketData", "usePaperTrading", "usePerformance", "useCompass", "useFaith", "useFamily", "useSubscription"]
+    }
+  },
+  "shared": {
+    "supabase": {
+      "name": "Supabase Backend",
+      "description": "Shared auth, database, edge functions",
+      "tables": ["profiles", "signals", "compass_checkins", "compass_profiles", "potency_actions", "faith_journey", "agent_configs", "newsletter_issues"],
+      "edgeFunctions": ["create-checkout", "create-portal-session", "create-watt-checkout", "stripe-webhook", "validate-email"]
+    },
+    "sharedPackage": {
+      "name": "@joshlevylabs/shared",
+      "location": "~/joshlevylabs/packages/shared/",
+      "modules": ["types/", "supabase/", "watts.ts", "potency-actions.ts", "utils.ts", "paper-trading/"],
+      "usedBy": ["website", "lever"]
+    },
+    "uiPackage": {
+      "name": "@joshlevylabs/ui",
+      "location": "~/joshlevylabs/packages/ui/",
+      "components": ["Button", "Card", "UpgradeGate"],
+      "usedBy": ["website"]
+    }
+  },
+  "flows": {
+    "podcastRelease": {
+      "name": "Podcast Release",
+      "emoji": "🎙️",
+      "steps": [
+        { "target": "website", "action": "Add MDX to content/podcast/" },
+        { "target": "website", "action": "Update /podcast page" },
+        { "target": "hub", "action": "Update public/data/podcast/index.json" },
+        { "target": "hub", "action": "Add episode markdown" },
+        { "target": "external", "action": "Newsletter: include in Builder's Frequency" }
+      ]
+    },
+    "newsletterRelease": {
+      "name": "Newsletter Release",
+      "emoji": "📰",
+      "steps": [
+        { "target": "website", "action": "Update /newsletters archive" },
+        { "target": "hub", "action": "Newsletter CMS updated" },
+        { "target": "external", "action": "Beehiiv: distribute to subscribers" }
+      ]
+    },
+    "tradingFeature": {
+      "name": "New Trading Feature",
+      "emoji": "📈",
+      "steps": [
+        { "target": "hub", "action": "New component in trading/" },
+        { "target": "hub", "action": "New data file in public/data/trading/" },
+        { "target": "lever", "action": "New component to display data" },
+        { "target": "lever", "action": "New hook to fetch data" },
+        { "target": "lever", "action": "Update plays/cycle tab" }
+      ]
+    },
+    "sharedUpdate": {
+      "name": "Shared Package Update",
+      "emoji": "📦",
+      "steps": [
+        { "target": "shared", "action": "Update types/logic in @joshlevylabs/shared" },
+        { "target": "website", "action": "Rebuild needed" },
+        { "target": "lever", "action": "Rebuild needed" }
+      ]
+    }
+  },
+  "syncIssues": {
+    "critical": [
+      { "issue": "Only 1 podcast MDX on website vs 3 in Hub", "programs": ["website", "hub"], "impact": "Podcast page shows stale content" },
+      { "issue": "Only 1 blog post on website", "programs": ["website"], "impact": "/writing looks empty" },
+      { "issue": "Mobile app not on App Store yet", "programs": ["lever"], "impact": "No public users" }
+    ],
+    "attention": [
+      { "issue": "Newsletter CMS in Hub but archive on website uses different API", "programs": ["hub", "website"] },
+      { "issue": "Compass exists in both website AND app with separate UIs", "programs": ["website", "lever"] },
+      { "issue": "Plays dashboard on website AND app", "programs": ["website", "lever"] },
+      { "issue": "No content sync automation", "programs": ["website", "hub", "lever"] },
+      { "issue": "Hub and Website use different Supabase instances", "programs": ["hub", "website"] }
+    ]
+  },
+  "revenue": [
+    { "stream": "Today's Plays Subscription", "platform": "Website + App", "status": "built", "potential": "$10-50/mo × subscribers" },
+    { "stream": "Watt Purchases", "platform": "App", "status": "built", "potential": "Microtransactions" },
+    { "stream": "Marriage Compass Premium", "platform": "Website + App", "status": "built", "potential": "Bundled" },
+    { "stream": "Newsletter Sponsorships", "platform": "Beehiiv", "status": "planned", "potential": "$50-500/issue" },
+    { "stream": "Podcast Sponsorships", "platform": "Spotify/YouTube", "status": "planned", "potential": "$100-1000/ep" },
+    { "stream": "Consulting", "platform": "Website", "status": "planned", "potential": "$200-500/hr" }
+  ]
+}

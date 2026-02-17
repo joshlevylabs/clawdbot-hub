@@ -37,6 +37,7 @@ interface ActionItem {
   priority: string;
   tag?: string; // "JOSHUA" | "AGENT"
   completedAt?: string;
+  agentOutput?: string;
 }
 
 interface TranscriptEntry {
@@ -679,6 +680,11 @@ function StandupDetail({ standup, onToggleActionItem }: { standup: Standup; onTo
                     {isCompleted && item.completedAt && (
                       <p className="text-xs text-slate-600 mt-0.5">
                         Completed {new Date(item.completedAt).toLocaleDateString()}
+                      </p>
+                    )}
+                    {isCompleted && item.agentOutput && (
+                      <p className="text-xs text-emerald-400/70 mt-1 bg-emerald-500/5 px-2 py-1 rounded">
+                        🤖 {item.agentOutput}
                       </p>
                     )}
                   </div>

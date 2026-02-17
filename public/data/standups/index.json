@@ -38,6 +38,17 @@
       "initiatives": []
     },
     {
+      "date": "2026-02-17",
+      "type": "adhoc-lever-faith-and-family",
+      "typeName": "Lever Faith and Family",
+      "typeEmoji": "\ud83d\udccb",
+      "topic": "Lever Faith and Family \u2014 Tuesday Feb 17",
+      "file": "2026-02-17-adhoc-lever-faith-and-family.json",
+      "tokenCost": 0.1119,
+      "verticals": [],
+      "initiatives": []
+    },
+    {
       "date": "2026-02-16",
       "type": "morning-priorities",
       "typeName": "Morning Priorities",

@@ -1,0 +1,20 @@
+{
+  "log": [
+    {
+      "date": "2026-02-16",
+      "type": "morning-priorities",
+      "inputTokens": 1159,
+      "outputTokens": 1201,
+      "totalTokens": 2360,
+      "estimatedCost": 0.1075,
+      "model": "claude-opus-4-6",
+      "duration": "26.0s"
+    }
+  ],
+  "totals": {
+    "today": 0.1075,
+    "week": 0.1075,
+    "month": 0.1075,
+    "standupCount": 1
+  }
+}

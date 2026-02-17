@@ -1,0 +1,254 @@
+{
+  "date": "2026-02-16",
+  "generatedAt": "2026-02-16T19:40:05.946982-08:00",
+  "topic": "Morning Priorities \u2014 Monday Feb 16",
+  "status": "completed",
+  "participants": [
+    {
+      "name": "Theo",
+      "role": "COO",
+      "emoji": "\ud83d\udd3a",
+      "description": "Orchestrates all operations. The right hand."
+    },
+    {
+      "name": "Elon",
+      "role": "CTO",
+      "emoji": "\ud83d\ude80",
+      "description": "Revolutionary technologist pushing humanity toward a sustainable, multi-planetary future. Owns all code, infrastructure, and moonshot engineering projects. First principles thinker who moves fast and breaks things to build the impossible."
+    },
+    {
+      "name": "Dave",
+      "role": "CRO",
+      "emoji": "\ud83d\udcb5",
+      "description": "Growth strategy, monetization. Gazelle-intense focus on revenue, zero debt thinking, proven frameworks for building wealth through business."
+    },
+    {
+      "name": "Alex",
+      "role": "CMO",
+      "emoji": "\ud83e\udd8d",
+      "description": "Content, creative direction, brand. Obsessed with offers, value equations, and volume. Every piece of content must generate leads or it does not ship."
+    }
+  ],
+  "duration": "26.0s",
+  "reports": {
+    "cto": {
+      "agent": "Elon",
+      "role": "CTO",
+      "emoji": "\ud83d\ude80",
+      "description": "Revolutionary technologist pushing humanity toward a sustainable, multi-planetary future. Owns all code, infrastructure, and moonshot engineering projects. First principles thinker who moves fast and breaks things to build the impossible.",
+      "department": "Engineering",
+      "directReports": [
+        "Nexus",
+        "Pixel",
+        "Sentinel"
+      ],
+      "highlights": [
+        "226 commits this week",
+        "Hub latest: bf75b40 data: fleet usage update",
+        "Build status: healthy"
+      ],
+      "concerns": [
+        "Uncommitted changes: Hub (1), Monorepo (16)",
+        "1 critical sync gaps",
+        "6 TODOs/FIXMEs"
+      ],
+      "metrics": {
+        "recentCommits": 226,
+        "openIssues": 2,
+        "buildHealthy": true,
+        "todosFixmes": 6,
+        "uncommittedHub": 1,
+        "uncommittedMono": 16
+      }
+    },
+    "cro": {
+      "agent": "Dave",
+      "role": "CRO",
+      "emoji": "\ud83d\udcb5",
+      "description": "Growth strategy, monetization. Gazelle-intense focus on revenue, zero debt thinking, proven frameworks for building wealth through business.",
+      "department": "Revenue",
+      "directReports": [
+        "Builder",
+        "Scout",
+        "Ticker"
+      ],
+      "highlights": [
+        "Paper portfolio equity: $100,083",
+        "Fear & Greed Index: 36 (fear)",
+        "SPY regime: sideways",
+        "No BUY signals \u2014 24 in HOLD",
+        "Positions: AEE, EFA, XLV, XLE, VNQ, TLT, GLD"
+      ],
+      "concerns": [
+        "Fear & Greed at 36 \u2014 market fearful"
+      ],
+      "metrics": {
+        "equity": 100083,
+        "positionCount": 7,
+        "signalsToday": 0,
+        "fearGreed": 36,
+        "fearGreedRating": "fear",
+        "regime": "sideways"
+      }
+    },
+    "cmo": {
+      "agent": "Alex",
+      "role": "CMO",
+      "emoji": "\ud83e\udd8d",
+      "description": "Content, creative direction, brand. Obsessed with offers, value equations, and volume. Every piece of content must generate leads or it does not ship.",
+      "department": "Marketing",
+      "directReports": [
+        "ScriptBot",
+        "Echo"
+      ],
+      "highlights": [
+        "3 podcast episodes produced",
+        "1 on website",
+        "1 blog post(s)",
+        "Last content: 2026-02-12"
+      ],
+      "concerns": [
+        "2 podcast episode(s) not synced to website",
+        "Only 1 blog post \u2014 needs more content"
+      ],
+      "metrics": {
+        "podcastEpisodes": 3,
+        "podcastOnWebsite": 1,
+        "blogPosts": 1,
+        "lastContentDate": "2026-02-12"
+      }
+    }
+  },
+  "transcript": [
+    {
+      "speaker": "Dave",
+      "role": "CRO",
+      "message": "Elon, that critical sync gap \u2014 any chance it touches the portfolio tracking or data feeds? Last thing I need is stale data when Joshua's reviewing positions."
+    },
+    {
+      "speaker": "Elon",
+      "role": "CTO",
+      "message": "Fair question. I'll prioritize it first thing and confirm once it's resolved. If it touches anything in your data pipeline, you'll know within the hour. First principles \u2014 fix the foundation before we build on top of it."
+    },
+    {
+      "speaker": "Alex",
+      "role": "CMO",
+      "message": "Dave, when Joshua reviews those positions, if there's anything worth turning into a market commentary piece, flag it my way. Fear at 36 is a narrative people want to hear about."
+    },
+    {
+      "speaker": "Dave",
+      "role": "CRO",
+      "message": "Love it. If Joshua makes any moves, I'll loop you in. --- **Theo (COO) \ud83c\udfaf:** Perfect. Clear Monday. Here's the summary: **Top three priorities for today:** 1. **Elon addresses the critical ecosystem sync gap** \u2014 this is highest urgency, gets done first. 2. **Joshua reviews all 7 active positions and risk parameters** \u2014 market's in fear territory, we need eyes on this early. 3. **Alex syncs the 2 podcast episodes to the website** \u2014 no reason for content to sit offline. Everything else rolls in behind those. Let's execute. Have a great Monday, team. ---"
+    }
+  ],
+  "actionItems": [
+    {
+      "text": "Review current positions: AEE, EFA, XLV, XLE, VNQ, TLT, GLD",
+      "priority": "medium",
+      "assignee": "Dave",
+      "completed": false,
+      "tag": "JOSHUA"
+    },
+    {
+      "text": "Review position sizing and risk parameters for 7 active positions",
+      "priority": "medium",
+      "assignee": "Dave",
+      "completed": false,
+      "tag": "JOSHUA"
+    },
+    {
+      "text": "Monitor Fear & Greed index (currently 36)",
+      "priority": "low",
+      "assignee": "Dave",
+      "completed": false,
+      "tag": "AGENT"
+    },
+    {
+      "text": "Address 1 critical ecosystem sync gap",
+      "priority": "high",
+      "assignee": "Elon",
+      "completed": false,
+      "tag": "AGENT"
+    },
+    {
+      "text": "Commit 16 uncommitted monorepo changes",
+      "priority": "low",
+      "assignee": "Elon",
+      "completed": false,
+      "tag": "AGENT"
+    },
+    {
+      "text": "Commit 1 uncommitted hub change",
+      "priority": "low",
+      "assignee": "Elon",
+      "completed": false,
+      "tag": "AGENT"
+    },
+    {
+      "text": "Review 1 ecosystem attention item",
+      "priority": "medium",
+      "assignee": "Elon",
+      "completed": false,
+      "tag": "AGENT"
+    },
+    {
+      "text": "Sync 2 podcast episodes to website",
+      "priority": "high",
+      "assignee": "Alex",
+      "completed": false,
+      "tag": "AGENT"
+    },
+    {
+      "text": "Draft next blog post",
+      "priority": "medium",
+      "assignee": "Alex",
+      "completed": false,
+      "tag": "AGENT"
+    }
+  ],
+  "topPriorities": [
+    "Address critical ecosystem sync gap immediately",
+    "Joshua reviews 7 active positions and risk parameters with Fear & Greed at 36",
+    "Sync 2 podcast episodes to website \u2014 content distribution can't wait"
+  ],
+  "ceoDirectives": [],
+  "type": "morning-priorities",
+  "typeName": "Morning Priorities",
+  "typeEmoji": "\ud83c\udf05",
+  "conversationMode": "ai",
+  "model": "claude-opus-4-6",
+  "tokenUsage": {
+    "input_tokens": 1159,
+    "output_tokens": 1201,
+    "total_tokens": 2360,
+    "duration": 26.0,
+    "model": "claude-opus-4-6",
+    "estimated_cost": 0.1075
+  },
+  "agentContext": {
+    "coo": {
+      "name": "Theo",
+      "title": "COO",
+      "emoji": "\ud83d\udd3a",
+      "description": "Orchestrates all operations. The right hand."
+    },
+    "cto": {
+      "name": "Elon",
+      "title": "CTO",
+      "emoji": "\ud83d\ude80",
+      "description": "Revolutionary technologist pushing humanity toward a sustainable, multi-planetary future. Owns all code, infrastructure, and moonshot engineering projects. First principles thinker who moves fast and breaks things to build the impossible."
+    },
+    "cro": {
+      "name": "Dave",
+      "title": "CRO",
+      "emoji": "\ud83d\udcb5",
+      "description": "Growth strategy, monetization. Gazelle-intense focus on revenue, zero debt thinking, proven frameworks for building wealth through business."
+    },
+    "cmo": {
+      "name": "Alex",
+      "title": "CMO",
+      "emoji": "\ud83e\udd8d",
+      "description": "Content, creative direction, brand. Obsessed with offers, value equations, and volume. Every piece of content must generate leads or it does not ship."
+    }
+  }
+}

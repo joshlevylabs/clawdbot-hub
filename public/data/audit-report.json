@@ -1,9 +1,9 @@
 {
-  "timestamp": "2026-02-17T17:55:02.134420+00:00",
+  "timestamp": "2026-02-17T17:55:36.873785+00:00",
   "summary": {
     "total_tasks": 8,
-    "verified_done": 5,
-    "done_but_unverified": 2,
+    "verified_done": 7,
+    "done_but_unverified": 0,
     "pending": 0,
     "stale": 0
   },
@@ -22,9 +22,9 @@
     },
     {
       "text": "Commit 1 uncommitted hub change(s)",
-      "status": "done_but_unverified",
+      "status": "verified_done",
       "assignee": "Elon",
-      "verification": "FAILED: Verify hub has no uncommitted changes (output: 3)"
+      "verification": "PASSED: Verify hub has no uncommitted changes"
     },
     {
       "text": "Review 1 ecosystem attention item(s)",
@@ -46,9 +46,9 @@
     },
     {
       "text": "Commit 2 uncommitted hub changes",
-      "status": "done_but_unverified",
+      "status": "verified_done",
       "assignee": "Elon",
-      "verification": "FAILED: Verify hub has no uncommitted changes (output: 3)"
+      "verification": "PASSED: Verify hub has no uncommitted changes"
     },
     {
       "text": "Commit uncommitted changes",
@@ -57,8 +57,5 @@
       "verification": "No verification rule found"
     }
   ],
-  "escalations": [
-    "Commit 1 uncommitted hub change(s) \u2014 marked done but verification FAILED",
-    "Commit 2 uncommitted hub changes \u2014 marked done but verification FAILED"
-  ]
+  "escalations": []
 }

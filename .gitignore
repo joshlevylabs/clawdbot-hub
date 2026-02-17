@@ -13,3 +13,5 @@ node_modules
 .env.prod.vercel
 .env.vercel
 .env.supabase
+.DS_Store
+public/.DS_Store

@@ -71,10 +71,11 @@
     {
       "text": "Commit 2 uncommitted hub changes",
       "assignee": "Elon",
-      "status": "done",
+      "status": "done_but_unverified",
       "completedAt": "2026-02-16T23:55:31.973289-08:00",
       "output": "[main a6e36a1] auto: standup cleanup\n Committer: Joshua Levy <joshualevy@Joshuas-Mac-mini.local>\nYou",
-      "verified": true
+      "verified": true,
+      "audit_note": "Task was marked done but verification FAILED: Verify hub has no uncommitted changes"
     }
   ]
 }

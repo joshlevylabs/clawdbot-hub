@@ -1,7 +1,7 @@
 {
   "timestamp": "2026-02-17T03:34:14.215330",
-  "last_updated": "2026-02-17 03:34:14",
-  "last_updated_unix": 1771328054,
+  "last_updated": "2026-02-17T14:05:52Z",
+  "last_updated_unix": 1771337152,
   "fear_greed": {
     "current": 34.7795918367347,
     "rating": "fear",
@@ -427,7 +427,7 @@
         "version": "3.0.0",
         "fibonacci": {
           "symbol": "QQQ",
-          "current_price": 601.9199829101562,
+          "current_price": 601.92,
           "swing_high": 636.5999755859375,
           "swing_low": 579.992718365408,
           "swing_high_idx": 114,
@@ -524,7 +524,7 @@
         "version": "3.0.0",
         "fibonacci": {
           "symbol": "IWM",
-          "current_price": 262.9599914550781,
+          "current_price": 262.96,
           "swing_high": 271.6000061035156,
           "swing_low": 228.13496396973687,
           "swing_high_idx": 110,
@@ -621,7 +621,7 @@
         "version": "3.0.0",
         "fibonacci": {
           "symbol": "XLK",
-          "current_price": 139.55999755859375,
+          "current_price": 139.56,
           "swing_high": 152.76328574939558,
           "swing_low": 85.84163713098569,
           "swing_high_idx": 177,
@@ -718,7 +718,7 @@
         "version": "3.0.0",
         "fibonacci": {
           "symbol": "XLC",
-          "current_price": 114.58000183105469,
+          "current_price": 114.58,
           "swing_high": 118.66999816894531,
           "swing_low": 109.51047067492786,
           "swing_high_idx": 95,
@@ -815,7 +815,7 @@
         "version": "3.0.0",
         "fibonacci": {
           "symbol": "XLF",
-          "current_price": 51.650001525878906,
+          "current_price": 51.65,
           "swing_high": 56.52000045776367,
           "swing_low": 50.90209727943318,
           "swing_high_idx": 99,
@@ -912,7 +912,7 @@
         "version": "3.0.0",
         "fibonacci": {
           "symbol": "XLV",
-          "current_price": 157.6699981689453,
+          "current_price": 157.67,
           "swing_high": 158.2759966493031,
           "swing_low": 133.16293579669355,
           "swing_high_idx": 73,
@@ -1009,7 +1009,7 @@
         "version": "3.0.0",
         "fibonacci": {
           "symbol": "XLP",
-          "current_price": 89.51000213623047,
+          "current_price": 89.51,
           "swing_high": 90.05999755859375,
           "swing_low": 76.51000213623047,
           "swing_high_idx": 125,
@@ -1102,7 +1102,7 @@
         "version": "3.0.0",
         "fibonacci": {
           "symbol": "XLE",
-          "current_price": 54.349998474121094,
+          "current_price": 54.35,
           "swing_high": 46.26561493376992,
           "swing_low": 41.99204467312608,
           "swing_high_idx": 79,
@@ -1199,7 +1199,7 @@
         "version": "3.0.0",
         "fibonacci": {
           "symbol": "XLB",
-          "current_price": 53.310001373291016,
+          "current_price": 53.31,
           "swing_high": 54.13999938964844,
           "swing_low": 43.12737337019588,
           "swing_high_idx": 125,
@@ -1389,7 +1389,7 @@
         "version": "3.0.0",
         "fibonacci": {
           "symbol": "EFA",
-          "current_price": 104.23999786376953,
+          "current_price": 104.24,
           "swing_high": 94.96912173066355,
           "swing_low": 69.65949896486606,
           "swing_high_idx": 438,
@@ -1486,7 +1486,7 @@
         "version": "3.0.0",
         "fibonacci": {
           "symbol": "EEM",
-          "current_price": 61.119998931884766,
+          "current_price": 61.12,
           "swing_high": 55.51553891465469,
           "swing_low": 48.65373346867458,
           "swing_high_idx": 177,
@@ -1583,7 +1583,7 @@
         "version": "3.0.0",
         "fibonacci": {
           "symbol": "INDA",
-          "current_price": 52.88999938964844,
+          "current_price": 52.89,
           "swing_high": 55.099998474121094,
           "swing_low": 50.939998626708984,
           "swing_high_idx": 69,
@@ -1680,7 +1680,7 @@
         "version": "3.0.0",
         "fibonacci": {
           "symbol": "FXI",
-          "current_price": 38.33000183105469,
+          "current_price": 38.33,
           "swing_high": 41.16999816894531,
           "swing_low": 37.74033560681721,
           "swing_high_idx": 115,
@@ -1773,7 +1773,7 @@
         "version": "3.0.0",
         "fibonacci": {
           "symbol": "EWJ",
-          "current_price": 93.8499984741211,
+          "current_price": 93.85,
           "swing_high": 82.23312363611166,
           "swing_low": 75.38920678209396,
           "swing_high_idx": 85,
@@ -1870,7 +1870,7 @@
         "version": "3.0.0",
         "fibonacci": {
           "symbol": "TLT",
-          "current_price": 89.72000122070312,
+          "current_price": 89.72,
           "swing_high": 89.62452697753906,
           "swing_low": 86.21025038222956,
           "swing_high_idx": 73,
@@ -1967,7 +1967,7 @@
         "version": "3.0.0",
         "fibonacci": {
           "symbol": "IEF",
-          "current_price": 97.20999908447266,
+          "current_price": 97.21,
           "swing_high": 96.78057340084138,
           "swing_low": 93.26831903464593,
           "swing_high_idx": 196,
@@ -2064,7 +2064,7 @@
         "version": "3.0.0",
         "fibonacci": {
           "symbol": "HYG",
-          "current_price": 80.8499984741211,
+          "current_price": 80.85,
           "swing_high": 80.8404107675588,
           "swing_low": 78.41497039794922,
           "swing_high_idx": 234,
@@ -2161,7 +2161,7 @@
         "version": "3.0.0",
         "fibonacci": {
           "symbol": "GLD",
-          "current_price": 462.6199951171875,
+          "current_price": 462.62,
           "swing_high": 509.70001220703125,
           "swing_low": 360.1199951171875,
           "swing_high_idx": 115,
@@ -2258,7 +2258,7 @@
         "version": "3.0.0",
         "fibonacci": {
           "symbol": "GDX",
-          "current_price": 103.94000244140625,
+          "current_price": 103.94,
           "swing_high": 113.5,
           "swing_low": 67.63875758780028,
           "swing_high_idx": 115,
@@ -2355,7 +2355,7 @@
         "version": "3.0.0",
         "fibonacci": {
           "symbol": "DBA",
-          "current_price": 25.790000915527344,
+          "current_price": 25.79,
           "swing_high": 26.010000228881836,
           "swing_low": 24.660624550871383,
           "swing_high_idx": 115,
@@ -2549,7 +2549,7 @@
         "version": "3.0.0",
         "fibonacci": {
           "symbol": "VNQ",
-          "current_price": 94.58999633789062,
+          "current_price": 94.59,
           "swing_high": 92.81999969482422,
           "swing_low": 87.3133358153632,
           "swing_high_idx": 107,

@@ -21,6 +21,29 @@ import {
   Thermometer,
 } from "lucide-react";
 import MREWidget from "@/components/MREWidget";
+import { Target, Bot, CheckCircle as CheckCircle2, Circle, ArrowRight } from "lucide-react";
+
+// Priority & Agent Task types
+interface JoshuaPriority {
+  text: string;
+  source: string;
+  urgency: string;
+}
+
+interface AgentTask {
+  text: string;
+  assignee: string;
+  status: string;
+  completedAt?: string;
+  output?: string;
+}
+
+interface JoshuaPrioritiesData {
+  date: string;
+  generatedAt: string;
+  priorities: JoshuaPriority[];
+  agentHandled: AgentTask[];
+}
 
 // Live Weather types
 interface LiveWeatherData {
@@ -358,8 +381,115 @@ function CalendarCard({ data }: { data: CalendarSection }) {
   );
 }
 
+// Joshua's Outstanding Priorities Card
+function PrioritiesCard({ data }: { data: JoshuaPrioritiesData | null }) {
+  if (!data || data.priorities.length === 0) return null;
+
+  const urgencyColors: Record<string, string> = {
+    high: "bg-red-500/20 text-red-400 border-red-500/30",
+    medium: "bg-amber-500/20 text-amber-400 border-amber-500/30",
+    low: "bg-slate-700/50 text-slate-400 border-slate-600/30",
+  };
+
+  return (
+    <div className="bg-gradient-to-br from-purple-600/10 to-purple-800/5 rounded-xl border border-purple-500/20 p-5">
+      <div className="flex items-center gap-3 mb-4">
+        <div className="w-10 h-10 bg-purple-600/20 rounded-lg flex items-center justify-center">
+          <Target className="w-5 h-5 text-purple-400" strokeWidth={1.5} />
+        </div>
+        <div>
+          <h2 className="font-semibold text-slate-200">Your Priorities</h2>
+          <p className="text-xs text-slate-500">From today&apos;s standups</p>
+        </div>
+      </div>
+      <div className="space-y-2 max-h-64 overflow-auto">
+        {data.priorities.map((p, i) => (
+          <div key={i} className="flex items-start gap-3 p-2.5 bg-purple-500/5 rounded-lg">
+            <div className="w-6 h-6 bg-purple-500/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+              <span className="text-xs font-bold text-purple-400">{i + 1}</span>
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm text-slate-200 leading-relaxed">{p.text}</p>
+              <div className="flex items-center gap-2 mt-1">
+                <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium border ${urgencyColors[p.urgency] || urgencyColors.medium}`}>
+                  {p.urgency.toUpperCase()}
+                </span>
+                <span className="text-[10px] text-slate-600">from {p.source}</span>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// Agent Completed Tasks Card
+function AgentTasksCard({ data }: { data: JoshuaPrioritiesData | null }) {
+  if (!data || data.agentHandled.length === 0) return null;
+
+  const completedCount = data.agentHandled.filter(t => t.status === "done").length;
+  const totalCount = data.agentHandled.length;
+
+  return (
+    <div className="bg-gradient-to-br from-cyan-600/10 to-cyan-800/5 rounded-xl border border-cyan-500/20 p-5">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-cyan-600/20 rounded-lg flex items-center justify-center">
+            <Bot className="w-5 h-5 text-cyan-400" strokeWidth={1.5} />
+          </div>
+          <div>
+            <h2 className="font-semibold text-slate-200">Agent Tasks</h2>
+            <p className="text-xs text-slate-500">Auto-handled today</p>
+          </div>
+        </div>
+        {totalCount > 0 && (
+          <div className="flex items-center gap-2">
+            <div className="w-16 h-1.5 bg-slate-800 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-cyan-500 rounded-full transition-all"
+                style={{ width: `${(completedCount / totalCount) * 100}%` }}
+              />
+            </div>
+            <span className="text-xs text-slate-500">{completedCount}/{totalCount}</span>
+          </div>
+        )}
+      </div>
+      <div className="space-y-1.5 max-h-64 overflow-auto">
+        {data.agentHandled.map((task, i) => (
+          <div key={i} className={`flex items-start gap-3 p-2 rounded-lg ${task.status === "done" ? "bg-emerald-500/5" : task.status === "failed" ? "bg-red-500/5" : "bg-cyan-500/5"}`}>
+            {task.status === "done" ? (
+              <CheckCircle2 className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" />
+            ) : task.status === "failed" ? (
+              <AlertTriangle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
+            ) : (
+              <Circle className="w-4 h-4 text-cyan-400/50 flex-shrink-0 mt-0.5" />
+            )}
+            <div className="flex-1 min-w-0">
+              <p className={`text-sm ${task.status === "done" ? "text-slate-400" : "text-slate-300"}`}>
+                {task.text}
+              </p>
+              <div className="flex items-center gap-2 mt-0.5">
+                <span className="text-[10px] text-slate-600">
+                  <ArrowRight className="w-2.5 h-2.5 inline" /> {task.assignee}
+                </span>
+                <span className={`text-[10px] font-medium ${
+                  task.status === "done" ? "text-emerald-500" : task.status === "failed" ? "text-red-400" : "text-cyan-400/50"
+                }`}>
+                  {task.status}
+                </span>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function DashboardPage() {
   const [briefData, setBriefData] = useState<BriefData | null>(null);
+  const [prioritiesData, setPrioritiesData] = useState<JoshuaPrioritiesData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -367,15 +497,18 @@ export default function DashboardPage() {
     setLoading(true);
     setError(null);
     try {
-      // Cache-bust to always get fresh data
-      const response = await fetch(`/data/morning-brief.json?t=${Date.now()}`, {
-        cache: 'no-store'
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setBriefData(data);
+      // Fetch brief and priorities in parallel
+      const [briefRes, prioritiesRes] = await Promise.all([
+        fetch(`/data/morning-brief.json?t=${Date.now()}`, { cache: 'no-store' }),
+        fetch(`/data/joshua-priorities.json?t=${Date.now()}`, { cache: 'no-store' }),
+      ]);
+      if (briefRes.ok) {
+        setBriefData(await briefRes.json());
       } else {
         setError("No data available");
+      }
+      if (prioritiesRes.ok) {
+        setPrioritiesData(await prioritiesRes.json());
       }
     } catch {
       setError("Failed to load dashboard data");
@@ -451,6 +584,14 @@ export default function DashboardPage() {
           <Cloud className="w-12 h-12 text-slate-700 mx-auto mb-4" strokeWidth={1.5} />
           <p className="text-slate-400 text-lg">{error}</p>
           <p className="text-slate-600 text-sm mt-2">Data will appear after the morning brief runs</p>
+        </div>
+      )}
+
+      {/* Priorities Row — always show if data exists, even without brief */}
+      {!loading && prioritiesData && (prioritiesData.priorities.length > 0 || prioritiesData.agentHandled.length > 0) && (
+        <div className="grid gap-4 md:grid-cols-2">
+          <PrioritiesCard data={prioritiesData} />
+          <AgentTasksCard data={prioritiesData} />
         </div>
       )}
 

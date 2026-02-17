@@ -99,12 +99,22 @@
       "estimatedCost": 0.0037,
       "model": "claude-3-5-haiku-20241022",
       "duration": "10.2s"
+    },
+    {
+      "date": "2026-02-16",
+      "type": "morning-priorities",
+      "inputTokens": 1144,
+      "outputTokens": 1333,
+      "totalTokens": 2477,
+      "estimatedCost": 0.1171,
+      "model": "claude-opus-4-6",
+      "duration": "25.5s"
     }
   ],
   "totals": {
-    "today": 0.0398,
-    "week": 0.0398,
-    "month": 0.0398,
-    "standupCount": 10
+    "today": 0.1569,
+    "week": 0.1569,
+    "month": 0.1569,
+    "standupCount": 11
   }
 }

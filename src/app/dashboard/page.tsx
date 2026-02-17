@@ -21,7 +21,7 @@ import {
   Thermometer,
 } from "lucide-react";
 import MREWidget from "@/components/MREWidget";
-import { Target, Bot, CheckCircle as CheckCircle2, Circle, ArrowRight } from "lucide-react";
+import { Target, Bot, CheckCircle as CheckCircle2, Circle, ArrowRight, X } from "lucide-react";
 
 // Priority & Agent Task types
 interface JoshuaPriority {
@@ -509,10 +509,58 @@ function AgentTasksCard({ data, completedIds, onToggle }: { data: JoshuaPrioriti
   );
 }
 
+// Confirmation Dialog for completing priorities
+function ConfirmCompleteDialog({ 
+  item, 
+  onConfirm, 
+  onCancel 
+}: { 
+  item: { type: string; index: number; text: string } | null; 
+  onConfirm: () => void; 
+  onCancel: () => void;
+}) {
+  if (!item) return null;
+  
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={onCancel}>
+      <div 
+        className="bg-slate-800 border border-slate-600/50 rounded-xl p-5 max-w-sm mx-4 shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-start justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+            <h3 className="font-semibold text-slate-200">Mark Complete?</h3>
+          </div>
+          <button onClick={onCancel} className="text-slate-500 hover:text-slate-300 transition-colors">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+        <p className="text-sm text-slate-400 mb-4 leading-relaxed">{item.text}</p>
+        <div className="flex gap-2 justify-end">
+          <button
+            onClick={onCancel}
+            className="px-3 py-1.5 text-sm rounded-lg bg-slate-700 text-slate-300 hover:bg-slate-600 transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={onConfirm}
+            className="px-3 py-1.5 text-sm rounded-lg bg-emerald-600 text-white hover:bg-emerald-500 transition-colors font-medium"
+          >
+            Complete
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function DashboardPage() {
   const [briefData, setBriefData] = useState<BriefData | null>(null);
   const [prioritiesData, setPrioritiesData] = useState<JoshuaPrioritiesData | null>(null);
   const [completedIds, setCompletedIds] = useState<Record<string, string>>({});
+  const [pendingConfirm, setPendingConfirm] = useState<{ type: string; index: number; text: string } | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -549,8 +597,27 @@ export default function DashboardPage() {
     fetchBrief();
   }, []);
 
-  const handleTogglePriority = async (type: string, index: number, completed: boolean) => {
+  // Show confirmation dialog before completing
+  const handleTogglePriority = (type: string, index: number, completed: boolean) => {
+    if (completed) {
+      // Find the text for the confirmation dialog
+      let text = "";
+      if (type === "priority" && prioritiesData) {
+        text = prioritiesData.priorities[index]?.text || "";
+      } else if (type === "agent" && prioritiesData) {
+        text = prioritiesData.agentHandled[index]?.text || "";
+      }
+      setPendingConfirm({ type, index, text });
+    } else {
+      // Uncompleting doesn't need confirmation
+      executeToggle(type, index, false);
+    }
+  };
+
+  // Actually perform the toggle after confirmation
+  const executeToggle = async (type: string, index: number, completed: boolean) => {
     const id = `${type}:${index}`;
+    setPendingConfirm(null);
 
     // Optimistic update
     setCompletedIds((prev) => {
@@ -602,6 +669,12 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6 max-w-6xl">
+      {/* Confirmation Dialog */}
+      <ConfirmCompleteDialog
+        item={pendingConfirm}
+        onConfirm={() => pendingConfirm && executeToggle(pendingConfirm.type, pendingConfirm.index, true)}
+        onCancel={() => setPendingConfirm(null)}
+      />
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>

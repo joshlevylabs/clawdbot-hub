@@ -49,12 +49,22 @@
       "estimatedCost": 0.1207,
       "model": "claude-opus-4-6",
       "duration": "34.5s"
+    },
+    {
+      "date": "2026-02-17",
+      "type": "adhoc-test-run",
+      "inputTokens": 848,
+      "outputTokens": 873,
+      "totalTokens": 1721,
+      "estimatedCost": 0.0782,
+      "model": "claude-opus-4-6",
+      "duration": "19.6s"
     }
   ],
   "totals": {
-    "today": 0.2174,
-    "week": 0.5207,
-    "month": 0.5207,
-    "standupCount": 5
+    "today": 0.2956,
+    "week": 0.5989,
+    "month": 0.5989,
+    "standupCount": 6
   }
 }

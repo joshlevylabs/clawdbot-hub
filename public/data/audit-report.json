@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-02-17T05:45:04.358420+00:00",
+  "timestamp": "2026-02-17T05:54:09.668427+00:00",
   "summary": {
     "total_tasks": 6,
     "verified_done": 0,
@@ -10,15 +10,15 @@
   "items": [
     {
       "text": "Address 1 critical ecosystem sync gap(s)",
-      "status": "pending",
+      "status": "overdue",
       "assignee": "Elon",
-      "verification": "NOT DONE: Verify no critical sync gaps remain in ecosystem map (output: 1)"
+      "verification": "OVERDUE (1.7h): Verify no critical sync gaps remain in ecosystem map (output: 1)"
     },
     {
       "text": "Sync 2 podcast episode(s) to website",
-      "status": "pending",
+      "status": "overdue",
       "assignee": "Alex",
-      "verification": "NOT DONE: Verify all hub podcast episodes exist on website (sync gap = 0) (output: 2)"
+      "verification": "OVERDUE (1.7h): Verify all hub podcast episodes exist on website (sync gap = 0) (output: 2)"
     },
     {
       "text": "Commit 1 uncommitted hub change(s)",
@@ -28,9 +28,9 @@
     },
     {
       "text": "Review 1 ecosystem attention item(s)",
-      "status": "pending",
+      "status": "overdue",
       "assignee": "Elon",
-      "verification": "NOT DONE: Verify ecosystem attention items decreased (output: 1)"
+      "verification": "OVERDUE (1.7h): Verify ecosystem attention items decreased (output: 1)"
     },
     {
       "text": "Monitor Fear & Greed index (currently 36)",
@@ -40,10 +40,15 @@
     },
     {
       "text": "Draft next blog post",
-      "status": "pending",
+      "status": "overdue",
       "assignee": "Alex",
-      "verification": "NOT DONE: Verify a blog post was created/modified in last 24 hours (output: 0)"
+      "verification": "OVERDUE (1.7h): Verify a blog post was created/modified in last 24 hours (output: 0)"
     }
   ],
-  "escalations": []
+  "escalations": [
+    "\u26a0\ufe0f OVERDUE [Elon]: Address 1 critical ecosystem sync gap(s) \u2014 pending for 1.7h, needs agent dispatch",
+    "\u26a0\ufe0f OVERDUE [Alex]: Sync 2 podcast episode(s) to website \u2014 pending for 1.7h, needs agent dispatch",
+    "\u26a0\ufe0f OVERDUE [Elon]: Review 1 ecosystem attention item(s) \u2014 pending for 1.7h, needs agent dispatch",
+    "\u26a0\ufe0f OVERDUE [Alex]: Draft next blog post \u2014 pending for 1.7h, needs agent dispatch"
+  ]
 }

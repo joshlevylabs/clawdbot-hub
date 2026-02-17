@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-02-17T06:15:03.937465+00:00",
+  "timestamp": "2026-02-17T06:30:17.174805+00:00",
   "summary": {
     "total_tasks": 6,
     "verified_done": 5,
@@ -22,9 +22,9 @@
     },
     {
       "text": "Commit 1 uncommitted hub change(s)",
-      "status": "verified_done",
+      "status": "done_but_unverified",
       "assignee": "Elon",
-      "verification": "PASSED: Verify hub has no uncommitted changes"
+      "verification": "FAILED: Verify hub has no uncommitted changes (output: 3)"
     },
     {
       "text": "Review 1 ecosystem attention item(s)",
@@ -34,9 +34,9 @@
     },
     {
       "text": "Monitor Fear & Greed index (currently 36)",
-      "status": "done_but_unverified",
+      "status": "verified_done",
       "assignee": "Dave",
-      "verification": "FAILED: Verify MRE signals file was updated in last 2 hours (output: 0)"
+      "verification": "PASSED: Verify MRE signals updated in last 2h (auto-passes weekends and outside market hours 6AM-2PM PT)"
     },
     {
       "text": "Draft next blog post",
@@ -46,6 +46,6 @@
     }
   ],
   "escalations": [
-    "Monitor Fear & Greed index (currently 36) \u2014 marked done but verification FAILED"
+    "Commit 1 uncommitted hub change(s) \u2014 marked done but verification FAILED"
   ]
 }

@@ -20,6 +20,12 @@ import {
   DollarSign,
   Filter,
   Cpu,
+  Plus,
+  Pencil,
+  Trash2,
+  Settings,
+  Save,
+  X,
 } from "lucide-react";
 
 // ---- Types ----
@@ -684,7 +690,7 @@ function StandupHistoryItem({
 }
 
 // ---- Tab Types ----
-type TabType = "history" | "scheduled";
+type TabType = "history" | "scheduled" | "manage";
 
 // ---- Scheduled Standup Types ----
 interface ScheduledStandupType {
@@ -708,21 +714,58 @@ interface ScheduleData {
 function ScheduledView() {
   const [scheduleData, setScheduleData] = useState<ScheduleData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showScheduleForm, setShowScheduleForm] = useState(false);
+  const [editingSchedule, setEditingSchedule] = useState<ScheduledStandupType | null>(null);
+  const [deleteConfirmSchedule, setDeleteConfirmSchedule] = useState<string | null>(null);
+  const [scheduleFormData, setScheduleFormData] = useState<any>({});
+  const [verticals, setVerticals] = useState<VerticalDef[]>([]);
+  const [initiatives, setInitiatives] = useState<InitiativeDef[]>([]);
 
   useEffect(() => {
-    async function fetchSchedule() {
+    async function fetchData() {
       try {
-        const res = await fetch("/data/standups/schedule.json");
-        if (res.ok) {
-          setScheduleData(await res.json());
+        const [scheduleRes, verticalsRes, initiativesRes] = await Promise.all([
+          fetch("/api/standup-schedules", { cache: "no-store" }),
+          fetch("/api/verticals", { cache: "no-store" }),
+          fetch("/api/initiatives", { cache: "no-store" })
+        ]);
+
+        // Fallback to JSON if API isn't ready
+        if (!scheduleRes.ok) {
+          const fallbackRes = await fetch("/data/standups/schedule.json");
+          if (fallbackRes.ok) {
+            setScheduleData(await fallbackRes.json());
+          }
+        } else {
+          const data = await scheduleRes.json();
+          setScheduleData({ types: data.schedules || [] });
+        }
+
+        if (verticalsRes.ok) {
+          const verticalsData = await verticalsRes.json();
+          setVerticals(verticalsData.verticals || []);
+        }
+
+        if (initiativesRes.ok) {
+          const initiativesData = await initiativesRes.json();
+          setInitiatives(initiativesData.initiatives || []);
         }
       } catch (err) {
-        console.error("Failed to load schedule data:", err);
+        console.error("Failed to load data:", err);
+        // Fallback to JSON
+        try {
+          const res = await fetch("/data/standups/schedule.json");
+          if (res.ok) {
+            setScheduleData(await res.json());
+          }
+        } catch (fallbackErr) {
+          console.error("Fallback failed:", fallbackErr);
+        }
       } finally {
         setLoading(false);
       }
     }
-    fetchSchedule();
+    fetchData();
   }, []);
 
   const getScheduledStandups = () => {
@@ -776,6 +819,59 @@ function ScheduledView() {
     return schedule.charAt(0).toUpperCase() + schedule.slice(1);
   };
 
+  const handleSaveSchedule = async (data: any) => {
+    try {
+      const method = editingSchedule ? 'PATCH' : 'POST';
+      const response = await fetch('/api/standup-schedules', {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        if (editingSchedule) {
+          setScheduleData(prev => prev ? {
+            ...prev,
+            types: prev.types.map(s => s.key === data.key ? result.schedule : s)
+          } : null);
+        } else {
+          setScheduleData(prev => prev ? {
+            ...prev,
+            types: [...prev.types, result.schedule]
+          } : { types: [result.schedule] });
+        }
+        setShowScheduleForm(false);
+        setEditingSchedule(null);
+        setScheduleFormData({});
+      } else {
+        console.error('Failed to save schedule');
+      }
+    } catch (err) {
+      console.error('Error saving schedule:', err);
+    }
+  };
+
+  const handleDeleteSchedule = async (key: string) => {
+    try {
+      const response = await fetch(`/api/standup-schedules?key=${encodeURIComponent(key)}`, {
+        method: 'DELETE'
+      });
+
+      if (response.ok) {
+        setScheduleData(prev => prev ? {
+          ...prev,
+          types: prev.types.filter(s => s.key !== key)
+        } : null);
+        setDeleteConfirmSchedule(null);
+      } else {
+        console.error('Failed to delete schedule');
+      }
+    } catch (err) {
+      console.error('Error deleting schedule:', err);
+    }
+  };
+
   if (loading) {
     return (
       <div className="space-y-4">
@@ -790,6 +886,22 @@ function ScheduledView() {
 
   return (
     <div className="space-y-6">
+      {/* Header with Add Button */}
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-medium text-slate-200">Scheduled Standups</h2>
+        <button
+          onClick={() => {
+            setScheduleFormData({});
+            setEditingSchedule(null);
+            setShowScheduleForm(true);
+          }}
+          className="btn btn-primary flex items-center gap-2 text-sm"
+        >
+          <Plus className="w-4 h-4" />
+          Add Schedule
+        </button>
+      </div>
+
       {/* Today Section */}
       <div>
         <h3 className="text-sm font-medium text-slate-300 mb-3 flex items-center gap-2">
@@ -839,6 +951,24 @@ function ScheduledView() {
                         ))}
                       </div>
                     )}
+                  </div>
+                  <div className="flex items-center gap-1 ml-4">
+                    <button
+                      onClick={() => {
+                        setScheduleFormData(standup);
+                        setEditingSchedule(standup);
+                        setShowScheduleForm(true);
+                      }}
+                      className="p-1.5 hover:bg-slate-800 rounded"
+                    >
+                      <Pencil className="w-3 h-3 text-slate-400" />
+                    </button>
+                    <button
+                      onClick={() => setDeleteConfirmSchedule(standup.key)}
+                      className="p-1.5 hover:bg-slate-800 rounded"
+                    >
+                      <Trash2 className="w-3 h-3 text-red-400" />
+                    </button>
                   </div>
                 </div>
               </div>
@@ -897,12 +1027,802 @@ function ScheduledView() {
                       </div>
                     )}
                   </div>
+                  <div className="flex items-center gap-1 ml-4">
+                    <button
+                      onClick={() => {
+                        setScheduleFormData(standup);
+                        setEditingSchedule(standup);
+                        setShowScheduleForm(true);
+                      }}
+                      className="p-1.5 hover:bg-slate-800 rounded"
+                    >
+                      <Pencil className="w-3 h-3 text-slate-400" />
+                    </button>
+                    <button
+                      onClick={() => setDeleteConfirmSchedule(standup.key)}
+                      className="p-1.5 hover:bg-slate-800 rounded"
+                    >
+                      <Trash2 className="w-3 h-3 text-red-400" />
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
           </div>
         )}
       </div>
+
+      {/* Schedule Form Modal */}
+      {showScheduleForm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-slate-800 rounded-xl p-6 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-medium text-slate-100">
+                {editingSchedule ? 'Edit Schedule' : 'Add Schedule'}
+              </h3>
+              <button
+                onClick={() => {
+                  setShowScheduleForm(false);
+                  setEditingSchedule(null);
+                  setScheduleFormData({});
+                }}
+                className="p-1 hover:bg-slate-700 rounded"
+              >
+                <X className="w-4 h-4 text-slate-400" />
+              </button>
+            </div>
+            
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleSaveSchedule(scheduleFormData);
+              }}
+              className="space-y-4"
+            >
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-1">Key</label>
+                  <input
+                    type="text"
+                    value={scheduleFormData.key || ''}
+                    onChange={(e) => setScheduleFormData({ ...scheduleFormData, key: e.target.value })}
+                    className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-slate-200"
+                    placeholder="morning-priorities"
+                    required
+                    disabled={editingSchedule}
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-1">Name</label>
+                  <input
+                    type="text"
+                    value={scheduleFormData.name || ''}
+                    onChange={(e) => setScheduleFormData({ ...scheduleFormData, name: e.target.value })}
+                    className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-slate-200"
+                    placeholder="Morning Priorities"
+                    required
+                  />
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-1">Emoji</label>
+                  <input
+                    type="text"
+                    value={scheduleFormData.emoji || ''}
+                    onChange={(e) => setScheduleFormData({ ...scheduleFormData, emoji: e.target.value })}
+                    className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-slate-200"
+                    placeholder="🌅"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-1">Schedule</label>
+                  <select
+                    value={scheduleFormData.schedule || ''}
+                    onChange={(e) => setScheduleFormData({ ...scheduleFormData, schedule: e.target.value })}
+                    className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-slate-200"
+                    required
+                  >
+                    <option value="">Select schedule</option>
+                    <option value="daily">Daily</option>
+                    <option value="monday">Monday</option>
+                    <option value="tuesday">Tuesday</option>
+                    <option value="wednesday">Wednesday</option>
+                    <option value="thursday">Thursday</option>
+                    <option value="friday">Friday</option>
+                    <option value="saturday">Saturday</option>
+                    <option value="sunday">Sunday</option>
+                  </select>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-1">Time</label>
+                  <input
+                    type="time"
+                    value={scheduleFormData.time || ''}
+                    onChange={(e) => setScheduleFormData({ ...scheduleFormData, time: e.target.value })}
+                    className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-slate-200"
+                    required
+                  />
+                </div>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-1">Agenda</label>
+                <textarea
+                  value={scheduleFormData.agenda || ''}
+                  onChange={(e) => setScheduleFormData({ ...scheduleFormData, agenda: e.target.value })}
+                  className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-slate-200"
+                  rows={3}
+                  placeholder="Full org daily kickoff. Review overnight changes..."
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">Participants</label>
+                <div className="grid grid-cols-2 gap-2">
+                  {['COO', 'CTO', 'CRO', 'CMO'].map((role) => (
+                    <label key={role} className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={scheduleFormData.participants?.includes(role) || false}
+                        onChange={(e) => {
+                          const currentParticipants = scheduleFormData.participants || [];
+                          if (e.target.checked) {
+                            setScheduleFormData({ ...scheduleFormData, participants: [...currentParticipants, role] });
+                          } else {
+                            setScheduleFormData({ ...scheduleFormData, participants: currentParticipants.filter(p => p !== role) });
+                          }
+                        }}
+                        className="rounded"
+                      />
+                      <span className="text-sm text-slate-300">{roleIcons[role] || "👤"} {role}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+              
+              <div>
+                <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={scheduleFormData.auto_execute || false}
+                    onChange={(e) => setScheduleFormData({ ...scheduleFormData, auto_execute: e.target.checked })}
+                    className="rounded"
+                  />
+                  <span className="text-sm text-slate-300">Auto-Execute</span>
+                </label>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">Verticals</label>
+                <div className="grid grid-cols-2 gap-2 max-h-32 overflow-y-auto">
+                  {verticals.map((vertical) => (
+                    <label key={vertical.key} className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={scheduleFormData.verticals?.includes(vertical.key) || false}
+                        onChange={(e) => {
+                          const currentVerticals = scheduleFormData.verticals || [];
+                          if (e.target.checked) {
+                            setScheduleFormData({ ...scheduleFormData, verticals: [...currentVerticals, vertical.key] });
+                          } else {
+                            setScheduleFormData({ ...scheduleFormData, verticals: currentVerticals.filter(v => v !== vertical.key) });
+                          }
+                        }}
+                        className="rounded"
+                      />
+                      <span className="text-sm text-slate-300">{vertical.emoji} {vertical.name}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">Initiatives</label>
+                <div className="grid grid-cols-1 gap-2 max-h-32 overflow-y-auto">
+                  {initiatives.map((initiative) => (
+                    <label key={initiative.key} className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={scheduleFormData.initiatives?.includes(initiative.key) || false}
+                        onChange={(e) => {
+                          const currentInitiatives = scheduleFormData.initiatives || [];
+                          if (e.target.checked) {
+                            setScheduleFormData({ ...scheduleFormData, initiatives: [...currentInitiatives, initiative.key] });
+                          } else {
+                            setScheduleFormData({ ...scheduleFormData, initiatives: currentInitiatives.filter(i => i !== initiative.key) });
+                          }
+                        }}
+                        className="rounded"
+                      />
+                      <span className="text-sm text-slate-300">🎯 {initiative.name}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+              
+              <div className="flex gap-2 pt-4">
+                <button type="submit" className="btn btn-primary flex-1">
+                  <Save className="w-4 h-4 mr-2" />
+                  {editingSchedule ? 'Update' : 'Create'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowScheduleForm(false);
+                    setEditingSchedule(null);
+                    setScheduleFormData({});
+                  }}
+                  className="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded text-slate-200"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deleteConfirmSchedule && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-slate-800 rounded-xl p-6 w-full max-w-sm mx-4">
+            <h3 className="text-lg font-medium text-slate-100 mb-2">Confirm Delete</h3>
+            <p className="text-sm text-slate-400 mb-4">
+              Are you sure you want to delete this schedule? This action cannot be undone.
+            </p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => handleDeleteSchedule(deleteConfirmSchedule)}
+                className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded text-white flex-1"
+              >
+                Delete
+              </button>
+              <button
+                onClick={() => setDeleteConfirmSchedule(null)}
+                className="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded text-slate-200 flex-1"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ---- Manage View Component ----
+function ManageView() {
+  const [verticals, setVerticals] = useState<VerticalDef[]>([]);
+  const [initiatives, setInitiatives] = useState<InitiativeDef[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showVerticalForm, setShowVerticalForm] = useState(false);
+  const [showInitiativeForm, setShowInitiativeForm] = useState(false);
+  const [editingVertical, setEditingVertical] = useState<VerticalDef | null>(null);
+  const [editingInitiative, setEditingInitiative] = useState<InitiativeDef | null>(null);
+  const [deleteConfirm, setDeleteConfirm] = useState<{ type: 'vertical' | 'initiative', key: string } | null>(null);
+  const [formData, setFormData] = useState<any>({});
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const [verticalsRes, initiativesRes] = await Promise.all([
+          fetch('/api/verticals', { cache: 'no-store' }),
+          fetch('/api/initiatives', { cache: 'no-store' })
+        ]);
+
+        if (verticalsRes.ok) {
+          const verticalsData = await verticalsRes.json();
+          setVerticals(verticalsData.verticals || []);
+        }
+
+        if (initiativesRes.ok) {
+          const initiativesData = await initiativesRes.json();
+          setInitiatives(initiativesData.initiatives || []);
+        }
+      } catch (err) {
+        console.error('Failed to load manage data:', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, []);
+
+  const handleSaveVertical = async (data: any) => {
+    try {
+      const method = editingVertical ? 'PATCH' : 'POST';
+      const response = await fetch('/api/verticals', {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        if (editingVertical) {
+          setVerticals(prev => prev.map(v => v.key === data.key ? result.vertical : v));
+        } else {
+          setVerticals(prev => [...prev, result.vertical]);
+        }
+        setShowVerticalForm(false);
+        setEditingVertical(null);
+        setFormData({});
+      } else {
+        console.error('Failed to save vertical');
+      }
+    } catch (err) {
+      console.error('Error saving vertical:', err);
+    }
+  };
+
+  const handleSaveInitiative = async (data: any) => {
+    try {
+      const method = editingInitiative ? 'PATCH' : 'POST';
+      const response = await fetch('/api/initiatives', {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        if (editingInitiative) {
+          setInitiatives(prev => prev.map(i => i.key === data.key ? result.initiative : i));
+        } else {
+          setInitiatives(prev => [...prev, result.initiative]);
+        }
+        setShowInitiativeForm(false);
+        setEditingInitiative(null);
+        setFormData({});
+      } else {
+        console.error('Failed to save initiative');
+      }
+    } catch (err) {
+      console.error('Error saving initiative:', err);
+    }
+  };
+
+  const handleDelete = async (type: 'vertical' | 'initiative', key: string) => {
+    try {
+      const endpoint = type === 'vertical' ? 'verticals' : 'initiatives';
+      const response = await fetch(`/api/${endpoint}?key=${encodeURIComponent(key)}`, {
+        method: 'DELETE'
+      });
+
+      if (response.ok) {
+        if (type === 'vertical') {
+          setVerticals(prev => prev.filter(v => v.key !== key));
+        } else {
+          setInitiatives(prev => prev.filter(i => i.key !== key));
+        }
+        setDeleteConfirm(null);
+      } else {
+        console.error(`Failed to delete ${type}`);
+      }
+    } catch (err) {
+      console.error(`Error deleting ${type}:`, err);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="space-y-4">
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="bg-slate-900/50 rounded-xl border border-slate-800 p-4 h-24 animate-pulse" />
+        ))}
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-8">
+      {/* Verticals Section */}
+      <div>
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-medium text-slate-200">Verticals</h3>
+          <button
+            onClick={() => {
+              setFormData({});
+              setEditingVertical(null);
+              setShowVerticalForm(true);
+            }}
+            className="btn btn-primary flex items-center gap-2 text-sm"
+          >
+            <Plus className="w-4 h-4" />
+            Add Vertical
+          </button>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {verticals.map((vertical) => (
+            <div key={vertical.key} className="bg-slate-900/50 rounded-xl border border-slate-800 p-4">
+              <div className="flex items-start justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <span className="text-lg">{vertical.emoji}</span>
+                  <h4 className="font-medium text-slate-100">{vertical.name}</h4>
+                </div>
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={() => {
+                      setFormData(vertical);
+                      setEditingVertical(vertical);
+                      setShowVerticalForm(true);
+                    }}
+                    className="p-1.5 hover:bg-slate-800 rounded"
+                  >
+                    <Pencil className="w-3 h-3 text-slate-400" />
+                  </button>
+                  <button
+                    onClick={() => setDeleteConfirm({ type: 'vertical', key: vertical.key })}
+                    className="p-1.5 hover:bg-slate-800 rounded"
+                  >
+                    <Trash2 className="w-3 h-3 text-red-400" />
+                  </button>
+                </div>
+              </div>
+              {vertical.description && (
+                <p className="text-sm text-slate-400 mb-3">{vertical.description}</p>
+              )}
+              {vertical.color && (
+                <div className="flex items-center gap-2">
+                  <div className={`w-3 h-3 rounded-full bg-${vertical.color}-500`}></div>
+                  <span className="text-xs text-slate-500">{vertical.color}</span>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Initiatives Section */}
+      <div>
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-medium text-slate-200">Initiatives</h3>
+          <button
+            onClick={() => {
+              setFormData({});
+              setEditingInitiative(null);
+              setShowInitiativeForm(true);
+            }}
+            className="btn btn-primary flex items-center gap-2 text-sm"
+          >
+            <Plus className="w-4 h-4" />
+            Add Initiative
+          </button>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {initiatives.map((initiative) => (
+            <div key={initiative.key} className="bg-slate-900/50 rounded-xl border border-slate-800 p-4">
+              <div className="flex items-start justify-between mb-2">
+                <h4 className="font-medium text-slate-100">{initiative.name}</h4>
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={() => {
+                      setFormData(initiative);
+                      setEditingInitiative(initiative);
+                      setShowInitiativeForm(true);
+                    }}
+                    className="p-1.5 hover:bg-slate-800 rounded"
+                  >
+                    <Pencil className="w-3 h-3 text-slate-400" />
+                  </button>
+                  <button
+                    onClick={() => setDeleteConfirm({ type: 'initiative', key: initiative.key })}
+                    className="p-1.5 hover:bg-slate-800 rounded"
+                  >
+                    <Trash2 className="w-3 h-3 text-red-400" />
+                  </button>
+                </div>
+              </div>
+              
+              {initiative.description && (
+                <p className="text-sm text-slate-400 mb-3">{initiative.description}</p>
+              )}
+              
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className={`px-2 py-0.5 rounded text-xs font-medium ${
+                  initiative.status === 'active' ? 'bg-emerald-500/20 text-emerald-400' :
+                  initiative.status === 'paused' ? 'bg-amber-500/20 text-amber-400' :
+                  'bg-slate-500/20 text-slate-400'
+                }`}>
+                  {initiative.status}
+                </span>
+                
+                {initiative.priority && (
+                  <PriorityBadge priority={initiative.priority} />
+                )}
+                
+                {initiative.verticals?.map((vKey) => (
+                  <VerticalBadge key={vKey} verticalKey={vKey} />
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Vertical Form Modal */}
+      {showVerticalForm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-slate-800 rounded-xl p-6 w-full max-w-md mx-4">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-medium text-slate-100">
+                {editingVertical ? 'Edit Vertical' : 'Add Vertical'}
+              </h3>
+              <button
+                onClick={() => {
+                  setShowVerticalForm(false);
+                  setEditingVertical(null);
+                  setFormData({});
+                }}
+                className="p-1 hover:bg-slate-700 rounded"
+              >
+                <X className="w-4 h-4 text-slate-400" />
+              </button>
+            </div>
+            
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleSaveVertical(formData);
+              }}
+              className="space-y-4"
+            >
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-1">Key</label>
+                <input
+                  type="text"
+                  value={formData.key || ''}
+                  onChange={(e) => setFormData({ ...formData, key: e.target.value })}
+                  className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-slate-200"
+                  placeholder="ecosystem"
+                  required
+                  disabled={editingVertical}
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-1">Name</label>
+                <input
+                  type="text"
+                  value={formData.name || ''}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-slate-200"
+                  placeholder="Ecosystem"
+                  required
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-1">Emoji</label>
+                <input
+                  type="text"
+                  value={formData.emoji || ''}
+                  onChange={(e) => setFormData({ ...formData, emoji: e.target.value })}
+                  className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-slate-200"
+                  placeholder="🌐"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-1">Description</label>
+                <textarea
+                  value={formData.description || ''}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-slate-200"
+                  rows={3}
+                  placeholder="Cross-cutting concerns spanning all products"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-1">Color</label>
+                <select
+                  value={formData.color || ''}
+                  onChange={(e) => setFormData({ ...formData, color: e.target.value })}
+                  className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-slate-200"
+                >
+                  <option value="">Select color</option>
+                  <option value="slate">Slate</option>
+                  <option value="blue">Blue</option>
+                  <option value="purple">Purple</option>
+                  <option value="emerald">Emerald</option>
+                  <option value="amber">Amber</option>
+                  <option value="red">Red</option>
+                </select>
+              </div>
+              
+              <div className="flex gap-2 pt-4">
+                <button type="submit" className="btn btn-primary flex-1">
+                  <Save className="w-4 h-4 mr-2" />
+                  {editingVertical ? 'Update' : 'Create'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowVerticalForm(false);
+                    setEditingVertical(null);
+                    setFormData({});
+                  }}
+                  className="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded text-slate-200"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Initiative Form Modal */}
+      {showInitiativeForm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-slate-800 rounded-xl p-6 w-full max-w-md mx-4">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-medium text-slate-100">
+                {editingInitiative ? 'Edit Initiative' : 'Add Initiative'}
+              </h3>
+              <button
+                onClick={() => {
+                  setShowInitiativeForm(false);
+                  setEditingInitiative(null);
+                  setFormData({});
+                }}
+                className="p-1 hover:bg-slate-700 rounded"
+              >
+                <X className="w-4 h-4 text-slate-400" />
+              </button>
+            </div>
+            
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleSaveInitiative(formData);
+              }}
+              className="space-y-4"
+            >
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-1">Key</label>
+                <input
+                  type="text"
+                  value={formData.key || ''}
+                  onChange={(e) => setFormData({ ...formData, key: e.target.value })}
+                  className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-slate-200"
+                  placeholder="app-store-submit"
+                  required
+                  disabled={editingInitiative}
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-1">Name</label>
+                <input
+                  type="text"
+                  value={formData.name || ''}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-slate-200"
+                  placeholder="App Store Submission"
+                  required
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-1">Description</label>
+                <textarea
+                  value={formData.description || ''}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-slate-200"
+                  rows={3}
+                  placeholder="Get Lever app ready and submitted to Apple App Store"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-1">Status</label>
+                <select
+                  value={formData.status || ''}
+                  onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                  className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-slate-200"
+                >
+                  <option value="">Select status</option>
+                  <option value="active">Active</option>
+                  <option value="paused">Paused</option>
+                  <option value="completed">Completed</option>
+                </select>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-1">Priority</label>
+                <select
+                  value={formData.priority || ''}
+                  onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
+                  className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-slate-200"
+                >
+                  <option value="">Select priority</option>
+                  <option value="high">High</option>
+                  <option value="medium">Medium</option>
+                  <option value="low">Low</option>
+                </select>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-1">Verticals</label>
+                <div className="space-y-2 max-h-32 overflow-y-auto">
+                  {verticals.map((vertical) => (
+                    <label key={vertical.key} className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={formData.verticals?.includes(vertical.key) || false}
+                        onChange={(e) => {
+                          const currentVerticals = formData.verticals || [];
+                          if (e.target.checked) {
+                            setFormData({ ...formData, verticals: [...currentVerticals, vertical.key] });
+                          } else {
+                            setFormData({ ...formData, verticals: currentVerticals.filter(v => v !== vertical.key) });
+                          }
+                        }}
+                        className="rounded"
+                      />
+                      <span className="text-sm text-slate-300">{vertical.emoji} {vertical.name}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+              
+              <div className="flex gap-2 pt-4">
+                <button type="submit" className="btn btn-primary flex-1">
+                  <Save className="w-4 h-4 mr-2" />
+                  {editingInitiative ? 'Update' : 'Create'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowInitiativeForm(false);
+                    setEditingInitiative(null);
+                    setFormData({});
+                  }}
+                  className="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded text-slate-200"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deleteConfirm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-slate-800 rounded-xl p-6 w-full max-w-sm mx-4">
+            <h3 className="text-lg font-medium text-slate-100 mb-2">Confirm Delete</h3>
+            <p className="text-sm text-slate-400 mb-4">
+              Are you sure you want to delete this {deleteConfirm.type}? This action cannot be undone.
+            </p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => handleDelete(deleteConfirm.type, deleteConfirm.key)}
+                className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded text-white flex-1"
+              >
+                Delete
+              </button>
+              <button
+                onClick={() => setDeleteConfirm(null)}
+                className="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded text-slate-200 flex-1"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -1124,6 +2044,16 @@ export default function StandupsPage() {
         >
           📅 Scheduled
         </button>
+        <button
+          onClick={() => setActiveTab("manage")}
+          className={`px-4 py-2 rounded-t-lg text-sm font-medium transition-colors ${
+            activeTab === "manage"
+              ? "bg-primary-600/20 text-primary-400 border-t border-l border-r border-primary-500/30 border-b-transparent"
+              : "text-slate-500 hover:text-slate-400"
+          }`}
+        >
+          ⚙️ Manage
+        </button>
       </div>
 
       {/* Filter Tabs - Only show on History tab */}
@@ -1258,8 +2188,10 @@ export default function StandupsPage() {
             </div>
           </div>
         </>
-      ) : (
+      ) : activeTab === "scheduled" ? (
         <ScheduledView />
+      ) : (
+        <ManageView />
       )}
     </div>
   );

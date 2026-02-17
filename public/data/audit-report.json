@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-02-17T19:46:38.715280+00:00",
+  "timestamp": "2026-02-17T20:02:37.345966+00:00",
   "summary": {
-    "total_tasks": 8,
-    "verified_done": 8,
+    "total_tasks": 10,
+    "verified_done": 10,
     "done_but_unverified": 0,
     "pending": 0,
     "stale": 0
@@ -42,7 +42,8 @@
       "text": "Draft next blog post",
       "status": "verified_done",
       "assignee": "Alex",
-      "verification": "PASSED: Verify a blog post was created/modified in last 24 hours"
+      "verification": "PASSED: Verify a blog post was created/modified in last 24 hours",
+      "audit_note": "Completed outside dispatcher"
     },
     {
       "text": "Commit 2 uncommitted hub changes",
@@ -55,6 +56,18 @@
       "status": "done",
       "assignee": "Elon",
       "verification": "No verification rule found"
+    },
+    {
+      "text": "Monitor Fear & Greed index (currently 34)",
+      "status": "verified_done",
+      "assignee": "Dave",
+      "verification": "PASSED: Verify MRE signals updated in last 2h (auto-passes weekends and outside market hours 6AM-2PM PT)"
+    },
+    {
+      "text": "Commit 4 uncommitted hub change(s)",
+      "status": "verified_done",
+      "assignee": "Elon",
+      "verification": "PASSED: Verify hub has no uncommitted changes"
     }
   ],
   "escalations": []

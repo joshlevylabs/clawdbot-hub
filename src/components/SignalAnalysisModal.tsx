@@ -56,6 +56,7 @@ interface PitRecommendation {
   sharpe: number;
   best_horizon: string;
   sma_period: number;
+  confidence_multiplier: number;
   notes: string;
   pattern: string;
 }

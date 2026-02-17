@@ -738,7 +738,19 @@ function getDefaultAgents(): Record<string, AgentState> {
       id: "ticker", name: "Chris", title: "Trading Strategist", emoji: "📈",
       model: "Sonnet 4", status: "active", department: "Revenue",
       description: "Chris Vermeulen — 25+ year veteran trader. ETF specialist focused on capital preservation and riding only rising assets. Owns the MRE improvement system.",
-      reportsTo: "cro", directReports: [],
+      reportsTo: "cro", directReports: ["quant", "sweep"],
+    },
+    quant: {
+      id: "quant", name: "Quant", title: "Signal Analyst", emoji: "🧮",
+      model: "Sonnet 4", status: "active", department: "Revenue",
+      description: "Signal accuracy analysis, correlation scanning, and regime detection. The analytical engine of the MRE system.",
+      reportsTo: "ticker", directReports: [],
+    },
+    sweep: {
+      id: "sweep", name: "Sweep", title: "Backtester", emoji: "🧪",
+      model: "Sonnet 4", status: "active", department: "Revenue",
+      description: "Parameter optimization, backtesting, and regression testing. Validates every change before it ships.",
+      reportsTo: "ticker", directReports: [],
     },
   };
 }
@@ -769,6 +781,8 @@ function getAgentIcon(agent: AgentState, isCLevel: boolean): ReactNode {
     builder: <Rocket className={iconClass} />,
     scout: <Search className={iconClass} />,
     ticker: <BarChart3 className={iconClass} />,
+    quant: <Cpu className={iconClass} />,
+    sweep: <TestTube className={iconClass} />,
     auditor: <Check className={iconClass} />,
   };
 

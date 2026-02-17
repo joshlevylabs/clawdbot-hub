@@ -1,6 +1,6 @@
 {
   "date": "2026-02-17",
-  "generatedAt": "2026-02-17T15:18:25.976420-08:00",
+  "generatedAt": "2026-02-17T15:43:04.230458-08:00",
   "priorities": [
     {
       "text": "Review current positions: AEE, EFA, XLV, XLE, VNQ, TLT, GLD",
@@ -130,6 +130,31 @@
       "completedAt": "2026-02-17T15:20:08.271577-08:00",
       "output": "Hub fully committed and pushed. No uncommitted changes remain.",
       "verified": true
+    },
+    {
+      "text": "Generate daily devotional content based on 8 faith dimensions",
+      "assignee": "Alex",
+      "status": "pending"
+    },
+    {
+      "text": "Draft faith lesson content for the Lever app (currently 7 lessons)",
+      "assignee": "Alex",
+      "status": "pending"
+    },
+    {
+      "text": "Prepare reminders for upcoming family events: Jetts vaccine",
+      "assignee": "Alex",
+      "status": "pending"
+    },
+    {
+      "text": "Draft feature spec for expanding Family tab (currently 454 lines)",
+      "assignee": "Elon",
+      "status": "pending"
+    },
+    {
+      "text": "Review family touchpoint tracker design for 3 family members",
+      "assignee": "Elon",
+      "status": "pending"
     }
   ]
 }

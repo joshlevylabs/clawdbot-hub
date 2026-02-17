@@ -1,6 +1,6 @@
 {
   "date": "2026-02-17",
-  "generatedAt": "2026-02-17T15:18:25.976420-08:00",
+  "generatedAt": "2026-02-17T15:43:04.230458-08:00",
   "topic": "Lever Faith and Family \u2014 Tuesday Feb 17",
   "status": "completed",
   "participants": [
@@ -29,7 +29,7 @@
       "description": "Content, creative direction, brand. Obsessed with offers, value equations, and volume. Every piece of content must generate leads or it does not ship."
     }
   ],
-  "duration": "31.5s",
+  "duration": "25.4s",
   "reports": {
     "cto": {
       "agent": "Elon",
@@ -43,19 +43,20 @@
         "Sentinel"
       ],
       "highlights": [
-        "366 commits this week",
-        "Hub latest: 38aca33 fix: add completed/completedAt fields to TypeScript interfaces",
+        "374 commits this week",
+        "Hub latest: dc0cb4d fix: persist standup action item completions via Supabase \u2014 survives refresh",
         "Build status: healthy"
       ],
       "concerns": [
+        "Uncommitted changes: Hub (1), Monorepo (0)",
         "6 TODOs/FIXMEs"
       ],
       "metrics": {
-        "recentCommits": 366,
+        "recentCommits": 374,
         "openIssues": 0,
         "buildHealthy": true,
         "todosFixmes": 6,
-        "uncommittedHub": 0,
+        "uncommittedHub": 1,
         "uncommittedMono": 0
       }
     },
@@ -118,85 +119,106 @@
     {
       "speaker": "Theo",
       "role": "COO",
-      "message": "Morning team. This is our Faith and Family feature stress test for Lever. I'll be honest \u2014 we don't have domain-specific data pulled for this module yet, so today's job is to identify what's missing, what needs building, and what content opportunities exist. Let's be direct about gaps. Elon, what's the current state of Faith and Family in the app?"
+      "message": "Morning team. Quick focused session \u2014 we're stress testing the Faith and Family features in Lever. Here's where we stand: we've got 7 faith lessons live, 8 faith dimensions mapped for devotional content, a Family tab at 454 lines, and 3 family members being tracked. The question is simple \u2014 what can agents auto-handle right now versus what needs Joshua's hands on it?"
     },
     {
       "speaker": "Elon",
       "role": "CTO",
-      "message": "So right now, Faith and Family is essentially a placeholder. We have the category shell but there's no dedicated tracking, no journaling prompts, no family goal-setting workflows \u2014 nothing that makes it feel like a real lever. If we're serious about this being a core pillar alongside health and wealth, we need at minimum: a daily reflection or devotional prompt system, a family relationship tracker with configurable touchpoints, and some kind of accountability metric that ties into the overall Lever score. The architecture can support all of this, but nobody's specced it out yet. That's the bottleneck."
-    },
-    {
-      "speaker": "Dave",
-      "role": "CRO",
-      "message": "From a revenue angle, Faith and Family is actually the sleeper differentiator. Every productivity app does habits and finances \u2014 almost none of them touch this space meaningfully. If we nail it, that's our moat with the faith-based market, which is massive and underserved in tech. But we can't monetize what doesn't exist yet, so building this out is a revenue conversation too. Nothing actionable on my approved items specifically ties to Faith and Family, but I'd flag that we need Joshua's eyes on this as a strategic priority."
+      "message": "The Family tab spec is at 454 lines, which is substantial but needs expansion if we're serious about touchpoint tracking for all 3 family members. I can draft a feature spec for expanding that tab and review the family touchpoint tracker design \u2014 both are straightforward automation tasks. There's also 1 uncommitted hub change sitting out there that I'll commit. None of this requires Joshua unless he wants to change the architecture."
     },
     {
       "speaker": "Alex",
       "role": "CMO",
-      "message": "Content-wise, this is wide open and honestly exciting. Faith and Family content \u2014 daily devotionals, marriage check-in prompts, parenting frameworks, legacy planning \u2014 that stuff generates insane engagement in the faith-based demo. I can start with a blog post that positions Lever's Faith and Family vision, teases what's coming, and drives waitlist signups. [AGENT] Draft next blog post \u2014 I'll angle it around the Faith and Family pillar specifically and why most apps ignore the most important levers in life."
+      "message": "Content side is where the agents can really eat. I can generate daily devotional content across all 8 faith dimensions, draft additional faith lesson content to grow beyond those 7 lessons, and prep reminders for upcoming family events \u2014 Jett's vaccine is on the calendar. I'd also slot in the next blog post draft. That's four auto-tasks I can run without Joshua touching anything."
+    },
+    {
+      "speaker": "Dave",
+      "role": "CRO",
+      "message": "I'll keep monitoring the Fear and Greed index \u2014 it's sitting at 34 right now, which is low. From a revenue lens, the faith and family features are retention plays, not direct monetization. But sticky features reduce churn, so I'm all for it. My concern is making sure Joshua actually reviews what the agents produce on the faith content \u2014 devotionals are personal, and if the tone is off, it damages trust fast."
     },
     {
       "speaker": "Theo",
       "role": "COO",
-      "message": "Good. Let's do a quick round of cross-talk. Elon, what does Alex need from you to make that blog post technically accurate about what's coming?"
+      "message": "Dave raises a good point. Alex, how do you handle tone control on the devotional and lesson content?"
+    },
+    {
+      "speaker": "Alex",
+      "role": "CMO",
+      "message": "Fair challenge. The 8 dimensions give me structure, so I'm not freestyling \u2014 but Dave's right, Joshua should review the first batch of devotional outputs before we put them on autopilot. Once he approves the tone and format, I can run indefinitely."
     },
     {
       "speaker": "Elon",
       "role": "CTO",
-      "message": "I can spec out a one-pager on the Faith and Family feature roadmap \u2014 devotional engine, family touchpoint tracker, and the scoring integration \u2014 so Alex isn't writing fiction. Give me 48 hours. But I need Joshua to actually sign off on what devotional content looks like, because that's a theological and personal call, not an engineering one."
-    },
-    {
-      "speaker": "Dave",
-      "role": "CRO",
-      "message": "Agreed with Elon on that. Joshua needs to own the content voice for anything faith-related. That's brand-defining territory. Also, Elon \u2014 when you spec the family touchpoint tracker, think about couples as a use case. Shared accountability between spouses could be a premium feature down the line."
-    },
-    {
-      "speaker": "Alex",
-      "role": "CMO",
-      "message": "Love the couples angle, Dave. That's a content series in itself \u2014 \"Lever Together\" or something. But let's not get ahead of ourselves. Blog post first, feature spec first, then we layer."
+      "message": "Agreed. Same principle for the Family Tab expansion \u2014 I'll draft the spec, but Joshua should approve the feature direction before I build further. The touchpoint tracker review is low-stakes enough to auto-handle."
     },
     {
       "speaker": "Theo",
       "role": "COO",
-      "message": "Alright, landing this. Top priorities: one, Joshua needs to define the Faith and Family content vision and voice \u2014 that's foundational and nothing moves without it. Two, we need a feature spec for the Faith and Family module so engineering can start building. Three, Alex gets the blog post drafted to start generating interest. On approved action items, here's what we're tracking: [AGENT] Draft next blog post, angled on Faith and Family as Lever's differentiator \u2014 that's Alex. [JOSHUA] Review 17 BUY signals \u2014 Dave, that's still outstanding and high priority even though it's wealth-side. [JOSHUA] Review current positions and position sizing \u2014 Dave, keep those in front of Joshua. [AGENT] Monitor Fear and Greed index at 34 \u2014 Dave, keep that running in the background. For Faith and Family specifically, we need Joshua in the loop before next standup. That's the unlock. We're done."
+      "message": "Good alignment. Here's how we're closing this out. Top priorities: first, get faith content generation running \u2014 devotionals and lessons \u2014 with Joshua reviewing the initial outputs for tone. Second, expand the Family Tab spec and review the touchpoint tracker. Third, don't let the small stuff rot \u2014 commit that hub change and keep monitoring Fear and Greed. Action items: [AGENT] Generate daily devotional content based on 8 faith dimensions, assigned to Alex. [AGENT] Draft faith lesson content for the Lever app, currently 7 lessons, assigned to Alex. [AGENT] Prepare reminders for upcoming family events \u2014 Jett's vaccine, assigned to Alex. [AGENT] Draft next blog post, assigned to Alex. [AGENT] Draft feature spec for expanding Family Tab, currently 454 lines, assigned to Elon. [AGENT] Review family touchpoint tracker design for 3 family members, assigned to Elon. [AGENT] Commit 1 uncommitted hub change, assigned to Elon. [AGENT] Monitor Fear and Greed index at 34, assigned to Dave. And critically \u2014 [JOSHUA] Review and approve initial devotional content for tone and format before scaling. [JOSHUA] Approve Family Tab feature direction from Elon's spec. Let's move."
     }
   ],
   "actionItems": [
     {
-      "text": "Review 17 BUY signal(s)",
-      "priority": "high",
-      "assignee": "Dave",
+      "text": "Generate daily devotional content based on 8 faith dimensions",
+      "priority": "medium",
+      "assignee": "Alex",
       "completed": false,
-      "tag": "JOSHUA"
+      "tag": "AGENT"
     },
     {
-      "text": "Review current positions: AEE, EWA, EFA, XLV, XLE, VNQ, TLT, GLD, AKAM",
+      "text": "Draft faith lesson content for the Lever app (currently 7 lessons)",
       "priority": "medium",
-      "assignee": "Dave",
+      "assignee": "Alex",
       "completed": false,
-      "tag": "JOSHUA"
+      "tag": "AGENT"
     },
     {
-      "text": "Review position sizing and risk parameters for 9 active position(s)",
+      "text": "Prepare reminders for upcoming family events: Jetts vaccine",
       "priority": "medium",
-      "assignee": "Dave",
+      "assignee": "Alex",
       "completed": false,
-      "tag": "JOSHUA"
+      "tag": "AGENT"
+    },
+    {
+      "text": "Draft next blog post",
+      "priority": "medium",
+      "assignee": "Alex",
+      "completed": false,
+      "tag": "AGENT"
+    },
+    {
+      "text": "Draft feature spec for expanding Family tab (currently 454 lines)",
+      "priority": "medium",
+      "assignee": "Elon",
+      "completed": false,
+      "tag": "AGENT"
+    },
+    {
+      "text": "Review family touchpoint tracker design for 3 family members",
+      "priority": "low",
+      "assignee": "Elon",
+      "completed": false,
+      "tag": "AGENT"
+    },
+    {
+      "text": "Commit 1 uncommitted hub change(s)",
+      "priority": "low",
+      "assignee": "Elon",
+      "completed": false,
+      "tag": "AGENT"
     },
     {
       "text": "Monitor Fear & Greed index (currently 34)",
       "priority": "low",
       "assignee": "Dave",
-      "completed": true,
-      "tag": "AGENT",
-      "completedAt": "2026-02-17T15:23:07.374948-08:00",
-      "agentOutput": "F&G: 37.3 (Fear). Sideways regime. SPY/QQQ both sideways. No immediate action needed."
+      "completed": false,
+      "tag": "AGENT"
     }
   ],
   "topPriorities": [
-    "Joshua defines Faith and Family content vision and theological voice for the Lever app",
-    "Feature spec for Faith and Family module \u2014 devotional engine, family touchpoint tracker, Lever score integration",
-    "Blog post drafted positioning Faith and Family as Lever's key differentiator in the market"
+    "Launch faith content generation (devotionals + lessons) with Joshua tone review on first batch",
+    "Expand Family Tab feature spec and review touchpoint tracker design",
+    "Clear housekeeping: commit hub change, monitor Fear & Greed index, draft blog post"
   ],
   "ceoDirectives": [],
   "type": "adhoc-lever-faith-and-family",
@@ -205,12 +227,12 @@
   "conversationMode": "ai",
   "model": "claude-opus-4-6",
   "tokenUsage": {
-    "input_tokens": 1200,
-    "output_tokens": 1252,
-    "total_tokens": 2452,
-    "duration": 31.5,
+    "input_tokens": 1251,
+    "output_tokens": 1309,
+    "total_tokens": 2560,
+    "duration": 25.4,
     "model": "claude-opus-4-6",
-    "estimated_cost": 0.1119
+    "estimated_cost": 0.1169
   },
   "verticals": [],
   "initiatives": [],

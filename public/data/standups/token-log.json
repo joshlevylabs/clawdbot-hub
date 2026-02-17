@@ -69,12 +69,22 @@
       "estimatedCost": 0.1119,
       "model": "claude-opus-4-6",
       "duration": "31.5s"
+    },
+    {
+      "date": "2026-02-17",
+      "type": "adhoc-lever-faith-and-family",
+      "inputTokens": 1251,
+      "outputTokens": 1309,
+      "totalTokens": 2560,
+      "estimatedCost": 0.1169,
+      "model": "claude-opus-4-6",
+      "duration": "25.4s"
     }
   ],
   "totals": {
-    "today": 0.4075,
-    "week": 0.7108,
-    "month": 0.7108,
-    "standupCount": 7
+    "today": 0.5244,
+    "week": 0.8277,
+    "month": 0.8277,
+    "standupCount": 8
   }
 }

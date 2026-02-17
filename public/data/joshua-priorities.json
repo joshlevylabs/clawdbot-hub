@@ -77,7 +77,7 @@
     {
       "text": "Draft next blog post",
       "assignee": "Alex",
-      "status": "done",
+      "status": "pending",
       "completedAt": null,
       "output": "Not yet automated: Requires content strategy decision and writing \u2014 not automated",
       "verified": true,
@@ -104,12 +104,16 @@
     {
       "text": "Monitor Fear & Greed index (currently 34)",
       "assignee": "Dave",
-      "status": "pending"
+      "status": "done",
+      "completedAt": "2026-02-17T12:02:19.811805-08:00",
+      "output": "Fear & Greed check: see trading dashboard"
     },
     {
       "text": "Commit 4 uncommitted hub change(s)",
       "assignee": "Elon",
-      "status": "pending"
+      "status": "done",
+      "completedAt": "2026-02-17T12:02:22.385960-08:00",
+      "output": "[main 1243f73] auto: standup cleanup\n Committer: Joshua Levy <joshualevy@Joshuas-Mac-mini.local>\nYou"
     }
   ]
 }

@@ -1,6 +1,6 @@
 {
   "date": "2026-02-16",
-  "generatedAt": "2026-02-16T17:29:32.908644-08:00",
+  "generatedAt": "2026-02-16T18:00:20.556243-08:00",
   "priorities": [
     {
       "text": "Review Ecosystem Map podcast narrative",
@@ -15,6 +15,21 @@
     {
       "text": "Adjust crypto position stop-loss parameters",
       "source": "trading-review",
+      "urgency": "high"
+    },
+    {
+      "text": "Review enterprise B2B contract structures",
+      "source": "morning-priorities",
+      "urgency": "high"
+    },
+    {
+      "text": "Review south-region data center performance bottleneck",
+      "source": "evening-wrap",
+      "urgency": "high"
+    },
+    {
+      "text": "Prepare enterprise contract final documentation",
+      "source": "evening-wrap",
       "urgency": "high"
     }
   ],
@@ -37,6 +52,26 @@
     {
       "text": "Monitor Fear & Greed index for sentiment shift",
       "assignee": "System",
+      "status": "pending"
+    },
+    {
+      "text": "Deploy quantum-adaptive load balancing diagnostic scripts",
+      "assignee": "Elon",
+      "status": "pending"
+    },
+    {
+      "text": "Schedule AI-generated thought leadership content drops",
+      "assignee": "Alex",
+      "status": "pending"
+    },
+    {
+      "text": "Technical validation of marketing interactive demo",
+      "assignee": "Elon/Tech Team",
+      "status": "pending"
+    },
+    {
+      "text": "Update lead magnet tracking metrics",
+      "assignee": "Alex",
       "status": "pending"
     }
   ]

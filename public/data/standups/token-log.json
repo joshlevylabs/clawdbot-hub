@@ -69,12 +69,32 @@
       "estimatedCost": 0.0036,
       "model": "claude-3-5-haiku-20241022",
       "duration": "12.4s"
+    },
+    {
+      "date": "2026-02-16",
+      "type": "morning-priorities",
+      "inputTokens": 848,
+      "outputTokens": 662,
+      "totalTokens": 1510,
+      "estimatedCost": 0.0042,
+      "model": "claude-3-5-haiku-20241022",
+      "duration": "14.7s"
+    },
+    {
+      "date": "2026-02-16",
+      "type": "evening-wrap",
+      "inputTokens": 847,
+      "outputTokens": 624,
+      "totalTokens": 1471,
+      "estimatedCost": 0.004,
+      "model": "claude-3-5-haiku-20241022",
+      "duration": "14.0s"
     }
   ],
   "totals": {
-    "today": 0.0279,
-    "week": 0.0279,
-    "month": 0.0279,
-    "standupCount": 7
+    "today": 0.0361,
+    "week": 0.0361,
+    "month": 0.0361,
+    "standupCount": 9
   }
 }

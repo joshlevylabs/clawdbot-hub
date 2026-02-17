@@ -1,4 +1,7 @@
 {
+  "_deprecated": "This file is stale. Supabase paper_positions and paper_trading_config tables are the source of truth for portfolio data.",
+  "_last_updated": "2026-02-13T14:00:52.393921",
+  "_note": "Use Hub /trading dashboard or Supabase queries for current positions and performance data.",
   "account": {
     "starting_capital": 100000,
     "cash": 100000,

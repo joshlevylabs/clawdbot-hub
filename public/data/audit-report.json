@@ -1,42 +1,42 @@
 {
-  "timestamp": "2026-02-17T06:01:50.272994+00:00",
+  "timestamp": "2026-02-17T06:03:38.449529+00:00",
   "summary": {
     "total_tasks": 6,
-    "verified_done": 1,
-    "done_but_unverified": 3,
-    "pending": 2,
+    "verified_done": 4,
+    "done_but_unverified": 2,
+    "pending": 0,
     "stale": 0
   },
   "items": [
     {
       "text": "Address 1 critical ecosystem sync gap(s)",
-      "status": "done_but_unverified",
+      "status": "verified_done",
       "assignee": "Elon",
-      "verification": "FAILED: Verify no critical sync gaps remain in ecosystem map (output: 1)"
+      "verification": "PASSED: Verify no critical sync gaps remain in ecosystem map (excludes headers)"
     },
     {
       "text": "Sync 2 podcast episode(s) to website",
-      "status": "done_but_unverified",
+      "status": "verified_done",
       "assignee": "Alex",
-      "verification": "FAILED: Verify all hub podcast episodes exist on website (sync gap = 0) (output: -2)"
+      "verification": "PASSED: Verify all hub podcast episodes exist on website (sync gap = 0)"
     },
     {
       "text": "Commit 1 uncommitted hub change(s)",
       "status": "done_but_unverified",
       "assignee": "Elon",
-      "verification": "No verification rule found"
+      "verification": "FAILED: Verify hub has no uncommitted changes (output: 3)"
     },
     {
       "text": "Review 1 ecosystem attention item(s)",
-      "status": "done_but_unverified",
+      "status": "verified_done",
       "assignee": "Elon",
-      "verification": "FAILED: Verify ecosystem attention items decreased (output: 2)"
+      "verification": "PASSED: Verify no attention items remain in ecosystem map (excludes headers)"
     },
     {
       "text": "Monitor Fear & Greed index (currently 36)",
       "status": "done_but_unverified",
       "assignee": "Dave",
-      "verification": "No verification rule found"
+      "verification": "FAILED: Verify MRE signals file was updated in last 2 hours (output: 0)"
     },
     {
       "text": "Draft next blog post",
@@ -46,8 +46,7 @@
     }
   ],
   "escalations": [
-    "Address 1 critical ecosystem sync gap(s) \u2014 marked done but verification FAILED",
-    "Sync 2 podcast episode(s) to website \u2014 marked done but verification FAILED",
-    "Review 1 ecosystem attention item(s) \u2014 marked done but verification FAILED"
+    "Commit 1 uncommitted hub change(s) \u2014 marked done but verification FAILED",
+    "Monitor Fear & Greed index (currently 36) \u2014 marked done but verification FAILED"
   ]
 }

@@ -245,11 +245,11 @@ function InitiativeBadge({ initiative }: { initiative: InitiativeDef }) {
   );
 }
 
-function JoshuaPrioritiesCard({ priorities, completedIds, onToggle }: { priorities: JoshuaPriorities | null; completedIds: Record<string, string>; onToggle?: (type: string, index: number, completed: boolean) => void }) {
+function JoshuaPrioritiesCard({ priorities, onToggle }: { priorities: JoshuaPriorities | null; onToggle?: (type: string, index: number, completed: boolean) => void }) {
   if (!priorities || (!priorities.priorities.length && !priorities.agentHandled.length)) return null;
 
-  const visiblePriorities = priorities.priorities.filter((_, i) => !completedIds[`priority:${i}`]);
-  const visibleAgentTasks = priorities.agentHandled.filter((a, i) => a.status !== "done" && !completedIds[`agent:${i}`]);
+  const visiblePriorities = priorities.priorities.filter(p => !p.completed);
+  const visibleAgentTasks = priorities.agentHandled.filter(a => a.status !== "done" && !a.completed);
 
   if (visiblePriorities.length === 0 && visibleAgentTasks.length === 0) {
     return (
@@ -277,22 +277,45 @@ function JoshuaPrioritiesCard({ priorities, completedIds, onToggle }: { prioriti
           </div>
           <div className="space-y-2">
             {priorities.priorities.map((p, i) => {
-              if (completedIds[`priority:${i}`]) return null;
+              if (p.completed) return null;
+              const isCompleted = p.completed;
               return (
-                <button
+                <div
                   key={i}
-                  onClick={() => onToggle?.("priority", i, true)}
-                  className="w-full text-left flex items-start gap-3 p-2.5 rounded-lg transition-colors bg-purple-500/5 hover:bg-purple-500/10"
+                  className={`w-full text-left flex items-start gap-3 p-2.5 rounded-lg transition-colors ${
+                    isCompleted ? "bg-emerald-500/5 opacity-60" : "bg-purple-500/5 hover:bg-purple-500/10"
+                  }`}
                 >
-                  <Circle className="w-5 h-5 text-purple-400/50 flex-shrink-0 mt-0.5 hover:text-purple-400" />
+                  <button
+                    onClick={() => onToggle?.("priority", i, !isCompleted)}
+                    className="flex-shrink-0 mt-0.5 hover:scale-110 transition-transform"
+                  >
+                    {isCompleted ? (
+                      <CheckCircle className="w-5 h-5 text-emerald-500" />
+                    ) : (
+                      <Circle className="w-5 h-5 text-purple-400/50 hover:text-purple-400" />
+                    )}
+                  </button>
                   <div className="flex-1">
-                    <p className="text-sm leading-relaxed text-slate-200">{p.text}</p>
+                    <p className={`text-sm leading-relaxed ${isCompleted ? "text-slate-500 line-through" : "text-slate-200"}`}>
+                      {p.text}
+                    </p>
                     <div className="flex items-center gap-2 mt-1">
                       <PriorityBadge priority={p.urgency} />
                       <span className="text-[10px] text-slate-600">from {p.source}</span>
+                      {isCompleted && p.completedAt && (
+                        <>
+                          <span className="text-[10px] text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded">
+                            ✓ Completed by Joshua
+                          </span>
+                          <span className="text-[10px] text-slate-600">
+                            {new Date(p.completedAt).toLocaleDateString()}
+                          </span>
+                        </>
+                      )}
                     </div>
                   </div>
-                </button>
+                </div>
               );
             })}
           </div>
@@ -308,7 +331,7 @@ function JoshuaPrioritiesCard({ priorities, completedIds, onToggle }: { prioriti
           </div>
           <div className="space-y-2">
             {priorities.agentHandled.map((a, i) => {
-              if (a.status === "done" || completedIds[`agent:${i}`]) return null;
+              if (a.status === "done" || a.completed) return null;
               return (
                 <button
                   key={i}
@@ -326,6 +349,50 @@ function JoshuaPrioritiesCard({ priorities, completedIds, onToggle }: { prioriti
           </div>
         </div>
       )}
+
+      {/* Completed Items (Last 7 Days) */}
+      {priorities && (() => {
+        const completedItems = priorities.priorities
+          .filter(p => p.completed && p.completedAt)
+          .filter(p => {
+            const completedDate = new Date(p.completedAt!);
+            const weekAgo = new Date();
+            weekAgo.setDate(weekAgo.getDate() - 7);
+            return completedDate >= weekAgo;
+          })
+          .sort((a, b) => new Date(b.completedAt!).getTime() - new Date(a.completedAt!).getTime());
+
+        return completedItems.length > 0 ? (
+          <div className="bg-gradient-to-br from-emerald-600/10 to-emerald-800/5 rounded-xl border border-emerald-500/20 p-5">
+            <div className="flex items-center gap-2 mb-4">
+              <CheckCircle className="w-5 h-5 text-emerald-400" strokeWidth={1.5} />
+              <h2 className="font-semibold text-slate-100 text-sm">Completed by Joshua</h2>
+              <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                LAST 7 DAYS
+              </span>
+            </div>
+            <div className="space-y-2">
+              {completedItems.map((p, i) => (
+                <div key={i} className="flex items-start gap-3 p-2.5 rounded-lg bg-emerald-500/5 opacity-75">
+                  <CheckCircle className="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
+                  <div className="flex-1">
+                    <p className="text-sm leading-relaxed text-slate-400 line-through">{p.text}</p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <PriorityBadge priority={p.urgency} />
+                      <span className="text-[10px] text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded">
+                        ✓ Completed by Joshua
+                      </span>
+                      <span className="text-[10px] text-slate-600">
+                        {new Date(p.completedAt!).toLocaleDateString()} - from {p.source}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : null;
+      })()}
     </div>
   );
 }
@@ -452,7 +519,7 @@ function ReportCard({ title, icon, report }: { title: string; icon: string; repo
   );
 }
 
-function StandupDetail({ standup }: { standup: Standup }) {
+function StandupDetail({ standup, onToggleActionItem }: { standup: Standup; onToggleActionItem?: (text: string, completed: boolean) => void }) {
   const [showTranscript, setShowTranscript] = useState(false);
   const completedActions = standup.actionItems.filter((a) => a.completed).length;
   const totalActions = standup.actionItems.length;
@@ -571,25 +638,52 @@ function StandupDetail({ standup }: { standup: Standup }) {
             </div>
           </div>
           <div className="space-y-2">
-            {standup.actionItems.map((item, i) => (
-              <div key={i} className={`flex items-start gap-3 p-2 rounded-lg ${item.completed ? "bg-emerald-500/5" : "bg-slate-800/20"}`}>
-                {item.completed ? (
-                  <CheckCircle className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" />
-                ) : (
-                  <Circle className="w-4 h-4 text-slate-600 flex-shrink-0 mt-0.5" />
-                )}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <p className={`text-sm ${item.completed ? "text-slate-500 line-through" : "text-slate-300"}`}>
-                      {cleanText(item)}
-                    </p>
-                    <TagBadge tag={getTag(item)} />
-                    <PriorityBadge priority={item.priority} />
+            {standup.actionItems.map((item, i) => {
+              const isJoshua = getTag(item) === "JOSHUA";
+              const isCompleted = item.completed;
+              return (
+                <div key={i} className={`flex items-start gap-3 p-2 rounded-lg ${isCompleted ? "bg-emerald-500/5 opacity-60" : "bg-slate-800/20"}`}>
+                  {isJoshua ? (
+                    <button
+                      onClick={() => onToggleActionItem?.(cleanText(item), !isCompleted)}
+                      className="flex-shrink-0 mt-0.5 hover:scale-110 transition-transform"
+                    >
+                      {isCompleted ? (
+                        <CheckCircle className="w-4 h-4 text-emerald-500" />
+                      ) : (
+                        <Circle className="w-4 h-4 text-purple-400 hover:text-purple-300" />
+                      )}
+                    </button>
+                  ) : (
+                    isCompleted ? (
+                      <CheckCircle className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" />
+                    ) : (
+                      <Circle className="w-4 h-4 text-slate-600 flex-shrink-0 mt-0.5" />
+                    )
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <p className={`text-sm ${isCompleted ? "text-slate-500 line-through" : "text-slate-300"}`}>
+                        {cleanText(item)}
+                      </p>
+                      <TagBadge tag={getTag(item)} />
+                      <PriorityBadge priority={item.priority} />
+                      {isCompleted && item.completedAt && (
+                        <span className="text-[10px] text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded">
+                          ✓ Completed by Joshua
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-xs text-slate-600 mt-0.5">→ {item.assignee}</p>
+                    {isCompleted && item.completedAt && (
+                      <p className="text-xs text-slate-600 mt-0.5">
+                        Completed {new Date(item.completedAt).toLocaleDateString()}
+                      </p>
+                    )}
                   </div>
-                  <p className="text-xs text-slate-600 mt-0.5">→ {item.assignee}</p>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}
@@ -2069,7 +2163,18 @@ export default function StandupsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [allInitiatives, setAllInitiatives] = useState<InitiativeDef[]>([]);
-  const [completedIds, setCompletedIds] = useState<Record<string, string>>({});
+
+  // Helper functions (moved from StandupDetail for reuse)
+  const getTag = (item: ActionItem): string => {
+    if (item.tag) return item.tag;
+    if (item.text.startsWith("[JOSHUA]")) return "JOSHUA";
+    if (item.text.startsWith("[AGENT]")) return "AGENT";
+    return "AGENT";
+  };
+
+  const cleanText = (item: ActionItem): string => {
+    return item.text.replace(/^\[(JOSHUA|AGENT)\]\s*/, "");
+  };
 
   useEffect(() => {
     async function fetchData() {
@@ -2120,16 +2225,6 @@ export default function StandupsPage() {
           // Initiatives file may not exist yet
         }
 
-        // Load completions from Supabase
-        try {
-          const compRes = await fetch("/api/priorities", { cache: "no-store" });
-          if (compRes.ok) {
-            const compData = await compRes.json();
-            setCompletedIds(compData.completedIds || {});
-          }
-        } catch {
-          // Completions API may not be ready
-        }
       } catch (err) {
         setError("Failed to load standup data");
         console.error(err);
@@ -2153,37 +2248,69 @@ export default function StandupsPage() {
   };
 
   const handleTogglePriority = async (type: string, index: number, completed: boolean) => {
-    const id = `${type}:${index}`;
+    if (!joshuaPriorities) return;
 
-    // Optimistic update — item disappears immediately
-    setCompletedIds((prev) => {
-      const next = { ...prev };
-      if (completed) {
-        next[id] = new Date().toISOString();
+    const priority = type === "priority" 
+      ? joshuaPriorities.priorities[index] 
+      : joshuaPriorities.agentHandled[index];
+    
+    if (!priority) return;
+
+    // Optimistic update to local state
+    setJoshuaPriorities(prev => {
+      if (!prev) return prev;
+      const updated = { ...prev };
+      if (type === "priority") {
+        updated.priorities = [...prev.priorities];
+        updated.priorities[index] = {
+          ...updated.priorities[index],
+          completed,
+          completedAt: completed ? new Date().toISOString() : undefined,
+        };
       } else {
-        delete next[id];
+        updated.agentHandled = [...prev.agentHandled];
+        updated.agentHandled[index] = {
+          ...updated.agentHandled[index],
+          completed,
+          completedAt: completed ? new Date().toISOString() : undefined,
+        };
       }
-      return next;
+      return updated;
     });
 
-    // Persist to Supabase via API
+    // Persist to API
     try {
       await fetch("/api/priorities", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id, completed }),
+        body: JSON.stringify({ 
+          text: priority.text, 
+          completed, 
+          completedAt: completed ? new Date().toISOString() : undefined 
+        }),
       });
     } catch (err) {
       console.error("Failed to toggle priority:", err);
       // Revert on error
-      setCompletedIds((prev) => {
-        const next = { ...prev };
-        if (!completed) {
-          next[id] = new Date().toISOString();
+      setJoshuaPriorities(prev => {
+        if (!prev) return prev;
+        const reverted = { ...prev };
+        if (type === "priority") {
+          reverted.priorities = [...prev.priorities];
+          reverted.priorities[index] = {
+            ...reverted.priorities[index],
+            completed: !completed,
+            completedAt: !completed ? new Date().toISOString() : undefined,
+          };
         } else {
-          delete next[id];
+          reverted.agentHandled = [...prev.agentHandled];
+          reverted.agentHandled[index] = {
+            ...reverted.agentHandled[index],
+            completed: !completed,
+            completedAt: !completed ? new Date().toISOString() : undefined,
+          };
         }
-        return next;
+        return reverted;
       });
     }
   };
@@ -2332,7 +2459,7 @@ export default function StandupsPage() {
       {activeTab === "history" ? (
         <>
           {/* Joshua's Priorities (top — most important) */}
-          <JoshuaPrioritiesCard priorities={joshuaPriorities} completedIds={completedIds} onToggle={handleTogglePriority} />
+          <JoshuaPrioritiesCard priorities={joshuaPriorities} onToggle={handleTogglePriority} />
 
           {/* CEO Directives */}
           {selectedStandup?.ceoDirectives && selectedStandup.ceoDirectives.length > 0 && (
@@ -2394,7 +2521,33 @@ export default function StandupsPage() {
               {selectedStandup ? (
                 <>
                   <h2 className="text-lg font-semibold text-slate-100 mb-4">{selectedStandup.topic}</h2>
-                  <StandupDetail standup={selectedStandup} />
+                  <StandupDetail 
+                    standup={selectedStandup} 
+                    onToggleActionItem={async (text: string, completed: boolean) => {
+                      try {
+                        await fetch("/api/priorities", {
+                          method: "PATCH",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({ text, completed, completedAt: completed ? new Date().toISOString() : undefined }),
+                        });
+                        
+                        // Update the selected standup state to reflect the change
+                        setSelectedStandup(prev => {
+                          if (!prev) return prev;
+                          return {
+                            ...prev,
+                            actionItems: prev.actionItems.map(item => 
+                              cleanText(item) === text 
+                                ? { ...item, completed, completedAt: completed ? new Date().toISOString() : undefined }
+                                : item
+                            )
+                          };
+                        });
+                      } catch (err) {
+                        console.error("Failed to toggle action item:", err);
+                      }
+                    }}
+                  />
                 </>
               ) : error ? (
                 <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-6 text-center">

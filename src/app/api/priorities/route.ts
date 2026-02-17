@@ -1,84 +1,79 @@
 import { NextRequest, NextResponse } from "next/server";
+import fs from "fs";
+import path from "path";
 
-const SUPABASE_URL = process.env.NEXT_PUBLIC_PAPER_SUPABASE_URL || "";
-const SUPABASE_KEY = process.env.PAPER_SUPABASE_SERVICE_ROLE_KEY || "";
+const PRIORITIES_FILE = path.join(process.cwd(), "public", "data", "joshua-priorities.json");
 
-const headers = {
-  apikey: SUPABASE_KEY,
-  Authorization: `Bearer ${SUPABASE_KEY}`,
-  "Content-Type": "application/json",
-  Prefer: "return=representation",
-};
+interface Priority {
+  text: string;
+  source: string;
+  urgency: string;
+  completed?: boolean;
+  completedAt?: string;
+}
 
-// GET — return all completed priority IDs
+interface JoshuaPriorities {
+  date: string;
+  generatedAt: string;
+  priorities: Priority[];
+  agentHandled: any[];
+}
+
 export async function GET() {
   try {
-    const res = await fetch(
-      `${SUPABASE_URL}/rest/v1/priority_completions?select=id,completed_at`,
-      { headers, cache: "no-store" }
-    );
-    if (!res.ok) {
-      return NextResponse.json({ error: "Failed to fetch completions" }, { status: 500 });
+    if (!fs.existsSync(PRIORITIES_FILE)) {
+      return NextResponse.json({ error: "Priorities file not found" }, { status: 404 });
     }
-    const rows = await res.json();
-    // Return as a set of completed IDs
-    const completedIds: Record<string, string> = {};
-    for (const row of rows) {
-      completedIds[row.id] = row.completed_at;
-    }
-    return NextResponse.json({ completedIds });
-  } catch (err) {
-    console.error("Error fetching completions:", err);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+
+    const data = JSON.parse(fs.readFileSync(PRIORITIES_FILE, "utf8"));
+    return NextResponse.json(data);
+  } catch (error) {
+    console.error("Error reading priorities:", error);
+    return NextResponse.json({ error: "Failed to load priorities" }, { status: 500 });
   }
 }
 
-// PATCH — toggle a priority completion
-export async function PATCH(req: NextRequest) {
+export async function PATCH(request: NextRequest) {
   try {
-    const body = await req.json();
-    const { id, completed } = body;
-    // id: "priority:0", "priority:1", "agent:0", etc.
-    // completed: boolean
+    const { text, completed, completedAt } = await request.json();
 
-    if (!id || completed == null) {
+    if (!text || typeof completed !== "boolean") {
       return NextResponse.json(
-        { error: "Missing required fields: id, completed" },
+        { error: "Missing required fields: text and completed" },
         { status: 400 }
       );
     }
 
-    if (completed) {
-      // Upsert into completions table
-      const res = await fetch(
-        `${SUPABASE_URL}/rest/v1/priority_completions`,
-        {
-          method: "POST",
-          headers: { ...headers, Prefer: "resolution=merge-duplicates,return=representation" },
-          body: JSON.stringify({ id, completed_at: new Date().toISOString() }),
-        }
-      );
-      if (!res.ok) {
-        const err = await res.text();
-        console.error("Supabase upsert error:", err);
-        return NextResponse.json({ error: "Failed to save completion" }, { status: 500 });
-      }
-    } else {
-      // Delete from completions table
-      const res = await fetch(
-        `${SUPABASE_URL}/rest/v1/priority_completions?id=eq.${encodeURIComponent(id)}`,
-        { method: "DELETE", headers }
-      );
-      if (!res.ok) {
-        const err = await res.text();
-        console.error("Supabase delete error:", err);
-        return NextResponse.json({ error: "Failed to remove completion" }, { status: 500 });
-      }
+    if (!fs.existsSync(PRIORITIES_FILE)) {
+      return NextResponse.json({ error: "Priorities file not found" }, { status: 404 });
     }
 
-    return NextResponse.json({ success: true, id, completed });
-  } catch (err) {
-    console.error("Error updating completion:", err);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    const data: JoshuaPriorities = JSON.parse(fs.readFileSync(PRIORITIES_FILE, "utf8"));
+    
+    // Find the priority by text match
+    const priorityIndex = data.priorities.findIndex(p => p.text === text);
+    
+    if (priorityIndex === -1) {
+      return NextResponse.json({ error: "Priority not found" }, { status: 404 });
+    }
+
+    // Update the priority
+    data.priorities[priorityIndex] = {
+      ...data.priorities[priorityIndex],
+      completed,
+      completedAt: completed ? (completedAt || new Date().toISOString()) : undefined,
+    };
+
+    // Write back to file
+    fs.writeFileSync(PRIORITIES_FILE, JSON.stringify(data, null, 2));
+
+    return NextResponse.json({ 
+      success: true, 
+      priority: data.priorities[priorityIndex] 
+    });
+
+  } catch (error) {
+    console.error("Error updating priority:", error);
+    return NextResponse.json({ error: "Failed to update priority" }, { status: 500 });
   }
 }

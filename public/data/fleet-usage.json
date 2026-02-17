@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-02-17T03:00:04.602126",
+  "generated_at": "2026-02-17T03:36:04.922600",
   "active_sessions": 2,
   "billing_model": "subscription",
   "subscriptions": {
@@ -15,49 +15,49 @@
     "today": 6.67,
     "week": 46.67,
     "month": 200.0,
-    "api_equivalent_today": 1.922,
-    "api_equivalent_week": 69.9347,
-    "api_equivalent_month": 87.1089,
+    "api_equivalent_today": 2.8784,
+    "api_equivalent_week": 70.4609,
+    "api_equivalent_month": 87.635,
     "savings_today": 0,
     "savings_month": 0,
     "subscription_daily": 6.67,
     "subscription_monthly": 200.0,
-    "tokens_today": 3935361
+    "tokens_today": 5978044
   },
   "by_model": {
     "Claude Sonnet 4": {
-      "cost_today": 1.922,
-      "cost_week": 10.2967,
-      "cost_month": 10.2967,
-      "tokens_today": 3935361,
-      "tokens_week": 13287519,
-      "tokens_month": 13287519,
-      "calls_today": 89
+      "cost_today": 2.8784,
+      "cost_week": 11.2532,
+      "cost_month": 11.2532,
+      "tokens_today": 5978044,
+      "tokens_week": 15330202,
+      "tokens_month": 15330202,
+      "calls_today": 138
     },
     "Claude Opus 4": {
       "cost_today": 0,
-      "cost_week": 59.638,
-      "cost_month": 76.8121,
+      "cost_week": 59.2077,
+      "cost_month": 76.3819,
       "tokens_today": 0,
-      "tokens_week": 80970945,
-      "tokens_month": 95964558,
+      "tokens_week": 80476174,
+      "tokens_month": 95469787,
       "calls_today": 0
     }
   },
   "by_agent": {
     "cron": {
-      "cost_today": 1.7501,
-      "cost_week": 16.6755,
-      "cost_month": 33.8497,
-      "tokens_today": 3451932,
+      "cost_today": 2.5958,
+      "cost_week": 17.091,
+      "cost_month": 34.2652,
+      "tokens_today": 5166815,
       "primary_model": "Claude Opus 4",
       "department": "other"
     },
     "theo": {
-      "cost_today": 0.1719,
-      "cost_week": 53.2592,
-      "cost_month": 53.2592,
-      "tokens_today": 483429,
+      "cost_today": 0.2826,
+      "cost_week": 53.3699,
+      "cost_month": 53.3699,
+      "tokens_today": 811229,
       "primary_model": "Claude Sonnet 4",
       "department": "executive"
     }
@@ -74,7 +74,7 @@
     "2026-02-11": 1.4463385,
     "2026-02-13": 0.41251425,
     "2026-02-15": 5.688171249999999,
-    "2026-02-16": 56.4219812,
-    "2026-02-17": 1.9219816499999993
+    "2026-02-16": 55.991730700000005,
+    "2026-02-17": 2.87840445
   }
 }

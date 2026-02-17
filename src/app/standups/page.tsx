@@ -249,17 +249,17 @@ function TokenUsageWidget({ tokenLog }: { tokenLog: TokenLog | null }) {
         <Cpu className="w-4 h-4 text-slate-500" strokeWidth={1.5} />
         <p className="text-xs text-slate-500 uppercase tracking-wide font-medium">Token Costs</p>
       </div>
-      <div className="grid grid-cols-3 gap-3">
-        <div className="text-center">
-          <p className="text-lg font-bold text-slate-200">${totals.today.toFixed(3)}</p>
+      <div className="grid grid-cols-3 gap-2 lg:gap-3">
+        <div className="text-center min-w-0">
+          <p className="text-sm lg:text-lg font-bold text-slate-200 truncate">${totals.today.toFixed(3)}</p>
           <p className="text-[10px] text-slate-500">Today</p>
         </div>
-        <div className="text-center">
-          <p className="text-lg font-bold text-slate-200">${totals.week.toFixed(3)}</p>
+        <div className="text-center min-w-0">
+          <p className="text-sm lg:text-lg font-bold text-slate-200 truncate">${totals.week.toFixed(3)}</p>
           <p className="text-[10px] text-slate-500">Week</p>
         </div>
-        <div className="text-center">
-          <p className="text-lg font-bold text-slate-200">${totals.month.toFixed(3)}</p>
+        <div className="text-center min-w-0">
+          <p className="text-sm lg:text-lg font-bold text-slate-200 truncate">${totals.month.toFixed(3)}</p>
           <p className="text-[10px] text-slate-500">Month</p>
         </div>
       </div>
@@ -554,7 +554,7 @@ function StandupHistoryItem({
   return (
     <button
       onClick={onClick}
-      className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
+      className={`w-full lg:w-auto flex-shrink-0 text-left px-3 py-2 rounded-lg text-sm transition-colors ${
         isSelected
           ? "bg-primary-600/20 border border-primary-500/30 text-primary-300"
           : "bg-slate-900/30 border border-slate-800 text-slate-400 hover:border-slate-700 hover:text-slate-300"
@@ -704,7 +704,7 @@ export default function StandupsPage() {
       </div>
 
       {/* Type Filter Tabs */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1">
+      <div className="flex items-center gap-2 overflow-x-auto pb-1 flex-nowrap">
         {TYPE_FILTERS.map((f) => (
           <button
             key={f.key}
@@ -729,7 +729,7 @@ export default function StandupsPage() {
       )}
 
       {/* Summary Stats */}
-      <div className="grid grid-cols-5 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
         <div className="bg-slate-900/50 rounded-xl border border-slate-800 p-3 text-center">
           <p className="text-xl font-bold text-slate-100">{standupIndex?.standups?.length || 0}</p>
           <p className="text-[10px] text-slate-500 mt-0.5">Standups</p>
@@ -753,10 +753,10 @@ export default function StandupsPage() {
       </div>
 
       {/* Main Content */}
-      <div className="flex gap-4">
+      <div className="flex flex-col lg:flex-row gap-4">
         {/* History Sidebar */}
-        <div className="w-48 flex-shrink-0 space-y-2">
-          <p className="text-xs text-slate-500 uppercase tracking-wide font-medium px-1 mb-2">History</p>
+        <div className="w-full lg:w-48 flex-shrink-0 space-y-2 lg:space-y-2 flex lg:flex-col gap-2 lg:gap-0 overflow-x-auto lg:overflow-x-visible">
+          <p className="text-xs text-slate-500 uppercase tracking-wide font-medium px-1 mb-2 lg:mb-2 hidden lg:block">History</p>
           {filteredEntries.length === 0 ? (
             <p className="text-xs text-slate-600 px-1">No standups found</p>
           ) : (
@@ -779,7 +779,7 @@ export default function StandupsPage() {
         </div>
 
         {/* Detail View */}
-        <div className="flex-1 min-w-0">
+        <div className="flex-1 min-w-0 w-full">
           {selectedStandup ? (
             <>
               <h2 className="text-lg font-semibold text-slate-100 mb-4">{selectedStandup.topic}</h2>

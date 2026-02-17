@@ -1,6 +1,6 @@
 {
   "date": "2026-02-17",
-  "generatedAt": "2026-02-17T12:01:53.297076-08:00",
+  "generatedAt": "2026-02-17T14:39:37.720719-08:00",
   "priorities": [
     {
       "text": "Review current positions: AEE, EFA, XLV, XLE, VNQ, TLT, GLD",
@@ -25,6 +25,11 @@
     {
       "text": "Review position sizing and risk parameters for 9 active position(s)",
       "source": "afternoon-checkpoint",
+      "urgency": "medium"
+    },
+    {
+      "text": "Review current positions: AEE, EWA, EFA, XLV, XLE, VNQ, TLT, GLD, AKAM",
+      "source": "lever-faith-family",
       "urgency": "medium"
     }
   ],

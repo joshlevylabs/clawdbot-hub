@@ -39,12 +39,22 @@
       "estimatedCost": 0.0967,
       "model": "claude-opus-4-6",
       "duration": "24.5s"
+    },
+    {
+      "date": "2026-02-17",
+      "type": "lever-faith-family",
+      "inputTokens": 1232,
+      "outputTokens": 1363,
+      "totalTokens": 2595,
+      "estimatedCost": 0.1207,
+      "model": "claude-opus-4-6",
+      "duration": "34.5s"
     }
   ],
   "totals": {
-    "today": 0.0967,
-    "week": 0.4,
-    "month": 0.4,
-    "standupCount": 4
+    "today": 0.2174,
+    "week": 0.5207,
+    "month": 0.5207,
+    "standupCount": 5
   }
 }

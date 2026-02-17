@@ -3,162 +3,310 @@
     {
       "key": "morning-priorities",
       "name": "Morning Priorities",
-      "emoji": "🌅",
+      "emoji": "\ud83c\udf05",
       "schedule": "daily",
       "time": "05:45",
-      "participants": ["COO", "CTO", "CRO", "CMO"],
+      "participants": [
+        "COO",
+        "CTO",
+        "CRO",
+        "CMO"
+      ],
       "agenda": "Full org daily kickoff. Review overnight changes, surface top priorities for Joshua, identify tasks agents should auto-handle today.",
-      "autoExecute": true
+      "autoExecute": true,
+      "verticals": [
+        "ecosystem"
+      ],
+      "initiatives": []
     },
     {
       "key": "afternoon-checkpoint",
       "name": "Afternoon Checkpoint",
-      "emoji": "🌞",
+      "emoji": "\ud83c\udf1e",
       "schedule": "daily",
       "time": "12:00",
-      "participants": ["COO", "CTO", "CRO", "CMO"],
+      "participants": [
+        "COO",
+        "CTO",
+        "CRO",
+        "CMO"
+      ],
       "agenda": "Midday progress review. What got done this morning? Any blockers? Reprioritize if needed. Market midday check.",
-      "autoExecute": true
+      "autoExecute": true,
+      "verticals": [
+        "ecosystem"
+      ],
+      "initiatives": []
     },
     {
       "key": "evening-wrap",
       "name": "Evening Wrap",
-      "emoji": "🌆",
+      "emoji": "\ud83c\udf06",
       "schedule": "daily",
       "time": "18:00",
-      "participants": ["COO", "CTO", "CRO", "CMO"],
+      "participants": [
+        "COO",
+        "CTO",
+        "CRO",
+        "CMO"
+      ],
       "agenda": "End-of-day review. What shipped today? What carries over? Market close summary. Preview tomorrow's priorities.",
-      "autoExecute": true
+      "autoExecute": true,
+      "verticals": [
+        "ecosystem"
+      ],
+      "initiatives": []
     },
     {
       "key": "midnight-prep",
       "name": "Midnight Prep",
-      "emoji": "🌙",
+      "emoji": "\ud83c\udf19",
       "schedule": "daily",
       "time": "23:55",
-      "participants": ["COO", "CTO", "CRO", "CMO"],
+      "participants": [
+        "COO",
+        "CTO",
+        "CRO",
+        "CMO"
+      ],
       "agenda": "Overnight prep. Queue tasks for overnight agents. Set up tomorrow's agenda. Review ecosystem health before agents run nightly jobs.",
-      "autoExecute": true
+      "autoExecute": true,
+      "verticals": [
+        "ecosystem"
+      ],
+      "initiatives": []
     },
     {
       "key": "cto-tech-debt",
       "name": "Tech Debt Sprint",
-      "emoji": "🔧",
+      "emoji": "\ud83d\udd27",
       "schedule": "monday",
       "time": "07:00",
-      "participants": ["COO", "CTO"],
+      "participants": [
+        "COO",
+        "CTO"
+      ],
       "agenda": "Elon reviews codebase health: TODOs, build issues, dependency updates, tech debt across all 3 programs. Plan targeted fixes for the week.",
-      "autoExecute": true
+      "autoExecute": true,
+      "verticals": [
+        "ecosystem",
+        "hub",
+        "joshlevylabs",
+        "lever"
+      ],
+      "initiatives": []
     },
     {
       "key": "cto-app-store",
       "name": "App Store Readiness",
-      "emoji": "📱",
+      "emoji": "\ud83d\udcf1",
       "schedule": "wednesday",
       "time": "07:00",
-      "participants": ["COO", "CTO"],
+      "participants": [
+        "COO",
+        "CTO"
+      ],
       "agenda": "Elon reviews Lever app progress toward App Store submission. Build status, missing features, compliance checklist, EAS build health.",
-      "autoExecute": true
+      "autoExecute": true,
+      "verticals": [
+        "lever"
+      ],
+      "initiatives": [
+        "app-store-submit",
+        "lever-dashboard"
+      ]
     },
     {
       "key": "cto-infra-review",
       "name": "Infrastructure Review",
-      "emoji": "🏗️",
+      "emoji": "\ud83c\udfd7\ufe0f",
       "schedule": "friday",
       "time": "07:00",
-      "participants": ["COO", "CTO"],
+      "participants": [
+        "COO",
+        "CTO"
+      ],
       "agenda": "Elon reviews deployment health, Supabase usage, API performance, Vercel build times, error rates. Plan infrastructure improvements.",
-      "autoExecute": true
+      "autoExecute": true,
+      "verticals": [
+        "ecosystem",
+        "hub"
+      ],
+      "initiatives": []
     },
     {
       "key": "cmo-content-calendar",
       "name": "Content Calendar Review",
-      "emoji": "📅",
+      "emoji": "\ud83d\udcc5",
       "schedule": "monday",
       "time": "07:30",
-      "participants": ["COO", "CMO"],
+      "participants": [
+        "COO",
+        "CMO"
+      ],
       "agenda": "Alex reviews content pipeline: podcast episode status, blog schedule, newsletter planning, content gaps. Plan this week's content output.",
-      "autoExecute": true
+      "autoExecute": true,
+      "verticals": [
+        "joshlevylabs"
+      ],
+      "initiatives": [
+        "podcast-distribution",
+        "content-growth"
+      ]
     },
     {
       "key": "cmo-distribution",
       "name": "Distribution Audit",
-      "emoji": "📣",
+      "emoji": "\ud83d\udce3",
       "schedule": "wednesday",
       "time": "07:30",
-      "participants": ["COO", "CMO"],
+      "participants": [
+        "COO",
+        "CMO"
+      ],
       "agenda": "Alex reviews distribution reach: social media presence, SEO rankings, cross-platform syndication, content not yet distributed. Fix gaps.",
-      "autoExecute": true
+      "autoExecute": true,
+      "verticals": [
+        "joshlevylabs"
+      ],
+      "initiatives": [
+        "podcast-distribution",
+        "content-growth"
+      ]
     },
     {
       "key": "cmo-audience-growth",
       "name": "Audience Growth Strategy",
-      "emoji": "📈",
+      "emoji": "\ud83d\udcc8",
       "schedule": "friday",
       "time": "07:30",
-      "participants": ["COO", "CMO"],
+      "participants": [
+        "COO",
+        "CMO"
+      ],
       "agenda": "Alex reviews audience metrics: newsletter subscribers, podcast listeners, website traffic, social followers. Plan growth tactics.",
-      "autoExecute": false
+      "autoExecute": false,
+      "verticals": [
+        "joshlevylabs"
+      ],
+      "initiatives": [
+        "content-growth"
+      ]
     },
     {
       "key": "cro-portfolio",
       "name": "Portfolio Performance",
-      "emoji": "💰",
+      "emoji": "\ud83d\udcb0",
       "schedule": "monday",
       "time": "08:00",
-      "participants": ["COO", "CRO"],
+      "participants": [
+        "COO",
+        "CRO"
+      ],
       "agenda": "Dave reviews paper trading results: P&L by position, strategy effectiveness, risk metrics, drawdowns. Identify what's working and what's not.",
-      "autoExecute": false
+      "autoExecute": false,
+      "verticals": [
+        "hub"
+      ],
+      "initiatives": [
+        "mre-v14-optimization"
+      ]
     },
     {
       "key": "cro-market-intel",
       "name": "Market Intelligence",
-      "emoji": "🔍",
+      "emoji": "\ud83d\udd0d",
       "schedule": "wednesday",
       "time": "08:00",
-      "participants": ["COO", "CRO"],
+      "participants": [
+        "COO",
+        "CRO"
+      ],
       "agenda": "Dave reviews macro outlook: regime analysis, sector rotation, Fear & Greed trends, earnings calendar. Strategic positioning recommendations.",
-      "autoExecute": false
+      "autoExecute": false,
+      "verticals": [
+        "hub"
+      ],
+      "initiatives": [
+        "mre-v14-optimization"
+      ]
     },
     {
       "key": "cro-monetization",
       "name": "Monetization Pipeline",
-      "emoji": "💵",
+      "emoji": "\ud83d\udcb5",
       "schedule": "friday",
       "time": "08:00",
-      "participants": ["COO", "CRO"],
+      "participants": [
+        "COO",
+        "CRO"
+      ],
       "agenda": "Dave reviews revenue streams: subscription conversion, watt economy metrics, pricing optimization, new monetization opportunities.",
-      "autoExecute": false
+      "autoExecute": false,
+      "verticals": [
+        "ecosystem"
+      ],
+      "initiatives": []
     },
     {
       "key": "weekly-revenue",
       "name": "Weekly Revenue Review",
-      "emoji": "🏦",
+      "emoji": "\ud83c\udfe6",
       "schedule": "monday",
       "time": "08:30",
-      "participants": ["COO", "CTO", "CRO", "CMO"],
+      "participants": [
+        "COO",
+        "CTO",
+        "CRO",
+        "CMO"
+      ],
       "agenda": "Full org revenue review: subscription metrics, watt purchases, content monetization, trading P&L. How are we tracking toward income goals?",
-      "autoExecute": false
+      "autoExecute": false,
+      "verticals": [
+        "ecosystem"
+      ],
+      "initiatives": []
     },
     {
       "key": "ecosystem-sync",
       "name": "Ecosystem Sync Audit",
-      "emoji": "🔄",
+      "emoji": "\ud83d\udd04",
       "schedule": "wednesday",
       "time": "08:30",
-      "participants": ["COO", "CTO", "CMO"],
+      "participants": [
+        "COO",
+        "CTO",
+        "CMO"
+      ],
       "agenda": "Cross-program sync check: are all 3 programs aligned? Content synced between website and Hub? Features matched between website and app? Fix drift.",
-      "autoExecute": true
+      "autoExecute": true,
+      "verticals": [
+        "ecosystem",
+        "joshlevylabs",
+        "hub",
+        "lever"
+      ],
+      "initiatives": []
     },
     {
       "key": "brand-momentum",
       "name": "Brand Momentum Check",
-      "emoji": "🚀",
+      "emoji": "\ud83d\ude80",
       "schedule": "friday",
       "time": "08:30",
-      "participants": ["COO", "CMO", "CRO"],
+      "participants": [
+        "COO",
+        "CMO",
+        "CRO"
+      ],
       "agenda": "Brand health: content performance trends, audience engagement, competitive positioning, brand consistency across platforms. What's resonating?",
-      "autoExecute": false
+      "autoExecute": false,
+      "verticals": [
+        "joshlevylabs"
+      ],
+      "initiatives": [
+        "content-growth"
+      ]
     }
   ]
 }

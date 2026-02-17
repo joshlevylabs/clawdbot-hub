@@ -92,6 +92,28 @@ interface Standup {
   conversationMode?: "ai" | "template";
   model?: string;
   tokenUsage?: TokenUsage | null;
+  // Verticals & initiatives
+  verticals?: string[];
+  initiatives?: string[];
+  verticalDetails?: VerticalDef[];
+  initiativeDetails?: InitiativeDef[];
+}
+
+interface VerticalDef {
+  key: string;
+  name: string;
+  emoji: string;
+  description?: string;
+  color?: string;
+}
+
+interface InitiativeDef {
+  key: string;
+  name: string;
+  description?: string;
+  verticals: string[];
+  status: string;
+  priority?: string;
 }
 
 interface StandupIndexEntry {
@@ -102,6 +124,8 @@ interface StandupIndexEntry {
   typeName?: string;
   typeEmoji?: string;
   tokenCost?: number;
+  verticals?: string[];
+  initiatives?: string[];
 }
 
 interface StandupIndex {
@@ -136,6 +160,14 @@ function getAgentColors(name: string, role?: string) {
 
 const roleIcons: Record<string, string> = { COO: "🏛️", CTO: "📡", CRO: "📈", CMO: "🎨" };
 
+// Vertical color map
+const verticalStyles: Record<string, { bg: string; text: string; border: string; emoji: string; label: string }> = {
+  ecosystem: { bg: "bg-slate-500/20", text: "text-slate-300", border: "border-slate-500/30", emoji: "🌐", label: "Ecosystem" },
+  joshlevylabs: { bg: "bg-blue-500/20", text: "text-blue-400", border: "border-blue-500/30", emoji: "🏠", label: "joshlevylabs.com" },
+  hub: { bg: "bg-purple-500/20", text: "text-purple-400", border: "border-purple-500/30", emoji: "🔺", label: "Hub" },
+  lever: { bg: "bg-emerald-500/20", text: "text-emerald-400", border: "border-emerald-500/30", emoji: "📱", label: "Lever" },
+};
+
 // Type filter config
 const TYPE_FILTERS = [
   { key: "all", label: "All", emoji: "📊" },
@@ -143,6 +175,15 @@ const TYPE_FILTERS = [
   { key: "trading-review", label: "Trading", emoji: "📈" },
   { key: "content-pipeline", label: "Content", emoji: "🎙️" },
   { key: "tech-sprint", label: "Tech", emoji: "🔧" },
+];
+
+// Vertical filter config
+const VERTICAL_FILTERS = [
+  { key: "all", label: "All", emoji: "🔷" },
+  { key: "ecosystem", label: "Ecosystem", emoji: "🌐" },
+  { key: "joshlevylabs", label: "Website", emoji: "🏠" },
+  { key: "hub", label: "Hub", emoji: "🔺" },
+  { key: "lever", label: "Lever", emoji: "📱" },
 ];
 
 // ---- Components ----
@@ -171,6 +212,29 @@ function TagBadge({ tag }: { tag: string }) {
       }`}
     >
       {isJoshua ? "👤 JOSHUA" : "🤖 AGENT"}
+    </span>
+  );
+}
+
+function VerticalBadge({ verticalKey }: { verticalKey: string }) {
+  const style = verticalStyles[verticalKey];
+  if (!style) return null;
+  return (
+    <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium border ${style.bg} ${style.text} ${style.border}`}>
+      {style.emoji} {style.label}
+    </span>
+  );
+}
+
+function InitiativeBadge({ initiative }: { initiative: InitiativeDef }) {
+  const priorityColors: Record<string, string> = {
+    high: "bg-amber-500/20 text-amber-400 border-amber-500/30",
+    medium: "bg-sky-500/20 text-sky-400 border-sky-500/30",
+    low: "bg-slate-700/50 text-slate-400 border-slate-600/30",
+  };
+  return (
+    <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium border ${priorityColors[initiative.priority || "medium"] || priorityColors.medium}`}>
+      🎯 {initiative.name}
     </span>
   );
 }
@@ -416,6 +480,18 @@ function StandupDetail({ standup }: { standup: Standup }) {
         </span>
       </div>
 
+      {/* Verticals & Initiatives */}
+      {((standup.verticals && standup.verticals.length > 0) || (standup.initiativeDetails && standup.initiativeDetails.length > 0)) && (
+        <div className="flex items-center gap-2 flex-wrap">
+          {standup.verticals?.map((vk) => (
+            <VerticalBadge key={vk} verticalKey={vk} />
+          ))}
+          {standup.initiativeDetails?.map((ini) => (
+            <InitiativeBadge key={ini.key} initiative={ini} />
+          ))}
+        </div>
+      )}
+
       {/* Participants */}
       <div className="flex items-center gap-2 flex-wrap">
         {standup.participants.map((p) => {
@@ -569,6 +645,16 @@ function StandupHistoryItem({
       <p className={`text-xs mt-0.5 truncate ${isSelected ? "text-primary-400/70" : "text-slate-500"}`}>
         {formatDate(entry.date)}
       </p>
+      {entry.verticals && entry.verticals.length > 0 && entry.verticals[0] !== "ecosystem" && (
+        <div className="flex items-center gap-1 mt-1">
+          {entry.verticals.slice(0, 3).map((vk) => {
+            const s = verticalStyles[vk];
+            return s ? (
+              <span key={vk} className={`text-[9px] ${s.text}`} title={s.label}>{s.emoji}</span>
+            ) : null;
+          })}
+        </div>
+      )}
       {entry.tokenCost != null && entry.tokenCost > 0 && (
         <p className="text-[10px] text-slate-600 mt-0.5">${entry.tokenCost.toFixed(4)}</p>
       )}
@@ -589,6 +675,8 @@ interface ScheduledStandupType {
   participants: string[];
   agenda: string;
   autoExecute?: boolean;
+  verticals?: string[];
+  initiatives?: string[];
 }
 
 interface ScheduleData {
@@ -723,6 +811,13 @@ function ScheduledView() {
                         </span>
                       )}
                     </div>
+                    {standup.verticals && standup.verticals.length > 0 && (
+                      <div className="flex items-center gap-1.5 mt-2 flex-wrap">
+                        {standup.verticals.map((vk) => (
+                          <VerticalBadge key={vk} verticalKey={vk} />
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -773,6 +868,13 @@ function ScheduledView() {
                         </span>
                       )}
                     </div>
+                    {standup.verticals && standup.verticals.length > 0 && (
+                      <div className="flex items-center gap-1.5 mt-2 flex-wrap">
+                        {standup.verticals.map((vk) => (
+                          <VerticalBadge key={vk} verticalKey={vk} />
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -793,9 +895,11 @@ export default function StandupsPage() {
   const [tokenLog, setTokenLog] = useState<TokenLog | null>(null);
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
   const [typeFilter, setTypeFilter] = useState<string>("all");
+  const [verticalFilter, setVerticalFilter] = useState<string>("all");
   const [activeTab, setActiveTab] = useState<TabType>("history");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [allInitiatives, setAllInitiatives] = useState<InitiativeDef[]>([]);
 
   useEffect(() => {
     async function fetchData() {
@@ -834,6 +938,17 @@ export default function StandupsPage() {
         } catch {
           // Token log might not be in public data — that's fine
         }
+
+        // Load initiatives
+        try {
+          const initRes = await fetch("/data/initiatives.json");
+          if (initRes.ok) {
+            const initData = await initRes.json();
+            setAllInitiatives(initData.initiatives || []);
+          }
+        } catch {
+          // Initiatives file may not exist yet
+        }
       } catch (err) {
         setError("Failed to load standup data");
         console.error(err);
@@ -856,12 +971,18 @@ export default function StandupsPage() {
     }
   };
 
-  // Filtered index entries
+  // Filtered index entries (type + vertical)
   const filteredEntries = useMemo(() => {
     if (!standupIndex) return [];
-    if (typeFilter === "all") return standupIndex.standups;
-    return standupIndex.standups.filter((s) => (s.type || "daily-priorities") === typeFilter);
-  }, [standupIndex, typeFilter]);
+    let entries = standupIndex.standups;
+    if (typeFilter !== "all") {
+      entries = entries.filter((s) => (s.type || "daily-priorities") === typeFilter);
+    }
+    if (verticalFilter !== "all") {
+      entries = entries.filter((s) => s.verticals?.includes(verticalFilter));
+    }
+    return entries;
+  }, [standupIndex, typeFilter, verticalFilter]);
 
   // Compute stats
   const totalConcerns = selectedStandup
@@ -936,22 +1057,47 @@ export default function StandupsPage() {
         </button>
       </div>
 
-      {/* Type Filter Tabs - Only show on History tab */}
+      {/* Filter Tabs - Only show on History tab */}
       {activeTab === "history" && (
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 flex-nowrap">
-          {TYPE_FILTERS.map((f) => (
-            <button
-              key={f.key}
-              onClick={() => setTypeFilter(f.key)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap ${
-                typeFilter === f.key
-                  ? "bg-primary-600/20 text-primary-400 border border-primary-500/30"
-                  : "bg-slate-900/30 text-slate-500 border border-slate-800 hover:border-slate-700 hover:text-slate-400"
-              }`}
-            >
-              {f.emoji} {f.label}
-            </button>
-          ))}
+        <div className="space-y-2">
+          {/* Type filters */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 flex-nowrap">
+            {TYPE_FILTERS.map((f) => (
+              <button
+                key={f.key}
+                onClick={() => setTypeFilter(f.key)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap ${
+                  typeFilter === f.key
+                    ? "bg-primary-600/20 text-primary-400 border border-primary-500/30"
+                    : "bg-slate-900/30 text-slate-500 border border-slate-800 hover:border-slate-700 hover:text-slate-400"
+                }`}
+              >
+                {f.emoji} {f.label}
+              </button>
+            ))}
+          </div>
+          {/* Vertical filters */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 flex-nowrap">
+            <span className="text-[10px] text-slate-600 uppercase tracking-wider font-medium mr-1">Vertical</span>
+            {VERTICAL_FILTERS.map((f) => {
+              const style = verticalStyles[f.key];
+              return (
+                <button
+                  key={f.key}
+                  onClick={() => setVerticalFilter(f.key)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap ${
+                    verticalFilter === f.key
+                      ? style
+                        ? `${style.bg} ${style.text} border ${style.border}`
+                        : "bg-primary-600/20 text-primary-400 border border-primary-500/30"
+                      : "bg-slate-900/30 text-slate-500 border border-slate-800 hover:border-slate-700 hover:text-slate-400"
+                  }`}
+                >
+                  {f.emoji} {f.label}
+                </button>
+              );
+            })}
+          </div>
         </div>
       )}
 

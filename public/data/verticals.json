@@ -1,0 +1,42 @@
+{
+  "verticals": [
+    {
+      "key": "ecosystem",
+      "name": "Ecosystem",
+      "emoji": "🌐",
+      "description": "Cross-cutting concerns spanning all products and infrastructure",
+      "repos": [
+        "~/clawd",
+        "~/clawd/clawdbot-hub",
+        "~/joshlevylabs"
+      ],
+      "color": "slate"
+    },
+    {
+      "key": "joshlevylabs",
+      "name": "joshlevylabs.com",
+      "emoji": "🏠",
+      "description": "Personal brand website, blog, podcast, and public content",
+      "repos": ["~/joshlevylabs"],
+      "paths": ["apps/web"],
+      "color": "blue"
+    },
+    {
+      "key": "hub",
+      "name": "Clawdbot Hub",
+      "emoji": "🔺",
+      "description": "Agent dashboard, standups, trading, fleet management",
+      "repos": ["~/clawd/clawdbot-hub"],
+      "color": "purple"
+    },
+    {
+      "key": "lever",
+      "name": "Lever App",
+      "emoji": "📱",
+      "description": "Mobile app — finance, faith, family, marriage compass",
+      "repos": ["~/joshlevylabs"],
+      "paths": ["apps/mobile"],
+      "color": "emerald"
+    }
+  ]
+}

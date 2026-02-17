@@ -1,0 +1,58 @@
+{
+  "initiatives": [
+    {
+      "key": "app-store-submit",
+      "name": "App Store Submission",
+      "description": "Get Lever app ready and submitted to Apple App Store",
+      "verticals": ["lever"],
+      "status": "active",
+      "created": "2026-02-17",
+      "priority": "high"
+    },
+    {
+      "key": "lever-dashboard",
+      "name": "Enhance Lever Dashboard",
+      "description": "Improve the home dashboard UX of the Lever mobile app",
+      "verticals": ["lever"],
+      "status": "active",
+      "created": "2026-02-17",
+      "priority": "medium"
+    },
+    {
+      "key": "podcast-distribution",
+      "name": "Podcast Distribution Pipeline",
+      "description": "Automate end-to-end podcast production and multi-platform distribution",
+      "verticals": ["joshlevylabs", "hub"],
+      "status": "active",
+      "created": "2026-02-17",
+      "priority": "medium"
+    },
+    {
+      "key": "mre-v14-optimization",
+      "name": "MRE V14 Optimization",
+      "description": "Continuous overnight optimization of MRE trading signals",
+      "verticals": ["hub", "ecosystem"],
+      "status": "active",
+      "created": "2026-02-17",
+      "priority": "high"
+    },
+    {
+      "key": "hub-standup-system",
+      "name": "Standup System Enhancement",
+      "description": "Multi-agent standup meetings with verticals, initiatives, and task dispatch",
+      "verticals": ["hub"],
+      "status": "active",
+      "created": "2026-02-17",
+      "priority": "medium"
+    },
+    {
+      "key": "content-growth",
+      "name": "Audience & Content Growth",
+      "description": "Grow newsletter subscribers, podcast listeners, and website traffic",
+      "verticals": ["joshlevylabs"],
+      "status": "active",
+      "created": "2026-02-17",
+      "priority": "medium"
+    }
+  ]
+}

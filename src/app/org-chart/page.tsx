@@ -471,13 +471,17 @@ function parseMemoryMd(content: string): MemoryFields {
   const keyContext = parseBulletList(content, "Key Context");
   const sections = parseSections(content);
 
-  let rawNotes = "";
+  // Collect all sections that aren't "Lessons Learned" or "Key Context" into rawNotes
+  const skipHeaders = new Set(["lessons learned", "key context"]);
+  const extraSections: string[] = [];
   for (const [key, val] of Object.entries(sections)) {
     const kl = key.toLowerCase();
-    if (kl.includes("notes") || kl.includes("raw") || kl.includes("other")) {
-      rawNotes = val;
+    if (!skipHeaders.has(kl) && val.trim()) {
+      extraSections.push(`## ${key}\n\n${val}`);
     }
   }
+
+  let rawNotes = extraSections.join("\n\n");
 
   if (lessonsLearned.length === 0 && keyContext.length === 0 && !rawNotes) {
     rawNotes = content;

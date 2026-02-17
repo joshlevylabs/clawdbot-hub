@@ -1371,8 +1371,9 @@ function DesktopTree({ agents, selectedId, onSelect }: { agents: Record<string, 
   }
 
   const cooAgent = cooNode.agent;
-  // C-level executives (children of COO)
-  const cLevelNodes = cooNode.children;
+  // C-level executives (children of COO) vs staff reports
+  const cLevelNodes = cooNode.children.filter(c => isCLevel(c.agent.id));
+  const staffNodes = cooNode.children.filter(c => !isCLevel(c.agent.id));
 
   return (
     <div ref={containerRef} className="relative hidden lg:block">
@@ -1391,6 +1392,17 @@ function DesktopTree({ agents, selectedId, onSelect }: { agents: Record<string, 
           <ExecutiveCard agent={cooAgent} selected={selectedId === cooAgent.id} onClick={() => onSelect(cooAgent.id)} />
         </div>
       </div>
+
+      {/* COO Staff (non-C-level direct reports like Auditor) */}
+      {staffNodes.length > 0 && (
+        <div className="flex justify-center gap-4 mb-16 relative z-10">
+          {staffNodes.map(node => (
+            <div key={node.agent.id} className="w-full max-w-xs" data-node={node.agent.id}>
+              <TeamLeadCard agent={node.agent} selected={selectedId === node.agent.id} onClick={() => onSelect(node.agent.id)} />
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* C-Level executives */}
       {cLevelNodes.length > 0 && (

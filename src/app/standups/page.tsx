@@ -714,21 +714,11 @@ interface ScheduleData {
 function ScheduledView() {
   const [scheduleData, setScheduleData] = useState<ScheduleData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [showScheduleForm, setShowScheduleForm] = useState(false);
-  const [editingSchedule, setEditingSchedule] = useState<ScheduledStandupType | null>(null);
-  const [deleteConfirmSchedule, setDeleteConfirmSchedule] = useState<string | null>(null);
-  const [scheduleFormData, setScheduleFormData] = useState<any>({});
-  const [verticals, setVerticals] = useState<VerticalDef[]>([]);
-  const [initiatives, setInitiatives] = useState<InitiativeDef[]>([]);
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const [scheduleRes, verticalsRes, initiativesRes] = await Promise.all([
-          fetch("/api/standup-schedules", { cache: "no-store" }),
-          fetch("/api/verticals", { cache: "no-store" }),
-          fetch("/api/initiatives", { cache: "no-store" })
-        ]);
+        const scheduleRes = await fetch("/api/standup-schedules", { cache: "no-store" });
 
         // Fallback to JSON if API isn't ready
         if (!scheduleRes.ok) {
@@ -739,16 +729,6 @@ function ScheduledView() {
         } else {
           const data = await scheduleRes.json();
           setScheduleData({ types: data.schedules || [] });
-        }
-
-        if (verticalsRes.ok) {
-          const verticalsData = await verticalsRes.json();
-          setVerticals(verticalsData.verticals || []);
-        }
-
-        if (initiativesRes.ok) {
-          const initiativesData = await initiativesRes.json();
-          setInitiatives(initiativesData.initiatives || []);
         }
       } catch (err) {
         console.error("Failed to load data:", err);
@@ -768,8 +748,8 @@ function ScheduledView() {
     fetchData();
   }, []);
 
-  const getScheduledStandups = () => {
-    if (!scheduleData) return { today: [], tomorrow: [] };
+  const getRemainingTodayStandups = () => {
+    if (!scheduleData) return [];
     
     // Get current time in PT timezone
     const now = new Date();
@@ -778,28 +758,31 @@ function ScheduledView() {
       weekday: 'long',
       year: 'numeric',
       month: '2-digit',  
-      day: '2-digit'
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
     }).formatToParts(now);
     
     const today = ptTime.find(p => p.type === 'weekday')?.value.toLowerCase() || '';
-    
-    // Get tomorrow
-    const tomorrow = new Date(now);
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    const tomorrowPt = new Intl.DateTimeFormat('en-US', {
-      timeZone: 'America/Los_Angeles',
-      weekday: 'long'
-    }).format(tomorrow).toLowerCase();
+    const currentHour = parseInt(ptTime.find(p => p.type === 'hour')?.value || '0');
+    const currentMinute = parseInt(ptTime.find(p => p.type === 'minute')?.value || '0');
+    const currentTimeMinutes = currentHour * 60 + currentMinute;
 
     const todayStandups = scheduleData.types.filter(type => {
-      return type.schedule === 'daily' || type.schedule === today;
+      const isScheduledToday = type.schedule === 'daily' || type.schedule === today;
+      
+      if (!isScheduledToday) return false;
+      
+      // Check if the standup time has passed
+      const [standupHour, standupMinute] = type.time.split(':').map(Number);
+      const standupTimeMinutes = standupHour * 60 + standupMinute;
+      
+      // Only include standups that haven't passed yet
+      return standupTimeMinutes > currentTimeMinutes;
     }).sort((a, b) => a.time.localeCompare(b.time));
 
-    const tomorrowStandups = scheduleData.types.filter(type => {
-      return type.schedule === 'daily' || type.schedule === tomorrowPt;
-    }).sort((a, b) => a.time.localeCompare(b.time));
-
-    return { today: todayStandups, tomorrow: tomorrowStandups };
+    return todayStandups;
   };
 
   const formatTime = (time: string) => {
@@ -819,57 +802,39 @@ function ScheduledView() {
     return schedule.charAt(0).toUpperCase() + schedule.slice(1);
   };
 
-  const handleSaveSchedule = async (data: any) => {
-    try {
-      const method = editingSchedule ? 'PATCH' : 'POST';
-      const response = await fetch('/api/standup-schedules', {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
+  // Helper function to get next 30 days with standup counts
+  const getNext30Days = () => {
+    if (!scheduleData) return [];
+    
+    const days = [];
+    const today = new Date();
+    
+    for (let i = 0; i < 30; i++) {
+      const date = new Date(today);
+      date.setDate(today.getDate() + i);
+      
+      const dayName = new Intl.DateTimeFormat('en-US', {
+        timeZone: 'America/Los_Angeles',
+        weekday: 'long'
+      }).format(date).toLowerCase();
+      
+      const standupsCount = scheduleData.types.filter(type => {
+        return type.schedule === 'daily' || type.schedule === dayName;
+      }).length;
+      
+      days.push({
+        date: date,
+        dayNumber: date.getDate(),
+        isToday: i === 0,
+        dayName: dayName,
+        standupsCount: standupsCount,
+        standups: scheduleData.types.filter(type => {
+          return type.schedule === 'daily' || type.schedule === dayName;
+        }).sort((a, b) => a.time.localeCompare(b.time))
       });
-
-      if (response.ok) {
-        const result = await response.json();
-        if (editingSchedule) {
-          setScheduleData(prev => prev ? {
-            ...prev,
-            types: prev.types.map(s => s.key === data.key ? result.schedule : s)
-          } : null);
-        } else {
-          setScheduleData(prev => prev ? {
-            ...prev,
-            types: [...prev.types, result.schedule]
-          } : { types: [result.schedule] });
-        }
-        setShowScheduleForm(false);
-        setEditingSchedule(null);
-        setScheduleFormData({});
-      } else {
-        console.error('Failed to save schedule');
-      }
-    } catch (err) {
-      console.error('Error saving schedule:', err);
     }
-  };
-
-  const handleDeleteSchedule = async (key: string) => {
-    try {
-      const response = await fetch(`/api/standup-schedules?key=${encodeURIComponent(key)}`, {
-        method: 'DELETE'
-      });
-
-      if (response.ok) {
-        setScheduleData(prev => prev ? {
-          ...prev,
-          types: prev.types.filter(s => s.key !== key)
-        } : null);
-        setDeleteConfirmSchedule(null);
-      } else {
-        console.error('Failed to delete schedule');
-      }
-    } catch (err) {
-      console.error('Error deleting schedule:', err);
-    }
+    
+    return days;
   };
 
   if (loading) {
@@ -882,41 +847,32 @@ function ScheduledView() {
     );
   }
 
-  const { today, tomorrow } = getScheduledStandups();
+  const remainingToday = getRemainingTodayStandups();
+  const next30Days = getNext30Days();
 
   return (
     <div className="space-y-6">
-      {/* Header with Add Button */}
+      {/* Header */}
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-medium text-slate-200">Scheduled Standups</h2>
-        <button
-          onClick={() => {
-            setScheduleFormData({});
-            setEditingSchedule(null);
-            setShowScheduleForm(true);
-          }}
-          className="btn btn-primary flex items-center gap-2 text-sm"
-        >
-          <Plus className="w-4 h-4" />
-          Add Schedule
-        </button>
       </div>
 
-      {/* Today Section */}
+      {/* Today's Remaining Standups */}
       <div>
         <h3 className="text-sm font-medium text-slate-300 mb-3 flex items-center gap-2">
           <Calendar className="w-4 h-4" />
-          Today
+          Today's Remaining Standups
         </h3>
-        {today.length === 0 ? (
-          <p className="text-sm text-slate-500 bg-slate-900/30 rounded-lg p-4 border border-slate-800">
-            No standups scheduled for today.
-          </p>
+        {remainingToday.length === 0 ? (
+          <div className="text-sm text-slate-400 bg-slate-900/30 rounded-lg p-4 border border-slate-800 flex items-center gap-2">
+            <CheckCircle className="w-4 h-4 text-green-400" />
+            All standups completed for today ✅
+          </div>
         ) : (
           <div className="space-y-3">
-            {today.map((standup) => (
+            {remainingToday.map((standup) => (
               <div key={standup.key} className="bg-slate-900/50 rounded-xl border border-slate-800 p-4">
-                <div className="flex items-start justify-between">
+                <div className="flex items-start">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
                       <span className="text-lg">{standup.emoji}</span>
@@ -944,31 +900,6 @@ function ScheduledView() {
                         </span>
                       )}
                     </div>
-                    {standup.verticals && standup.verticals.length > 0 && (
-                      <div className="flex items-center gap-1.5 mt-2 flex-wrap">
-                        {standup.verticals.map((vk) => (
-                          <VerticalBadge key={vk} verticalKey={vk} />
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-1 ml-4">
-                    <button
-                      onClick={() => {
-                        setScheduleFormData(standup);
-                        setEditingSchedule(standup);
-                        setShowScheduleForm(true);
-                      }}
-                      className="p-1.5 hover:bg-slate-800 rounded"
-                    >
-                      <Pencil className="w-3 h-3 text-slate-400" />
-                    </button>
-                    <button
-                      onClick={() => setDeleteConfirmSchedule(standup.key)}
-                      className="p-1.5 hover:bg-slate-800 rounded"
-                    >
-                      <Trash2 className="w-3 h-3 text-red-400" />
-                    </button>
                   </div>
                 </div>
               </div>
@@ -977,321 +908,64 @@ function ScheduledView() {
         )}
       </div>
 
-      {/* Tomorrow Section */}
+      {/* 30-Day Calendar View */}
       <div>
         <h3 className="text-sm font-medium text-slate-300 mb-3 flex items-center gap-2">
           <Calendar className="w-4 h-4" />
-          Tomorrow
+          Next 30 Days
         </h3>
-        {tomorrow.length === 0 ? (
-          <p className="text-sm text-slate-500 bg-slate-900/30 rounded-lg p-4 border border-slate-800">
-            No standups scheduled for tomorrow.
-          </p>
-        ) : (
-          <div className="space-y-3">
-            {tomorrow.map((standup) => (
-              <div key={standup.key} className="bg-slate-900/50 rounded-xl border border-slate-800 p-4">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="text-lg">{standup.emoji}</span>
-                      <h4 className="font-medium text-slate-100">{standup.name}</h4>
-                      <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-slate-600/20 text-slate-400 border border-slate-600/30">
-                        {formatTime(standup.time)} PT
-                      </span>
-                    </div>
-                    <p className="text-sm text-slate-400 mb-3 leading-relaxed">{standup.agenda}</p>
-                    <div className="flex items-center gap-2 flex-wrap">
-                      {standup.participants.map((role) => {
-                        const colors = getAgentColors("", role);
-                        return (
-                          <span key={role} className={`px-2 py-1 rounded-lg text-xs border ${colors.bg} ${colors.text} ${colors.border}`}>
-                            {roleIcons[role] || "👤"} {role}
-                          </span>
-                        );
-                      })}
-                      <span className="px-2 py-0.5 rounded text-xs bg-slate-700/50 text-slate-500 border border-slate-600/30">
-                        {getScheduleLabel(standup.schedule)}
-                      </span>
-                      {standup.autoExecute && (
-                        <span className="px-2 py-0.5 rounded text-xs bg-green-500/20 text-green-400 border border-green-500/30">
-                          Auto-Execute
-                        </span>
-                      )}
-                    </div>
-                    {standup.verticals && standup.verticals.length > 0 && (
-                      <div className="flex items-center gap-1.5 mt-2 flex-wrap">
-                        {standup.verticals.map((vk) => (
-                          <VerticalBadge key={vk} verticalKey={vk} />
-                        ))}
-                      </div>
-                    )}
+        <div className="bg-slate-900/50 rounded-xl border border-slate-800 p-4">
+          <div className="grid grid-cols-7 gap-2">
+            {next30Days.map((day, index) => (
+              <div
+                key={index}
+                className={`
+                  relative p-3 rounded-lg border text-center cursor-pointer transition-colors
+                  ${day.isToday 
+                    ? 'bg-primary-500/20 border-primary-500/50 text-primary-300' 
+                    : 'bg-slate-800/50 border-slate-700 text-slate-300 hover:bg-slate-800'
+                  }
+                `}
+                title={`${day.date.toLocaleDateString('en-US', { 
+                  timeZone: 'America/Los_Angeles',
+                  weekday: 'long', 
+                  month: 'long', 
+                  day: 'numeric' 
+                })}: ${day.standupsCount} standup${day.standupsCount !== 1 ? 's' : ''}`}
+              >
+                <div className="font-medium text-sm">{day.dayNumber}</div>
+                {day.standupsCount > 0 && (
+                  <div className={`
+                    absolute -top-1 -right-1 w-5 h-5 rounded-full text-xs font-bold flex items-center justify-center
+                    ${day.isToday 
+                      ? 'bg-primary-400 text-slate-900' 
+                      : 'bg-slate-600 text-slate-200'
+                    }
+                  `}>
+                    {day.standupsCount}
                   </div>
-                  <div className="flex items-center gap-1 ml-4">
-                    <button
-                      onClick={() => {
-                        setScheduleFormData(standup);
-                        setEditingSchedule(standup);
-                        setShowScheduleForm(true);
-                      }}
-                      className="p-1.5 hover:bg-slate-800 rounded"
-                    >
-                      <Pencil className="w-3 h-3 text-slate-400" />
-                    </button>
-                    <button
-                      onClick={() => setDeleteConfirmSchedule(standup.key)}
-                      className="p-1.5 hover:bg-slate-800 rounded"
-                    >
-                      <Trash2 className="w-3 h-3 text-red-400" />
-                    </button>
-                  </div>
-                </div>
+                )}
               </div>
             ))}
           </div>
-        )}
+          
+          {/* Calendar Legend */}
+          <div className="flex items-center gap-4 mt-4 pt-3 border-t border-slate-700 text-xs text-slate-400">
+            <div className="flex items-center gap-1">
+              <div className="w-3 h-3 rounded bg-primary-500/20 border border-primary-500/50"></div>
+              <span>Today</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <div className="w-3 h-3 rounded-full bg-slate-600 text-slate-200 text-xs flex items-center justify-center font-bold">4</div>
+              <span>Standup count</span>
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* Schedule Form Modal */}
-      {showScheduleForm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-slate-800 rounded-xl p-6 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-medium text-slate-100">
-                {editingSchedule ? 'Edit Schedule' : 'Add Schedule'}
-              </h3>
-              <button
-                onClick={() => {
-                  setShowScheduleForm(false);
-                  setEditingSchedule(null);
-                  setScheduleFormData({});
-                }}
-                className="p-1 hover:bg-slate-700 rounded"
-              >
-                <X className="w-4 h-4 text-slate-400" />
-              </button>
-            </div>
-            
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleSaveSchedule(scheduleFormData);
-              }}
-              className="space-y-4"
-            >
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-1">Key</label>
-                  <input
-                    type="text"
-                    value={scheduleFormData.key || ''}
-                    onChange={(e) => setScheduleFormData({ ...scheduleFormData, key: e.target.value })}
-                    className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-slate-200"
-                    placeholder="morning-priorities"
-                    required
-                    disabled={!!editingSchedule}
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-1">Name</label>
-                  <input
-                    type="text"
-                    value={scheduleFormData.name || ''}
-                    onChange={(e) => setScheduleFormData({ ...scheduleFormData, name: e.target.value })}
-                    className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-slate-200"
-                    placeholder="Morning Priorities"
-                    required
-                  />
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-3 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-1">Emoji</label>
-                  <input
-                    type="text"
-                    value={scheduleFormData.emoji || ''}
-                    onChange={(e) => setScheduleFormData({ ...scheduleFormData, emoji: e.target.value })}
-                    className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-slate-200"
-                    placeholder="🌅"
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-1">Schedule</label>
-                  <select
-                    value={scheduleFormData.schedule || ''}
-                    onChange={(e) => setScheduleFormData({ ...scheduleFormData, schedule: e.target.value })}
-                    className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-slate-200"
-                    required
-                  >
-                    <option value="">Select schedule</option>
-                    <option value="daily">Daily</option>
-                    <option value="monday">Monday</option>
-                    <option value="tuesday">Tuesday</option>
-                    <option value="wednesday">Wednesday</option>
-                    <option value="thursday">Thursday</option>
-                    <option value="friday">Friday</option>
-                    <option value="saturday">Saturday</option>
-                    <option value="sunday">Sunday</option>
-                  </select>
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-1">Time</label>
-                  <input
-                    type="time"
-                    value={scheduleFormData.time || ''}
-                    onChange={(e) => setScheduleFormData({ ...scheduleFormData, time: e.target.value })}
-                    className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-slate-200"
-                    required
-                  />
-                </div>
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1">Agenda</label>
-                <textarea
-                  value={scheduleFormData.agenda || ''}
-                  onChange={(e) => setScheduleFormData({ ...scheduleFormData, agenda: e.target.value })}
-                  className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-slate-200"
-                  rows={3}
-                  placeholder="Full org daily kickoff. Review overnight changes..."
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">Participants</label>
-                <div className="grid grid-cols-2 gap-2">
-                  {['COO', 'CTO', 'CRO', 'CMO'].map((role) => (
-                    <label key={role} className="flex items-center gap-2">
-                      <input
-                        type="checkbox"
-                        checked={scheduleFormData.participants?.includes(role) || false}
-                        onChange={(e) => {
-                          const currentParticipants = scheduleFormData.participants || [];
-                          if (e.target.checked) {
-                            setScheduleFormData({ ...scheduleFormData, participants: [...currentParticipants, role] });
-                          } else {
-                            setScheduleFormData({ ...scheduleFormData, participants: currentParticipants.filter((p: string) => p !== role) });
-                          }
-                        }}
-                        className="rounded"
-                      />
-                      <span className="text-sm text-slate-300">{roleIcons[role] || "👤"} {role}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-              
-              <div>
-                <label className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={scheduleFormData.auto_execute || false}
-                    onChange={(e) => setScheduleFormData({ ...scheduleFormData, auto_execute: e.target.checked })}
-                    className="rounded"
-                  />
-                  <span className="text-sm text-slate-300">Auto-Execute</span>
-                </label>
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">Verticals</label>
-                <div className="grid grid-cols-2 gap-2 max-h-32 overflow-y-auto">
-                  {verticals.map((vertical) => (
-                    <label key={vertical.key} className="flex items-center gap-2">
-                      <input
-                        type="checkbox"
-                        checked={scheduleFormData.verticals?.includes(vertical.key) || false}
-                        onChange={(e) => {
-                          const currentVerticals = scheduleFormData.verticals || [];
-                          if (e.target.checked) {
-                            setScheduleFormData({ ...scheduleFormData, verticals: [...currentVerticals, vertical.key] });
-                          } else {
-                            setScheduleFormData({ ...scheduleFormData, verticals: currentVerticals.filter((v: string) => v !== vertical.key) });
-                          }
-                        }}
-                        className="rounded"
-                      />
-                      <span className="text-sm text-slate-300">{vertical.emoji} {vertical.name}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">Initiatives</label>
-                <div className="grid grid-cols-1 gap-2 max-h-32 overflow-y-auto">
-                  {initiatives.map((initiative) => (
-                    <label key={initiative.key} className="flex items-center gap-2">
-                      <input
-                        type="checkbox"
-                        checked={scheduleFormData.initiatives?.includes(initiative.key) || false}
-                        onChange={(e) => {
-                          const currentInitiatives = scheduleFormData.initiatives || [];
-                          if (e.target.checked) {
-                            setScheduleFormData({ ...scheduleFormData, initiatives: [...currentInitiatives, initiative.key] });
-                          } else {
-                            setScheduleFormData({ ...scheduleFormData, initiatives: currentInitiatives.filter((i: string) => i !== initiative.key) });
-                          }
-                        }}
-                        className="rounded"
-                      />
-                      <span className="text-sm text-slate-300">🎯 {initiative.name}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-              
-              <div className="flex gap-2 pt-4">
-                <button type="submit" className="btn btn-primary flex-1">
-                  <Save className="w-4 h-4 mr-2" />
-                  {editingSchedule ? 'Update' : 'Create'}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowScheduleForm(false);
-                    setEditingSchedule(null);
-                    setScheduleFormData({});
-                  }}
-                  className="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded text-slate-200"
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Delete Confirmation Modal */}
-      {deleteConfirmSchedule && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-slate-800 rounded-xl p-6 w-full max-w-sm mx-4">
-            <h3 className="text-lg font-medium text-slate-100 mb-2">Confirm Delete</h3>
-            <p className="text-sm text-slate-400 mb-4">
-              Are you sure you want to delete this schedule? This action cannot be undone.
-            </p>
-            <div className="flex gap-2">
-              <button
-                onClick={() => handleDeleteSchedule(deleteConfirmSchedule)}
-                className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded text-white flex-1"
-              >
-                Delete
-              </button>
-              <button
-                onClick={() => setDeleteConfirmSchedule(null)}
-                className="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded text-slate-200 flex-1"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+    </div>
+  );
+}
     </div>
   );
 }

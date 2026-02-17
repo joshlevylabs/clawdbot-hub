@@ -1,0 +1,49 @@
+{
+  "timestamp": "2026-02-17T04:29:26.320422+00:00",
+  "summary": {
+    "total_tasks": 6,
+    "verified_done": 0,
+    "done_but_unverified": 0,
+    "pending": 6,
+    "stale": 0
+  },
+  "items": [
+    {
+      "text": "Address 1 critical ecosystem sync gap(s)",
+      "status": "pending",
+      "assignee": "Elon",
+      "verification": "NOT DONE: Verify no critical sync gaps remain in ecosystem map (output: 1)"
+    },
+    {
+      "text": "Sync 2 podcast episode(s) to website",
+      "status": "pending",
+      "assignee": "Alex",
+      "verification": "NOT DONE: Verify all hub podcast episodes exist on website (sync gap = 0) (output: 2)"
+    },
+    {
+      "text": "Commit 1 uncommitted hub change(s)",
+      "status": "done_but_unverified",
+      "assignee": "Elon",
+      "verification": "No verification rule found"
+    },
+    {
+      "text": "Review 1 ecosystem attention item(s)",
+      "status": "pending",
+      "assignee": "Elon",
+      "verification": "NOT DONE: Verify ecosystem attention items decreased (output: 1)"
+    },
+    {
+      "text": "Monitor Fear & Greed index (currently 36)",
+      "status": "done_but_unverified",
+      "assignee": "Dave",
+      "verification": "No verification rule found"
+    },
+    {
+      "text": "Draft next blog post",
+      "status": "pending",
+      "assignee": "Alex",
+      "verification": "NOT DONE: Verify a blog post was created/modified in last 24 hours (output: 0)"
+    }
+  ],
+  "escalations": []
+}

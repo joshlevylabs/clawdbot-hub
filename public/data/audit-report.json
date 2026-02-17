@@ -1,10 +1,10 @@
 {
-  "timestamp": "2026-02-17T23:30:14.557621+00:00",
+  "timestamp": "2026-02-17T23:45:05.272004+00:00",
   "summary": {
-    "total_tasks": 11,
+    "total_tasks": 16,
     "verified_done": 11,
     "done_but_unverified": 0,
-    "pending": 0,
+    "pending": 5,
     "stale": 0
   },
   "items": [
@@ -73,6 +73,36 @@
       "status": "verified_done",
       "assignee": "Elon",
       "verification": "PASSED: Verify hub has no uncommitted changes"
+    },
+    {
+      "text": "Generate daily devotional content based on 8 faith dimensions",
+      "status": "pending",
+      "assignee": "Alex",
+      "verification": "No verification rule found"
+    },
+    {
+      "text": "Draft faith lesson content for the Lever app (currently 7 lessons)",
+      "status": "pending",
+      "assignee": "Alex",
+      "verification": "No verification rule found"
+    },
+    {
+      "text": "Prepare reminders for upcoming family events: Jetts vaccine",
+      "status": "pending",
+      "assignee": "Alex",
+      "verification": "No verification rule found"
+    },
+    {
+      "text": "Draft feature spec for expanding Family tab (currently 454 lines)",
+      "status": "pending",
+      "assignee": "Elon",
+      "verification": "No verification rule found"
+    },
+    {
+      "text": "Review family touchpoint tracker design for 3 family members",
+      "status": "pending",
+      "assignee": "Elon",
+      "verification": "No verification rule found"
     }
   ],
   "escalations": []

@@ -731,9 +731,9 @@ function getDefaultAgents(): Record<string, AgentState> {
       reportsTo: "cro", directReports: [],
     },
     ticker: {
-      id: "ticker", name: "Ticker", title: "Trading Lead", emoji: "📊",
+      id: "ticker", name: "Chris", title: "Trading Strategist", emoji: "📈",
       model: "Sonnet 4", status: "active", department: "Revenue",
-      description: "MRE pipeline, nightly optimization, signals",
+      description: "Chris Vermeulen — 25+ year veteran trader. ETF specialist focused on capital preservation and riding only rising assets. Owns the MRE improvement system.",
       reportsTo: "cro", directReports: [],
     },
   };

@@ -87,7 +87,7 @@ function parseIdentity(content: string, dirName: string): Omit<AgentData, "files
 function getDefaultAgentSeeds(): (Partial<AgentRow> & { id: string })[] {
   return [
     { id: "ceo", name: "Joshua", title: "CEO", emoji: "👑", model: "Human", department: "Executive", status: "active", description: "Sets the vision. The builder.", reports_to: null, direct_reports: ["coo"], files: {} },
-    { id: "coo", name: "Theo", title: "COO", emoji: "🔺", model: "Claude Opus 4", department: "Executive", status: "active", description: "Orchestrates all operations. The right hand.", reports_to: "ceo", direct_reports: ["cto", "cmo", "cro"], files: {} },
+    { id: "coo", name: "Theo", title: "COO", emoji: "🔺", model: "Claude Opus 4", department: "Executive", status: "active", description: "Orchestrates all operations. The right hand.", reports_to: "ceo", direct_reports: ["cto", "cmo", "cro", "auditor"], files: {} },
     { id: "cto", name: "Atlas", title: "CTO", emoji: "🗺️", model: "Claude Sonnet 4", department: "Engineering", status: "active", description: "Owns all code and infrastructure.", reports_to: "coo", direct_reports: ["forge", "pixel", "sentinel"], files: {} },
     { id: "forge", name: "Forge", title: "Backend Lead", emoji: "🔨", model: "Sonnet 4", department: "Engineering", status: "active", description: "APIs, databases, security", reports_to: "cto", direct_reports: [], files: {} },
     { id: "pixel", name: "Pixel", title: "Frontend Lead", emoji: "✨", model: "Sonnet 4", department: "Engineering", status: "idle", description: "UI/UX, CI/CD, deployment", reports_to: "cto", direct_reports: [], files: {} },
@@ -98,7 +98,8 @@ function getDefaultAgentSeeds(): (Partial<AgentRow> & { id: string })[] {
     { id: "cro", name: "Venture", title: "CRO", emoji: "💰", model: "Claude Sonnet 4", department: "Revenue", status: "active", description: "Growth strategy, monetization.", reports_to: "coo", direct_reports: ["builder", "scout", "the-pit"], files: {} },
     { id: "builder", name: "Builder", title: "Products Lead", emoji: "🏗️", model: "Sonnet 4", department: "Revenue", status: "active", description: "Product ideation, feature dev, market fit", reports_to: "cro", direct_reports: [], files: {} },
     { id: "scout", name: "Scout", title: "Growth Lead", emoji: "🔍", model: "Haiku 3.5", department: "Revenue", status: "idle", description: "User acquisition, community, analytics", reports_to: "cro", direct_reports: [], files: {} },
-    { id: "the-pit", name: "The Pit", title: "Trading Lead", emoji: "📈", model: "Sonnet 4", department: "Revenue", status: "active", description: "MRE pipeline, nightly optimization, signals", reports_to: "cro", direct_reports: [], files: {} },
+    { id: "the-pit", name: "Chris", title: "Trading Strategist", emoji: "📈", model: "Sonnet 4", department: "Revenue", status: "active", description: "Chris Vermeulen — 25+ year veteran trader. ETF specialist focused on capital preservation and riding only rising assets. Owns the MRE improvement system.", reports_to: "cro", direct_reports: [], files: {} },
+    { id: "auditor", name: "Auditor", title: "Task Auditor", emoji: "🔎", model: "Sonnet 4", department: "Executive", status: "active", description: "Verifies agent tasks by checking actual world state. Trust but verify.", reports_to: "coo", direct_reports: [], files: {} },
   ];
 }
 

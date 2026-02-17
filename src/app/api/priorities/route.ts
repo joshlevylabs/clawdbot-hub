@@ -1,81 +1,84 @@
 import { NextRequest, NextResponse } from "next/server";
-import { readFileSync, writeFileSync } from "fs";
-import { join } from "path";
 
-const PRIORITIES_PATH = join(process.cwd(), "public/data/joshua-priorities.json");
+const SUPABASE_URL = process.env.NEXT_PUBLIC_PAPER_SUPABASE_URL || "";
+const SUPABASE_KEY = process.env.PAPER_SUPABASE_SERVICE_ROLE_KEY || "";
 
-function loadPriorities() {
-  try {
-    const raw = readFileSync(PRIORITIES_PATH, "utf-8");
-    return JSON.parse(raw);
-  } catch {
-    return null;
-  }
-}
+const headers = {
+  apikey: SUPABASE_KEY,
+  Authorization: `Bearer ${SUPABASE_KEY}`,
+  "Content-Type": "application/json",
+  Prefer: "return=representation",
+};
 
-function savePriorities(data: Record<string, unknown>) {
-  writeFileSync(PRIORITIES_PATH, JSON.stringify(data, null, 2));
-}
-
-// GET — return current priorities
+// GET — return all completed priority IDs
 export async function GET() {
-  const data = loadPriorities();
-  if (!data) {
-    return NextResponse.json({ error: "Priorities file not found" }, { status: 404 });
+  try {
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/priority_completions?select=id,completed_at`,
+      { headers, cache: "no-store" }
+    );
+    if (!res.ok) {
+      return NextResponse.json({ error: "Failed to fetch completions" }, { status: 500 });
+    }
+    const rows = await res.json();
+    // Return as a set of completed IDs
+    const completedIds: Record<string, string> = {};
+    for (const row of rows) {
+      completedIds[row.id] = row.completed_at;
+    }
+    return NextResponse.json({ completedIds });
+  } catch (err) {
+    console.error("Error fetching completions:", err);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-  return NextResponse.json(data);
 }
 
-// PATCH — toggle a priority or agent task
+// PATCH — toggle a priority completion
 export async function PATCH(req: NextRequest) {
   try {
     const body = await req.json();
-    const { type, index, completed } = body;
-    // type: "priority" | "agent"
-    // index: number (position in array)
+    const { id, completed } = body;
+    // id: "priority:0", "priority:1", "agent:0", etc.
     // completed: boolean
 
-    if (!type || index == null || completed == null) {
+    if (!id || completed == null) {
       return NextResponse.json(
-        { error: "Missing required fields: type, index, completed" },
+        { error: "Missing required fields: id, completed" },
         { status: 400 }
       );
     }
 
-    const data = loadPriorities();
-    if (!data) {
-      return NextResponse.json({ error: "Priorities file not found" }, { status: 404 });
-    }
-
-    if (type === "priority") {
-      if (!data.priorities || index >= data.priorities.length) {
-        return NextResponse.json({ error: "Invalid priority index" }, { status: 400 });
-      }
-      data.priorities[index].completed = completed;
-      if (completed) {
-        data.priorities[index].completedAt = new Date().toISOString();
-      } else {
-        delete data.priorities[index].completedAt;
-      }
-    } else if (type === "agent") {
-      if (!data.agentHandled || index >= data.agentHandled.length) {
-        return NextResponse.json({ error: "Invalid agent task index" }, { status: 400 });
-      }
-      if (completed) {
-        data.agentHandled[index].status = "done";
-        data.agentHandled[index].completedAt = new Date().toISOString();
-      } else {
-        data.agentHandled[index].status = "done_but_unverified";
-        delete data.agentHandled[index].completedAt;
+    if (completed) {
+      // Upsert into completions table
+      const res = await fetch(
+        `${SUPABASE_URL}/rest/v1/priority_completions`,
+        {
+          method: "POST",
+          headers: { ...headers, Prefer: "resolution=merge-duplicates,return=representation" },
+          body: JSON.stringify({ id, completed_at: new Date().toISOString() }),
+        }
+      );
+      if (!res.ok) {
+        const err = await res.text();
+        console.error("Supabase upsert error:", err);
+        return NextResponse.json({ error: "Failed to save completion" }, { status: 500 });
       }
     } else {
-      return NextResponse.json({ error: "Invalid type: must be 'priority' or 'agent'" }, { status: 400 });
+      // Delete from completions table
+      const res = await fetch(
+        `${SUPABASE_URL}/rest/v1/priority_completions?id=eq.${encodeURIComponent(id)}`,
+        { method: "DELETE", headers }
+      );
+      if (!res.ok) {
+        const err = await res.text();
+        console.error("Supabase delete error:", err);
+        return NextResponse.json({ error: "Failed to remove completion" }, { status: 500 });
+      }
     }
 
-    savePriorities(data);
-    return NextResponse.json(data);
+    return NextResponse.json({ success: true, id, completed });
   } catch (err) {
-    console.error("Error updating priorities:", err);
+    console.error("Error updating completion:", err);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

@@ -239,52 +239,48 @@ function InitiativeBadge({ initiative }: { initiative: InitiativeDef }) {
   );
 }
 
-function JoshuaPrioritiesCard({ priorities, onToggle }: { priorities: JoshuaPriorities | null; onToggle?: (type: string, index: number, completed: boolean) => void }) {
+function JoshuaPrioritiesCard({ priorities, completedIds, onToggle }: { priorities: JoshuaPriorities | null; completedIds: Record<string, string>; onToggle?: (type: string, index: number, completed: boolean) => void }) {
   if (!priorities || (!priorities.priorities.length && !priorities.agentHandled.length)) return null;
 
-  const completedPriorities = priorities.priorities.filter((p: Record<string, unknown>) => p.completed).length;
-  const totalPriorities = priorities.priorities.length;
+  const visiblePriorities = priorities.priorities.filter((_, i) => !completedIds[`priority:${i}`]);
+  const visibleAgentTasks = priorities.agentHandled.filter((a, i) => a.status !== "done" && !completedIds[`agent:${i}`]);
+
+  if (visiblePriorities.length === 0 && visibleAgentTasks.length === 0) {
+    return (
+      <div className="bg-gradient-to-br from-emerald-600/10 to-emerald-800/5 rounded-xl border border-emerald-500/20 p-5">
+        <div className="flex items-center gap-2">
+          <CheckCircle className="w-5 h-5 text-emerald-400" strokeWidth={1.5} />
+          <h2 className="font-semibold text-slate-100 text-sm">All Clear!</h2>
+          <span className="text-xs text-slate-500">All priorities and tasks completed</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">
       {/* Joshua's Items */}
-      {priorities.priorities.length > 0 && (
+      {visiblePriorities.length > 0 && (
         <div className="bg-gradient-to-br from-purple-600/10 to-purple-800/5 rounded-xl border border-purple-500/20 p-5">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <Target className="w-5 h-5 text-purple-400" strokeWidth={1.5} />
-              <h2 className="font-semibold text-slate-100 text-sm">Joshua&apos;s Priorities</h2>
-              {completedPriorities < totalPriorities && (
-                <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-purple-500/20 text-purple-400 border border-purple-500/30">
-                  NEEDS YOUR ACTION
-                </span>
-              )}
-            </div>
-            {totalPriorities > 0 && (
-              <div className="flex items-center gap-2">
-                <div className="w-16 h-1.5 bg-slate-800 rounded-full overflow-hidden">
-                  <div className="h-full bg-purple-500 rounded-full transition-all" style={{ width: `${(completedPriorities / totalPriorities) * 100}%` }} />
-                </div>
-                <span className="text-xs text-slate-500">{completedPriorities}/{totalPriorities}</span>
-              </div>
-            )}
+          <div className="flex items-center gap-2 mb-4">
+            <Target className="w-5 h-5 text-purple-400" strokeWidth={1.5} />
+            <h2 className="font-semibold text-slate-100 text-sm">Joshua&apos;s Priorities</h2>
+            <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-purple-500/20 text-purple-400 border border-purple-500/30">
+              {visiblePriorities.length} REMAINING
+            </span>
           </div>
           <div className="space-y-2">
             {priorities.priorities.map((p, i) => {
-              const isCompleted = !!(p as Record<string, unknown>).completed;
+              if (completedIds[`priority:${i}`]) return null;
               return (
                 <button
                   key={i}
-                  onClick={() => onToggle?.("priority", i, !isCompleted)}
-                  className={`w-full text-left flex items-start gap-3 p-2.5 rounded-lg transition-colors ${isCompleted ? "bg-emerald-500/5" : "bg-purple-500/5 hover:bg-purple-500/10"}`}
+                  onClick={() => onToggle?.("priority", i, true)}
+                  className="w-full text-left flex items-start gap-3 p-2.5 rounded-lg transition-colors bg-purple-500/5 hover:bg-purple-500/10"
                 >
-                  {isCompleted ? (
-                    <CheckCircle className="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
-                  ) : (
-                    <Circle className="w-5 h-5 text-purple-400/50 flex-shrink-0 mt-0.5 hover:text-purple-400" />
-                  )}
+                  <Circle className="w-5 h-5 text-purple-400/50 flex-shrink-0 mt-0.5 hover:text-purple-400" />
                   <div className="flex-1">
-                    <p className={`text-sm leading-relaxed ${isCompleted ? "text-slate-500 line-through" : "text-slate-200"}`}>{p.text}</p>
+                    <p className="text-sm leading-relaxed text-slate-200">{p.text}</p>
                     <div className="flex items-center gap-2 mt-1">
                       <PriorityBadge priority={p.urgency} />
                       <span className="text-[10px] text-slate-600">from {p.source}</span>
@@ -297,31 +293,25 @@ function JoshuaPrioritiesCard({ priorities, onToggle }: { priorities: JoshuaPrio
         </div>
       )}
 
-      {/* Agent-Handled Items */}
-      {priorities.agentHandled.length > 0 && (
+      {/* Agent-Handled Items — only show pending ones */}
+      {visibleAgentTasks.length > 0 && (
         <div className="bg-gradient-to-br from-cyan-600/10 to-cyan-800/5 rounded-xl border border-cyan-500/20 p-5">
           <div className="flex items-center gap-2 mb-4">
             <Bot className="w-5 h-5 text-cyan-400" strokeWidth={1.5} />
-            <h2 className="font-semibold text-slate-100 text-sm">Auto-Handled by Agents</h2>
+            <h2 className="font-semibold text-slate-100 text-sm">Pending Agent Tasks</h2>
           </div>
           <div className="space-y-2">
             {priorities.agentHandled.map((a, i) => {
-              const isDone = a.status === "done";
+              if (a.status === "done" || completedIds[`agent:${i}`]) return null;
               return (
                 <button
                   key={i}
-                  onClick={() => onToggle?.("agent", i, !isDone)}
-                  className={`w-full text-left flex items-center gap-3 p-2 rounded-lg transition-colors ${isDone ? "bg-emerald-500/5" : "bg-cyan-500/5 hover:bg-cyan-500/10"}`}
+                  onClick={() => onToggle?.("agent", i, true)}
+                  className="w-full text-left flex items-center gap-3 p-2 rounded-lg transition-colors bg-cyan-500/5 hover:bg-cyan-500/10"
                 >
-                  {isDone ? (
-                    <CheckCircle className="w-4 h-4 text-emerald-500 flex-shrink-0" />
-                  ) : (
-                    <Circle className="w-4 h-4 text-cyan-400/50 flex-shrink-0 hover:text-cyan-400" />
-                  )}
+                  <Circle className="w-4 h-4 text-cyan-400/50 flex-shrink-0 hover:text-cyan-400" />
                   <div className="flex-1">
-                    <p className={`text-sm ${isDone ? "text-slate-500 line-through" : "text-slate-300"}`}>
-                      {a.text}
-                    </p>
+                    <p className="text-sm text-slate-300">{a.text}</p>
                     <p className="text-xs text-slate-600 mt-0.5">→ {a.assignee} · {a.status}</p>
                   </div>
                 </button>
@@ -931,6 +921,7 @@ export default function StandupsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [allInitiatives, setAllInitiatives] = useState<InitiativeDef[]>([]);
+  const [completedIds, setCompletedIds] = useState<Record<string, string>>({});
 
   useEffect(() => {
     async function fetchData() {
@@ -980,6 +971,17 @@ export default function StandupsPage() {
         } catch {
           // Initiatives file may not exist yet
         }
+
+        // Load completions from Supabase
+        try {
+          const compRes = await fetch("/api/priorities", { cache: "no-store" });
+          if (compRes.ok) {
+            const compData = await compRes.json();
+            setCompletedIds(compData.completedIds || {});
+          }
+        } catch {
+          // Completions API may not be ready
+        }
       } catch (err) {
         setError("Failed to load standup data");
         console.error(err);
@@ -1003,30 +1005,38 @@ export default function StandupsPage() {
   };
 
   const handleTogglePriority = async (type: string, index: number, completed: boolean) => {
-    // Optimistic update
-    if (joshuaPriorities) {
-      const updated = JSON.parse(JSON.stringify(joshuaPriorities));
-      if (type === "priority") {
-        updated.priorities[index].completed = completed;
-      } else if (type === "agent") {
-        updated.agentHandled[index].status = completed ? "done" : "done_but_unverified";
-      }
-      setJoshuaPriorities(updated);
-    }
+    const id = `${type}:${index}`;
 
-    // Persist to API
+    // Optimistic update — item disappears immediately
+    setCompletedIds((prev) => {
+      const next = { ...prev };
+      if (completed) {
+        next[id] = new Date().toISOString();
+      } else {
+        delete next[id];
+      }
+      return next;
+    });
+
+    // Persist to Supabase via API
     try {
-      const res = await fetch("/api/priorities", {
+      await fetch("/api/priorities", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ type, index, completed }),
+        body: JSON.stringify({ id, completed }),
       });
-      if (res.ok) {
-        const fresh = await res.json();
-        setJoshuaPriorities(fresh);
-      }
     } catch (err) {
       console.error("Failed to toggle priority:", err);
+      // Revert on error
+      setCompletedIds((prev) => {
+        const next = { ...prev };
+        if (!completed) {
+          next[id] = new Date().toISOString();
+        } else {
+          delete next[id];
+        }
+        return next;
+      });
     }
   };
 
@@ -1164,7 +1174,7 @@ export default function StandupsPage() {
       {activeTab === "history" ? (
         <>
           {/* Joshua's Priorities (top — most important) */}
-          <JoshuaPrioritiesCard priorities={joshuaPriorities} onToggle={handleTogglePriority} />
+          <JoshuaPrioritiesCard priorities={joshuaPriorities} completedIds={completedIds} onToggle={handleTogglePriority} />
 
           {/* CEO Directives */}
           {selectedStandup?.ceoDirectives && selectedStandup.ceoDirectives.length > 0 && (

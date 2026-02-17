@@ -1,10 +1,10 @@
 {
-  "timestamp": "2026-02-17T06:10:46.040639",
-  "last_updated": "2026-02-17 06:10:46",
+  "timestamp": "2026-02-17T06:16:15.754508",
+  "last_updated": "2026-02-17 06:16:15",
   "universe_size": 652,
   "core_size": 0,
   "data_date": "2026-02-17",
-  "pipeline_runtime_s": 4.7,
+  "pipeline_runtime_s": 4.1,
   "fear_greed": {
     "current": 34.9836734693878,
     "rating": "fear",
@@ -19,7 +19,7 @@
     "bear_pct": 36.4,
     "bear_count": 246,
     "total_assets": 676,
-    "vix": 21.9,
+    "vix": 22.1,
     "crash_mode": {
       "active": false,
       "crash_score": 0,

@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-02-17T14:03:56.686257+00:00",
+  "timestamp": "2026-02-17T14:16:12.346380+00:00",
   "summary": {
     "total_tasks": 8,
     "verified_done": 5,
@@ -24,7 +24,7 @@
       "text": "Commit 1 uncommitted hub change(s)",
       "status": "done_but_unverified",
       "assignee": "Elon",
-      "verification": "FAILED: Verify hub has no uncommitted changes (output: 15)"
+      "verification": "FAILED: Verify hub has no uncommitted changes (output: 2)"
     },
     {
       "text": "Review 1 ecosystem attention item(s)",
@@ -48,7 +48,7 @@
       "text": "Commit 2 uncommitted hub changes",
       "status": "done_but_unverified",
       "assignee": "Elon",
-      "verification": "FAILED: Verify hub has no uncommitted changes (output: 15)"
+      "verification": "FAILED: Verify hub has no uncommitted changes (output: 2)"
     },
     {
       "text": "Commit uncommitted changes",

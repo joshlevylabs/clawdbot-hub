@@ -464,28 +464,28 @@ export default function FibonacciModal({
                       />
                     )}
 
-                  {/* Retracement levels */}
+                  {/* Retracement levels (including 0% and 100% anchor lines) */}
                   {retracementEntries
-                    .filter(
-                      ([pct]) =>
-                        pct !== "0.0" && pct !== "100.0"
-                    )
                     .map(([pct, price]) => {
-                      const isAbove = price > currentPrice;
-                      const color = isAbove ? "#34d399" : "#f87171";
                       const pctNum = parseFloat(pct);
+                      const isAnchor = pctNum === 0 || pctNum === 100;
+                      const isAbove = price > currentPrice;
                       const isEntryZone = pctNum >= 38.2 && pctNum <= 61.8;
+                      const color = isAnchor ? "#22d3ee" : isEntryZone ? "#fbbf24" : isAbove ? "#34d399" : "#f87171";
+                      const label = isAnchor
+                        ? `${pctNum === 0 ? "Swing High" : "Swing Low"} — $${formatCurrency(price)}`
+                        : `${pct}% — $${formatCurrency(price)}`;
                       return (
                         <ReferenceLine
                           key={`ret-${pct}`}
                           y={price}
-                          stroke={isEntryZone ? "#fbbf24" : color}
-                          strokeDasharray="6 4"
-                          strokeOpacity={0.5}
+                          stroke={color}
+                          strokeDasharray={isAnchor ? "3 3" : "6 4"}
+                          strokeOpacity={isAnchor ? 0.35 : 0.5}
                           label={
                             <FibLabel
-                              value={`${pct}% — $${formatCurrency(price)}`}
-                              fill={isEntryZone ? "#fbbf24" : color}
+                              value={label}
+                              fill={color}
                             />
                           }
                         />
@@ -994,15 +994,18 @@ export function FibonacciAnalysisContent({ symbol, fibData }: FibonacciAnalysisC
               )}
 
               {retracementEntries
-                .filter(([pct]) => pct !== "0.0" && pct !== "100.0")
                 .map(([pct, price]) => {
-                  const isAbove = price > currentPrice;
-                  const color = isAbove ? "#34d399" : "#f87171";
                   const pctNum = parseFloat(pct);
+                  const isAnchor = pctNum === 0 || pctNum === 100;
+                  const isAbove = price > currentPrice;
                   const isEntryZone = pctNum >= 38.2 && pctNum <= 61.8;
+                  const color = isAnchor ? "#22d3ee" : isEntryZone ? "#fbbf24" : isAbove ? "#34d399" : "#f87171";
+                  const label = isAnchor
+                    ? `${pctNum === 0 ? "Swing High" : "Swing Low"} — $${formatCurrency(price)}`
+                    : `${pct}% — $${formatCurrency(price)}`;
                   return (
-                    <ReferenceLine key={`ret-${pct}`} y={price} stroke={isEntryZone ? "#fbbf24" : color} strokeDasharray="6 4" strokeOpacity={0.5}
-                      label={<FibLabel value={`${pct}% — $${formatCurrency(price)}`} fill={isEntryZone ? "#fbbf24" : color} />} />
+                    <ReferenceLine key={`ret-${pct}`} y={price} stroke={color} strokeDasharray={isAnchor ? "3 3" : "6 4"} strokeOpacity={isAnchor ? 0.35 : 0.5}
+                      label={<FibLabel value={label} fill={color} />} />
                   );
                 })}
 

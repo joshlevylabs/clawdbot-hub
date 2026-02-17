@@ -9,12 +9,22 @@
       "estimatedCost": 0.1075,
       "model": "claude-opus-4-6",
       "duration": "26.0s"
+    },
+    {
+      "date": "2026-02-16",
+      "type": "morning-priorities",
+      "inputTokens": 1254,
+      "outputTokens": 1190,
+      "totalTokens": 2444,
+      "estimatedCost": 0.1081,
+      "model": "claude-opus-4-6",
+      "duration": "25.3s"
     }
   ],
   "totals": {
-    "today": 0.1075,
-    "week": 0.1075,
-    "month": 0.1075,
-    "standupCount": 1
+    "today": 0.2156,
+    "week": 0.2156,
+    "month": 0.2156,
+    "standupCount": 2
   }
 }

@@ -1,6 +1,6 @@
 {
   "date": "2026-02-16",
-  "generatedAt": "2026-02-16T19:40:05.946982-08:00",
+  "generatedAt": "2026-02-16T20:13:53.547816-08:00",
   "priorities": [
     {
       "text": "Review current positions: AEE, EFA, XLV, XLE, VNQ, TLT, GLD",
@@ -9,6 +9,11 @@
     },
     {
       "text": "Review position sizing and risk parameters for 7 active positions",
+      "source": "morning-priorities",
+      "urgency": "medium"
+    },
+    {
+      "text": "Review position sizing and risk parameters for 7 active position(s)",
       "source": "morning-priorities",
       "urgency": "medium"
     }
@@ -62,6 +67,26 @@
       "status": "done",
       "completedAt": "2026-02-16T19:45:46.201579-08:00",
       "output": "Blog post drafting queued \u2014 see content pipeline"
+    },
+    {
+      "text": "Address 1 critical ecosystem sync gap(s)",
+      "assignee": "Elon",
+      "status": "pending"
+    },
+    {
+      "text": "Sync 2 podcast episode(s) to website",
+      "assignee": "Alex",
+      "status": "pending"
+    },
+    {
+      "text": "Commit 1 uncommitted hub change(s)",
+      "assignee": "Elon",
+      "status": "pending"
+    },
+    {
+      "text": "Review 1 ecosystem attention item(s)",
+      "assignee": "Elon",
+      "status": "pending"
     }
   ]
 }

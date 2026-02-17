@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { X, Activity, Target, TrendingUp, Loader2 } from "lucide-react";
+import { X, Activity, Target, TrendingUp, Loader2, ChevronDown, ChevronUp, AlertTriangle } from "lucide-react";
 import { FibonacciAnalysisContent } from "@/components/FibonacciModal";
 
 // ===== Types =====
@@ -77,6 +77,30 @@ interface SignalAnalysisModalProps {
   onClose: () => void;
 }
 
+interface UniverseSignalData {
+  symbol: string;
+  signal: string;
+  signal_strength: number;
+  signal_source?: string;
+  strategies_agreeing?: number;
+  strategy_votes?: {
+    fear_greed: boolean;
+    regime_confirmation: boolean;
+    rsi_oversold: boolean;
+    mean_reversion: boolean;
+    momentum: boolean;
+  };
+  signal_track?: string;
+  rsi_14?: number;
+  bb_position?: string;
+  dip_5d_pct?: number;
+  return_5d?: number;
+  momentum_20d?: number;
+  volatility_20d?: number;
+  price: number;
+  regime: string;
+}
+
 // ===== Helpers =====
 
 function formatCurrency(value: number): string {
@@ -86,11 +110,385 @@ function formatCurrency(value: number): string {
   });
 }
 
+// ===== Parse helpers for Pit notes =====
+
+function parseEMAs(notes: string): Record<string, number> {
+  const emas: Record<string, number> = {};
+  const emaRegex = /EMA(\d+)=\$?([\d,.]+)/g;
+  let match;
+  while ((match = emaRegex.exec(notes)) !== null) {
+    emas[match[1]] = parseFloat(match[2].replace(/,/g, ""));
+  }
+  return emas;
+}
+
+function parseSupportResistance(notes: string): { support: string | null; resistance: string | null } {
+  const supportMatch = notes.match(/Support near \$?([\d,.]+)/i);
+  const resistanceMatch = notes.match(/[Rr]esistance near \$?([\d,.]+)/i);
+  return {
+    support: supportMatch ? supportMatch[1] : null,
+    resistance: resistanceMatch ? resistanceMatch[1] : null,
+  };
+}
+
+function parseRSI(pattern: string): number | null {
+  const rsiMatch = pattern.match(/RSI[^\d]*?(\d+)/i);
+  return rsiMatch ? parseInt(rsiMatch[1]) : null;
+}
+
+function getVerdictColor(verdict: string): string {
+  const v = verdict.toUpperCase();
+  if (v.startsWith("STRONG BUY")) return "bg-emerald-500/30 text-emerald-300 border-emerald-400/60";
+  if (v.startsWith("STRONG SELL")) return "bg-red-500/30 text-red-300 border-red-400/60";
+  if (v.startsWith("BUY")) return "bg-green-500/20 text-green-400 border-green-500/50";
+  if (v.startsWith("CAUTIOUS BUY")) return "bg-green-500/20 text-green-400 border-green-500/50";
+  if (v.startsWith("CAUTIOUS")) return "bg-amber-500/20 text-amber-400 border-amber-500/50";
+  if (v.startsWith("HOLD")) return "bg-amber-500/20 text-amber-400 border-amber-500/50";
+  if (v.startsWith("SELL") || v.startsWith("AVOID")) return "bg-red-500/20 text-red-400 border-red-500/50";
+  return "bg-slate-500/20 text-slate-400 border-slate-500/50";
+}
+
+function getVerdictLabel(verdict: string): string {
+  const v = verdict.toUpperCase();
+  return v.split("—")[0].split("–")[0].trim();
+}
+
+function generateCautionFlags(pitRec: PitRecommendation, universeSignal: UniverseSignalData | null): string[] {
+  const flags: string[] = [];
+  const rsi = parseRSI(pitRec.pattern);
+  if (rsi && rsi > 70) flags.push(`RSI overbought at ${rsi}`);
+  if (rsi && rsi < 30) flags.push(`RSI oversold at ${rsi}`);
+  if (universeSignal?.bb_position === "above_upper") flags.push("Price above upper Bollinger Band");
+  if (universeSignal?.return_5d && universeSignal.return_5d > 10) flags.push(`Already up ${universeSignal.return_5d.toFixed(1)}% in 5d`);
+  if (universeSignal?.return_5d && universeSignal.return_5d < -10) flags.push(`Down ${Math.abs(universeSignal.return_5d).toFixed(1)}% in 5d — possible falling knife`);
+  const rangeMatch = pitRec.notes.match(/currently at (\d+)% of range/);
+  if (rangeMatch && parseInt(rangeMatch[1]) > 90) flags.push(`Near top of 6-month range (${rangeMatch[1]}%)`);
+  if (pitRec.pattern.includes("volume dry-up")) flags.push("Volume dry-up — weak conviction");
+  if (pitRec.pattern.includes("MACD bearish crossover")) flags.push("MACD bearish crossover");
+  if (pitRec.pattern.includes("rising wedge")) flags.push("Rising wedge pattern — potential reversal");
+  if (pitRec.sharpe < 0) flags.push(`Negative Sharpe ratio (${pitRec.sharpe.toFixed(2)})`);
+  return flags;
+}
+
+function generateBottomLine(pitRec: PitRecommendation, universeSignal: UniverseSignalData | null, cautionFlags: string[]): string {
+  const v = pitRec.pit_verdict.toUpperCase();
+  const rsi = parseRSI(pitRec.pattern);
+  const emas = parseEMAs(pitRec.notes);
+  const emaCount = Object.keys(emas).length;
+  const isStackedBullish = pitRec.pattern.includes("above stacked EMAs");
+  const isStackedBearish = pitRec.pattern.includes("below stacked EMAs");
+  const consensus = universeSignal?.strategies_agreeing ?? 0;
+  const hasCautions = cautionFlags.length > 0;
+
+  if (v.startsWith("STRONG BUY")) {
+    let line = "Strong bullish structure";
+    if (isStackedBullish && emaCount >= 2) line += " with stacked EMAs";
+    if (rsi && rsi > 70) line += ". Momentum is real but entering overbought territory";
+    else line += ". Momentum supports the trend";
+    if (consensus >= 3) line += `. ${consensus}/5 strategies confirm`;
+    if (hasCautions) line += ". Ride with trailing stop; fresh entries may want to wait for a pullback";
+    else line += ". Favorable setup for entry or adding to position";
+    return line + ".";
+  }
+  if (v.startsWith("STRONG SELL")) {
+    let line = "Bearish structure dominates";
+    if (isStackedBearish) line += " — price below all major EMAs";
+    line += ". Avoid new entries, consider reducing exposure";
+    if (pitRec.sharpe < 0) line += ". Negative Sharpe confirms poor risk-adjusted returns";
+    return line + ".";
+  }
+  if (v.startsWith("CAUTIOUS BUY") || v.startsWith("BUY")) {
+    let line = "Bullish bias";
+    if (isStackedBullish) line += " with favorable EMA alignment";
+    if (pitRec.pattern.includes("MACD positive")) line += ", MACD supports upward momentum";
+    if (hasCautions) line += `. Watch out: ${cautionFlags[0].toLowerCase()}`;
+    if (consensus >= 3) line += `. Good consensus (${consensus}/5 strategies)`;
+    if (v.startsWith("CAUTIOUS")) line += ". Size accordingly — moderate conviction only";
+    else line += ". Reasonable entry if risk is managed";
+    return line + ".";
+  }
+  if (v.startsWith("HOLD")) {
+    let line = "No strong directional edge right now";
+    if (pitRec.pattern.includes("MACD histogram falling")) line += " — momentum fading";
+    if (consensus <= 1) line += `. Weak consensus (${consensus}/5)`;
+    line += ". Hold existing positions, but don't add aggressively";
+    return line + ".";
+  }
+  // Default
+  return `Mixed signals. ${pitRec.pit_verdict.split("—")[1]?.trim() || "Monitor for clearer direction."}.`;
+}
+
+// ===== Chris's Take Component =====
+
+function ChrisTakeSection({ pitRec, pitData, universeSignal, symbol }: {
+  pitRec: PitRecommendation | null;
+  pitData: PitData | null;
+  universeSignal: UniverseSignalData | null;
+  symbol: string;
+}) {
+  const [expanded, setExpanded] = useState(!!pitRec);
+
+  if (!pitRec) {
+    return (
+      <div className="bg-slate-800/50 rounded-xl border border-slate-700/50 overflow-hidden">
+        <div className="px-4 py-3 flex items-center gap-2">
+          <span className="text-lg">📈</span>
+          <span className="font-semibold text-slate-400">Chris&apos;s Take — {symbol}</span>
+        </div>
+        <div className="px-4 pb-4">
+          <p className="text-sm text-slate-600 italic">
+            No Pit analysis available for {symbol}. The Pit fleet runs nightly against active signals — check back after the next optimization cycle.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  const rsi = parseRSI(pitRec.pattern);
+  const emas = parseEMAs(pitRec.notes);
+  const { support, resistance } = parseSupportResistance(pitRec.notes);
+  const cautionFlags = generateCautionFlags(pitRec, universeSignal);
+  const bottomLine = generateBottomLine(pitRec, universeSignal, cautionFlags);
+  const verdictLabel = getVerdictLabel(pitRec.pit_verdict);
+  const verdictColor = getVerdictColor(pitRec.pit_verdict);
+
+  // Parse accuracy fields
+  const accuracyMatch5d = pitRec.accuracy.match(/5d return: ([+-]?[\d.]+%)/);
+  const accuracyMatch20d = pitRec.accuracy.match(/20d return: ([+-]?[\d.]+%)/);
+
+  // Strategy votes from universe
+  const votes = universeSignal?.strategy_votes;
+  const firingStrategies = votes
+    ? Object.entries(votes).filter(([, v]) => v).map(([k]) => k.replace(/_/g, " "))
+    : [];
+
+  // EMA alignment
+  const emaKeys = Object.keys(emas).sort((a, b) => parseInt(a) - parseInt(b));
+  const emaValues = emaKeys.map(k => emas[k]);
+  const isEmaFullyBullish = emaValues.length >= 2 && emaValues.every((v, i) => i === 0 || v < emaValues[i - 1]);
+
+  return (
+    <div className="bg-slate-800/50 rounded-xl border border-indigo-500/30 overflow-hidden">
+      {/* Header — clickable to expand/collapse */}
+      <button
+        onClick={() => setExpanded(!expanded)}
+        className="w-full bg-indigo-600/15 border-b border-indigo-500/30 px-4 py-3 flex items-center justify-between hover:bg-indigo-600/25 transition-colors"
+      >
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="text-lg">📈</span>
+          <span className="font-semibold text-slate-100">Chris&apos;s Take</span>
+          <span className="text-slate-400">—</span>
+          <span className="font-bold text-slate-200">{symbol}</span>
+          <span className={`inline-flex px-2 py-0.5 rounded-lg border text-xs font-bold ${verdictColor}`}>
+            {verdictLabel}
+          </span>
+        </div>
+        {expanded ? (
+          <ChevronUp className="w-4 h-4 text-slate-400" />
+        ) : (
+          <ChevronDown className="w-4 h-4 text-slate-400" />
+        )}
+      </button>
+
+      {expanded && (
+        <div className="p-4 space-y-4">
+          {/* Verdict */}
+          <div className="p-3 rounded-lg bg-slate-900/60 border border-slate-700">
+            <p className="text-xs text-slate-500 uppercase tracking-wide mb-1">Pit Fleet Verdict</p>
+            <p className="text-sm font-bold text-slate-100">{pitRec.pit_verdict}</p>
+          </div>
+
+          {/* Pattern */}
+          <div>
+            <p className="text-xs text-slate-500 uppercase tracking-wide mb-1">Pattern</p>
+            <p className="text-sm text-slate-300">{pitRec.pattern}</p>
+          </div>
+
+          {/* Key Metrics Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {rsi !== null && (
+              <div className="bg-slate-900/50 rounded-lg p-3">
+                <p className="text-xs text-slate-500">RSI</p>
+                <p className={`text-lg font-bold ${rsi > 70 ? "text-red-400" : rsi < 30 ? "text-emerald-400" : "text-slate-200"}`}>
+                  {rsi}
+                </p>
+                <p className="text-[10px] text-slate-600">
+                  {rsi > 70 ? "Overbought" : rsi < 30 ? "Oversold" : "Neutral"}
+                </p>
+              </div>
+            )}
+            <div className="bg-slate-900/50 rounded-lg p-3">
+              <p className="text-xs text-slate-500">Sharpe</p>
+              <p className={`text-lg font-bold ${pitRec.sharpe >= 3 ? "text-emerald-400" : pitRec.sharpe >= 1 ? "text-amber-400" : "text-red-400"}`}>
+                {pitRec.sharpe.toFixed(2)}
+              </p>
+            </div>
+            <div className="bg-slate-900/50 rounded-lg p-3">
+              <p className="text-xs text-slate-500">Confidence Mult.</p>
+              <p className={`text-lg font-bold ${pitRec.confidence_multiplier >= 1.2 ? "text-emerald-400" : pitRec.confidence_multiplier >= 1.0 ? "text-slate-200" : "text-amber-400"}`}>
+                {pitRec.confidence_multiplier}x
+              </p>
+              <p className="text-[10px] text-slate-600">
+                {pitRec.confidence_multiplier >= 1.2 ? "Boosted" : pitRec.confidence_multiplier >= 1.0 ? "Standard" : "Dampened"}
+              </p>
+            </div>
+            <div className="bg-slate-900/50 rounded-lg p-3">
+              <p className="text-xs text-slate-500">Best Horizon</p>
+              <p className="text-lg font-bold text-slate-200">{pitRec.best_horizon}</p>
+            </div>
+          </div>
+
+          {/* Accuracy */}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="bg-slate-900/50 rounded-lg p-3">
+              <p className="text-xs text-slate-500">5d Backtested Return</p>
+              <p className={`text-sm font-bold font-mono ${accuracyMatch5d && accuracyMatch5d[1].startsWith("+") ? "text-emerald-400" : "text-red-400"}`}>
+                {accuracyMatch5d ? accuracyMatch5d[1] : "—"}
+              </p>
+            </div>
+            <div className="bg-slate-900/50 rounded-lg p-3">
+              <p className="text-xs text-slate-500">20d Backtested Return</p>
+              <p className={`text-sm font-bold font-mono ${accuracyMatch20d && accuracyMatch20d[1].startsWith("+") ? "text-emerald-400" : "text-red-400"}`}>
+                {accuracyMatch20d ? accuracyMatch20d[1] : "—"}
+              </p>
+            </div>
+          </div>
+
+          {/* Support / Resistance + EMA Stack */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {/* Support / Resistance */}
+            {(support || resistance) && (
+              <div className="bg-slate-900/50 rounded-lg p-3">
+                <p className="text-xs text-slate-500 uppercase tracking-wide mb-2">Support / Resistance</p>
+                <div className="flex items-center gap-4 text-sm">
+                  {support && (
+                    <div>
+                      <span className="text-[10px] text-emerald-500 uppercase">Support</span>
+                      <p className="font-mono font-bold text-emerald-400">${support}</p>
+                    </div>
+                  )}
+                  {support && resistance && <span className="text-slate-600">|</span>}
+                  {resistance && (
+                    <div>
+                      <span className="text-[10px] text-red-500 uppercase">Resistance</span>
+                      <p className="font-mono font-bold text-red-400">${resistance}</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* EMA Stack */}
+            {emaKeys.length > 0 && (
+              <div className="bg-slate-900/50 rounded-lg p-3">
+                <p className="text-xs text-slate-500 uppercase tracking-wide mb-2">EMA Stack</p>
+                <div className="flex flex-wrap gap-2">
+                  {emaKeys.map(k => (
+                    <span key={k} className="text-xs font-mono bg-slate-800 px-2 py-1 rounded border border-slate-700">
+                      <span className="text-slate-500">EMA{k}=</span>
+                      <span className="text-slate-200">${emas[k].toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                    </span>
+                  ))}
+                </div>
+                <p className="text-[10px] mt-1.5">
+                  {isEmaFullyBullish ? (
+                    <span className="text-emerald-400">✅ Fully bullish alignment (shorter EMAs above longer)</span>
+                  ) : pitRec.pattern.includes("below stacked EMAs") ? (
+                    <span className="text-red-400">🔴 Bearish alignment (price below EMAs)</span>
+                  ) : (
+                    <span className="text-amber-400">🟡 Mixed EMA positioning</span>
+                  )}
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* MRE Signal Summary (from universe data) */}
+          {universeSignal && (
+            <div className="bg-slate-900/50 rounded-lg p-3">
+              <p className="text-xs text-slate-500 uppercase tracking-wide mb-2">MRE Signal Summary</p>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                <div>
+                  <p className="text-[10px] text-slate-500">Signal</p>
+                  <span className={`inline-flex px-1.5 py-0.5 rounded border text-xs font-bold ${
+                    universeSignal.signal === "BUY"
+                      ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/50"
+                      : "bg-slate-500/20 text-slate-400 border-slate-500/50"
+                  }`}>
+                    {universeSignal.signal}
+                  </span>
+                </div>
+                <div>
+                  <p className="text-[10px] text-slate-500">Consensus</p>
+                  <p className="font-bold text-slate-200">{universeSignal.strategies_agreeing ?? 0}/5</p>
+                </div>
+                <div>
+                  <p className="text-[10px] text-slate-500">Signal Track</p>
+                  <p className="text-slate-300 capitalize">{universeSignal.signal_track ?? "—"}</p>
+                </div>
+                <div>
+                  <p className="text-[10px] text-slate-500">Signal Strength</p>
+                  <p className="font-mono font-bold text-slate-200">{universeSignal.signal_strength || "—"}</p>
+                </div>
+              </div>
+              {firingStrategies.length > 0 && (
+                <div className="mt-2">
+                  <p className="text-[10px] text-slate-500 mb-1">Strategies Firing</p>
+                  <div className="flex flex-wrap gap-1">
+                    {firingStrategies.map(s => (
+                      <span key={s} className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 capitalize">
+                        {s}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Caution Flags */}
+          {cautionFlags.length > 0 && (
+            <div className="bg-amber-900/20 rounded-lg p-3 border border-amber-500/30">
+              <p className="text-xs font-bold text-amber-400 mb-2 flex items-center gap-1.5">
+                <AlertTriangle className="w-3.5 h-3.5" /> Caution Flags
+              </p>
+              <ul className="space-y-1">
+                {cautionFlags.map((flag, i) => (
+                  <li key={i} className="text-xs text-amber-300/80 flex items-start gap-1.5">
+                    <span className="text-amber-500 mt-0.5">⚠️</span> {flag}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* Bottom Line */}
+          <div className="bg-indigo-900/20 rounded-lg p-3 border border-indigo-500/30">
+            <p className="text-xs font-bold text-indigo-400 mb-1 flex items-center gap-1.5">
+              💡 Bottom Line
+            </p>
+            <p className="text-sm text-slate-200">{bottomLine}</p>
+          </div>
+
+          {/* Global Context (from pit data) */}
+          {pitData?.global_context && (
+            <div className="pt-3 border-t border-slate-700/50">
+              <p className="text-xs text-slate-500 uppercase tracking-wide mb-1">Market Context (Pit Fleet v{pitData.version})</p>
+              <p className="text-xs text-slate-400 italic">{pitData.global_context.thesis}</p>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ===== Main Component =====
 
 export default function SignalAnalysisModal({ symbol, onClose }: SignalAnalysisModalProps) {
   const [signal, setSignal] = useState<MRESignalData | null>(null);
   const [pitData, setPitData] = useState<PitData | null>(null);
+  const [universeSignal, setUniverseSignal] = useState<UniverseSignalData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -120,10 +518,16 @@ export default function SignalAnalysisModal({ symbol, onClose }: SignalAnalysisM
           matchedSignal = signals.find((s: any) => s.symbol === symbol) || null;
         }
 
-        if (!matchedSignal && universeRes.ok) {
+        // Also try to find universe signal data for Chris's Take
+        let matchedUniverse: UniverseSignalData | null = null;
+
+        if (universeRes.ok) {
           const universeJson = await universeRes.json();
-          const universeSignals: MRESignalData[] = universeJson.signals?.by_asset_class || universeJson.signals || [];
-          matchedSignal = universeSignals.find((s: any) => s.symbol === symbol) || null;
+          const universeSignals = universeJson.signals?.by_asset_class || universeJson.signals || [];
+          if (!matchedSignal) {
+            matchedSignal = universeSignals.find((s: any) => s.symbol === symbol) || null;
+          }
+          matchedUniverse = universeSignals.find((s: any) => s.symbol === symbol) || null;
         }
 
         if (!matchedSignal) {
@@ -133,6 +537,7 @@ export default function SignalAnalysisModal({ symbol, onClose }: SignalAnalysisM
         }
 
         if (!cancelled) setSignal(matchedSignal);
+        if (!cancelled) setUniverseSignal(matchedUniverse);
 
         // Pit fleet data (optional)
         if (pitRes.ok) {
@@ -490,7 +895,15 @@ export default function SignalAnalysisModal({ symbol, onClose }: SignalAnalysisM
                 </div>
               </div>
 
-              {/* ═══════════ SECTION 2: Fibonacci Chart & Analysis ═══════════ */}
+              {/* ═══════════ SECTION 2: Chris's Take ═══════════ */}
+              <ChrisTakeSection
+                pitRec={pitRec}
+                pitData={pitData}
+                universeSignal={universeSignal}
+                symbol={symbol}
+              />
+
+              {/* ═══════════ SECTION 3: Fibonacci Chart & Analysis ═══════════ */}
               {signal.fibonacci && signal.fibonacci.retracements && (
                 <div className="bg-slate-850 rounded-xl border border-indigo-500/30 overflow-hidden">
                   <div className="bg-indigo-600/20 border-b border-indigo-500/30 px-4 py-3 flex items-center gap-2">

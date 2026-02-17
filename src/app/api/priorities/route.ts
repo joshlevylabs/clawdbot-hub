@@ -28,7 +28,7 @@ interface JoshuaPriorities {
   agentHandled: any[];
 }
 
-// Fetch completions from Supabase
+// Fetch ALL completions from Supabase
 async function getCompletions(): Promise<Record<string, string>> {
   try {
     const res = await fetch(
@@ -39,7 +39,6 @@ async function getCompletions(): Promise<Record<string, string>> {
     const rows = await res.json();
     const map: Record<string, string> = {};
     for (const row of rows) {
-      // id format: "priority:INDEX" or "agent:INDEX" or text-based key
       map[row.id] = row.completed_at;
     }
     return map;
@@ -48,8 +47,17 @@ async function getCompletions(): Promise<Record<string, string>> {
   }
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    const { searchParams } = new URL(request.url);
+    const completionsOnly = searchParams.get("completions");
+
+    // If ?completions=true, return raw completions map (used by standups page)
+    if (completionsOnly === "true") {
+      const completions = await getCompletions();
+      return NextResponse.json({ completions });
+    }
+
     if (!fs.existsSync(PRIORITIES_FILE)) {
       return NextResponse.json({ error: "Priorities file not found" }, { status: 404 });
     }
@@ -59,10 +67,10 @@ export async function GET() {
     // Merge completion state from Supabase
     const completions = await getCompletions();
     
-    // Apply completions to priorities by index
+    // Apply completions to priorities by index AND text
     data.priorities = data.priorities.map((p, i) => {
       const key = `priority:${i}`;
-      const textKey = `priority:text:${p.text}`;
+      const textKey = `action:${hashText(p.text)}`;
       const completedAt = completions[key] || completions[textKey];
       if (completedAt) {
         return { ...p, completed: true, completedAt };
@@ -73,7 +81,8 @@ export async function GET() {
     // Apply completions to agent handled items by index
     data.agentHandled = (data.agentHandled || []).map((a: any, i: number) => {
       const key = `agent:${i}`;
-      const completedAt = completions[key];
+      const textKey = `action:${hashText(a.text)}`;
+      const completedAt = completions[key] || completions[textKey];
       if (completedAt && a.status !== "done") {
         return { ...a, completed: true, completedAt, status: "done" };
       }
@@ -85,6 +94,17 @@ export async function GET() {
     console.error("Error reading priorities:", error);
     return NextResponse.json({ error: "Failed to load priorities" }, { status: 500 });
   }
+}
+
+// Simple hash for text-based keys (stable, short)
+function hashText(text: string): string {
+  let hash = 0;
+  for (let i = 0; i < text.length; i++) {
+    const chr = text.charCodeAt(i);
+    hash = ((hash << 5) - hash) + chr;
+    hash |= 0; // Convert to 32bit integer
+  }
+  return Math.abs(hash).toString(36);
 }
 
 export async function PATCH(request: NextRequest) {
@@ -99,21 +119,14 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
-    // Determine the ID to use
+    // Build a stable ID from the text content
+    // This works for both priorities and standup action items
     let id = body.id;
+    if (!id && text) {
+      id = `action:${hashText(text)}`;
+    }
     if (!id && index !== undefined) {
       id = `${type || "priority"}:${index}`;
-    }
-    if (!id && text) {
-      // Find by text match in file to get index
-      const data: JoshuaPriorities = JSON.parse(fs.readFileSync(PRIORITIES_FILE, "utf8"));
-      const idx = data.priorities.findIndex(p => p.text === text);
-      if (idx !== -1) {
-        id = `priority:${idx}`;
-      } else {
-        // Also try text-based key
-        id = `priority:text:${text}`;
-      }
     }
 
     if (!id) {

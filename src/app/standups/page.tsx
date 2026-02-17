@@ -2183,19 +2183,54 @@ export default function StandupsPage() {
     return item.text.replace(/^\[(JOSHUA|AGENT)\]\s*/, "");
   };
 
+  // Hash function matching the API's hashText (for completion lookup)
+  const hashText = (text: string): string => {
+    let hash = 0;
+    for (let i = 0; i < text.length; i++) {
+      const chr = text.charCodeAt(i);
+      hash = ((hash << 5) - hash) + chr;
+      hash |= 0;
+    }
+    return Math.abs(hash).toString(36);
+  };
+
+  // Apply completions from Supabase to a standup's action items
+  const applyCompletions = (standup: Standup, completions: Record<string, string>): Standup => {
+    if (!standup.actionItems || Object.keys(completions).length === 0) return standup;
+    return {
+      ...standup,
+      actionItems: standup.actionItems.map(item => {
+        const cleanedText = item.text.replace(/^\[(JOSHUA|AGENT)\]\s*/, "");
+        const key = `action:${hashText(cleanedText)}`;
+        const completedAt = completions[key];
+        if (completedAt && !item.completed) {
+          return { ...item, completed: true, completedAt };
+        }
+        return item;
+      }),
+    };
+  };
+
   useEffect(() => {
     async function fetchData() {
       try {
-        const [latestRes, indexRes, prioritiesRes] = await Promise.all([
+        const [latestRes, indexRes, prioritiesRes, completionsRes] = await Promise.all([
           fetch("/data/standups/latest.json"),
           fetch("/data/standups/index.json"),
-          fetch("/data/joshua-priorities.json"),
+          fetch("/api/priorities"),
+          fetch("/api/priorities?completions=true"),
         ]);
+
+        // Parse completions first so we can apply them
+        let completions: Record<string, string> = {};
+        if (completionsRes.ok) {
+          const cData = await completionsRes.json();
+          completions = cData.completions || {};
+        }
 
         if (latestRes.ok) {
           const data = await latestRes.json();
-          setSelectedStandup(data);
-          // Determine the file name from the latest data
+          setSelectedStandup(applyCompletions(data, completions));
           const dateStr = data.date;
           const typeStr = data.type || "daily-priorities";
           setSelectedFile(`${dateStr}-${typeStr}.json`);
@@ -2245,9 +2280,18 @@ export default function StandupsPage() {
   const loadStandup = async (file: string) => {
     setSelectedFile(file);
     try {
-      const res = await fetch(`/data/standups/${file}`);
+      const [res, completionsRes] = await Promise.all([
+        fetch(`/data/standups/${file}`),
+        fetch("/api/priorities?completions=true"),
+      ]);
       if (res.ok) {
-        setSelectedStandup(await res.json());
+        const data = await res.json();
+        let completions: Record<string, string> = {};
+        if (completionsRes.ok) {
+          const cData = await completionsRes.json();
+          completions = cData.completions || {};
+        }
+        setSelectedStandup(applyCompletions(data, completions));
       }
     } catch (err) {
       console.error("Failed to load standup:", err);

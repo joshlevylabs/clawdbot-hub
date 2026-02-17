@@ -662,7 +662,13 @@ function getDefaultAgents(): Record<string, AgentState> {
       id: "coo", name: "Theo", title: "COO", emoji: "🔺",
       model: "Claude Opus 4", status: "active", department: "Executive",
       description: "Orchestrates all operations. The right hand.",
-      reportsTo: "ceo", directReports: ["cto", "cmo", "cro"],
+      reportsTo: "ceo", directReports: ["cto", "cmo", "cro", "auditor"],
+    },
+    auditor: {
+      id: "auditor", name: "Auditor", title: "Task Auditor", emoji: "🔎",
+      model: "Sonnet 4", status: "active", department: "Executive",
+      description: "Verifies agent tasks by checking actual world state. Trust but verify.",
+      reportsTo: "coo", directReports: [],
     },
     cto: {
       id: "cto", name: "Atlas", title: "CTO", emoji: "🗺️",
@@ -759,6 +765,7 @@ function getAgentIcon(agent: AgentState, isCLevel: boolean): ReactNode {
     builder: <Rocket className={iconClass} />,
     scout: <Search className={iconClass} />,
     ticker: <BarChart3 className={iconClass} />,
+    auditor: <Check className={iconClass} />,
   };
 
   return iconMap[agent.id] || <Bot className={iconClass} />;

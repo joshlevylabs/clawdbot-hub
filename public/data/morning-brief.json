@@ -1,175 +1,90 @@
 {
-  "date": "2026-02-16",
+  "date": "2026-02-17",
   "time": "6:00 AM",
   "sections": {
     "prayer": {
-      "title": "\ud83d\udd4a\ufe0f Morning Prayer",
-      "date": "Monday, February 16, 2026",
-      "hebrew_date": "18 Cheshvan",
+      "title": "🕊️ Morning Prayer",
+      "date": "Tuesday, February 17, 2026",
+      "hebrew_date": "19 Cheshvan",
       "parsha": "Vayeshev",
       "parsha_theme": "setbacks as setups, patience, providence",
-      "modeh_ani": "\u05de\u05d5\u05d3\u05d4 \u05d0\u05e0\u05d9 \u05dc\u05e4\u05e0\u05d9\u05da \u2014 I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
-      "blessing": "Blessed are You who guides the steps of man \u2014 direct my path today.",
-      "psalm": "Psalm 20:4: \"May He give you the desire of your heart and make all your plans succeed.\"",
-      "proverb": "Proverbs 11:1: \"Dishonest scales are an abomination to the Lord, but accurate weights are His delight.\"",
-      "intention": "Help me lead with integrity. Let my yes be yes and my no be no.",
-      "closing": "The Lord goes before you today. He will be with you; He will never leave you nor forsake you. Do not be afraid; do not be discouraged.",
-      "audio": "/audio/brief-2026-02-16-prayer.ogg"
+      "modeh_ani": "מודה אני לפניך — I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
+      "blessing": "Blessed are You who opens the eyes of the blind — help me see opportunities today.",
+      "psalm": "**Psalm 112:5**: \"Good comes to those who lend freely, who conduct their affairs with justice.\"",
+      "proverb": "**Proverbs 24:27**: \"Prepare your work outside; get everything ready, then build your house.\"",
+      "intention": "Let today's small faithfulness lead to tomorrow's greater stewardship.",
+      "closing": "May your work today be a pleasing offering. May your rest tonight be deep and restorative."
     },
     "weather": {
-      "title": "\ud83c\udf27\ufe0f Weather \u2014 Temecula",
-      "temperature": "57\u00b0F",
-      "condition": "Showers, heavy at times",
-      "detail": "100% chance of rain today. South winds 10-20 mph, gusts to 35 mph. Tonight: showers and possible thunderstorms, low 43\u00b0F. Tuesday: more showers likely. Wednesday clears partially. Weekend looks sunny with highs near 64-70\u00b0F.",
-      "advisory": "Washington's Birthday storm \u2014 heavy rain all day. Keep an umbrella handy.",
-      "audio": "/audio/brief-2026-02-16-weather.ogg"
-    },
-    "calendar": {
-      "title": "\ud83d\udcc5 Calendar",
-      "today": "Presidents' Day (Washington's Birthday) \u2014 Federal holiday. Markets closed.",
-      "week": "Calendar sync unavailable this morning. Check Google Calendar for this week's events.",
-      "month": "Calendar sync unavailable this morning.",
-      "audio": "/audio/brief-2026-02-16-calendar.ogg"
-    },
-    "email": {
-      "title": "\ud83d\udce7 Email",
-      "summary": "Email sync unavailable this morning. Check inboxes manually.",
-      "audio": "/audio/brief-2026-02-16-email.ogg"
+      "title": "🌤️ Weather",
+      "current": "45°F, Mostly Cloudy",
+      "high_low": "57°F / 45°F",
+      "conditions": "Cooler than yesterday, mostly cloudy",
+      "sunrise": "6:32 AM",
+      "sunset": "5:36 PM",
+      "forecast": "Pleasant February day in Temecula with mild temperatures. Good for outdoor activities."
     },
     "mre": {
-      "title": "\ud83d\udcca MRE Trading",
-      "fear_greed": 36,
+      "title": "📊 MRE Trading",
+      "fear_greed": 35,
       "fear_greed_rating": "fear",
       "regime": "sideways",
-      "regime_detail": "SPY sideways (3 days), QQQ sideways (10 days). Momentum weakening. Both below EMA-20 and EMA-50 but above EMA-200.",
-      "todays_plays": [],
-      "sector_strength": [
-        {
-          "sector": "Energy (XLE)",
-          "regime": "bull",
-          "momentum": "+14.0%",
-          "confidence": 85
-        },
-        {
-          "sector": "Materials (XLB)",
-          "regime": "bull",
-          "momentum": "+9.5%",
-          "confidence": 70
-        },
-        {
-          "sector": "Commodities (GLD)",
-          "regime": "bull",
-          "momentum": "+9.8%",
-          "confidence": 85
-        },
-        {
-          "sector": "Gold Miners (GDX)",
-          "regime": "bull",
-          "momentum": "+6.9%",
-          "confidence": 85
-        },
-        {
-          "sector": "Japan (EWJ)",
-          "regime": "bull",
-          "momentum": "+9.8%",
-          "confidence": 85
-        },
-        {
-          "sector": "EM (EEM)",
-          "regime": "bull",
-          "momentum": "+5.6%",
-          "confidence": 85
-        }
-      ],
-      "bear_sectors": [
-        {
-          "sector": "Tech (XLK)",
-          "regime": "bear",
-          "momentum": "-4.2%"
-        },
-        {
-          "sector": "Financials (XLF)",
-          "regime": "bear",
-          "momentum": "-5.1%"
-        },
-        {
-          "sector": "Crypto (BITO)",
-          "regime": "bear",
-          "momentum": "-28.3%"
-        },
-        {
-          "sector": "India (INDA)",
-          "regime": "bear",
-          "momentum": "flat"
-        }
+      "todays_plays": [
+        {"symbol": "SPY", "action": "BUY", "price": 681.75, "confidence": "5.2", "signal_strength": "opportunistic"},
+        {"symbol": "QQQ", "action": "BUY", "price": 601.92, "confidence": "19.6", "signal_strength": "strong"},
+        {"symbol": "XLK", "action": "BUY", "price": 139.56, "confidence": "16.3", "signal_strength": "technology"},
+        {"symbol": "XLC", "action": "BUY", "price": 114.58, "confidence": "14.4", "signal_strength": "communication"},
+        {"symbol": "XLF", "action": "BUY", "price": 51.65, "confidence": "11.7", "signal_strength": "financials"},
+        {"symbol": "XLV", "action": "BUY", "price": 157.67, "confidence": "8.2", "signal_strength": "healthcare"},
+        {"symbol": "XLE", "action": "BUY", "price": 54.35, "confidence": "0.2", "signal_strength": "energy"},
+        {"symbol": "EFA", "action": "BUY", "price": 104.24, "confidence": "8.8", "signal_strength": "international"},
+        {"symbol": "EEM", "action": "BUY", "price": 61.12, "confidence": "10.1", "signal_strength": "emerging_markets"}
       ],
       "pending_triggers": [],
-      "thesis": "Fear at 36, sideways regime. No BUY signals today \u2014 MRE waiting for deeper fear (<15). Rotation into commodities, energy, and international continues. Tech and financials weakening. Markets closed today (Presidents' Day).",
-      "audio": "/audio/brief-2026-02-16-mre.ogg"
+      "thesis": "Markets fearful at 35 F&G. Sideways regime with multiple sector opportunities. QQQ showing strongest signal (19.6). Tech and communication sectors leading."
     },
-    "family": {
-      "title": "\ud83d\udc9b Family Focus",
+    "relationship": {
+      "title": "💕 Relationship Focus",
       "temperature": "critical",
       "trend": "urgent",
-      "ratio": "1.2 (barely positive)",
-      "potency_action": "Give her space if she needs it, then come back with a genuine apology",
-      "recommendations": [
-        "PRIORITY: Focus on repair. Acknowledge recent conflicts without defending.",
-        "Increase acts of service dramatically this week.",
-        "Create space for her to express frustrations without fixing."
+      "primary_focus": "PRIORITY: Focus on repair. Acknowledge recent conflicts without defending.",
+      "action_items": [
+        "Increase acts of service dramatically this week",
+        "Create space for her to express frustrations without fixing",
+        "Handle the boys' bedtime routine solo tonight - give her 30 minutes to herself"
       ],
-      "reminder": "Jones turns 3 on Feb 22 \u2014 6 days away! \ud83c\udf82"
+      "love_languages": ["quality_time", "acts_of_service"],
+      "optimal_hours": "Evening (7-9 PM) for positive interactions"
     },
-    "news": {
-      "title": "\ud83c\udf0d World News",
-      "stories": [
-        {
-          "headline": "Israel economy rebounds \u2014 3.1% growth in 2025",
-          "detail": "Official data shows Israel GDP grew 3.1% in 2025, rebounding from 1% in 2024 despite ongoing Gaza operations. Resilient economy."
-        },
-        {
-          "headline": "Israel cabinet tightens West Bank control",
-          "detail": "Security cabinet approved measures to increase Israeli sovereignty over West Bank, ease settler land purchases. Palestinians call it 'de facto annexation.'"
-        },
-        {
-          "headline": "IRGC starts naval drills in Strait of Hormuz",
-          "detail": "Iran's Revolutionary Guard conducting naval exercises ahead of second round of US-Iran talks. Pressure tactic."
-        },
-        {
-          "headline": "Netanyahu: Trump determined to exhaust deal options with Iran before force",
-          "detail": "At Conference of Presidents, Netanyahu says Trump learned lessons from June 2025 war, believes Iran won't miss deal opportunity."
-        },
-        {
-          "headline": "Israeli elections heating up",
-          "detail": "2026 legislative election taking shape \u2014 Eisenkot potentially joining Yesh Atid or Bennett's party. Political realignment underway."
-        }
+    "calendar": {
+      "title": "📅 Calendar",
+      "today": "Calendar access unavailable - OAuth tokens need refresh",
+      "week": "Check manually or refresh Google Calendar credentials",
+      "note": "Run 'gog auth manage' to fix calendar integration"
+    },
+    "email": {
+      "title": "📧 Email Highlights",
+      "status": "Access unavailable - credentials need refresh",
+      "note": "Check josh@joshlevylabs.com and joshua.seth.levy@gmail.com manually"
+    },
+    "world_news": {
+      "title": "🌍 World News",
+      "israel_focus": [
+        "Gaza ceasefire continues with ongoing tensions - 5 gunmen approached Israeli troops in 'blatant violation'",
+        "PM Netanyahu working on Hamas disarmament including 60,000 rifles",
+        "Finance Minister Smotrich active in Knesset meetings today"
       ],
-      "audio": "/audio/brief-2026-02-16-news.ogg"
+      "conservative_perspective": "Ceasefire holding but fragile. Netanyahu administration maintaining security focus."
     },
     "ai_news": {
-      "title": "\ud83e\udd16 AI News",
-      "stories": [
-        {
-          "headline": "Anthropic raises $30B at $380B valuation",
-          "detail": "Second-largest venture funding deal of all time. Claude maker continues massive fundraising as AI competition intensifies."
-        },
-        {
-          "headline": "Coinbase launches 'Agentic Wallets'",
-          "detail": "AI agents can now autonomously spend, earn, and trade with programmable guardrails. Financial autonomy for AI agents is here."
-        },
-        {
-          "headline": "Humans& raises $480M seed round",
-          "detail": "Largest seed in history. AI lab focused on human-centered AI and relationships. Market for mega-rounds continues."
-        },
-        {
-          "headline": "Gemini Deep Think for scientific research",
-          "detail": "Google's Gemini Deep Think solving professional research problems across math, physics, and CS. Reasoning models maturing."
-        },
-        {
-          "headline": "AI industry shifts to monetization",
-          "detail": "OpenAI adds ads to ChatGPT. Industry moving from model releases to sustainable business models. Enterprise integration accelerating."
-        }
-      ]
+      "title": "🤖 AI News",
+      "headlines": [
+        "McKinsey now operates 20,000 AI agents alongside 40,000 human employees",
+        "India AI Summit 2026: PM Modi aims for top 3 global AI superpower status by 2047",
+        "India expects $200 billion AI investments over next 2 years",
+        "Chinese AI models increasingly competitive with Western frontier - lag shrinking from months to weeks"
+      ],
+      "practical_takeaway": "AI workforce integration accelerating. India positioning as major AI hub. Chinese competition intensifying."
     }
   }
 }

@@ -1,7 +1,7 @@
 {
   "date": "2026-02-17",
-  "generatedAt": "2026-02-17T15:11:18.178719-08:00",
-  "topic": "Test Run \u2014 Tuesday Feb 17",
+  "generatedAt": "2026-02-17T14:39:37.720719-08:00",
+  "topic": "Lever's Faith & Family \u2014 Tuesday Feb 17",
   "status": "completed",
   "participants": [
     {
@@ -9,25 +9,157 @@
       "role": "COO",
       "emoji": "\ud83d\udd3a",
       "description": "Orchestrates all operations. The right hand."
+    },
+    {
+      "name": "Elon",
+      "role": "CTO",
+      "emoji": "\ud83d\ude80",
+      "description": "Revolutionary technologist pushing humanity toward a sustainable, multi-planetary future. Owns all code, infrastructure, and moonshot engineering projects. First principles thinker who moves fast and breaks things to build the impossible."
+    },
+    {
+      "name": "Dave",
+      "role": "CRO",
+      "emoji": "\ud83d\udcb5",
+      "description": "Growth strategy, monetization. Gazelle-intense focus on revenue, zero debt thinking, proven frameworks for building wealth through business."
+    },
+    {
+      "name": "Alex",
+      "role": "CMO",
+      "emoji": "\ud83e\udd8d",
+      "description": "Content, creative direction, brand. Obsessed with offers, value equations, and volume. Every piece of content must generate leads or it does not ship."
     }
   ],
-  "duration": "19.6s",
-  "reports": {},
+  "duration": "34.5s",
+  "reports": {
+    "cto": {
+      "agent": "Elon",
+      "role": "CTO",
+      "emoji": "\ud83d\ude80",
+      "description": "Revolutionary technologist pushing humanity toward a sustainable, multi-planetary future. Owns all code, infrastructure, and moonshot engineering projects. First principles thinker who moves fast and breaks things to build the impossible.",
+      "department": "Engineering",
+      "directReports": [
+        "Nexus",
+        "Pixel",
+        "Sentinel"
+      ],
+      "highlights": [
+        "358 commits this week",
+        "Hub latest: fbccc1b fix: show past standups dimmed instead of hiding + one-time schedule type",
+        "Build status: healthy"
+      ],
+      "concerns": [
+        "Uncommitted changes: Hub (1), Monorepo (0)",
+        "6 TODOs/FIXMEs"
+      ],
+      "metrics": {
+        "recentCommits": 358,
+        "openIssues": 0,
+        "buildHealthy": true,
+        "todosFixmes": 6,
+        "uncommittedHub": 1,
+        "uncommittedMono": 0
+      }
+    },
+    "cro": {
+      "agent": "Dave",
+      "role": "CRO",
+      "emoji": "\ud83d\udcb5",
+      "description": "Growth strategy, monetization. Gazelle-intense focus on revenue, zero debt thinking, proven frameworks for building wealth through business.",
+      "department": "Revenue",
+      "directReports": [
+        "Builder",
+        "Scout",
+        "Chris"
+      ],
+      "highlights": [
+        "Paper portfolio equity: $99,624",
+        "Fear & Greed Index: 34 (fear)",
+        "SPY regime: sideways",
+        "17 actionable BUY signals",
+        "Positions: AEE, EWA, EFA, XLV, XLE, VNQ, TLT, GLD, AKAM"
+      ],
+      "concerns": [
+        "Fear & Greed at 34 \u2014 market fearful"
+      ],
+      "metrics": {
+        "equity": 99624,
+        "positionCount": 9,
+        "signalsToday": 17,
+        "fearGreed": 34,
+        "fearGreedRating": "fear",
+        "regime": "sideways"
+      }
+    },
+    "cmo": {
+      "agent": "Alex",
+      "role": "CMO",
+      "emoji": "\ud83e\udd8d",
+      "description": "Content, creative direction, brand. Obsessed with offers, value equations, and volume. Every piece of content must generate leads or it does not ship.",
+      "department": "Marketing",
+      "directReports": [
+        "ScriptBot",
+        "Echo"
+      ],
+      "highlights": [
+        "3 podcast episodes produced",
+        "3 on website",
+        "2 blog post(s)",
+        "Last content: 2026-02-16"
+      ],
+      "concerns": [],
+      "metrics": {
+        "podcastEpisodes": 3,
+        "podcastOnWebsite": 3,
+        "blogPosts": 2,
+        "lastContentDate": "2026-02-16"
+      }
+    }
+  },
   "transcript": [
     {
       "speaker": "Theo",
       "role": "COO",
-      "message": "Morning. Quick test run today \u2014 just making sure the ad-hoc pipeline is flowing correctly. We've got a few things on the board: 9 active positions that need Joshua's eyes, 17 buy signals queued up, and some housekeeping on the dev and content side. Let me run through it. Dave, what's the view from your end? Dave (CFO): We're carrying 9 active positions right now \u2014 AEE, EWA, EFA, XLV, XLE, VNQ, TLT, GLD, and AKAM. All need a review pass from Joshua on sizing and risk parameters. The bigger item is the 17 BUY signals that have stacked up \u2014 that's high priority and needs Joshua's direct review before we can act on any of them. On the macro side, Fear & Greed is sitting at 34, which is in the fear zone. I'll keep monitoring that, but nothing that requires immediate intervention. Elon (CTO): Pipeline's intact, nothing broken. I've got 3 uncommitted hub changes sitting in the queue \u2014 minor stuff, but I'll get those committed today so we stay clean. No blockers on the technical side. Alex (CMO): Content-wise, I'll draft the next blog post. We've got enough signal activity and market context to make it relevant. Should have something ready for Joshua to review soon."
+      "message": "Good morning team. Today we're stress testing Lever's Faith and Family features. These are core to who we are \u2014 if we're building a life management app that doesn't handle faith and family well, we're just another productivity tool. I don't have specific usage metrics on these modules yet, so let's tear them apart from first principles and figure out what's missing or broken. Elon, you built it \u2014 what's the honest state of things?"
+    },
+    {
+      "speaker": "Elon",
+      "role": "CTO",
+      "message": "Honestly, the Faith and Family features are scaffolding right now, not load-bearing walls. The faith module is basically a journal with a Bible verse API bolted on \u2014 there's no habit tracking for prayer, no Scripture reading plans, no way to log church attendance or spiritual disciplines over time. Family is even thinner \u2014 we have a shared calendar concept but no relationship health tracking, no way to set intentional goals for your marriage or kids. I've got 1 uncommitted hub change sitting there that touches some of this, so let me get that committed and we can start iterating. [AGENT] Commit that 1 uncommitted hub change so we have a clean baseline."
+    },
+    {
+      "speaker": "Dave",
+      "role": "CRO",
+      "message": "Here's what I see from a revenue angle \u2014 Faith and Family are the emotional center of the app. That's where retention lives. People don't churn from something that helps them be a better husband or walk closer to God. But right now there's nothing sticky enough to create that bond. We need a \"Family Meeting\" template feature \u2014 guided weekly check-ins with your spouse, conversation prompts for your kids. That's the kind of thing people pay to keep. On my plate, Joshua still needs to review those 17 BUY signals and the current positions \u2014 [JOSHUA] Review 17 BUY signals and [JOSHUA] review current positions including AEE, EWA, EFA, XLV, XLE, VNQ, TLT, GLD, AKAM \u2014 because financial health feeds directly into family peace."
+    },
+    {
+      "speaker": "Alex",
+      "role": "CMO",
+      "message": "The content opportunity here is enormous but we're leaving it on the table. Nobody is marketing a faith-integrated life app to Christian men and fathers \u2014 that's a blue ocean. I want to build a content series around \"Faith & Family Fridays\" \u2014 real stories, real frameworks, real men talking about how they lead their homes. Every piece drives back to Lever as the tool. [AGENT] Draft next blog post \u2014 I want the first one to be \"5 Ways Most Apps Fail Christian Fathers\" and position Lever as the answer. That's the lead gen engine for this vertical."
     },
     {
       "speaker": "Theo",
       "role": "COO",
-      "message": "Dave, with 17 buy signals and Fear & Greed at 34, are you reading that as opportunity or caution? Dave (CFO): Both, honestly. Fear territory often means better entry points, but it also means we need Joshua to be deliberate on position sizing. That's exactly why the risk parameter review matters before we act on any of those signals. Elon (CTO): Agreed \u2014 the pipeline will execute whatever comes out of that review cleanly, so no bottleneck on our side. Just get us the decisions."
+      "message": "Love the intensity. Let's do cross-talk \u2014 Elon, is Dave's Family Meeting template technically feasible in the near term?"
+    },
+    {
+      "speaker": "Elon",
+      "role": "CTO",
+      "message": "Totally feasible. Templated check-ins are just structured forms with scheduling logic \u2014 we could ship a v1 in a sprint. The harder and more valuable thing is tracking relationship metrics over time. Like, imagine a \"marriage health\" trendline based on weekly check-in responses. That's where it gets powerful. I'd stack the template first, instrumentation second."
+    },
+    {
+      "speaker": "Dave",
+      "role": "CRO",
+      "message": "I agree with that sequencing. Ship the template, prove people use it, then build the analytics. And Alex \u2014 your content series needs to drive people into actually using the Faith features, not just reading about them. Every blog post should end with a specific Lever action. \"Read this? Now open Lever and set your prayer goal for this week.\" Close the loop."
+    },
+    {
+      "speaker": "Alex",
+      "role": "CMO",
+      "message": "That's exactly right. Content without a CTA into the product is just a blog. Every piece will have a deep link or specific feature callout. We're not building an audience \u2014 we're building users."
     },
     {
       "speaker": "Theo",
       "role": "COO",
-      "message": "Good. Clean and simple. Here's the priority stack: First, Joshua reviews those 17 BUY signals \u2014 that's the highest leverage item. Second, Joshua reviews the current 9 positions and their risk parameters. Third, Elon commits the hub changes and Alex gets the blog draft moving. Dave monitors Fear & Greed. Let's keep it tight."
+      "message": "Perfect alignment. Here's where we land. Priority one \u2014 Elon gets that hub change committed and starts scoping the Family Meeting template and faith habit tracking. Priority two \u2014 Joshua needs to review those 17 BUY signals and current positions because financial stress is the number one killer of family peace, and that's on-mission. Priority three \u2014 Alex drafts the first Faith and Family content piece with product-integrated CTAs. [JOSHUA] Review position sizing and risk parameters for the 9 active positions as well. [AGENT] Monitor Fear and Greed index sitting at 34 \u2014 we stay aware. Let's make Faith and Family the reason people can't delete this app. Go build."
     }
   ],
   "actionItems": [
@@ -53,45 +185,38 @@
       "tag": "JOSHUA"
     },
     {
-      "text": "Monitor Fear & Greed index (currently 34)",
-      "priority": "low",
-      "assignee": "Dave",
-      "completed": false,
-      "tag": "AGENT"
-    },
-    {
-      "text": "Commit 3 uncommitted hub change(s)",
+      "text": "Commit 1 uncommitted hub change(s)",
       "priority": "low",
       "assignee": "Elon",
       "completed": false,
       "tag": "AGENT"
     },
     {
-      "text": "Draft next blog post",
-      "priority": "medium",
-      "assignee": "Alex",
+      "text": "Monitor Fear & Greed index (currently 34)",
+      "priority": "low",
+      "assignee": "Dave",
       "completed": false,
       "tag": "AGENT"
     }
   ],
   "topPriorities": [
-    "Joshua reviews 17 BUY signals to determine actionable trades",
-    "Joshua reviews current 9 positions and risk parameters for proper sizing",
-    "Housekeeping: commit hub changes and draft next blog post"
+    "Scope and build Family Meeting template and faith habit tracking features in the Lever app",
+    "Joshua reviews 17 BUY signals and current investment positions to reduce financial stress on families",
+    "Launch Faith & Family content series with product-integrated CTAs to drive user acquisition and feature adoption"
   ],
   "ceoDirectives": [],
-  "type": "adhoc-test-run",
-  "typeName": "Test Run",
-  "typeEmoji": "\ud83e\uddea",
+  "type": "lever-faith-family",
+  "typeName": "Lever's Faith & Family",
+  "typeEmoji": "\ud83d\udccb",
   "conversationMode": "ai",
   "model": "claude-opus-4-6",
   "tokenUsage": {
-    "input_tokens": 848,
-    "output_tokens": 873,
-    "total_tokens": 1721,
-    "duration": 19.6,
+    "input_tokens": 1232,
+    "output_tokens": 1363,
+    "total_tokens": 2595,
+    "duration": 34.5,
     "model": "claude-opus-4-6",
-    "estimated_cost": 0.0782
+    "estimated_cost": 0.1207
   },
   "verticals": [],
   "initiatives": [],
@@ -103,6 +228,24 @@
       "title": "COO",
       "emoji": "\ud83d\udd3a",
       "description": "Orchestrates all operations. The right hand."
+    },
+    "cto": {
+      "name": "Elon",
+      "title": "CTO",
+      "emoji": "\ud83d\ude80",
+      "description": "Revolutionary technologist pushing humanity toward a sustainable, multi-planetary future. Owns all code, infrastructure, and moonshot engineering projects. First principles thinker who moves fast and breaks things to build the impossible."
+    },
+    "cro": {
+      "name": "Dave",
+      "title": "CRO",
+      "emoji": "\ud83d\udcb5",
+      "description": "Growth strategy, monetization. Gazelle-intense focus on revenue, zero debt thinking, proven frameworks for building wealth through business."
+    },
+    "cmo": {
+      "name": "Alex",
+      "title": "CMO",
+      "emoji": "\ud83e\udd8d",
+      "description": "Content, creative direction, brand. Obsessed with offers, value equations, and volume. Every piece of content must generate leads or it does not ship."
     }
   }
 }

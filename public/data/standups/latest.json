@@ -1,7 +1,7 @@
 {
   "date": "2026-02-16",
-  "generatedAt": "2026-02-16T18:00:20.556243-08:00",
-  "topic": "Evening Wrap \u2014 Monday Feb 16",
+  "generatedAt": "2026-02-16T19:02:26.925170-08:00",
+  "topic": "Morning Priorities \u2014 Monday Feb 16",
   "status": "completed",
   "participants": [
     {
@@ -29,7 +29,7 @@
       "description": "Content, creative direction, brand. Obsessed with offers, value equations, and volume. Every piece of content must generate leads or it does not ship."
     }
   ],
-  "duration": "14.0s",
+  "duration": "10.2s",
   "reports": {
     "cto": {
       "agent": "Elon",
@@ -43,21 +43,21 @@
         "Sentinel"
       ],
       "highlights": [
-        "218 commits this week",
-        "Hub latest: 03de70b data: fleet usage update",
+        "221 commits this week",
+        "Hub latest: c4bad35 data: fleet usage update",
         "Build status: healthy"
       ],
       "concerns": [
-        "Uncommitted changes: Hub (6), Monorepo (16)",
+        "Uncommitted changes: Hub (5), Monorepo (16)",
         "1 critical sync gaps",
         "6 TODOs/FIXMEs"
       ],
       "metrics": {
-        "recentCommits": 218,
+        "recentCommits": 221,
         "openIssues": 2,
         "buildHealthy": true,
         "todosFixmes": 6,
-        "uncommittedHub": 6,
+        "uncommittedHub": 5,
         "uncommittedMono": 16
       }
     },
@@ -119,111 +119,41 @@
       }
     }
   },
-  "transcript": [
-    {
-      "speaker": "Theo",
-      "role": "COO",
-      "message": "Alright team, quick pulse check. Markets closed mixed today - S&P down 0.3%, but tech showing resilience. We need to review our key initiatives and tomorrow's critical path. Who wants to lead off?"
-    },
-    {
-      "speaker": "Elon",
-      "role": "CTO",
-      "message": "\ud83d\ude80 Infrastructure upgrade completed 92% - migrated three critical microservices to quantum-resilient architecture. Performance improvement: 37% faster compute times. Potential bottleneck in south-region data center requires immediate investigation."
-    },
-    {
-      "speaker": "Dave",
-      "role": "CRO",
-      "message": "\ud83d\udcb5 Closed two enterprise contracts today - total ARR impact $2.3M. Pipeline looking strong, conversion rates up 11% quarter-to-date. Strategic accounts in financial services are showing heightened interest."
-    },
-    {
-      "speaker": "Alex",
-      "role": "CMO",
-      "message": "\ud83e\udd8d Content acceleration program launched - new lead magnet converting at 22% which is 6 points above our baseline. Retargeting campaigns for Q1 are in final draft. Need Elon's team to validate technical feasibility of our interactive demo."
-    },
-    {
-      "speaker": "Theo",
-      "role": "COO",
-      "message": "Solid updates. Any cross-team observations?"
-    },
-    {
-      "speaker": "Elon",
-      "role": "CTO",
-      "message": "Dave, your enterprise conversion rates - are these predominantly from our AI infrastructure offerings or broader tech stack?"
-    },
-    {
-      "speaker": "Dave",
-      "role": "CRO",
-      "message": "Predominantly AI infrastructure. Financial services seeing direct ROI from our predictive modeling solutions. Your quantum architecture is a significant differentiator."
-    },
-    {
-      "speaker": "Theo",
-      "role": "COO",
-      "message": "Excellent. Let me summarize priorities for tomorrow: 1. Complete infrastructure migration 2. Finalize enterprise contract details 3. Validate marketing demo technical requirements Any final thoughts?"
-    },
-    {
-      "speaker": "Alex",
-      "role": "CMO",
-      "message": "Quick alignment needed with Elon on demo tech specs."
-    },
-    {
-      "speaker": "Elon",
-      "role": "CTO",
-      "message": "Agreed. We'll sync first thing tomorrow morning."
-    },
-    {
-      "speaker": "Theo",
-      "role": "COO",
-      "message": "Meeting adjourned. Let's execute."
-    }
-  ],
+  "transcript": [],
   "actionItems": [
     {
-      "text": "Review south-region data center performance bottleneck",
+      "text": "Address critical ecosystem sync gaps",
       "priority": "high",
       "assignee": "Elon",
-      "completed": false,
-      "tag": "JOSHUA"
-    },
-    {
-      "text": "Prepare enterprise contract final documentation",
-      "priority": "high",
-      "assignee": "Dave",
-      "completed": false,
-      "tag": "JOSHUA"
-    },
-    {
-      "text": "Technical validation of marketing interactive demo",
-      "priority": "medium",
-      "assignee": "Elon/Tech Team",
       "completed": false,
       "tag": "AGENT"
     },
     {
-      "text": "Update lead magnet tracking metrics",
-      "priority": "low",
+      "text": "Sync podcast episodes to website",
+      "priority": "high",
       "assignee": "Alex",
       "completed": false,
       "tag": "AGENT"
     }
   ],
   "topPriorities": [
-    "Complete quantum-resilient infrastructure migration",
-    "Finalize enterprise contract financial details",
-    "Validate marketing interactive demo technical requirements"
+    "Manage Crypto Market Volatility",
+    "Resolve Technical Infrastructure Gaps",
+    "Accelerate Content Marketing Deployment"
   ],
   "ceoDirectives": [],
-  "type": "evening-wrap",
-  "typeName": "Evening Wrap",
-  "typeEmoji": "\ud83c\udf06",
+  "type": "morning-priorities",
+  "typeName": "Morning Priorities",
+  "typeEmoji": "\ud83c\udf05",
   "conversationMode": "ai",
   "model": "claude-3-5-haiku-20241022",
   "tokenUsage": {
-    "input_tokens": 847,
-    "output_tokens": 624,
-    "total_tokens": 1471,
-    "duration": 14.0,
+    "input_tokens": 1143,
+    "output_tokens": 510,
+    "total_tokens": 1653,
+    "duration": 10.2,
     "model": "claude-3-5-haiku-20241022",
-    "estimated_cost": 0.004
+    "estimated_cost": 0.0037
   },
   "agentContext": {
     "coo": {

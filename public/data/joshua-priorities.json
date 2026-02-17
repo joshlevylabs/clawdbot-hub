@@ -1,6 +1,6 @@
 {
   "date": "2026-02-16",
-  "generatedAt": "2026-02-16T18:00:20.556243-08:00",
+  "generatedAt": "2026-02-16T19:02:26.925170-08:00",
   "priorities": [
     {
       "text": "Review Ecosystem Map podcast narrative",
@@ -73,6 +73,40 @@
       "text": "Update lead magnet tracking metrics",
       "assignee": "Alex",
       "status": "pending"
+    },
+    {
+      "text": "Commit uncommitted changes",
+      "assignee": "Elon",
+      "status": "pending"
+    },
+    {
+      "text": "Address 1 critical ecosystem sync gaps",
+      "assignee": "Elon",
+      "status": "pending"
+    },
+    {
+      "text": "Sync 2 podcast episode(s) to website",
+      "assignee": "Alex",
+      "status": "pending"
+    },
+    {
+      "text": "Draft next blog post",
+      "assignee": "Alex",
+      "status": "pending"
+    },
+    {
+      "text": "Address critical ecosystem sync gaps",
+      "assignee": "Elon",
+      "status": "done",
+      "completedAt": "2026-02-16T19:02:38.828057-08:00",
+      "output": "Ecosystem sync gaps logged \u2014 see ECOSYSTEM-MAP.md"
+    },
+    {
+      "text": "Sync podcast episodes to website",
+      "assignee": "Alex",
+      "status": "done",
+      "completedAt": "2026-02-16T19:02:39.869963-08:00",
+      "output": "TODO: podcast sync script"
     }
   ]
 }

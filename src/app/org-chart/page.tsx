@@ -3325,7 +3325,9 @@ function WorkspacePanel({
       ) : (
         <>
           <div className="flex-1 overflow-y-auto p-5">
-            {loading ? (
+            {activeTab === "PROTOCOLS" ? (
+              <AgentProtocolsPanel agentId={agentId} agentName={agent?.name || agentId} />
+            ) : loading ? (
               <WorkspaceSkeleton />
             ) : formData ? (
               <div>
@@ -3351,8 +3353,6 @@ function WorkspacePanel({
                   <HeartbeatForm data={formData.data} onChange={(d) => updateFormData({ type: "HEARTBEAT.md", data: d })} />
                 )}
               </div>
-            ) : activeTab === "PROTOCOLS" ? (
-              <AgentProtocolsPanel agentId={agentId} agentName={agent?.name || agentId} />
             ) : null}
           </div>
 
@@ -3452,12 +3452,16 @@ function DrawerOverlay({ open, onClose, children }: { open: boolean; onClose: ()
         onClick={onClose}
       />
       <div
-        className={`fixed top-0 right-0 z-50 h-full w-[600px] max-w-[90vw] hidden lg:flex transition-transform duration-300 ease-in-out ${
-          visible ? "translate-x-0" : "translate-x-full"
+        className={`fixed inset-0 z-50 hidden lg:flex items-center justify-center p-6 transition-all duration-300 ease-in-out ${
+          visible ? "opacity-100 scale-100" : "opacity-0 scale-95 pointer-events-none"
         }`}
-        style={{ boxShadow: visible ? "-8px 0 30px rgba(0,0,0,0.5)" : "none" }}
       >
-        {children}
+        <div
+          className="w-full max-w-2xl h-[85vh] flex"
+          style={{ boxShadow: visible ? "0 25px 50px rgba(0,0,0,0.5)" : "none", borderRadius: "1rem", overflow: "hidden" }}
+        >
+          {children}
+        </div>
       </div>
       <div
         className={`fixed bottom-0 left-0 right-0 z-50 lg:hidden transition-transform duration-300 ease-in-out ${

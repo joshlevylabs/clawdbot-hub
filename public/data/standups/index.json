@@ -26,6 +26,19 @@
     },
     {
       "date": "2026-02-17",
+      "type": "evening-wrap",
+      "typeName": "Evening Wrap",
+      "typeEmoji": "\ud83c\udf06",
+      "topic": "Evening Wrap \u2014 Tuesday Feb 17",
+      "file": "2026-02-17-evening-wrap.json",
+      "tokenCost": 0.1115,
+      "verticals": [
+        "ecosystem"
+      ],
+      "initiatives": []
+    },
+    {
+      "date": "2026-02-17",
       "type": "afternoon-checkpoint",
       "typeName": "Afternoon Checkpoint",
       "typeEmoji": "\ud83c\udf1e",

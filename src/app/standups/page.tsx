@@ -2190,24 +2190,38 @@ function ManageView() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  checked={formData.autoExecute || false}
-                  onChange={(e) => setFormData({ ...formData, autoExecute: e.target.checked })}
-                  className="rounded"
-                />
-                <label className="text-sm text-slate-300">Auto-Execute (agents run this standup automatically)</label>
-              </div>
-              
-              <div className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  checked={formData.interactive || false}
-                  onChange={(e) => setFormData({ ...formData, interactive: e.target.checked })}
-                  className="rounded"
-                />
-                <label className="text-sm text-slate-300">🎯 Interactive (pause for CEO decisions via Telegram buttons)</label>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-slate-400">Execution Mode</label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="radio"
+                    name="executionMode"
+                    checked={!formData.autoExecute && !formData.interactive}
+                    onChange={() => setFormData({ ...formData, autoExecute: false, interactive: false })}
+                    className="rounded"
+                  />
+                  <label className="text-sm text-slate-300">Manual (trigger from Hub or CLI only)</label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="radio"
+                    name="executionMode"
+                    checked={formData.autoExecute === true && !formData.interactive}
+                    onChange={() => setFormData({ ...formData, autoExecute: true, interactive: false })}
+                    className="rounded"
+                  />
+                  <label className="text-sm text-slate-300">Auto-Execute (agents run this standup automatically)</label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="radio"
+                    name="executionMode"
+                    checked={formData.interactive === true}
+                    onChange={() => setFormData({ ...formData, autoExecute: true, interactive: true })}
+                    className="rounded"
+                  />
+                  <label className="text-sm text-slate-300">🎯 Interactive (auto-execute + pause for CEO decisions via Telegram)</label>
+                </div>
               </div>
               
               <div className="flex gap-2 pt-4">

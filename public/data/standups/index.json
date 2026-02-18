@@ -14,6 +14,69 @@
       "initiatives": []
     },
     {
+      "date": "2026-02-18",
+      "type": "ecosystem-sync",
+      "typeName": "Ecosystem Sync Audit",
+      "typeEmoji": "\ud83d\udd04",
+      "topic": "Ecosystem Sync Audit \u2014 Wednesday Feb 18",
+      "file": "2026-02-18-ecosystem-sync.json",
+      "tokenCost": 0.1113,
+      "verticals": [
+        "ecosystem",
+        "joshlevylabs",
+        "hub",
+        "lever"
+      ],
+      "initiatives": []
+    },
+    {
+      "date": "2026-02-18",
+      "type": "cto-app-store",
+      "typeName": "App Store Readiness",
+      "typeEmoji": "\ud83d\udcf1",
+      "topic": "App Store Readiness \u2014 Wednesday Feb 18",
+      "file": "2026-02-18-cto-app-store.json",
+      "tokenCost": 0.1174,
+      "verticals": [
+        "lever"
+      ],
+      "initiatives": [
+        "app-store-submit",
+        "lever-dashboard"
+      ]
+    },
+    {
+      "date": "2026-02-18",
+      "type": "cro-market-intel",
+      "typeName": "Business Development",
+      "typeEmoji": "\ud83d\udd0d",
+      "topic": "Business Development \u2014 Wednesday Feb 18",
+      "file": "2026-02-18-cro-market-intel.json",
+      "tokenCost": 0.1307,
+      "verticals": [
+        "hub"
+      ],
+      "initiatives": [
+        "mre-v14-optimization"
+      ]
+    },
+    {
+      "date": "2026-02-18",
+      "type": "cmo-distribution",
+      "typeName": "Distribution Audit",
+      "typeEmoji": "\ud83d\udce3",
+      "topic": "Distribution Audit \u2014 Wednesday Feb 18",
+      "file": "2026-02-18-cmo-distribution.json",
+      "tokenCost": 0.1128,
+      "verticals": [
+        "joshlevylabs"
+      ],
+      "initiatives": [
+        "podcast-distribution",
+        "content-growth"
+      ]
+    },
+    {
       "date": "2026-02-17",
       "type": "morning-priorities",
       "typeName": "Morning Priorities",

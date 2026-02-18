@@ -129,12 +129,52 @@
       "estimatedCost": 0.1055,
       "model": "claude-opus-4-6",
       "duration": "24.6s"
+    },
+    {
+      "date": "2026-02-18",
+      "type": "cto-app-store",
+      "inputTokens": 1354,
+      "outputTokens": 1295,
+      "totalTokens": 2649,
+      "estimatedCost": 0.1174,
+      "model": "claude-opus-4-6",
+      "duration": "29.3s"
+    },
+    {
+      "date": "2026-02-18",
+      "type": "cmo-distribution",
+      "inputTokens": 1338,
+      "outputTokens": 1236,
+      "totalTokens": 2574,
+      "estimatedCost": 0.1128,
+      "model": "claude-opus-4-6",
+      "duration": "29.9s"
+    },
+    {
+      "date": "2026-02-18",
+      "type": "cro-market-intel",
+      "inputTokens": 1391,
+      "outputTokens": 1465,
+      "totalTokens": 2856,
+      "estimatedCost": 0.1307,
+      "model": "claude-opus-4-6",
+      "duration": "35.3s"
+    },
+    {
+      "date": "2026-02-18",
+      "type": "ecosystem-sync",
+      "inputTokens": 1473,
+      "outputTokens": 1190,
+      "totalTokens": 2663,
+      "estimatedCost": 0.1113,
+      "model": "claude-opus-4-6",
+      "duration": "26.0s"
     }
   ],
   "totals": {
-    "today": 1.1277,
-    "week": 1.431,
-    "month": 1.431,
-    "standupCount": 13
+    "today": 0.4722,
+    "week": 1.9032,
+    "month": 1.9032,
+    "standupCount": 17
   }
 }

@@ -351,6 +351,45 @@ export default function BulletinPage() {
     setSelectedTask(prev => prev ? { ...prev, ...updates } : null);
   };
 
+  const handleToggleSprintReady = async (task: Task, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const newValue = !task.sprintReady;
+    // Optimistic update
+    setTaskRegistry(prev => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        tasks: prev.tasks.map(t => t.key === task.key ? { ...t, sprintReady: newValue } : t),
+      };
+    });
+    try {
+      const res = await fetch("/api/tasks", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ taskKey: task.key, sprintReady: newValue }),
+      });
+      if (!res.ok) {
+        // Revert on failure
+        setTaskRegistry(prev => {
+          if (!prev) return prev;
+          return {
+            ...prev,
+            tasks: prev.tasks.map(t => t.key === task.key ? { ...t, sprintReady: !newValue } : t),
+          };
+        });
+      }
+    } catch {
+      // Revert on error
+      setTaskRegistry(prev => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          tasks: prev.tasks.map(t => t.key === task.key ? { ...t, sprintReady: !newValue } : t),
+        };
+      });
+    }
+  };
+
   if (loading) {
     return (
       <div className="space-y-4 max-w-7xl">
@@ -528,6 +567,7 @@ export default function BulletinPage() {
                     <th className="text-left px-4 py-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wider w-[90px]">Type</th>
                     <th className="text-left px-4 py-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wider w-[100px]">Assignee</th>
                     <th className="text-left px-4 py-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wider w-[80px]">Source</th>
+                    <th className="text-center px-4 py-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wider w-[80px]">Sprint</th>
                     <th className="text-left px-4 py-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wider w-[60px]">Action</th>
                   </tr>
                 </thead>
@@ -606,6 +646,19 @@ export default function BulletinPage() {
                         </td>
                         <td className="px-4 py-3">
                           <span className="text-xs text-primary-400/80 font-mono">{task.sourceStandup || "—"}</span>
+                        </td>
+                        <td className="px-4 py-3 text-center">
+                          <button
+                            onClick={(e) => handleToggleSprintReady(task, e)}
+                            className={`p-1.5 rounded-lg transition-all ${
+                              task.sprintReady
+                                ? "bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30"
+                                : "bg-slate-800/50 text-slate-600 hover:text-slate-400 hover:bg-slate-700/50"
+                            }`}
+                            title={task.sprintReady ? "Remove from sprint" : "Mark sprint-ready"}
+                          >
+                            <Zap className="w-4 h-4" strokeWidth={task.sprintReady ? 2.5 : 1.5} />
+                          </button>
                         </td>
                         <td className="px-4 py-3">
                           <button

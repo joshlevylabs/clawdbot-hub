@@ -1,6 +1,6 @@
 {
   "date": "2026-02-17",
-  "generatedAt": "2026-02-17T19:25:58.900324-08:00",
+  "generatedAt": "2026-02-17T19:27:21.828026-08:00",
   "priorities": [
     {
       "text": "Review current positions: AEE, EFA, XLV, XLE, VNQ, TLT, GLD",
@@ -176,6 +176,21 @@
     },
     {
       "text": "Generate daily devotional content based on 8 faith dimensions, structured as 7-day challenge",
+      "assignee": "Alex",
+      "status": "pending"
+    },
+    {
+      "text": "Monitor Fear & Greed index (currently 34) to inform build-vs-spend posture",
+      "assignee": "Dave",
+      "status": "pending"
+    },
+    {
+      "text": "Commit 1 uncommitted Hub change",
+      "assignee": "Elon",
+      "status": "pending"
+    },
+    {
+      "text": "Draft next blog post for joshlevylabs.com",
       "assignee": "Alex",
       "status": "pending"
     }

@@ -1,6 +1,6 @@
 {
   "date": "2026-02-18",
-  "generatedAt": "2026-02-18T12:00:37.955838-08:00",
+  "generatedAt": "2026-02-18T15:40:04.751375-08:00",
   "priorities": [
     {
       "text": "Review current positions: AEE, EFA, XLV, XLE, VNQ, TLT, GLD",
@@ -58,6 +58,16 @@
     {
       "text": "Approve Lever content investment level based on quarterly priority decision (J-013)",
       "source": "afternoon-checkpoint",
+      "urgency": "high"
+    },
+    {
+      "text": "Review and approve Family tab v1 scope to freeze spec on A-042",
+      "source": "adhoc-lyceum-build-out",
+      "urgency": "high"
+    },
+    {
+      "text": "Decide content audience direction for faith lessons (A-074) and devotionals (A-075)",
+      "source": "adhoc-lyceum-build-out",
       "urgency": "high"
     }
   ],

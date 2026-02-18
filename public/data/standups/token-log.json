@@ -179,12 +179,32 @@
       "estimatedCost": 0.1501,
       "model": "claude-opus-4-6",
       "duration": "37.0s"
+    },
+    {
+      "date": "2026-02-18",
+      "type": "adhoc-lyceum-build-out",
+      "inputTokens": 2148,
+      "outputTokens": 1385,
+      "totalTokens": 3533,
+      "estimatedCost": 0.1361,
+      "model": "claude-opus-4-6",
+      "duration": "35.5s"
+    },
+    {
+      "date": "2026-02-18",
+      "type": "adhoc-1771457922925",
+      "inputTokens": 1708,
+      "outputTokens": 1220,
+      "totalTokens": 2928,
+      "estimatedCost": 0.1171,
+      "model": "claude-opus-4-6",
+      "duration": "33.7s"
     }
   ],
   "totals": {
-    "today": 0.6223,
-    "week": 2.0533,
-    "month": 2.0533,
-    "standupCount": 18
+    "today": 0.8755,
+    "week": 2.3065,
+    "month": 2.3065,
+    "standupCount": 20
   }
 }

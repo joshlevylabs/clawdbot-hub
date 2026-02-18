@@ -1,6 +1,6 @@
 {
   "date": "2026-02-18",
-  "generatedAt": "2026-02-18T15:40:04.751375-08:00",
+  "generatedAt": "2026-02-18T15:45:02.914936-08:00",
   "priorities": [
     {
       "text": "Review current positions: AEE, EFA, XLV, XLE, VNQ, TLT, GLD",
@@ -68,6 +68,21 @@
     {
       "text": "Decide content audience direction for faith lessons (A-074) and devotionals (A-075)",
       "source": "adhoc-lyceum-build-out",
+      "urgency": "high"
+    },
+    {
+      "text": "Decide target audience and content focus for The Lyceum",
+      "source": "adhoc-the-lyceum-greenfield-architecture",
+      "urgency": "high"
+    },
+    {
+      "text": "Decide whether community features are in MVP or deferred to v2",
+      "source": "adhoc-the-lyceum-greenfield-architecture",
+      "urgency": "high"
+    },
+    {
+      "text": "Choose pricing model and free tier scope",
+      "source": "adhoc-the-lyceum-greenfield-architecture",
       "urgency": "high"
     }
   ],
@@ -324,6 +339,26 @@
       "status": "done",
       "verified": true,
       "audit_note": "Task was marked done but verification FAILED: Verify hub has no uncommitted changes"
+    },
+    {
+      "text": "Scaffold greenfield Lyceum repo: Next.js 14 App Router, Supabase auth, Postgres schema with cohort-ready lesson model, Stripe subscription integration",
+      "assignee": "Elon Musk",
+      "status": "pending"
+    },
+    {
+      "text": "Draft brand positioning document and landing page copy framework for The Lyceum",
+      "assignee": "Alex",
+      "status": "pending"
+    },
+    {
+      "text": "Draft pricing and monetization strategy document with free-to-paid conversion funnel",
+      "assignee": "Dave",
+      "status": "pending"
+    },
+    {
+      "text": "Design Lyceum data model: users, lessons, curriculum tracks, progress, cohorts, subscriptions",
+      "assignee": "Elon Musk",
+      "status": "pending"
     }
   ]
 }

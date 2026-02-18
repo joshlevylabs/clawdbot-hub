@@ -163,8 +163,8 @@ interface StandupIndex {
 interface JoshuaPriorities {
   date: string;
   generatedAt: string;
-  priorities: { text: string; source: string; urgency: string; completed?: boolean; completedAt?: string }[];
-  agentHandled: { text: string; assignee: string; status: string; completed?: boolean; completedAt?: string }[];
+  priorities: { text: string; source: string; urgency: string; completed?: boolean; completedAt?: string; taskKey?: string }[];
+  agentHandled: { text: string; assignee: string; status: string; completed?: boolean; completedAt?: string; taskKey?: string }[];
 }
 
 interface TokenLog {
@@ -320,6 +320,11 @@ function JoshuaPrioritiesCard({ priorities, onToggle }: { priorities: JoshuaPrio
                   </button>
                   <div className="flex-1">
                     <p className={`text-sm leading-relaxed ${isCompleted ? "text-slate-500 line-through" : "text-slate-200"}`}>
+                      {p.taskKey && (
+                        <span className="inline-block mr-1.5 px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                          {p.taskKey}
+                        </span>
+                      )}
                       {p.text}
                     </p>
                     <div className="flex items-center gap-2 mt-1">
@@ -362,7 +367,14 @@ function JoshuaPrioritiesCard({ priorities, onToggle }: { priorities: JoshuaPrio
                 >
                   <Circle className="w-4 h-4 text-cyan-400/50 flex-shrink-0 hover:text-cyan-400" />
                   <div className="flex-1">
-                    <p className="text-sm text-slate-300">{a.text}</p>
+                    <p className="text-sm text-slate-300">
+                      {a.taskKey && (
+                        <span className="inline-block mr-1.5 px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+                          {a.taskKey}
+                        </span>
+                      )}
+                      {a.text}
+                    </p>
                     <p className="text-xs text-slate-600 mt-0.5">→ {a.assignee} · {a.status}</p>
                   </div>
                 </button>
@@ -398,7 +410,14 @@ function JoshuaPrioritiesCard({ priorities, onToggle }: { priorities: JoshuaPrio
                 <div key={i} className="flex items-start gap-3 p-2.5 rounded-lg bg-emerald-500/5 opacity-75">
                   <CheckCircle className="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
                   <div className="flex-1">
-                    <p className="text-sm leading-relaxed text-slate-400 line-through">{p.text}</p>
+                    <p className="text-sm leading-relaxed text-slate-400 line-through">
+                      {p.taskKey && (
+                        <span className="inline-block mr-1.5 px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 no-underline" style={{textDecoration: 'none'}}>
+                          {p.taskKey}
+                        </span>
+                      )}
+                      {p.text}
+                    </p>
                     <div className="flex items-center gap-2 mt-1">
                       <PriorityBadge priority={p.urgency} />
                       <span className="text-[10px] text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded">

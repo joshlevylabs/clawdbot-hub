@@ -5,42 +5,50 @@
     {
       "text": "Review current positions: AEE, EFA, XLV, XLE, VNQ, TLT, GLD",
       "source": "midnight-prep",
-      "urgency": "medium"
+      "urgency": "medium",
+      "taskKey": "J-003"
     },
     {
       "text": "Review position sizing and risk parameters for 7 active positions",
       "source": "midnight-prep",
-      "urgency": "medium"
+      "urgency": "medium",
+      "taskKey": "J-004"
     },
     {
       "text": "Review 17 BUY signal(s)",
       "source": "morning-priorities",
-      "urgency": "high"
+      "urgency": "high",
+      "taskKey": "J-009"
     },
     {
       "text": "Review current positions: AEE, EWA, TLT, GLD, EFA, XLV, XLE, VNQ, AKAM",
       "source": "afternoon-checkpoint",
-      "urgency": "medium"
+      "urgency": "medium",
+      "taskKey": "J-010"
     },
     {
       "text": "Review position sizing and risk parameters for 9 active position(s)",
       "source": "afternoon-checkpoint",
-      "urgency": "medium"
+      "urgency": "medium",
+      "taskKey": "J-011"
     },
     {
       "text": "Review current positions: AEE, EWA, EFA, XLV, XLE, VNQ, TLT, GLD, AKAM",
       "source": "lever-faith-family",
-      "urgency": "medium"
+      "urgency": "medium",
+      "taskKey": "J-007"
     },
     {
       "text": "Decide whether to submit Lever app now or hold for content density",
       "source": "cto-app-store",
-      "urgency": "high"
+      "urgency": "high",
+      "taskKey": "J-012"
     },
     {
       "text": "Approve Lever content investment level based on quarterly priority decision",
       "source": "cmo-distribution",
-      "urgency": "high"
+      "urgency": "high",
+      "taskKey": "J-013"
     }
   ],
   "agentHandled": [
@@ -51,7 +59,8 @@
       "completedAt": "2026-02-16T21:55:00-08:00",
       "output": "Fixed by Elon via Auditor escalation: Synced 2 podcast episodes, marked paper-portfolio.json as deprecated",
       "audit_note": "Task was marked done but verification FAILED: Verify no critical sync gaps remain in ecosystem map",
-      "verified": true
+      "verified": true,
+      "taskKey": "A-001"
     },
     {
       "text": "Sync 2 podcast episode(s) to website",
@@ -60,7 +69,8 @@
       "completedAt": "2026-02-16T21:55:00-08:00",
       "output": "Completed by Alex via Auditor escalation: Synced episodes 002 and 003 to ~/joshlevylabs/apps/web/content/podcast/ in MDX format",
       "audit_note": "Task was marked done but verification FAILED: Verify all hub podcast episodes exist on website (sync gap = 0)",
-      "verified": true
+      "verified": true,
+      "taskKey": "A-002"
     },
     {
       "text": "Commit 1 uncommitted hub change(s)",
@@ -69,7 +79,8 @@
       "completedAt": "2026-02-17T19:01:13.467230-08:00",
       "output": "[main 4a124ca] auto: standup cleanup\n Committer: Joshua Levy <joshualevy@Joshuas-Mac-mini.local>\nYou",
       "audit_note": "Task was marked done but verification FAILED: Verify hub has no uncommitted changes",
-      "verified": true
+      "verified": true,
+      "taskKey": "A-036"
     },
     {
       "text": "Review 1 ecosystem attention item(s)",
@@ -78,7 +89,8 @@
       "completedAt": "2026-02-16T21:55:00-08:00",
       "output": "Fixed by Elon via Auditor escalation: Reviewed all 5 attention items, documented findings in ECOSYSTEM-MAP.md",
       "audit_note": "Task was marked done but verification FAILED: Verify ecosystem attention items decreased",
-      "verified": true
+      "verified": true,
+      "taskKey": "A-004"
     },
     {
       "text": "Monitor Fear & Greed index (currently 36)",
@@ -87,7 +99,8 @@
       "completedAt": "2026-02-16T23:55:29.550435-08:00",
       "output": "Fear & Greed check: see trading dashboard",
       "audit_note": "Task was marked done but verification FAILED: Verify MRE signals updated in last 2h (auto-passes weekends and outside market hours 6AM-2PM PT)",
-      "verified": true
+      "verified": true,
+      "taskKey": "A-007"
     },
     {
       "text": "Draft next blog post",
@@ -96,7 +109,8 @@
       "completedAt": "2026-02-18T15:35:00-08:00",
       "output": "Blog post 'The AI Builder's Paradox' drafted in The Builder's Frequency style, focusing on AI for Builders pillar. Saved to ~/clawd/memory/agent-tasks/2026-02-18-blog-draft/draft.md",
       "verified": true,
-      "audit_note": "Completed by sub-agent - AI-focused blog post following established content pillars"
+      "audit_note": "Completed by sub-agent - AI-focused blog post following established content pillars",
+      "taskKey": "A-068"
     },
     {
       "text": "Commit 2 uncommitted hub changes",
@@ -105,7 +119,8 @@
       "completedAt": "2026-02-17T15:20:08.271577-08:00",
       "output": "Hub fully committed and pushed. No uncommitted changes remain.",
       "verified": true,
-      "audit_note": "Task was marked done but verification FAILED: Verify hub has no uncommitted changes"
+      "audit_note": "Task was marked done but verification FAILED: Verify hub has no uncommitted changes",
+      "taskKey": "A-008"
     },
     {
       "text": "Commit uncommitted changes",
@@ -114,7 +129,8 @@
       "completedAt": "2026-02-17T05:45:28.787321-08:00",
       "output": "No matching task pattern found",
       "verified": true,
-      "audit_note": "Manually verified \u2014 all hub changes committed"
+      "audit_note": "Manually verified \u2014 all hub changes committed",
+      "taskKey": "A-026"
     },
     {
       "text": "Monitor Fear & Greed index (currently 34)",
@@ -123,7 +139,8 @@
       "completedAt": "2026-02-17T23:55:46.305254-08:00",
       "output": "Fear & Greed check: see trading dashboard",
       "verified": true,
-      "audit_note": "Task was marked done but verification FAILED: Verify MRE signals updated in last 2h (auto-passes weekends and outside market hours 6AM-2PM PT)"
+      "audit_note": "Task was marked done but verification FAILED: Verify MRE signals updated in last 2h (auto-passes weekends and outside market hours 6AM-2PM PT)",
+      "taskKey": "A-048"
     },
     {
       "text": "Commit 4 uncommitted hub change(s)",
@@ -132,7 +149,8 @@
       "completedAt": "2026-02-17T15:20:08.271577-08:00",
       "output": "Hub fully committed and pushed. No uncommitted changes remain.",
       "verified": true,
-      "audit_note": "Task was marked done but verification FAILED: Verify hub has no uncommitted changes"
+      "audit_note": "Task was marked done but verification FAILED: Verify hub has no uncommitted changes",
+      "taskKey": "A-030"
     },
     {
       "text": "Commit 3 uncommitted hub change(s)",
@@ -148,35 +166,40 @@
       "assignee": "Alex",
       "status": "done",
       "completedAt": "2026-02-18T15:35:00-08:00",
-      "output": "Generated devotional 'Truth and Wisdom: Seeking Understanding in an Age of Information' with all 9 tradition perspectives (Orthodox/Conservative/Reform Judaism, Catholic/Orthodox/Protestant Christianity, Sunni/Shia Islam, Mystical/Sufism). Saved to ~/clawd/memory/agent-tasks/2026-02-18-devotional/devotional.md"
+      "output": "Generated devotional 'Truth and Wisdom: Seeking Understanding in an Age of Information' with all 9 tradition perspectives (Orthodox/Conservative/Reform Judaism, Catholic/Orthodox/Protestant Christianity, Sunni/Shia Islam, Mystical/Sufism). Saved to ~/clawd/memory/agent-tasks/2026-02-18-devotional/devotional.md",
+      "taskKey": "A-067"
     },
     {
       "text": "Draft faith lesson content for the Lever app (currently 7 lessons)",
       "assignee": "Alex",
       "status": "done",
       "completedAt": "2026-02-18T15:35:00-08:00",
-      "output": "Drafted 3 new faith lessons: 'Faith and Doubt - Wrestling with Uncertainty', 'The Sacred and Ordinary - Finding God in Daily Life', 'Suffering and Meaning - When Bad Things Happen'. Following existing 4-section format (Teaching, Sources, Tension, Reflection). Saved to ~/clawd/memory/agent-tasks/2026-02-18-faith-lessons/lessons.md"
+      "output": "Drafted 3 new faith lessons: 'Faith and Doubt - Wrestling with Uncertainty', 'The Sacred and Ordinary - Finding God in Daily Life', 'Suffering and Meaning - When Bad Things Happen'. Following existing 4-section format (Teaching, Sources, Tension, Reflection). Saved to ~/clawd/memory/agent-tasks/2026-02-18-faith-lessons/lessons.md",
+      "taskKey": "A-066"
     },
     {
       "text": "Prepare reminders for upcoming family events: Jetts vaccine",
       "assignee": "Alex",
       "status": "done",
       "completedAt": "2026-02-18T15:35:00-08:00",
-      "output": "Verified vaccine reminder system: Scripts exist for Feb 19 (day-before) and Feb 20 (day-of) reminders. Core infrastructure functional but requires manual cron installation. Status documented with action items in ~/clawd/memory/agent-tasks/2026-02-18-family-reminders/status.md"
+      "output": "Verified vaccine reminder system: Scripts exist for Feb 19 (day-before) and Feb 20 (day-of) reminders. Core infrastructure functional but requires manual cron installation. Status documented with action items in ~/clawd/memory/agent-tasks/2026-02-18-family-reminders/status.md",
+      "taskKey": "A-071"
     },
     {
       "text": "Draft feature spec for expanding Family tab (currently 454 lines)",
       "assignee": "Elon",
       "status": "done",
       "completedAt": "2026-02-18T15:35:00-08:00",
-      "output": "Comprehensive Family tab expansion spec drafted with 3 major features: Touchpoint Tracker, Family Moments Archive, Milestone Tracking. Includes technical implementation, database schema, UI components, and 5-phase rollout plan. Saved to ~/clawd/memory/agent-tasks/2026-02-18-family-tab-spec/SPEC.md"
+      "output": "Comprehensive Family tab expansion spec drafted with 3 major features: Touchpoint Tracker, Family Moments Archive, Milestone Tracking. Includes technical implementation, database schema, UI components, and 5-phase rollout plan. Saved to ~/clawd/memory/agent-tasks/2026-02-18-family-tab-spec/SPEC.md",
+      "taskKey": "A-037"
     },
     {
       "text": "Review family touchpoint tracker design for 3 family members",
       "assignee": "Elon",
       "status": "done",
       "completedAt": "2026-02-18T15:35:00-08:00",
-      "output": "Detailed design review completed for touchpoint tracking with Jillian (spouse model), Jones & Jett (parent-child models). Analyzed relationship-specific optimizations, privacy considerations, technical architecture, and risk mitigation. Includes database schema recommendations and component specifications. Saved to ~/clawd/memory/agent-tasks/2026-02-18-family-touchpoint-review/REVIEW.md"
+      "output": "Detailed design review completed for touchpoint tracking with Jillian (spouse model), Jones & Jett (parent-child models). Analyzed relationship-specific optimizations, privacy considerations, technical architecture, and risk mitigation. Includes database schema recommendations and component specifications. Saved to ~/clawd/memory/agent-tasks/2026-02-18-family-touchpoint-review/REVIEW.md",
+      "taskKey": "A-070"
     },
     {
       "text": "Commit 1 uncommitted hub change",
@@ -185,7 +208,8 @@
       "completedAt": "2026-02-17T23:55:35.394051-08:00",
       "output": "[main 7b3ad7d] auto: standup cleanup\n Committer: Joshua Levy <joshualevy@Joshuas-Mac-mini.local>\nYou",
       "verified": true,
-      "audit_note": "Task was marked done but verification FAILED: Verify hub has no uncommitted changes"
+      "audit_note": "Task was marked done but verification FAILED: Verify hub has no uncommitted changes",
+      "taskKey": "A-040"
     },
     {
       "text": "Generate daily devotional content based on 8 faith dimensions, structured as 7-day challenge",
@@ -198,14 +222,16 @@
       "assignee": "Dave",
       "status": "done",
       "verified": true,
-      "audit_note": "Task was marked done but verification FAILED: Verify MRE signals updated in last 2h (auto-passes weekends and outside market hours 6AM-2PM PT)"
+      "audit_note": "Task was marked done but verification FAILED: Verify MRE signals updated in last 2h (auto-passes weekends and outside market hours 6AM-2PM PT)",
+      "taskKey": "A-018"
     },
     {
       "text": "Commit 1 uncommitted Hub change",
       "assignee": "Elon",
       "status": "done_but_unverified",
       "verified": true,
-      "audit_note": "Task was marked done but verification FAILED: Verify hub has no uncommitted changes"
+      "audit_note": "Task was marked done but verification FAILED: Verify hub has no uncommitted changes",
+      "taskKey": "A-040"
     },
     {
       "text": "Draft next blog post for joshlevylabs.com",
@@ -213,7 +239,8 @@
       "status": "resolved",
       "verified": true,
       "audit_note": "Task was marked done but verification FAILED: Verify a blog post was created/modified in last 24 hours",
-      "output": "Resolved: not automatable via dispatch"
+      "output": "Resolved: not automatable via dispatch",
+      "taskKey": "A-020"
     },
     {
       "text": "Commit 8 uncommitted monorepo changes",
@@ -221,41 +248,48 @@
       "status": "done",
       "completedAt": "2026-02-17T23:55:38.177469-08:00",
       "output": "[main 3cb0eb2] auto: standup cleanup\n 8 files changed, 333 insertions(+), 66 deletions(-)\n create mo",
-      "verified": true
+      "verified": true,
+      "taskKey": "A-041"
     },
     {
       "text": "Draft feature spec for expanding Family tab (currently 455 lines)",
       "assignee": "Elon",
       "status": "resolved",
       "completedAt": "2026-02-17T23:55:39.323536-08:00",
-      "output": "Resolved: not automatable via dispatch"
+      "output": "Resolved: not automatable via dispatch",
+      "taskKey": "A-069"
     },
     {
       "text": "Commit 4 uncommitted hub changes",
       "assignee": "Elon",
-      "status": "pending"
+      "status": "pending",
+      "taskKey": "A-049"
     },
     {
       "text": "Draft next blog post for SEO distribution",
       "assignee": "Alex",
-      "status": "pending"
+      "status": "pending",
+      "taskKey": "A-054"
     },
     {
       "text": "Commit 9 uncommitted hub changes",
       "assignee": "Elon",
-      "status": "pending"
+      "status": "pending",
+      "taskKey": "A-057"
     },
     {
       "text": "Monitor Fear & Greed index (currently 38)",
       "assignee": "Dave",
       "status": "done",
       "verified": true,
-      "audit_note": "Completed outside dispatcher"
+      "audit_note": "Completed outside dispatcher",
+      "taskKey": "A-059"
     },
     {
       "text": "Commit 11 uncommitted Hub changes",
       "assignee": "Elon",
-      "status": "pending"
+      "status": "pending",
+      "taskKey": "A-065"
     }
   ]
 }

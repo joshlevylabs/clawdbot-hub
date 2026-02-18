@@ -245,11 +245,12 @@
     {
       "text": "Commit 8 uncommitted monorepo changes",
       "assignee": "Elon",
-      "status": "done",
+      "status": "done_but_unverified",
       "completedAt": "2026-02-17T23:55:38.177469-08:00",
       "output": "[main 3cb0eb2] auto: standup cleanup\n 8 files changed, 333 insertions(+), 66 deletions(-)\n create mo",
       "verified": true,
-      "taskKey": "A-041"
+      "taskKey": "A-041",
+      "audit_note": "Task was marked done but verification FAILED: Verify monorepo has no uncommitted changes"
     },
     {
       "text": "Draft feature spec for expanding Family tab (currently 455 lines)",

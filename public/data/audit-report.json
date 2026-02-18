@@ -1,9 +1,9 @@
 {
-  "timestamp": "2026-02-18T19:30:40.641978+00:00",
+  "timestamp": "2026-02-18T19:45:25.297872+00:00",
   "summary": {
     "total_tasks": 28,
-    "verified_done": 27,
-    "done_but_unverified": 0,
+    "verified_done": 26,
+    "done_but_unverified": 1,
     "pending": 0,
     "stale": 1
   },
@@ -136,9 +136,9 @@
     },
     {
       "text": "Commit 8 uncommitted monorepo changes",
-      "status": "verified_done",
+      "status": "done_but_unverified",
       "assignee": "Elon",
-      "verification": "PASSED: Verify monorepo has no uncommitted changes"
+      "verification": "FAILED: Verify monorepo has no uncommitted changes (output: 1)"
     },
     {
       "text": "Draft feature spec for expanding Family tab (currently 455 lines)",
@@ -178,6 +178,7 @@
     }
   ],
   "escalations": [
+    "Commit 8 uncommitted monorepo changes \u2014 marked done but verification FAILED",
     "\ud83d\udd34 STALE [Alex]: Draft next blog post for SEO distribution \u2014 unresolved for 120 min"
   ]
 }

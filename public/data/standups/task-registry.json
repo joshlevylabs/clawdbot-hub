@@ -904,13 +904,13 @@
       "tag": "JOSHUA",
       "priority": "high",
       "assignee": "Joshua",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "ASR-1",
       "sourceStandupType": "cto-app-store",
       "sourceDate": "2026-02-18",
       "createdAt": "2026-02-18T08:49:36.999908-08:00",
-      "updatedAt": "2026-02-18T09:14:35.619091-08:00",
-      "completedAt": null
+      "updatedAt": "2026-02-18T20:02:46.851510+00:00",
+      "completedAt": "2026-02-18T20:02:46.851510+00:00"
     },
     {
       "key": "A-054",
@@ -988,13 +988,13 @@
       "tag": "JOSHUA",
       "priority": "high",
       "assignee": "Joshua",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "DA-1",
       "sourceStandupType": "cmo-distribution",
       "sourceDate": "2026-02-18",
       "createdAt": "2026-02-18T08:50:09.213609-08:00",
-      "updatedAt": "2026-02-18T09:14:35.621292-08:00",
-      "completedAt": null
+      "updatedAt": "2026-02-18T20:03:06.236391+00:00",
+      "completedAt": "2026-02-18T20:03:06.236391+00:00"
     },
     {
       "key": "A-059",

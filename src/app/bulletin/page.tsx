@@ -10,7 +10,8 @@ import {
   Clock,
   AlertTriangle,
   CheckCircle,
-  Zap
+  Zap,
+  Filter
 } from "lucide-react";
 import TicketDetailModal from "@/components/TicketDetailModal";
 
@@ -188,9 +189,11 @@ export default function BulletinPage() {
   const [typeFilter, setTypeFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [standupTypeFilter, setStandupTypeFilter] = useState<string>("all");
+  const [verticalFilter, setVerticalFilter] = useState<string>("all");
+  const [standupIndex, setStandupIndex] = useState<any>(null);
 
   useEffect(() => {
-    async function fetchTaskRegistry() {
+    async function fetchData() {
       try {
         // Load tasks from API (merges sprint-ready flags from Supabase)
         const res = await fetch("/api/tasks");
@@ -204,20 +207,38 @@ export default function BulletinPage() {
             setTaskRegistry(await staticRes.json());
           }
         }
+
+        // Load standup index
+        const indexRes = await fetch("/data/standups/index.json");
+        if (indexRes.ok) {
+          setStandupIndex(await indexRes.json());
+        }
       } catch (err) {
-        console.error("Failed to load task registry:", err);
+        console.error("Failed to load data:", err);
       } finally {
         setLoading(false);
       }
     }
-    fetchTaskRegistry();
+    fetchData();
   }, []);
+
+  // Build vertical lookup map from standup index
+  const verticalMap: Record<string, string[]> = {};
+  if (standupIndex) {
+    for (const s of standupIndex.standups) {
+      if (s.instanceKey) verticalMap[s.instanceKey] = s.verticals || [];
+    }
+  }
 
   // Filter tasks based on filters
   const filteredTasks = taskRegistry ? taskRegistry.tasks.filter((task: Task) => {
     if (typeFilter !== "all" && task.tag.toLowerCase() !== typeFilter) return false;
     if (statusFilter !== "all" && task.status !== statusFilter) return false;
     if (standupTypeFilter !== "all" && task.sourceStandupType !== standupTypeFilter) return false;
+    if (verticalFilter !== "all") {
+      const taskVerticals = verticalMap[task.sourceStandup] || [];
+      if (!taskVerticals.includes(verticalFilter)) return false;
+    }
     return true;
   }) : [];
 
@@ -230,6 +251,12 @@ export default function BulletinPage() {
 
   // Get unique standup types for filter
   const standupTypes: string[] = taskRegistry ? Array.from(new Set(taskRegistry.tasks.map((t: Task) => t.sourceStandupType as string))) : [];
+
+  // Get unique verticals from standup index
+  const allVerticals = standupIndex ? Array.from(new Set(
+    standupIndex.standups.flatMap((s: any) => s.verticals || [])
+  )) : [];
+  const verticals: string[] = allVerticals.filter(Boolean).sort();
 
   // Group tasks by status for kanban
   const tasksByStatus = {
@@ -329,89 +356,86 @@ export default function BulletinPage() {
       </div>
 
       {/* Filters */}
-      <div className="space-y-2">
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 flex-nowrap">
-          <span className="text-[10px] text-slate-600 uppercase tracking-wider font-medium mr-1">Type</span>
-          {[
-            { key: "all", label: "All" },
-            { key: "agent", label: "🤖 Agent" },
-            { key: "joshua", label: "👤 Joshua" },
-          ].map((filter) => (
-            <button
-              key={filter.key}
-              onClick={() => setTypeFilter(filter.key)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap ${
-                typeFilter === filter.key
-                  ? "bg-primary-600/20 text-primary-400 border border-primary-500/30"
-                  : "bg-slate-900/30 text-slate-500 border border-slate-800 hover:border-slate-700 hover:text-slate-400"
-              }`}
+      <div className="bg-slate-900/50 rounded-xl border border-slate-800 p-4">
+        <div className="flex items-center gap-3 flex-wrap">
+          <Filter className="w-4 h-4 text-slate-500" />
+          
+          {/* Type dropdown */}
+          <div className="flex flex-col gap-1">
+            <label className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">Type</label>
+            <select
+              value={typeFilter}
+              onChange={(e) => setTypeFilter(e.target.value)}
+              className="bg-slate-800/50 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-primary-500/50 appearance-none cursor-pointer"
             >
-              {filter.label}
-            </button>
-          ))}
-        </div>
-        
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 flex-nowrap">
-          <span className="text-[10px] text-slate-600 uppercase tracking-wider font-medium mr-1">Status</span>
-          {[
-            { key: "all", label: "All" },
-            { key: "pending", label: "Pending" },
-            { key: "in-progress", label: "In Progress" },
-            { key: "done_but_unverified", label: "Review" },
-            { key: "done", label: "Done" },
-            { key: "resolved", label: "Resolved" },
-          ].map((filter) => (
-            <button
-              key={filter.key}
-              onClick={() => setStatusFilter(filter.key)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap ${
-                statusFilter === filter.key
-                  ? "bg-primary-600/20 text-primary-400 border border-primary-500/30"
-                  : "bg-slate-900/30 text-slate-500 border border-slate-800 hover:border-slate-700 hover:text-slate-400"
-              }`}
-            >
-              {filter.label}
-            </button>
-          ))}
-        </div>
+              <option value="all">All Types</option>
+              <option value="agent">🤖 Agent</option>
+              <option value="joshua">👤 Joshua</option>
+            </select>
+          </div>
 
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 flex-nowrap">
-          <span className="text-[10px] text-slate-600 uppercase tracking-wider font-medium mr-1">Standup</span>
-          <button
-            onClick={() => setStandupTypeFilter("all")}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap ${
-              standupTypeFilter === "all"
-                ? "bg-primary-600/20 text-primary-400 border border-primary-500/30"
-                : "bg-slate-900/30 text-slate-500 border border-slate-800 hover:border-slate-700 hover:text-slate-400"
-            }`}
-          >
-            All
-          </button>
-          {standupTypes.slice(0, 6).map((type: string) => {
-            const typeNames: Record<string, string> = {
-              "morning-priorities": "Morning",
-              "ecosystem-sync": "Ecosystem",
-              "cto-app-store": "App Store", 
-              "cmo-distribution": "Distribution",
-              "cro-market-intel": "Business Dev",
-              "evening-wrap": "Evening",
-              "afternoon-checkpoint": "Afternoon",
-              "midnight-prep": "Midnight",
-            };
-            return (
-              <button
-                key={type}
-                onClick={() => setStandupTypeFilter(type)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap ${
-                  standupTypeFilter === type
-                    ? "bg-primary-600/20 text-primary-400 border border-primary-500/30"
-                    : "bg-slate-900/30 text-slate-500 border border-slate-800 hover:border-slate-700 hover:text-slate-400"
-                }`}
-              >
-                {typeNames[type] || type}
-              </button>
-            );
-          })}
+          {/* Status dropdown */}
+          <div className="flex flex-col gap-1">
+            <label className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">Status</label>
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="bg-slate-800/50 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-primary-500/50 appearance-none cursor-pointer"
+            >
+              <option value="all">All Status</option>
+              <option value="pending">Pending</option>
+              <option value="in-progress">In Progress</option>
+              <option value="done_but_unverified">Review</option>
+              <option value="done">Done</option>
+              <option value="resolved">Resolved</option>
+            </select>
+          </div>
+
+          {/* Standup dropdown */}
+          <div className="flex flex-col gap-1">
+            <label className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">Standup</label>
+            <select
+              value={standupTypeFilter}
+              onChange={(e) => setStandupTypeFilter(e.target.value)}
+              className="bg-slate-800/50 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-primary-500/50 appearance-none cursor-pointer"
+            >
+              <option value="all">All Standups</option>
+              {standupTypes.map((type: string) => {
+                const typeNames: Record<string, string> = {
+                  "morning-priorities": "Morning",
+                  "ecosystem-sync": "Ecosystem",
+                  "cto-app-store": "App Store", 
+                  "cmo-distribution": "Distribution",
+                  "cro-market-intel": "Business Dev",
+                  "evening-wrap": "Evening",
+                  "afternoon-checkpoint": "Afternoon",
+                  "midnight-prep": "Midnight",
+                };
+                return (
+                  <option key={type} value={type}>
+                    {typeNames[type] || type}
+                  </option>
+                );
+              })}
+            </select>
+          </div>
+
+          {/* Vertical dropdown */}
+          <div className="flex flex-col gap-1">
+            <label className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">Vertical</label>
+            <select
+              value={verticalFilter}
+              onChange={(e) => setVerticalFilter(e.target.value)}
+              className="bg-slate-800/50 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-primary-500/50 appearance-none cursor-pointer"
+            >
+              <option value="all">All Verticals</option>
+              {verticals.map((vertical: string) => (
+                <option key={vertical} value={vertical}>
+                  {vertical}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
       </div>
 

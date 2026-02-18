@@ -3710,6 +3710,7 @@ interface ProtocolData {
   activates: string[];
   roles: string[];
   isStages?: boolean;
+  details?: string; // Full protocol description/instructions
 }
 
 const PROTOCOLS: ProtocolData[] = [
@@ -3720,6 +3721,7 @@ const PROTOCOLS: ProtocolData[] = [
     countLabel: "13 roles",
     activates: ["Atlas (CTO)", "Nexus (Backend)", "Pixel (Frontend)", "Sentinel (QA)"],
     roles: ["PM", "Architect", "UI/UX Designer", "Frontend Dev", "Backend Dev", "DevOps", "Security Engineer", "Performance Engineer", "QA Auth", "QA Backend", "QA Frontend", "QA Integration", "QA DevOps", "Tech Writer", "Scribe", "Integrator", "Devil's Advocate"],
+    details: "Full engineering sprint protocol for major builds. Starts with PM creating an execution plan, Architect making ADRs, then parallel implementation agents. Devil's Advocate reviews before implementation. Integrator handles git cleanup. Scribe documents at the end. Use for any multi-file code change that touches >3 components."
   },
   {
     name: "The Studio",
@@ -3728,6 +3730,7 @@ const PROTOCOLS: ProtocolData[] = [
     countLabel: "14 roles",
     activates: ["Alex (CMO)", "ScriptBot (Content)", "Echo (Social)"],
     roles: ["CMO", "Brand Strategist", "Creative Director", "Show Runner", "ScriptBot", "Copywriter", "Visual Designer", "Motion Designer", "Distribution Lead", "Analytics Lead", "Community Manager", "Newsletter Editor", "SEO Specialist", "Brand DA"],
+    details: "Content creation and marketing protocol. CMO defines campaign strategy, Creative Director sets visual direction, Show Runner manages podcast production. ScriptBot drafts all written content. Distribution Lead handles cross-platform publishing. Use for podcast episodes, blog posts, newsletters, and social campaigns."
   },
   {
     name: "The Pit",
@@ -3736,6 +3739,7 @@ const PROTOCOLS: ProtocolData[] = [
     countLabel: "11 roles",
     activates: ["Dave (CRO)", "Ticker (Trading)"],
     roles: ["Strategist", "Quant Researcher", "Data Engineer", "Algorithm Dev", "Risk Manager", "Backtester", "Portfolio Manager", "Market Monitor", "Infrastructure Dev", "Compliance Auditor", "Performance Analyst"],
+    details: "Trading and market analysis protocol. Strategist defines thesis, Quant Researcher validates with data, Algorithm Dev implements signals. Risk Manager sets position sizing. Backtester validates before live deployment. Use for new trading strategies, signal optimization, and portfolio rebalancing."
   },
   {
     name: "The Tower",
@@ -3745,6 +3749,7 @@ const PROTOCOLS: ProtocolData[] = [
     activates: ["Any agent pushing to hub"],
     roles: ["Pre-Flight", "Commit", "Push", "Vercel Verify", "Live Verify", "Change QA"],
     isStages: true,
+    details: "Deployment pipeline — mandatory for every code push to Vercel-deployed repos. 5 stages: Pre-Flight checks for uncommitted changes, Commit stages and commits, Push sends to remote, Vercel Verify confirms build success, Live Verify hits production URL. Script: ~/clawd/agents/deploy-team/tower.sh <repo-dir> '<commit msg>'"
   },
   {
     name: "The Compass",
@@ -3753,6 +3758,7 @@ const PROTOCOLS: ProtocolData[] = [
     countLabel: "5 roles",
     activates: ["Personal advisory team"],
     roles: ["Pattern Analyst", "Daily Nudge", "Conflict Coach", "Routine Breaker", "Integration Advisor"],
+    details: "Relationship advisory protocol for marriage and family. Pattern Analyst tracks relationship dynamics, Daily Nudge suggests micro-actions, Conflict Coach provides de-escalation frameworks, Routine Breaker suggests novelty, Integration Advisor ensures all advice fits Joshua and Jillian's specific context."
   },
   {
     name: "The Broadcast",
@@ -3762,12 +3768,11 @@ const PROTOCOLS: ProtocolData[] = [
     activates: ["Alex (CMO)", "ScriptBot (Content)"],
     roles: ["Topic Research", "Script Draft", "Hub Review", "Record & Edit", "Platform Upload", "Newsletter & Blog", "Distribution"],
     isStages: true,
+    details: "Podcast publishing protocol — 7 stages from idea to distribution. Topic Research identifies audience-relevant subjects. Script Draft creates teleprompter-ready scripts on the Hub's /podcast page. Hub Review lets Joshua read and refine. Record & Edit is Joshua's recording session. Platform Upload pushes to YouTube, Spotify, Apple. Newsletter & Blog creates companion content. Distribution amplifies across all channels."
   },
 ];
 
-function ProtocolCard({ protocol }: { protocol: ProtocolData }) {
-  const [expanded, setExpanded] = useState(false);
-
+function ProtocolCard({ protocol, onClick }: { protocol: ProtocolData; onClick: () => void }) {
   return (
     <div className="group relative rounded-xl overflow-hidden transition-all duration-200 hover:scale-[1.01]">
       {/* Gradient border effect */}
@@ -3778,8 +3783,8 @@ function ProtocolCard({ protocol }: { protocol: ProtocolData }) {
       <div className="relative">
         {/* Main card content */}
         <button
-          onClick={() => setExpanded(!expanded)}
-          className="w-full text-left px-5 py-4 cursor-pointer"
+          onClick={onClick}
+          className="w-full text-left px-5 py-4 cursor-pointer hover:bg-slate-800/20"
         >
           <div className="flex items-start gap-3">
             <span className="text-2xl flex-shrink-0 mt-0.5">{protocol.icon}</span>
@@ -3801,51 +3806,117 @@ function ProtocolCard({ protocol }: { protocol: ProtocolData }) {
               </div>
             </div>
             <div className="flex-shrink-0 mt-1">
-              {expanded ? (
-                <ChevronDown className="w-4 h-4 text-slate-500" />
-              ) : (
-                <ChevronRight className="w-4 h-4 text-slate-500" />
-              )}
+              <ChevronRight className="w-4 h-4 text-slate-500" />
             </div>
           </div>
         </button>
-
-        {/* Expanded role list */}
-        {expanded && (
-          <div className="px-5 pb-4 pt-1 border-t border-slate-800/40 mx-3">
-            <p className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider mb-2 mt-2">
-              {protocol.isStages ? "Stages" : "Roles"}
-            </p>
-            {protocol.isStages ? (
-              <div className="flex flex-wrap items-center gap-1">
-                {protocol.roles.map((role, i) => (
-                  <span key={i} className="flex items-center gap-1">
-                    <span className="px-2 py-1 rounded-lg text-xs bg-indigo-950/40 text-indigo-300 border border-indigo-800/30 font-medium">
-                      {role}
-                    </span>
-                    {i < protocol.roles.length - 1 && (
-                      <ArrowRight className="w-3 h-3 text-slate-600" />
-                    )}
-                  </span>
-                ))}
-              </div>
-            ) : (
-              <div className="flex flex-wrap gap-1.5">
-                {protocol.roles.map((role, i) => (
-                  <span key={i} className="px-2 py-1 rounded-lg text-[11px] bg-slate-800/60 text-slate-300 border border-slate-700/40">
-                    {role}
-                  </span>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
       </div>
     </div>
   );
 }
 
 function ProtocolsSection() {
+  const [selectedProtocol, setSelectedProtocol] = useState<ProtocolData | null>(null);
+
+  if (selectedProtocol) {
+    return (
+      <div className="space-y-4 mt-8">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-slate-700 to-transparent" />
+          <h2 className="text-lg font-bold text-slate-300 tracking-tight whitespace-nowrap">
+            ⚡ Protocol Details
+          </h2>
+          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-slate-700 to-transparent" />
+        </div>
+        
+        {/* Protocol Detail Panel */}
+        <div className="relative rounded-2xl overflow-hidden border border-indigo-500/30 bg-gradient-to-br from-indigo-950/50 via-slate-900/80 to-violet-950/50 shadow-[0_0_30px_-5px_rgba(99,102,241,0.15)]">
+          <div className="relative p-8">
+            {/* Header */}
+            <div className="flex items-start justify-between mb-6">
+              <div className="flex items-start gap-4">
+                <span className="text-4xl flex-shrink-0">{selectedProtocol.icon}</span>
+                <div>
+                  <div className="flex items-center gap-3 mb-2">
+                    <h1 className="text-2xl font-bold text-slate-100">{selectedProtocol.name}</h1>
+                    <span className="px-3 py-1 rounded-lg text-sm font-semibold bg-indigo-900/50 text-indigo-300 border border-indigo-700/40">
+                      {selectedProtocol.countLabel}
+                    </span>
+                  </div>
+                  <p className="text-lg text-slate-300 mb-4">{selectedProtocol.description}</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setSelectedProtocol(null)}
+                className="p-2 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 transition-colors"
+                title="Close"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Details */}
+            <div className="mb-8">
+              <h3 className="text-sm font-semibold text-slate-300 uppercase tracking-wider mb-3">Full Details</h3>
+              <p className="text-slate-200 leading-relaxed">{selectedProtocol.details}</p>
+            </div>
+
+            {/* Stages/Roles Pipeline */}
+            <div className="mb-6">
+              <h3 className="text-sm font-semibold text-slate-300 uppercase tracking-wider mb-4">
+                {selectedProtocol.isStages ? "Stages Pipeline" : "Team Roles"}
+              </h3>
+              {selectedProtocol.isStages ? (
+                <div className="flex flex-wrap items-center gap-3">
+                  {selectedProtocol.roles.map((role, i) => (
+                    <span key={i} className="flex items-center gap-2">
+                      <div className="px-4 py-2 rounded-xl text-sm font-medium bg-gradient-to-r from-indigo-900/40 to-violet-900/40 text-indigo-200 border border-indigo-700/30">
+                        {role}
+                      </div>
+                      {i < selectedProtocol.roles.length - 1 && (
+                        <ArrowRight className="w-4 h-4 text-slate-500" />
+                      )}
+                    </span>
+                  ))}
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                  {selectedProtocol.roles.map((role, i) => (
+                    <div key={i} className="px-3 py-2 rounded-lg text-sm bg-slate-800/60 text-slate-300 border border-slate-700/40">
+                      {role}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Activates */}
+            <div>
+              <h3 className="text-sm font-semibold text-slate-300 uppercase tracking-wider mb-3">Activates</h3>
+              <div className="flex flex-wrap gap-2">
+                {selectedProtocol.activates.map((agent, i) => (
+                  <span key={i} className="px-3 py-2 rounded-lg text-sm bg-gradient-to-r from-slate-800/80 to-slate-700/80 text-slate-200 border border-slate-600/50">
+                    {agent}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Back button */}
+        <div className="flex justify-center">
+          <button
+            onClick={() => setSelectedProtocol(null)}
+            className="px-6 py-2 rounded-lg bg-slate-800/50 text-slate-300 border border-slate-700 hover:bg-slate-700/50 hover:text-slate-200 transition-colors"
+          >
+            ← Back to Protocols
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-4 mt-8">
       <div className="flex items-center gap-3 mb-2">
@@ -3860,7 +3931,7 @@ function ProtocolsSection() {
       </p>
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         {PROTOCOLS.map(protocol => (
-          <ProtocolCard key={protocol.name} protocol={protocol} />
+          <ProtocolCard key={protocol.name} protocol={protocol} onClick={() => setSelectedProtocol(protocol)} />
         ))}
       </div>
     </div>

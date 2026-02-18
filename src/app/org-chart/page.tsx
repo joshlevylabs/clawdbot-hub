@@ -1457,27 +1457,25 @@ function DesktopTree({ agents, selectedId, onSelect }: { agents: Record<string, 
           const isOpen = expanded[node.agent.id] !== false; // default open
           return (
             <div key={node.agent.id} className={`rounded-xl border ${colors.border} bg-slate-950/40 overflow-hidden`}>
-              {/* C-level header — clickable to expand/collapse */}
-              <div
-                className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-slate-900/50 transition-colors"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  toggle(node.agent.id);
-                }}
-              >
-                <span className="text-xs text-slate-500">{isOpen ? "▾" : "▸"}</span>
-                <span className="text-sm">{node.agent.emoji}</span>
-                <span className="font-bold text-sm text-slate-100">{node.agent.name}</span>
-                <span className={`text-xs font-semibold ${colors.accent}`}>{node.agent.title}</span>
-                <StatusDot status={node.agent.status} />
-                <span className="ml-auto text-[10px] text-slate-600">{node.children.length} report{node.children.length !== 1 ? "s" : ""}</span>
+              {/* C-level header — click name to open details, chevron to expand/collapse */}
+              <div className="flex items-center gap-2 px-3 py-2">
                 <button
-                  className="ml-1 text-slate-500 hover:text-slate-300 transition-colors"
-                  onClick={(e) => { e.stopPropagation(); onSelect(node.agent.id); }}
-                  title="Edit agent"
+                  className="text-xs text-slate-500 hover:text-slate-300 transition-colors px-0.5"
+                  onClick={(e) => { e.stopPropagation(); toggle(node.agent.id); }}
+                  title={isOpen ? "Collapse team" : "Expand team"}
                 >
-                  <Info className="w-3 h-3" />
+                  {isOpen ? "▾" : "▸"}
                 </button>
+                <button
+                  className="flex items-center gap-2 flex-1 min-w-0 cursor-pointer hover:opacity-80 transition-opacity text-left"
+                  onClick={() => onSelect(node.agent.id)}
+                >
+                  <span className="text-sm">{node.agent.emoji}</span>
+                  <span className="font-bold text-sm text-slate-100">{node.agent.name}</span>
+                  <span className={`text-xs font-semibold ${colors.accent}`}>{node.agent.title}</span>
+                  <StatusDot status={node.agent.status} />
+                </button>
+                <span className="text-[10px] text-slate-600 shrink-0">{node.children.length} report{node.children.length !== 1 ? "s" : ""}</span>
               </div>
 
               {/* Expanded team list */}

@@ -248,7 +248,9 @@
     {
       "text": "Monitor Fear & Greed index (currently 38)",
       "assignee": "Dave",
-      "status": "pending"
+      "status": "done",
+      "verified": true,
+      "audit_note": "Completed outside dispatcher"
     },
     {
       "text": "Commit 11 uncommitted Hub changes",

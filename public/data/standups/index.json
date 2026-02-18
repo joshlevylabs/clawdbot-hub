@@ -2,19 +2,6 @@
   "standups": [
     {
       "date": "2026-02-18",
-      "type": "morning-priorities",
-      "typeName": "Morning Priorities",
-      "typeEmoji": "\ud83c\udf05",
-      "topic": "Morning Priorities \u2014 Wednesday Feb 18",
-      "file": "2026-02-18-morning-priorities.json",
-      "tokenCost": 0,
-      "verticals": [
-        "ecosystem"
-      ],
-      "initiatives": []
-    },
-    {
-      "date": "2026-02-18",
       "type": "ecosystem-sync",
       "typeName": "Ecosystem Sync Audit",
       "typeEmoji": "\ud83d\udd04",
@@ -27,23 +14,8 @@
         "hub",
         "lever"
       ],
-      "initiatives": []
-    },
-    {
-      "date": "2026-02-18",
-      "type": "cto-app-store",
-      "typeName": "App Store Readiness",
-      "typeEmoji": "\ud83d\udcf1",
-      "topic": "App Store Readiness \u2014 Wednesday Feb 18",
-      "file": "2026-02-18-cto-app-store.json",
-      "tokenCost": 0.1174,
-      "verticals": [
-        "lever"
-      ],
-      "initiatives": [
-        "app-store-submit",
-        "lever-dashboard"
-      ]
+      "initiatives": [],
+      "time": "08:30"
     },
     {
       "date": "2026-02-18",
@@ -58,7 +30,8 @@
       ],
       "initiatives": [
         "mre-v14-optimization"
-      ]
+      ],
+      "time": "08:00"
     },
     {
       "date": "2026-02-18",
@@ -74,20 +47,39 @@
       "initiatives": [
         "podcast-distribution",
         "content-growth"
-      ]
+      ],
+      "time": "07:30"
     },
     {
-      "date": "2026-02-17",
+      "date": "2026-02-18",
+      "type": "cto-app-store",
+      "typeName": "App Store Readiness",
+      "typeEmoji": "\ud83d\udcf1",
+      "topic": "App Store Readiness \u2014 Wednesday Feb 18",
+      "file": "2026-02-18-cto-app-store.json",
+      "tokenCost": 0.1174,
+      "verticals": [
+        "lever"
+      ],
+      "initiatives": [
+        "app-store-submit",
+        "lever-dashboard"
+      ],
+      "time": "07:00"
+    },
+    {
+      "date": "2026-02-18",
       "type": "morning-priorities",
       "typeName": "Morning Priorities",
       "typeEmoji": "\ud83c\udf05",
-      "topic": "Morning Priorities \u2014 Tuesday Feb 17",
-      "file": "2026-02-17-morning-priorities.json",
+      "topic": "Morning Priorities \u2014 Wednesday Feb 18",
+      "file": "2026-02-18-morning-priorities.json",
       "tokenCost": 0,
       "verticals": [
         "ecosystem"
       ],
-      "initiatives": []
+      "initiatives": [],
+      "time": "05:45"
     },
     {
       "date": "2026-02-17",
@@ -100,18 +92,8 @@
       "verticals": [
         "ecosystem"
       ],
-      "initiatives": []
-    },
-    {
-      "date": "2026-02-17",
-      "type": "lever-faith-family",
-      "typeName": "Lever's Faith & Family",
-      "typeEmoji": "\ud83d\udccb",
-      "topic": "Lever's Faith & Family \u2014 Tuesday Feb 17",
-      "file": "2026-02-17-lever-faith-family.json",
-      "tokenCost": 0.1207,
-      "verticals": [],
-      "initiatives": []
+      "initiatives": [],
+      "time": "23:55"
     },
     {
       "date": "2026-02-17",
@@ -132,7 +114,8 @@
         "podcast-distribution",
         "hub-standup-system",
         "lever-dashboard"
-      ]
+      ],
+      "time": "19:00"
     },
     {
       "date": "2026-02-17",
@@ -145,7 +128,34 @@
       "verticals": [
         "ecosystem"
       ],
-      "initiatives": []
+      "initiatives": [],
+      "time": "12:00"
+    },
+    {
+      "date": "2026-02-17",
+      "type": "lever-faith-family",
+      "typeName": "Lever's Faith & Family",
+      "typeEmoji": "\ud83d\udccb",
+      "topic": "Lever's Faith & Family \u2014 Tuesday Feb 17",
+      "file": "2026-02-17-lever-faith-family.json",
+      "tokenCost": 0.1207,
+      "verticals": [],
+      "initiatives": [],
+      "time": "09:00"
+    },
+    {
+      "date": "2026-02-17",
+      "type": "morning-priorities",
+      "typeName": "Morning Priorities",
+      "typeEmoji": "\ud83c\udf05",
+      "topic": "Morning Priorities \u2014 Tuesday Feb 17",
+      "file": "2026-02-17-morning-priorities.json",
+      "tokenCost": 0,
+      "verticals": [
+        "ecosystem"
+      ],
+      "initiatives": [],
+      "time": "05:45"
     },
     {
       "date": "2026-02-17",
@@ -171,19 +181,6 @@
     },
     {
       "date": "2026-02-16",
-      "type": "morning-priorities",
-      "typeName": "Morning Priorities",
-      "typeEmoji": "\ud83c\udf05",
-      "topic": "Morning Priorities \u2014 Monday Feb 16",
-      "file": "2026-02-16-morning-priorities.json",
-      "tokenCost": 0.1081,
-      "verticals": [
-        "ecosystem"
-      ],
-      "initiatives": []
-    },
-    {
-      "date": "2026-02-16",
       "type": "midnight-prep",
       "typeName": "Midnight Prep",
       "typeEmoji": "\ud83c\udf19",
@@ -193,7 +190,22 @@
       "verticals": [
         "ecosystem"
       ],
-      "initiatives": []
+      "initiatives": [],
+      "time": "23:55"
+    },
+    {
+      "date": "2026-02-16",
+      "type": "morning-priorities",
+      "typeName": "Morning Priorities",
+      "typeEmoji": "\ud83c\udf05",
+      "topic": "Morning Priorities \u2014 Monday Feb 16",
+      "file": "2026-02-16-morning-priorities.json",
+      "tokenCost": 0.1081,
+      "verticals": [
+        "ecosystem"
+      ],
+      "initiatives": [],
+      "time": "05:45"
     }
   ]
 }

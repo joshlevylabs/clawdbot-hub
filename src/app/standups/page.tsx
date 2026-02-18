@@ -93,6 +93,7 @@ interface TokenUsage {
 
 interface Standup {
   date: string;
+  time?: string;
   generatedAt: string;
   topic: string;
   summary?: string;
@@ -142,6 +143,7 @@ interface InitiativeDef {
 
 interface StandupIndexEntry {
   date: string;
+  time?: string;
   topic: string;
   file: string;
   type?: string;
@@ -572,6 +574,11 @@ function StandupDetail({ standup, onToggleActionItem }: { standup: Standup; onTo
         <span className="text-xs text-slate-500 flex items-center gap-1">
           <Calendar className="w-3 h-3" /> {formatDate(standup.date)}
         </span>
+        {standup.time && (
+          <span className="text-xs text-slate-500 flex items-center gap-1">
+            <Clock className="w-3 h-3" /> {(() => { const [h, m] = standup.time.split(':').map(Number); const ampm = h >= 12 ? 'PM' : 'AM'; const h12 = h % 12 || 12; return `${h12}:${String(m).padStart(2, '0')} ${ampm} PT`; })()}
+          </span>
+        )}
         <span className="text-xs text-slate-500 flex items-center gap-1">
           <Clock className="w-3 h-3" /> {standup.duration}
         </span>
@@ -859,7 +866,7 @@ function StandupHistoryItem({
         </p>
       </div>
       <p className={`text-xs mt-0.5 truncate ${isSelected ? "text-primary-400/70" : "text-slate-500"}`}>
-        {formatDate(entry.date)}
+        {formatDate(entry.date)}{entry.time ? ` · ${(() => { const [h, m] = entry.time.split(':').map(Number); const ampm = h >= 12 ? 'PM' : 'AM'; const h12 = h % 12 || 12; return `${h12}:${String(m).padStart(2, '0')} ${ampm}`; })()}` : ''}
       </p>
       {entry.verticals && entry.verticals.length > 0 && entry.verticals[0] !== "ecosystem" && (
         <div className="flex items-center gap-1 mt-1">

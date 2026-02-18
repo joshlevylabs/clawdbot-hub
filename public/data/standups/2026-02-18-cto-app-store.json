@@ -222,5 +222,6 @@
       "recommended": 1
     }
   ],
-  "phase": "waiting_for_ceo"
+  "phase": "waiting_for_ceo",
+  "time": "07:00"
 }

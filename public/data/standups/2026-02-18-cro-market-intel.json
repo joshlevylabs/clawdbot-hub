@@ -209,5 +209,6 @@
       "recommended": 0
     }
   ],
-  "phase": "waiting_for_ceo"
+  "phase": "waiting_for_ceo",
+  "time": "08:00"
 }

@@ -561,6 +561,34 @@ function ReportCard({ title, icon, report }: { title: string; icon: string; repo
 }
 
 function StandupDetail({ standup, onToggleActionItem }: { standup: Standup; onToggleActionItem?: (text: string, completed: boolean) => void }) {
+  const [standupTickets, setStandupTickets] = useState<any[]>([]);
+  const [loadingTickets, setLoadingTickets] = useState(false);
+
+  // Load tickets for this standup
+  useEffect(() => {
+    if (!standup.instanceKey) return;
+    
+    const loadTickets = async () => {
+      setLoadingTickets(true);
+      try {
+        const response = await fetch("/data/standups/task-registry.json");
+        if (response.ok) {
+          const taskRegistry = await response.json();
+          // Filter tasks where sourceStandup matches this standup's instanceKey
+          const matchingTasks = Object.values(taskRegistry).filter((task: any) => 
+            task.sourceStandup === standup.instanceKey
+          );
+          setStandupTickets(matchingTasks);
+        }
+      } catch (error) {
+        console.error("Failed to load tickets for standup:", error);
+      } finally {
+        setLoadingTickets(false);
+      }
+    };
+
+    loadTickets();
+  }, [standup.instanceKey]);
   const [showTranscript, setShowTranscript] = useState(false);
   const completedActions = standup.actionItems.filter((a) => a.completed).length;
   const totalActions = standup.actionItems.length;
@@ -849,6 +877,59 @@ function StandupDetail({ standup, onToggleActionItem }: { standup: Standup; onTo
           </div>
         )}
       </div>
+
+      {/* Tickets Created Section */}
+      {standup.instanceKey && (
+        <div className="bg-slate-900/50 rounded-xl border border-slate-800 p-4">
+          <div className="flex items-center justify-between mb-3">
+            <p className="text-xs text-slate-500 uppercase tracking-wide font-medium">🎫 Tickets Created</p>
+            {loadingTickets ? (
+              <div className="w-4 h-4 border-2 border-slate-600 border-t-primary-500 rounded-full animate-spin"></div>
+            ) : (
+              <span className="text-xs text-slate-500">{standupTickets.length} tickets</span>
+            )}
+          </div>
+          {loadingTickets ? (
+            <div className="text-center py-4 text-slate-500 text-sm">Loading tickets...</div>
+          ) : standupTickets.length === 0 ? (
+            <div className="text-center py-4 text-slate-500 text-sm">No tickets created from this standup</div>
+          ) : (
+            <div className="space-y-2">
+              {standupTickets.map((ticket) => (
+                <div 
+                  key={ticket.key}
+                  className="flex items-center gap-3 p-3 bg-slate-800/30 rounded-lg hover:bg-slate-800/50 transition-colors cursor-pointer"
+                  onClick={() => {
+                    // Navigate to bulletin page with this ticket
+                    window.open(`/bulletin?ticket=${encodeURIComponent(ticket.key)}`, '_blank');
+                  }}
+                >
+                  <span className="text-xs font-mono text-primary-400 bg-primary-500/10 px-2 py-1 rounded border border-primary-500/20">
+                    {ticket.key}
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm text-slate-200 truncate">{ticket.text}</p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium border ${
+                        ticket.status === "done" || ticket.status === "resolved" 
+                          ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30"
+                          : ticket.status === "in-progress"
+                          ? "bg-blue-500/20 text-blue-400 border-blue-500/30"  
+                          : "bg-amber-500/20 text-amber-400 border-amber-500/30"
+                      }`}>
+                        {ticket.status.toUpperCase()}
+                      </span>
+                      <PriorityBadge priority={ticket.priority} />
+                      <span className="text-[10px] text-slate-500">→ {ticket.assignee}</span>
+                    </div>
+                  </div>
+                  <ArrowRight className="w-4 h-4 text-slate-500" />
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Token cost footer */}
       {standup.tokenUsage && (
@@ -2680,8 +2761,7 @@ export default function StandupsPage() {
       {/* Tab Content */}
       {activeTab === "history" ? (
         <>
-          {/* Joshua's Priorities (top — most important) */}
-          <JoshuaPrioritiesCard priorities={joshuaPriorities} onToggle={handleTogglePriority} />
+          {/* Priorities/tasks section removed - functionality moved to Bulletin page */}
 
           {/* CEO Directives */}
           {selectedStandup?.ceoDirectives && selectedStandup.ceoDirectives.length > 0 && (

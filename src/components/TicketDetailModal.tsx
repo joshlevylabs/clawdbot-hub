@@ -13,7 +13,12 @@ import {
   Bot,
   CheckCircle,
   AlertTriangle,
-  Circle
+  Circle,
+  Plus,
+  Trash2,
+  ExternalLink,
+  BookOpen,
+  Edit
 } from "lucide-react";
 
 // Task type from task-registry.json structure
@@ -172,6 +177,278 @@ function ActivityTimeline({ task }: { task: Task }) {
   );
 }
 
+// Description Section Component
+function DescriptionSection({ task, onUpdate }: { task: Task; onUpdate: (updates: Partial<Task>) => void }) {
+  const [description, setDescription] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
+  const [lastSaved, setLastSaved] = useState<string | null>(null);
+
+  // Load initial description from API
+  useEffect(() => {
+    fetch("/api/task-notes")
+      .then(res => res.json())
+      .then(notes => {
+        if (notes[task.key]?.description) {
+          setDescription(notes[task.key].description);
+        }
+      })
+      .catch(console.error);
+  }, [task.key]);
+
+  const handleSave = async (value: string) => {
+    setIsSaving(true);
+    try {
+      await fetch("/api/task-notes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          taskKey: task.key,
+          description: value
+        })
+      });
+      setLastSaved("Saved ✓");
+      setTimeout(() => setLastSaved(null), 2000);
+    } catch (error) {
+      console.error("Failed to save description:", error);
+      setLastSaved("Error saving");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleBlur = () => {
+    if (description.trim() !== "") {
+      handleSave(description);
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      <h2 className="text-sm font-semibold text-slate-300 uppercase tracking-wider">Description</h2>
+      <div className="space-y-2">
+        <textarea
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          onBlur={handleBlur}
+          placeholder="What this ticket is trying to accomplish. Initially empty — Joshua or agents can fill this in."
+          className="w-full h-24 bg-slate-800/50 border border-slate-700 rounded-lg p-3 text-slate-200 placeholder-slate-500 resize-none"
+        />
+        {(isSaving || lastSaved) && (
+          <p className="text-xs text-slate-500">
+            {isSaving ? "Saving..." : lastSaved}
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// Acceptance Criteria Section Component
+function AcceptanceCriteriaSection({ task, onUpdate }: { task: Task; onUpdate: (updates: Partial<Task>) => void }) {
+  const [criteria, setCriteria] = useState<{ text: string; completed: boolean }[]>([]);
+  const [isSaving, setIsSaving] = useState(false);
+
+  // Load initial criteria from API
+  useEffect(() => {
+    fetch("/api/task-notes")
+      .then(res => res.json())
+      .then(notes => {
+        if (notes[task.key]?.acceptanceCriteria) {
+          setCriteria(notes[task.key].acceptanceCriteria);
+        }
+      })
+      .catch(console.error);
+  }, [task.key]);
+
+  const saveCriteria = async (newCriteria: { text: string; completed: boolean }[]) => {
+    setIsSaving(true);
+    try {
+      await fetch("/api/task-notes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          taskKey: task.key,
+          acceptanceCriteria: newCriteria
+        })
+      });
+    } catch (error) {
+      console.error("Failed to save acceptance criteria:", error);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const addCriterion = () => {
+    const newCriteria = [...criteria, { text: "", completed: false }];
+    setCriteria(newCriteria);
+  };
+
+  const removeCriterion = (index: number) => {
+    const newCriteria = criteria.filter((_, i) => i !== index);
+    setCriteria(newCriteria);
+    saveCriteria(newCriteria);
+  };
+
+  const updateCriterion = (index: number, text: string) => {
+    const newCriteria = criteria.map((c, i) => i === index ? { ...c, text } : c);
+    setCriteria(newCriteria);
+  };
+
+  const toggleCriterion = (index: number) => {
+    const newCriteria = criteria.map((c, i) => i === index ? { ...c, completed: !c.completed } : c);
+    setCriteria(newCriteria);
+    saveCriteria(newCriteria);
+  };
+
+  const handleCriterionBlur = (index: number, text: string) => {
+    if (text.trim()) {
+      saveCriteria(criteria);
+    } else {
+      removeCriterion(index);
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      <h2 className="text-sm font-semibold text-slate-300 uppercase tracking-wider">Acceptance Criteria</h2>
+      <div className="space-y-2">
+        {criteria.map((criterion, index) => (
+          <div key={index} className="flex items-start gap-3 p-2 bg-slate-800/30 rounded-lg">
+            <button
+              onClick={() => toggleCriterion(index)}
+              className="flex-shrink-0 mt-1 hover:scale-110 transition-transform"
+            >
+              {criterion.completed ? (
+                <CheckCircle className="w-4 h-4 text-emerald-500" />
+              ) : (
+                <Circle className="w-4 h-4 text-slate-500 hover:text-slate-400" />
+              )}
+            </button>
+            <input
+              type="text"
+              value={criterion.text}
+              onChange={(e) => updateCriterion(index, e.target.value)}
+              onBlur={(e) => handleCriterionBlur(index, e.target.value)}
+              placeholder="Enter acceptance criterion..."
+              className="flex-1 bg-transparent text-slate-200 placeholder-slate-500 border-none outline-none"
+            />
+            <button
+              onClick={() => removeCriterion(index)}
+              className="flex-shrink-0 p-1 hover:bg-slate-700 rounded text-red-400 hover:text-red-300"
+            >
+              <Trash2 className="w-3 h-3" />
+            </button>
+          </div>
+        ))}
+        <button
+          onClick={addCriterion}
+          className="flex items-center gap-2 px-3 py-2 text-slate-400 hover:text-slate-300 hover:bg-slate-800/50 rounded-lg text-sm transition-colors"
+        >
+          <Plus className="w-4 h-4" />
+          Add criteria
+        </button>
+        {isSaving && (
+          <p className="text-xs text-slate-500">Saving...</p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// Source Standup Link Section Component
+function SourceStandupLinkSection({ task }: { task: Task }) {
+  const handleViewSourceStandup = () => {
+    const url = `/standups?standup=${encodeURIComponent(task.sourceStandup)}`;
+    window.open(url, '_blank');
+  };
+
+  return (
+    <div className="space-y-4">
+      <h2 className="text-sm font-semibold text-slate-300 uppercase tracking-wider">Source Standup</h2>
+      <button
+        onClick={handleViewSourceStandup}
+        className="w-full flex items-center gap-3 p-4 bg-slate-800/50 border border-slate-700 rounded-lg hover:bg-slate-800/70 transition-colors"
+      >
+        <MessageSquare className="w-5 h-5 text-primary-400 flex-shrink-0" />
+        <div className="flex-1 text-left">
+          <p className="text-slate-200 font-medium">{task.sourceStandup}</p>
+          <p className="text-xs text-slate-500">
+            {task.sourceStandupType} • {new Date(task.sourceDate + "T00:00:00Z").toLocaleDateString()}
+          </p>
+        </div>
+        <ExternalLink className="w-4 h-4 text-slate-400" />
+      </button>
+    </div>
+  );
+}
+
+// Notes for Theo Section Component
+function NotesForTheoSection({ task, onUpdate }: { task: Task; onUpdate: (updates: Partial<Task>) => void }) {
+  const [notes, setNotes] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
+  const [lastSaved, setLastSaved] = useState<string | null>(null);
+
+  // Load initial notes from API
+  useEffect(() => {
+    fetch("/api/task-notes")
+      .then(res => res.json())
+      .then(taskNotes => {
+        if (taskNotes[task.key]?.sprintNotes) {
+          setNotes(taskNotes[task.key].sprintNotes);
+        }
+      })
+      .catch(console.error);
+  }, [task.key]);
+
+  const handleSave = async (value: string) => {
+    setIsSaving(true);
+    try {
+      await fetch("/api/task-notes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          taskKey: task.key,
+          sprintNotes: value
+        })
+      });
+      setLastSaved("Saved ✓");
+      setTimeout(() => setLastSaved(null), 2000);
+    } catch (error) {
+      console.error("Failed to save sprint notes:", error);
+      setLastSaved("Error saving");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleBlur = () => {
+    handleSave(notes);
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center gap-2">
+        <BookOpen className="w-4 h-4 text-slate-400" />
+        <h2 className="text-sm font-semibold text-slate-300 uppercase tracking-wider">Notes for Theo 📝</h2>
+      </div>
+      <div className="space-y-2">
+        <textarea
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+          onBlur={handleBlur}
+          placeholder="Leave context notes here. When you mark this as Sprint Ready, Theo will read these notes when working on the sprint."
+          className="w-full h-32 bg-slate-800/50 border border-slate-700 rounded-lg p-3 text-slate-200 placeholder-slate-500 resize-none"
+        />
+        {(isSaving || lastSaved) && (
+          <p className="text-xs text-slate-500">
+            {isSaving ? "Saving..." : lastSaved}
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function TicketDetailModal({ task, onClose, onUpdate }: TicketDetailModalProps) {
   const [localTask, setLocalTask] = useState(task);
 
@@ -227,86 +504,32 @@ export default function TicketDetailModal({ task, onClose, onUpdate }: TicketDet
               </button>
             </div>
 
-            {/* Task Details */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <div>
-                  <label className="text-sm font-medium text-slate-400 mb-2 block">Status</label>
-                  <StatusBadge status={localTask.status} />
-                  <p className="text-xs text-slate-500 mt-1">
-                    Status changes come from standups - not editable from UI
-                  </p>
-                </div>
+            {/* New Left Panel Sections */}
+            <DescriptionSection task={localTask} onUpdate={onUpdate} />
+            <AcceptanceCriteriaSection task={localTask} onUpdate={onUpdate} />
+            <SourceStandupLinkSection task={localTask} />
+            <NotesForTheoSection task={localTask} onUpdate={onUpdate} />
 
-                <div>
-                  <label className="text-sm font-medium text-slate-400 mb-2 block">Priority</label>
-                  <PriorityBadge priority={localTask.priority} />
-                </div>
-
-                <div>
-                  <label className="text-sm font-medium text-slate-400 mb-2 block">Type</label>
-                  {localTask.tag === "AGENT" ? (
-                    <div className="flex items-center gap-2 px-3 py-1.5 bg-cyan-500/15 text-cyan-400 border border-cyan-500/30 rounded-lg inline-flex text-sm font-medium">
-                      <Bot className="w-4 h-4" />
-                      🤖 AGENT
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-2 px-3 py-1.5 bg-purple-500/15 text-purple-400 border border-purple-500/30 rounded-lg inline-flex text-sm font-medium">
-                      <User className="w-4 h-4" />
-                      👤 JOSHUA
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <div>
-                  <label className="text-sm font-medium text-slate-400 mb-2 block">Assignee</label>
-                  <div className="flex items-center gap-3 px-3 py-2 bg-slate-800/50 border border-slate-700 rounded-lg">
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-                      localTask.assignee === "Agent" ? "bg-cyan-500/20 text-cyan-400" :
-                      localTask.assignee === "Joshua" ? "bg-purple-500/20 text-purple-400" :
-                      "bg-slate-500/20 text-slate-400"
-                    }`}>
-                      {(localTask.assignee || "?")[0]}
-                    </div>
-                    <span className="text-slate-200 font-medium">{localTask.assignee || "Unassigned"}</span>
+            {/* Sprint Ready Toggle */}
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm font-medium text-slate-400 mb-2 block">Sprint Ready</label>
+                <div className="flex items-center justify-between px-3 py-2 bg-slate-800/50 border border-slate-700 rounded-lg">
+                  <div>
+                    <p className="text-slate-200 text-sm">Mark for "Sprint!" command</p>
+                    <p className="text-xs text-slate-500">Joshua uses this to batch sprint tasks</p>
                   </div>
-                </div>
-
-                <div>
-                  <label className="text-sm font-medium text-slate-400 mb-2 block">Source Standup</label>
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2 px-3 py-2 bg-slate-800/50 border border-slate-700 rounded-lg">
-                      <MessageSquare className="w-4 h-4 text-primary-400" />
-                      <div>
-                        <span className="text-slate-200 font-medium">{localTask.sourceStandup}</span>
-                        <p className="text-xs text-slate-500">Type: {localTask.sourceStandupType}</p>
-                        <p className="text-xs text-slate-500">Date: {formatDate(localTask.sourceDate + "T00:00:00Z")}</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="text-sm font-medium text-slate-400 mb-2 block">Sprint Ready</label>
-                  <div className="flex items-center justify-between px-3 py-2 bg-slate-800/50 border border-slate-700 rounded-lg">
-                    <div>
-                      <p className="text-slate-200 text-sm">Mark for "Sprint!" command</p>
-                      <p className="text-xs text-slate-500">Joshua uses this to batch sprint tasks</p>
-                    </div>
-                    <button
-                      onClick={handleSprintReadyToggle}
-                      className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                        localTask.sprintReady
-                          ? 'bg-emerald-600 text-white hover:bg-emerald-700'
-                          : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
-                      }`}
-                    >
-                      <Zap className="w-4 h-4" />
-                      {localTask.sprintReady ? 'Ready' : 'Not Ready'}
-                    </button>
-                  </div>
+                  <button
+                    onClick={handleSprintReadyToggle}
+                    className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      localTask.sprintReady
+                        ? 'bg-emerald-600 text-white hover:bg-emerald-700'
+                        : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+                    }`}
+                  >
+                    <Zap className="w-4 h-4" />
+                    {localTask.sprintReady ? 'Ready' : 'Not Ready'}
+                  </button>
                 </div>
               </div>
             </div>
@@ -386,9 +609,14 @@ export default function TicketDetailModal({ task, onClose, onUpdate }: TicketDet
                     <span className="text-slate-300">{new Date(localTask.sourceDate + "T00:00:00Z").toLocaleDateString()}</span>
                   </div>
                 </div>
-                {/* Link to source standup - placeholder for future implementation */}
-                <button className="w-full mt-2 flex items-center justify-center gap-2 px-3 py-1.5 bg-slate-700/50 hover:bg-slate-700 text-slate-300 rounded text-xs transition-colors">
-                  <Link className="w-3 h-3" />
+                <button 
+                  onClick={() => {
+                    const url = `/standups?standup=${encodeURIComponent(localTask.sourceStandup)}`;
+                    window.open(url, '_blank');
+                  }}
+                  className="w-full mt-2 flex items-center justify-center gap-2 px-3 py-1.5 bg-slate-700/50 hover:bg-slate-700 text-slate-300 rounded text-xs transition-colors"
+                >
+                  <ExternalLink className="w-3 h-3" />
                   View Source Standup
                 </button>
               </div>

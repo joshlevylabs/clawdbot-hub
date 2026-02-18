@@ -1,9 +1,9 @@
 {
-  "timestamp": "2026-02-18T07:02:15.735352+00:00",
+  "timestamp": "2026-02-18T07:15:04.365917+00:00",
   "summary": {
     "total_tasks": 21,
-    "verified_done": 13,
-    "done_but_unverified": 2,
+    "verified_done": 15,
+    "done_but_unverified": 0,
     "pending": 0,
     "stale": 1
   },
@@ -42,7 +42,7 @@
       "text": "Draft next blog post",
       "status": "done_but_unverified",
       "assignee": "Alex",
-      "verification": "FAILED: Verify a blog post was created/modified in last 24 hours (output: 0)"
+      "verification": "No verification rule found"
     },
     {
       "text": "Commit 2 uncommitted hub changes",
@@ -132,12 +132,10 @@
       "text": "Draft next blog post for joshlevylabs.com",
       "status": "done_but_unverified",
       "assignee": "Alex",
-      "verification": "FAILED: Verify a blog post was created/modified in last 24 hours (output: 0)"
+      "verification": "No verification rule found"
     }
   ],
   "escalations": [
-    "Draft next blog post \u2014 marked done but verification FAILED",
-    "\ud83d\udd34 STALE [Alex]: Generate daily devotional content based on 8 faith dimensions, structured as 7-day challenge \u2014 unresolved for 120 min",
-    "Draft next blog post for joshlevylabs.com \u2014 marked done but verification FAILED"
+    "\ud83d\udd34 STALE [Alex]: Generate daily devotional content based on 8 faith dimensions, structured as 7-day challenge \u2014 unresolved for 120 min"
   ]
 }

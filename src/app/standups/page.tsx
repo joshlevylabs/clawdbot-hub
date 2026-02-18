@@ -565,10 +565,37 @@ function ReportCard({ title, icon, report }: { title: string; icon: string; repo
 function StandupDetail({ standup, onToggleActionItem }: { standup: Standup; onToggleActionItem?: (text: string, completed: boolean) => void }) {
   const [standupTickets, setStandupTickets] = useState<any[]>([]);
   const [loadingTickets, setLoadingTickets] = useState(false);
+  const [resolvedInstanceKey, setResolvedInstanceKey] = useState<string | null>(standup.instanceKey || null);
+
+  // Resolve instanceKey from index if missing (e.g. latest.json doesn't have it)
+  useEffect(() => {
+    if (standup.instanceKey) {
+      setResolvedInstanceKey(standup.instanceKey);
+      return;
+    }
+    // Try to find instanceKey from index by matching date + type
+    const resolveKey = async () => {
+      try {
+        const res = await fetch("/data/standups/index.json");
+        if (res.ok) {
+          const indexData = await res.json();
+          const match = (indexData.standups || []).find(
+            (s: any) => s.date === standup.date && s.type === standup.type
+          );
+          if (match?.instanceKey) {
+            setResolvedInstanceKey(match.instanceKey);
+          }
+        }
+      } catch {
+        // Couldn't resolve — tickets section won't show
+      }
+    };
+    resolveKey();
+  }, [standup.instanceKey, standup.date, standup.type]);
 
   // Load tickets for this standup
   useEffect(() => {
-    if (!standup.instanceKey) return;
+    if (!resolvedInstanceKey) return;
     
     const loadTickets = async () => {
       setLoadingTickets(true);
@@ -579,7 +606,7 @@ function StandupDetail({ standup, onToggleActionItem }: { standup: Standup; onTo
           // Filter tasks where sourceStandup matches this standup's instanceKey
           const allTasks = taskRegistry.tasks || [];
           const matchingTasks = allTasks.filter((task: any) => 
-            task.sourceStandup === standup.instanceKey
+            task.sourceStandup === resolvedInstanceKey
           );
           setStandupTickets(matchingTasks);
         }
@@ -591,10 +618,8 @@ function StandupDetail({ standup, onToggleActionItem }: { standup: Standup; onTo
     };
 
     loadTickets();
-  }, [standup.instanceKey]);
+  }, [resolvedInstanceKey]);
   const [showTranscript, setShowTranscript] = useState(false);
-  const completedActions = standup.actionItems.filter((a) => a.completed).length;
-  const totalActions = standup.actionItems.length;
 
   const formatDate = (dateStr: string) => {
     const [year, month, day] = dateStr.split("-").map(Number);
@@ -709,76 +734,85 @@ function StandupDetail({ standup, onToggleActionItem }: { standup: Standup; onTo
         {standup.reports.cmo && <ReportCard title="Content Pipeline" icon="🎨" report={standup.reports.cmo} />}
       </div>
 
-      {/* Action Items */}
-      {totalActions > 0 && (
-        <div className="bg-slate-900/50 rounded-xl border border-slate-800 p-4">
-          <div className="flex items-center justify-between mb-3">
-            <p className="text-xs text-slate-500 uppercase tracking-wide font-medium">Action Items</p>
-            <div className="flex items-center gap-2">
-              <div className="w-20 h-1.5 bg-slate-800 rounded-full overflow-hidden">
-                <div className="h-full bg-primary-500 rounded-full transition-all" style={{ width: totalActions > 0 ? `${(completedActions / totalActions) * 100}%` : "0%" }} />
+      {/* Summary */}
+      {standup.actionItems && standup.actionItems.length > 0 && (
+        <div className="bg-gradient-to-br from-slate-900/60 to-slate-800/30 rounded-xl border border-slate-700/50 p-5">
+          <div className="flex items-center gap-2 mb-4">
+            <MessageSquare className="w-4 h-4 text-primary-400" strokeWidth={1.5} />
+            <p className="text-xs text-slate-400 uppercase tracking-wide font-semibold">Summary</p>
+          </div>
+          
+          {/* Standup overview */}
+          <p className="text-sm text-slate-300 leading-relaxed mb-4">
+            This {standup.typeName || "standup"} covered {standup.participants.length} agent{standup.participants.length !== 1 ? "s" : ""} discussing{" "}
+            {standup.verticals && standup.verticals.length > 0 
+              ? standup.verticals.join(", ") 
+              : "organizational priorities"
+            }.{" "}
+            {standup.actionItems.length} action item{standup.actionItems.length !== 1 ? "s were" : " was"} identified
+            {(() => {
+              const joshuaItems = standup.actionItems.filter(a => (a.tag === "JOSHUA" || a.text.startsWith("[JOSHUA]")));
+              const agentItems = standup.actionItems.filter(a => (a.tag !== "JOSHUA" && !a.text.startsWith("[JOSHUA]")));
+              if (joshuaItems.length > 0 && agentItems.length > 0) {
+                return ` — ${joshuaItems.length} for Joshua and ${agentItems.length} for agents`;
+              } else if (joshuaItems.length > 0) {
+                return ` — all for Joshua`;
+              } else {
+                return ` — all delegated to agents`;
+              }
+            })()}.
+          </p>
+
+          {/* Key topics from transcript */}
+          {standup.transcript && standup.transcript.length > 0 && (
+            <div className="mb-4">
+              <p className="text-xs text-slate-500 font-medium mb-2">Key Discussion Points</p>
+              <div className="space-y-2">
+                {(() => {
+                  // Extract key topics from participant messages (skip short ones)
+                  const keyMessages = standup.transcript
+                    .filter(e => e.message.length > 80)
+                    .slice(0, 4);
+                  return keyMessages.map((entry, i) => {
+                    const colors = getAgentColors(entry.speaker, entry.role);
+                    return (
+                      <div key={i} className="flex items-start gap-2">
+                        <span className={`text-[10px] font-medium ${colors.text} flex-shrink-0 mt-0.5`}>
+                          {entry.speaker}:
+                        </span>
+                        <p className="text-xs text-slate-400 leading-relaxed line-clamp-2">
+                          {entry.message.length > 200 ? entry.message.substring(0, 200) + "..." : entry.message}
+                        </p>
+                      </div>
+                    );
+                  });
+                })()}
               </div>
-              <span className="text-xs text-slate-500">{completedActions}/{totalActions}</span>
             </div>
-          </div>
-          <div className="space-y-2">
-            {standup.actionItems.map((item, i) => {
-              const isJoshua = getTag(item) === "JOSHUA";
-              const isCompleted = item.completed;
-              return (
-                <div key={i} className={`flex items-start gap-3 p-2 rounded-lg ${isCompleted ? "bg-emerald-500/5 opacity-60" : "bg-slate-800/20"}`}>
-                  {isJoshua ? (
-                    <button
-                      onClick={() => onToggleActionItem?.(cleanText(item), !isCompleted)}
-                      className="flex-shrink-0 mt-0.5 hover:scale-110 transition-transform"
-                    >
-                      {isCompleted ? (
-                        <CheckCircle className="w-4 h-4 text-emerald-500" />
-                      ) : (
-                        <Circle className="w-4 h-4 text-purple-400 hover:text-purple-300" />
-                      )}
-                    </button>
-                  ) : (
-                    isCompleted ? (
-                      <CheckCircle className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" />
-                    ) : (
-                      <Circle className="w-4 h-4 text-slate-600 flex-shrink-0 mt-0.5" />
-                    )
-                  )}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <p className={`text-sm ${isCompleted ? "text-slate-500 line-through" : "text-slate-300"}`}>
-                        {cleanText(item)}
-                      </p>
-                      <TagBadge tag={getTag(item)} />
-                      <PriorityBadge priority={item.priority} />
-                      {item.taskKey && (
-                        <span className="text-[10px] font-mono text-primary-400 bg-primary-500/10 px-1.5 py-0.5 rounded border border-primary-500/20">
-                          {item.taskKey}
-                        </span>
-                      )}
-                      {isCompleted && item.completedAt && (
-                        <span className="text-[10px] text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded">
-                          ✓ Completed by Joshua
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-xs text-slate-600 mt-0.5">→ {item.assignee}</p>
-                    {isCompleted && item.completedAt && (
-                      <p className="text-xs text-slate-600 mt-0.5">
-                        Completed {new Date(item.completedAt).toLocaleDateString()}
-                      </p>
-                    )}
-                    {isCompleted && item.agentOutput && (
-                      <p className="text-xs text-emerald-400/70 mt-1 bg-emerald-500/5 px-2 py-1 rounded">
-                        🤖 {item.agentOutput}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+          )}
+
+          {/* Tickets summary */}
+          {standupTickets.length > 0 && (
+            <div className="pt-3 border-t border-slate-700/30">
+              <p className="text-xs text-slate-500 font-medium mb-2">
+                🎫 {standupTickets.length} ticket{standupTickets.length !== 1 ? "s" : ""} created from this standup
+              </p>
+              <div className="flex items-center gap-3 text-xs text-slate-400">
+                {(() => {
+                  const done = standupTickets.filter((t: any) => t.status === "done" || t.status === "resolved").length;
+                  const pending = standupTickets.filter((t: any) => t.status === "pending").length;
+                  const inProgress = standupTickets.filter((t: any) => t.status === "in-progress").length;
+                  return (
+                    <>
+                      {done > 0 && <span className="text-emerald-400">✅ {done} done</span>}
+                      {inProgress > 0 && <span className="text-blue-400">🔄 {inProgress} in progress</span>}
+                      {pending > 0 && <span className="text-amber-400">⏳ {pending} pending</span>}
+                    </>
+                  );
+                })()}
+              </div>
+            </div>
+          )}
         </div>
       )}
 
@@ -882,7 +916,7 @@ function StandupDetail({ standup, onToggleActionItem }: { standup: Standup; onTo
       </div>
 
       {/* Tickets Created Section */}
-      {standup.instanceKey && (
+      {resolvedInstanceKey && (
         <div className="bg-slate-900/50 rounded-xl border border-slate-800 p-4">
           <div className="flex items-center justify-between mb-3">
             <p className="text-xs text-slate-500 uppercase tracking-wide font-medium">🎫 Tickets Created</p>

@@ -90,6 +90,7 @@ type FileTab =
   | "AGENTS.md"
   | "MEMORY.md"
   | "HEARTBEAT.md"
+  | "PROTOCOLS"
   | "EDIT_AGENT";
 
 const ALL_FILE_TABS: FileTab[] = [
@@ -100,6 +101,7 @@ const ALL_FILE_TABS: FileTab[] = [
   "AGENTS.md",
   "MEMORY.md",
   "HEARTBEAT.md",
+  "PROTOCOLS",
   "EDIT_AGENT",
 ];
 
@@ -111,6 +113,7 @@ const FILE_TAB_META: Record<FileTab, { emoji: string; label: string; icon: typeo
   "AGENTS.md": { emoji: "📋", label: "Agents", icon: Users },
   "MEMORY.md": { emoji: "🧠", label: "Memory", icon: BookOpen },
   "HEARTBEAT.md": { emoji: "💓", label: "Heartbeat", icon: Heart },
+  "PROTOCOLS": { emoji: "⚡", label: "Protocols", icon: Zap },
   "EDIT_AGENT": { emoji: "✨", label: "Edit", icon: Zap },
 };
 
@@ -1205,6 +1208,7 @@ function getFallbackContent(agentId: string, tab: FileTab, agents: Record<string
     case "AGENTS.md": return buildFallbackAgents(agent, agents);
     case "MEMORY.md": return buildFallbackMemory();
     case "HEARTBEAT.md": return buildFallbackHeartbeat(agent);
+    case "PROTOCOLS": return "";
     case "EDIT_AGENT": return "";
   }
 }
@@ -2858,7 +2862,7 @@ function WorkspacePanel({
   };
 
   useEffect(() => {
-    if (activeTab !== "EDIT_AGENT") {
+    if (activeTab !== "EDIT_AGENT" && activeTab !== "PROTOCOLS") {
       fetchFile(activeTab);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -2874,6 +2878,7 @@ function WorkspacePanel({
       case "AGENTS.md": return serializeAgentsMd(formData.data);
       case "MEMORY.md": return serializeMemoryMd(formData.data);
       case "HEARTBEAT.md": return serializeHeartbeatMd(formData.data);
+      default: return rawContent;
     }
   }, [formData, rawContent]);
 
@@ -3346,6 +3351,8 @@ function WorkspacePanel({
                   <HeartbeatForm data={formData.data} onChange={(d) => updateFormData({ type: "HEARTBEAT.md", data: d })} />
                 )}
               </div>
+            ) : activeTab === "PROTOCOLS" ? (
+              <AgentProtocolsPanel agentId={agentId} agentName={agent?.name || agentId} />
             ) : null}
           </div>
 
@@ -3722,6 +3729,91 @@ function ModelStrategy() {
           <p className="text-[10px] text-slate-600 mt-1 text-right">Relative cost</p>
         </div>
       ))}
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Agent Protocols Panel — shown in agent detail modal
+   ═══════════════════════════════════════════════════════════════ */
+
+function AgentProtocolsPanel({ agentId, agentName }: { agentId: string; agentName: string }) {
+  // Check which protocols mention this agent by name or id
+  const agentProtocols = PROTOCOLS.filter(p =>
+    p.activates.some(a => {
+      const lower = a.toLowerCase();
+      return lower.includes(agentName.toLowerCase()) || lower.includes(agentId.toLowerCase());
+    })
+  );
+  const otherProtocols = PROTOCOLS.filter(p => !agentProtocols.includes(p));
+
+  return (
+    <div className="space-y-6">
+      {/* Assigned protocols */}
+      <div>
+        <h3 className="text-sm font-semibold text-slate-200 mb-3 flex items-center gap-2">
+          <Zap className="w-4 h-4 text-violet-400" />
+          Active Protocols
+          <span className="text-[10px] text-slate-500 font-normal">({agentProtocols.length})</span>
+        </h3>
+        {agentProtocols.length === 0 ? (
+          <p className="text-xs text-slate-500 italic">No protocols assigned to this agent.</p>
+        ) : (
+          <div className="space-y-2">
+            {agentProtocols.map(p => (
+              <div key={p.name} className="rounded-lg border border-violet-500/20 bg-violet-950/10 p-3">
+                <div className="flex items-center gap-2 mb-1.5">
+                  <span className="text-lg">{p.icon}</span>
+                  <span className="font-bold text-sm text-slate-100">{p.name}</span>
+                  <span className="text-[10px] text-slate-500">{p.countLabel}</span>
+                  <span className="ml-auto inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-medium bg-emerald-900/30 text-emerald-400 border border-emerald-700/20">
+                    <Check className="w-2.5 h-2.5" /> Active
+                  </span>
+                </div>
+                <p className="text-xs text-slate-400 mb-2">{p.description}</p>
+                {p.details && (
+                  <p className="text-[11px] text-slate-500 leading-relaxed">{p.details}</p>
+                )}
+                <div className="mt-2 flex flex-wrap gap-1">
+                  {p.roles.map(r => (
+                    <span key={r} className="px-1.5 py-0.5 rounded text-[9px] bg-slate-800/60 text-slate-400 border border-slate-700/30">
+                      {r}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Available protocols (not yet assigned) */}
+      <div>
+        <h3 className="text-sm font-semibold text-slate-200 mb-3 flex items-center gap-2">
+          <Play className="w-4 h-4 text-slate-500" />
+          Available Protocols
+          <span className="text-[10px] text-slate-500 font-normal">({otherProtocols.length})</span>
+        </h3>
+        <div className="space-y-2">
+          {otherProtocols.map(p => (
+            <div key={p.name} className="rounded-lg border border-slate-800/40 bg-slate-950/30 p-3 opacity-70 hover:opacity-100 transition-opacity">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-lg">{p.icon}</span>
+                <span className="font-semibold text-sm text-slate-300">{p.name}</span>
+                <span className="text-[10px] text-slate-600">{p.countLabel}</span>
+                <span className="ml-auto text-[9px] text-slate-600">Not assigned</span>
+              </div>
+              <p className="text-xs text-slate-500">{p.description}</p>
+              <div className="mt-2 flex flex-wrap gap-1">
+                <span className="text-[10px] text-slate-600">Activates:</span>
+                {p.activates.map(a => (
+                  <span key={a} className="px-1.5 py-0.5 rounded text-[9px] bg-slate-800/40 text-slate-500">{a}</span>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

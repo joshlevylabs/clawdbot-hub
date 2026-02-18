@@ -82,9 +82,9 @@
     {
       "text": "Draft next blog post",
       "assignee": "Alex",
-      "status": "resolved",
+      "status": "pending",
       "completedAt": null,
-      "output": "Resolved: not automatable via dispatch",
+      "output": "Not yet automated: Requires content strategy decision and writing \u2014 not automated",
       "verified": true,
       "audit_note": "Task was marked done but verification FAILED: Verify a blog post was created/modified in last 24 hours"
     },
@@ -110,7 +110,7 @@
       "text": "Monitor Fear & Greed index (currently 34)",
       "assignee": "Dave",
       "status": "done",
-      "completedAt": "2026-02-17T19:01:16.986251-08:00",
+      "completedAt": "2026-02-17T23:55:46.305254-08:00",
       "output": "Fear & Greed check: see trading dashboard",
       "verified": true
     },
@@ -134,23 +134,23 @@
     {
       "text": "Generate daily devotional content based on 8 faith dimensions",
       "assignee": "Alex",
-      "status": "resolved",
-      "completedAt": "2026-02-17T19:01:08.952991-08:00",
-      "output": "Resolved: not automatable via dispatch"
+      "status": "no_handler",
+      "completedAt": "2026-02-17T23:55:42.780895-08:00",
+      "output": "No matching task pattern found"
     },
     {
       "text": "Draft faith lesson content for the Lever app (currently 7 lessons)",
       "assignee": "Alex",
-      "status": "resolved",
-      "completedAt": "2026-02-17T19:01:10.085633-08:00",
-      "output": "Resolved: not automatable via dispatch"
+      "status": "no_handler",
+      "completedAt": "2026-02-17T23:55:43.909089-08:00",
+      "output": "No matching task pattern found"
     },
     {
       "text": "Prepare reminders for upcoming family events: Jetts vaccine",
       "assignee": "Alex",
-      "status": "resolved",
-      "completedAt": "2026-02-17T19:01:11.234261-08:00",
-      "output": "Resolved: not automatable via dispatch"
+      "status": "no_handler",
+      "completedAt": "2026-02-17T23:55:45.059693-08:00",
+      "output": "No matching task pattern found"
     },
     {
       "text": "Draft feature spec for expanding Family tab (currently 454 lines)",
@@ -162,16 +162,16 @@
     {
       "text": "Review family touchpoint tracker design for 3 family members",
       "assignee": "Elon",
-      "status": "resolved",
-      "completedAt": "2026-02-17T19:01:15.774738-08:00",
-      "output": "Resolved: not automatable via dispatch"
+      "status": "no_handler",
+      "completedAt": "2026-02-17T23:55:40.460068-08:00",
+      "output": "No matching task pattern found"
     },
     {
       "text": "Commit 1 uncommitted hub change",
       "assignee": "Elon",
       "status": "done",
-      "completedAt": "2026-02-17T18:00:45.701436-08:00",
-      "output": "[main 2f4db88] auto: standup cleanup\n Committer: Joshua Levy <joshualevy@Joshuas-Mac-mini.local>\nYou",
+      "completedAt": "2026-02-17T23:55:35.394051-08:00",
+      "output": "[main 7b3ad7d] auto: standup cleanup\n Committer: Joshua Levy <joshualevy@Joshuas-Mac-mini.local>\nYou",
       "verified": true
     },
     {
@@ -205,12 +205,16 @@
     {
       "text": "Commit 8 uncommitted monorepo changes",
       "assignee": "Elon",
-      "status": "pending"
+      "status": "done",
+      "completedAt": "2026-02-17T23:55:38.177469-08:00",
+      "output": "[main 3cb0eb2] auto: standup cleanup\n 8 files changed, 333 insertions(+), 66 deletions(-)\n create mo"
     },
     {
       "text": "Draft feature spec for expanding Family tab (currently 455 lines)",
       "assignee": "Elon",
-      "status": "pending"
+      "status": "no_handler",
+      "completedAt": "2026-02-17T23:55:39.323536-08:00",
+      "output": "No matching task pattern found"
     }
   ]
 }

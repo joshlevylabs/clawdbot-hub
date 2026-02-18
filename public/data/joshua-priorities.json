@@ -56,8 +56,8 @@
       "text": "Commit 1 uncommitted hub change(s)",
       "assignee": "Elon",
       "status": "done",
-      "completedAt": "2026-02-17T15:20:08.271577-08:00",
-      "output": "Hub fully committed and pushed. No uncommitted changes remain.",
+      "completedAt": "2026-02-17T19:01:13.467230-08:00",
+      "output": "[main 4a124ca] auto: standup cleanup\n Committer: Joshua Levy <joshualevy@Joshuas-Mac-mini.local>\nYou",
       "audit_note": "Task was marked done but verification FAILED: Verify hub has no uncommitted changes",
       "verified": true
     },
@@ -82,7 +82,7 @@
     {
       "text": "Draft next blog post",
       "assignee": "Alex",
-      "status": "done",
+      "status": "pending",
       "completedAt": null,
       "output": "Not yet automated: Requires content strategy decision and writing \u2014 not automated",
       "verified": true,
@@ -110,7 +110,7 @@
       "text": "Monitor Fear & Greed index (currently 34)",
       "assignee": "Dave",
       "status": "done",
-      "completedAt": "2026-02-17T18:00:49.125707-08:00",
+      "completedAt": "2026-02-17T19:01:16.986251-08:00",
       "output": "Fear & Greed check: see trading dashboard",
       "verified": true
     },
@@ -135,35 +135,35 @@
       "text": "Generate daily devotional content based on 8 faith dimensions",
       "assignee": "Alex",
       "status": "no_handler",
-      "completedAt": "2026-02-17T18:00:51.284071-08:00",
+      "completedAt": "2026-02-17T19:01:08.952991-08:00",
       "output": "No matching task pattern found"
     },
     {
       "text": "Draft faith lesson content for the Lever app (currently 7 lessons)",
       "assignee": "Alex",
       "status": "no_handler",
-      "completedAt": "2026-02-17T18:00:52.421619-08:00",
+      "completedAt": "2026-02-17T19:01:10.085633-08:00",
       "output": "No matching task pattern found"
     },
     {
       "text": "Prepare reminders for upcoming family events: Jetts vaccine",
       "assignee": "Alex",
       "status": "no_handler",
-      "completedAt": "2026-02-17T18:00:53.557842-08:00",
+      "completedAt": "2026-02-17T19:01:11.234261-08:00",
       "output": "No matching task pattern found"
     },
     {
       "text": "Draft feature spec for expanding Family tab (currently 454 lines)",
       "assignee": "Elon",
       "status": "no_handler",
-      "completedAt": "2026-02-17T18:00:46.835862-08:00",
+      "completedAt": "2026-02-17T19:01:14.615619-08:00",
       "output": "No matching task pattern found"
     },
     {
       "text": "Review family touchpoint tracker design for 3 family members",
       "assignee": "Elon",
       "status": "no_handler",
-      "completedAt": "2026-02-17T18:00:47.958256-08:00",
+      "completedAt": "2026-02-17T19:01:15.774738-08:00",
       "output": "No matching task pattern found"
     },
     {

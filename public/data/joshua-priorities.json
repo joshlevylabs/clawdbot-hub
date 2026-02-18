@@ -1,6 +1,6 @@
 {
   "date": "2026-02-17",
-  "generatedAt": "2026-02-17T19:27:21.828026-08:00",
+  "generatedAt": "2026-02-17T23:55:06.094202-08:00",
   "priorities": [
     {
       "text": "Review current positions: AEE, EFA, XLV, XLE, VNQ, TLT, GLD",
@@ -201,6 +201,16 @@
       "verified": true,
       "audit_note": "Task was marked done but verification FAILED: Verify a blog post was created/modified in last 24 hours",
       "output": "Resolved: not automatable via dispatch"
+    },
+    {
+      "text": "Commit 8 uncommitted monorepo changes",
+      "assignee": "Elon",
+      "status": "pending"
+    },
+    {
+      "text": "Draft feature spec for expanding Family tab (currently 455 lines)",
+      "assignee": "Elon",
+      "status": "pending"
     }
   ]
 }

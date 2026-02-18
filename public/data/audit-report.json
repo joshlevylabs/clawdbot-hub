@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-02-18T02:01:08.051114+00:00",
+  "timestamp": "2026-02-18T02:15:04.348498+00:00",
   "summary": {
     "total_tasks": 17,
     "verified_done": 12,
@@ -42,8 +42,7 @@
       "text": "Draft next blog post",
       "status": "verified_done",
       "assignee": "Alex",
-      "verification": "PASSED: Verify a blog post was created/modified in last 24 hours",
-      "audit_note": "Completed outside dispatcher"
+      "verification": "PASSED: Verify a blog post was created/modified in last 24 hours"
     },
     {
       "text": "Commit 2 uncommitted hub changes",

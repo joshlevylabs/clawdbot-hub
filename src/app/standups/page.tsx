@@ -180,6 +180,9 @@ const roleColors: Record<string, { bg: string; text: string; border: string }> =
   CTO: { bg: "bg-blue-500/20", text: "text-blue-400", border: "border-blue-500/30" },
   CRO: { bg: "bg-emerald-500/20", text: "text-emerald-400", border: "border-emerald-500/30" },
   CMO: { bg: "bg-amber-500/20", text: "text-amber-400", border: "border-amber-500/30" },
+  CFTO: { bg: "bg-teal-500/20", text: "text-teal-400", border: "border-teal-500/30" },
+  CTIO: { bg: "bg-cyan-500/20", text: "text-cyan-400", border: "border-cyan-500/30" },
+  CPO: { bg: "bg-rose-500/20", text: "text-rose-400", border: "border-rose-500/30" },
 };
 const defaultColor = { bg: "bg-slate-500/20", text: "text-slate-400", border: "border-slate-500/30" };
 
@@ -188,7 +191,7 @@ function getAgentColors(name: string, role?: string) {
   return defaultColor;
 }
 
-const roleIcons: Record<string, string> = { COO: "🏛️", CTO: "📡", CRO: "📈", CMO: "🎨" };
+const roleIcons: Record<string, string> = { COO: "🏛️", CTO: "📡", CRO: "📈", CMO: "🎨", CFTO: "📈", CTIO: "⚡", CPO: "🧭" };
 
 // Vertical color map
 const verticalStyles: Record<string, { bg: string; text: string; border: string; emoji: string; label: string }> = {
@@ -1466,7 +1469,7 @@ function ScheduledView() {
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-1">Participants</label>
                 <div className="flex flex-wrap gap-2">
-                  {['COO', 'CTO', 'CRO', 'CMO'].map((role) => (
+                  {['COO', 'CTO', 'CMO', 'CRO', 'CFTO', 'CTIO', 'CPO'].map((role) => (
                     <label key={role} className="flex items-center gap-1.5 bg-slate-900 border border-slate-700 rounded px-3 py-1.5 cursor-pointer hover:border-slate-600">
                       <input
                         type="checkbox"
@@ -2279,7 +2282,7 @@ function ManageView() {
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-1">Participants</label>
                 <div className="flex flex-wrap gap-2">
-                  {['COO', 'CTO', 'CRO', 'CMO'].map((role) => (
+                  {['COO', 'CTO', 'CMO', 'CRO', 'CFTO', 'CTIO', 'CPO'].map((role) => (
                     <label key={role} className="flex items-center gap-1.5 bg-slate-900 border border-slate-700 rounded px-3 py-1.5 cursor-pointer hover:border-slate-600">
                       <input
                         type="checkbox"

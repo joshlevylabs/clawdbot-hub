@@ -154,6 +154,7 @@ interface StandupIndexEntry {
   tokenCost?: number;
   verticals?: string[];
   initiatives?: string[];
+  instanceKey?: string;
 }
 
 interface StandupIndex {
@@ -575,7 +576,8 @@ function StandupDetail({ standup, onToggleActionItem }: { standup: Standup; onTo
         if (response.ok) {
           const taskRegistry = await response.json();
           // Filter tasks where sourceStandup matches this standup's instanceKey
-          const matchingTasks = Object.values(taskRegistry).filter((task: any) => 
+          const allTasks = taskRegistry.tasks || [];
+          const matchingTasks = allTasks.filter((task: any) => 
             task.sourceStandup === standup.instanceKey
           );
           setStandupTickets(matchingTasks);
@@ -971,6 +973,11 @@ function StandupHistoryItem({
         <p className={`font-medium text-xs ${isSelected ? "text-primary-300" : "text-slate-300"}`}>
           {entry.typeName || formatDate(entry.date)}
         </p>
+        {entry.instanceKey && (
+          <span className={`px-1 py-0.5 rounded text-[9px] font-mono font-bold ${isSelected ? "bg-primary-500/20 text-primary-400" : "bg-slate-700/50 text-slate-500"}`}>
+            {entry.instanceKey}
+          </span>
+        )}
       </div>
       <p className={`text-xs mt-0.5 truncate ${isSelected ? "text-primary-400/70" : "text-slate-500"}`}>
         {formatDate(entry.date)}{entry.time ? ` · ${(() => { const [h, m] = entry.time.split(':').map(Number); const ampm = h >= 12 ? 'PM' : 'AM'; const h12 = h % 12 || 12; return `${h12}:${String(m).padStart(2, '0')} ${ampm}`; })()}` : ''}

@@ -38,6 +38,7 @@ interface ActionItem {
   tag?: string; // "JOSHUA" | "AGENT"
   completedAt?: string;
   agentOutput?: string;
+  taskKey?: string; // Task registry key (A-001, J-001, etc.)
 }
 
 interface TranscriptEntry {
@@ -953,7 +954,7 @@ function TasksView() {
   const completionPercent = totalTasks > 0 ? Math.round((doneTasks / totalTasks) * 100) : 0;
 
   // Get unique standup types for filter
-  const standupTypes = taskRegistry ? [...new Set(taskRegistry.tasks.map((t: any) => t.sourceStandupType))] : [];
+  const standupTypes: string[] = taskRegistry ? Array.from(new Set(taskRegistry.tasks.map((t: any) => t.sourceStandupType as string))) : [];
 
   const StatusBadge = ({ status }: { status: string }) => {
     const colors: Record<string, string> = {

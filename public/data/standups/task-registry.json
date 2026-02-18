@@ -87,20 +87,6 @@
       "completedAt": null
     },
     {
-      "key": "A-005",
-      "text": "Monitor Fear & Greed index (currently 36)",
-      "tag": "AGENT",
-      "priority": "low",
-      "assignee": "Dave",
-      "status": "resolved",
-      "sourceStandup": "MP-1",
-      "sourceStandupType": "morning-priorities",
-      "sourceDate": "2026-02-16",
-      "createdAt": "2026-02-16T20:13:53.547816-08:00",
-      "updatedAt": "2026-02-18T19:03:17.078130+00:00",
-      "completedAt": "2026-02-18T19:03:17.078130+00:00"
-    },
-    {
       "key": "A-006",
       "text": "Draft next blog post",
       "tag": "AGENT",
@@ -141,34 +127,6 @@
       "createdAt": "2026-02-16T23:55:04.837727-08:00",
       "updatedAt": "2026-02-18T09:14:35.612844-08:00",
       "completedAt": "2026-02-18T15:28:21.979+00:00"
-    },
-    {
-      "key": "A-007",
-      "text": "Monitor Fear & Greed index (currently 36)",
-      "tag": "AGENT",
-      "priority": "low",
-      "assignee": "Dave",
-      "status": "resolved",
-      "sourceStandup": "MNP-1",
-      "sourceStandupType": "midnight-prep",
-      "sourceDate": "2026-02-16",
-      "createdAt": "2026-02-16T23:55:04.837727-08:00",
-      "updatedAt": "2026-02-18T19:03:17.078130+00:00",
-      "completedAt": "2026-02-18T19:03:17.078130+00:00"
-    },
-    {
-      "key": "A-008",
-      "text": "Commit 2 uncommitted hub changes",
-      "tag": "AGENT",
-      "priority": "low",
-      "assignee": "Elon",
-      "status": "resolved",
-      "sourceStandup": "MNP-1",
-      "sourceStandupType": "midnight-prep",
-      "sourceDate": "2026-02-16",
-      "createdAt": "2026-02-16T23:55:04.837727-08:00",
-      "updatedAt": "2026-02-18T19:03:17.078130+00:00",
-      "completedAt": "2026-02-18T19:03:17.078130+00:00"
     },
     {
       "key": "A-009",
@@ -297,34 +255,6 @@
       "completedAt": "2026-02-17T21:34:12Z"
     },
     {
-      "key": "A-018",
-      "text": "Monitor Fear & Greed index (currently 34) to inform build-vs-spend posture",
-      "tag": "AGENT",
-      "priority": "low",
-      "assignee": "Dave",
-      "status": "resolved",
-      "sourceStandup": "ERR-1",
-      "sourceStandupType": "adhoc-ecosystem-revenue-product-creation",
-      "sourceDate": "2026-02-17",
-      "createdAt": "2026-02-17T19:27:21.828026-08:00",
-      "updatedAt": "2026-02-18T19:03:17.078130+00:00",
-      "completedAt": "2026-02-18T19:03:17.078130+00:00"
-    },
-    {
-      "key": "A-019",
-      "text": "Commit 1 uncommitted Hub change",
-      "tag": "AGENT",
-      "priority": "low",
-      "assignee": "Elon",
-      "status": "resolved",
-      "sourceStandup": "ERR-1",
-      "sourceStandupType": "adhoc-ecosystem-revenue-product-creation",
-      "sourceDate": "2026-02-17",
-      "createdAt": "2026-02-17T19:27:21.828026-08:00",
-      "updatedAt": "2026-02-18T19:03:17.078130+00:00",
-      "completedAt": "2026-02-18T19:03:17.078130+00:00"
-    },
-    {
       "key": "A-020",
       "text": "Draft next blog post for joshlevylabs.com",
       "tag": "AGENT",
@@ -407,20 +337,6 @@
       "createdAt": "2026-02-17T19:27:21.828026-08:00",
       "updatedAt": "2026-02-18T18:53:02.139549+00:00",
       "completedAt": "2026-02-17T16:28:51.271157+00:00"
-    },
-    {
-      "key": "A-026",
-      "text": "Commit uncommitted changes",
-      "tag": "AGENT",
-      "priority": "low",
-      "assignee": "Elon",
-      "status": "resolved",
-      "sourceStandup": "MP-2",
-      "sourceStandupType": "morning-priorities",
-      "sourceDate": "2026-02-17",
-      "createdAt": "2026-02-17T05:45:05.118620-08:00",
-      "updatedAt": "2026-02-18T19:03:17.078130+00:00",
-      "completedAt": "2026-02-18T19:03:17.078130+00:00"
     },
     {
       "key": "J-005",
@@ -563,20 +479,6 @@
       "completedAt": "2026-02-17T21:34:12+00:00"
     },
     {
-      "key": "A-030",
-      "text": "Commit 4 uncommitted hub change(s)",
-      "tag": "AGENT",
-      "priority": "low",
-      "assignee": "Elon",
-      "status": "resolved",
-      "sourceStandup": "AC-1",
-      "sourceStandupType": "afternoon-checkpoint",
-      "sourceDate": "2026-02-17",
-      "createdAt": "2026-02-17T12:01:53.297076-08:00",
-      "updatedAt": "2026-02-18T19:03:17.078130+00:00",
-      "completedAt": "2026-02-18T19:03:17.078130+00:00"
-    },
-    {
       "key": "A-031",
       "text": "Draft next blog post",
       "tag": "AGENT",
@@ -703,34 +605,6 @@
       "completedAt": "2026-02-17T21:34:12+00:00"
     },
     {
-      "key": "A-040",
-      "text": "Commit 1 uncommitted hub change",
-      "tag": "AGENT",
-      "priority": "low",
-      "assignee": "Elon",
-      "status": "resolved",
-      "sourceStandup": "MNP-2",
-      "sourceStandupType": "midnight-prep",
-      "sourceDate": "2026-02-17",
-      "createdAt": "2026-02-17T23:55:06.094202-08:00",
-      "updatedAt": "2026-02-18T19:03:17.078130+00:00",
-      "completedAt": "2026-02-18T19:03:17.078130+00:00"
-    },
-    {
-      "key": "A-041",
-      "text": "Commit 8 uncommitted monorepo changes",
-      "tag": "AGENT",
-      "priority": "low",
-      "assignee": "Elon",
-      "status": "resolved",
-      "sourceStandup": "MNP-2",
-      "sourceStandupType": "midnight-prep",
-      "sourceDate": "2026-02-17",
-      "createdAt": "2026-02-17T23:55:06.094202-08:00",
-      "updatedAt": "2026-02-18T19:03:17.078130+00:00",
-      "completedAt": "2026-02-18T19:03:17.078130+00:00"
-    },
-    {
       "key": "A-042",
       "text": "Draft feature spec for expanding Family tab (currently 455 lines)",
       "tag": "AGENT",
@@ -829,20 +703,6 @@
       "completedAt": "2026-02-17T21:34:12+00:00"
     },
     {
-      "key": "A-049",
-      "text": "Commit 4 uncommitted hub changes",
-      "tag": "AGENT",
-      "priority": "low",
-      "assignee": "Elon",
-      "status": "resolved",
-      "sourceStandup": "ASR-1",
-      "sourceStandupType": "cto-app-store",
-      "sourceDate": "2026-02-18",
-      "createdAt": "2026-02-18T08:49:36.999908-08:00",
-      "updatedAt": "2026-02-18T19:03:17.078130+00:00",
-      "completedAt": "2026-02-18T19:03:17.078130+00:00"
-    },
-    {
       "key": "A-050",
       "text": "Draft faith lesson content for the Lever app (currently 7 lessons)",
       "tag": "AGENT",
@@ -869,20 +729,6 @@
       "createdAt": "2026-02-18T08:49:36.999908-08:00",
       "updatedAt": "2026-02-18T18:53:02.139549+00:00",
       "completedAt": "2026-02-17T21:05:42+00:00"
-    },
-    {
-      "key": "A-052",
-      "text": "Draft feature spec for expanding Family tab (currently 455 lines)",
-      "tag": "AGENT",
-      "priority": "medium",
-      "assignee": "Elon",
-      "status": "resolved",
-      "sourceStandup": "ASR-1",
-      "sourceStandupType": "cto-app-store",
-      "sourceDate": "2026-02-18",
-      "createdAt": "2026-02-18T08:49:36.999908-08:00",
-      "updatedAt": "2026-02-18T19:03:25.921124+00:00",
-      "completedAt": "2026-02-18T19:03:25.921124+00:00"
     },
     {
       "key": "A-053",
@@ -955,20 +801,6 @@
       "completedAt": "2026-02-17T16:28:51.271143+00:00"
     },
     {
-      "key": "A-057",
-      "text": "Commit 9 uncommitted hub changes",
-      "tag": "AGENT",
-      "priority": "low",
-      "assignee": "Elon",
-      "status": "resolved",
-      "sourceStandup": "DA-1",
-      "sourceStandupType": "cmo-distribution",
-      "sourceDate": "2026-02-18",
-      "createdAt": "2026-02-18T08:50:09.213609-08:00",
-      "updatedAt": "2026-02-18T19:03:17.078130+00:00",
-      "completedAt": "2026-02-18T19:03:17.078130+00:00"
-    },
-    {
       "key": "A-058",
       "text": "Prepare reminders for upcoming family events: Jetts vaccine",
       "tag": "AGENT",
@@ -995,20 +827,6 @@
       "createdAt": "2026-02-18T08:50:09.213609-08:00",
       "updatedAt": "2026-02-18T20:03:06.236391+00:00",
       "completedAt": "2026-02-18T20:03:06.236391+00:00"
-    },
-    {
-      "key": "A-059",
-      "text": "Monitor Fear & Greed index (currently 38)",
-      "tag": "AGENT",
-      "priority": "low",
-      "assignee": "Dave",
-      "status": "resolved",
-      "sourceStandup": "BD-1",
-      "sourceStandupType": "cro-market-intel",
-      "sourceDate": "2026-02-18",
-      "createdAt": "2026-02-18T08:50:42.084355-08:00",
-      "updatedAt": "2026-02-18T19:03:17.078130+00:00",
-      "completedAt": "2026-02-18T19:03:17.078130+00:00"
     },
     {
       "key": "A-060",
@@ -1039,20 +857,6 @@
       "completedAt": "2026-02-17T21:05:42+00:00"
     },
     {
-      "key": "A-062",
-      "text": "Draft feature spec for expanding Family tab (currently 455 lines)",
-      "tag": "AGENT",
-      "priority": "medium",
-      "assignee": "Elon",
-      "status": "resolved",
-      "sourceStandup": "BD-1",
-      "sourceStandupType": "cro-market-intel",
-      "sourceDate": "2026-02-18",
-      "createdAt": "2026-02-18T08:50:42.084355-08:00",
-      "updatedAt": "2026-02-18T19:03:25.921124+00:00",
-      "completedAt": "2026-02-18T19:03:25.921124+00:00"
-    },
-    {
       "key": "A-063",
       "text": "Review family touchpoint tracker design for 3 family members",
       "tag": "AGENT",
@@ -1079,20 +883,6 @@
       "createdAt": "2026-02-18T08:50:42.084355-08:00",
       "updatedAt": "2026-02-18T18:53:02.139549+00:00",
       "completedAt": "2026-02-17T16:28:51.271151+00:00"
-    },
-    {
-      "key": "A-065",
-      "text": "Commit 11 uncommitted Hub changes",
-      "tag": "AGENT",
-      "priority": "low",
-      "assignee": "Elon",
-      "status": "resolved",
-      "sourceStandup": "ESA-1",
-      "sourceStandupType": "ecosystem-sync",
-      "sourceDate": "2026-02-18",
-      "createdAt": "2026-02-18T08:51:20.280604-08:00",
-      "updatedAt": "2026-02-18T19:03:17.078130+00:00",
-      "completedAt": "2026-02-18T19:03:17.078130+00:00"
     },
     {
       "key": "A-066",
@@ -1135,20 +925,6 @@
       "createdAt": "2026-02-18T08:51:20.280604-08:00",
       "updatedAt": "2026-02-18T18:53:02.139549+00:00",
       "completedAt": "2026-02-17T16:28:51.271151+00:00"
-    },
-    {
-      "key": "A-069",
-      "text": "Draft feature spec for expanding Family tab (currently 455 lines)",
-      "tag": "AGENT",
-      "priority": "medium",
-      "assignee": "Elon",
-      "status": "resolved",
-      "sourceStandup": "ESA-1",
-      "sourceStandupType": "ecosystem-sync",
-      "sourceDate": "2026-02-18",
-      "createdAt": "2026-02-18T08:51:20.280604-08:00",
-      "updatedAt": "2026-02-18T19:03:25.921124+00:00",
-      "completedAt": "2026-02-18T19:03:25.921124+00:00"
     },
     {
       "key": "A-070",

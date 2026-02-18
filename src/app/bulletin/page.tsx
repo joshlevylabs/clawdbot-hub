@@ -24,7 +24,7 @@ interface Task {
   tag: "AGENT" | "JOSHUA";
   priority: "high" | "medium" | "low";
   assignee: string;
-  status: "pending" | "in-progress" | "done" | "done_but_unverified" | "resolved";
+  status: "pending" | "in-progress" | "done" | "done_but_unverified";
   sourceStandup: string;
   sourceStandupType: string;
   sourceDate: string;
@@ -146,12 +146,6 @@ const statusConfig = {
     bgColor: "from-slate-850 to-emerald-950/20",
     icon: CheckCircle
   },
-  resolved: { 
-    label: "Done", 
-    color: "emerald", 
-    bgColor: "from-slate-850 to-emerald-950/20",
-    icon: CheckCircle
-  }
 };
 
 function TaskCard({ task, onClick }: { task: Task; onClick: (task: Task) => void }) {
@@ -159,8 +153,7 @@ function TaskCard({ task, onClick }: { task: Task; onClick: (task: Task) => void
     pending: "border-amber-500/30",
     "in-progress": "border-blue-500/30",
     done_but_unverified: "border-yellow-500/30", 
-    done: "border-emerald-500/30",
-    resolved: "border-emerald-500/30"
+    done: "border-emerald-500/30"
   };
 
   const priorityColors = {
@@ -328,7 +321,7 @@ export default function BulletinPage() {
   const totalTasks = taskRegistry?.tasks.length || 0;
   const agentTasks = taskRegistry?.tasks.filter((t: Task) => t.tag === "AGENT").length || 0;
   const joshuaTasks = taskRegistry?.tasks.filter((t: Task) => t.tag === "JOSHUA").length || 0;
-  const doneTasks = taskRegistry?.tasks.filter((t: Task) => t.status === "done" || t.status === "resolved").length || 0;
+  const doneTasks = taskRegistry?.tasks.filter((t: Task) => t.status === "done").length || 0;
   const completionPercent = totalTasks > 0 ? Math.round((doneTasks / totalTasks) * 100) : 0;
 
   // Get unique standup types for filter
@@ -345,7 +338,7 @@ export default function BulletinPage() {
     pending: filteredTasks.filter(t => t.status === 'pending'),
     "in-progress": filteredTasks.filter(t => t.status === 'in-progress'),
     done_but_unverified: filteredTasks.filter(t => t.status === 'done_but_unverified'),
-    done: filteredTasks.filter(t => t.status === 'done' || t.status === 'resolved')
+    done: filteredTasks.filter(t => t.status === 'done')
   };
 
   const handleTaskClick = (task: Task) => {
@@ -465,8 +458,7 @@ export default function BulletinPage() {
                 {value: "pending", label: "Pending"},
                 {value: "in-progress", label: "In Progress"},
                 {value: "done_but_unverified", label: "Review"},
-                {value: "done", label: "Done"},
-                {value: "resolved", label: "Resolved"}
+                {value: "done", label: "Done"}
               ]}
               selected={statusFilter}
               onChange={setStatusFilter}
@@ -556,14 +548,12 @@ export default function BulletinPage() {
                       "in-progress": "bg-blue-500/15 text-blue-400 border-blue-500/30",
                       done: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30",
                       done_but_unverified: "bg-yellow-500/15 text-yellow-400 border-yellow-500/30",
-                      resolved: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30",
                     };
                     const statusLabels: Record<string, string> = {
                       pending: "PENDING",
                       "in-progress": "IN PROGRESS",
                       done: "DONE",
                       done_but_unverified: "REVIEW",
-                      resolved: "RESOLVED",
                     };
                     return (
                       <tr
@@ -577,7 +567,7 @@ export default function BulletinPage() {
                         </td>
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-2">
-                            <p className={`text-sm leading-snug ${task.status === "done" || task.status === "resolved" ? "text-slate-500 line-through" : "text-slate-200"}`}>
+                            <p className={`text-sm leading-snug ${task.status === "done" ? "text-slate-500 line-through" : "text-slate-200"}`}>
                               {task.text}
                             </p>
                             {task.sprintReady && (
@@ -641,8 +631,7 @@ export default function BulletinPage() {
         /* Kanban Board */
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 min-h-96">
           {(Object.keys(statusConfig) as Array<keyof typeof statusConfig>).map((status) => {
-            // Map status for done/resolved grouping
-            const tasks = status === 'done' ? tasksByStatus.done : tasksByStatus[status as keyof typeof tasksByStatus] || [];
+            const tasks = tasksByStatus[status as keyof typeof tasksByStatus] || [];
             return (
               <KanbanColumn
                 key={status}

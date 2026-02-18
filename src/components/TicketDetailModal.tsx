@@ -28,7 +28,7 @@ interface Task {
   tag: "AGENT" | "JOSHUA";
   priority: "high" | "medium" | "low";
   assignee: string;
-  status: "pending" | "in-progress" | "done" | "done_but_unverified" | "resolved";
+  status: "pending" | "in-progress" | "done" | "done_but_unverified";
   sourceStandup: string;
   sourceStandupType: string;
   sourceDate: string;
@@ -78,14 +78,6 @@ const statusOptions = [
     icon: CheckCircle,
     description: "Completed and verified"
   },
-  { 
-    value: "resolved", 
-    label: "Resolved", 
-    color: "emerald", 
-    bg: "bg-emerald-600",
-    icon: CheckCircle,
-    description: "Fully resolved"
-  }
 ] as const;
 
 // Priority options
@@ -130,7 +122,7 @@ function ActivityTimeline({ task }: { task: Task }) {
       timestamp: task.updatedAt,
       action: "Last updated", 
       user: task.tag === "AGENT" ? "Agent" : "Joshua",
-      details: task.status === "done" || task.status === "resolved" ? "Marked as complete" : "Status updated"
+      details: task.status === "done" ? "Marked as complete" : "Status updated"
     }
   ];
 

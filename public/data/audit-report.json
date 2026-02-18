@@ -1,11 +1,11 @@
 {
-  "timestamp": "2026-02-18T22:00:16.497308+00:00",
+  "timestamp": "2026-02-18T22:15:04.267690+00:00",
   "summary": {
     "total_tasks": 29,
     "verified_done": 28,
     "done_but_unverified": 0,
-    "pending": 1,
-    "stale": 0
+    "pending": 0,
+    "stale": 1
   },
   "items": [
     {
@@ -154,7 +154,7 @@
     },
     {
       "text": "Draft next blog post for SEO distribution",
-      "status": "pending",
+      "status": "stale",
       "assignee": "Alex",
       "verification": "No verification rule found"
     },
@@ -183,5 +183,7 @@
       "verification": "PASSED: Verify hub has no uncommitted changes"
     }
   ],
-  "escalations": []
+  "escalations": [
+    "\ud83d\udd34 STALE [Alex]: Draft next blog post for SEO distribution \u2014 unresolved for 120 min"
+  ]
 }

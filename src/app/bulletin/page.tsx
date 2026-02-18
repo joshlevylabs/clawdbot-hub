@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { 
   Eye,
   LayoutGrid,
@@ -11,7 +11,9 @@ import {
   AlertTriangle,
   CheckCircle,
   Zap,
-  Filter
+  Filter,
+  ChevronDown,
+  Check
 } from "lucide-react";
 import TicketDetailModal from "@/components/TicketDetailModal";
 
@@ -37,6 +39,86 @@ interface TaskRegistry {
 }
 
 type ViewMode = "table" | "kanban";
+
+// Multi-select dropdown component
+function MultiSelectFilter({ 
+  label, 
+  options, 
+  selected, 
+  onChange 
+}: { 
+  label: string;
+  options: { value: string; label: string }[];
+  selected: string[];
+  onChange: (selected: string[]) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  // Close on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  const toggle = (value: string) => {
+    onChange(
+      selected.includes(value) 
+        ? selected.filter(v => v !== value)
+        : [...selected, value]
+    );
+  };
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        onClick={() => setOpen(!open)}
+        className="flex items-center gap-2 bg-slate-800/50 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-300 hover:border-slate-600 transition-colors"
+      >
+        <span>{label}</span>
+        {selected.length > 0 && (
+          <span className="bg-primary-500/20 text-primary-400 text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+            {selected.length}
+          </span>
+        )}
+        <ChevronDown className="w-3 h-3 text-slate-500" />
+      </button>
+      {open && (
+        <div className="absolute top-full left-0 mt-1 z-50 bg-slate-800 border border-slate-700 rounded-lg shadow-xl min-w-[180px] py-1">
+          {selected.length > 0 && (
+            <button
+              onClick={() => onChange([])}
+              className="w-full text-left px-3 py-1.5 text-[11px] text-slate-500 hover:text-slate-300 hover:bg-slate-700/50 transition-colors"
+            >
+              Clear all
+            </button>
+          )}
+          {options.map(opt => (
+            <button
+              key={opt.value}
+              onClick={() => toggle(opt.value)}
+              className="w-full flex items-center gap-2 px-3 py-1.5 text-xs text-slate-300 hover:bg-slate-700/50 transition-colors"
+            >
+              <div className={`w-3.5 h-3.5 rounded border flex items-center justify-center ${
+                selected.includes(opt.value) 
+                  ? "bg-primary-500 border-primary-500" 
+                  : "border-slate-600"
+              }`}>
+                {selected.includes(opt.value) && (
+                  <Check className="w-2.5 h-2.5 text-white" />
+                )}
+              </div>
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 // Status configuration for kanban columns
 const statusConfig = {
@@ -186,10 +268,10 @@ export default function BulletinPage() {
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   
   // Filters
-  const [typeFilter, setTypeFilter] = useState<string>("all");
-  const [statusFilter, setStatusFilter] = useState<string>("all");
-  const [standupTypeFilter, setStandupTypeFilter] = useState<string>("all");
-  const [verticalFilter, setVerticalFilter] = useState<string>("all");
+  const [typeFilter, setTypeFilter] = useState<string[]>([]);
+  const [statusFilter, setStatusFilter] = useState<string[]>([]);
+  const [standupTypeFilter, setStandupTypeFilter] = useState<string[]>([]);
+  const [verticalFilter, setVerticalFilter] = useState<string[]>([]);
   const [standupIndex, setStandupIndex] = useState<any>(null);
 
   useEffect(() => {
@@ -232,12 +314,12 @@ export default function BulletinPage() {
 
   // Filter tasks based on filters
   const filteredTasks = taskRegistry ? taskRegistry.tasks.filter((task: Task) => {
-    if (typeFilter !== "all" && task.tag.toLowerCase() !== typeFilter) return false;
-    if (statusFilter !== "all" && task.status !== statusFilter) return false;
-    if (standupTypeFilter !== "all" && task.sourceStandupType !== standupTypeFilter) return false;
-    if (verticalFilter !== "all") {
+    if (typeFilter.length > 0 && !typeFilter.includes(task.tag.toLowerCase())) return false;
+    if (statusFilter.length > 0 && !statusFilter.includes(task.status)) return false;
+    if (standupTypeFilter.length > 0 && !standupTypeFilter.includes(task.sourceStandupType)) return false;
+    if (verticalFilter.length > 0) {
       const taskVerticals = verticalMap[task.sourceStandup] || [];
-      if (!taskVerticals.includes(verticalFilter)) return false;
+      if (!verticalFilter.some(v => taskVerticals.includes(v))) return false;
     }
     return true;
   }) : [];
@@ -363,44 +445,40 @@ export default function BulletinPage() {
           {/* Type dropdown */}
           <div className="flex flex-col gap-1">
             <label className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">Type</label>
-            <select
-              value={typeFilter}
-              onChange={(e) => setTypeFilter(e.target.value)}
-              className="bg-slate-800/50 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-primary-500/50 appearance-none cursor-pointer"
-            >
-              <option value="all">All Types</option>
-              <option value="agent">🤖 Agent</option>
-              <option value="joshua">👤 Joshua</option>
-            </select>
+            <MultiSelectFilter
+              label="Type"
+              options={[
+                {value: "agent", label: "🤖 Agent"},
+                {value: "joshua", label: "👤 Joshua"}
+              ]}
+              selected={typeFilter}
+              onChange={setTypeFilter}
+            />
           </div>
 
           {/* Status dropdown */}
           <div className="flex flex-col gap-1">
             <label className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">Status</label>
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="bg-slate-800/50 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-primary-500/50 appearance-none cursor-pointer"
-            >
-              <option value="all">All Status</option>
-              <option value="pending">Pending</option>
-              <option value="in-progress">In Progress</option>
-              <option value="done_but_unverified">Review</option>
-              <option value="done">Done</option>
-              <option value="resolved">Resolved</option>
-            </select>
+            <MultiSelectFilter
+              label="Status"
+              options={[
+                {value: "pending", label: "Pending"},
+                {value: "in-progress", label: "In Progress"},
+                {value: "done_but_unverified", label: "Review"},
+                {value: "done", label: "Done"},
+                {value: "resolved", label: "Resolved"}
+              ]}
+              selected={statusFilter}
+              onChange={setStatusFilter}
+            />
           </div>
 
           {/* Standup dropdown */}
           <div className="flex flex-col gap-1">
             <label className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">Standup</label>
-            <select
-              value={standupTypeFilter}
-              onChange={(e) => setStandupTypeFilter(e.target.value)}
-              className="bg-slate-800/50 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-primary-500/50 appearance-none cursor-pointer"
-            >
-              <option value="all">All Standups</option>
-              {standupTypes.map((type: string) => {
+            <MultiSelectFilter
+              label="Standup"
+              options={standupTypes.map((type: string) => {
                 const typeNames: Record<string, string> = {
                   "morning-priorities": "Morning",
                   "ecosystem-sync": "Ecosystem",
@@ -411,30 +489,28 @@ export default function BulletinPage() {
                   "afternoon-checkpoint": "Afternoon",
                   "midnight-prep": "Midnight",
                 };
-                return (
-                  <option key={type} value={type}>
-                    {typeNames[type] || type}
-                  </option>
-                );
+                return {
+                  value: type,
+                  label: typeNames[type] || type
+                };
               })}
-            </select>
+              selected={standupTypeFilter}
+              onChange={setStandupTypeFilter}
+            />
           </div>
 
           {/* Vertical dropdown */}
           <div className="flex flex-col gap-1">
             <label className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">Vertical</label>
-            <select
-              value={verticalFilter}
-              onChange={(e) => setVerticalFilter(e.target.value)}
-              className="bg-slate-800/50 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-primary-500/50 appearance-none cursor-pointer"
-            >
-              <option value="all">All Verticals</option>
-              {verticals.map((vertical: string) => (
-                <option key={vertical} value={vertical}>
-                  {vertical}
-                </option>
-              ))}
-            </select>
+            <MultiSelectFilter
+              label="Vertical"
+              options={verticals.map((vertical: string) => ({
+                value: vertical,
+                label: vertical.charAt(0).toUpperCase() + vertical.slice(1)
+              }))}
+              selected={verticalFilter}
+              onChange={setVerticalFilter}
+            />
           </div>
         </div>
       </div>

@@ -700,6 +700,11 @@ function StandupDetail({ standup, onToggleActionItem }: { standup: Standup; onTo
                       </p>
                       <TagBadge tag={getTag(item)} />
                       <PriorityBadge priority={item.priority} />
+                      {item.taskKey && (
+                        <span className="text-[10px] font-mono text-primary-400 bg-primary-500/10 px-1.5 py-0.5 rounded border border-primary-500/20">
+                          {item.taskKey}
+                        </span>
+                      )}
                       {isCompleted && item.completedAt && (
                         <span className="text-[10px] text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded">
                           ✓ Completed by Joshua
@@ -886,7 +891,7 @@ function StandupHistoryItem({
 }
 
 // ---- Tab Types ----
-type TabType = "history" | "scheduled" | "manage";
+type TabType = "history" | "scheduled" | "manage" | "tasks";
 
 // ---- Scheduled Standup Types ----
 interface ScheduledStandupType {
@@ -906,6 +911,233 @@ interface ScheduledStandupType {
 
 interface ScheduleData {
   types: ScheduledStandupType[];
+}
+
+// ---- Tasks View Component ----
+function TasksView() {
+  const [taskRegistry, setTaskRegistry] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [typeFilter, setTypeFilter] = useState<string>("all");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [standupTypeFilter, setStandupTypeFilter] = useState<string>("all");
+
+  useEffect(() => {
+    async function fetchTaskRegistry() {
+      try {
+        const res = await fetch("/data/standups/task-registry.json");
+        if (res.ok) {
+          setTaskRegistry(await res.json());
+        }
+      } catch (err) {
+        console.error("Failed to load task registry:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchTaskRegistry();
+  }, []);
+
+  // Filter tasks based on filters
+  const filteredTasks = taskRegistry ? taskRegistry.tasks.filter((task: any) => {
+    if (typeFilter !== "all" && task.tag.toLowerCase() !== typeFilter) return false;
+    if (statusFilter !== "all" && task.status !== statusFilter) return false;
+    if (standupTypeFilter !== "all" && task.sourceStandupType !== standupTypeFilter) return false;
+    return true;
+  }) : [];
+
+  // Calculate stats
+  const totalTasks = taskRegistry?.tasks.length || 0;
+  const agentTasks = taskRegistry?.tasks.filter((t: any) => t.tag === "AGENT").length || 0;
+  const joshuaTasks = taskRegistry?.tasks.filter((t: any) => t.tag === "JOSHUA").length || 0;
+  const doneTasks = taskRegistry?.tasks.filter((t: any) => t.status === "done").length || 0;
+  const completionPercent = totalTasks > 0 ? Math.round((doneTasks / totalTasks) * 100) : 0;
+
+  // Get unique standup types for filter
+  const standupTypes = taskRegistry ? [...new Set(taskRegistry.tasks.map((t: any) => t.sourceStandupType))] : [];
+
+  const StatusBadge = ({ status }: { status: string }) => {
+    const colors: Record<string, string> = {
+      pending: "bg-amber-500/20 text-amber-400 border-amber-500/30",
+      "in-progress": "bg-blue-500/20 text-blue-400 border-blue-500/30",
+      done: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
+    };
+    return (
+      <span className={`px-2 py-1 rounded text-xs font-medium border ${colors[status] || colors.pending}`}>
+        {status === "in-progress" ? "IN-PROGRESS" : status.toUpperCase()}
+      </span>
+    );
+  };
+
+  if (loading) {
+    return (
+      <div className="space-y-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+          {[1, 2, 3, 4, 5].map((i) => (
+            <div key={i} className="bg-slate-900/50 rounded-xl border border-slate-800 p-3 h-16 animate-pulse" />
+          ))}
+        </div>
+        <div className="space-y-3">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="bg-slate-900/50 rounded-xl border border-slate-800 p-4 h-20 animate-pulse" />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Stats Bar */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+        <div className="bg-slate-900/50 rounded-xl border border-slate-800 p-3 text-center">
+          <p className="text-xl font-bold text-slate-100">{totalTasks}</p>
+          <p className="text-[10px] text-slate-500 mt-0.5">Total Tasks</p>
+        </div>
+        <div className="bg-slate-900/50 rounded-xl border border-slate-800 p-3 text-center">
+          <p className="text-xl font-bold text-cyan-400">{agentTasks}</p>
+          <p className="text-[10px] text-slate-500 mt-0.5">🤖 Agent</p>
+        </div>
+        <div className="bg-slate-900/50 rounded-xl border border-slate-800 p-3 text-center">
+          <p className="text-xl font-bold text-purple-400">{joshuaTasks}</p>
+          <p className="text-[10px] text-slate-500 mt-0.5">👤 Joshua</p>
+        </div>
+        <div className="bg-slate-900/50 rounded-xl border border-slate-800 p-3 text-center">
+          <p className="text-xl font-bold text-emerald-400">{doneTasks}</p>
+          <p className="text-[10px] text-slate-500 mt-0.5">✅ Done</p>
+        </div>
+        <div className="bg-slate-900/50 rounded-xl border border-slate-800 p-3 text-center">
+          <p className="text-xl font-bold text-primary-400">{completionPercent}%</p>
+          <p className="text-[10px] text-slate-500 mt-0.5">Completion</p>
+        </div>
+      </div>
+
+      {/* Filters */}
+      <div className="space-y-2">
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 flex-nowrap">
+          <span className="text-[10px] text-slate-600 uppercase tracking-wider font-medium mr-1">Type</span>
+          {[
+            { key: "all", label: "All" },
+            { key: "agent", label: "🤖 Agent" },
+            { key: "joshua", label: "👤 Joshua" },
+          ].map((filter) => (
+            <button
+              key={filter.key}
+              onClick={() => setTypeFilter(filter.key)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap ${
+                typeFilter === filter.key
+                  ? "bg-primary-600/20 text-primary-400 border border-primary-500/30"
+                  : "bg-slate-900/30 text-slate-500 border border-slate-800 hover:border-slate-700 hover:text-slate-400"
+              }`}
+            >
+              {filter.label}
+            </button>
+          ))}
+        </div>
+        
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 flex-nowrap">
+          <span className="text-[10px] text-slate-600 uppercase tracking-wider font-medium mr-1">Status</span>
+          {[
+            { key: "all", label: "All" },
+            { key: "pending", label: "Pending" },
+            { key: "in-progress", label: "In Progress" },
+            { key: "done", label: "Done" },
+          ].map((filter) => (
+            <button
+              key={filter.key}
+              onClick={() => setStatusFilter(filter.key)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap ${
+                statusFilter === filter.key
+                  ? "bg-primary-600/20 text-primary-400 border border-primary-500/30"
+                  : "bg-slate-900/30 text-slate-500 border border-slate-800 hover:border-slate-700 hover:text-slate-400"
+              }`}
+            >
+              {filter.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 flex-nowrap">
+          <span className="text-[10px] text-slate-600 uppercase tracking-wider font-medium mr-1">Standup</span>
+          <button
+            onClick={() => setStandupTypeFilter("all")}
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap ${
+              standupTypeFilter === "all"
+                ? "bg-primary-600/20 text-primary-400 border border-primary-500/30"
+                : "bg-slate-900/30 text-slate-500 border border-slate-800 hover:border-slate-700 hover:text-slate-400"
+            }`}
+          >
+            All
+          </button>
+          {standupTypes.slice(0, 6).map((type: string) => {
+            const typeNames: Record<string, string> = {
+              "morning-priorities": "Morning",
+              "ecosystem-sync": "Ecosystem",
+              "cto-app-store": "App Store", 
+              "cmo-distribution": "Distribution",
+              "cro-market-intel": "Business Dev",
+              "evening-wrap": "Evening",
+              "afternoon-checkpoint": "Afternoon",
+              "midnight-prep": "Midnight",
+            };
+            return (
+              <button
+                key={type}
+                onClick={() => setStandupTypeFilter(type)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap ${
+                  standupTypeFilter === type
+                    ? "bg-primary-600/20 text-primary-400 border border-primary-500/30"
+                    : "bg-slate-900/30 text-slate-500 border border-slate-800 hover:border-slate-700 hover:text-slate-400"
+                }`}
+              >
+                {typeNames[type] || type}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Tasks Table */}
+      <div className="space-y-3">
+        {filteredTasks.length === 0 ? (
+          <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-6 text-center">
+            <Target className="w-8 h-8 text-slate-600 mx-auto mb-2" />
+            <p className="text-slate-400 text-sm">No tasks found matching your filters.</p>
+          </div>
+        ) : (
+          filteredTasks.map((task: any) => (
+            <div key={task.key} className="bg-slate-900/50 rounded-xl border border-slate-800 p-4">
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-sm font-mono text-primary-400">{task.key}</span>
+                    <TagBadge tag={task.tag} />
+                    <PriorityBadge priority={task.priority} />
+                    <StatusBadge status={task.status} />
+                  </div>
+                  
+                  <p className="text-slate-200 text-sm mb-2 leading-relaxed">{task.text}</p>
+                  
+                  <div className="flex items-center gap-4 text-xs text-slate-500">
+                    <span>👤 {task.assignee}</span>
+                    <button 
+                      onClick={() => {
+                        // Navigate to source standup - you could implement this
+                        console.log("Navigate to:", task.sourceStandup);
+                      }}
+                      className="text-primary-400 hover:text-primary-300 underline"
+                    >
+                      {task.sourceStandup}
+                    </button>
+                    <span>{new Date(task.createdAt).toLocaleDateString()}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+    </div>
+  );
 }
 
 // ---- Scheduled View Component ----
@@ -2297,6 +2529,12 @@ export default function StandupsPage() {
   const [error, setError] = useState<string | null>(null);
   const [allInitiatives, setAllInitiatives] = useState<InitiativeDef[]>([]);
 
+  // Tasks tab state
+  const [taskRegistry, setTaskRegistry] = useState<any>(null);
+  const [taskTypeFilter, setTaskTypeFilter] = useState<string>("all"); // all, agent, joshua
+  const [taskStatusFilter, setTaskStatusFilter] = useState<string>("all"); // all, pending, in-progress, done
+  const [taskStandupTypeFilter, setTaskStandupTypeFilter] = useState<string>("all"); // all, morning-priorities, etc.
+
   // Helper functions (moved from StandupDetail for reuse)
   const getTag = (item: ActionItem): string => {
     if (item.tag) return item.tag;
@@ -2391,6 +2629,16 @@ export default function StandupsPage() {
           }
         } catch {
           // Initiatives file may not exist yet
+        }
+
+        // Load task registry for Tasks tab
+        try {
+          const taskRes = await fetch("/data/standups/task-registry.json");
+          if (taskRes.ok) {
+            setTaskRegistry(await taskRes.json());
+          }
+        } catch {
+          // Task registry might not exist yet
         }
 
       } catch (err) {
@@ -2586,6 +2834,16 @@ export default function StandupsPage() {
         >
           ⚙️ Manage
         </button>
+        <button
+          onClick={() => setActiveTab("tasks")}
+          className={`px-4 py-2 rounded-t-lg text-sm font-medium transition-colors ${
+            activeTab === "tasks"
+              ? "bg-primary-600/20 text-primary-400 border-t border-l border-r border-primary-500/30 border-b-transparent"
+              : "text-slate-500 hover:text-slate-400"
+          }`}
+        >
+          📋 Tasks
+        </button>
       </div>
 
       {/* Filter Tabs - Only show on History tab */}
@@ -2697,7 +2955,14 @@ export default function StandupsPage() {
             <div className="flex-1 min-w-0 w-full">
               {selectedStandup ? (
                 <>
-                  <h2 className="text-lg font-semibold text-slate-100 mb-4">{selectedStandup.topic}</h2>
+                  <div className="flex items-center gap-3 mb-4">
+                    <h2 className="text-lg font-semibold text-slate-100">{selectedStandup.topic}</h2>
+                    {selectedStandup.instanceKey && (
+                      <span className="px-2 py-1 bg-primary-500/20 text-primary-400 border border-primary-500/30 rounded text-sm font-mono">
+                        {selectedStandup.instanceKey}
+                      </span>
+                    )}
+                  </div>
                   <StandupDetail 
                     standup={selectedStandup} 
                     onToggleActionItem={async (text: string, completed: boolean) => {
@@ -2748,6 +3013,8 @@ export default function StandupsPage() {
         </>
       ) : activeTab === "scheduled" ? (
         <ScheduledView />
+      ) : activeTab === "tasks" ? (
+        <TasksView />
       ) : (
         <ManageView />
       )}

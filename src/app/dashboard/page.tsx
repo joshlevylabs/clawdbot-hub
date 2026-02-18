@@ -644,23 +644,39 @@ export default function DashboardPage() {
     setLoading(true);
     setError(null);
     try {
-      // Fetch brief, priorities, and completions in parallel
-      const [briefRes, prioritiesRes, completionsRes] = await Promise.all([
+      // Fetch brief and priorities+completions in parallel
+      // The API merges completion state into priorities, so use it as the source of truth
+      const [briefRes, apiRes] = await Promise.all([
         fetch(`/data/morning-brief.json?t=${Date.now()}`, { cache: 'no-store' }),
-        fetch(`/data/joshua-priorities.json?t=${Date.now()}`, { cache: 'no-store' }),
-        fetch(`/api/priorities`, { cache: 'no-store' }),
+        fetch(`/api/priorities?t=${Date.now()}`, { cache: 'no-store' }),
       ]);
       if (briefRes.ok) {
         setBriefData(normalizeBriefData(await briefRes.json()));
       } else {
         setError("No data available");
       }
-      if (prioritiesRes.ok) {
-        setPrioritiesData(await prioritiesRes.json());
-      }
-      if (completionsRes.ok) {
-        const cData = await completionsRes.json();
-        setCompletedIds(cData.completedIds || {});
+      if (apiRes.ok) {
+        const apiData = await apiRes.json();
+        setPrioritiesData(apiData);
+        // Build completedIds map from the merged API response
+        const ids: Record<string, string> = {};
+        (apiData.priorities || []).forEach((p: any, i: number) => {
+          if (p.completed && p.completedAt) {
+            ids[`priority:${i}`] = p.completedAt;
+          }
+        });
+        (apiData.agentHandled || []).forEach((a: any, i: number) => {
+          if (a.completed && a.completedAt) {
+            ids[`agent:${i}`] = a.completedAt;
+          }
+        });
+        setCompletedIds(ids);
+      } else {
+        // Fallback to static file if API fails
+        const fallbackRes = await fetch(`/data/joshua-priorities.json?t=${Date.now()}`, { cache: 'no-store' });
+        if (fallbackRes.ok) {
+          setPrioritiesData(await fallbackRes.json());
+        }
       }
     } catch {
       setError("Failed to load dashboard data");

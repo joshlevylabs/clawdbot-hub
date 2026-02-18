@@ -96,7 +96,6 @@ type FileTab =
 const ALL_FILE_TABS: FileTab[] = [
   "IDENTITY.md",
   "SOUL.md",
-  "USER.md",
   "TOOLS.md",
   "AGENTS.md",
   "MEMORY.md",
@@ -3191,8 +3190,8 @@ function WorkspacePanel({
         </div>
       </div>
 
-      {/* Tab Bar */}
-      <div className="flex border-b border-slate-800/60 overflow-x-auto flex-shrink-0 scrollbar-none">
+      {/* Tab Bar — horizontally scrollable */}
+      <div className="flex border-b border-slate-800/60 overflow-x-auto flex-shrink-0" style={{ scrollbarWidth: "thin", scrollbarColor: "#334155 transparent" }}>
         {ALL_FILE_TABS.map((tab) => {
           const meta = FILE_TAB_META[tab];
           const isActive = activeTab === tab;

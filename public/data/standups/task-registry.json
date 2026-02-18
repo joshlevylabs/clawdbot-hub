@@ -1,5 +1,5 @@
 {
-  "nextAgentId": 72,
+  "nextAgentId": 78,
   "nextJoshuaId": 14,
   "tasks": [
     {
@@ -1177,6 +1177,90 @@
       "createdAt": "2026-02-18T08:51:20.280604-08:00",
       "updatedAt": "2026-02-18T18:53:02.139549+00:00",
       "completedAt": "2026-02-18T07:27:00+00:00"
+    },
+    {
+      "key": "A-072",
+      "text": "Commit 3 uncommitted hub changes",
+      "tag": "AGENT",
+      "priority": "low",
+      "assignee": "Elon",
+      "status": "pending",
+      "sourceStandup": "AC-2",
+      "sourceStandupType": "afternoon-checkpoint",
+      "sourceDate": "2026-02-18",
+      "createdAt": "2026-02-18T12:00:37.955838-08:00",
+      "updatedAt": "2026-02-18T12:00:37.955838-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "A-073",
+      "text": "Review family touchpoint tracker design for 3 family members",
+      "tag": "AGENT",
+      "priority": "low",
+      "assignee": "Elon",
+      "status": "pending",
+      "sourceStandup": "AC-2",
+      "sourceStandupType": "afternoon-checkpoint",
+      "sourceDate": "2026-02-18",
+      "createdAt": "2026-02-18T12:00:37.955838-08:00",
+      "updatedAt": "2026-02-18T12:00:37.955838-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "A-074",
+      "text": "Draft faith lesson content for the Lever app (currently 7 lessons)",
+      "tag": "AGENT",
+      "priority": "medium",
+      "assignee": "Alex",
+      "status": "pending",
+      "sourceStandup": "AC-2",
+      "sourceStandupType": "afternoon-checkpoint",
+      "sourceDate": "2026-02-18",
+      "createdAt": "2026-02-18T12:00:37.955838-08:00",
+      "updatedAt": "2026-02-18T12:00:37.955838-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "A-075",
+      "text": "Generate daily devotional content based on 8 faith dimensions",
+      "tag": "AGENT",
+      "priority": "medium",
+      "assignee": "Alex",
+      "status": "pending",
+      "sourceStandup": "AC-2",
+      "sourceStandupType": "afternoon-checkpoint",
+      "sourceDate": "2026-02-18",
+      "createdAt": "2026-02-18T12:00:37.955838-08:00",
+      "updatedAt": "2026-02-18T12:00:37.955838-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "A-076",
+      "text": "Prepare reminders for upcoming family events: Jetts vaccine",
+      "tag": "AGENT",
+      "priority": "medium",
+      "assignee": "Alex",
+      "status": "pending",
+      "sourceStandup": "AC-2",
+      "sourceStandupType": "afternoon-checkpoint",
+      "sourceDate": "2026-02-18",
+      "createdAt": "2026-02-18T12:00:37.955838-08:00",
+      "updatedAt": "2026-02-18T12:00:37.955838-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "A-077",
+      "text": "Monitor Fear & Greed index (currently 38)",
+      "tag": "AGENT",
+      "priority": "low",
+      "assignee": "Dave",
+      "status": "pending",
+      "sourceStandup": "AC-2",
+      "sourceStandupType": "afternoon-checkpoint",
+      "sourceDate": "2026-02-18",
+      "createdAt": "2026-02-18T12:00:37.955838-08:00",
+      "updatedAt": "2026-02-18T12:00:37.955838-08:00",
+      "completedAt": null
     }
   ]
 }

@@ -2,6 +2,21 @@
   "standups": [
     {
       "date": "2026-02-18",
+      "time": "12:00",
+      "type": "afternoon-checkpoint",
+      "typeName": "Afternoon Checkpoint",
+      "typeEmoji": "\ud83c\udf1e",
+      "topic": "Afternoon Checkpoint \u2014 Wednesday Feb 18",
+      "file": "2026-02-18-afternoon-checkpoint.json",
+      "tokenCost": 0.1501,
+      "verticals": [
+        "ecosystem"
+      ],
+      "initiatives": [],
+      "instanceKey": "AC-2"
+    },
+    {
+      "date": "2026-02-18",
       "type": "ecosystem-sync",
       "typeName": "Ecosystem Sync Audit",
       "typeEmoji": "\ud83d\udd04",

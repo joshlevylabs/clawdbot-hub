@@ -3452,13 +3452,13 @@ function DrawerOverlay({ open, onClose, children }: { open: boolean; onClose: ()
         onClick={onClose}
       />
       <div
-        className={`fixed inset-0 z-50 hidden lg:flex items-center justify-center p-6 transition-all duration-300 ease-in-out ${
+        className={`fixed inset-0 z-50 hidden lg:flex items-start justify-center pt-20 pb-6 px-6 transition-all duration-300 ease-in-out ${
           visible ? "opacity-100 scale-100" : "opacity-0 scale-95 pointer-events-none"
         }`}
       >
         <div
-          className="w-full max-w-2xl h-[85vh] flex"
-          style={{ boxShadow: visible ? "0 25px 50px rgba(0,0,0,0.5)" : "none", borderRadius: "1rem", overflow: "hidden" }}
+          className="w-full max-w-2xl flex"
+          style={{ maxHeight: "calc(100vh - 6rem)", boxShadow: visible ? "0 25px 50px rgba(0,0,0,0.5)" : "none", borderRadius: "1rem", overflow: "hidden" }}
         >
           {children}
         </div>

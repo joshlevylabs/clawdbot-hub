@@ -89,12 +89,22 @@
       "estimatedCost": 0.1115,
       "model": "claude-opus-4-6",
       "duration": "25.1s"
+    },
+    {
+      "date": "2026-02-17",
+      "type": "evening-wrap",
+      "inputTokens": 1436,
+      "outputTokens": 1255,
+      "totalTokens": 2691,
+      "estimatedCost": 0.1157,
+      "model": "claude-opus-4-6",
+      "duration": "26.8s"
     }
   ],
   "totals": {
-    "today": 0.6359,
-    "week": 0.9392,
-    "month": 0.9392,
-    "standupCount": 9
+    "today": 0.7516,
+    "week": 1.0549,
+    "month": 1.0549,
+    "standupCount": 10
   }
 }

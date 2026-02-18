@@ -31,11 +31,19 @@
       "typeEmoji": "\ud83c\udf06",
       "topic": "Evening Wrap \u2014 Tuesday Feb 17",
       "file": "2026-02-17-evening-wrap.json",
-      "tokenCost": 0.1115,
+      "tokenCost": 0.1157,
       "verticals": [
-        "ecosystem"
+        "hub",
+        "joshlevylabs",
+        "ecosystem",
+        "lever"
       ],
-      "initiatives": []
+      "initiatives": [
+        "content-growth",
+        "podcast-distribution",
+        "hub-standup-system",
+        "lever-dashboard"
+      ]
     },
     {
       "date": "2026-02-17",

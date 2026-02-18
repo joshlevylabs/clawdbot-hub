@@ -15,7 +15,8 @@
         "lever"
       ],
       "initiatives": [],
-      "time": "08:30"
+      "time": "08:30",
+      "instanceKey": "ESA-1"
     },
     {
       "date": "2026-02-18",
@@ -31,7 +32,8 @@
       "initiatives": [
         "mre-v14-optimization"
       ],
-      "time": "08:00"
+      "time": "08:00",
+      "instanceKey": "BD-1"
     },
     {
       "date": "2026-02-18",
@@ -48,7 +50,8 @@
         "podcast-distribution",
         "content-growth"
       ],
-      "time": "07:30"
+      "time": "07:30",
+      "instanceKey": "DA-1"
     },
     {
       "date": "2026-02-18",
@@ -65,7 +68,8 @@
         "app-store-submit",
         "lever-dashboard"
       ],
-      "time": "07:00"
+      "time": "07:00",
+      "instanceKey": "ASR-1"
     },
     {
       "date": "2026-02-18",
@@ -79,7 +83,8 @@
         "ecosystem"
       ],
       "initiatives": [],
-      "time": "05:45"
+      "time": "05:45",
+      "instanceKey": "MP-3"
     },
     {
       "date": "2026-02-17",
@@ -93,7 +98,8 @@
         "ecosystem"
       ],
       "initiatives": [],
-      "time": "23:55"
+      "time": "23:55",
+      "instanceKey": "MNP-2"
     },
     {
       "date": "2026-02-17",
@@ -115,7 +121,8 @@
         "hub-standup-system",
         "lever-dashboard"
       ],
-      "time": "19:00"
+      "time": "19:00",
+      "instanceKey": "EW-1"
     },
     {
       "date": "2026-02-17",
@@ -129,7 +136,8 @@
         "ecosystem"
       ],
       "initiatives": [],
-      "time": "12:00"
+      "time": "12:00",
+      "instanceKey": "AC-1"
     },
     {
       "date": "2026-02-17",
@@ -141,7 +149,8 @@
       "tokenCost": 0.1207,
       "verticals": [],
       "initiatives": [],
-      "time": "09:00"
+      "time": "09:00",
+      "instanceKey": "STD-1"
     },
     {
       "date": "2026-02-17",
@@ -155,7 +164,8 @@
         "ecosystem"
       ],
       "initiatives": [],
-      "time": "05:45"
+      "time": "05:45",
+      "instanceKey": "MP-2"
     },
     {
       "date": "2026-02-17",
@@ -166,7 +176,8 @@
       "file": "2026-02-17-adhoc-lever-faith-and-family.json",
       "tokenCost": 0.1169,
       "verticals": [],
-      "initiatives": []
+      "initiatives": [],
+      "instanceKey": "LFF-1"
     },
     {
       "date": "2026-02-17",
@@ -177,7 +188,8 @@
       "file": "2026-02-17-adhoc-ecosystem-revenue-product-creation.json",
       "tokenCost": 0.1349,
       "verticals": [],
-      "initiatives": []
+      "initiatives": [],
+      "instanceKey": "ERR-1"
     },
     {
       "date": "2026-02-16",
@@ -191,7 +203,8 @@
         "ecosystem"
       ],
       "initiatives": [],
-      "time": "23:55"
+      "time": "23:55",
+      "instanceKey": "MNP-1"
     },
     {
       "date": "2026-02-16",
@@ -205,7 +218,8 @@
         "ecosystem"
       ],
       "initiatives": [],
-      "time": "05:45"
+      "time": "05:45",
+      "instanceKey": "MP-1"
     }
   ]
 }

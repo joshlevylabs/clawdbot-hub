@@ -88,42 +88,48 @@
       "priority": "medium",
       "assignee": "Alex",
       "completed": false,
-      "tag": "AGENT"
+      "tag": "AGENT",
+      "taskKey": "A-054"
     },
     {
       "text": "Generate daily devotional content based on 8 faith dimensions",
       "priority": "medium",
       "assignee": "Alex",
       "completed": false,
-      "tag": "AGENT"
+      "tag": "AGENT",
+      "taskKey": "A-055"
     },
     {
       "text": "Draft faith lesson content for the Lever app (currently 7 lessons)",
       "priority": "medium",
       "assignee": "Alex",
       "completed": false,
-      "tag": "AGENT"
+      "tag": "AGENT",
+      "taskKey": "A-056"
     },
     {
       "text": "Commit 9 uncommitted hub changes",
       "priority": "low",
       "assignee": "Elon",
       "completed": false,
-      "tag": "AGENT"
+      "tag": "AGENT",
+      "taskKey": "A-057"
     },
     {
       "text": "Prepare reminders for upcoming family events: Jetts vaccine",
       "priority": "medium",
       "assignee": "Alex",
       "completed": false,
-      "tag": "AGENT"
+      "tag": "AGENT",
+      "taskKey": "A-058"
     },
     {
       "text": "Approve Lever content investment level based on quarterly priority decision",
       "priority": "high",
       "assignee": "Joshua",
       "completed": false,
-      "tag": "JOSHUA"
+      "tag": "JOSHUA",
+      "taskKey": "J-013"
     }
   ],
   "topPriorities": [
@@ -219,5 +225,6 @@
     }
   ],
   "phase": "waiting_for_ceo",
-  "time": "07:30"
+  "time": "07:30",
+  "instanceKey": "DA-1"
 }

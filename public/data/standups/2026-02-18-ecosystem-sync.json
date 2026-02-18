@@ -123,49 +123,56 @@
       "priority": "low",
       "assignee": "Elon",
       "completed": false,
-      "tag": "AGENT"
+      "tag": "AGENT",
+      "taskKey": "A-065"
     },
     {
       "text": "Draft faith lesson content for the Lever app (currently 7 lessons)",
       "priority": "medium",
       "assignee": "Alex",
       "completed": false,
-      "tag": "AGENT"
+      "tag": "AGENT",
+      "taskKey": "A-066"
     },
     {
       "text": "Generate daily devotional content based on 8 faith dimensions",
       "priority": "medium",
       "assignee": "Alex",
       "completed": false,
-      "tag": "AGENT"
+      "tag": "AGENT",
+      "taskKey": "A-067"
     },
     {
       "text": "Draft next blog post",
       "priority": "medium",
       "assignee": "Alex",
       "completed": false,
-      "tag": "AGENT"
+      "tag": "AGENT",
+      "taskKey": "A-068"
     },
     {
       "text": "Draft feature spec for expanding Family tab (currently 455 lines)",
       "priority": "medium",
       "assignee": "Elon",
       "completed": false,
-      "tag": "AGENT"
+      "tag": "AGENT",
+      "taskKey": "A-069"
     },
     {
       "text": "Review family touchpoint tracker design for 3 family members",
       "priority": "low",
       "assignee": "Elon",
       "completed": false,
-      "tag": "AGENT"
+      "tag": "AGENT",
+      "taskKey": "A-070"
     },
     {
       "text": "Prepare reminders for upcoming family events: Jetts vaccine",
       "priority": "medium",
       "assignee": "Alex",
       "completed": false,
-      "tag": "AGENT"
+      "tag": "AGENT",
+      "taskKey": "A-071"
     }
   ],
   "topPriorities": [
@@ -278,5 +285,6 @@
     }
   ],
   "phase": "waiting_for_ceo",
-  "time": "08:30"
+  "time": "08:30",
+  "instanceKey": "ESA-1"
 }

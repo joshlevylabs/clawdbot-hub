@@ -84,42 +84,48 @@
       "priority": "low",
       "assignee": "Dave",
       "completed": false,
-      "tag": "AGENT"
+      "tag": "AGENT",
+      "taskKey": "A-059"
     },
     {
       "text": "Draft faith lesson content for the Lever app (currently 7 lessons)",
       "priority": "medium",
       "assignee": "Alex",
       "completed": false,
-      "tag": "AGENT"
+      "tag": "AGENT",
+      "taskKey": "A-060"
     },
     {
       "text": "Generate daily devotional content based on 8 faith dimensions",
       "priority": "medium",
       "assignee": "Alex",
       "completed": false,
-      "tag": "AGENT"
+      "tag": "AGENT",
+      "taskKey": "A-061"
     },
     {
       "text": "Draft feature spec for expanding Family tab (currently 455 lines)",
       "priority": "medium",
       "assignee": "Elon",
       "completed": false,
-      "tag": "AGENT"
+      "tag": "AGENT",
+      "taskKey": "A-062"
     },
     {
       "text": "Review family touchpoint tracker design for 3 family members",
       "priority": "low",
       "assignee": "Elon",
       "completed": false,
-      "tag": "AGENT"
+      "tag": "AGENT",
+      "taskKey": "A-063"
     },
     {
       "text": "Draft next blog post",
       "priority": "medium",
       "assignee": "Alex",
       "completed": false,
-      "tag": "AGENT"
+      "tag": "AGENT",
+      "taskKey": "A-064"
     }
   ],
   "topPriorities": [
@@ -210,5 +216,6 @@
     }
   ],
   "phase": "waiting_for_ceo",
-  "time": "08:00"
+  "time": "08:00",
+  "instanceKey": "BD-1"
 }

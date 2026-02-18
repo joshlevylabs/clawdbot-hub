@@ -164,56 +164,64 @@
       "priority": "medium",
       "assignee": "Alex",
       "completed": false,
-      "tag": "AGENT"
+      "tag": "AGENT",
+      "taskKey": "A-032"
     },
     {
       "text": "Generate daily devotional content based on 8 faith dimensions",
       "priority": "medium",
       "assignee": "Alex",
       "completed": false,
-      "tag": "AGENT"
+      "tag": "AGENT",
+      "taskKey": "A-033"
     },
     {
       "text": "Draft faith lesson content for the Lever app (currently 7 lessons)",
       "priority": "medium",
       "assignee": "Alex",
       "completed": false,
-      "tag": "AGENT"
+      "tag": "AGENT",
+      "taskKey": "A-034"
     },
     {
       "text": "Prepare reminders for upcoming family events: Jetts vaccine",
       "priority": "medium",
       "assignee": "Alex",
       "completed": false,
-      "tag": "AGENT"
+      "tag": "AGENT",
+      "taskKey": "A-035"
     },
     {
       "text": "Commit 1 uncommitted hub change(s)",
       "priority": "low",
       "assignee": "Elon",
       "completed": false,
-      "tag": "AGENT"
+      "tag": "AGENT",
+      "taskKey": "A-036"
     },
     {
       "text": "Draft feature spec for expanding Family tab (currently 454 lines)",
       "priority": "medium",
       "assignee": "Elon",
       "completed": false,
-      "tag": "AGENT"
+      "tag": "AGENT",
+      "taskKey": "A-037"
     },
     {
       "text": "Review family touchpoint tracker design for 3 family members",
       "priority": "low",
       "assignee": "Elon",
       "completed": false,
-      "tag": "AGENT"
+      "tag": "AGENT",
+      "taskKey": "A-038"
     },
     {
       "text": "Monitor Fear & Greed index (currently 34)",
       "priority": "low",
       "assignee": "Dave",
       "completed": false,
-      "tag": "AGENT"
+      "tag": "AGENT",
+      "taskKey": "A-039"
     }
   ],
   "topPriorities": [
@@ -370,5 +378,6 @@
       "description": "Content, creative direction, brand. Obsessed with offers, value equations, and volume. Every piece of content must generate leads or it does not ship."
     }
   },
-  "time": "19:00"
+  "time": "19:00",
+  "instanceKey": "EW-1"
 }

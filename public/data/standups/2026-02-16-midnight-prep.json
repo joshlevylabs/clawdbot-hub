@@ -163,35 +163,40 @@
       "priority": "medium",
       "assignee": "Dave",
       "completed": false,
-      "tag": "JOSHUA"
+      "tag": "JOSHUA",
+      "taskKey": "J-003"
     },
     {
       "text": "Review position sizing and risk parameters for 7 active positions",
       "priority": "medium",
       "assignee": "Dave",
       "completed": false,
-      "tag": "JOSHUA"
+      "tag": "JOSHUA",
+      "taskKey": "J-004"
     },
     {
       "text": "Monitor Fear & Greed index (currently 36)",
       "priority": "low",
       "assignee": "Dave",
       "completed": false,
-      "tag": "AGENT"
+      "tag": "AGENT",
+      "taskKey": "A-007"
     },
     {
       "text": "Commit 2 uncommitted hub changes",
       "priority": "low",
       "assignee": "Elon",
       "completed": false,
-      "tag": "AGENT"
+      "tag": "AGENT",
+      "taskKey": "A-008"
     },
     {
       "text": "Draft next blog post",
       "priority": "medium",
       "assignee": "Alex",
       "completed": false,
-      "tag": "AGENT"
+      "tag": "AGENT",
+      "taskKey": "A-009"
     }
   ],
   "topPriorities": [
@@ -240,5 +245,6 @@
     }
   },
   "summary": "Focus: Portfolio health check \u2014 review all 7 active positions and risk parameters in a fear-leaning market \u00b7 3 concerns flagged \u00b7 5 actions (2 Joshua, 3 agent)",
-  "time": "23:55"
+  "time": "23:55",
+  "instanceKey": "MNP-1"
 }

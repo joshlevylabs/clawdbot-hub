@@ -163,42 +163,48 @@
       "priority": "high",
       "assignee": "Dave",
       "completed": false,
-      "tag": "JOSHUA"
+      "tag": "JOSHUA",
+      "taskKey": "J-009"
     },
     {
       "text": "Review current positions: AEE, EWA, TLT, GLD, EFA, XLV, XLE, VNQ, AKAM",
       "priority": "medium",
       "assignee": "Dave",
       "completed": false,
-      "tag": "JOSHUA"
+      "tag": "JOSHUA",
+      "taskKey": "J-010"
     },
     {
       "text": "Review position sizing and risk parameters for 9 active position(s)",
       "priority": "medium",
       "assignee": "Dave",
       "completed": false,
-      "tag": "JOSHUA"
+      "tag": "JOSHUA",
+      "taskKey": "J-011"
     },
     {
       "text": "Monitor Fear & Greed index (currently 34)",
       "priority": "low",
       "assignee": "Dave",
       "completed": false,
-      "tag": "AGENT"
+      "tag": "AGENT",
+      "taskKey": "A-029"
     },
     {
       "text": "Commit 4 uncommitted hub change(s)",
       "priority": "low",
       "assignee": "Elon",
       "completed": false,
-      "tag": "AGENT"
+      "tag": "AGENT",
+      "taskKey": "A-030"
     },
     {
       "text": "Draft next blog post",
       "priority": "medium",
       "assignee": "Alex",
       "completed": false,
-      "tag": "AGENT"
+      "tag": "AGENT",
+      "taskKey": "A-031"
     }
   ],
   "topPriorities": [
@@ -266,5 +272,6 @@
     }
   },
   "summary": "Focus: Joshua reviews 17 BUY signals to unblock potential entries \u00b7 3 concerns flagged \u00b7 6 actions (3 Joshua, 3 agent)",
-  "time": "12:00"
+  "time": "12:00",
+  "instanceKey": "AC-1"
 }

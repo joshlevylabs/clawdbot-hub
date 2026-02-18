@@ -168,35 +168,40 @@
       "priority": "high",
       "assignee": "Dave",
       "completed": false,
-      "tag": "JOSHUA"
+      "tag": "JOSHUA",
+      "taskKey": "J-006"
     },
     {
       "text": "Review current positions: AEE, EWA, EFA, XLV, XLE, VNQ, TLT, GLD, AKAM",
       "priority": "medium",
       "assignee": "Dave",
       "completed": false,
-      "tag": "JOSHUA"
+      "tag": "JOSHUA",
+      "taskKey": "J-007"
     },
     {
       "text": "Review position sizing and risk parameters for 9 active position(s)",
       "priority": "medium",
       "assignee": "Dave",
       "completed": false,
-      "tag": "JOSHUA"
+      "tag": "JOSHUA",
+      "taskKey": "J-008"
     },
     {
       "text": "Commit 1 uncommitted hub change(s)",
       "priority": "low",
       "assignee": "Elon",
       "completed": false,
-      "tag": "AGENT"
+      "tag": "AGENT",
+      "taskKey": "A-027"
     },
     {
       "text": "Monitor Fear & Greed index (currently 34)",
       "priority": "low",
       "assignee": "Dave",
       "completed": false,
-      "tag": "AGENT"
+      "tag": "AGENT",
+      "taskKey": "A-028"
     }
   ],
   "topPriorities": [
@@ -249,5 +254,6 @@
     }
   },
   "summary": "Focus: Scope and build Family Meeting template and faith habit tracking features in the Lever app \u00b7 3 concerns flagged \u00b7 5 actions (3 Joshua, 2 agent)",
-  "time": "09:00"
+  "time": "09:00",
+  "instanceKey": "STD-1"
 }

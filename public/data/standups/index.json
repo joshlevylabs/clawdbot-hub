@@ -2,6 +2,19 @@
   "standups": [
     {
       "date": "2026-02-18",
+      "time": "15:45",
+      "type": "adhoc-the-lyceum-greenfield-architecture",
+      "typeName": "The Lyceum Greenfield Architecture",
+      "typeEmoji": "\ud83c\udfdb\ufe0f",
+      "topic": "The Lyceum Greenfield Architecture \u2014 Wednesday Feb 18",
+      "file": "2026-02-18-adhoc-the-lyceum-greenfield-architecture.json",
+      "tokenCost": 0.2667,
+      "verticals": [],
+      "initiatives": [],
+      "instanceKey": "STD-3"
+    },
+    {
+      "date": "2026-02-18",
       "time": "15:40",
       "type": "adhoc-1771457922925",
       "typeName": "Lyceum Build Out",

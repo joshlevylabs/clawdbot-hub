@@ -1,6 +1,6 @@
 {
-  "nextAgentId": 79,
-  "nextJoshuaId": 16,
+  "nextAgentId": 83,
+  "nextJoshuaId": 19,
   "tasks": [
     {
       "key": "A-001",
@@ -1078,6 +1078,104 @@
       "sourceDate": "2026-02-18",
       "createdAt": "2026-02-18T15:39:38.080594-08:00",
       "updatedAt": "2026-02-18T15:39:38.080594-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "J-016",
+      "text": "Decide target audience and content focus for The Lyceum",
+      "tag": "JOSHUA",
+      "priority": "high",
+      "assignee": "Joshua",
+      "status": "pending",
+      "sourceStandup": "STD-1",
+      "sourceStandupType": "adhoc-the-lyceum-greenfield-architecture",
+      "sourceDate": "2026-02-18",
+      "createdAt": "2026-02-18T15:45:02.914936-08:00",
+      "updatedAt": "2026-02-18T15:45:02.914936-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "J-017",
+      "text": "Decide whether community features are in MVP or deferred to v2",
+      "tag": "JOSHUA",
+      "priority": "high",
+      "assignee": "Joshua",
+      "status": "pending",
+      "sourceStandup": "STD-1",
+      "sourceStandupType": "adhoc-the-lyceum-greenfield-architecture",
+      "sourceDate": "2026-02-18",
+      "createdAt": "2026-02-18T15:45:02.914936-08:00",
+      "updatedAt": "2026-02-18T15:45:02.914936-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "J-018",
+      "text": "Choose pricing model and free tier scope",
+      "tag": "JOSHUA",
+      "priority": "high",
+      "assignee": "Joshua",
+      "status": "pending",
+      "sourceStandup": "STD-1",
+      "sourceStandupType": "adhoc-the-lyceum-greenfield-architecture",
+      "sourceDate": "2026-02-18",
+      "createdAt": "2026-02-18T15:45:02.914936-08:00",
+      "updatedAt": "2026-02-18T15:45:02.914936-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "A-079",
+      "text": "Scaffold greenfield Lyceum repo: Next.js 14 App Router, Supabase auth, Postgres schema with cohort-ready lesson model, Stripe subscription integration",
+      "tag": "AGENT",
+      "priority": "high",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "sourceStandup": "STD-1",
+      "sourceStandupType": "adhoc-the-lyceum-greenfield-architecture",
+      "sourceDate": "2026-02-18",
+      "createdAt": "2026-02-18T15:45:02.914936-08:00",
+      "updatedAt": "2026-02-18T15:45:02.914936-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "A-080",
+      "text": "Draft brand positioning document and landing page copy framework for The Lyceum",
+      "tag": "AGENT",
+      "priority": "medium",
+      "assignee": "Alex",
+      "status": "pending",
+      "sourceStandup": "STD-1",
+      "sourceStandupType": "adhoc-the-lyceum-greenfield-architecture",
+      "sourceDate": "2026-02-18",
+      "createdAt": "2026-02-18T15:45:02.914936-08:00",
+      "updatedAt": "2026-02-18T15:45:02.914936-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "A-081",
+      "text": "Draft pricing and monetization strategy document with free-to-paid conversion funnel",
+      "tag": "AGENT",
+      "priority": "medium",
+      "assignee": "Dave",
+      "status": "pending",
+      "sourceStandup": "STD-1",
+      "sourceStandupType": "adhoc-the-lyceum-greenfield-architecture",
+      "sourceDate": "2026-02-18",
+      "createdAt": "2026-02-18T15:45:02.914936-08:00",
+      "updatedAt": "2026-02-18T15:45:02.914936-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "A-082",
+      "text": "Design Lyceum data model: users, lessons, curriculum tracks, progress, cohorts, subscriptions",
+      "tag": "AGENT",
+      "priority": "medium",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "sourceStandup": "STD-1",
+      "sourceStandupType": "adhoc-the-lyceum-greenfield-architecture",
+      "sourceDate": "2026-02-18",
+      "createdAt": "2026-02-18T15:45:02.914936-08:00",
+      "updatedAt": "2026-02-18T15:45:02.914936-08:00",
       "completedAt": null
     }
   ]

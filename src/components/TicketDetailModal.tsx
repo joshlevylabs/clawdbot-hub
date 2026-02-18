@@ -456,13 +456,21 @@ export default function TicketDetailModal({ task, onClose, onUpdate }: TicketDet
     setLocalTask(task);
   }, [task]);
 
-  const handleSprintReadyToggle = () => {
+  const handleSprintReadyToggle = async () => {
     const newSprintReady = !localTask.sprintReady;
     setLocalTask(prev => ({ ...prev, sprintReady: newSprintReady }));
     onUpdate({ sprintReady: newSprintReady });
     
-    // TODO: Persist to task-registry.json via API route or localStorage
-    // For now, just update in memory
+    // Persist to task-registry.json via API
+    try {
+      await fetch("/api/tasks", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ taskKey: localTask.key, sprintReady: newSprintReady }),
+      });
+    } catch (error) {
+      console.error("Failed to persist sprint-ready status:", error);
+    }
   };
 
   const formatDate = (dateString: string) => {

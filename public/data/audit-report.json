@@ -1,11 +1,11 @@
 {
-  "timestamp": "2026-02-18T09:45:04.785561+00:00",
+  "timestamp": "2026-02-18T10:00:16.586321+00:00",
   "summary": {
     "total_tasks": 23,
     "verified_done": 17,
     "done_but_unverified": 0,
-    "pending": 1,
-    "stale": 0
+    "pending": 0,
+    "stale": 1
   },
   "items": [
     {
@@ -40,7 +40,7 @@
     },
     {
       "text": "Draft next blog post",
-      "status": "pending",
+      "status": "stale",
       "assignee": "Alex",
       "verification": "No verification rule found"
     },
@@ -147,5 +147,7 @@
       "verification": "No verification rule found"
     }
   ],
-  "escalations": []
+  "escalations": [
+    "\ud83d\udd34 STALE [Alex]: Draft next blog post \u2014 unresolved for 120 min"
+  ]
 }

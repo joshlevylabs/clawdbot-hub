@@ -125,7 +125,20 @@ const ID_TO_DIR: Record<string, string> = {
   cmo: "muse",
   cro: "venture",
   nexus: "forge",
-  ticker: "pit",
+  cfto: "pit",
+  ctio: "ctio",
+  testarch: "test-arch",
+  hwval: "hw-validation",
+  swval: "sw-ai-validation",
+  dataint: "data-integrity",
+  autotool: "automation-tooling",
+  compstd: "compliance",
+  cpo: "cpo",
+  faithfam: "faith-family",
+  aiinfra: "ai-infra",
+  conshw: "consumer-hw",
+  roboauto: "robotics",
+  digplat: "digital-platforms",
   // All others use the same name: pixel, sentinel, scriptbot, echo, builder, scout
 };
 
@@ -666,7 +679,7 @@ function getDefaultAgents(): Record<string, AgentState> {
       id: "coo", name: "Theo", title: "COO", emoji: "🔺",
       model: "Claude Opus 4", status: "active", department: "Executive",
       description: "Orchestrates all operations. The right hand.",
-      reportsTo: "ceo", directReports: ["cto", "cmo", "cro", "auditor"],
+      reportsTo: "ceo", directReports: ["cto", "cmo", "cro", "cfto", "ctio", "cpo", "auditor"],
     },
     auditor: {
       id: "auditor", name: "Auditor", title: "Task Auditor", emoji: "🔎",
@@ -720,7 +733,7 @@ function getDefaultAgents(): Record<string, AgentState> {
       id: "cro", name: "Dave", title: "CRO", emoji: "💵",
       model: "Claude Sonnet 4", status: "active", department: "Revenue",
       description: "Growth strategy, monetization. Gazelle-intense focus on revenue, proven frameworks, every dollar has a purpose.",
-      reportsTo: "coo", directReports: ["builder", "scout", "ticker"],
+      reportsTo: "coo", directReports: ["builder", "scout"],
     },
     builder: {
       id: "builder", name: "Builder", title: "Products Lead", emoji: "🏗️",
@@ -734,23 +747,103 @@ function getDefaultAgents(): Record<string, AgentState> {
       description: "User acquisition, community, analytics",
       reportsTo: "cro", directReports: [],
     },
-    ticker: {
-      id: "ticker", name: "Chris", title: "Trading Strategist", emoji: "📈",
+    cfto: {
+      id: "cfto", name: "Chris", title: "CFTO", emoji: "📈",
       model: "Sonnet 4", status: "active", department: "Revenue",
-      description: "Chris Vermeulen — 25+ year veteran trader. ETF specialist focused on capital preservation and riding only rising assets. Owns the MRE improvement system.",
-      reportsTo: "cro", directReports: ["quant", "sweep"],
+      description: "Chris Vermeulen — 25+ year veteran trader. CFTO owning all financial tools and products. ETF specialist focused on capital preservation and riding only rising assets.",
+      reportsTo: "coo", directReports: ["quant", "sweep"],
     },
     quant: {
       id: "quant", name: "Quant", title: "Signal Analyst", emoji: "🧮",
       model: "Sonnet 4", status: "active", department: "Revenue",
       description: "Signal accuracy analysis, correlation scanning, and regime detection. The analytical engine of the MRE system.",
-      reportsTo: "ticker", directReports: [],
+      reportsTo: "cfto", directReports: [],
     },
     sweep: {
       id: "sweep", name: "Sweep", title: "Backtester", emoji: "🧪",
       model: "Sonnet 4", status: "active", department: "Revenue",
       description: "Parameter optimization, backtesting, and regression testing. Validates every change before it ships.",
-      reportsTo: "ticker", directReports: [],
+      reportsTo: "cfto", directReports: [],
+    },
+    /* ── CTIO — Test Infrastructure ── */
+    ctio: {
+      id: "ctio", name: "Elon", title: "CTIO", emoji: "🧪",
+      model: "Claude Sonnet 4", status: "active", department: "Engineering",
+      description: "Relentless Systems Verifier. First-principles testing, design-to-failure, refuses to ship 'probably works.'",
+      reportsTo: "coo", directReports: ["testarch", "hwval", "swval", "dataint", "autotool", "compstd"],
+    },
+    testarch: {
+      id: "testarch", name: "Lamport", title: "VP Test Architecture", emoji: "🏗️",
+      model: "Sonnet 4", status: "active", department: "Engineering",
+      description: "Elegant System Theorist. Traceability matrices, formal invariants, correctness frameworks. Thinks in proofs.",
+      reportsTo: "ctio", directReports: [],
+    },
+    hwval: {
+      id: "hwval", name: "Deming", title: "Dir. Hardware Validation", emoji: "🔌",
+      model: "Sonnet 4", status: "active", department: "Engineering",
+      description: "Industrial Reliability Master. Burn-in protocols, reliability curves, statistical process control. Thinks in sigma levels.",
+      reportsTo: "ctio", directReports: [],
+    },
+    swval: {
+      id: "swval", name: "Russell", title: "Dir. Software & AI Validation", emoji: "🤖",
+      model: "Sonnet 4", status: "active", department: "Engineering",
+      description: "Alignment Guardian. Agent alignment testing, hallucination scoring, adversarial prompts, drift & bias measurement.",
+      reportsTo: "ctio", directReports: [],
+    },
+    dataint: {
+      id: "dataint", name: "Silver", title: "Dir. Data Integrity", emoji: "📊",
+      model: "Sonnet 4", status: "active", department: "Engineering",
+      description: "Measurement Purist. Telemetry, anomaly detection, probabilistic dashboards. Bayesian signal-from-noise.",
+      reportsTo: "ctio", directReports: [],
+    },
+    autotool: {
+      id: "autotool", name: "Linus", title: "Dir. Automation & Tooling", emoji: "⚙️",
+      model: "Sonnet 4", status: "active", department: "Engineering",
+      description: "Builder of Builder Tools. Internal frameworks, pipeline optimization, hates unnecessary abstraction.",
+      reportsTo: "ctio", directReports: [],
+    },
+    compstd: {
+      id: "compstd", name: "Vestager", title: "Dir. Compliance & Standards", emoji: "📜",
+      model: "Sonnet 4", status: "active", department: "Engineering",
+      description: "Institutional Integrity Defender. Regulatory constraints, audit logs, prevents 'move fast break laws.'",
+      reportsTo: "ctio", directReports: [],
+    },
+    /* ── CPO — Product ── */
+    cpo: {
+      id: "cpo", name: "Jobs", title: "CPO", emoji: "🧭",
+      model: "Claude Sonnet 4", status: "active", department: "Executive",
+      description: "Taste + Vision + Market Timing. Ruthless focus, simplicity as discipline, product intuition.",
+      reportsTo: "coo", directReports: ["faithfam", "aiinfra", "conshw", "roboauto", "digplat"],
+    },
+    faithfam: {
+      id: "faithfam", name: "Peterson", title: "Dir. Faith & Family", emoji: "🕊️",
+      model: "Sonnet 4", status: "active", department: "Executive",
+      description: "Moral Order + Psychological Responsibility. Ethical product review, family impact, civilizational thinking.",
+      reportsTo: "cpo", directReports: [],
+    },
+    aiinfra: {
+      id: "aiinfra", name: "Hassabis", title: "Dir. AI Infrastructure", emoji: "🧠",
+      model: "Sonnet 4", status: "active", department: "Engineering",
+      description: "Scaling Intelligence Architect. Agent orchestration, capability scaling, research vs. deploy balance.",
+      reportsTo: "cpo", directReports: [],
+    },
+    conshw: {
+      id: "conshw", name: "Ive", title: "Dir. Consumer Hardware", emoji: "🔊",
+      model: "Sonnet 4", status: "active", department: "Engineering",
+      description: "Human-Centered Engineer. Obsessive simplicity, tactile emotional design, precision industrial execution.",
+      reportsTo: "cpo", directReports: [],
+    },
+    roboauto: {
+      id: "roboauto", name: "Brooks", title: "Dir. Robotics & Automation", emoji: "🤖",
+      model: "Sonnet 4", status: "active", department: "Engineering",
+      description: "Applied Robotics Visionary. Grounded in reality, behavior-based robotics, practical autonomy.",
+      reportsTo: "cpo", directReports: [],
+    },
+    digplat: {
+      id: "digplat", name: "Bezos", title: "Dir. Digital Platforms", emoji: "🌐",
+      model: "Sonnet 4", status: "active", department: "Engineering",
+      description: "Platform Ecosystem Builder. API design, marketplace flywheels, infrastructure-first scaling.",
+      reportsTo: "cpo", directReports: [],
     },
   };
 }
@@ -780,16 +873,29 @@ function getAgentIcon(agent: AgentState, isCLevel: boolean): ReactNode {
     echo: <Share2 className={iconClass} />,
     builder: <Rocket className={iconClass} />,
     scout: <Search className={iconClass} />,
-    ticker: <BarChart3 className={iconClass} />,
+    cfto: <BarChart3 className={iconClass} />,
     quant: <Cpu className={iconClass} />,
     sweep: <TestTube className={iconClass} />,
     auditor: <Check className={iconClass} />,
+    ctio: <TestTube className={iconClass} />,
+    testarch: <Network className={iconClass} />,
+    hwval: <Wrench className={iconClass} />,
+    swval: <Brain className={iconClass} />,
+    dataint: <BarChart3 className={iconClass} />,
+    autotool: <Wrench className={iconClass} />,
+    compstd: <BookOpen className={iconClass} />,
+    cpo: <Zap className={iconClass} />,
+    faithfam: <Heart className={iconClass} />,
+    aiinfra: <Brain className={iconClass} />,
+    conshw: <Cpu className={iconClass} />,
+    roboauto: <Bot className={iconClass} />,
+    digplat: <Network className={iconClass} />,
   };
 
   return iconMap[agent.id] || <Bot className={iconClass} />;
 }
 
-const C_LEVEL_IDS = new Set(["ceo", "coo", "cto", "cmo", "cro"]);
+const C_LEVEL_IDS = new Set(["ceo", "coo", "cto", "cmo", "cro", "cfto", "ctio", "cpo"]);
 
 function isCLevel(id: string): boolean {
   return C_LEVEL_IDS.has(id);
@@ -3643,7 +3749,7 @@ const ROUTES = [
   { task: "Build / Fix code", agents: ["Atlas", "CTO"], color: "text-cyan-400" },
   { task: "Write content", agents: ["Alex", "ScriptBot"], color: "text-rose-400" },
   { task: "Post social", agents: ["Alex", "Echo"], color: "text-rose-400" },
-  { task: "Trading / optimize", agents: ["Dave", "Ticker"], color: "text-emerald-400" },
+  { task: "Trading / optimize", agents: ["Chris (CFTO)", "Quant", "Sweep"], color: "text-emerald-400" },
   { task: "Test / audit", agents: ["Atlas", "Sentinel"], color: "text-cyan-400" },
   { task: "Design / UI", agents: ["Atlas", "Pixel"], color: "text-cyan-400" },
   { task: "Research / question", agents: ["Theo (direct)"], color: "text-violet-400" },
@@ -3737,7 +3843,7 @@ const PROTOCOLS: ProtocolData[] = [
     icon: "🏛️",
     description: "Trading Team Protocol",
     countLabel: "11 roles",
-    activates: ["Dave (CRO)", "Ticker (Trading)"],
+    activates: ["Chris (CFTO)", "Quant", "Sweep"],
     roles: ["Strategist", "Quant Researcher", "Data Engineer", "Algorithm Dev", "Risk Manager", "Backtester", "Portfolio Manager", "Market Monitor", "Infrastructure Dev", "Compliance Auditor", "Performance Analyst"],
     details: "Trading and market analysis protocol. Strategist defines thesis, Quant Researcher validates with data, Algorithm Dev implements signals. Risk Manager sets position sizing. Backtester validates before live deployment. Use for new trading strategies, signal optimization, and portfolio rebalancing."
   },
@@ -4256,10 +4362,12 @@ function CronJobCard({ job }: { job: CronJob }) {
 
 type CronGroupBy = "category" | "agent";
 
-const AGENT_ORDER = ["Theo", "Ticker", "Alex", "Atlas"];
+const AGENT_ORDER = ["Theo", "Chris", "Alex", "Atlas", "Elon", "Jobs"];
 const AGENT_ICONS: Record<string, string> = {
   "Theo": "🔺",
-  "Ticker": "📊",
+  "Chris": "📈",
+  "Elon": "🧪",
+  "Jobs": "🧭",
   "Alex": "🦍",
   "Atlas": "🗺️",
   "Unknown": "❓",

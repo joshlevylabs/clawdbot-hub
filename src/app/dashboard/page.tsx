@@ -530,7 +530,7 @@ function AgentTasksCard({ data, completedIds, onToggle }: { data: JoshuaPrioriti
   // Items are "done" if either the JSON status says done OR if manually completed via UI
   const visibleTasks = data.agentHandled.filter((t, i) => {
     const manuallyDone = !!completedIds[`agent:${i}`];
-    const statusDone = t.status === "done";
+    const statusDone = t.status === "done" || t.status === "resolved" || t.status === "completed";
     return !manuallyDone && !statusDone;
   });
 
@@ -552,7 +552,7 @@ function AgentTasksCard({ data, completedIds, onToggle }: { data: JoshuaPrioriti
       <div className="space-y-1.5 max-h-64 overflow-auto">
         {data.agentHandled.map((task, i) => {
           const manuallyDone = !!completedIds[`agent:${i}`];
-          const statusDone = task.status === "done";
+          const statusDone = task.status === "done" || task.status === "resolved" || task.status === "completed";
           if (manuallyDone || statusDone) return null;
           const isFailed = task.status === "failed";
           return (

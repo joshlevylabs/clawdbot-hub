@@ -451,10 +451,27 @@ function NotesForTheoSection({ task, onUpdate }: { task: Task; onUpdate: (update
 
 export default function TicketDetailModal({ task, onClose, onUpdate }: TicketDetailModalProps) {
   const [localTask, setLocalTask] = useState(task);
+  const [verticals, setVerticals] = useState<string[]>([]);
+  const [initiatives, setInitiatives] = useState<string[]>([]);
 
   useEffect(() => {
     setLocalTask(task);
   }, [task]);
+
+  useEffect(() => {
+    fetch("/data/standups/index.json")
+      .then(res => res.json())
+      .then(indexData => {
+        const match = (indexData.standups || []).find(
+          (s: any) => s.instanceKey === task.sourceStandup
+        );
+        if (match) {
+          setVerticals(match.verticals || []);
+          setInitiatives(match.initiatives || []);
+        }
+      })
+      .catch(console.error);
+  }, [task.sourceStandup]);
 
   const handleSprintReadyToggle = async () => {
     const newSprintReady = !localTask.sprintReady;
@@ -629,6 +646,39 @@ export default function TicketDetailModal({ task, onClose, onUpdate }: TicketDet
                 </button>
               </div>
             </div>
+
+            {/* Verticals & Initiatives */}
+            {(verticals.length > 0 || initiatives.length > 0) && (
+              <div>
+                <h3 className="font-medium text-slate-200 mb-3">Classification</h3>
+                <div className="space-y-2">
+                  {verticals.length > 0 && (
+                    <div>
+                      <p className="text-xs text-slate-500 mb-1">Verticals</p>
+                      <div className="flex flex-wrap gap-1">
+                        {verticals.map(v => (
+                          <span key={v} className="px-2 py-0.5 rounded text-[10px] font-medium bg-primary-500/15 text-primary-400 border border-primary-500/30">
+                            {v}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {initiatives.length > 0 && (
+                    <div>
+                      <p className="text-xs text-slate-500 mb-1">Initiatives</p>
+                      <div className="flex flex-wrap gap-1">
+                        {initiatives.map(i => (
+                          <span key={i} className="px-2 py-0.5 rounded text-[10px] font-medium bg-cyan-500/15 text-cyan-400 border border-cyan-500/30">
+                            {i}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
 
             {/* Notes */}
             <div>

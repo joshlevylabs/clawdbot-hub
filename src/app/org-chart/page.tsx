@@ -3754,6 +3754,15 @@ const PROTOCOLS: ProtocolData[] = [
     activates: ["Personal advisory team"],
     roles: ["Pattern Analyst", "Daily Nudge", "Conflict Coach", "Routine Breaker", "Integration Advisor"],
   },
+  {
+    name: "The Broadcast",
+    icon: "🎙️",
+    description: "Podcast Publishing Protocol",
+    countLabel: "7 stages",
+    activates: ["Alex (CMO)", "ScriptBot (Content)"],
+    roles: ["Topic Research", "Script Draft", "Hub Review", "Record & Edit", "Platform Upload", "Newsletter & Blog", "Distribution"],
+    isStages: true,
+  },
 ];
 
 function ProtocolCard({ protocol }: { protocol: ProtocolData }) {

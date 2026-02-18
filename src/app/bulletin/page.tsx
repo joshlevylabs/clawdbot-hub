@@ -254,9 +254,9 @@ export default function BulletinPage() {
 
   // Get unique verticals from standup index
   const allVerticals = standupIndex ? Array.from(new Set(
-    standupIndex.standups.flatMap((s: any) => s.verticals || [])
+    standupIndex.standups.flatMap((s: any) => (s.verticals || []) as string[])
   )) : [];
-  const verticals: string[] = allVerticals.filter(Boolean).sort();
+  const verticals: string[] = (allVerticals.filter(Boolean) as string[]).sort();
 
   // Group tasks by status for kanban
   const tasksByStatus = {

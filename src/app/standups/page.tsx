@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import {
   MessageSquare,
   ChevronDown,
@@ -2400,7 +2401,9 @@ function ManageView() {
 
 // ---- Main Page ----
 
-export default function StandupsPage() {
+function StandupsPageInner() {
+  const searchParams = useSearchParams();
+  const standupParam = searchParams.get("standup"); // e.g. "MP-1" instanceKey
   const [selectedStandup, setSelectedStandup] = useState<Standup | null>(null);
   const [standupIndex, setStandupIndex] = useState<StandupIndex | null>(null);
   const [joshuaPriorities, setJoshuaPriorities] = useState<JoshuaPriorities | null>(null);
@@ -2476,17 +2479,39 @@ export default function StandupsPage() {
           completions = cData.completions || {};
         }
 
-        if (latestRes.ok) {
+        let indexData: StandupIndex | null = null;
+        if (indexRes.ok) {
+          indexData = await indexRes.json();
+          setStandupIndex(indexData);
+        }
+
+        // If ?standup=MP-1 param is present, find and load that standup by instanceKey
+        let deepLinked = false;
+        if (standupParam && indexData) {
+          const match = indexData.standups.find(
+            (s: StandupIndexEntry) => s.instanceKey === standupParam
+          );
+          if (match) {
+            try {
+              const deepRes = await fetch(`/data/standups/${match.file}`);
+              if (deepRes.ok) {
+                const deepData = await deepRes.json();
+                setSelectedStandup(applyCompletions(deepData, completions));
+                setSelectedFile(match.file);
+                deepLinked = true;
+              }
+            } catch {
+              // Fall through to latest
+            }
+          }
+        }
+
+        if (!deepLinked && latestRes.ok) {
           const data = await latestRes.json();
           setSelectedStandup(applyCompletions(data, completions));
           const dateStr = data.date;
           const typeStr = data.type || "daily-priorities";
           setSelectedFile(`${dateStr}-${typeStr}.json`);
-        }
-
-        if (indexRes.ok) {
-          const indexData = await indexRes.json();
-          setStandupIndex(indexData);
         }
 
         if (prioritiesRes.ok) {
@@ -2533,7 +2558,7 @@ export default function StandupsPage() {
       }
     }
     fetchData();
-  }, []);
+  }, [standupParam]);
 
   const loadStandup = async (file: string) => {
     setSelectedFile(file);
@@ -2891,5 +2916,13 @@ export default function StandupsPage() {
         <ManageView />
       )}
     </div>
+  );
+}
+
+export default function StandupsPage() {
+  return (
+    <Suspense fallback={<div className="p-8 text-slate-400">Loading standups...</div>}>
+      <StandupsPageInner />
+    </Suspense>
   );
 }

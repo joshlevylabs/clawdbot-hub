@@ -8,13 +8,13 @@
       "tag": "AGENT",
       "priority": "high",
       "assignee": "Elon",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "MP-1",
       "sourceStandupType": "morning-priorities",
       "sourceDate": "2026-02-16",
       "createdAt": "2026-02-16T20:13:53.547816-08:00",
-      "updatedAt": "2026-02-18T09:14:35.612293-08:00",
-      "completedAt": null
+      "updatedAt": "2026-02-18T18:53:02.139549+00:00",
+      "completedAt": "2026-02-18T18:53:02.139549+00:00"
     },
     {
       "key": "J-001",
@@ -22,13 +22,13 @@
       "tag": "JOSHUA",
       "priority": "medium",
       "assignee": "Dave",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "MP-1",
       "sourceStandupType": "morning-priorities",
       "sourceDate": "2026-02-16",
       "createdAt": "2026-02-16T20:13:53.547816-08:00",
-      "updatedAt": "2026-02-18T09:14:35.612301-08:00",
-      "completedAt": null
+      "updatedAt": "2026-02-18T18:53:02.139549+00:00",
+      "completedAt": "2026-02-18T15:28:21.979+00:00"
     },
     {
       "key": "A-002",
@@ -36,13 +36,13 @@
       "tag": "AGENT",
       "priority": "high",
       "assignee": "Alex",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "MP-1",
       "sourceStandupType": "morning-priorities",
       "sourceDate": "2026-02-16",
       "createdAt": "2026-02-16T20:13:53.547816-08:00",
-      "updatedAt": "2026-02-18T09:14:35.612306-08:00",
-      "completedAt": null
+      "updatedAt": "2026-02-18T18:53:02.139549+00:00",
+      "completedAt": "2026-02-18T18:53:02.139549+00:00"
     },
     {
       "key": "J-002",
@@ -50,13 +50,13 @@
       "tag": "JOSHUA",
       "priority": "medium",
       "assignee": "Dave",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "MP-1",
       "sourceStandupType": "morning-priorities",
       "sourceDate": "2026-02-16",
       "createdAt": "2026-02-16T20:13:53.547816-08:00",
-      "updatedAt": "2026-02-18T09:14:35.612309-08:00",
-      "completedAt": null
+      "updatedAt": "2026-02-18T18:53:02.139549+00:00",
+      "completedAt": "2026-02-18T15:35:40.223+00:00"
     },
     {
       "key": "A-003",
@@ -64,13 +64,13 @@
       "tag": "AGENT",
       "priority": "low",
       "assignee": "Elon",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "MP-1",
       "sourceStandupType": "morning-priorities",
       "sourceDate": "2026-02-16",
       "createdAt": "2026-02-16T20:13:53.547816-08:00",
-      "updatedAt": "2026-02-18T09:14:35.612312-08:00",
-      "completedAt": null
+      "updatedAt": "2026-02-18T18:53:02.139549+00:00",
+      "completedAt": "2026-02-17T21:37:00+00:00"
     },
     {
       "key": "A-004",
@@ -106,13 +106,13 @@
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "Alex",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "MP-1",
       "sourceStandupType": "morning-priorities",
       "sourceDate": "2026-02-16",
       "createdAt": "2026-02-16T20:13:53.547816-08:00",
-      "updatedAt": "2026-02-18T09:14:35.612321-08:00",
-      "completedAt": null
+      "updatedAt": "2026-02-18T18:53:02.139549+00:00",
+      "completedAt": "2026-02-17T16:28:51.271151+00:00"
     },
     {
       "key": "J-003",
@@ -176,13 +176,13 @@
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "Alex",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "MNP-1",
       "sourceStandupType": "midnight-prep",
       "sourceDate": "2026-02-16",
       "createdAt": "2026-02-16T23:55:04.837727-08:00",
-      "updatedAt": "2026-02-18T09:14:35.612853-08:00",
-      "completedAt": null
+      "updatedAt": "2026-02-18T18:53:02.139549+00:00",
+      "completedAt": "2026-02-17T16:28:51.271151+00:00"
     },
     {
       "key": "A-010",
@@ -344,13 +344,13 @@
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "Alex",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "ERR-1",
       "sourceStandupType": "adhoc-ecosystem-revenue-product-creation",
       "sourceDate": "2026-02-17",
       "createdAt": "2026-02-17T19:27:21.828026-08:00",
-      "updatedAt": "2026-02-18T09:14:35.614397-08:00",
-      "completedAt": null
+      "updatedAt": "2026-02-18T18:53:02.139549+00:00",
+      "completedAt": "2026-02-17T21:05:42+00:00"
     },
     {
       "key": "A-022",
@@ -358,13 +358,13 @@
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "Alex",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "ERR-1",
       "sourceStandupType": "adhoc-ecosystem-revenue-product-creation",
       "sourceDate": "2026-02-17",
       "createdAt": "2026-02-17T19:27:21.828026-08:00",
-      "updatedAt": "2026-02-18T09:14:35.614400-08:00",
-      "completedAt": null
+      "updatedAt": "2026-02-18T18:53:02.139549+00:00",
+      "completedAt": "2026-02-17T16:28:51.271143+00:00"
     },
     {
       "key": "A-023",
@@ -372,13 +372,13 @@
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "Alex",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "ERR-1",
       "sourceStandupType": "adhoc-ecosystem-revenue-product-creation",
       "sourceDate": "2026-02-17",
       "createdAt": "2026-02-17T19:27:21.828026-08:00",
-      "updatedAt": "2026-02-18T09:14:35.614403-08:00",
-      "completedAt": null
+      "updatedAt": "2026-02-18T18:53:02.139549+00:00",
+      "completedAt": "2026-02-18T07:27:00+00:00"
     },
     {
       "key": "A-024",
@@ -386,13 +386,13 @@
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "Elon",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "ERR-1",
       "sourceStandupType": "adhoc-ecosystem-revenue-product-creation",
       "sourceDate": "2026-02-17",
       "createdAt": "2026-02-17T19:27:21.828026-08:00",
-      "updatedAt": "2026-02-18T09:14:35.614406-08:00",
-      "completedAt": null
+      "updatedAt": "2026-02-18T18:53:02.139549+00:00",
+      "completedAt": "2026-02-17T16:28:51.271154+00:00"
     },
     {
       "key": "A-025",
@@ -400,13 +400,13 @@
       "tag": "AGENT",
       "priority": "low",
       "assignee": "Elon",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "ERR-1",
       "sourceStandupType": "adhoc-ecosystem-revenue-product-creation",
       "sourceDate": "2026-02-17",
       "createdAt": "2026-02-17T19:27:21.828026-08:00",
-      "updatedAt": "2026-02-18T09:14:35.614408-08:00",
-      "completedAt": null
+      "updatedAt": "2026-02-18T18:53:02.139549+00:00",
+      "completedAt": "2026-02-17T16:28:51.271157+00:00"
     },
     {
       "key": "A-026",
@@ -428,13 +428,13 @@
       "tag": "JOSHUA",
       "priority": "high",
       "assignee": "Dave",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "MP-2",
       "sourceStandupType": "morning-priorities",
       "sourceDate": "2026-02-17",
       "createdAt": "2026-02-17T05:45:05.118620-08:00",
-      "updatedAt": "2026-02-18T09:14:35.615370-08:00",
-      "completedAt": null
+      "updatedAt": "2026-02-18T18:53:02.139549+00:00",
+      "completedAt": "2026-02-17T23:37:39.338+00:00"
     },
     {
       "key": "J-006",
@@ -442,13 +442,13 @@
       "tag": "JOSHUA",
       "priority": "high",
       "assignee": "Dave",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "STD-1",
       "sourceStandupType": "lever-faith-family",
       "sourceDate": "2026-02-17",
       "createdAt": "2026-02-17T14:39:37.720719-08:00",
-      "updatedAt": "2026-02-18T09:14:35.616698-08:00",
-      "completedAt": null
+      "updatedAt": "2026-02-18T18:53:02.139549+00:00",
+      "completedAt": "2026-02-17T23:37:39.338+00:00"
     },
     {
       "key": "J-007",
@@ -470,13 +470,13 @@
       "tag": "JOSHUA",
       "priority": "medium",
       "assignee": "Dave",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "STD-1",
       "sourceStandupType": "lever-faith-family",
       "sourceDate": "2026-02-17",
       "createdAt": "2026-02-17T14:39:37.720719-08:00",
-      "updatedAt": "2026-02-18T09:14:35.616704-08:00",
-      "completedAt": null
+      "updatedAt": "2026-02-18T18:53:02.139549+00:00",
+      "completedAt": "2026-02-17T23:37:38.26+00:00"
     },
     {
       "key": "A-027",
@@ -484,13 +484,13 @@
       "tag": "AGENT",
       "priority": "low",
       "assignee": "Elon",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "STD-1",
       "sourceStandupType": "lever-faith-family",
       "sourceDate": "2026-02-17",
       "createdAt": "2026-02-17T14:39:37.720719-08:00",
-      "updatedAt": "2026-02-18T09:14:35.616707-08:00",
-      "completedAt": null
+      "updatedAt": "2026-02-18T18:53:02.139549+00:00",
+      "completedAt": "2026-02-17T21:37:00+00:00"
     },
     {
       "key": "A-028",
@@ -498,13 +498,13 @@
       "tag": "AGENT",
       "priority": "low",
       "assignee": "Dave",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "STD-1",
       "sourceStandupType": "lever-faith-family",
       "sourceDate": "2026-02-17",
       "createdAt": "2026-02-17T14:39:37.720719-08:00",
-      "updatedAt": "2026-02-18T09:14:35.616710-08:00",
-      "completedAt": null
+      "updatedAt": "2026-02-18T18:53:02.139549+00:00",
+      "completedAt": "2026-02-17T21:34:12+00:00"
     },
     {
       "key": "J-009",
@@ -554,13 +554,13 @@
       "tag": "AGENT",
       "priority": "low",
       "assignee": "Dave",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "AC-1",
       "sourceStandupType": "afternoon-checkpoint",
       "sourceDate": "2026-02-17",
       "createdAt": "2026-02-17T12:01:53.297076-08:00",
-      "updatedAt": "2026-02-18T09:14:35.617077-08:00",
-      "completedAt": null
+      "updatedAt": "2026-02-18T18:53:02.139549+00:00",
+      "completedAt": "2026-02-17T21:34:12+00:00"
     },
     {
       "key": "A-030",
@@ -582,13 +582,13 @@
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "Alex",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "AC-1",
       "sourceStandupType": "afternoon-checkpoint",
       "sourceDate": "2026-02-17",
       "createdAt": "2026-02-17T12:01:53.297076-08:00",
-      "updatedAt": "2026-02-18T09:14:35.617083-08:00",
-      "completedAt": null
+      "updatedAt": "2026-02-18T18:53:02.139549+00:00",
+      "completedAt": "2026-02-17T16:28:51.271151+00:00"
     },
     {
       "key": "A-032",
@@ -596,13 +596,13 @@
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "Alex",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "EW-1",
       "sourceStandupType": "evening-wrap",
       "sourceDate": "2026-02-17",
       "createdAt": "2026-02-17T19:00:38.507440-08:00",
-      "updatedAt": "2026-02-18T09:14:35.617841-08:00",
-      "completedAt": null
+      "updatedAt": "2026-02-18T18:53:02.139549+00:00",
+      "completedAt": "2026-02-17T16:28:51.271151+00:00"
     },
     {
       "key": "A-033",
@@ -610,13 +610,13 @@
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "Alex",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "EW-1",
       "sourceStandupType": "evening-wrap",
       "sourceDate": "2026-02-17",
       "createdAt": "2026-02-17T19:00:38.507440-08:00",
-      "updatedAt": "2026-02-18T09:14:35.617845-08:00",
-      "completedAt": null
+      "updatedAt": "2026-02-18T18:53:02.139549+00:00",
+      "completedAt": "2026-02-17T21:05:42+00:00"
     },
     {
       "key": "A-034",
@@ -624,13 +624,13 @@
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "Alex",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "EW-1",
       "sourceStandupType": "evening-wrap",
       "sourceDate": "2026-02-17",
       "createdAt": "2026-02-17T19:00:38.507440-08:00",
-      "updatedAt": "2026-02-18T09:14:35.617848-08:00",
-      "completedAt": null
+      "updatedAt": "2026-02-18T18:53:02.139549+00:00",
+      "completedAt": "2026-02-17T16:28:51.271143+00:00"
     },
     {
       "key": "A-035",
@@ -638,13 +638,13 @@
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "Alex",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "EW-1",
       "sourceStandupType": "evening-wrap",
       "sourceDate": "2026-02-17",
       "createdAt": "2026-02-17T19:00:38.507440-08:00",
-      "updatedAt": "2026-02-18T09:14:35.617851-08:00",
-      "completedAt": null
+      "updatedAt": "2026-02-18T18:53:02.139549+00:00",
+      "completedAt": "2026-02-18T07:27:00+00:00"
     },
     {
       "key": "A-036",
@@ -652,13 +652,13 @@
       "tag": "AGENT",
       "priority": "low",
       "assignee": "Elon",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "EW-1",
       "sourceStandupType": "evening-wrap",
       "sourceDate": "2026-02-17",
       "createdAt": "2026-02-17T19:00:38.507440-08:00",
-      "updatedAt": "2026-02-18T09:14:35.617854-08:00",
-      "completedAt": null
+      "updatedAt": "2026-02-18T18:53:02.139549+00:00",
+      "completedAt": "2026-02-17T21:37:00+00:00"
     },
     {
       "key": "A-037",
@@ -666,13 +666,13 @@
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "Elon",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "EW-1",
       "sourceStandupType": "evening-wrap",
       "sourceDate": "2026-02-17",
       "createdAt": "2026-02-17T19:00:38.507440-08:00",
-      "updatedAt": "2026-02-18T09:14:35.617857-08:00",
-      "completedAt": null
+      "updatedAt": "2026-02-18T18:53:02.139549+00:00",
+      "completedAt": "2026-02-17T16:28:51.271154+00:00"
     },
     {
       "key": "A-038",
@@ -680,13 +680,13 @@
       "tag": "AGENT",
       "priority": "low",
       "assignee": "Elon",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "EW-1",
       "sourceStandupType": "evening-wrap",
       "sourceDate": "2026-02-17",
       "createdAt": "2026-02-17T19:00:38.507440-08:00",
-      "updatedAt": "2026-02-18T09:14:35.617860-08:00",
-      "completedAt": null
+      "updatedAt": "2026-02-18T18:53:02.139549+00:00",
+      "completedAt": "2026-02-17T16:28:51.271157+00:00"
     },
     {
       "key": "A-039",
@@ -694,13 +694,13 @@
       "tag": "AGENT",
       "priority": "low",
       "assignee": "Dave",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "EW-1",
       "sourceStandupType": "evening-wrap",
       "sourceDate": "2026-02-17",
       "createdAt": "2026-02-17T19:00:38.507440-08:00",
-      "updatedAt": "2026-02-18T09:14:35.617863-08:00",
-      "completedAt": null
+      "updatedAt": "2026-02-18T18:53:02.139549+00:00",
+      "completedAt": "2026-02-17T21:34:12+00:00"
     },
     {
       "key": "A-040",
@@ -750,13 +750,13 @@
       "tag": "AGENT",
       "priority": "low",
       "assignee": "Elon",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "MNP-2",
       "sourceStandupType": "midnight-prep",
       "sourceDate": "2026-02-17",
       "createdAt": "2026-02-17T23:55:06.094202-08:00",
-      "updatedAt": "2026-02-18T09:14:35.618382-08:00",
-      "completedAt": null
+      "updatedAt": "2026-02-18T18:53:02.139549+00:00",
+      "completedAt": "2026-02-17T16:28:51.271157+00:00"
     },
     {
       "key": "A-044",
@@ -764,13 +764,13 @@
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "Alex",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "MNP-2",
       "sourceStandupType": "midnight-prep",
       "sourceDate": "2026-02-17",
       "createdAt": "2026-02-17T23:55:06.094202-08:00",
-      "updatedAt": "2026-02-18T09:14:35.618385-08:00",
-      "completedAt": null
+      "updatedAt": "2026-02-18T18:53:02.139549+00:00",
+      "completedAt": "2026-02-17T16:28:51.271151+00:00"
     },
     {
       "key": "A-045",
@@ -778,13 +778,13 @@
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "Alex",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "MNP-2",
       "sourceStandupType": "midnight-prep",
       "sourceDate": "2026-02-17",
       "createdAt": "2026-02-17T23:55:06.094202-08:00",
-      "updatedAt": "2026-02-18T09:14:35.618388-08:00",
-      "completedAt": null
+      "updatedAt": "2026-02-18T18:53:02.139549+00:00",
+      "completedAt": "2026-02-17T21:05:42+00:00"
     },
     {
       "key": "A-046",
@@ -792,13 +792,13 @@
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "Alex",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "MNP-2",
       "sourceStandupType": "midnight-prep",
       "sourceDate": "2026-02-17",
       "createdAt": "2026-02-17T23:55:06.094202-08:00",
-      "updatedAt": "2026-02-18T09:14:35.618391-08:00",
-      "completedAt": null
+      "updatedAt": "2026-02-18T18:53:02.139549+00:00",
+      "completedAt": "2026-02-17T16:28:51.271143+00:00"
     },
     {
       "key": "A-047",
@@ -806,13 +806,13 @@
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "Alex",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "MNP-2",
       "sourceStandupType": "midnight-prep",
       "sourceDate": "2026-02-17",
       "createdAt": "2026-02-17T23:55:06.094202-08:00",
-      "updatedAt": "2026-02-18T09:14:35.618394-08:00",
-      "completedAt": null
+      "updatedAt": "2026-02-18T18:53:02.139549+00:00",
+      "completedAt": "2026-02-18T07:27:00+00:00"
     },
     {
       "key": "A-048",
@@ -820,13 +820,13 @@
       "tag": "AGENT",
       "priority": "low",
       "assignee": "Dave",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "MNP-2",
       "sourceStandupType": "midnight-prep",
       "sourceDate": "2026-02-17",
       "createdAt": "2026-02-17T23:55:06.094202-08:00",
-      "updatedAt": "2026-02-18T09:14:35.618397-08:00",
-      "completedAt": null
+      "updatedAt": "2026-02-18T18:53:02.139549+00:00",
+      "completedAt": "2026-02-17T21:34:12+00:00"
     },
     {
       "key": "A-049",
@@ -848,13 +848,13 @@
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "Alex",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "ASR-1",
       "sourceStandupType": "cto-app-store",
       "sourceDate": "2026-02-18",
       "createdAt": "2026-02-18T08:49:36.999908-08:00",
-      "updatedAt": "2026-02-18T09:14:35.619079-08:00",
-      "completedAt": null
+      "updatedAt": "2026-02-18T18:53:02.139549+00:00",
+      "completedAt": "2026-02-17T16:28:51.271143+00:00"
     },
     {
       "key": "A-051",
@@ -862,13 +862,13 @@
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "Alex",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "ASR-1",
       "sourceStandupType": "cto-app-store",
       "sourceDate": "2026-02-18",
       "createdAt": "2026-02-18T08:49:36.999908-08:00",
-      "updatedAt": "2026-02-18T09:14:35.619082-08:00",
-      "completedAt": null
+      "updatedAt": "2026-02-18T18:53:02.139549+00:00",
+      "completedAt": "2026-02-17T21:05:42+00:00"
     },
     {
       "key": "A-052",
@@ -890,13 +890,13 @@
       "tag": "AGENT",
       "priority": "low",
       "assignee": "Elon",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "ASR-1",
       "sourceStandupType": "cto-app-store",
       "sourceDate": "2026-02-18",
       "createdAt": "2026-02-18T08:49:36.999908-08:00",
-      "updatedAt": "2026-02-18T09:14:35.619088-08:00",
-      "completedAt": null
+      "updatedAt": "2026-02-18T18:53:02.139549+00:00",
+      "completedAt": "2026-02-17T16:28:51.271157+00:00"
     },
     {
       "key": "J-012",
@@ -932,13 +932,13 @@
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "Alex",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "DA-1",
       "sourceStandupType": "cmo-distribution",
       "sourceDate": "2026-02-18",
       "createdAt": "2026-02-18T08:50:09.213609-08:00",
-      "updatedAt": "2026-02-18T09:14:35.621280-08:00",
-      "completedAt": null
+      "updatedAt": "2026-02-18T18:53:02.139549+00:00",
+      "completedAt": "2026-02-17T21:05:42+00:00"
     },
     {
       "key": "A-056",
@@ -946,13 +946,13 @@
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "Alex",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "DA-1",
       "sourceStandupType": "cmo-distribution",
       "sourceDate": "2026-02-18",
       "createdAt": "2026-02-18T08:50:09.213609-08:00",
-      "updatedAt": "2026-02-18T09:14:35.621283-08:00",
-      "completedAt": null
+      "updatedAt": "2026-02-18T18:53:02.139549+00:00",
+      "completedAt": "2026-02-17T16:28:51.271143+00:00"
     },
     {
       "key": "A-057",
@@ -974,13 +974,13 @@
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "Alex",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "DA-1",
       "sourceStandupType": "cmo-distribution",
       "sourceDate": "2026-02-18",
       "createdAt": "2026-02-18T08:50:09.213609-08:00",
-      "updatedAt": "2026-02-18T09:14:35.621288-08:00",
-      "completedAt": null
+      "updatedAt": "2026-02-18T18:53:02.139549+00:00",
+      "completedAt": "2026-02-18T07:27:00+00:00"
     },
     {
       "key": "J-013",
@@ -1016,13 +1016,13 @@
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "Alex",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "BD-1",
       "sourceStandupType": "cro-market-intel",
       "sourceDate": "2026-02-18",
       "createdAt": "2026-02-18T08:50:42.084355-08:00",
-      "updatedAt": "2026-02-18T09:14:35.622428-08:00",
-      "completedAt": null
+      "updatedAt": "2026-02-18T18:53:02.139549+00:00",
+      "completedAt": "2026-02-17T16:28:51.271143+00:00"
     },
     {
       "key": "A-061",
@@ -1030,13 +1030,13 @@
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "Alex",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "BD-1",
       "sourceStandupType": "cro-market-intel",
       "sourceDate": "2026-02-18",
       "createdAt": "2026-02-18T08:50:42.084355-08:00",
-      "updatedAt": "2026-02-18T09:14:35.622432-08:00",
-      "completedAt": null
+      "updatedAt": "2026-02-18T18:53:02.139549+00:00",
+      "completedAt": "2026-02-17T21:05:42+00:00"
     },
     {
       "key": "A-062",
@@ -1058,13 +1058,13 @@
       "tag": "AGENT",
       "priority": "low",
       "assignee": "Elon",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "BD-1",
       "sourceStandupType": "cro-market-intel",
       "sourceDate": "2026-02-18",
       "createdAt": "2026-02-18T08:50:42.084355-08:00",
-      "updatedAt": "2026-02-18T09:14:35.622438-08:00",
-      "completedAt": null
+      "updatedAt": "2026-02-18T18:53:02.139549+00:00",
+      "completedAt": "2026-02-17T16:28:51.271157+00:00"
     },
     {
       "key": "A-064",
@@ -1072,13 +1072,13 @@
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "Alex",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "BD-1",
       "sourceStandupType": "cro-market-intel",
       "sourceDate": "2026-02-18",
       "createdAt": "2026-02-18T08:50:42.084355-08:00",
-      "updatedAt": "2026-02-18T09:14:35.622441-08:00",
-      "completedAt": null
+      "updatedAt": "2026-02-18T18:53:02.139549+00:00",
+      "completedAt": "2026-02-17T16:28:51.271151+00:00"
     },
     {
       "key": "A-065",
@@ -1100,13 +1100,13 @@
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "Alex",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "ESA-1",
       "sourceStandupType": "ecosystem-sync",
       "sourceDate": "2026-02-18",
       "createdAt": "2026-02-18T08:51:20.280604-08:00",
-      "updatedAt": "2026-02-18T09:14:35.623542-08:00",
-      "completedAt": null
+      "updatedAt": "2026-02-18T18:53:02.139549+00:00",
+      "completedAt": "2026-02-17T16:28:51.271143+00:00"
     },
     {
       "key": "A-067",
@@ -1114,13 +1114,13 @@
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "Alex",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "ESA-1",
       "sourceStandupType": "ecosystem-sync",
       "sourceDate": "2026-02-18",
       "createdAt": "2026-02-18T08:51:20.280604-08:00",
-      "updatedAt": "2026-02-18T09:14:35.623546-08:00",
-      "completedAt": null
+      "updatedAt": "2026-02-18T18:53:02.139549+00:00",
+      "completedAt": "2026-02-17T21:05:42+00:00"
     },
     {
       "key": "A-068",
@@ -1128,13 +1128,13 @@
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "Alex",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "ESA-1",
       "sourceStandupType": "ecosystem-sync",
       "sourceDate": "2026-02-18",
       "createdAt": "2026-02-18T08:51:20.280604-08:00",
-      "updatedAt": "2026-02-18T09:14:35.623549-08:00",
-      "completedAt": null
+      "updatedAt": "2026-02-18T18:53:02.139549+00:00",
+      "completedAt": "2026-02-17T16:28:51.271151+00:00"
     },
     {
       "key": "A-069",
@@ -1156,13 +1156,13 @@
       "tag": "AGENT",
       "priority": "low",
       "assignee": "Elon",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "ESA-1",
       "sourceStandupType": "ecosystem-sync",
       "sourceDate": "2026-02-18",
       "createdAt": "2026-02-18T08:51:20.280604-08:00",
-      "updatedAt": "2026-02-18T09:14:35.623555-08:00",
-      "completedAt": null
+      "updatedAt": "2026-02-18T18:53:02.139549+00:00",
+      "completedAt": "2026-02-17T16:28:51.271157+00:00"
     },
     {
       "key": "A-071",
@@ -1170,13 +1170,13 @@
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "Alex",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "ESA-1",
       "sourceStandupType": "ecosystem-sync",
       "sourceDate": "2026-02-18",
       "createdAt": "2026-02-18T08:51:20.280604-08:00",
-      "updatedAt": "2026-02-18T09:14:35.623558-08:00",
-      "completedAt": null
+      "updatedAt": "2026-02-18T18:53:02.139549+00:00",
+      "completedAt": "2026-02-18T07:27:00+00:00"
     }
   ]
 }

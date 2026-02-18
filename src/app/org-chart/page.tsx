@@ -688,9 +688,9 @@ function getDefaultAgents(): Record<string, AgentState> {
       reportsTo: "coo", directReports: [],
     },
     cto: {
-      id: "cto", name: "Atlas", title: "CTO", emoji: "🗺️",
+      id: "cto", name: "Elon", title: "CTO", emoji: "🗺️",
       model: "Claude Sonnet 4", status: "active", department: "Engineering",
-      description: "Owns all code and infrastructure.",
+      description: "Revolutionary technologist. First principles, vertical integration, moonshot engineering.",
       reportsTo: "coo", directReports: ["nexus", "pixel", "sentinel"],
     },
     nexus: {
@@ -1400,86 +1400,23 @@ function ConnectorOverlay({ lines }: { lines: LineSegment[] }) {
    ═══════════════════════════════════════════════════════════════ */
 
 function DesktopTree({ agents, selectedId, onSelect }: { agents: Record<string, AgentState>; selectedId: string | null; onSelect: (id: string) => void }) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [lines, setLines] = useState<LineSegment[]>([]);
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
 
   const tree = useMemo(() => buildTree(agents), [agents]);
 
-  const computeLines = useCallback(() => {
-    const root = containerRef.current;
-    if (!root) return;
-    const rootRect = root.getBoundingClientRect();
-    const newLines: LineSegment[] = [];
-
-    const getAnchor = (el: Element, position: "bottom" | "top") => {
-      const r = el.getBoundingClientRect();
-      return {
-        x: r.left + r.width / 2 - rootRect.left,
-        y: position === "bottom" ? r.bottom - rootRect.top : r.top - rootRect.top,
-      };
-    };
-
-    const connect = (parentId: string, childIds: string[], color: string) => {
-      const parentEl = root.querySelector(`[data-node="${parentId}"]`);
-      if (!parentEl) return;
-      const parentAnchor = getAnchor(parentEl, "bottom");
-
-      const childAnchors = childIds
-        .map((id) => {
-          const el = root.querySelector(`[data-node="${id}"]`);
-          if (!el) return null;
-          return getAnchor(el, "top");
-        })
-        .filter(Boolean) as { x: number; y: number }[];
-
-      if (childAnchors.length === 0) return;
-      const midY = parentAnchor.y + (childAnchors[0].y - parentAnchor.y) / 2;
-      newLines.push({ x1: parentAnchor.x, y1: parentAnchor.y, x2: parentAnchor.x, y2: midY, color });
-
-      if (childAnchors.length === 1) {
-        newLines.push({ x1: parentAnchor.x, y1: midY, x2: childAnchors[0].x, y2: childAnchors[0].y, color });
-      } else {
-        const leftX = Math.min(...childAnchors.map((a) => a.x));
-        const rightX = Math.max(...childAnchors.map((a) => a.x));
-        newLines.push({ x1: leftX, y1: midY, x2: rightX, y2: midY, color });
-        for (const child of childAnchors) {
-          newLines.push({ x1: child.x, y1: midY, x2: child.x, y2: child.y, color });
-        }
-      }
-    };
-
-    // Dynamically connect based on state
-    for (const agent of Object.values(agents)) {
-      if (agent.directReports.length > 0) {
-        const colors = getAgentColors(agent);
-        connect(agent.id, agent.directReports, colors.accentHex);
-      }
-    }
-
-    setLines(newLines);
-  }, [agents]);
-
-  useEffect(() => {
-    const timer = setTimeout(computeLines, 100);
-    window.addEventListener("resize", computeLines);
-    return () => {
-      clearTimeout(timer);
-      window.removeEventListener("resize", computeLines);
-    };
-  }, [computeLines]);
+  const toggle = useCallback((id: string) => {
+    setExpanded(prev => ({ ...prev, [id]: !prev[id] }));
+  }, []);
 
   if (!tree) return null;
 
-  // Build display structure from tree
   const ceoAgent = tree.agent;
   const cooNode = tree.children.find(c => c.agent.id === "coo") || tree.children[0];
   if (!cooNode) {
-    // Just CEO, no children
     return (
-      <div ref={containerRef} className="relative hidden lg:block">
-        <ConnectorOverlay lines={lines} />
-        <div className="flex justify-center mb-16 relative z-10">
-          <div className="w-full max-w-md" data-node={ceoAgent.id}>
+      <div className="hidden lg:block">
+        <div className="flex justify-center mb-8">
+          <div className="w-full max-w-sm">
             <ExecutiveCard agent={ceoAgent} selected={selectedId === ceoAgent.id} onClick={() => onSelect(ceoAgent.id)} />
           </div>
         </div>
@@ -1488,84 +1425,78 @@ function DesktopTree({ agents, selectedId, onSelect }: { agents: Record<string, 
   }
 
   const cooAgent = cooNode.agent;
-  // C-level executives (children of COO) vs staff reports
   const cLevelNodes = cooNode.children.filter(c => isCLevel(c.agent.id));
   const staffNodes = cooNode.children.filter(c => !isCLevel(c.agent.id));
 
   return (
-    <div ref={containerRef} className="relative hidden lg:block">
-      <ConnectorOverlay lines={lines} />
-
-      {/* CEO */}
-      <div className="flex justify-center mb-16 relative z-10">
-        <div className="w-full max-w-md" data-node={ceoAgent.id}>
+    <div className="hidden lg:block space-y-4">
+      {/* CEO + COO row */}
+      <div className="flex items-center justify-center gap-6">
+        <div className="w-full max-w-xs">
           <ExecutiveCard agent={ceoAgent} selected={selectedId === ceoAgent.id} onClick={() => onSelect(ceoAgent.id)} />
         </div>
-      </div>
-
-      {/* COO */}
-      <div className="flex justify-center mb-16 relative z-10">
-        <div className="w-full max-w-md" data-node={cooAgent.id}>
+        <div className="text-slate-600">→</div>
+        <div className="w-full max-w-xs">
           <ExecutiveCard agent={cooAgent} selected={selectedId === cooAgent.id} onClick={() => onSelect(cooAgent.id)} />
         </div>
+        {/* Staff reports (Auditor) inline */}
+        {staffNodes.map(node => (
+          <div key={node.agent.id} className="w-full max-w-[160px]">
+            <TeamLeadCard agent={node.agent} selected={selectedId === node.agent.id} onClick={() => onSelect(node.agent.id)} />
+          </div>
+        ))}
       </div>
 
-      {/* COO Staff (non-C-level direct reports like Auditor) */}
-      {staffNodes.length > 0 && (
-        <div className="flex justify-center gap-4 mb-16 relative z-10">
-          {staffNodes.map(node => (
-            <div key={node.agent.id} className="w-full max-w-xs" data-node={node.agent.id}>
-              <TeamLeadCard agent={node.agent} selected={selectedId === node.agent.id} onClick={() => onSelect(node.agent.id)} />
-            </div>
-          ))}
-        </div>
-      )}
+      {/* Divider */}
+      <div className="border-t border-slate-800/50 mx-4" />
 
-      {/* C-Level executives */}
-      {cLevelNodes.length > 0 && (
-        <div className={`grid gap-6 mb-16 relative z-10`} style={{ gridTemplateColumns: `repeat(${cLevelNodes.length}, 1fr)` }}>
-          {cLevelNodes.map(node => (
-            <div key={node.agent.id} data-node={node.agent.id}>
-              <ExecutiveCard agent={node.agent} selected={selectedId === node.agent.id} onClick={() => onSelect(node.agent.id)} />
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Team leads (children of C-levels) — grouped under column headers */}
-      {cLevelNodes.length > 0 && (
-        <div className="grid gap-6 relative z-10" style={{ gridTemplateColumns: `repeat(${cLevelNodes.length}, 1fr)` }}>
-          {cLevelNodes.map(node => {
-            const colors = getAgentColors(node.agent);
-            const deptLabel = node.agent.department === "Engineering" ? "Engineering"
-              : node.agent.department === "Marketing" ? "Marketing"
-              : node.agent.department === "Revenue" ? "Revenue"
-              : node.agent.department;
-            return (
-              <div key={node.agent.id} className={`rounded-xl border border-slate-800/40 bg-slate-950/30 p-3 space-y-3`}>
-                {/* Column header label */}
-                <div className="flex items-center gap-2 px-2 pb-2 border-b border-slate-800/40">
-                  <div className={`w-1.5 h-1.5 rounded-full ${colors.accent.replace("text-", "bg-")}`} />
-                  <span className={`text-[11px] font-semibold uppercase tracking-wider ${colors.accent} opacity-70`}>
-                    {deptLabel}
-                  </span>
-                  <span className="text-[10px] text-slate-600">
-                    {node.children.length} agent{node.children.length !== 1 ? "s" : ""}
-                  </span>
-                </div>
-                {node.children.map(leaf => (
-                  <div key={leaf.agent.id} data-node={leaf.agent.id}>
-                    <TeamLeadCard agent={leaf.agent} selected={selectedId === leaf.agent.id} onClick={() => onSelect(leaf.agent.id)} />
-                  </div>
-                ))}
-                {node.children.length === 0 && (
-                  <div className="text-xs text-slate-600 italic px-2 py-4 text-center">No team leads</div>
-                )}
+      {/* C-Suite as collapsible department rows */}
+      <div className="grid grid-cols-2 xl:grid-cols-3 gap-3">
+        {cLevelNodes.map(node => {
+          const colors = getAgentColors(node.agent);
+          const isOpen = expanded[node.agent.id] !== false; // default open
+          return (
+            <div key={node.agent.id} className={`rounded-xl border ${colors.border} bg-slate-950/40 overflow-hidden`}>
+              {/* C-level header — clickable to expand/collapse */}
+              <div
+                className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-slate-900/50 transition-colors"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggle(node.agent.id);
+                }}
+              >
+                <span className="text-xs text-slate-500">{isOpen ? "▾" : "▸"}</span>
+                <span className="text-sm">{node.agent.emoji}</span>
+                <span className="font-bold text-sm text-slate-100">{node.agent.name}</span>
+                <span className={`text-xs font-semibold ${colors.accent}`}>{node.agent.title}</span>
+                <StatusDot status={node.agent.status} />
+                <span className="ml-auto text-[10px] text-slate-600">{node.children.length} report{node.children.length !== 1 ? "s" : ""}</span>
+                <button
+                  className="ml-1 text-slate-500 hover:text-slate-300 transition-colors"
+                  onClick={(e) => { e.stopPropagation(); onSelect(node.agent.id); }}
+                  title="Edit agent"
+                >
+                  <Info className="w-3 h-3" />
+                </button>
               </div>
-            );
-          })}
-        </div>
-      )}
+
+              {/* Expanded team list */}
+              {isOpen && node.children.length > 0 && (
+                <div className="px-2 pb-2 space-y-1.5 border-t border-slate-800/30">
+                  {node.children.map(leaf => (
+                    <div key={leaf.agent.id} className="mt-1.5">
+                      <TeamLeadCard agent={leaf.agent} selected={selectedId === leaf.agent.id} onClick={() => onSelect(leaf.agent.id)} />
+                    </div>
+                  ))}
+                </div>
+              )}
+              {isOpen && node.children.length === 0 && (
+                <div className="px-3 pb-2 text-[10px] text-slate-600 italic border-t border-slate-800/30 pt-2">No direct reports</div>
+              )}
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }

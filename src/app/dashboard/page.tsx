@@ -166,9 +166,21 @@ interface BriefData {
   };
 }
 
-// Helper to normalize items
-function normalizeNewsItem(item: NewsItem | string): NewsItem {
-  return typeof item === "string" ? { headline: item } : item;
+// Helper to normalize news items — handles {headline}, {title}, or plain string
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function normalizeNewsItem(item: any): NewsItem {
+  if (typeof item === "string") return { headline: item };
+  return { headline: item.headline || item.title || item.description || "Unknown", source: item.source, url: item.url };
+}
+
+// Normalize calendar events — handles {title}, {event}, or plain string
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function normalizeCalendarEvents(events: any[]): CalendarEvent[] {
+  if (!Array.isArray(events)) return [];
+  return events.map((e) => {
+    if (typeof e === "string") return { title: e };
+    return { title: e.title || e.event || e.name || "Untitled", time: e.time, location: e.location, date: e.date };
+  });
 }
 
 // Normalize morning brief JSON — handles both flat and nested formats
@@ -177,27 +189,60 @@ function normalizeBriefData(raw: any): BriefData {
   // If already in expected format, return as-is
   if (raw.sections) return raw as BriefData;
   
-  // Map flat structure → nested sections
+  // Map flat email → categorized email
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const email = raw.email as any;
+  const allEmailItems = email?.items || email?.highlights || [];
   const normalizedEmail: EmailSection | undefined = email ? {
     title: email.title || "Email",
-    needs_attention: email.needs_attention || email.highlights?.filter?.((e: any) => e.priority === "high") || [],
-    dev_work: email.dev_work || email.highlights?.filter?.((e: any) => e.category === "dev") || [],
-    good_news: email.good_news || email.highlights?.filter?.((e: any) => e.category === "good") || [],
-    items: email.items || email.highlights || [],
+    needs_attention: email.needs_attention || allEmailItems.filter((e: any) => e.priority === "high" || e.priority === "urgent"),
+    dev_work: email.dev_work || allEmailItems.filter((e: any) => e.category === "dev" || (e.from && /vercel|github|netlify/i.test(e.from))),
+    good_news: email.good_news || allEmailItems.filter((e: any) => e.category === "good" || e.priority === "low"),
+    items: allEmailItems,
   } : undefined;
+
+  // Map flat calendar → normalized calendar with event→title remapping
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const cal = raw.calendar as any;
+  const normalizedCalendar: CalendarSection | undefined = cal ? {
+    title: cal.title || "Calendar",
+    today: normalizeCalendarEvents(cal.today || []),
+    week: normalizeCalendarEvents(cal.week || []),
+    month: normalizeCalendarEvents(cal.month || []),
+    items: cal.items,
+  } : undefined;
+
+  // Map world_news headlines → subsections with normalized news items
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const worldNews = raw.world_news as any;
+  const normalizedNews = worldNews ? {
+    title: "World News",
+    subsections: worldNews.subsections || {
+      main: {
+        title: worldNews.title || "Headlines",
+        items: (worldNews.items || worldNews.headlines || []).map(normalizeNewsItem),
+      },
+    },
+  } : undefined;
+
+  // Map ai_news headlines → items with normalized news items
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const aiNews = raw.ai_news as any;
+  const normalizedAI = aiNews ? {
+    title: "AI News",
+    items: (aiNews.items || aiNews.headlines || []).map(normalizeNewsItem),
+  } : (raw.ai || undefined);
 
   return {
     date: raw.date || "",
     time: raw.generated_at ? new Date(raw.generated_at).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }) : "",
     sections: {
       weather: raw.weather || undefined,
-      calendar: raw.calendar || undefined,
+      calendar: normalizedCalendar,
       email: normalizedEmail,
       markets: raw.markets || raw.mre || undefined,
-      news: raw.world_news ? { title: "World News", subsections: raw.world_news.subsections || { main: { title: raw.world_news.title || "Headlines", items: raw.world_news.items || raw.world_news.headlines || [] } } } : undefined,
-      ai: raw.ai_news ? { title: "AI News", items: raw.ai_news.items || raw.ai_news.headlines || [] } : raw.ai || undefined,
+      news: normalizedNews,
+      ai: normalizedAI,
     },
   };
 }

@@ -1,11 +1,11 @@
 {
-  "timestamp": "2026-02-18T05:15:04.311387+00:00",
+  "timestamp": "2026-02-18T05:30:20.670056+00:00",
   "summary": {
     "total_tasks": 21,
     "verified_done": 15,
     "done_but_unverified": 0,
-    "pending": 1,
-    "stale": 0
+    "pending": 0,
+    "stale": 1
   },
   "items": [
     {
@@ -112,7 +112,7 @@
     },
     {
       "text": "Generate daily devotional content based on 8 faith dimensions, structured as 7-day challenge",
-      "status": "pending",
+      "status": "stale",
       "assignee": "Alex",
       "verification": "No verification rule found"
     },
@@ -135,5 +135,7 @@
       "verification": "PASSED: Verify a blog post was created/modified in last 24 hours"
     }
   ],
-  "escalations": []
+  "escalations": [
+    "\ud83d\udd34 STALE [Alex]: Generate daily devotional content based on 8 faith dimensions, structured as 7-day challenge \u2014 unresolved for 120 min"
+  ]
 }

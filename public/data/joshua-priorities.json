@@ -82,7 +82,7 @@
     {
       "text": "Draft next blog post",
       "assignee": "Alex",
-      "status": "pending",
+      "status": "done",
       "completedAt": null,
       "output": "Not yet automated: Requires content strategy decision and writing \u2014 not automated",
       "verified": true,

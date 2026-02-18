@@ -1,152 +1,170 @@
 {
-  "date": "2026-02-17",
-  "time": "6:00 AM",
-  "sections": {
-    "prayer": {
-      "title": "\ud83d\udd4a\ufe0f Morning Prayer",
-      "date": "Tuesday, February 17, 2026",
-      "hebrew_date": "19 Cheshvan",
-      "parsha": "Vayeshev",
-      "parsha_theme": "setbacks as setups, patience, providence",
-      "modeh_ani": "\u05de\u05d5\u05d3\u05d4 \u05d0\u05e0\u05d9 \u05dc\u05e4\u05e0\u05d9\u05da \u2014 I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
-      "blessing": "Blessed are You who opens the eyes of the blind \u2014 help me see opportunities today.",
-      "psalm": "**Psalm 112:5**: \"Good comes to those who lend freely, who conduct their affairs with justice.\"",
-      "proverb": "**Proverbs 24:27**: \"Prepare your work outside; get everything ready, then build your house.\"",
-      "intention": "Let today's small faithfulness lead to tomorrow's greater stewardship.",
-      "closing": "May your work today be a pleasing offering. May your rest tonight be deep and restorative.",
-      "audio": "/audio/brief-2026-02-17-prayer.ogg"
+  "date": "2026-02-18",
+  "generated_at": "2026-02-18T06:00:00-08:00",
+  "prayer": {
+    "title": "🕯️ Morning Prayer",
+    "date": "Wednesday, February 18, 2026",
+    "hebrew_date": "20 Cheshvan",
+    "parsha": "Vayeshev",
+    "parsha_theme": "setbacks as setups, patience, providence",
+    "modeh_ani": "מודה אני לפניך — I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
+    "blessing": "Blessed are You who clothes the naked — provide for all my needs this day.",
+    "psalm": "**Psalm 20:4**: \"May He give you the desire of your heart and make all your plans succeed.\"",
+    "proverb": "**Proverbs 10:4**: \"A slack hand causes poverty, but the hand of the diligent makes rich.\"",
+    "intention": "Let my work today compound into something that outlasts me.",
+    "closing": "May your work today be a pleasing offering. May your rest tonight be deep and restorative."
+  },
+  "relationship": {
+    "title": "💗 Relationship Temperature",
+    "status": "critical",
+    "trend": "urgent",
+    "ratio": 1.2,
+    "stats": {
+      "total": 11,
+      "positive": 6,
+      "negative": 5
     },
-    "weather": {
-      "title": "\ud83c\udf24\ufe0f Weather",
-      "current": "45\u00b0F, Mostly Cloudy",
-      "high_low": "57\u00b0F / 45\u00b0F",
-      "conditions": "Cooler than yesterday, mostly cloudy",
-      "sunrise": "6:32 AM",
-      "sunset": "5:36 PM",
-      "forecast": "Pleasant February day in Temecula with mild temperatures. Good for outdoor activities.",
-      "audio": "/audio/brief-2026-02-17-weather.ogg"
+    "love_languages": {
+      "primary": "quality_time",
+      "secondary": "acts_of_service"
     },
-    "mre": {
-      "title": "\ud83d\udcca MRE Trading",
-      "fear_greed": 35,
-      "fear_greed_rating": "fear",
-      "regime": "sideways",
-      "todays_plays": [
-        {
-          "symbol": "SPY",
-          "action": "BUY",
-          "price": 681.75,
-          "confidence": "5.2",
-          "signal_strength": "opportunistic"
-        },
-        {
-          "symbol": "QQQ",
-          "action": "BUY",
-          "price": 601.92,
-          "confidence": "19.6",
-          "signal_strength": "strong"
-        },
-        {
-          "symbol": "XLK",
-          "action": "BUY",
-          "price": 139.56,
-          "confidence": "16.3",
-          "signal_strength": "technology"
-        },
-        {
-          "symbol": "XLC",
-          "action": "BUY",
-          "price": 114.58,
-          "confidence": "14.4",
-          "signal_strength": "communication"
-        },
-        {
-          "symbol": "XLF",
-          "action": "BUY",
-          "price": 51.65,
-          "confidence": "11.7",
-          "signal_strength": "financials"
-        },
-        {
-          "symbol": "XLV",
-          "action": "BUY",
-          "price": 157.67,
-          "confidence": "8.2",
-          "signal_strength": "healthcare"
-        },
-        {
-          "symbol": "XLE",
-          "action": "BUY",
-          "price": 54.35,
-          "confidence": "0.2",
-          "signal_strength": "energy"
-        },
-        {
-          "symbol": "EFA",
-          "action": "BUY",
-          "price": 104.24,
-          "confidence": "8.8",
-          "signal_strength": "international"
-        },
-        {
-          "symbol": "EEM",
-          "action": "BUY",
-          "price": 61.12,
-          "confidence": "10.1",
-          "signal_strength": "emerging_markets"
-        }
-      ],
-      "pending_triggers": [],
-      "thesis": "Markets fearful at 35 F&G. Sideways regime with multiple sector opportunities. QQQ showing strongest signal (19.6). Tech and communication sectors leading.",
-      "audio": "/audio/brief-2026-02-17-mre.ogg"
+    "recommendations": [
+      "PRIORITY: Focus on repair. Acknowledge recent conflicts without defending.",
+      "Increase acts of service dramatically this week.",
+      "Create space for her to express frustrations without fixing."
+    ]
+  },
+  "weather": {
+    "title": "🌦️ Weather",
+    "location": "Temecula, CA",
+    "today": {
+      "condition": "Scattered Showers",
+      "high": 54,
+      "low": 40,
+      "rain_chance": 38,
+      "description": "Rain showers this morning with some sunshine during the afternoon hours. Winds WSW at 10-20 mph."
     },
-    "relationship": {
-      "title": "\ud83d\udc95 Relationship Focus",
-      "temperature": "critical",
-      "trend": "urgent",
-      "primary_focus": "PRIORITY: Focus on repair. Acknowledge recent conflicts without defending.",
-      "action_items": [
-        "Increase acts of service dramatically this week",
-        "Create space for her to express frustrations without fixing",
-        "Handle the boys' bedtime routine solo tonight - give her 30 minutes to herself"
-      ],
-      "love_languages": [
-        "quality_time",
-        "acts_of_service"
-      ],
-      "optimal_hours": "Evening (7-9 PM) for positive interactions"
+    "tomorrow": {
+      "condition": "Rain",
+      "high": 53,
+      "low": 39,
+      "rain_chance": 98,
+      "description": "Cloudy with periods of rain. Rainfall around a quarter of an inch."
     },
-    "calendar": {
-      "title": "\ud83d\udcc5 Calendar",
-      "today": "Calendar access unavailable - OAuth tokens need refresh",
-      "week": "Check manually or refresh Google Calendar credentials",
-      "note": "Run 'gog auth manage' to fix calendar integration",
-      "audio": "/audio/brief-2026-02-17-calendar.ogg"
-    },
-    "email": {
-      "title": "\ud83d\udce7 Email Highlights",
-      "status": "Access unavailable - credentials need refresh",
-      "note": "Check josh@joshlevylabs.com and joshua.seth.levy@gmail.com manually",
-      "audio": "/audio/brief-2026-02-17-email.ogg"
-    },
-    "world_news": {
-      "title": "\ud83c\udf0d World News",
-      "israel_focus": [
-        "Gaza ceasefire continues with ongoing tensions - 5 gunmen approached Israeli troops in 'blatant violation'",
-        "PM Netanyahu working on Hamas disarmament including 60,000 rifles",
-        "Finance Minister Smotrich active in Knesset meetings today"
-      ],
-      "conservative_perspective": "Ceasefire holding but fragile. Netanyahu administration maintaining security focus."
-    },
-    "ai_news": {
-      "title": "\ud83e\udd16 AI News",
-      "headlines": [
-        "McKinsey now operates 20,000 AI agents alongside 40,000 human employees",
-        "India AI Summit 2026: PM Modi aims for top 3 global AI superpower status by 2047",
-        "India expects $200 billion AI investments over next 2 years",
-        "Chinese AI models increasingly competitive with Western frontier - lag shrinking from months to weeks"
-      ],
-      "practical_takeaway": "AI workforce integration accelerating. India positioning as major AI hub. Chinese competition intensifying."
+    "weekend": {
+      "saturday": "Partly Cloudy, 66°/44°",
+      "sunday": "Mostly Sunny, 71°/47°"
     }
+  },
+  "calendar": {
+    "title": "📅 Calendar",
+    "today": [],
+    "week": [],
+    "month": [
+      {
+        "date": "March 6, 2026",
+        "event": "Brendon Schmidt's birthday",
+        "type": "birthday"
+      }
+    ]
+  },
+  "email": {
+    "title": "📧 Email Highlights",
+    "highlights": [
+      {
+        "from": "Stripe",
+        "subject": "Action required to resume payouts from your Stripe balance",
+        "status": "UNREAD",
+        "priority": "high",
+        "date": "2026-02-17 23:26"
+      },
+      {
+        "from": "LinkedIn",
+        "subject": "You have 1 new message",
+        "status": "UNREAD",
+        "priority": "medium",
+        "date": "2026-02-17 19:17"
+      },
+      {
+        "from": "Vercel",
+        "subject": "Failed production deployment on team 'joshlevylabs' projects'",
+        "status": "UNREAD",
+        "priority": "high",
+        "date": "2026-02-17 15:16"
+      },
+      {
+        "from": "OpusClip",
+        "subject": "Video Successfully Published (multiple)",
+        "status": "READ",
+        "priority": "low",
+        "date": "2026-02-18 03:00-03:03",
+        "note": "4 videos published early morning"
+      }
+    ]
+  },
+  "mre": {
+    "title": "📊 MRE Trading",
+    "fear_greed": 38,
+    "fear_greed_rating": "fear",
+    "regime": "sideways",
+    "todays_plays": [
+      {"symbol": "SPY", "action": "BUY", "price": 682.85, "confidence": "Low-Moderate", "strength": 1.9},
+      {"symbol": "QQQ", "action": "BUY", "price": 601.3, "confidence": "Strong", "strength": 7.2},
+      {"symbol": "XLK", "action": "BUY", "price": 139.48, "confidence": "Strong", "strength": 6.0},
+      {"symbol": "XLC", "action": "BUY", "price": 114.4, "confidence": "Strong", "strength": 7.2},
+      {"symbol": "XLF", "action": "BUY", "price": 52.2, "confidence": "Moderate", "strength": 4.3},
+      {"symbol": "XLV", "action": "BUY", "price": 157.37, "confidence": "Weak", "strength": 1.5},
+      {"symbol": "XLP", "action": "BUY", "price": 88.2, "confidence": "Moderate", "strength": 2.4},
+      {"symbol": "XLU", "action": "BUY", "price": 46.38, "confidence": "Moderate", "strength": 3.6},
+      {"symbol": "EFA", "action": "BUY", "price": 104.22, "confidence": "Moderate", "strength": 3.2},
+      {"symbol": "EEM", "action": "BUY", "price": 60.87, "confidence": "Moderate", "strength": 3.7}
+    ],
+    "pending_triggers": [],
+    "thesis": "Fear elevated at 38, sideways regime. Multiple BUY signals across sectors - strongest in tech (QQQ, XLC, XLK). 15 total BUY signals vs 9 HOLD."
+  },
+  "family": {
+    "title": "👨‍👩‍👧‍👦 Family Focus",
+    "jillian": {
+      "love_languages": ["quality time", "acts of service"],
+      "interests": ["reading", "shopping", "following influencers", "concerts"]
+    },
+    "jones": {
+      "age": "2 years, 8 months",
+      "favorites": ["Super Wings", "Blaze and the Monster Machines"]
+    },
+    "jett": {
+      "age": "7 months",
+      "note": "Growing fast"
+    },
+    "upcoming_dates": [
+      "March 6: Brendon Schmidt's birthday",
+      "March 26: Wedding Anniversary"
+    ]
+  },
+  "world_news": {
+    "title": "🌍 World News",
+    "headlines": [
+      {
+        "title": "New START Nuclear Treaty Expired February 5th",
+        "description": "US-Russia nuclear arms control treaty expired, ending Cold War-era cooperation. No binding limits on strategic nuclear arsenals for first time in 50+ years.",
+        "significance": "Major geopolitical development - UN Secretary General warns of 'grave moment' for international peace and security",
+        "date": "2026-02-05"
+      }
+    ]
+  },
+  "ai_news": {
+    "title": "🤖 AI News",
+    "headlines": [
+      {
+        "title": "2026: AI Moves from Hype to Pragmatism",
+        "description": "Industry shifting from scaling large models to practical applications. Focus on smaller, domain-specific models and real-world integration.",
+        "significance": "Major transition year - scaling laws hitting limits, new architectures needed"
+      },
+      {
+        "title": "Yann LeCun Leaves Meta for $5B World Model Startup",
+        "description": "Former Meta chief AI scientist starting own world model lab, reportedly seeking $5 billion valuation",
+        "significance": "High-profile AI talent movement, world models gaining momentum"
+      }
+    ]
   }
 }

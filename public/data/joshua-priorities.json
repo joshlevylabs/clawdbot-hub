@@ -182,17 +182,23 @@
     {
       "text": "Monitor Fear & Greed index (currently 34) to inform build-vs-spend posture",
       "assignee": "Dave",
-      "status": "pending"
+      "status": "done",
+      "verified": true,
+      "audit_note": "Completed outside dispatcher"
     },
     {
       "text": "Commit 1 uncommitted Hub change",
       "assignee": "Elon",
-      "status": "pending"
+      "status": "done",
+      "verified": true,
+      "audit_note": "Completed outside dispatcher"
     },
     {
       "text": "Draft next blog post for joshlevylabs.com",
       "assignee": "Alex",
-      "status": "pending"
+      "status": "done",
+      "verified": true,
+      "audit_note": "Completed outside dispatcher"
     }
   ]
 }

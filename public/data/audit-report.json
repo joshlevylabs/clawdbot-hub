@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-02-18T03:30:17.234766+00:00",
+  "timestamp": "2026-02-18T03:45:05.059475+00:00",
   "summary": {
     "total_tasks": 21,
     "verified_done": 15,
@@ -120,22 +120,19 @@
       "text": "Monitor Fear & Greed index (currently 34) to inform build-vs-spend posture",
       "status": "verified_done",
       "assignee": "Dave",
-      "verification": "PASSED: Verify MRE signals updated in last 2h (auto-passes weekends and outside market hours 6AM-2PM PT)",
-      "audit_note": "Completed outside dispatcher"
+      "verification": "PASSED: Verify MRE signals updated in last 2h (auto-passes weekends and outside market hours 6AM-2PM PT)"
     },
     {
       "text": "Commit 1 uncommitted Hub change",
       "status": "verified_done",
       "assignee": "Elon",
-      "verification": "PASSED: Verify hub has no uncommitted changes",
-      "audit_note": "Completed outside dispatcher"
+      "verification": "PASSED: Verify hub has no uncommitted changes"
     },
     {
       "text": "Draft next blog post for joshlevylabs.com",
       "status": "verified_done",
       "assignee": "Alex",
-      "verification": "PASSED: Verify a blog post was created/modified in last 24 hours",
-      "audit_note": "Completed outside dispatcher"
+      "verification": "PASSED: Verify a blog post was created/modified in last 24 hours"
     }
   ],
   "escalations": []

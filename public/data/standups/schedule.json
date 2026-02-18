@@ -20,63 +20,6 @@
       "initiatives": []
     },
     {
-      "key": "afternoon-checkpoint",
-      "name": "Afternoon Checkpoint",
-      "emoji": "\ud83c\udf1e",
-      "schedule": "daily",
-      "time": "12:00",
-      "participants": [
-        "COO",
-        "CTO",
-        "CRO",
-        "CMO"
-      ],
-      "agenda": "Midday progress review. What got done this morning? Any blockers? Reprioritize if needed. Market midday check.",
-      "autoExecute": true,
-      "verticals": [
-        "ecosystem"
-      ],
-      "initiatives": []
-    },
-    {
-      "key": "evening-wrap",
-      "name": "Evening Wrap",
-      "emoji": "\ud83c\udf06",
-      "schedule": "daily",
-      "time": "18:00",
-      "participants": [
-        "COO",
-        "CTO",
-        "CRO",
-        "CMO"
-      ],
-      "agenda": "End-of-day review. What shipped today? What carries over? Market close summary. Preview tomorrow's priorities.",
-      "autoExecute": true,
-      "verticals": [
-        "ecosystem"
-      ],
-      "initiatives": []
-    },
-    {
-      "key": "midnight-prep",
-      "name": "Midnight Prep",
-      "emoji": "\ud83c\udf19",
-      "schedule": "daily",
-      "time": "23:55",
-      "participants": [
-        "COO",
-        "CTO",
-        "CRO",
-        "CMO"
-      ],
-      "agenda": "Overnight prep. Queue tasks for overnight agents. Set up tomorrow's agenda. Review ecosystem health before agents run nightly jobs.",
-      "autoExecute": true,
-      "verticals": [
-        "ecosystem"
-      ],
-      "initiatives": []
-    },
-    {
       "key": "cto-tech-debt",
       "name": "Tech Debt Sprint",
       "emoji": "\ud83d\udd27",
@@ -307,6 +250,71 @@
       "initiatives": [
         "content-growth"
       ]
+    },
+    {
+      "key": "afternoon-checkpoint",
+      "name": "Afternoon Checkpoint",
+      "emoji": "\ud83c\udf1e",
+      "schedule": "daily",
+      "time": "12:00",
+      "participants": [
+        "COO",
+        "CTO",
+        "CRO",
+        "CMO"
+      ],
+      "agenda": "Midday progress review. What got done this morning? Any blockers? Reprioritize if needed. Market midday check.",
+      "autoExecute": true,
+      "verticals": [
+        "ecosystem"
+      ],
+      "initiatives": []
+    },
+    {
+      "key": "evening-wrap",
+      "name": "Evening Wrap",
+      "emoji": "\ud83c\udf06",
+      "schedule": "daily",
+      "time": "18:30",
+      "participants": [
+        "COO",
+        "CTO",
+        "CRO",
+        "CMO"
+      ],
+      "agenda": "End-of-day review. What shipped today? What carries over? Market close summary. Preview tomorrow's priorities.",
+      "autoExecute": true,
+      "verticals": [
+        "hub",
+        "joshlevylabs",
+        "ecosystem",
+        "lever"
+      ],
+      "initiatives": [
+        "content-growth",
+        "podcast-distribution",
+        "hub-standup-system",
+        "lever-dashboard"
+      ]
+    },
+    {
+      "key": "midnight-prep",
+      "name": "Midnight Prep",
+      "emoji": "\ud83c\udf19",
+      "schedule": "daily",
+      "time": "23:55",
+      "participants": [
+        "COO",
+        "CTO",
+        "CRO",
+        "CMO"
+      ],
+      "agenda": "Overnight prep. Queue tasks for overnight agents. Set up tomorrow's agenda. Review ecosystem health before agents run nightly jobs.",
+      "autoExecute": true,
+      "verticals": [
+        "ecosystem"
+      ],
+      "initiatives": []
     }
   ]
 }

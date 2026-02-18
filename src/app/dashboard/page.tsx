@@ -171,6 +171,37 @@ function normalizeNewsItem(item: NewsItem | string): NewsItem {
   return typeof item === "string" ? { headline: item } : item;
 }
 
+// Normalize morning brief JSON — handles both flat and nested formats
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function normalizeBriefData(raw: any): BriefData {
+  // If already in expected format, return as-is
+  if (raw.sections) return raw as BriefData;
+  
+  // Map flat structure → nested sections
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const email = raw.email as any;
+  const normalizedEmail: EmailSection | undefined = email ? {
+    title: email.title || "Email",
+    needs_attention: email.needs_attention || email.highlights?.filter?.((e: any) => e.priority === "high") || [],
+    dev_work: email.dev_work || email.highlights?.filter?.((e: any) => e.category === "dev") || [],
+    good_news: email.good_news || email.highlights?.filter?.((e: any) => e.category === "good") || [],
+    items: email.items || email.highlights || [],
+  } : undefined;
+
+  return {
+    date: raw.date || "",
+    time: raw.generated_at ? new Date(raw.generated_at).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }) : "",
+    sections: {
+      weather: raw.weather || undefined,
+      calendar: raw.calendar || undefined,
+      email: normalizedEmail,
+      markets: raw.markets || raw.mre || undefined,
+      news: raw.world_news ? { title: "World News", subsections: raw.world_news.subsections || { main: { title: raw.world_news.title || "Headlines", items: raw.world_news.items || raw.world_news.headlines || [] } } } : undefined,
+      ai: raw.ai_news ? { title: "AI News", items: raw.ai_news.items || raw.ai_news.headlines || [] } : raw.ai || undefined,
+    },
+  };
+}
+
 // Live Weather Card with tabs
 function LiveWeatherCard() {
   const [weather, setWeather] = useState<LiveWeatherData | null>(null);
@@ -575,7 +606,7 @@ export default function DashboardPage() {
         fetch(`/api/priorities`, { cache: 'no-store' }),
       ]);
       if (briefRes.ok) {
-        setBriefData(await briefRes.json());
+        setBriefData(normalizeBriefData(await briefRes.json()));
       } else {
         setError("No data available");
       }

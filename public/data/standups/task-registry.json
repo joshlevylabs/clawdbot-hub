@@ -330,12 +330,12 @@
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "Alex",
-      "status": "pending",
+      "status": "done_but_unverified",
       "sourceStandup": "ERR-1",
       "sourceStandupType": "adhoc-ecosystem-revenue-product-creation",
       "sourceDate": "2026-02-17",
       "createdAt": "2026-02-17T19:27:21.828026-08:00",
-      "updatedAt": "2026-02-18T09:14:35.614394-08:00",
+      "updatedAt": "2026-02-18T19:45:47.135072+00:00",
       "completedAt": null
     },
     {

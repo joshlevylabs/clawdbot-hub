@@ -95,6 +95,7 @@ interface Standup {
   date: string;
   generatedAt: string;
   topic: string;
+  summary?: string;
   status: "completed" | "in-progress";
   participants: { name: string; role: string; emoji?: string; description?: string }[];
   duration: string;
@@ -590,6 +591,13 @@ function StandupDetail({ standup, onToggleActionItem }: { standup: Standup; onTo
           {standup.status}
         </span>
       </div>
+
+      {/* Executive Summary */}
+      {standup.summary && (
+        <div className="bg-gradient-to-r from-slate-800/80 to-slate-900/50 rounded-xl border border-slate-700/50 px-5 py-3">
+          <p className="text-sm text-slate-200 leading-relaxed italic">{standup.summary}</p>
+        </div>
+      )}
 
       {/* Verticals & Initiatives */}
       {((standup.verticals && standup.verticals.length > 0) || (standup.initiativeDetails && standup.initiativeDetails.length > 0)) && (

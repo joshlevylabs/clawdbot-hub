@@ -1117,44 +1117,111 @@ function TasksView() {
         </div>
       </div>
 
-      {/* Tasks Table */}
-      <div className="space-y-3">
+      {/* Jira-style Tasks Table */}
+      <div className="bg-slate-900/50 rounded-xl border border-slate-800 overflow-hidden">
         {filteredTasks.length === 0 ? (
-          <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-6 text-center">
+          <div className="p-6 text-center">
             <Target className="w-8 h-8 text-slate-600 mx-auto mb-2" />
             <p className="text-slate-400 text-sm">No tasks found matching your filters.</p>
           </div>
         ) : (
-          filteredTasks.map((task: any) => (
-            <div key={task.key} className="bg-slate-900/50 rounded-xl border border-slate-800 p-4">
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="text-sm font-mono text-primary-400">{task.key}</span>
-                    <TagBadge tag={task.tag} />
-                    <PriorityBadge priority={task.priority} />
-                    <StatusBadge status={task.status} />
-                  </div>
-                  
-                  <p className="text-slate-200 text-sm mb-2 leading-relaxed">{task.text}</p>
-                  
-                  <div className="flex items-center gap-4 text-xs text-slate-500">
-                    <span>👤 {task.assignee}</span>
-                    <button 
-                      onClick={() => {
-                        // Navigate to source standup - you could implement this
-                        console.log("Navigate to:", task.sourceStandup);
-                      }}
-                      className="text-primary-400 hover:text-primary-300 underline"
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-slate-700/50">
+                  <th className="text-left px-4 py-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wider w-[90px]">Key</th>
+                  <th className="text-left px-4 py-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Title</th>
+                  <th className="text-left px-4 py-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wider w-[90px]">Priority</th>
+                  <th className="text-left px-4 py-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wider w-[110px]">Status</th>
+                  <th className="text-left px-4 py-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wider w-[90px]">Type</th>
+                  <th className="text-left px-4 py-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wider w-[100px]">Assignee</th>
+                  <th className="text-left px-4 py-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wider w-[80px]">Source</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredTasks.map((task: any, idx: number) => {
+                  const priorityColors: Record<string, string> = {
+                    high: "text-red-400",
+                    medium: "text-amber-400",
+                    low: "text-slate-400",
+                  };
+                  const priorityIcons: Record<string, string> = {
+                    high: "↑",
+                    medium: "→",
+                    low: "↓",
+                  };
+                  const statusColors: Record<string, string> = {
+                    pending: "bg-amber-500/15 text-amber-400 border-amber-500/30",
+                    "in-progress": "bg-blue-500/15 text-blue-400 border-blue-500/30",
+                    done: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30",
+                    done_but_unverified: "bg-yellow-500/15 text-yellow-400 border-yellow-500/30",
+                    resolved: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30",
+                  };
+                  const statusLabels: Record<string, string> = {
+                    pending: "PENDING",
+                    "in-progress": "IN PROGRESS",
+                    done: "DONE",
+                    done_but_unverified: "UNVERIFIED",
+                    resolved: "RESOLVED",
+                  };
+                  return (
+                    <tr
+                      key={task.key}
+                      className={`border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors ${
+                        idx % 2 === 0 ? "bg-slate-900/20" : "bg-transparent"
+                      }`}
                     >
-                      {task.sourceStandup}
-                    </button>
-                    <span>{new Date(task.createdAt).toLocaleDateString()}</span>
-                  </div>
-                </div>
-              </div>
+                      <td className="px-4 py-3">
+                        <span className="text-sm font-mono font-bold text-primary-400">{task.key}</span>
+                      </td>
+                      <td className="px-4 py-3">
+                        <p className={`text-sm leading-snug ${task.status === "done" || task.status === "resolved" ? "text-slate-500 line-through" : "text-slate-200"}`}>
+                          {task.text}
+                        </p>
+                      </td>
+                      <td className="px-4 py-3">
+                        <span className={`text-sm font-medium ${priorityColors[task.priority] || "text-slate-400"}`}>
+                          {priorityIcons[task.priority] || "→"} {(task.priority || "medium").charAt(0).toUpperCase() + (task.priority || "medium").slice(1)}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3">
+                        <span className={`inline-block px-2 py-1 rounded text-[11px] font-semibold border ${statusColors[task.status] || statusColors.pending}`}>
+                          {statusLabels[task.status] || task.status?.toUpperCase()}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3">
+                        {task.tag === "AGENT" ? (
+                          <span className="inline-block px-2 py-1 rounded text-[11px] font-semibold bg-cyan-500/15 text-cyan-400 border border-cyan-500/30">🤖 AGENT</span>
+                        ) : (
+                          <span className="inline-block px-2 py-1 rounded text-[11px] font-semibold bg-purple-500/15 text-purple-400 border border-purple-500/30">👤 CEO</span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-1.5">
+                          <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${
+                            task.assignee === "Elon" ? "bg-green-500/20 text-green-400" :
+                            task.assignee === "Alex" ? "bg-pink-500/20 text-pink-400" :
+                            task.assignee === "Dave" ? "bg-orange-500/20 text-orange-400" :
+                            task.assignee === "Theo" ? "bg-red-500/20 text-red-400" :
+                            "bg-slate-500/20 text-slate-400"
+                          }`}>
+                            {(task.assignee || "?")[0]}
+                          </div>
+                          <span className="text-xs text-slate-300">{task.assignee || "—"}</span>
+                        </div>
+                      </td>
+                      <td className="px-4 py-3">
+                        <span className="text-xs text-primary-400/80 font-mono">{task.sourceStandup || "—"}</span>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+            <div className="px-4 py-2 border-t border-slate-800/50 text-xs text-slate-500">
+              {filteredTasks.length} of {totalTasks} tasks
             </div>
-          ))
+          </div>
         )}
       </div>
     </div>

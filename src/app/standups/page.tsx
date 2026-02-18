@@ -1068,11 +1068,17 @@ function ScheduledView() {
   const [loading, setLoading] = useState(true);
   const [showOneTimeForm, setShowOneTimeForm] = useState(false);
   const [oneTimeData, setOneTimeData] = useState<any>({});
+  const [verticals, setVerticals] = useState<VerticalDef[]>([]);
+  const [initiatives, setInitiatives] = useState<InitiativeDef[]>([]);
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const scheduleRes = await fetch("/api/standup-schedules", { cache: "no-store" });
+        const [scheduleRes, verticalsRes, initiativesRes] = await Promise.all([
+          fetch("/api/standup-schedules", { cache: "no-store" }),
+          fetch("/api/verticals", { cache: "no-store" }),
+          fetch("/api/initiatives", { cache: "no-store" }),
+        ]);
 
         // Fallback to JSON if API isn't ready
         if (!scheduleRes.ok) {
@@ -1083,6 +1089,15 @@ function ScheduledView() {
         } else {
           const data = await scheduleRes.json();
           setScheduleData({ types: data.schedules || [] });
+        }
+
+        if (verticalsRes.ok) {
+          const vData = await verticalsRes.json();
+          setVerticals(vData.verticals || []);
+        }
+        if (initiativesRes.ok) {
+          const iData = await initiativesRes.json();
+          setInitiatives(iData.initiatives || []);
         }
       } catch (err) {
         console.error("Failed to load data:", err);
@@ -1221,6 +1236,8 @@ function ScheduledView() {
         participants: data.participants || ['COO'],
         agenda: data.agenda || '',
         autoExecute: false,
+        verticals: data.verticals || [],
+        initiatives: data.initiatives || [],
       };
 
       const response = await fetch('/api/standup-schedules', {
@@ -1490,6 +1507,69 @@ function ScheduledView() {
                 </div>
               </div>
               
+              {verticals.length > 0 && (
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-1">Verticals</label>
+                  <div className="flex flex-wrap gap-2">
+                    {verticals.map((v) => {
+                      const vs = verticalStyles[v.key];
+                      return (
+                        <label key={v.key} className={`flex items-center gap-1.5 rounded px-3 py-1.5 cursor-pointer border ${
+                          oneTimeData.verticals?.includes(v.key) 
+                            ? (vs ? `${vs.bg} ${vs.text} ${vs.border}` : 'bg-slate-700 text-slate-200 border-slate-500') 
+                            : 'bg-slate-900 text-slate-300 border-slate-700 hover:border-slate-600'
+                        }`}>
+                          <input
+                            type="checkbox"
+                            checked={oneTimeData.verticals?.includes(v.key) || false}
+                            onChange={(e) => {
+                              const current = oneTimeData.verticals || [];
+                              if (e.target.checked) {
+                                setOneTimeData({ ...oneTimeData, verticals: [...current, v.key] });
+                              } else {
+                                setOneTimeData({ ...oneTimeData, verticals: current.filter((k: string) => k !== v.key) });
+                              }
+                            }}
+                            className="rounded hidden"
+                          />
+                          <span className="text-sm">{v.emoji} {v.name}</span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {initiatives.length > 0 && (
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-1">Initiatives</label>
+                  <div className="flex flex-wrap gap-2">
+                    {initiatives.filter(i => i.status === 'active').map((ini) => (
+                      <label key={ini.key} className={`flex items-center gap-1.5 rounded px-3 py-1.5 cursor-pointer border ${
+                        oneTimeData.initiatives?.includes(ini.key) 
+                          ? 'bg-indigo-500/20 text-indigo-400 border-indigo-500/30' 
+                          : 'bg-slate-900 text-slate-300 border-slate-700 hover:border-slate-600'
+                      }`}>
+                        <input
+                          type="checkbox"
+                          checked={oneTimeData.initiatives?.includes(ini.key) || false}
+                          onChange={(e) => {
+                            const current = oneTimeData.initiatives || [];
+                            if (e.target.checked) {
+                              setOneTimeData({ ...oneTimeData, initiatives: [...current, ini.key] });
+                            } else {
+                              setOneTimeData({ ...oneTimeData, initiatives: current.filter((k: string) => k !== ini.key) });
+                            }
+                          }}
+                          className="rounded hidden"
+                        />
+                        <span className="text-sm">{ini.name}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <div className="flex gap-2 pt-4">
                 <button type="submit" className="btn btn-primary flex-1">
                   <Plus className="w-4 h-4 mr-2" />

@@ -473,7 +473,7 @@ export default function BulletinPage() {
                               {task.text}
                             </p>
                             {task.sprintReady && (
-                              <Zap className="w-4 h-4 text-emerald-400 flex-shrink-0" title="Sprint Ready" />
+                              <Zap className="w-4 h-4 text-emerald-400 flex-shrink-0" />
                             )}
                           </div>
                         </td>

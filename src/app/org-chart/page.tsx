@@ -232,6 +232,25 @@ interface IdentityFields {
 
 function parseIdentityMd(content: string): IdentityFields {
   const kv = parseKeyValueMd(content);
+
+  // Extract multi-line ## Role section content
+  let roleContent = "";
+  const lines = content.split("\n");
+  let inRoleSection = false;
+  for (const line of lines) {
+    if (/^##\s+(Role|Role Description)\s*$/i.test(line.trim())) {
+      inRoleSection = true;
+      continue;
+    }
+    if (inRoleSection && /^##\s/.test(line)) {
+      break; // next section
+    }
+    if (inRoleSection) {
+      roleContent += (roleContent ? "\n" : "") + line;
+    }
+  }
+  roleContent = roleContent.trim();
+
   return {
     name: kv["Name"] || "",
     title: kv["Title"] || kv["Role"] || "",
@@ -241,7 +260,7 @@ function parseIdentityMd(content: string): IdentityFields {
     status: kv["Status"] || "",
     reportsTo: kv["Reports To"] || kv["Reports to"] || "",
     directReports: kv["Direct Reports"] || kv["Direct reports"] || "",
-    roleDescription: kv["Role Description"] || kv["Description"] || "",
+    roleDescription: roleContent || kv["Role Description"] || kv["Description"] || "",
   };
 }
 
@@ -253,7 +272,11 @@ function serializeIdentityMd(f: IdentityFields): string {
   if (f.emoji) lines.push(`- **Emoji:** ${f.emoji}`);
   if (f.department) lines.push(`- **Department:** ${f.department}`);
   if (f.status) lines.push(`- **Status:** ${f.status}`);
-  if (f.roleDescription) lines.push(`- **Description:** ${f.roleDescription}`);
+  if (f.roleDescription) {
+    // KV line gets first line only; full content goes in ## Role section
+    const firstLine = f.roleDescription.split("\n")[0].trim();
+    lines.push(`- **Description:** ${firstLine}`);
+  }
   if (f.reportsTo) lines.push(`- **Reports To:** ${f.reportsTo}`);
   lines.push(`- **Direct Reports:** ${f.directReports || ""}`);
   if (f.roleDescription) {

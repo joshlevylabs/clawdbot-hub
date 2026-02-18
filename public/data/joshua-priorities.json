@@ -55,7 +55,7 @@
     {
       "text": "Commit 1 uncommitted hub change(s)",
       "assignee": "Elon",
-      "status": "done",
+      "status": "done_but_unverified",
       "completedAt": "2026-02-17T19:01:13.467230-08:00",
       "output": "[main 4a124ca] auto: standup cleanup\n Committer: Joshua Levy <joshualevy@Joshuas-Mac-mini.local>\nYou",
       "audit_note": "Task was marked done but verification FAILED: Verify hub has no uncommitted changes",
@@ -73,10 +73,10 @@
     {
       "text": "Monitor Fear & Greed index (currently 36)",
       "assignee": "Dave",
-      "status": "done",
+      "status": "done_but_unverified",
       "completedAt": "2026-02-16T23:55:29.550435-08:00",
       "output": "Fear & Greed check: see trading dashboard",
-      "audit_note": "Task was marked done but verification FAILED: Verify MRE signals file was updated in last 2 hours (auto-passes on weekends)",
+      "audit_note": "Task was marked done but verification FAILED: Verify MRE signals updated in last 2h (auto-passes weekends and outside market hours 6AM-2PM PT)",
       "verified": true
     },
     {
@@ -91,7 +91,7 @@
     {
       "text": "Commit 2 uncommitted hub changes",
       "assignee": "Elon",
-      "status": "done",
+      "status": "done_but_unverified",
       "completedAt": "2026-02-17T15:20:08.271577-08:00",
       "output": "Hub fully committed and pushed. No uncommitted changes remain.",
       "verified": true,
@@ -109,15 +109,16 @@
     {
       "text": "Monitor Fear & Greed index (currently 34)",
       "assignee": "Dave",
-      "status": "done",
+      "status": "done_but_unverified",
       "completedAt": "2026-02-17T23:55:46.305254-08:00",
       "output": "Fear & Greed check: see trading dashboard",
-      "verified": true
+      "verified": true,
+      "audit_note": "Task was marked done but verification FAILED: Verify MRE signals updated in last 2h (auto-passes weekends and outside market hours 6AM-2PM PT)"
     },
     {
       "text": "Commit 4 uncommitted hub change(s)",
       "assignee": "Elon",
-      "status": "done",
+      "status": "done_but_unverified",
       "completedAt": "2026-02-17T15:20:08.271577-08:00",
       "output": "Hub fully committed and pushed. No uncommitted changes remain.",
       "verified": true,
@@ -126,7 +127,7 @@
     {
       "text": "Commit 3 uncommitted hub change(s)",
       "assignee": "Elon",
-      "status": "done",
+      "status": "done_but_unverified",
       "completedAt": "2026-02-17T15:20:08.271577-08:00",
       "output": "Hub fully committed and pushed. No uncommitted changes remain.",
       "verified": true,
@@ -170,7 +171,7 @@
     {
       "text": "Commit 1 uncommitted hub change",
       "assignee": "Elon",
-      "status": "done",
+      "status": "done_but_unverified",
       "completedAt": "2026-02-17T23:55:35.394051-08:00",
       "output": "[main 7b3ad7d] auto: standup cleanup\n Committer: Joshua Levy <joshualevy@Joshuas-Mac-mini.local>\nYou",
       "verified": true,
@@ -185,14 +186,14 @@
     {
       "text": "Monitor Fear & Greed index (currently 34) to inform build-vs-spend posture",
       "assignee": "Dave",
-      "status": "done",
+      "status": "done_but_unverified",
       "verified": true,
-      "audit_note": "Completed outside dispatcher"
+      "audit_note": "Task was marked done but verification FAILED: Verify MRE signals updated in last 2h (auto-passes weekends and outside market hours 6AM-2PM PT)"
     },
     {
       "text": "Commit 1 uncommitted Hub change",
       "assignee": "Elon",
-      "status": "done",
+      "status": "done_but_unverified",
       "verified": true,
       "audit_note": "Task was marked done but verification FAILED: Verify hub has no uncommitted changes"
     },

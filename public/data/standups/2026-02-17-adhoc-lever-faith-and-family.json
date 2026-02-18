@@ -279,5 +279,103 @@
       "emoji": "\ud83e\udd8d",
       "description": "Content, creative direction, brand. Obsessed with offers, value equations, and volume. Every piece of content must generate leads or it does not ship."
     }
-  }
+  },
+  "agentSummary": [
+    {
+      "task": "Generate devotional content (8 faith dimensions)",
+      "agent": "ScriptBot",
+      "agentTitle": "Content Lead",
+      "department": "Marketing",
+      "protocol": "The Studio",
+      "status": "complete",
+      "riskLevel": "green",
+      "summary": "8 devotionals written, one per faith dimension. Each grounded in scripture, written in Joshua's voice. Ready for review and Supabase insertion.",
+      "outputType": "content",
+      "reviewNeeded": true
+    },
+    {
+      "task": "Draft 3 new faith lessons",
+      "agent": "ScriptBot",
+      "agentTitle": "Content Lead",
+      "department": "Marketing",
+      "protocol": "The Studio",
+      "status": "complete",
+      "riskLevel": "yellow",
+      "summary": "3 lessons: Community of Faith, Faith Meets Reason, Justice & Mercy. Structured to match existing 7 lessons with Supabase-ready JSON.",
+      "outputType": "content",
+      "reviewNeeded": true
+    },
+    {
+      "task": "Prepare family event reminders (Jett vaccine Feb 20)",
+      "agent": "Pixel",
+      "agentTitle": "Frontend Lead",
+      "department": "Engineering",
+      "protocol": "The Forge",
+      "status": "complete",
+      "riskLevel": "green",
+      "summary": "Day-before (Feb 19) and day-of (Feb 20) Telegram reminders configured for Jett's vaccine appointment.",
+      "outputType": "ops",
+      "reviewNeeded": false
+    },
+    {
+      "task": "Draft blog post for joshlevylabs.com",
+      "agent": "ScriptBot",
+      "agentTitle": "Content Lead",
+      "department": "Marketing",
+      "protocol": "The Studio",
+      "status": "complete",
+      "riskLevel": "yellow",
+      "summary": "\"The AI Builder's Secret Weapon\" \u2014 1,450 words on AI for Builders pillar. Markdown with frontmatter, ready to publish.",
+      "outputType": "content",
+      "reviewNeeded": true
+    },
+    {
+      "task": "Feature spec for Family tab expansion",
+      "agent": "Pixel",
+      "agentTitle": "Frontend Lead",
+      "department": "Engineering",
+      "protocol": "The Forge",
+      "status": "complete",
+      "riskLevel": "yellow",
+      "summary": "335-line spec covering 25+ features: member profiles, relationship intelligence, advanced events, family dynamics, automation. 4-phase roadmap.",
+      "outputType": "design",
+      "reviewNeeded": true
+    },
+    {
+      "task": "Touchpoint tracker design",
+      "agent": "Pixel",
+      "agentTitle": "Frontend Lead",
+      "department": "Engineering",
+      "protocol": "The Forge",
+      "status": "complete",
+      "riskLevel": "yellow",
+      "summary": "364-line design: 3 new DB tables (touchpoints, goals, reminders), 4 React components, connection health scoring algorithm.",
+      "outputType": "design",
+      "reviewNeeded": true
+    },
+    {
+      "task": "Commit uncommitted hub changes",
+      "agent": "Pixel",
+      "agentTitle": "Frontend Lead",
+      "department": "Engineering",
+      "protocol": "The Tower",
+      "status": "complete",
+      "riskLevel": "yellow",
+      "summary": "Committed and pushed .DS_Store cleanup. Hub repo clean and synced.",
+      "outputType": "ops",
+      "reviewNeeded": false
+    },
+    {
+      "task": "Monitor Fear & Greed index",
+      "agent": "Chris",
+      "agentTitle": "Trading Strategist",
+      "department": "Revenue",
+      "protocol": "The Pit",
+      "status": "complete",
+      "riskLevel": "green",
+      "summary": "F&G at 34.8 (Fear). SPY/QQQ sideways. VIX elevated at 22.1. 17 BUY signals active across sectors. Markets fearful but not panicked.",
+      "outputType": "data",
+      "reviewNeeded": false
+    }
+  ]
 }

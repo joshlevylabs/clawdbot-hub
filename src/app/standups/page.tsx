@@ -46,6 +46,20 @@ interface TranscriptEntry {
   message: string;
 }
 
+interface AgentTaskSummary {
+  task: string;
+  agent: string;
+  agentTitle: string;
+  department: string;
+  protocol: string;
+  status: "complete" | "failed" | "pending" | "awaiting-review";
+  riskLevel: "green" | "yellow" | "red";
+  summary: string;
+  outputType: "content" | "design" | "code" | "data" | "ops";
+  outputPreview?: string;
+  reviewNeeded: boolean;
+}
+
 interface ReportMetrics {
   [key: string]: string | number | boolean;
 }
@@ -93,6 +107,7 @@ interface Standup {
   actionItems: ActionItem[];
   topPriorities: string[];
   ceoDirectives: CEODirective[];
+  agentSummary?: AgentTaskSummary[];
   // New multi-standup fields
   type?: string;
   typeName?: string;
@@ -687,6 +702,71 @@ function StandupDetail({ standup, onToggleActionItem }: { standup: Standup; onTo
                         🤖 {item.agentOutput}
                       </p>
                     )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Agent Work Summary */}
+      {standup.agentSummary && standup.agentSummary.length > 0 && (
+        <div className="bg-slate-900/50 rounded-xl border border-slate-800 p-4">
+          <div className="flex items-center justify-between mb-3">
+            <p className="text-xs text-slate-500 uppercase tracking-wide font-medium">🤖 Agent Work Summary</p>
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-emerald-400">
+                {standup.agentSummary.filter(t => t.status === "complete").length}/{standup.agentSummary.length} complete
+              </span>
+            </div>
+          </div>
+          <div className="space-y-2">
+            {standup.agentSummary.map((task, i) => {
+              const riskColors = {
+                green: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+                yellow: "bg-amber-500/10 text-amber-400 border-amber-500/20",
+                red: "bg-red-500/10 text-red-400 border-red-500/20",
+              };
+              const statusIcon = task.status === "complete" ? "✅" : task.status === "failed" ? "❌" : task.status === "awaiting-review" ? "📝" : "⏳";
+              const outputIcons = { content: "📄", design: "📐", code: "💻", data: "📊", ops: "🔧" };
+              const protocolColors: Record<string, string> = {
+                "The Forge": "text-orange-400",
+                "The Studio": "text-pink-400",
+                "The Pit": "text-blue-400",
+                "The Tower": "text-yellow-400",
+              };
+              return (
+                <div key={i} className={`p-3 rounded-lg border ${task.status === "complete" ? "bg-emerald-500/5 border-emerald-500/10" : "bg-slate-800/30 border-slate-700/30"}`}>
+                  <div className="flex items-start gap-2">
+                    <span className="text-sm flex-shrink-0">{statusIcon}</span>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap mb-1">
+                        <span className="text-sm text-slate-200 font-medium">{task.task}</span>
+                      </div>
+                      <div className="flex items-center gap-2 flex-wrap mb-1.5">
+                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700/50">
+                          {task.agent} · {task.agentTitle}
+                        </span>
+                        <span className={`text-[10px] px-1.5 py-0.5 rounded ${protocolColors[task.protocol] || "text-slate-400"} bg-slate-800 border border-slate-700/50`}>
+                          {task.protocol}
+                        </span>
+                        <span className={`text-[10px] px-1.5 py-0.5 rounded border ${riskColors[task.riskLevel]}`}>
+                          {task.riskLevel === "green" ? "🟢" : task.riskLevel === "yellow" ? "🟡" : "🔴"} {task.riskLevel}
+                        </span>
+                        <span className="text-[10px] text-slate-500">
+                          {outputIcons[task.outputType] || "📄"} {task.outputType}
+                        </span>
+                        {task.reviewNeeded && (
+                          <span className="text-[10px] px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-400 border border-purple-500/20">
+                            needs review
+                          </span>
+                        )}
+                      </div>
+                      {task.summary && (
+                        <p className="text-xs text-slate-400 leading-relaxed">{task.summary}</p>
+                      )}
+                    </div>
                   </div>
                 </div>
               );

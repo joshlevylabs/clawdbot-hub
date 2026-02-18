@@ -4944,7 +4944,7 @@ export default function OrgChartPage() {
                 : Array.isArray(ad.direct_reports) && (ad.direct_reports as string[]).length > 0
                   ? (ad.direct_reports as string[])
                   : [];
-              const directReports = [...new Set([...base.directReports, ...supaReports])].map(r => ID_MIGRATION[r] || r);
+              const directReports = Array.from(new Set([...base.directReports, ...supaReports])).map(r => ID_MIGRATION[r] || r);
               merged[id] = {
                 ...base,
                 name: (ad.name as string) || base.name,

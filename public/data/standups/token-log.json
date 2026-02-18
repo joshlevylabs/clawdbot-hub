@@ -99,12 +99,22 @@
       "estimatedCost": 0.1157,
       "model": "claude-opus-4-6",
       "duration": "26.8s"
+    },
+    {
+      "date": "2026-02-17",
+      "type": "adhoc-ecosystem-revenue-product-creation",
+      "inputTokens": 997,
+      "outputTokens": 1610,
+      "totalTokens": 2607,
+      "estimatedCost": 0.1357,
+      "model": "claude-opus-4-6",
+      "duration": "34.2s"
     }
   ],
   "totals": {
-    "today": 0.7516,
-    "week": 1.0549,
-    "month": 1.0549,
-    "standupCount": 10
+    "today": 0.8873,
+    "week": 1.1906,
+    "month": 1.1906,
+    "standupCount": 11
   }
 }

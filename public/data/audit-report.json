@@ -1,10 +1,10 @@
 {
-  "timestamp": "2026-02-18T07:45:04.028332+00:00",
+  "timestamp": "2026-02-18T08:03:28.822796+00:00",
   "summary": {
-    "total_tasks": 21,
-    "verified_done": 21,
+    "total_tasks": 23,
+    "verified_done": 17,
     "done_but_unverified": 0,
-    "pending": 0,
+    "pending": 1,
     "stale": 0
   },
   "items": [
@@ -40,9 +40,9 @@
     },
     {
       "text": "Draft next blog post",
-      "status": "resolved",
+      "status": "pending",
       "assignee": "Alex",
-      "verification": "Resolved: not automatable via dispatch"
+      "verification": "No verification rule found"
     },
     {
       "text": "Commit 2 uncommitted hub changes",
@@ -76,21 +76,21 @@
     },
     {
       "text": "Generate daily devotional content based on 8 faith dimensions",
-      "status": "resolved",
+      "status": "no_handler",
       "assignee": "Alex",
-      "verification": "Resolved: not automatable via dispatch"
+      "verification": "No verification rule found"
     },
     {
       "text": "Draft faith lesson content for the Lever app (currently 7 lessons)",
-      "status": "resolved",
+      "status": "no_handler",
       "assignee": "Alex",
-      "verification": "Resolved: not automatable via dispatch"
+      "verification": "No verification rule found"
     },
     {
       "text": "Prepare reminders for upcoming family events: Jetts vaccine",
-      "status": "resolved",
+      "status": "no_handler",
       "assignee": "Alex",
-      "verification": "Resolved: not automatable via dispatch"
+      "verification": "No verification rule found"
     },
     {
       "text": "Draft feature spec for expanding Family tab (currently 454 lines)",
@@ -100,9 +100,9 @@
     },
     {
       "text": "Review family touchpoint tracker design for 3 family members",
-      "status": "resolved",
+      "status": "no_handler",
       "assignee": "Elon",
-      "verification": "Resolved: not automatable via dispatch"
+      "verification": "No verification rule found"
     },
     {
       "text": "Commit 1 uncommitted hub change",
@@ -133,6 +133,18 @@
       "status": "resolved",
       "assignee": "Alex",
       "verification": "Resolved: not automatable via dispatch"
+    },
+    {
+      "text": "Commit 8 uncommitted monorepo changes",
+      "status": "verified_done",
+      "assignee": "Elon",
+      "verification": "PASSED: Verify monorepo has no uncommitted changes"
+    },
+    {
+      "text": "Draft feature spec for expanding Family tab (currently 455 lines)",
+      "status": "no_handler",
+      "assignee": "Elon",
+      "verification": "No verification rule found"
     }
   ],
   "escalations": []

@@ -1297,29 +1297,26 @@ function ExecutiveCard({ agent, selected, onClick }: { agent: AgentState; select
   return (
     <button
       onClick={onClick}
-      className={`relative rounded-2xl border-2 ${selected ? `${dept.selectedBorder} shadow-[0_0_20px_-3px_${dept.accentHex}40]` : dept.border} ${dept.bg} ${dept.glow} p-6 transition-all duration-300 hover:scale-[1.01] w-full text-left cursor-pointer`}
+      className={`relative rounded-xl border-2 ${selected ? `${dept.selectedBorder} shadow-[0_0_20px_-3px_${dept.accentHex}40]` : dept.border} ${dept.bg} ${dept.glow} p-3 transition-all duration-300 hover:scale-[1.01] w-full text-left cursor-pointer`}
     >
       <div
-        className={`absolute top-0 left-6 right-6 h-px bg-gradient-to-r from-transparent ${dept.accent.replace("text-", "via-")} to-transparent opacity-40`}
+        className={`absolute top-0 left-4 right-4 h-px bg-gradient-to-r from-transparent ${dept.accent.replace("text-", "via-")} to-transparent opacity-40`}
       />
-      <div className="flex items-start gap-4">
-        <div className={`shrink-0 p-3 rounded-xl border ${dept.iconBg}`}>
+      <div className="flex items-center gap-3">
+        <div className={`shrink-0 p-2 rounded-lg border ${dept.iconBg}`}>
           {icon}
         </div>
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-3 mb-1">
-            {agent.emoji && <span className="text-lg">{agent.emoji}</span>}
-            <h3 className="font-bold text-lg text-slate-100 tracking-tight">
+          <div className="flex items-center gap-2">
+            {agent.emoji && <span className="text-base">{agent.emoji}</span>}
+            <h3 className="font-bold text-sm text-slate-100 tracking-tight">
               {agent.name}
             </h3>
-            <span className={`text-sm font-semibold ${dept.accent}`}>
+            <span className={`text-xs font-semibold ${dept.accent}`}>
               {agent.title}
             </span>
             <StatusDot status={agent.status} size="md" />
           </div>
-          <p className="text-sm text-slate-400 leading-relaxed mb-3">
-            {agent.description}
-          </p>
           <ModelBadge model={agent.model} />
         </div>
       </div>
@@ -1333,25 +1330,21 @@ function TeamLeadCard({ agent, selected, onClick }: { agent: AgentState; selecte
   return (
     <button
       onClick={onClick}
-      className={`relative rounded-xl border-2 ${selected ? `${dept.selectedBorder} shadow-[0_0_15px_-3px_${dept.accentHex}40]` : "border-slate-800/60"} bg-slate-900/80 backdrop-blur-sm p-4 transition-all duration-200 hover:border-slate-700/80 hover:bg-slate-900/90 w-full text-left cursor-pointer`}
+      className={`relative rounded-lg border ${selected ? `${dept.selectedBorder} shadow-[0_0_15px_-3px_${dept.accentHex}40]` : "border-slate-800/60"} bg-slate-900/80 backdrop-blur-sm px-3 py-2 transition-all duration-200 hover:border-slate-700/80 hover:bg-slate-900/90 w-full text-left cursor-pointer`}
     >
-      <div className="flex items-start gap-3">
-        <div className={`shrink-0 mt-0.5 p-2 rounded-lg border ${dept.iconBg}`}>
+      <div className="flex items-center gap-2">
+        <div className={`shrink-0 p-1.5 rounded-md border ${dept.iconBg}`}>
           {icon}
         </div>
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-0.5">
-            {agent.emoji && <span className="text-sm">{agent.emoji}</span>}
-            <h4 className="font-semibold text-sm text-slate-200">{agent.name}</h4>
+          <div className="flex items-center gap-1.5">
+            {agent.emoji && <span className="text-xs">{agent.emoji}</span>}
+            <h4 className="font-semibold text-xs text-slate-200">{agent.name}</h4>
+            <span className={`text-[10px] font-medium ${dept.accent} opacity-80`}>
+              {agent.title}
+            </span>
             <StatusDot status={agent.status} />
           </div>
-          <p className={`text-xs font-medium ${dept.accent} opacity-80 mb-1`}>
-            {agent.title}
-          </p>
-          <p className="text-xs text-slate-500 leading-relaxed mb-2">
-            {agent.description}
-          </p>
-          <ModelBadge model={agent.model} />
         </div>
       </div>
     </button>
@@ -4913,8 +4906,11 @@ export default function OrgChartPage() {
           if (data && typeof data === "object" && !Array.isArray(data) && Object.keys(data).length > 0) {
             const defaults = getDefaultAgents();
             const merged = { ...defaults };
-            for (const [id, agentData] of Object.entries(data)) {
+            // ID migration map for renamed agents
+            const ID_MIGRATION: Record<string, string> = { ticker: "cfto" };
+            for (const [rawId, agentData] of Object.entries(data)) {
               if (typeof agentData !== "object" || agentData === null) continue;
+              const id = ID_MIGRATION[rawId] || rawId;
               const ad = agentData as Record<string, unknown>;
               const base = merged[id] || defaults[id];
               if (!base) {
@@ -4938,14 +4934,17 @@ export default function OrgChartPage() {
                 continue;
               }
               // Supabase data takes precedence — handle both camelCase and snake_case
-              const reportsTo = ad.reportsTo !== undefined ? (ad.reportsTo as string | null)
+              const rawReportsTo = ad.reportsTo !== undefined ? (ad.reportsTo as string | null)
                 : ad.reports_to !== undefined ? (ad.reports_to as string | null)
                 : base.reportsTo;
-              const directReports = Array.isArray(ad.directReports) && ad.directReports.length > 0
+              const reportsTo = rawReportsTo ? (ID_MIGRATION[rawReportsTo] || rawReportsTo) : rawReportsTo;
+              // Union directReports from Supabase + defaults so new agents aren't lost
+              const supaReports = Array.isArray(ad.directReports) && ad.directReports.length > 0
                 ? (ad.directReports as string[])
                 : Array.isArray(ad.direct_reports) && (ad.direct_reports as string[]).length > 0
                   ? (ad.direct_reports as string[])
-                  : base.directReports;
+                  : [];
+              const directReports = [...new Set([...base.directReports, ...supaReports])].map(r => ID_MIGRATION[r] || r);
               merged[id] = {
                 ...base,
                 name: (ad.name as string) || base.name,

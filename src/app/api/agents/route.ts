@@ -22,8 +22,20 @@ const DIR_TO_ID: Record<string, string> = {
   theo: "coo",
   muse: "cmo",
   venture: "cro",
-  pit: "ticker",
-  // All others use dir name as id: forge, pixel, sentinel, scriptbot, echo, builder, scout
+  pit: "cfto",
+  forge: "nexus",
+  "test-arch": "testarch",
+  "hw-validation": "hwval",
+  "sw-ai-validation": "swval",
+  "data-integrity": "dataint",
+  "automation-tooling": "autotool",
+  compliance: "compstd",
+  "faith-family": "faithfam",
+  "ai-infra": "aiinfra",
+  "consumer-hw": "conshw",
+  robotics: "roboauto",
+  "digital-platforms": "digplat",
+  // All others use dir name as id: pixel, sentinel, scriptbot, echo, builder, scout
 };
 
 interface AgentData {
@@ -87,21 +99,37 @@ function parseIdentity(content: string, dirName: string): Omit<AgentData, "files
 function getDefaultAgentSeeds(): (Partial<AgentRow> & { id: string })[] {
   return [
     { id: "ceo", name: "Joshua", title: "CEO", emoji: "👑", model: "Human", department: "Executive", status: "active", description: "Sets the vision. The builder.", reports_to: null, direct_reports: ["coo"], files: {} },
-    { id: "coo", name: "Theo", title: "COO", emoji: "🔺", model: "Claude Opus 4", department: "Executive", status: "active", description: "Orchestrates all operations. The right hand.", reports_to: "ceo", direct_reports: ["cto", "cmo", "cro", "auditor"], files: {} },
-    { id: "cto", name: "Atlas", title: "CTO", emoji: "🗺️", model: "Claude Sonnet 4", department: "Engineering", status: "active", description: "Owns all code and infrastructure.", reports_to: "coo", direct_reports: ["forge", "pixel", "sentinel"], files: {} },
-    { id: "forge", name: "Forge", title: "Backend Lead", emoji: "🔨", model: "Sonnet 4", department: "Engineering", status: "active", description: "APIs, databases, security", reports_to: "cto", direct_reports: [], files: {} },
+    { id: "coo", name: "Theo", title: "COO", emoji: "🔺", model: "Claude Opus 4", department: "Executive", status: "active", description: "Orchestrates all operations. The right hand.", reports_to: "ceo", direct_reports: ["cto", "cmo", "cro", "cfto", "ctio", "cpo", "auditor"], files: {} },
+    { id: "auditor", name: "Auditor", title: "Task Auditor", emoji: "🔎", model: "Sonnet 4", department: "Executive", status: "active", description: "Verifies agent tasks by checking actual world state. Trust but verify.", reports_to: "coo", direct_reports: [], files: {} },
+    { id: "cto", name: "Atlas", title: "CTO", emoji: "🗺️", model: "Claude Sonnet 4", department: "Engineering", status: "active", description: "Owns all code and infrastructure.", reports_to: "coo", direct_reports: ["nexus", "pixel", "sentinel"], files: {} },
+    { id: "nexus", name: "Nexus", title: "Backend Lead", emoji: "🔗", model: "Sonnet 4", department: "Engineering", status: "active", description: "APIs, databases, security", reports_to: "cto", direct_reports: [], files: {} },
     { id: "pixel", name: "Pixel", title: "Frontend Lead", emoji: "✨", model: "Sonnet 4", department: "Engineering", status: "idle", description: "UI/UX, CI/CD, deployment", reports_to: "cto", direct_reports: [], files: {} },
     { id: "sentinel", name: "Sentinel", title: "QA Lead", emoji: "🛡️", model: "Haiku 3.5", department: "Engineering", status: "standby", description: "Testing, code review, quality gates", reports_to: "cto", direct_reports: [], files: {} },
-    { id: "cmo", name: "Muse", title: "CMO", emoji: "🎨", model: "Claude Sonnet 4", department: "Marketing", status: "active", description: "Content, creative direction, brand.", reports_to: "coo", direct_reports: ["scriptbot", "echo"], files: {} },
+    { id: "cmo", name: "Alex", title: "CMO", emoji: "🦍", model: "Claude Sonnet 4", department: "Marketing", status: "active", description: "Content, creative direction, brand. Obsessed with offers, value equations, and volume.", reports_to: "coo", direct_reports: ["scriptbot", "echo"], files: {} },
     { id: "scriptbot", name: "ScriptBot", title: "Content Lead", emoji: "📝", model: "Sonnet 4", department: "Marketing", status: "active", description: "Podcast scripts, newsletter, blog posts", reports_to: "cmo", direct_reports: [], files: {} },
     { id: "echo", name: "Echo", title: "Social Lead", emoji: "📣", model: "Haiku 3.5", department: "Marketing", status: "idle", description: "Social scheduling, engagement, community", reports_to: "cmo", direct_reports: [], files: {} },
-    { id: "cro", name: "Venture", title: "CRO", emoji: "💰", model: "Claude Sonnet 4", department: "Revenue", status: "active", description: "Growth strategy, monetization.", reports_to: "coo", direct_reports: ["builder", "scout", "ticker"], files: {} },
+    { id: "cro", name: "Dave", title: "CRO", emoji: "💵", model: "Claude Sonnet 4", department: "Revenue", status: "active", description: "Growth strategy, monetization. Gazelle-intense focus on revenue.", reports_to: "coo", direct_reports: ["builder", "scout"], files: {} },
     { id: "builder", name: "Builder", title: "Products Lead", emoji: "🏗️", model: "Sonnet 4", department: "Revenue", status: "active", description: "Product ideation, feature dev, market fit", reports_to: "cro", direct_reports: [], files: {} },
     { id: "scout", name: "Scout", title: "Growth Lead", emoji: "🔍", model: "Haiku 3.5", department: "Revenue", status: "idle", description: "User acquisition, community, analytics", reports_to: "cro", direct_reports: [], files: {} },
-    { id: "ticker", name: "Chris", title: "Trading Strategist", emoji: "📈", model: "Sonnet 4", department: "Revenue", status: "active", description: "Chris Vermeulen — 25+ year veteran trader. ETF specialist focused on capital preservation and riding only rising assets. Owns the MRE improvement system.", reports_to: "cro", direct_reports: ["quant", "sweep"], files: {} },
-    { id: "quant", name: "Quant", title: "Signal Analyst", emoji: "🧮", model: "Sonnet 4", department: "Revenue", status: "active", description: "Signal accuracy analysis, correlation scanning, and regime detection.", reports_to: "ticker", direct_reports: [], files: {} },
-    { id: "sweep", name: "Sweep", title: "Backtester", emoji: "🧪", model: "Sonnet 4", department: "Revenue", status: "active", description: "Parameter optimization, backtesting, and regression testing.", reports_to: "ticker", direct_reports: [], files: {} },
-    { id: "auditor", name: "Auditor", title: "Task Auditor", emoji: "🔎", model: "Sonnet 4", department: "Executive", status: "active", description: "Verifies agent tasks by checking actual world state. Trust but verify.", reports_to: "coo", direct_reports: [], files: {} },
+    // CFTO — Chris promoted to C-suite
+    { id: "cfto", name: "Chris", title: "CFTO", emoji: "📈", model: "Sonnet 4", department: "Revenue", status: "active", description: "Chris Vermeulen — CFTO owning all financial tools and products.", reports_to: "coo", direct_reports: ["quant", "sweep"], files: {} },
+    { id: "quant", name: "Quant", title: "Signal Analyst", emoji: "🧮", model: "Sonnet 4", department: "Revenue", status: "active", description: "Signal accuracy analysis, correlation scanning, and regime detection.", reports_to: "cfto", direct_reports: [], files: {} },
+    { id: "sweep", name: "Sweep", title: "Backtester", emoji: "🧪", model: "Sonnet 4", department: "Revenue", status: "active", description: "Parameter optimization, backtesting, and regression testing.", reports_to: "cfto", direct_reports: [], files: {} },
+    // CTIO — Test Infrastructure
+    { id: "ctio", name: "Elon", title: "CTIO", emoji: "🧪", model: "Claude Sonnet 4", department: "Engineering", status: "active", description: "Relentless Systems Verifier. First-principles testing.", reports_to: "coo", direct_reports: ["testarch", "hwval", "swval", "dataint", "autotool", "compstd"], files: {} },
+    { id: "testarch", name: "Lamport", title: "VP Test Architecture", emoji: "🏗️", model: "Sonnet 4", department: "Engineering", status: "active", description: "Elegant System Theorist. Traceability matrices, formal correctness.", reports_to: "ctio", direct_reports: [], files: {} },
+    { id: "hwval", name: "Deming", title: "Dir. Hardware Validation", emoji: "🔌", model: "Sonnet 4", department: "Engineering", status: "active", description: "Industrial Reliability Master. Burn-in protocols, sigma levels.", reports_to: "ctio", direct_reports: [], files: {} },
+    { id: "swval", name: "Russell", title: "Dir. Software & AI Validation", emoji: "🤖", model: "Sonnet 4", department: "Engineering", status: "active", description: "Alignment Guardian. Hallucination scoring, adversarial testing.", reports_to: "ctio", direct_reports: [], files: {} },
+    { id: "dataint", name: "Silver", title: "Dir. Data Integrity", emoji: "📊", model: "Sonnet 4", department: "Engineering", status: "active", description: "Measurement Purist. Telemetry, anomaly detection, Bayesian reasoning.", reports_to: "ctio", direct_reports: [], files: {} },
+    { id: "autotool", name: "Linus", title: "Dir. Automation & Tooling", emoji: "⚙️", model: "Sonnet 4", department: "Engineering", status: "active", description: "Builder of Builder Tools. Frameworks, pipeline optimization.", reports_to: "ctio", direct_reports: [], files: {} },
+    { id: "compstd", name: "Vestager", title: "Dir. Compliance & Standards", emoji: "📜", model: "Sonnet 4", department: "Engineering", status: "active", description: "Institutional Integrity Defender. Regulatory constraints, audit logs.", reports_to: "ctio", direct_reports: [], files: {} },
+    // CPO — Product
+    { id: "cpo", name: "Jobs", title: "CPO", emoji: "🧭", model: "Claude Sonnet 4", department: "Executive", status: "active", description: "Taste + Vision + Market Timing. Ruthless focus, product intuition.", reports_to: "coo", direct_reports: ["faithfam", "aiinfra", "conshw", "roboauto", "digplat"], files: {} },
+    { id: "faithfam", name: "Peterson", title: "Dir. Faith & Family", emoji: "🕊️", model: "Sonnet 4", department: "Executive", status: "active", description: "Moral Order + Psychological Responsibility. Ethical product review.", reports_to: "cpo", direct_reports: [], files: {} },
+    { id: "aiinfra", name: "Hassabis", title: "Dir. AI Infrastructure", emoji: "🧠", model: "Sonnet 4", department: "Engineering", status: "active", description: "Scaling Intelligence Architect. Agent orchestration, capability scaling.", reports_to: "cpo", direct_reports: [], files: {} },
+    { id: "conshw", name: "Ive", title: "Dir. Consumer Hardware", emoji: "🔊", model: "Sonnet 4", department: "Engineering", status: "active", description: "Human-Centered Engineer. Obsessive simplicity, emotional design.", reports_to: "cpo", direct_reports: [], files: {} },
+    { id: "roboauto", name: "Brooks", title: "Dir. Robotics & Automation", emoji: "🤖", model: "Sonnet 4", department: "Engineering", status: "active", description: "Applied Robotics Visionary. Behavior-based, practical autonomy.", reports_to: "cpo", direct_reports: [], files: {} },
+    { id: "digplat", name: "Bezos", title: "Dir. Digital Platforms", emoji: "🌐", model: "Sonnet 4", department: "Engineering", status: "active", description: "Platform Ecosystem Builder. APIs, marketplace flywheels, scaling.", reports_to: "cpo", direct_reports: [], files: {} },
   ];
 }
 

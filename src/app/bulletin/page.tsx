@@ -262,7 +262,7 @@ export default function BulletinPage() {
   
   // Filters
   const [typeFilter, setTypeFilter] = useState<string[]>([]);
-  const [statusFilter, setStatusFilter] = useState<string[]>([]);
+  const [statusFilter, setStatusFilter] = useState<string[]>(["pending", "in-progress", "done_but_unverified"]);
   const [standupTypeFilter, setStandupTypeFilter] = useState<string[]>([]);
   const [verticalFilter, setVerticalFilter] = useState<string[]>([]);
   const [standupIndex, setStandupIndex] = useState<any>(null);

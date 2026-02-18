@@ -255,7 +255,7 @@
     {
       "text": "Commit 8 uncommitted monorepo changes",
       "assignee": "Elon",
-      "status": "done_but_unverified",
+      "status": "done",
       "completedAt": "2026-02-17T23:55:38.177469-08:00",
       "output": "[main 3cb0eb2] auto: standup cleanup\n 8 files changed, 333 insertions(+), 66 deletions(-)\n create mo",
       "verified": true,
@@ -311,7 +311,9 @@
     {
       "text": "Commit 3 uncommitted hub changes",
       "assignee": "Elon",
-      "status": "pending"
+      "status": "done",
+      "verified": true,
+      "audit_note": "Completed outside dispatcher"
     }
   ]
 }

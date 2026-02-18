@@ -1,11 +1,11 @@
 {
-  "timestamp": "2026-02-18T19:45:25.297872+00:00",
+  "timestamp": "2026-02-18T20:01:49.281165+00:00",
   "summary": {
-    "total_tasks": 28,
-    "verified_done": 26,
-    "done_but_unverified": 1,
-    "pending": 0,
-    "stale": 1
+    "total_tasks": 29,
+    "verified_done": 28,
+    "done_but_unverified": 0,
+    "pending": 1,
+    "stale": 0
   },
   "items": [
     {
@@ -136,9 +136,9 @@
     },
     {
       "text": "Commit 8 uncommitted monorepo changes",
-      "status": "done_but_unverified",
+      "status": "verified_done",
       "assignee": "Elon",
-      "verification": "FAILED: Verify monorepo has no uncommitted changes (output: 1)"
+      "verification": "PASSED: Verify monorepo has no uncommitted changes"
     },
     {
       "text": "Draft feature spec for expanding Family tab (currently 455 lines)",
@@ -154,7 +154,7 @@
     },
     {
       "text": "Draft next blog post for SEO distribution",
-      "status": "stale",
+      "status": "pending",
       "assignee": "Alex",
       "verification": "No verification rule found"
     },
@@ -175,10 +175,14 @@
       "status": "verified_done",
       "assignee": "Elon",
       "verification": "PASSED: Verify hub has no uncommitted changes"
+    },
+    {
+      "text": "Commit 3 uncommitted hub changes",
+      "status": "verified_done",
+      "assignee": "Elon",
+      "verification": "PASSED: Verify hub has no uncommitted changes",
+      "audit_note": "Completed outside dispatcher"
     }
   ],
-  "escalations": [
-    "Commit 8 uncommitted monorepo changes \u2014 marked done but verification FAILED",
-    "\ud83d\udd34 STALE [Alex]: Draft next blog post for SEO distribution \u2014 unresolved for 120 min"
-  ]
+  "escalations": []
 }

@@ -123,6 +123,7 @@ interface Standup {
   initiatives?: string[];
   verticalDetails?: VerticalDef[];
   initiativeDetails?: InitiativeDef[];
+  instanceKey?: string;
 }
 
 interface VerticalDef {

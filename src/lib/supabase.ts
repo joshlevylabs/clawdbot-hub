@@ -20,6 +20,17 @@ export interface DbTask {
   priority: 'low' | 'medium' | 'high';
   created_at: string;
   updated_at: string;
+  // Extended Kanban fields
+  assignee?: string | null;
+  labels?: string[] | null;
+  components?: string[] | null;
+  notes?: string | null;
+  sprint_ready?: boolean;
+  source?: string | null;
+  activity?: any[] | null;
+  checklist?: any[] | null;
+  linked_tasks?: string[] | null;
+  ticket_id?: string | null;
 }
 
 export interface DbSkill {

@@ -9,6 +9,17 @@ export interface Task {
   priority: "low" | "medium" | "high";
   createdAt: string;
   updatedAt: string;
+  // Extended Kanban fields
+  assignee?: string;
+  labels?: string[];
+  components?: string[];
+  notes?: string;
+  sprintReady?: boolean;
+  source?: string;
+  activity?: Array<{ timestamp: string; action: string; user: string; details?: any }>;
+  checklist?: Array<{ id: string; text: string; completed: boolean }>;
+  linkedTasks?: string[];
+  ticketId?: string;
 }
 
 export interface Connection {
@@ -47,6 +58,16 @@ const dbToTask = (db: DbTask): Task => ({
   priority: db.priority,
   createdAt: db.created_at,
   updatedAt: db.updated_at,
+  assignee: db.assignee || undefined,
+  labels: db.labels || undefined,
+  components: db.components || undefined,
+  notes: db.notes || undefined,
+  sprintReady: db.sprint_ready || false,
+  source: db.source || undefined,
+  activity: db.activity || undefined,
+  checklist: db.checklist || undefined,
+  linkedTasks: db.linked_tasks || undefined,
+  ticketId: db.ticket_id || undefined,
 });
 
 const dbToSkill = (db: DbSkill): Skill => ({
@@ -179,6 +200,16 @@ export const useHubStore = create<HubStore>()((set, get) => ({
     if (updates.description !== undefined) dbUpdates.description = updates.description || null;
     if (updates.status !== undefined) dbUpdates.status = updates.status;
     if (updates.priority !== undefined) dbUpdates.priority = updates.priority;
+    if (updates.assignee !== undefined) dbUpdates.assignee = updates.assignee || null;
+    if (updates.labels !== undefined) dbUpdates.labels = updates.labels || null;
+    if (updates.components !== undefined) dbUpdates.components = updates.components || null;
+    if (updates.notes !== undefined) dbUpdates.notes = updates.notes || null;
+    if (updates.sprintReady !== undefined) dbUpdates.sprint_ready = updates.sprintReady;
+    if (updates.source !== undefined) dbUpdates.source = updates.source || null;
+    if (updates.activity !== undefined) dbUpdates.activity = updates.activity || null;
+    if (updates.checklist !== undefined) dbUpdates.checklist = updates.checklist || null;
+    if (updates.linkedTasks !== undefined) dbUpdates.linked_tasks = updates.linkedTasks || null;
+    if (updates.ticketId !== undefined) dbUpdates.ticket_id = updates.ticketId || null;
 
     const { error } = await supabase
       .from("tasks")

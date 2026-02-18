@@ -192,9 +192,17 @@ export default function BulletinPage() {
   useEffect(() => {
     async function fetchTaskRegistry() {
       try {
-        const res = await fetch("/data/standups/task-registry.json");
+        // Load tasks from API (merges sprint-ready flags from Supabase)
+        const res = await fetch("/api/tasks");
         if (res.ok) {
-          setTaskRegistry(await res.json());
+          const data = await res.json();
+          setTaskRegistry({ tasks: data.tasks });
+        } else {
+          // Fallback to static file
+          const staticRes = await fetch("/data/standups/task-registry.json");
+          if (staticRes.ok) {
+            setTaskRegistry(await staticRes.json());
+          }
         }
       } catch (err) {
         console.error("Failed to load task registry:", err);

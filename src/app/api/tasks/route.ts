@@ -3,6 +3,15 @@ import { promises as fs } from "fs";
 import path from "path";
 
 const TASK_REGISTRY_PATH = path.join(process.cwd(), "public", "data", "standups", "task-registry.json");
+const SUPABASE_URL = process.env.NEXT_PUBLIC_PAPER_SUPABASE_URL || "";
+const SUPABASE_KEY = process.env.PAPER_SUPABASE_SERVICE_ROLE_KEY || "";
+
+const supabaseHeaders = {
+  apikey: SUPABASE_KEY,
+  Authorization: `Bearer ${SUPABASE_KEY}`,
+  "Content-Type": "application/json",
+  Prefer: "return=representation",
+};
 
 interface Task {
   key: string;
@@ -35,25 +44,41 @@ async function loadRegistry(): Promise<TaskRegistry> {
   }
 }
 
-async function saveRegistry(registry: TaskRegistry) {
-  await fs.writeFile(TASK_REGISTRY_PATH, JSON.stringify(registry, null, 2), "utf8");
+// Fetch sprint-ready flags from Supabase (stored as sprint:<key> in priority_completions)
+async function getSprintReadyFlags(): Promise<Set<string>> {
+  try {
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/priority_completions?id=like.sprint:*&select=id`,
+      { headers: supabaseHeaders, cache: "no-store" }
+    );
+    if (!res.ok) return new Set();
+    const rows = await res.json();
+    return new Set(rows.map((r: { id: string }) => r.id.replace("sprint:", "")));
+  } catch {
+    return new Set();
+  }
 }
 
-// GET /api/tasks - Get all tasks (or filter by query params)
+// GET /api/tasks - Get tasks with sprint-ready state from Supabase
 export async function GET(request: NextRequest) {
   try {
     const registry = await loadRegistry();
+    const sprintFlags = await getSprintReadyFlags();
     const { searchParams } = new URL(request.url);
-    const sprintReady = searchParams.get("sprintReady");
-    const status = searchParams.get("status");
+    const filterSprintReady = searchParams.get("sprintReady");
+    const filterStatus = searchParams.get("status");
 
-    let tasks = registry.tasks;
+    // Merge sprint-ready flags from Supabase into task data
+    let tasks = registry.tasks.map(t => ({
+      ...t,
+      sprintReady: sprintFlags.has(t.key),
+    }));
 
-    if (sprintReady === "true") {
+    if (filterSprintReady === "true") {
       tasks = tasks.filter(t => t.sprintReady === true);
     }
-    if (status) {
-      tasks = tasks.filter(t => t.status === status);
+    if (filterStatus) {
+      tasks = tasks.filter(t => t.status === filterStatus);
     }
 
     return NextResponse.json({ tasks });
@@ -63,49 +88,61 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// PATCH /api/tasks - Update a specific task by key
+// PATCH /api/tasks - Update sprint-ready flag (persisted to Supabase)
 export async function PATCH(request: NextRequest) {
   try {
     const body = await request.json();
-    const { taskKey, ...updates } = body;
+    const { taskKey, sprintReady } = body;
 
     if (!taskKey) {
       return NextResponse.json({ error: "taskKey is required" }, { status: 400 });
     }
 
-    // Whitelist of allowed fields to update
-    const allowedFields = ["sprintReady", "status", "priority", "completedAt"];
-    const filteredUpdates: Record<string, unknown> = {};
-    for (const key of Object.keys(updates)) {
-      if (allowedFields.includes(key)) {
-        filteredUpdates[key] = updates[key];
+    if (typeof sprintReady !== "boolean") {
+      return NextResponse.json({ error: "sprintReady (boolean) is required" }, { status: 400 });
+    }
+
+    const id = `sprint:${taskKey}`;
+
+    if (sprintReady) {
+      // Upsert sprint flag into Supabase
+      const res = await fetch(
+        `${SUPABASE_URL}/rest/v1/priority_completions`,
+        {
+          method: "POST",
+          headers: { ...supabaseHeaders, Prefer: "resolution=merge-duplicates,return=representation" },
+          body: JSON.stringify({
+            id,
+            completed_at: new Date().toISOString(),
+          }),
+        }
+      );
+
+      if (!res.ok) {
+        const err = await res.text();
+        console.error("Supabase upsert error:", err);
+        return NextResponse.json({ error: "Failed to save sprint-ready flag" }, { status: 500 });
       }
+
+      return NextResponse.json({ success: true, taskKey, sprintReady: true });
+    } else {
+      // Delete sprint flag from Supabase
+      const res = await fetch(
+        `${SUPABASE_URL}/rest/v1/priority_completions?id=eq.${encodeURIComponent(id)}`,
+        {
+          method: "DELETE",
+          headers: supabaseHeaders,
+        }
+      );
+
+      if (!res.ok) {
+        const err = await res.text();
+        console.error("Supabase delete error:", err);
+        return NextResponse.json({ error: "Failed to remove sprint-ready flag" }, { status: 500 });
+      }
+
+      return NextResponse.json({ success: true, taskKey, sprintReady: false });
     }
-
-    if (Object.keys(filteredUpdates).length === 0) {
-      return NextResponse.json({ error: "No valid fields to update" }, { status: 400 });
-    }
-
-    const registry = await loadRegistry();
-    const taskIndex = registry.tasks.findIndex(t => t.key === taskKey);
-
-    if (taskIndex === -1) {
-      return NextResponse.json({ error: `Task ${taskKey} not found` }, { status: 404 });
-    }
-
-    // Apply updates
-    registry.tasks[taskIndex] = {
-      ...registry.tasks[taskIndex],
-      ...filteredUpdates,
-      updatedAt: new Date().toISOString(),
-    };
-
-    await saveRegistry(registry);
-
-    return NextResponse.json({
-      success: true,
-      task: registry.tasks[taskIndex],
-    });
   } catch (error) {
     console.error("Failed to update task:", error);
     return NextResponse.json({ error: "Failed to update task" }, { status: 500 });

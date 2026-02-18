@@ -18,13 +18,13 @@ import {
   Network,
   Cpu,
   Layers,
-  LayoutGrid,
+  ClipboardList,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 const navItems = [
   { href: "/dashboard", icon: Sunrise, label: "Dashboard" },
-  { href: "/board", icon: LayoutGrid, label: "Board" },
+  { href: "/bulletin", icon: ClipboardList, label: "Bulletin" },
   { href: "/org-chart", icon: Network, label: "Org Chart" },
   { href: "/fleet", icon: Cpu, label: "Fleet" },
   { href: "/standups", icon: MessageSquare, label: "Standups" },

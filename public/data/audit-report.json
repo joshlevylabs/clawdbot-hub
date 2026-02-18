@@ -1,9 +1,9 @@
 {
-  "timestamp": "2026-02-18T11:15:05.485991+00:00",
+  "timestamp": "2026-02-18T11:33:08.830316+00:00",
   "summary": {
     "total_tasks": 23,
-    "verified_done": 23,
-    "done_but_unverified": 0,
+    "verified_done": 17,
+    "done_but_unverified": 6,
     "pending": 0,
     "stale": 0
   },
@@ -22,9 +22,9 @@
     },
     {
       "text": "Commit 1 uncommitted hub change(s)",
-      "status": "verified_done",
+      "status": "done_but_unverified",
       "assignee": "Elon",
-      "verification": "PASSED: Verify hub has no uncommitted changes"
+      "verification": "FAILED: Verify hub has no uncommitted changes (output: 1)"
     },
     {
       "text": "Review 1 ecosystem attention item(s)",
@@ -46,9 +46,9 @@
     },
     {
       "text": "Commit 2 uncommitted hub changes",
-      "status": "verified_done",
+      "status": "done_but_unverified",
       "assignee": "Elon",
-      "verification": "PASSED: Verify hub has no uncommitted changes"
+      "verification": "FAILED: Verify hub has no uncommitted changes (output: 1)"
     },
     {
       "text": "Commit uncommitted changes",
@@ -64,15 +64,15 @@
     },
     {
       "text": "Commit 4 uncommitted hub change(s)",
-      "status": "verified_done",
+      "status": "done_but_unverified",
       "assignee": "Elon",
-      "verification": "PASSED: Verify hub has no uncommitted changes"
+      "verification": "FAILED: Verify hub has no uncommitted changes (output: 1)"
     },
     {
       "text": "Commit 3 uncommitted hub change(s)",
-      "status": "verified_done",
+      "status": "done_but_unverified",
       "assignee": "Elon",
-      "verification": "PASSED: Verify hub has no uncommitted changes"
+      "verification": "FAILED: Verify hub has no uncommitted changes (output: 1)"
     },
     {
       "text": "Generate daily devotional content based on 8 faith dimensions",
@@ -106,9 +106,9 @@
     },
     {
       "text": "Commit 1 uncommitted hub change",
-      "status": "verified_done",
+      "status": "done_but_unverified",
       "assignee": "Elon",
-      "verification": "PASSED: Verify hub has no uncommitted changes"
+      "verification": "FAILED: Verify hub has no uncommitted changes (output: 1)"
     },
     {
       "text": "Generate daily devotional content based on 8 faith dimensions, structured as 7-day challenge",
@@ -124,9 +124,9 @@
     },
     {
       "text": "Commit 1 uncommitted Hub change",
-      "status": "verified_done",
+      "status": "done_but_unverified",
       "assignee": "Elon",
-      "verification": "PASSED: Verify hub has no uncommitted changes"
+      "verification": "FAILED: Verify hub has no uncommitted changes (output: 1)"
     },
     {
       "text": "Draft next blog post for joshlevylabs.com",
@@ -147,5 +147,12 @@
       "verification": "Resolved: not automatable via dispatch"
     }
   ],
-  "escalations": []
+  "escalations": [
+    "Commit 1 uncommitted hub change(s) \u2014 marked done but verification FAILED",
+    "Commit 2 uncommitted hub changes \u2014 marked done but verification FAILED",
+    "Commit 4 uncommitted hub change(s) \u2014 marked done but verification FAILED",
+    "Commit 3 uncommitted hub change(s) \u2014 marked done but verification FAILED",
+    "Commit 1 uncommitted hub change \u2014 marked done but verification FAILED",
+    "Commit 1 uncommitted Hub change \u2014 marked done but verification FAILED"
+  ]
 }

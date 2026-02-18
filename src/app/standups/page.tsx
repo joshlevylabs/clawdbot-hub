@@ -891,6 +891,8 @@ interface ScheduledStandupType {
   participants: string[];
   agenda: string;
   autoExecute?: boolean;
+  interactive?: boolean;
+  interactiveTimeoutMinutes?: number;
   verticals?: string[];
   initiatives?: string[];
 }
@@ -1594,6 +1596,11 @@ function ManageView() {
                     Auto-Execute
                   </span>
                 )}
+                {standup.interactive && (
+                  <span className="px-2 py-0.5 rounded text-xs bg-purple-500/20 text-purple-400 border border-purple-500/30">
+                    🎯 Interactive
+                  </span>
+                )}
               </div>
               
               {standup.agenda && (
@@ -2191,6 +2198,16 @@ function ManageView() {
                   className="rounded"
                 />
                 <label className="text-sm text-slate-300">Auto-Execute (agents run this standup automatically)</label>
+              </div>
+              
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={formData.interactive || false}
+                  onChange={(e) => setFormData({ ...formData, interactive: e.target.checked })}
+                  className="rounded"
+                />
+                <label className="text-sm text-slate-300">🎯 Interactive (pause for CEO decisions via Telegram buttons)</label>
               </div>
               
               <div className="flex gap-2 pt-4">

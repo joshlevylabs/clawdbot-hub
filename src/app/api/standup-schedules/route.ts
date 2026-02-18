@@ -59,7 +59,7 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { key, name, emoji, schedule, time, participants, agenda, auto_execute, verticals, initiatives } = body;
+    const { key, name, emoji, schedule, time, participants, agenda, auto_execute, interactive, interactive_timeout_minutes, verticals, initiatives } = body;
 
     if (!key || !name || !schedule || !time) {
       return NextResponse.json(
@@ -84,6 +84,8 @@ export async function POST(req: NextRequest) {
       participants: participants || [],
       agenda: agenda || "",
       auto_execute: auto_execute || false,
+      interactive: interactive || false,
+      interactive_timeout_minutes: interactive_timeout_minutes || 15,
       verticals: verticals || [],
       initiatives: initiatives || [],
       created_at: new Date().toISOString(),
@@ -117,7 +119,7 @@ export async function POST(req: NextRequest) {
 export async function PATCH(req: NextRequest) {
   try {
     const body = await req.json();
-    const { key, name, emoji, schedule, time, participants, agenda, auto_execute, verticals, initiatives } = body;
+    const { key, name, emoji, schedule, time, participants, agenda, auto_execute, interactive, interactive_timeout_minutes, verticals, initiatives } = body;
 
     if (!key) {
       return NextResponse.json(
@@ -141,6 +143,8 @@ export async function PATCH(req: NextRequest) {
       ...(participants && { participants }),
       ...(agenda !== undefined && { agenda }),
       ...(auto_execute !== undefined && { auto_execute }),
+      ...(interactive !== undefined && { interactive }),
+      ...(interactive_timeout_minutes !== undefined && { interactive_timeout_minutes }),
       ...(verticals && { verticals }),
       ...(initiatives && { initiatives }),
       updated_at: new Date().toISOString()

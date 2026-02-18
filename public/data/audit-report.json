@@ -1,11 +1,11 @@
 {
-  "timestamp": "2026-02-18T01:30:17.687854+00:00",
+  "timestamp": "2026-02-18T01:45:04.876353+00:00",
   "summary": {
     "total_tasks": 16,
     "verified_done": 11,
     "done_but_unverified": 0,
-    "pending": 5,
-    "stale": 0
+    "pending": 0,
+    "stale": 5
   },
   "items": [
     {
@@ -76,34 +76,40 @@
     },
     {
       "text": "Generate daily devotional content based on 8 faith dimensions",
-      "status": "pending",
+      "status": "stale",
       "assignee": "Alex",
       "verification": "No verification rule found"
     },
     {
       "text": "Draft faith lesson content for the Lever app (currently 7 lessons)",
-      "status": "pending",
+      "status": "stale",
       "assignee": "Alex",
       "verification": "No verification rule found"
     },
     {
       "text": "Prepare reminders for upcoming family events: Jetts vaccine",
-      "status": "pending",
+      "status": "stale",
       "assignee": "Alex",
       "verification": "No verification rule found"
     },
     {
       "text": "Draft feature spec for expanding Family tab (currently 454 lines)",
-      "status": "pending",
+      "status": "stale",
       "assignee": "Elon",
       "verification": "No verification rule found"
     },
     {
       "text": "Review family touchpoint tracker design for 3 family members",
-      "status": "pending",
+      "status": "stale",
       "assignee": "Elon",
       "verification": "No verification rule found"
     }
   ],
-  "escalations": []
+  "escalations": [
+    "\ud83d\udd34 STALE [Alex]: Generate daily devotional content based on 8 faith dimensions \u2014 unresolved for 120 min",
+    "\ud83d\udd34 STALE [Alex]: Draft faith lesson content for the Lever app (currently 7 lessons) \u2014 unresolved for 120 min",
+    "\ud83d\udd34 STALE [Alex]: Prepare reminders for upcoming family events: Jetts vaccine \u2014 unresolved for 120 min",
+    "\ud83d\udd34 STALE [Elon]: Draft feature spec for expanding Family tab (currently 454 lines) \u2014 unresolved for 120 min",
+    "\ud83d\udd34 STALE [Elon]: Review family touchpoint tracker design for 3 family members \u2014 unresolved for 120 min"
+  ]
 }

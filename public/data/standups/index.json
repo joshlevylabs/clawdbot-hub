@@ -2,17 +2,16 @@
   "standups": [
     {
       "date": "2026-02-18",
-      "time": "15:45",
+      "time": "16:09",
       "type": "adhoc-the-lyceum-greenfield-architecture",
       "typeName": "The Lyceum Greenfield Architecture",
       "typeEmoji": "\ud83c\udfdb\ufe0f",
       "topic": "The Lyceum Greenfield Architecture \u2014 Wednesday Feb 18",
       "file": "2026-02-18-adhoc-the-lyceum-greenfield-architecture.json",
-      "tokenCost": 0.2667,
+      "tokenCost": 0.3412,
       "verticals": [],
       "initiatives": [],
-      "instanceKey": "STD-3",
-      "summary": "Standalone platform for R&D/manufacturing engineers in electronics. Free tier + ~$200/mo premium. Content-only MVP."
+      "instanceKey": "STD-5"
     },
     {
       "date": "2026-02-18",

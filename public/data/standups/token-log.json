@@ -219,12 +219,32 @@
       "estimatedCost": 0.2667,
       "model": "claude-opus-4-6",
       "duration": "72.4s"
+    },
+    {
+      "date": "2026-02-18",
+      "type": "adhoc-the-lyceum-greenfield-architecture",
+      "inputTokens": 2342,
+      "outputTokens": 2429,
+      "totalTokens": 4771,
+      "estimatedCost": 0.2173,
+      "model": "claude-opus-4-6",
+      "duration": "58.6s"
+    },
+    {
+      "date": "2026-02-18",
+      "type": "adhoc-the-lyceum-greenfield-architecture",
+      "inputTokens": 4179,
+      "outputTokens": 3713,
+      "totalTokens": 7892,
+      "estimatedCost": 0.3412,
+      "model": "claude-opus-4-6",
+      "duration": "84.1s"
     }
   ],
   "totals": {
-    "today": 1.303,
-    "week": 2.734,
-    "month": 2.734,
-    "standupCount": 22
+    "today": 1.8615,
+    "week": 3.2925,
+    "month": 3.2925,
+    "standupCount": 24
   }
 }

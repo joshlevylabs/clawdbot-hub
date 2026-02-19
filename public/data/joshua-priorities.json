@@ -1,6 +1,6 @@
 {
   "date": "2026-02-18",
-  "generatedAt": "2026-02-18T15:49:40.656224-08:00",
+  "generatedAt": "2026-02-18T16:12:32.785746-08:00",
   "priorities": [
     {
       "text": "Review current positions: AEE, EFA, XLV, XLE, VNQ, TLT, GLD",
@@ -82,6 +82,16 @@
     },
     {
       "text": "Choose pricing model and free tier scope",
+      "source": "adhoc-the-lyceum-greenfield-architecture",
+      "urgency": "high"
+    },
+    {
+      "text": "Decide first curriculum track topic and content authorship model",
+      "source": "adhoc-the-lyceum-greenfield-architecture",
+      "urgency": "high"
+    },
+    {
+      "text": "Review and approve MVP product spec once drafted",
       "source": "adhoc-the-lyceum-greenfield-architecture",
       "urgency": "high"
     }
@@ -358,6 +368,41 @@
     {
       "text": "Design Lyceum data model: users, lessons, curriculum tracks, progress, cohorts, subscriptions",
       "assignee": "Elon Musk",
+      "status": "pending"
+    },
+    {
+      "text": "Extend A-082 data model to include author reference on lessons/tracks and team billing flag on subscriptions",
+      "assignee": "Elon Musk",
+      "status": "pending"
+    },
+    {
+      "text": "Complete greenfield repo scaffold per A-079 with Next.js 14, Supabase auth, Postgres, Stripe integration",
+      "assignee": "Elon Musk",
+      "status": "pending"
+    },
+    {
+      "text": "Draft one-page MVP product spec: curriculum track view, cohort enrollment flow, progress dashboard \u2014 three features only",
+      "assignee": "Steve Jobs",
+      "status": "pending"
+    },
+    {
+      "text": "Finalize brand positioning doc and landing page copy framework per A-080",
+      "assignee": "Alex",
+      "status": "pending"
+    },
+    {
+      "text": "Complete pricing and monetization strategy with B2B team tier added to A-081",
+      "assignee": "Dave",
+      "status": "pending"
+    },
+    {
+      "text": "Draft shortlist of 3 candidate curriculum tracks with market sizing and differentiation analysis",
+      "assignee": "James Truchard",
+      "status": "pending"
+    },
+    {
+      "text": "Design waitlist landing page with lead magnet (free technical reference guide)",
+      "assignee": "Alex",
       "status": "pending"
     }
   ]

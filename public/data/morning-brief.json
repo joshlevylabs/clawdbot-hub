@@ -1,241 +1,96 @@
 {
-  "date": "2026-02-18",
-  "generated_at": "2026-02-18T06:00:00-08:00",
-  "prayer": {
-    "title": "\ud83d\udd6f\ufe0f Morning Prayer",
-    "date": "Wednesday, February 18, 2026",
-    "hebrew_date": "20 Cheshvan",
-    "parsha": "Vayeshev",
-    "parsha_theme": "setbacks as setups, patience, providence",
-    "modeh_ani": "\u05de\u05d5\u05d3\u05d4 \u05d0\u05e0\u05d9 \u05dc\u05e4\u05e0\u05d9\u05da \u2014 I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
-    "blessing": "Blessed are You who clothes the naked \u2014 provide for all my needs this day.",
-    "psalm": "**Psalm 20:4**: \"May He give you the desire of your heart and make all your plans succeed.\"",
-    "proverb": "**Proverbs 10:4**: \"A slack hand causes poverty, but the hand of the diligent makes rich.\"",
-    "intention": "Let my work today compound into something that outlasts me.",
-    "closing": "May your work today be a pleasing offering. May your rest tonight be deep and restorative."
-  },
-  "relationship": {
-    "title": "\ud83d\udc97 Relationship Temperature",
-    "status": "critical",
-    "trend": "urgent",
-    "ratio": 1.2,
-    "stats": {
-      "total": 11,
-      "positive": 6,
-      "negative": 5
+  "date": "2026-02-19",
+  "timestamp": "2026-02-19T06:00:00-08:00",
+  "sections": {
+    "prayer": {
+      "title": "🕐️ Morning Prayer",
+      "date": "Thursday, February 19, 2026",
+      "hebrew_date": "21 Cheshvan",
+      "parsha": "Vayeshev",
+      "parsha_theme": "setbacks as setups, patience, providence",
+      "modeh_ani": "מודה אני לפניך — I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
+      "blessing": "Blessed are You who girds Israel with strength — fortify me for the work ahead.",
+      "psalm": "**Psalm 37:5**: \"Commit your way to the Lord; trust in Him and He will act.\"",
+      "proverb": "**Proverbs 27:23**: \"Know well the condition of your flocks, and give attention to your herds.\"",
+      "intention": "Give me wisdom to know when to push forward and when to rest.",
+      "closing": "Go in peace. Build with purpose. Return with gratitude."
     },
-    "love_languages": {
-      "primary": "quality_time",
-      "secondary": "acts_of_service"
-    },
-    "recommendations": [
-      "PRIORITY: Focus on repair. Acknowledge recent conflicts without defending.",
-      "Increase acts of service dramatically this week.",
-      "Create space for her to express frustrations without fixing."
-    ]
-  },
-  "weather": {
-    "title": "\ud83c\udf26\ufe0f Weather",
-    "location": "Temecula, CA",
-    "today": {
-      "condition": "Scattered Showers",
-      "high": 54,
-      "low": 40,
-      "rain_chance": 38,
-      "description": "Rain showers this morning with some sunshine during the afternoon hours. Winds WSW at 10-20 mph."
-    },
-    "tomorrow": {
-      "condition": "Rain",
-      "high": 53,
-      "low": 39,
-      "rain_chance": 98,
-      "description": "Cloudy with periods of rain. Rainfall around a quarter of an inch."
-    },
-    "weekend": {
-      "saturday": "Partly Cloudy, 66\u00b0/44\u00b0",
-      "sunday": "Mostly Sunny, 71\u00b0/47\u00b0"
-    }
-  },
-  "calendar": {
-    "title": "\ud83d\udcc5 Calendar",
-    "today": [],
-    "week": [],
-    "month": [
-      {
-        "date": "March 6, 2026",
-        "event": "Brendon Schmidt's birthday",
-        "type": "birthday"
+    "weather": {
+      "title": "🌤️ Weather",
+      "location": "Temecula, CA",
+      "today": {
+        "conditions": "Showers likely before 10am, then rain between 10am-4pm, then chance of rain and thunderstorms after 4pm",
+        "high": 54,
+        "wind": "Southwest 25-30 mph, gusts up to 40 mph",
+        "precipitation": "100% chance, quarter to half inch possible"
+      },
+      "tonight": {
+        "conditions": "Chance of rain and thunderstorms before 7pm, then scattered showers",
+        "low": 36,
+        "frost": "Patchy frost after 4am"
+      },
+      "outlook": {
+        "friday": "Mostly sunny, high 55°F",
+        "weekend": "Sunny, highs 67-72°F",
+        "next_week": "Mostly sunny, highs 76-77°F"
       }
-    ]
-  },
-  "email": {
-    "title": "\ud83d\udce7 Email Highlights",
-    "highlights": [
-      {
-        "from": "Stripe",
-        "subject": "Action required to resume payouts from your Stripe balance",
-        "status": "UNREAD",
-        "priority": "high",
-        "date": "2026-02-17 23:26"
-      },
-      {
-        "from": "LinkedIn",
-        "subject": "You have 1 new message",
-        "status": "UNREAD",
-        "priority": "medium",
-        "date": "2026-02-17 19:17"
-      },
-      {
-        "from": "Vercel",
-        "subject": "Failed production deployment on team 'joshlevylabs' projects'",
-        "status": "UNREAD",
-        "priority": "high",
-        "date": "2026-02-17 15:16"
-      },
-      {
-        "from": "OpusClip",
-        "subject": "Video Successfully Published (multiple)",
-        "status": "READ",
-        "priority": "low",
-        "date": "2026-02-18 03:00-03:03",
-        "note": "4 videos published early morning"
-      }
-    ]
-  },
-  "mre": {
-    "title": "\ud83d\udcca MRE Trading",
-    "fear_greed": 38,
-    "fear_greed_rating": "fear",
-    "regime": "sideways",
-    "todays_plays": [
-      {
-        "symbol": "SPY",
-        "action": "BUY",
-        "price": 682.85,
-        "confidence": "Low-Moderate",
-        "strength": 1.9
-      },
-      {
-        "symbol": "QQQ",
-        "action": "BUY",
-        "price": 601.3,
-        "confidence": "Strong",
-        "strength": 7.2
-      },
-      {
-        "symbol": "XLK",
-        "action": "BUY",
-        "price": 139.48,
-        "confidence": "Strong",
-        "strength": 6.0
-      },
-      {
-        "symbol": "XLC",
-        "action": "BUY",
-        "price": 114.4,
-        "confidence": "Strong",
-        "strength": 7.2
-      },
-      {
-        "symbol": "XLF",
-        "action": "BUY",
-        "price": 52.2,
-        "confidence": "Moderate",
-        "strength": 4.3
-      },
-      {
-        "symbol": "XLV",
-        "action": "BUY",
-        "price": 157.37,
-        "confidence": "Weak",
-        "strength": 1.5
-      },
-      {
-        "symbol": "XLP",
-        "action": "BUY",
-        "price": 88.2,
-        "confidence": "Moderate",
-        "strength": 2.4
-      },
-      {
-        "symbol": "XLU",
-        "action": "BUY",
-        "price": 46.38,
-        "confidence": "Moderate",
-        "strength": 3.6
-      },
-      {
-        "symbol": "EFA",
-        "action": "BUY",
-        "price": 104.22,
-        "confidence": "Moderate",
-        "strength": 3.2
-      },
-      {
-        "symbol": "EEM",
-        "action": "BUY",
-        "price": 60.87,
-        "confidence": "Moderate",
-        "strength": 3.7
-      }
-    ],
-    "pending_triggers": [],
-    "thesis": "Fear elevated at 38, sideways regime. Multiple BUY signals across sectors - strongest in tech (QQQ, XLC, XLK). 15 total BUY signals vs 9 HOLD."
-  },
-  "family": {
-    "title": "\ud83d\udc68\u200d\ud83d\udc69\u200d\ud83d\udc67\u200d\ud83d\udc66 Family Focus",
-    "jillian": {
-      "love_languages": [
-        "quality time",
-        "acts of service"
+    },
+    "calendar": {
+      "title": "📅 Calendar",
+      "today": "No events scheduled",
+      "this_week": "No events scheduled",
+      "upcoming": [
+        {
+          "date": "2026-03-06",
+          "event": "Brendon Schmidt's birthday"
+        }
+      ]
+    },
+    "emails": {
+      "title": "📧 Email Highlights",
+      "highlights": [
+        "AWS Marketplace: ELK stack update notification",
+        "Indeed: New acoustic engineer job in Tempe, AZ",
+        "HeyGen: 2026 product strategy executive AMA",
+        "LinkedIn: Messages and network updates",
+        "ZipRecruiter: Howmet Aerospace hiring alert"
+      ]
+    },
+    "mre": {
+      "title": "📊 MRE Trading",
+      "fear_greed": 39.8,
+      "fear_greed_rating": "fear",
+      "regime": "sideways",
+      "todays_plays": [],
+      "all_signals": "HOLD",
+      "pending_triggers": [],
+      "thesis": "Fear at 40, sideways regime. No active signals - all assets on HOLD. Market volatility elevated (VIX 20.3). Wait for clearer directional signals."
+    },
+    "relationship": {
+      "title": "💝 Family Focus",
+      "status": "CRITICAL - Needs Attention",
+      "temperature": "critical",
+      "trend": "urgent",
+      "recommendations": [
+        "PRIORITY: Focus on repair. Acknowledge recent conflicts without defending.",
+        "Increase acts of service dramatically this week.",
+        "Create space for her to express frustrations without fixing."
       ],
-      "interests": [
-        "reading",
-        "shopping",
-        "following influencers",
-        "concerts"
+      "love_languages": ["Quality Time", "Acts of Service"]
+    },
+    "news": {
+      "title": "🌍 News Highlights",
+      "israel_middle_east": [
+        "Ramadan begins - Israel managing security cautiously without escalating tensions",
+        "Police extend Temple Mount visiting hours for non-Muslims during Ramadan",
+        "Ongoing discussions about October 7 narrative and Gaza war policy"
+      ],
+      "ai_tech": [
+        "Google.org Impact Challenges 2026: Up to $3M funding for AI projects in government innovation",
+        "OpenAI 2026 roadmap features GPT-5 'Orion' model and autonomous 'Operator' web agent",
+        "$100B Stargate supercomputer project announced",
+        "India AI Impact Summit 2026 begins February 16 in New Delhi"
       ]
-    },
-    "jones": {
-      "age": "2 years, 8 months",
-      "favorites": [
-        "Super Wings",
-        "Blaze and the Monster Machines"
-      ]
-    },
-    "jett": {
-      "age": "7 months",
-      "note": "Growing fast"
-    },
-    "upcoming_dates": [
-      "March 6: Brendon Schmidt's birthday",
-      "March 26: Wedding Anniversary"
-    ]
-  },
-  "world_news": {
-    "title": "\ud83c\udf0d World News",
-    "headlines": [
-      {
-        "title": "New START Nuclear Treaty Expired February 5th",
-        "description": "US-Russia nuclear arms control treaty expired, ending Cold War-era cooperation. No binding limits on strategic nuclear arsenals for first time in 50+ years.",
-        "significance": "Major geopolitical development - UN Secretary General warns of 'grave moment' for international peace and security",
-        "date": "2026-02-05"
-      }
-    ]
-  },
-  "ai_news": {
-    "title": "\ud83e\udd16 AI News",
-    "headlines": [
-      {
-        "title": "2026: AI Moves from Hype to Pragmatism",
-        "description": "Industry shifting from scaling large models to practical applications. Focus on smaller, domain-specific models and real-world integration.",
-        "significance": "Major transition year - scaling laws hitting limits, new architectures needed"
-      },
-      {
-        "title": "Yann LeCun Leaves Meta for $5B World Model Startup",
-        "description": "Former Meta chief AI scientist starting own world model lab, reportedly seeking $5 billion valuation",
-        "significance": "High-profile AI talent movement, world models gaining momentum"
-      }
-    ]
+    }
   }
 }

@@ -1,10 +1,10 @@
 {
-  "timestamp": "2026-02-19T00:00:16.939449+00:00",
+  "timestamp": "2026-02-19T00:15:04.886758+00:00",
   "summary": {
-    "total_tasks": 33,
+    "total_tasks": 40,
     "verified_done": 28,
     "done_but_unverified": 0,
-    "pending": 5,
+    "pending": 12,
     "stale": 0
   },
   "items": [
@@ -204,6 +204,48 @@
       "text": "Design Lyceum data model: users, lessons, curriculum tracks, progress, cohorts, subscriptions",
       "status": "pending",
       "assignee": "Elon Musk",
+      "verification": "No verification rule found"
+    },
+    {
+      "text": "Extend A-082 data model to include author reference on lessons/tracks and team billing flag on subscriptions",
+      "status": "pending",
+      "assignee": "Elon Musk",
+      "verification": "No verification rule found"
+    },
+    {
+      "text": "Complete greenfield repo scaffold per A-079 with Next.js 14, Supabase auth, Postgres, Stripe integration",
+      "status": "pending",
+      "assignee": "Elon Musk",
+      "verification": "No verification rule found"
+    },
+    {
+      "text": "Draft one-page MVP product spec: curriculum track view, cohort enrollment flow, progress dashboard \u2014 three features only",
+      "status": "pending",
+      "assignee": "Steve Jobs",
+      "verification": "No verification rule found"
+    },
+    {
+      "text": "Finalize brand positioning doc and landing page copy framework per A-080",
+      "status": "pending",
+      "assignee": "Alex",
+      "verification": "No verification rule found"
+    },
+    {
+      "text": "Complete pricing and monetization strategy with B2B team tier added to A-081",
+      "status": "pending",
+      "assignee": "Dave",
+      "verification": "No verification rule found"
+    },
+    {
+      "text": "Draft shortlist of 3 candidate curriculum tracks with market sizing and differentiation analysis",
+      "status": "pending",
+      "assignee": "James Truchard",
+      "verification": "No verification rule found"
+    },
+    {
+      "text": "Design waitlist landing page with lead magnet (free technical reference guide)",
+      "status": "pending",
+      "assignee": "Alex",
       "verification": "No verification rule found"
     }
   ],

@@ -1,6 +1,6 @@
 {
   "nextAgentId": 97,
-  "nextJoshuaId": 23,
+  "nextJoshuaId": 24,
   "tasks": [
     {
       "key": "A-001",
@@ -1267,6 +1267,20 @@
       "sourceDate": "2026-02-19",
       "createdAt": "2026-02-19T05:45:05.918793-08:00",
       "updatedAt": "2026-02-19T05:45:05.918793-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "J-023",
+      "text": "Evaluate deployment of idle cash ($75,340 available)",
+      "tag": "JOSHUA",
+      "priority": "medium",
+      "assignee": "Dave",
+      "status": "pending",
+      "sourceStandup": "AC-3",
+      "sourceStandupType": "afternoon-checkpoint",
+      "sourceDate": "2026-02-19",
+      "createdAt": "2026-02-19T12:00:42.125145-08:00",
+      "updatedAt": "2026-02-19T12:00:42.125145-08:00",
       "completedAt": null
     }
   ]

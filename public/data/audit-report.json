@@ -1,10 +1,10 @@
 {
-  "timestamp": "2026-02-18T23:45:05.551849+00:00",
+  "timestamp": "2026-02-19T00:00:16.939449+00:00",
   "summary": {
-    "total_tasks": 29,
+    "total_tasks": 33,
     "verified_done": 28,
     "done_but_unverified": 0,
-    "pending": 1,
+    "pending": 5,
     "stale": 0
   },
   "items": [
@@ -181,6 +181,30 @@
       "status": "verified_done",
       "assignee": "Elon",
       "verification": "PASSED: Verify hub has no uncommitted changes"
+    },
+    {
+      "text": "Scaffold greenfield Lyceum repo: Next.js 14 App Router, Supabase auth, Postgres schema with cohort-ready lesson model, Stripe subscription integration",
+      "status": "pending",
+      "assignee": "Elon Musk",
+      "verification": "No verification rule found"
+    },
+    {
+      "text": "Draft brand positioning document and landing page copy framework for The Lyceum",
+      "status": "pending",
+      "assignee": "Alex",
+      "verification": "No verification rule found"
+    },
+    {
+      "text": "Draft pricing and monetization strategy document with free-to-paid conversion funnel",
+      "status": "pending",
+      "assignee": "Dave",
+      "verification": "No verification rule found"
+    },
+    {
+      "text": "Design Lyceum data model: users, lessons, curriculum tracks, progress, cohorts, subscriptions",
+      "status": "pending",
+      "assignee": "Elon Musk",
+      "verification": "No verification rule found"
     }
   ],
   "escalations": []

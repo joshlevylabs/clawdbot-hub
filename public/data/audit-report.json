@@ -1,11 +1,11 @@
 {
-  "timestamp": "2026-02-19T05:45:05.812612+00:00",
+  "timestamp": "2026-02-19T06:03:11.161693+00:00",
   "summary": {
-    "total_tasks": 30,
+    "total_tasks": 28,
     "verified_done": 28,
     "done_but_unverified": 0,
     "pending": 0,
-    "stale": 2
+    "stale": 0
   },
   "items": [
     {
@@ -153,12 +153,6 @@
       "verification": "PASSED: Verify hub has no uncommitted changes"
     },
     {
-      "text": "Draft next blog post for SEO distribution",
-      "status": "stale",
-      "assignee": "Alex",
-      "verification": "No verification rule found"
-    },
-    {
       "text": "Commit 9 uncommitted hub changes",
       "status": "verified_done",
       "assignee": "Elon",
@@ -181,16 +175,7 @@
       "status": "verified_done",
       "assignee": "Elon",
       "verification": "PASSED: Verify hub has no uncommitted changes"
-    },
-    {
-      "text": "Extend A-082 data model to include author reference on lessons/tracks and team billing flag on subscriptions",
-      "status": "stale",
-      "assignee": "Elon Musk",
-      "verification": "No verification rule found"
     }
   ],
-  "escalations": [
-    "\ud83d\udd34 STALE [Alex]: Draft next blog post for SEO distribution \u2014 unresolved for 120 min",
-    "\ud83d\udd34 STALE [Elon Musk]: Extend A-082 data model to include author reference on lessons/tracks and team billing flag on subscriptions \u2014 unresolved for 120 min"
-  ]
+  "escalations": []
 }

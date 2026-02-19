@@ -324,12 +324,6 @@
       "audit_note": "Task was marked done but verification FAILED: Verify hub has no uncommitted changes"
     },
     {
-      "text": "Draft next blog post for SEO distribution",
-      "assignee": "Alex",
-      "status": "pending",
-      "taskKey": "A-054"
-    },
-    {
       "text": "Commit 9 uncommitted hub changes",
       "assignee": "Elon",
       "status": "done",
@@ -359,11 +353,6 @@
       "status": "done",
       "verified": true,
       "audit_note": "Task was marked done but verification FAILED: Verify hub has no uncommitted changes"
-    },
-    {
-      "text": "Extend A-082 data model to include author reference on lessons/tracks and team billing flag on subscriptions",
-      "assignee": "Elon Musk",
-      "status": "pending"
     }
   ]
 }

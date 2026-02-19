@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-02-18T19:30:05.358917",
+  "generated_at": "2026-02-18T20:00:05.265884",
   "active_sessions": 1,
   "billing_model": "subscription",
   "subscriptions": {
@@ -15,14 +15,14 @@
     "today": 6.67,
     "week": 46.67,
     "month": 200.0,
-    "api_equivalent_today": 43.0829,
-    "api_equivalent_week": 54.2983,
-    "api_equivalent_month": 75.5162,
-    "savings_today": 36.42,
+    "api_equivalent_today": 38.9671,
+    "api_equivalent_week": 50.1825,
+    "api_equivalent_month": 71.4003,
+    "savings_today": 32.3,
     "savings_month": 0,
     "subscription_daily": 6.67,
     "subscription_monthly": 200.0,
-    "tokens_today": 48248653
+    "tokens_today": 42215344
   },
   "by_model": {
     "Claude Opus 4": {
@@ -35,30 +35,30 @@
       "calls_today": 381
     },
     "Claude Sonnet 4": {
-      "cost_today": 12.8539,
-      "cost_week": 13.9637,
-      "cost_month": 13.9637,
-      "tokens_today": 19064787,
-      "tokens_week": 20679126,
-      "tokens_month": 20679126,
-      "calls_today": 419
+      "cost_today": 8.738,
+      "cost_week": 9.8479,
+      "cost_month": 9.8479,
+      "tokens_today": 13031478,
+      "tokens_week": 14645817,
+      "tokens_month": 14645817,
+      "calls_today": 293
     }
   },
   "by_agent": {
     "unknown": {
-      "cost_today": 39.1497,
-      "cost_week": 41.7082,
-      "cost_month": 41.7082,
-      "tokens_today": 40229783,
+      "cost_today": 35.0353,
+      "cost_week": 37.5938,
+      "cost_month": 37.5938,
+      "tokens_today": 34196892,
       "primary_model": "Claude Sonnet 4",
       "department": "other"
     },
     "cron": {
-      "cost_today": 3.9332,
-      "cost_week": 12.59,
-      "cost_month": 33.8079,
-      "tokens_today": 8018870,
-      "primary_model": "Claude Sonnet 4",
+      "cost_today": 3.9318,
+      "cost_week": 12.5887,
+      "cost_month": 33.8065,
+      "tokens_today": 8018452,
+      "primary_model": "Claude Opus 4",
       "department": "other"
     }
   },
@@ -76,6 +76,6 @@
     "2026-02-15": 5.688171249999999,
     "2026-02-16": 0.30010665000000003,
     "2026-02-17": 3.3682484500000007,
-    "2026-02-18": 43.082899799999986
+    "2026-02-18": 38.96707305000001
   }
 }

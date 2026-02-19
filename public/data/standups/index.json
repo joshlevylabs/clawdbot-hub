@@ -2,6 +2,29 @@
   "standups": [
     {
       "date": "2026-02-18",
+      "time": "19:00",
+      "type": "evening-wrap",
+      "typeName": "Evening Wrap",
+      "typeEmoji": "\ud83c\udf06",
+      "topic": "Evening Wrap \u2014 Wednesday Feb 18",
+      "file": "2026-02-18-evening-wrap.json",
+      "tokenCost": 0.1247,
+      "verticals": [
+        "hub",
+        "joshlevylabs",
+        "ecosystem",
+        "lever"
+      ],
+      "initiatives": [
+        "content-growth",
+        "podcast-distribution",
+        "hub-standup-system",
+        "lever-dashboard"
+      ],
+      "instanceKey": "EW-2"
+    },
+    {
+      "date": "2026-02-18",
       "time": "16:09",
       "type": "adhoc-the-lyceum-greenfield-architecture",
       "typeName": "The Lyceum Greenfield Architecture",

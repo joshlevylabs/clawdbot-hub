@@ -15,3 +15,4 @@ node_modules
 .env.supabase
 .DS_Store
 public/.DS_Store
+public/.DS_Store

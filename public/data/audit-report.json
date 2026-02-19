@@ -1,10 +1,10 @@
 {
-  "timestamp": "2026-02-19T13:31:47.253586+00:00",
+  "timestamp": "2026-02-19T13:46:19.011908+00:00",
   "summary": {
-    "total_tasks": 28,
-    "verified_done": 28,
+    "total_tasks": 37,
+    "verified_done": 31,
     "done_but_unverified": 0,
-    "pending": 0,
+    "pending": 6,
     "stale": 0
   },
   "items": [
@@ -175,6 +175,63 @@
       "status": "verified_done",
       "assignee": "Elon",
       "verification": "PASSED: Verify hub has no uncommitted changes"
+    },
+    {
+      "text": "Commit 3 uncommitted hub changes (A-072)",
+      "status": "verified_done",
+      "assignee": "Elon",
+      "verification": "PASSED: Verify hub has no uncommitted changes",
+      "audit_note": "Completed outside dispatcher"
+    },
+    {
+      "text": "Commit 1 uncommitted hub change (A-090)",
+      "status": "verified_done",
+      "assignee": "Elon",
+      "verification": "PASSED: Verify hub has no uncommitted changes",
+      "audit_note": "Completed outside dispatcher"
+    },
+    {
+      "text": "Review family touchpoint tracker design (A-073) in context of A-042",
+      "status": "pending",
+      "assignee": "Elon",
+      "verification": "No verification rule found"
+    },
+    {
+      "text": "Extend A-042 to flag architectural decision gate before spec advances",
+      "status": "pending",
+      "assignee": "Theo",
+      "verification": "No verification rule found"
+    },
+    {
+      "text": "Draft faith lesson content \u2014 push from 7 to 10 lessons (A-074)",
+      "status": "pending",
+      "assignee": "Alex",
+      "verification": "No verification rule found"
+    },
+    {
+      "text": "Generate daily devotional content based on 8 faith dimensions (A-075)",
+      "status": "pending",
+      "assignee": "Alex",
+      "verification": "No verification rule found"
+    },
+    {
+      "text": "Prepare Jett's vaccine reminder (A-076)",
+      "status": "pending",
+      "assignee": "Alex",
+      "verification": "No verification rule found"
+    },
+    {
+      "text": "Draft preliminary Lever revenue model sketch",
+      "status": "pending",
+      "assignee": "Dave",
+      "verification": "No verification rule found"
+    },
+    {
+      "text": "Continue monitoring Fear & Greed index at 38 (A-077)",
+      "status": "verified_done",
+      "assignee": "Dave",
+      "verification": "PASSED: Verify MRE signals updated in last 2h (auto-passes weekends and outside market hours 6AM-2PM PT)",
+      "audit_note": "Completed outside dispatcher"
     }
   ],
   "escalations": []

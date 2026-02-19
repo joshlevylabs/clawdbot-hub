@@ -367,12 +367,16 @@
     {
       "text": "Commit 3 uncommitted hub changes (A-072)",
       "assignee": "Elon",
-      "status": "pending"
+      "status": "done",
+      "verified": true,
+      "audit_note": "Completed outside dispatcher"
     },
     {
       "text": "Commit 1 uncommitted hub change (A-090)",
       "assignee": "Elon",
-      "status": "pending"
+      "status": "done",
+      "verified": true,
+      "audit_note": "Completed outside dispatcher"
     },
     {
       "text": "Review family touchpoint tracker design (A-073) in context of A-042",
@@ -407,7 +411,9 @@
     {
       "text": "Continue monitoring Fear & Greed index at 38 (A-077)",
       "assignee": "Dave",
-      "status": "pending"
+      "status": "done",
+      "verified": true,
+      "audit_note": "Completed outside dispatcher"
     }
   ]
 }

@@ -11,37 +11,8 @@
       "tokenCost": 0.2667,
       "verticals": [],
       "initiatives": [],
-      "instanceKey": "STD-3"
-    },
-    {
-      "date": "2026-02-18",
-      "time": "15:40",
-      "type": "adhoc-1771457922925",
-      "typeName": "Lyceum Build Out",
-      "typeEmoji": "\ud83c\udfdb\ufe0f",
-      "topic": "Lyceum Build Out \u2014 Wednesday Feb 18",
-      "file": "2026-02-18-adhoc-1771457922925.json",
-      "tokenCost": 0.1171,
-      "verticals": [
-        "Lyceum"
-      ],
-      "initiatives": [
-        "lyceum-app-creation"
-      ],
-      "instanceKey": "STD-1"
-    },
-    {
-      "date": "2026-02-18",
-      "time": "15:39",
-      "type": "adhoc-lyceum-build-out",
-      "typeName": "Lyceum Build Out",
-      "typeEmoji": "\ud83c\udfdb\ufe0f",
-      "topic": "Lyceum Build Out \u2014 Wednesday Feb 18",
-      "file": "2026-02-18-adhoc-lyceum-build-out.json",
-      "tokenCost": 0.1361,
-      "verticals": [],
-      "initiatives": [],
-      "instanceKey": "STD-1"
+      "instanceKey": "STD-3",
+      "summary": "Standalone platform for R&D/manufacturing engineers in electronics. Free tier + ~$200/mo premium. Content-only MVP."
     },
     {
       "date": "2026-02-18",

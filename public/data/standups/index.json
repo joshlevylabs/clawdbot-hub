@@ -2,6 +2,21 @@
   "standups": [
     {
       "date": "2026-02-18",
+      "time": "23:55",
+      "type": "midnight-prep",
+      "typeName": "Midnight Prep",
+      "typeEmoji": "\ud83c\udf19",
+      "topic": "Midnight Prep \u2014 Wednesday Feb 18",
+      "file": "2026-02-18-midnight-prep.json",
+      "tokenCost": 0.1131,
+      "verticals": [
+        "ecosystem"
+      ],
+      "initiatives": [],
+      "instanceKey": "MNP-3"
+    },
+    {
+      "date": "2026-02-18",
       "time": "19:00",
       "type": "evening-wrap",
       "typeName": "Evening Wrap",

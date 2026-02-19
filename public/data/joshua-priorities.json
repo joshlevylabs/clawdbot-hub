@@ -1,6 +1,6 @@
 {
-  "date": "2026-02-18",
-  "generatedAt": "2026-02-18T23:55:08.215912-08:00",
+  "date": "2026-02-19",
+  "generatedAt": "2026-02-19T05:45:05.918793-08:00",
   "priorities": [
     {
       "text": "Review current positions: AEE, EFA, XLV, XLE, VNQ, TLT, GLD",
@@ -103,6 +103,16 @@
     {
       "text": "Review and approve MVP product spec once drafted (J-020)",
       "source": "evening-wrap",
+      "urgency": "high"
+    },
+    {
+      "text": "Decide Lever direction: personal tool vs. product",
+      "source": "morning-priorities",
+      "urgency": "high"
+    },
+    {
+      "text": "Decide Family tab integration approach with faith content",
+      "source": "morning-priorities",
       "urgency": "high"
     }
   ],
@@ -353,6 +363,51 @@
       "status": "done",
       "verified": true,
       "audit_note": "Task was marked done but verification FAILED: Verify hub has no uncommitted changes"
+    },
+    {
+      "text": "Commit 3 uncommitted hub changes (A-072)",
+      "assignee": "Elon",
+      "status": "pending"
+    },
+    {
+      "text": "Commit 1 uncommitted hub change (A-090)",
+      "assignee": "Elon",
+      "status": "pending"
+    },
+    {
+      "text": "Review family touchpoint tracker design (A-073) in context of A-042",
+      "assignee": "Elon",
+      "status": "pending"
+    },
+    {
+      "text": "Extend A-042 to flag architectural decision gate before spec advances",
+      "assignee": "Theo",
+      "status": "pending"
+    },
+    {
+      "text": "Draft faith lesson content \u2014 push from 7 to 10 lessons (A-074)",
+      "assignee": "Alex",
+      "status": "pending"
+    },
+    {
+      "text": "Generate daily devotional content based on 8 faith dimensions (A-075)",
+      "assignee": "Alex",
+      "status": "pending"
+    },
+    {
+      "text": "Prepare Jett's vaccine reminder (A-076)",
+      "assignee": "Alex",
+      "status": "pending"
+    },
+    {
+      "text": "Draft preliminary Lever revenue model sketch",
+      "assignee": "Dave",
+      "status": "pending"
+    },
+    {
+      "text": "Continue monitoring Fear & Greed index at 38 (A-077)",
+      "assignee": "Dave",
+      "status": "pending"
     }
   ]
 }

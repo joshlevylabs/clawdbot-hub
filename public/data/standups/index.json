@@ -1,6 +1,21 @@
 {
   "standups": [
     {
+      "date": "2026-02-19",
+      "time": "05:45",
+      "type": "morning-priorities",
+      "typeName": "Morning Priorities",
+      "typeEmoji": "\ud83c\udf05",
+      "topic": "Morning Priorities \u2014 Thursday Feb 19",
+      "file": "2026-02-19-morning-priorities.json",
+      "tokenCost": 0.1517,
+      "verticals": [
+        "ecosystem"
+      ],
+      "initiatives": [],
+      "instanceKey": "MP-4"
+    },
+    {
       "date": "2026-02-18",
       "time": "23:55",
       "type": "midnight-prep",

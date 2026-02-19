@@ -3,20 +3,21 @@
   "timestamp": "2026-02-19T06:00:00-08:00",
   "sections": {
     "prayer": {
-      "title": "🕐️ Morning Prayer",
+      "title": "\ud83d\udd50\ufe0f Morning Prayer",
       "date": "Thursday, February 19, 2026",
       "hebrew_date": "21 Cheshvan",
       "parsha": "Vayeshev",
       "parsha_theme": "setbacks as setups, patience, providence",
-      "modeh_ani": "מודה אני לפניך — I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
-      "blessing": "Blessed are You who girds Israel with strength — fortify me for the work ahead.",
+      "modeh_ani": "\u05de\u05d5\u05d3\u05d4 \u05d0\u05e0\u05d9 \u05dc\u05e4\u05e0\u05d9\u05da \u2014 I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
+      "blessing": "Blessed are You who girds Israel with strength \u2014 fortify me for the work ahead.",
       "psalm": "**Psalm 37:5**: \"Commit your way to the Lord; trust in Him and He will act.\"",
       "proverb": "**Proverbs 27:23**: \"Know well the condition of your flocks, and give attention to your herds.\"",
       "intention": "Give me wisdom to know when to push forward and when to rest.",
-      "closing": "Go in peace. Build with purpose. Return with gratitude."
+      "closing": "Go in peace. Build with purpose. Return with gratitude.",
+      "audio": "/audio/brief-2026-02-19-prayer.ogg"
     },
     "weather": {
-      "title": "🌤️ Weather",
+      "title": "\ud83c\udf24\ufe0f Weather",
       "location": "Temecula, CA",
       "today": {
         "conditions": "Showers likely before 10am, then rain between 10am-4pm, then chance of rain and thunderstorms after 4pm",
@@ -30,13 +31,14 @@
         "frost": "Patchy frost after 4am"
       },
       "outlook": {
-        "friday": "Mostly sunny, high 55°F",
-        "weekend": "Sunny, highs 67-72°F",
-        "next_week": "Mostly sunny, highs 76-77°F"
-      }
+        "friday": "Mostly sunny, high 55\u00b0F",
+        "weekend": "Sunny, highs 67-72\u00b0F",
+        "next_week": "Mostly sunny, highs 76-77\u00b0F"
+      },
+      "audio": "/audio/brief-2026-02-19-weather.ogg"
     },
     "calendar": {
-      "title": "📅 Calendar",
+      "title": "\ud83d\udcc5 Calendar",
       "today": "No events scheduled",
       "this_week": "No events scheduled",
       "upcoming": [
@@ -44,10 +46,11 @@
           "date": "2026-03-06",
           "event": "Brendon Schmidt's birthday"
         }
-      ]
+      ],
+      "audio": "/audio/brief-2026-02-19-calendar.ogg"
     },
     "emails": {
-      "title": "📧 Email Highlights",
+      "title": "\ud83d\udce7 Email Highlights",
       "highlights": [
         "AWS Marketplace: ELK stack update notification",
         "Indeed: New acoustic engineer job in Tempe, AZ",
@@ -57,17 +60,18 @@
       ]
     },
     "mre": {
-      "title": "📊 MRE Trading",
+      "title": "\ud83d\udcca MRE Trading",
       "fear_greed": 39.8,
       "fear_greed_rating": "fear",
       "regime": "sideways",
       "todays_plays": [],
       "all_signals": "HOLD",
       "pending_triggers": [],
-      "thesis": "Fear at 40, sideways regime. No active signals - all assets on HOLD. Market volatility elevated (VIX 20.3). Wait for clearer directional signals."
+      "thesis": "Fear at 40, sideways regime. No active signals - all assets on HOLD. Market volatility elevated (VIX 20.3). Wait for clearer directional signals.",
+      "audio": "/audio/brief-2026-02-19-mre.ogg"
     },
     "relationship": {
-      "title": "💝 Family Focus",
+      "title": "\ud83d\udc9d Family Focus",
       "status": "CRITICAL - Needs Attention",
       "temperature": "critical",
       "trend": "urgent",
@@ -76,10 +80,13 @@
         "Increase acts of service dramatically this week.",
         "Create space for her to express frustrations without fixing."
       ],
-      "love_languages": ["Quality Time", "Acts of Service"]
+      "love_languages": [
+        "Quality Time",
+        "Acts of Service"
+      ]
     },
     "news": {
-      "title": "🌍 News Highlights",
+      "title": "\ud83c\udf0d News Highlights",
       "israel_middle_east": [
         "Ramadan begins - Israel managing security cautiously without escalating tensions",
         "Police extend Temple Mount visiting hours for non-Muslims during Ramadan",
@@ -90,7 +97,8 @@
         "OpenAI 2026 roadmap features GPT-5 'Orion' model and autonomous 'Operator' web agent",
         "$100B Stargate supercomputer project announced",
         "India AI Impact Summit 2026 begins February 16 in New Delhi"
-      ]
+      ],
+      "audio": "/audio/brief-2026-02-19-news.ogg"
     }
   }
 }

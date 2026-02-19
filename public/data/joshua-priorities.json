@@ -178,17 +178,21 @@
     {
       "text": "Generate daily devotional content based on 8 faith dimensions (A-075)",
       "assignee": "Alex",
-      "status": "pending"
+      "status": "backlog",
+      "note": "Moved to backlog \u2014 standup-generated, awaiting prioritization"
     },
     {
       "text": "Draft faith lesson content \u2014 push from 7 to 10 lessons (A-074)",
       "assignee": "Alex",
-      "status": "pending"
+      "status": "backlog",
+      "note": "Moved to backlog \u2014 standup-generated, awaiting prioritization"
     },
     {
       "text": "Prepare Jett's vaccine reminder (A-076)",
       "assignee": "Alex",
-      "status": "pending"
+      "status": "done",
+      "completedAt": "2026-02-19T14:47:00.573134",
+      "note": "Done \u2014 reminder script running daily, day-before sent"
     },
     {
       "text": "Draft feature spec for expanding Family tab (currently 455 lines)",
@@ -201,17 +205,21 @@
     {
       "text": "Review family touchpoint tracker design (A-073) in context of A-042",
       "assignee": "Elon",
-      "status": "pending"
+      "status": "backlog",
+      "note": "Moved to backlog \u2014 standup-generated, awaiting prioritization"
     },
     {
       "text": "Extend A-042 to flag architectural decision gate before spec advances",
       "assignee": "Theo",
-      "status": "pending"
+      "status": "done",
+      "completedAt": "2026-02-19T14:47:00.573134",
+      "note": "Done \u2014 Joshua answered both CEO decision gates"
     },
     {
       "text": "Draft preliminary Lever revenue model sketch",
       "assignee": "Dave",
-      "status": "pending"
+      "status": "backlog",
+      "note": "Moved to backlog \u2014 standup-generated, awaiting prioritization"
     }
   ]
 }

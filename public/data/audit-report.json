@@ -1,11 +1,11 @@
 {
-  "timestamp": "2026-02-19T22:00:17.955375+00:00",
+  "timestamp": "2026-02-19T22:15:05.533338+00:00",
   "summary": {
     "total_tasks": 13,
     "verified_done": 7,
     "done_but_unverified": 0,
-    "pending": 6,
-    "stale": 0
+    "pending": 0,
+    "stale": 6
   },
   "items": [
     {
@@ -46,19 +46,19 @@
     },
     {
       "text": "Generate daily devotional content based on 8 faith dimensions (A-075)",
-      "status": "pending",
+      "status": "stale",
       "assignee": "Alex",
       "verification": "No verification rule found"
     },
     {
       "text": "Draft faith lesson content \u2014 push from 7 to 10 lessons (A-074)",
-      "status": "pending",
+      "status": "stale",
       "assignee": "Alex",
       "verification": "No verification rule found"
     },
     {
       "text": "Prepare Jett's vaccine reminder (A-076)",
-      "status": "pending",
+      "status": "stale",
       "assignee": "Alex",
       "verification": "No verification rule found"
     },
@@ -70,22 +70,29 @@
     },
     {
       "text": "Review family touchpoint tracker design (A-073) in context of A-042",
-      "status": "pending",
+      "status": "stale",
       "assignee": "Elon",
       "verification": "No verification rule found"
     },
     {
       "text": "Extend A-042 to flag architectural decision gate before spec advances",
-      "status": "pending",
+      "status": "stale",
       "assignee": "Theo",
       "verification": "No verification rule found"
     },
     {
       "text": "Draft preliminary Lever revenue model sketch",
-      "status": "pending",
+      "status": "stale",
       "assignee": "Dave",
       "verification": "No verification rule found"
     }
   ],
-  "escalations": []
+  "escalations": [
+    "\ud83d\udd34 STALE [Alex]: Generate daily devotional content based on 8 faith dimensions (A-075) \u2014 unresolved for 120 min",
+    "\ud83d\udd34 STALE [Alex]: Draft faith lesson content \u2014 push from 7 to 10 lessons (A-074) \u2014 unresolved for 120 min",
+    "\ud83d\udd34 STALE [Alex]: Prepare Jett's vaccine reminder (A-076) \u2014 unresolved for 120 min",
+    "\ud83d\udd34 STALE [Elon]: Review family touchpoint tracker design (A-073) in context of A-042 \u2014 unresolved for 120 min",
+    "\ud83d\udd34 STALE [Theo]: Extend A-042 to flag architectural decision gate before spec advances \u2014 unresolved for 120 min",
+    "\ud83d\udd34 STALE [Dave]: Draft preliminary Lever revenue model sketch \u2014 unresolved for 120 min"
+  ]
 }

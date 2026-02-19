@@ -1089,14 +1089,14 @@
       "tag": "AGENT",
       "priority": "high",
       "assignee": "Elon Musk",
-      "status": "done",
+      "status": "cancelled",
       "sourceStandup": "STD-1",
       "sourceStandupType": "adhoc-the-lyceum-greenfield-architecture",
       "sourceDate": "2026-02-18",
       "createdAt": "2026-02-18T15:45:02.914936-08:00",
       "updatedAt": "2026-02-18T15:45:02.914936-08:00",
-      "completedAt": "2026-02-18T18:16:03.364814",
-      "completionNote": "Completed by lyceum-scaffold agents \u2014 full Next.js 14 project at ~/clawd/lyceum/"
+      "completedAt": "2026-02-18T18:30:53.773008",
+      "completionNote": "INVALIDATED: Based on wrong product definition. Lyceum is an industrial analytics platform, not an education platform."
     },
     {
       "key": "A-080",
@@ -1104,14 +1104,14 @@
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "Alex",
-      "status": "done",
+      "status": "cancelled",
       "sourceStandup": "STD-1",
       "sourceStandupType": "adhoc-the-lyceum-greenfield-architecture",
       "sourceDate": "2026-02-18",
       "createdAt": "2026-02-18T15:45:02.914936-08:00",
       "updatedAt": "2026-02-18T15:45:02.914936-08:00",
-      "completedAt": "2026-02-18T18:16:03.364814",
-      "completionNote": "Completed by lyceum-brand agent \u2014 ~/clawd/lyceum/docs/BRAND-POSITIONING.md"
+      "completedAt": "2026-02-18T18:30:53.773008",
+      "completionNote": "INVALIDATED: Based on wrong product definition. Lyceum is an industrial analytics platform, not an education platform."
     },
     {
       "key": "A-081",
@@ -1119,14 +1119,14 @@
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "Dave",
-      "status": "done",
+      "status": "cancelled",
       "sourceStandup": "STD-1",
       "sourceStandupType": "adhoc-the-lyceum-greenfield-architecture",
       "sourceDate": "2026-02-18",
       "createdAt": "2026-02-18T15:45:02.914936-08:00",
       "updatedAt": "2026-02-18T15:45:02.914936-08:00",
-      "completedAt": "2026-02-18T18:16:03.364814",
-      "completionNote": "Completed by lyceum-brand agent \u2014 ~/clawd/lyceum/docs/PRICING-STRATEGY.md"
+      "completedAt": "2026-02-18T18:30:53.773008",
+      "completionNote": "INVALIDATED: Based on wrong product definition. Lyceum is an industrial analytics platform, not an education platform."
     },
     {
       "key": "A-082",
@@ -1134,14 +1134,14 @@
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "Elon Musk",
-      "status": "done",
+      "status": "cancelled",
       "sourceStandup": "STD-1",
       "sourceStandupType": "adhoc-the-lyceum-greenfield-architecture",
       "sourceDate": "2026-02-18",
       "createdAt": "2026-02-18T15:45:02.914936-08:00",
       "updatedAt": "2026-02-18T15:45:02.914936-08:00",
-      "completedAt": "2026-02-18T18:16:03.364814",
-      "completionNote": "Completed by lyceum-mvp-spec agent \u2014 ~/clawd/lyceum/docs/DATA-MODEL.md"
+      "completedAt": "2026-02-18T18:30:53.773008",
+      "completionNote": "INVALIDATED: Based on wrong product definition. Lyceum is an industrial analytics platform, not an education platform."
     },
     {
       "key": "A-083",
@@ -1149,14 +1149,14 @@
       "tag": "AGENT",
       "priority": "high",
       "assignee": "Elon Musk",
-      "status": "done",
+      "status": "cancelled",
       "sourceStandup": "STD-5",
       "sourceStandupType": "adhoc-the-lyceum-greenfield-architecture",
       "sourceDate": "2026-02-18",
       "createdAt": "2026-02-18T16:09:02.517123-08:00",
       "updatedAt": "2026-02-18T16:09:02.517123-08:00",
-      "completedAt": "2026-02-18T18:16:03.364814",
-      "completionNote": "Completed by lyceum-mvp-spec agent \u2014 DATA-MODEL.md includes author refs + team_billing flag"
+      "completedAt": "2026-02-18T18:30:53.773008",
+      "completionNote": "INVALIDATED: Based on wrong product definition. Lyceum is an industrial analytics platform, not an education platform."
     },
     {
       "key": "A-084",
@@ -1164,14 +1164,14 @@
       "tag": "AGENT",
       "priority": "high",
       "assignee": "Elon Musk",
-      "status": "done",
+      "status": "cancelled",
       "sourceStandup": "STD-5",
       "sourceStandupType": "adhoc-the-lyceum-greenfield-architecture",
       "sourceDate": "2026-02-18",
       "createdAt": "2026-02-18T16:09:02.517123-08:00",
       "updatedAt": "2026-02-18T16:09:02.517123-08:00",
-      "completedAt": "2026-02-18T18:16:03.364814",
-      "completionNote": "Completed by lyceum-scaffold agents \u2014 64 files, full project structure"
+      "completedAt": "2026-02-18T18:30:53.773008",
+      "completionNote": "INVALIDATED: Based on wrong product definition. Lyceum is an industrial analytics platform, not an education platform."
     },
     {
       "key": "J-019",
@@ -1193,14 +1193,14 @@
       "tag": "AGENT",
       "priority": "high",
       "assignee": "Steve Jobs",
-      "status": "done",
+      "status": "cancelled",
       "sourceStandup": "STD-5",
       "sourceStandupType": "adhoc-the-lyceum-greenfield-architecture",
       "sourceDate": "2026-02-18",
       "createdAt": "2026-02-18T16:09:02.517123-08:00",
       "updatedAt": "2026-02-18T16:09:02.517123-08:00",
-      "completedAt": "2026-02-18T18:16:03.364814",
-      "completionNote": "Completed by lyceum-mvp-spec agent \u2014 ~/clawd/lyceum/docs/MVP-SPEC.md"
+      "completedAt": "2026-02-18T18:30:53.773008",
+      "completionNote": "INVALIDATED: Based on wrong product definition. Lyceum is an industrial analytics platform, not an education platform."
     },
     {
       "key": "A-086",
@@ -1208,14 +1208,14 @@
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "Alex",
-      "status": "done",
+      "status": "cancelled",
       "sourceStandup": "STD-5",
       "sourceStandupType": "adhoc-the-lyceum-greenfield-architecture",
       "sourceDate": "2026-02-18",
       "createdAt": "2026-02-18T16:09:02.517123-08:00",
       "updatedAt": "2026-02-18T16:09:02.517123-08:00",
-      "completedAt": "2026-02-18T18:16:03.364814",
-      "completionNote": "Completed by lyceum-brand agent \u2014 BRAND-POSITIONING.md includes landing page copy framework"
+      "completedAt": "2026-02-18T18:30:53.773008",
+      "completionNote": "INVALIDATED: Based on wrong product definition. Lyceum is an industrial analytics platform, not an education platform."
     },
     {
       "key": "A-087",
@@ -1223,14 +1223,14 @@
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "Dave",
-      "status": "done",
+      "status": "cancelled",
       "sourceStandup": "STD-5",
       "sourceStandupType": "adhoc-the-lyceum-greenfield-architecture",
       "sourceDate": "2026-02-18",
       "createdAt": "2026-02-18T16:09:02.517123-08:00",
       "updatedAt": "2026-02-18T16:09:02.517123-08:00",
-      "completedAt": "2026-02-18T18:16:03.364814",
-      "completionNote": "Completed by lyceum-brand agent \u2014 PRICING-STRATEGY.md includes B2B tier"
+      "completedAt": "2026-02-18T18:30:53.773008",
+      "completionNote": "INVALIDATED: Based on wrong product definition. Lyceum is an industrial analytics platform, not an education platform."
     },
     {
       "key": "A-088",
@@ -1238,14 +1238,14 @@
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "James Truchard",
-      "status": "done",
+      "status": "cancelled",
       "sourceStandup": "STD-5",
       "sourceStandupType": "adhoc-the-lyceum-greenfield-architecture",
       "sourceDate": "2026-02-18",
       "createdAt": "2026-02-18T16:09:02.517123-08:00",
       "updatedAt": "2026-02-18T16:09:02.517123-08:00",
-      "completedAt": "2026-02-18T18:16:03.364814",
-      "completionNote": "Completed by lyceum-curriculum agent \u2014 ~/clawd/lyceum/docs/CURRICULUM-TRACKS.md"
+      "completedAt": "2026-02-18T18:30:53.773008",
+      "completionNote": "INVALIDATED: Based on wrong product definition. Lyceum is an industrial analytics platform, not an education platform."
     },
     {
       "key": "J-020",
@@ -1267,14 +1267,14 @@
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "Alex",
-      "status": "done",
+      "status": "cancelled",
       "sourceStandup": "STD-5",
       "sourceStandupType": "adhoc-the-lyceum-greenfield-architecture",
       "sourceDate": "2026-02-18",
       "createdAt": "2026-02-18T16:09:02.517123-08:00",
       "updatedAt": "2026-02-18T16:09:02.517123-08:00",
-      "completedAt": "2026-02-18T18:16:03.364814",
-      "completionNote": "Deferred \u2014 waitlist landing page depends on Supabase setup"
+      "completedAt": "2026-02-18T18:30:53.773008",
+      "completionNote": "INVALIDATED: Based on wrong product definition. Lyceum is an industrial analytics platform, not an education platform."
     }
   ]
 }

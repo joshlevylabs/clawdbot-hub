@@ -1,12 +1,11 @@
 {
-  "timestamp": "2026-02-19T05:15:06.470309+00:00",
+  "timestamp": "2026-02-19T05:30:21.450759+00:00",
   "summary": {
     "total_tasks": 40,
     "verified_done": 28,
     "done_but_unverified": 0,
     "pending": 0,
-    "stale": 0,
-    "escalations": 0
+    "stale": 12
   },
   "items": [
     {
@@ -250,5 +249,18 @@
       "verification": "No verification rule found"
     }
   ],
-  "escalations": []
+  "escalations": [
+    "\ud83d\udd34 STALE [Alex]: Draft next blog post for SEO distribution \u2014 unresolved for 120 min",
+    "\ud83d\udd34 STALE [Elon Musk]: Scaffold greenfield Lyceum repo: Next.js 14 App Router, Supabase auth, Postgres schema with cohort-ready lesson model, Stripe subscription integration \u2014 unresolved for 120 min",
+    "\ud83d\udd34 STALE [Alex]: Draft brand positioning document and landing page copy framework for The Lyceum \u2014 unresolved for 120 min",
+    "\ud83d\udd34 STALE [Dave]: Draft pricing and monetization strategy document with free-to-paid conversion funnel \u2014 unresolved for 120 min",
+    "\ud83d\udd34 STALE [Elon Musk]: Design Lyceum data model: users, lessons, curriculum tracks, progress, cohorts, subscriptions \u2014 unresolved for 120 min",
+    "\ud83d\udd34 STALE [Elon Musk]: Extend A-082 data model to include author reference on lessons/tracks and team billing flag on subscriptions \u2014 unresolved for 120 min",
+    "\ud83d\udd34 STALE [Elon Musk]: Complete greenfield repo scaffold per A-079 with Next.js 14, Supabase auth, Postgres, Stripe integration \u2014 unresolved for 120 min",
+    "\ud83d\udd34 STALE [Steve Jobs]: Draft one-page MVP product spec: curriculum track view, cohort enrollment flow, progress dashboard \u2014 three features only \u2014 unresolved for 120 min",
+    "\ud83d\udd34 STALE [Alex]: Finalize brand positioning doc and landing page copy framework per A-080 \u2014 unresolved for 120 min",
+    "\ud83d\udd34 STALE [Dave]: Complete pricing and monetization strategy with B2B team tier added to A-081 \u2014 unresolved for 120 min",
+    "\ud83d\udd34 STALE [James Truchard]: Draft shortlist of 3 candidate curriculum tracks with market sizing and differentiation analysis \u2014 unresolved for 120 min",
+    "\ud83d\udd34 STALE [Alex]: Design waitlist landing page with lead magnet (free technical reference guide) \u2014 unresolved for 120 min"
+  ]
 }

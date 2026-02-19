@@ -361,58 +361,8 @@
       "audit_note": "Task was marked done but verification FAILED: Verify hub has no uncommitted changes"
     },
     {
-      "text": "Scaffold greenfield Lyceum repo: Next.js 14 App Router, Supabase auth, Postgres schema with cohort-ready lesson model, Stripe subscription integration",
-      "assignee": "Elon Musk",
-      "status": "pending"
-    },
-    {
-      "text": "Draft brand positioning document and landing page copy framework for The Lyceum",
-      "assignee": "Alex",
-      "status": "pending"
-    },
-    {
-      "text": "Draft pricing and monetization strategy document with free-to-paid conversion funnel",
-      "assignee": "Dave",
-      "status": "pending"
-    },
-    {
-      "text": "Design Lyceum data model: users, lessons, curriculum tracks, progress, cohorts, subscriptions",
-      "assignee": "Elon Musk",
-      "status": "pending"
-    },
-    {
       "text": "Extend A-082 data model to include author reference on lessons/tracks and team billing flag on subscriptions",
       "assignee": "Elon Musk",
-      "status": "pending"
-    },
-    {
-      "text": "Complete greenfield repo scaffold per A-079 with Next.js 14, Supabase auth, Postgres, Stripe integration",
-      "assignee": "Elon Musk",
-      "status": "pending"
-    },
-    {
-      "text": "Draft one-page MVP product spec: curriculum track view, cohort enrollment flow, progress dashboard \u2014 three features only",
-      "assignee": "Steve Jobs",
-      "status": "pending"
-    },
-    {
-      "text": "Finalize brand positioning doc and landing page copy framework per A-080",
-      "assignee": "Alex",
-      "status": "pending"
-    },
-    {
-      "text": "Complete pricing and monetization strategy with B2B team tier added to A-081",
-      "assignee": "Dave",
-      "status": "pending"
-    },
-    {
-      "text": "Draft shortlist of 3 candidate curriculum tracks with market sizing and differentiation analysis",
-      "assignee": "James Truchard",
-      "status": "pending"
-    },
-    {
-      "text": "Design waitlist landing page with lead magnet (free technical reference guide)",
-      "assignee": "Alex",
       "status": "pending"
     }
   ]

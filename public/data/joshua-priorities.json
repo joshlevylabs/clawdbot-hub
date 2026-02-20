@@ -1,30 +1,12 @@
 {
   "date": "2026-02-20",
-  "generatedAt": "2026-02-20T05:08:33.650895-08:00",
+  "generatedAt": "2026-02-20T13:59:50.411578-08:00",
   "priorities": [
-    {
-      "text": "Evaluate deployment of idle cash ($75,340 available) \u2014 CEO decided keep liquid, flagged for ongoing review",
-      "source": "adhoc-evening-roster-test",
-      "urgency": "medium",
-      "taskKey": "J-001"
-    },
-    {
-      "text": "Evaluate deployment of idle cash ($75,340 available) \u2014 continue monitoring, no action per CEO directive",
-      "source": "overnight-sprint",
-      "urgency": "medium",
-      "taskKey": "J-002"
-    },
     {
       "text": "Jett vaccine appointment tomorrow February 20 \u2014 tracked and confirmed",
       "source": "overnight-sprint",
       "urgency": "high",
       "taskKey": "J-004"
-    },
-    {
-      "text": "Evaluate deployment of idle cash ($75,340 available)",
-      "source": "overnight-sprint",
-      "urgency": "medium",
-      "taskKey": "J-005"
     },
     {
       "text": "Decide newsletter send timing relative to Apple approval",
@@ -39,156 +21,18 @@
       "taskKey": "J-021"
     },
     {
-      "text": "Verify crash reporting is active and functional before any launch push (close A-016)",
-      "source": "midday-checkpoint",
-      "urgency": "high",
-      "taskKey": "J-022"
-    },
-    {
-      "text": "Review and merge analytics Swift hooks PR once validation passes (advance A-075)",
-      "source": "evening-session",
-      "urgency": "high",
-      "taskKey": "J-023"
+      "text": "Evaluate deployment of idle cash ($75,340 available)",
+      "source": "overnight-sprint",
+      "urgency": "medium",
+      "taskKey": "J-005"
     }
   ],
   "agentHandled": [
     {
-      "text": "Address 3 critical ecosystem sync gaps (podcast MDX mismatch, blog post rendering, App Store submission)",
-      "assignee": "Elon",
+      "text": "Commit 12 uncommitted hub files and remove 3 dead-code TODOs (advance A-090, close A-076)",
+      "assignee": "Elon Musk",
       "status": "pending",
-      "taskKey": "A-001"
-    },
-    {
-      "text": "Review 5 ecosystem attention items with architecture specs",
-      "assignee": "Elon",
-      "status": "pending",
-      "taskKey": "A-002"
-    },
-    {
-      "text": "Commit 1 uncommitted hub change",
-      "assignee": "Elon",
-      "status": "pending",
-      "taskKey": "A-003"
-    },
-    {
-      "text": "Draft faith lesson content for the Lever app \u2014 breadth-first across 8 dimensions, from 7 toward 15-20 lessons",
-      "assignee": "Alex",
-      "status": "pending",
-      "taskKey": "A-004"
-    },
-    {
-      "text": "Generate daily devotional content based on 8 faith dimensions",
-      "assignee": "Alex",
-      "status": "pending",
-      "taskKey": "A-005"
-    },
-    {
-      "text": "Prepare reminders for upcoming family events: Jetts vaccine (Feb 20)",
-      "assignee": "Alex",
-      "status": "pending",
-      "taskKey": "A-006"
-    },
-    {
-      "text": "Monitor Fear & Greed index (currently 39)",
-      "assignee": "Dave",
-      "status": "pending",
-      "taskKey": "A-007"
-    },
-    {
-      "text": "Draft feature spec for expanding Family tab (currently 455 lines)",
-      "assignee": "Elon",
-      "status": "pending",
-      "taskKey": "A-008"
-    },
-    {
-      "text": "Review family touchpoint tracker design for 3 family members",
-      "assignee": "Elon",
-      "status": "pending",
-      "taskKey": "A-009"
-    },
-    {
-      "text": "Address 3 critical ecosystem sync gaps and extend A-001 to include App Store listing assets (screenshots, description, keywords)",
-      "assignee": "Elon",
-      "status": "pending",
-      "taskKey": "A-010"
-    },
-    {
-      "text": "Commit 2 uncommitted hub changes",
-      "assignee": "Elon",
-      "status": "pending",
-      "taskKey": "A-011"
-    },
-    {
-      "text": "Sync 1 podcast episode to website to close content gap",
-      "assignee": "Alex",
-      "status": "pending",
-      "taskKey": "A-012"
-    },
-    {
-      "text": "Draft faith lesson content for the Lever app (currently 7 lessons, target 15-20)",
-      "assignee": "Alex",
-      "status": "pending",
-      "taskKey": "A-013"
-    },
-    {
-      "text": "Review 5 ecosystem attention items (newsletter CMS, Compass UI duplication, Plays dashboard, content sync, dual Supabase)",
-      "assignee": "Elon",
-      "status": "pending",
-      "taskKey": "A-014"
-    },
-    {
-      "text": "Draft full App Store listing: app name, subtitle, description, promotional text, keywords, and screenshot specifications",
-      "assignee": "Alex",
-      "status": "pending",
-      "taskKey": "A-015"
-    },
-    {
-      "text": "Confirm crash reporting is active and functional in the current build",
-      "assignee": "Steve Jobs",
-      "status": "pending",
-      "taskKey": "A-016"
-    },
-    {
-      "text": "Package build and submit to App Store once Joshua approves listing",
-      "assignee": "Elon",
-      "status": "pending",
-      "taskKey": "A-017"
-    },
-    {
-      "text": "Close podcast MDX sync gap and blog rendering issues (A-001, A-010) in parallel",
-      "assignee": "Elon",
-      "status": "pending",
-      "taskKey": "A-018"
-    },
-    {
-      "text": "Close A-012: publish missing podcast episode to website",
-      "assignee": "Alex",
-      "status": "pending",
-      "taskKey": "A-019"
-    },
-    {
-      "text": "Instrument analytics (tab switches, lesson completions, session duration) as post-submission patch during Apple review window",
-      "assignee": "James Truchard",
-      "status": "pending",
-      "taskKey": "A-020"
-    },
-    {
-      "text": "Continue monitoring cash position and market signals per J-001 directive",
-      "assignee": "Dave",
-      "status": "pending",
-      "taskKey": "A-021"
-    },
-    {
-      "text": "Commit 7 uncommitted hub change(s)",
-      "assignee": "Elon",
-      "status": "pending",
-      "taskKey": "A-022"
-    },
-    {
-      "text": "Address 3 critical ecosystem sync gap(s)",
-      "assignee": "Elon",
-      "status": "pending",
-      "taskKey": "A-023"
+      "taskKey": "A-098"
     },
     {
       "text": "Review 5 ecosystem attention item(s)",
@@ -197,34 +41,10 @@
       "taskKey": "A-024"
     },
     {
-      "text": "Finalize analytics instrumentation spec (tab switches, lesson completions, session duration, attribution source) for A-020 \u2014 ready to deploy as post-approval patch",
-      "assignee": "James Truchard",
-      "status": "pending",
-      "taskKey": "A-025"
-    },
-    {
-      "text": "Draft missing podcast episode MDX file and commit to website repo to close A-012/A-019 sync gap",
-      "assignee": "Alex",
-      "status": "pending",
-      "taskKey": "A-026"
-    },
-    {
-      "text": "Fix podcast rendering on website so synced MDX displays correctly \u2014 close A-001 and A-018",
+      "text": "Monitor Apple review status and alert team immediately on approval (A-037)",
       "assignee": "Elon Musk",
       "status": "pending",
-      "taskKey": "A-027"
-    },
-    {
-      "text": "Commit last uncommitted hub file to close A-022",
-      "assignee": "Elon Musk",
-      "status": "pending",
-      "taskKey": "A-028"
-    },
-    {
-      "text": "Monitor App Store review status and alert team when status changes",
-      "assignee": "Elon Musk",
-      "status": "pending",
-      "taskKey": "A-029"
+      "taskKey": "A-093"
     },
     {
       "text": "Continue monitoring Fear & Greed index and cash position per standing directives (A-007, A-021)",
@@ -233,142 +53,10 @@
       "taskKey": "A-030"
     },
     {
-      "text": "Draft podcast rendering fix for website to close A-027",
+      "text": "Stage 3 dead-code TODO removals for Joshua's quick merge (advance A-076)",
       "assignee": "Elon Musk",
       "status": "pending",
-      "taskKey": "A-031"
-    },
-    {
-      "text": "Audit 7 TODOs/FIXMEs in codebase and triage for post-approval patch",
-      "assignee": "Elon Musk",
-      "status": "pending",
-      "taskKey": "A-032"
-    },
-    {
-      "text": "Draft launch newsletter copy for medium-push announcement (ready to send on Apple approval)",
-      "assignee": "Alex",
-      "status": "pending",
-      "taskKey": "A-033"
-    },
-    {
-      "text": "Finalize analytics event schema with implementation guide \u2014 tab switches, lesson opened/completed/time-on-lesson, session duration, attribution (extend A-025)",
-      "assignee": "James Truchard",
-      "status": "pending",
-      "taskKey": "A-034"
-    },
-    {
-      "text": "Draft launch metrics dashboard spec: downloads, DAU, session depth, conversion funnel",
-      "assignee": "Dave",
-      "status": "pending",
-      "taskKey": "A-035"
-    },
-    {
-      "text": "Quality review existing 7 faith lessons for polish and launch readiness",
-      "assignee": "faith",
-      "status": "pending",
-      "taskKey": "A-036"
-    },
-    {
-      "text": "Continue monitoring App Store review status and alert team on status change (A-029)",
-      "assignee": "Elon Musk",
-      "status": "pending",
-      "taskKey": "A-037"
-    },
-    {
-      "text": "Commit 1 uncommitted hub file (fleet usage update) to close A-028",
-      "assignee": "Elon Musk",
-      "status": "pending",
-      "taskKey": "A-038"
-    },
-    {
-      "text": "Merge podcast rendering fix and verify display to advance A-031 and close A-027",
-      "assignee": "Elon Musk",
-      "status": "pending",
-      "taskKey": "A-039"
-    },
-    {
-      "text": "Document TODO/FIXME triage \u2014 flag 2 user-facing items for post-approval patch, close A-032",
-      "assignee": "Elon Musk",
-      "status": "pending",
-      "taskKey": "A-040"
-    },
-    {
-      "text": "Finalize launch newsletter with 3 subject line variants and direct App Store CTA \u2014 advance A-033",
-      "assignee": "Alex",
-      "status": "pending",
-      "taskKey": "A-041"
-    },
-    {
-      "text": "Complete analytics implementation guide with Swift snippets for all 6 event types \u2014 close A-034",
-      "assignee": "James Truchard",
-      "status": "pending",
-      "taskKey": "A-042"
-    },
-    {
-      "text": "Finalize launch metrics dashboard spec with download targets and conversion funnel \u2014 close A-035",
-      "assignee": "Dave",
-      "status": "pending",
-      "taskKey": "A-043"
-    },
-    {
-      "text": "Quality review all 7 faith lessons for tone, accuracy, and clear takeaways \u2014 close A-036",
-      "assignee": "faith",
-      "status": "pending",
-      "taskKey": "A-044"
-    },
-    {
-      "text": "Review 2 user-facing TODO items (empty states) flagged by Elon and decide patch priority",
-      "assignee": "Steve Jobs",
-      "status": "pending",
-      "taskKey": "A-045"
-    },
-    {
-      "text": "Commit hub file (A-028), merge podcast rendering fix (A-031), document TODO triage with user-facing flags (A-032)",
-      "assignee": "Elon Musk",
-      "status": "pending",
-      "taskKey": "A-046"
-    },
-    {
-      "text": "Finalize launch newsletter with story-driven subject line ('I built an app. Here's why.' style), hero CTA, and App Store link (A-033)",
-      "assignee": "Alex",
-      "status": "pending",
-      "taskKey": "A-047"
-    },
-    {
-      "text": "Draft 2 missing podcast MDX files to close podcast sync gap (A-026)",
-      "assignee": "Alex",
-      "status": "pending",
-      "taskKey": "A-048"
-    },
-    {
-      "text": "Finalize launch metrics dashboard spec benchmarked to 150 week-one downloads, with escalation trigger at <100 by day 3 (A-035)",
-      "assignee": "Dave",
-      "status": "pending",
-      "taskKey": "A-049"
-    },
-    {
-      "text": "Review 2 user-facing TODO empty states (Family/Compass tabs) flagged by Elon and decide patch-critical status",
-      "assignee": "Steve Jobs",
-      "status": "pending",
-      "taskKey": "A-050"
-    },
-    {
-      "text": "Document empty state patch plan with Steve's copy for Family and Compass tabs (extend A-050)",
-      "assignee": "Elon Musk",
-      "status": "pending",
-      "taskKey": "A-051"
-    },
-    {
-      "text": "Finalize launch newsletter with story-driven subject line, hero CTA, App Store link placeholder \u2014 close A-047",
-      "assignee": "Alex",
-      "status": "pending",
-      "taskKey": "A-052"
-    },
-    {
-      "text": "Draft 1 missing podcast MDX file to advance A-048 sync gap",
-      "assignee": "Alex",
-      "status": "pending",
-      "taskKey": "A-053"
+      "taskKey": "A-083"
     },
     {
       "text": "Finalize launch metrics dashboard spec with 150 target benchmark and day-3 escalation trigger \u2014 close A-049",
@@ -377,274 +65,16 @@
       "taskKey": "A-054"
     },
     {
-      "text": "Fix 3 faith lessons (vague takeaway, scripture anchor, tone) and close A-044",
-      "assignee": "faith",
-      "status": "pending",
-      "taskKey": "A-055"
-    },
-    {
-      "text": "Write empty state placeholder copy for Family and Compass tabs and hand to Elon",
-      "assignee": "Steve Jobs",
-      "status": "pending",
-      "taskKey": "A-056"
-    },
-    {
-      "text": "Merge podcast rendering fix, commit hub file, and pre-build empty state patch with Steve's copy (close A-039, A-038, A-051)",
-      "assignee": "Elon Musk",
-      "status": "pending",
-      "taskKey": "A-057"
-    },
-    {
-      "text": "Finalize launch newsletter copy with story-driven hook and App Store CTA placeholder (close A-052)",
-      "assignee": "Alex",
-      "status": "pending",
-      "taskKey": "A-058"
-    },
-    {
-      "text": "Extend analytics implementation guide with crash breadcrumb system (extend A-042)",
-      "assignee": "James Truchard",
-      "status": "pending",
-      "taskKey": "A-059"
-    },
-    {
-      "text": "Fix third faith lesson (lesson 7 tone adjustment) to close A-055",
-      "assignee": "faith",
-      "status": "pending",
-      "taskKey": "A-060"
-    },
-    {
-      "text": "Batch-push three commits: podcast rendering fix (A-039), hub file (A-038), empty state patch with Steve's Compass copy (A-051)",
-      "assignee": "Elon Musk",
-      "status": "pending",
-      "taskKey": "A-061"
-    },
-    {
-      "text": "Deliver Compass tab empty state copy to Elon within 10 minutes (close A-056)",
-      "assignee": "Steve Jobs",
-      "status": "pending",
-      "taskKey": "A-062"
-    },
-    {
-      "text": "Finalize launch newsletter and pre-schedule in CMS with Slack-confirmation gate (close A-058)",
-      "assignee": "Alex",
-      "status": "pending",
-      "taskKey": "A-063"
-    },
-    {
-      "text": "Complete lesson 7 tone adjustment to finish faith lesson polish (close A-055, A-060)",
-      "assignee": "faith",
-      "status": "pending",
-      "taskKey": "A-064"
-    },
-    {
-      "text": "Test CMS pre-schedule flow end-to-end to confirm one-click send works on launch day",
-      "assignee": "Dave",
-      "status": "pending",
-      "taskKey": "A-065"
-    },
-    {
-      "text": "Draft lightweight analytics data validation test spec to verify event firing before patch ship",
-      "assignee": "James Truchard",
-      "status": "pending",
-      "taskKey": "A-066"
-    },
-    {
-      "text": "Write welcome modal copy (3 sentences, warm orientation) and hand to Elon",
-      "assignee": "Steve Jobs",
-      "status": "pending",
-      "taskKey": "A-067"
-    },
-    {
-      "text": "Commit 3 uncommitted hub files and wire Compass empty state + welcome modal copy into day-one patch build",
-      "assignee": "Elon Musk",
-      "status": "pending",
-      "taskKey": "A-068"
-    },
-    {
-      "text": "Clean up 3 dead-code TODOs (zero-risk removals) to reduce codebase noise",
-      "assignee": "Elon Musk",
-      "status": "pending",
-      "taskKey": "A-069"
-    },
-    {
-      "text": "Scaffold analytics Swift hooks in codebase per James's implementation guide (A-042) so validation can begin",
-      "assignee": "Elon Musk",
-      "status": "pending",
-      "taskKey": "A-070"
-    },
-    {
-      "text": "Draft faith lessons 8 and 9 (content expansion toward 15-20 target)",
-      "assignee": "Alex",
-      "status": "pending",
-      "taskKey": "A-071"
-    },
-    {
-      "text": "Prep analytics validation test environment so event firing can be verified once Elon's scaffolding lands (advance A-066)",
-      "assignee": "James Truchard",
-      "status": "pending",
-      "taskKey": "A-072"
-    },
-    {
-      "text": "Support Alex on faith lessons 8-9 drafting \u2014 ensure dimensional coverage and tone consistency",
-      "assignee": "faith",
-      "status": "pending",
-      "taskKey": "A-073"
-    },
-    {
-      "text": "Batch-push 3 uncommitted hub files, merge podcast rendering fix (A-039), wire welcome modal copy (A-067) and Compass empty state copy (A-062) into day-one patch build (closes A-068, A-038, A-039)",
-      "assignee": "Elon Musk",
-      "status": "pending",
-      "taskKey": "A-074"
-    },
-    {
-      "text": "Scaffold analytics Swift hooks per James's implementation guide into day-one patch codebase (advance A-070)",
-      "assignee": "Elon Musk",
-      "status": "pending",
-      "taskKey": "A-075"
-    },
-    {
-      "text": "Remove 3 dead-code TODOs (zero-risk) to close A-069",
-      "assignee": "Elon Musk",
-      "status": "pending",
-      "taskKey": "A-076"
-    },
-    {
-      "text": "Draft faith lesson 10 (Community dimension) once faith clears lessons 8-9 review (advance A-071)",
-      "assignee": "Alex",
-      "status": "pending",
-      "taskKey": "A-077"
-    },
-    {
-      "text": "Review faith lessons 8-9 drafts for dimensional balance, tone, and scripture anchors (advance A-073)",
-      "assignee": "faith",
-      "status": "pending",
-      "taskKey": "A-078"
-    },
-    {
-      "text": "Prep analytics validation test environment with pass/fail checks for 6 event types (advance A-072, A-066)",
-      "assignee": "James Truchard",
-      "status": "pending",
-      "taskKey": "A-079"
-    },
-    {
-      "text": "Confirm CMS pre-schedule flow is airtight and screenshot is queued for Joshua's Slack review (verify A-063, A-065)",
-      "assignee": "Dave",
-      "status": "pending",
-      "taskKey": "A-080"
-    },
-    {
-      "text": "Test CMS pre-schedule flow end-to-end confirming manual click-to-send works (close A-065)",
-      "assignee": "Dave",
-      "status": "pending",
-      "taskKey": "A-081"
-    },
-    {
-      "text": "Draft faith lesson 10 on Community dimension once Peterson clears 8-9 (advance A-077)",
-      "assignee": "Alex",
-      "status": "pending",
-      "taskKey": "A-082"
-    },
-    {
-      "text": "Stage 3 dead-code TODO removals for Joshua's quick merge (advance A-076)",
-      "assignee": "Elon Musk",
-      "status": "pending",
-      "taskKey": "A-083"
-    },
-    {
-      "text": "Prep analytics validation test environment \u2014 ready to run the moment hooks land (advance A-079)",
-      "assignee": "James Truchard",
-      "status": "pending",
-      "taskKey": "A-084"
-    },
-    {
-      "text": "Prep batch commit: 3 hub files + podcast fix + welcome modal + empty state copy (advance A-074)",
-      "assignee": "Elon Musk",
-      "status": "pending",
-      "taskKey": "A-085"
-    },
-    {
-      "text": "Jett's vaccine appointment today \u2014 ensure it's on Joshua's calendar (A-006)",
-      "assignee": "Peterson",
-      "status": "pending",
-      "taskKey": "A-086"
-    },
-    {
-      "text": "Stage analytics Swift hooks PR from James's implementation guide so Joshua only needs review-and-merge (advance A-075)",
-      "assignee": "Elon Musk",
-      "status": "pending",
-      "taskKey": "A-087"
-    },
-    {
-      "text": "Run analytics validation tests within 1 hour of hooks landing in codebase (advance A-084)",
-      "assignee": "James Truchard",
-      "status": "pending",
-      "taskKey": "A-088"
-    },
-    {
-      "text": "Return lesson 9 scripture anchor notes to Alex within 1 hour (advance A-078)",
-      "assignee": "Peterson",
-      "status": "pending",
-      "taskKey": "A-089"
-    },
-    {
-      "text": "Commit 11 uncommitted hub files and merge staged dead-code TODO removals (advance A-083, A-038)",
-      "assignee": "Elon Musk",
-      "status": "pending",
-      "taskKey": "A-090"
-    },
-    {
-      "text": "Coordinate with Alex on Monday follow-up reminder newsletter draft per CEO directive",
-      "assignee": "Dave",
-      "status": "pending",
-      "taskKey": "A-091"
-    },
-    {
-      "text": "Commit drafted podcast MDX file to close sync gap (advance A-053)",
-      "assignee": "Alex",
-      "status": "pending",
-      "taskKey": "A-092"
-    },
-    {
-      "text": "Monitor Apple review status and alert team immediately on approval (A-037)",
-      "assignee": "Elon Musk",
-      "status": "pending",
-      "taskKey": "A-093"
-    },
-    {
-      "text": "Stage analytics Swift hooks PR with all 6 event types for Joshua's review-and-merge (close A-087)",
-      "assignee": "Elon Musk",
-      "status": "pending",
-      "taskKey": "A-094"
-    },
-    {
-      "text": "Run analytics validation tests against staged hooks and report pass/fail within 30 min of PR push (advance A-088)",
-      "assignee": "James Truchard",
-      "status": "pending",
-      "taskKey": "A-095"
-    },
-    {
-      "text": "Fix lesson 9 scripture anchor (swap to James 1:2-4), draft lesson 10 on Community dimension (advance A-071, A-082)",
-      "assignee": "Alex",
-      "status": "pending",
-      "taskKey": "A-096"
-    },
-    {
       "text": "Return lesson 9 scripture notes to Alex within 30 minutes, final review of lesson 8 clearance (close A-089)",
       "assignee": "Peterson",
       "status": "pending",
       "taskKey": "A-097"
     },
     {
-      "text": "Commit 12 uncommitted hub files and remove 3 dead-code TODOs (advance A-090, close A-076)",
-      "assignee": "Elon Musk",
+      "text": "Visual review of empty state copy rendering in compiled build \u2014 verify hierarchy and spacing (advance A-050)",
+      "assignee": "Steve Jobs",
       "status": "pending",
-      "taskKey": "A-098"
-    },
-    {
-      "text": "Final CMS dry run to confirm one-click newsletter send works end-to-end (close A-081)",
-      "assignee": "Dave",
-      "status": "pending",
-      "taskKey": "A-099"
+      "taskKey": "A-101"
     },
     {
       "text": "Commit drafted podcast MDX file to website repo (close A-053, advance A-092)",
@@ -653,10 +83,58 @@
       "taskKey": "A-100"
     },
     {
-      "text": "Visual review of empty state copy rendering in compiled build \u2014 verify hierarchy and spacing (advance A-050)",
-      "assignee": "Steve Jobs",
+      "text": "Run analytics validation tests against staged hooks and report pass/fail within 30 min of PR push (advance A-088)",
+      "assignee": "James Truchard",
       "status": "pending",
-      "taskKey": "A-101"
+      "taskKey": "A-095"
+    },
+    {
+      "text": "Test CMS pre-schedule flow end-to-end confirming manual click-to-send works (close A-065)",
+      "assignee": "Dave",
+      "status": "pending",
+      "taskKey": "A-081"
+    },
+    {
+      "text": "Final CMS dry run to confirm one-click newsletter send works end-to-end (close A-081)",
+      "assignee": "Dave",
+      "status": "pending",
+      "taskKey": "A-099"
+    },
+    {
+      "text": "Jett's vaccine appointment today \u2014 ensure it's on Joshua's calendar (A-006)",
+      "assignee": "Peterson",
+      "status": "pending",
+      "taskKey": "A-086"
+    },
+    {
+      "text": "Fix hub build",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "taskKey": "A-102"
+    },
+    {
+      "text": "Sync 1 podcast episode(s) to website",
+      "assignee": "Alex",
+      "status": "pending",
+      "taskKey": "A-103"
+    },
+    {
+      "text": "Commit 3 uncommitted hub change(s)",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "taskKey": "A-104"
+    },
+    {
+      "text": "Address 3 critical ecosystem sync gap(s)",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "taskKey": "A-105"
+    },
+    {
+      "text": "Monitor Fear & Greed index (currently 38)",
+      "assignee": "Dave",
+      "status": "pending",
+      "taskKey": "A-106"
     }
   ]
 }

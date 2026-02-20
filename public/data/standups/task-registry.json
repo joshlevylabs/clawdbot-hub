@@ -1,5 +1,5 @@
 {
-  "nextAgentId": 102,
+  "nextAgentId": 107,
   "nextJoshuaId": 24,
   "tasks": [
     {
@@ -238,6 +238,76 @@
       "sourceDate": "2026-02-20",
       "createdAt": "2026-02-20T05:03:07.603744-08:00",
       "updatedAt": "2026-02-20T05:03:07.603744-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "A-102",
+      "text": "Fix hub build",
+      "tag": "AGENT",
+      "priority": "high",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "sourceStandup": "STD-1",
+      "sourceStandupType": "adhoc-podcast-planning-episode-4-how-i-use-ai-agents-to-run-my-entire-podcast-and-newsletter-pipeline",
+      "sourceDate": "2026-02-20",
+      "createdAt": "2026-02-20T13:59:50.411578-08:00",
+      "updatedAt": "2026-02-20T13:59:50.411578-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "A-103",
+      "text": "Sync 1 podcast episode(s) to website",
+      "tag": "AGENT",
+      "priority": "high",
+      "assignee": "Alex",
+      "status": "pending",
+      "sourceStandup": "STD-1",
+      "sourceStandupType": "adhoc-podcast-planning-episode-4-how-i-use-ai-agents-to-run-my-entire-podcast-and-newsletter-pipeline",
+      "sourceDate": "2026-02-20",
+      "createdAt": "2026-02-20T13:59:50.411578-08:00",
+      "updatedAt": "2026-02-20T13:59:50.411578-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "A-104",
+      "text": "Commit 3 uncommitted hub change(s)",
+      "tag": "AGENT",
+      "priority": "low",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "sourceStandup": "STD-1",
+      "sourceStandupType": "adhoc-podcast-planning-episode-4-how-i-use-ai-agents-to-run-my-entire-podcast-and-newsletter-pipeline",
+      "sourceDate": "2026-02-20",
+      "createdAt": "2026-02-20T13:59:50.411578-08:00",
+      "updatedAt": "2026-02-20T13:59:50.411578-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "A-105",
+      "text": "Address 3 critical ecosystem sync gap(s)",
+      "tag": "AGENT",
+      "priority": "high",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "sourceStandup": "STD-1",
+      "sourceStandupType": "adhoc-podcast-planning-episode-4-how-i-use-ai-agents-to-run-my-entire-podcast-and-newsletter-pipeline",
+      "sourceDate": "2026-02-20",
+      "createdAt": "2026-02-20T13:59:50.411578-08:00",
+      "updatedAt": "2026-02-20T13:59:50.411578-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "A-106",
+      "text": "Monitor Fear & Greed index (currently 38)",
+      "tag": "AGENT",
+      "priority": "low",
+      "assignee": "Dave",
+      "status": "pending",
+      "sourceStandup": "STD-1",
+      "sourceStandupType": "adhoc-podcast-planning-episode-4-how-i-use-ai-agents-to-run-my-entire-podcast-and-newsletter-pipeline",
+      "sourceDate": "2026-02-20",
+      "createdAt": "2026-02-20T13:59:50.411578-08:00",
+      "updatedAt": "2026-02-20T13:59:50.411578-08:00",
       "completedAt": null
     }
   ]

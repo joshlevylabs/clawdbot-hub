@@ -28,6 +28,19 @@
     },
     {
       "date": "2026-02-20",
+      "time": "13:59",
+      "type": "adhoc-podcast-planning-episode-4-how-i-use-ai-agents-to-run-my-entire-podcast-and-newsletter-pipeline",
+      "typeName": "Podcast Planning \u2014 Episode 4: How I Use AI Agents to Run My Entire Podcast and Newsletter Pipeline",
+      "typeEmoji": "\ud83c\udf99\ufe0f",
+      "topic": "Podcast Planning \u2014 Episode 4: How I Use AI Agents to Run My Entire Podcast and Newsletter Pipeline \u2014 Friday Feb 20",
+      "file": "2026-02-20-adhoc-podcast-planning-episode-4-how-i-use-ai-agents-to-run-my-entire-podcast-and-newsletter-pipeline.json",
+      "tokenCost": 0.2886,
+      "verticals": [],
+      "initiatives": [],
+      "instanceKey": "STD-1"
+    },
+    {
+      "date": "2026-02-20",
       "time": "12:00",
       "type": "test-2",
       "typeName": "Test Run 2",

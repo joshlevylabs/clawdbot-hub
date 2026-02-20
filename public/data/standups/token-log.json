@@ -669,12 +669,22 @@
       "estimatedCost": 0.45690000000000003,
       "model": "claude-opus-4-6",
       "duration": "90.7s"
+    },
+    {
+      "date": "2026-02-20",
+      "type": "adhoc-podcast-planning-episode-4-how-i-use-ai-agents-to-run-my-entire-podcast-and-newsletter-pipeline",
+      "inputTokens": 5035,
+      "outputTokens": 2841,
+      "totalTokens": 7876,
+      "estimatedCost": 0.2886,
+      "model": "claude-opus-4-6",
+      "duration": "69.2s"
     }
   ],
   "totals": {
-    "today": 7.8567,
-    "week": 14.7142,
-    "month": 14.7142,
-    "standupCount": 67
+    "today": 8.1453,
+    "week": 15.0028,
+    "month": 15.0028,
+    "standupCount": 68
   }
 }

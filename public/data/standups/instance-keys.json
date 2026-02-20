@@ -6,7 +6,8 @@
     "overnight-sprint": 24,
     "morning-kickoff": 2,
     "midday-checkpoint": 2,
-    "evening-session": 2
+    "evening-session": 2,
+    "adhoc-podcast-planning-episode-4-how-i-use-ai-agents-to-run-my-entire-podcast-and-newsletter-pipeline": 1
   },
   "abbreviations": {
     "adhoc-evening-wrap": "STD",
@@ -15,6 +16,7 @@
     "overnight-sprint": "STD",
     "morning-kickoff": "STD",
     "midday-checkpoint": "STD",
-    "evening-session": "STD"
+    "evening-session": "STD",
+    "adhoc-podcast-planning-episode-4-how-i-use-ai-agents-to-run-my-entire-podcast-and-newsletter-pipeline": "STD"
   }
 }

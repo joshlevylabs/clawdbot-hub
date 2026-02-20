@@ -484,9 +484,9 @@
       "priority": "high"
     }
   ],
-  "type": "evening-session",
-  "typeName": "Evening Session",
-  "typeEmoji": "\ud83c\udf06",
+  "type": "test-3",
+  "typeName": "Test Run 3",
+  "typeEmoji": "\ud83e\uddea",
   "conversationMode": "ai",
   "model": "claude-opus-4-6",
   "tokenUsage": {

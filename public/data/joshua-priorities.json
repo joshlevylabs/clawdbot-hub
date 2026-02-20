@@ -1,6 +1,6 @@
 {
   "date": "2026-02-20",
-  "generatedAt": "2026-02-20T04:16:10.455914-08:00",
+  "generatedAt": "2026-02-20T05:08:33.650895-08:00",
   "priorities": [
     {
       "text": "Evaluate deployment of idle cash ($75,340 available) \u2014 CEO decided keep liquid, flagged for ongoing review",
@@ -33,22 +33,22 @@
       "taskKey": "J-007"
     },
     {
-      "text": "Review and approve final newsletter copy once Alex delivers story-driven draft",
-      "source": "overnight-sprint",
-      "urgency": "medium",
-      "taskKey": "J-011"
-    },
-    {
-      "text": "Review pre-scheduled newsletter via Slack screenshot in the morning and confirm send-readiness (J-016)",
-      "source": "overnight-sprint",
+      "text": "Review and merge day-one patch build (welcome modal, empty states, podcast fix) once confirmed ready",
+      "source": "midday-checkpoint",
       "urgency": "high",
-      "taskKey": "J-017"
+      "taskKey": "J-021"
     },
     {
-      "text": "Approve or reject welcome modal addition to day-one patch",
-      "source": "overnight-sprint",
-      "urgency": "medium",
-      "taskKey": "J-018"
+      "text": "Verify crash reporting is active and functional before any launch push (close A-016)",
+      "source": "midday-checkpoint",
+      "urgency": "high",
+      "taskKey": "J-022"
+    },
+    {
+      "text": "Review and merge analytics Swift hooks PR once validation passes (advance A-075)",
+      "source": "evening-session",
+      "urgency": "high",
+      "taskKey": "J-023"
     }
   ],
   "agentHandled": [
@@ -489,6 +489,174 @@
       "assignee": "faith",
       "status": "pending",
       "taskKey": "A-073"
+    },
+    {
+      "text": "Batch-push 3 uncommitted hub files, merge podcast rendering fix (A-039), wire welcome modal copy (A-067) and Compass empty state copy (A-062) into day-one patch build (closes A-068, A-038, A-039)",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "taskKey": "A-074"
+    },
+    {
+      "text": "Scaffold analytics Swift hooks per James's implementation guide into day-one patch codebase (advance A-070)",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "taskKey": "A-075"
+    },
+    {
+      "text": "Remove 3 dead-code TODOs (zero-risk) to close A-069",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "taskKey": "A-076"
+    },
+    {
+      "text": "Draft faith lesson 10 (Community dimension) once faith clears lessons 8-9 review (advance A-071)",
+      "assignee": "Alex",
+      "status": "pending",
+      "taskKey": "A-077"
+    },
+    {
+      "text": "Review faith lessons 8-9 drafts for dimensional balance, tone, and scripture anchors (advance A-073)",
+      "assignee": "faith",
+      "status": "pending",
+      "taskKey": "A-078"
+    },
+    {
+      "text": "Prep analytics validation test environment with pass/fail checks for 6 event types (advance A-072, A-066)",
+      "assignee": "James Truchard",
+      "status": "pending",
+      "taskKey": "A-079"
+    },
+    {
+      "text": "Confirm CMS pre-schedule flow is airtight and screenshot is queued for Joshua's Slack review (verify A-063, A-065)",
+      "assignee": "Dave",
+      "status": "pending",
+      "taskKey": "A-080"
+    },
+    {
+      "text": "Test CMS pre-schedule flow end-to-end confirming manual click-to-send works (close A-065)",
+      "assignee": "Dave",
+      "status": "pending",
+      "taskKey": "A-081"
+    },
+    {
+      "text": "Draft faith lesson 10 on Community dimension once Peterson clears 8-9 (advance A-077)",
+      "assignee": "Alex",
+      "status": "pending",
+      "taskKey": "A-082"
+    },
+    {
+      "text": "Stage 3 dead-code TODO removals for Joshua's quick merge (advance A-076)",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "taskKey": "A-083"
+    },
+    {
+      "text": "Prep analytics validation test environment \u2014 ready to run the moment hooks land (advance A-079)",
+      "assignee": "James Truchard",
+      "status": "pending",
+      "taskKey": "A-084"
+    },
+    {
+      "text": "Prep batch commit: 3 hub files + podcast fix + welcome modal + empty state copy (advance A-074)",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "taskKey": "A-085"
+    },
+    {
+      "text": "Jett's vaccine appointment today \u2014 ensure it's on Joshua's calendar (A-006)",
+      "assignee": "Peterson",
+      "status": "pending",
+      "taskKey": "A-086"
+    },
+    {
+      "text": "Stage analytics Swift hooks PR from James's implementation guide so Joshua only needs review-and-merge (advance A-075)",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "taskKey": "A-087"
+    },
+    {
+      "text": "Run analytics validation tests within 1 hour of hooks landing in codebase (advance A-084)",
+      "assignee": "James Truchard",
+      "status": "pending",
+      "taskKey": "A-088"
+    },
+    {
+      "text": "Return lesson 9 scripture anchor notes to Alex within 1 hour (advance A-078)",
+      "assignee": "Peterson",
+      "status": "pending",
+      "taskKey": "A-089"
+    },
+    {
+      "text": "Commit 11 uncommitted hub files and merge staged dead-code TODO removals (advance A-083, A-038)",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "taskKey": "A-090"
+    },
+    {
+      "text": "Coordinate with Alex on Monday follow-up reminder newsletter draft per CEO directive",
+      "assignee": "Dave",
+      "status": "pending",
+      "taskKey": "A-091"
+    },
+    {
+      "text": "Commit drafted podcast MDX file to close sync gap (advance A-053)",
+      "assignee": "Alex",
+      "status": "pending",
+      "taskKey": "A-092"
+    },
+    {
+      "text": "Monitor Apple review status and alert team immediately on approval (A-037)",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "taskKey": "A-093"
+    },
+    {
+      "text": "Stage analytics Swift hooks PR with all 6 event types for Joshua's review-and-merge (close A-087)",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "taskKey": "A-094"
+    },
+    {
+      "text": "Run analytics validation tests against staged hooks and report pass/fail within 30 min of PR push (advance A-088)",
+      "assignee": "James Truchard",
+      "status": "pending",
+      "taskKey": "A-095"
+    },
+    {
+      "text": "Fix lesson 9 scripture anchor (swap to James 1:2-4), draft lesson 10 on Community dimension (advance A-071, A-082)",
+      "assignee": "Alex",
+      "status": "pending",
+      "taskKey": "A-096"
+    },
+    {
+      "text": "Return lesson 9 scripture notes to Alex within 30 minutes, final review of lesson 8 clearance (close A-089)",
+      "assignee": "Peterson",
+      "status": "pending",
+      "taskKey": "A-097"
+    },
+    {
+      "text": "Commit 12 uncommitted hub files and remove 3 dead-code TODOs (advance A-090, close A-076)",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "taskKey": "A-098"
+    },
+    {
+      "text": "Final CMS dry run to confirm one-click newsletter send works end-to-end (close A-081)",
+      "assignee": "Dave",
+      "status": "pending",
+      "taskKey": "A-099"
+    },
+    {
+      "text": "Commit drafted podcast MDX file to website repo (close A-053, advance A-092)",
+      "assignee": "Alex",
+      "status": "pending",
+      "taskKey": "A-100"
+    },
+    {
+      "text": "Visual review of empty state copy rendering in compiled build \u2014 verify hierarchy and spacing (advance A-050)",
+      "assignee": "Steve Jobs",
+      "status": "pending",
+      "taskKey": "A-101"
     }
   ]
 }

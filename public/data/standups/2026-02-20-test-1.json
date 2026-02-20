@@ -448,9 +448,9 @@
       "priority": "high"
     }
   ],
-  "type": "morning-kickoff",
-  "typeName": "Morning Kickoff",
-  "typeEmoji": "\ud83c\udf05",
+  "type": "test-1",
+  "typeName": "Test Run 1",
+  "typeEmoji": "\ud83e\uddea",
   "conversationMode": "ai",
   "model": "claude-opus-4-6",
   "tokenUsage": {

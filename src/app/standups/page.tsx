@@ -497,6 +497,136 @@ function DirectivesCard({ directives }: { directives: CEODirective[] }) {
   );
 }
 
+function DirectivesView() {
+  const [directives, setDirectives] = useState<{directive: string; setDate: string; priority: string; standupType?: string; standupEmoji?: string}[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchDirectives() {
+      try {
+        const indexRes = await fetch("/data/standups/index.json");
+        if (!indexRes.ok) return;
+        const indexData = await indexRes.json();
+        
+        const allDirectives: any[] = [];
+        
+        // Load each standup and collect directives
+        for (const entry of (indexData.standups || [])) {
+          try {
+            const res = await fetch(`/data/standups/${entry.file}`);
+            if (res.ok) {
+              const standup = await res.json();
+              if (standup.ceoDirectives && standup.ceoDirectives.length > 0) {
+                for (const d of standup.ceoDirectives) {
+                  allDirectives.push({
+                    ...d,
+                    standupType: entry.typeName || entry.type,
+                    standupEmoji: entry.typeEmoji || "📋",
+                    standupDate: entry.date,
+                  });
+                }
+              }
+            }
+          } catch {}
+        }
+        
+        // Sort by date descending (newest first)
+        allDirectives.sort((a, b) => (b.setDate || b.standupDate || "").localeCompare(a.setDate || a.standupDate || ""));
+        setDirectives(allDirectives);
+      } catch (err) {
+        console.error("Failed to load directives:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchDirectives();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="space-y-4">
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="bg-slate-900/50 rounded-xl border border-slate-800 p-4 h-16 animate-pulse" />
+        ))}
+      </div>
+    );
+  }
+
+  if (directives.length === 0) {
+    return (
+      <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-6 text-center">
+        <Zap className="w-8 h-8 text-slate-600 mx-auto mb-2" />
+        <p className="text-slate-400 text-sm">No CEO directives recorded yet.</p>
+        <p className="text-slate-500 text-xs mt-2">Directives are captured during standup meetings when the CEO makes decisions.</p>
+      </div>
+    );
+  }
+
+  // Group by date
+  const grouped: Record<string, typeof directives> = {};
+  for (const d of directives) {
+    const date = d.setDate || d.standupDate || "Unknown";
+    if (!grouped[date]) grouped[date] = [];
+    grouped[date].push(d);
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center gap-3">
+        <Zap className="w-5 h-5 text-amber-400" strokeWidth={1.5} />
+        <h2 className="text-lg font-semibold text-slate-100">CEO Directive History</h2>
+        <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-amber-500/20 text-amber-400 border border-amber-500/30">
+          {directives.length} total
+        </span>
+      </div>
+      
+      {Object.entries(grouped).map(([date, items]) => (
+        <div key={date}>
+          <div className="flex items-center gap-2 mb-3">
+            <Calendar className="w-4 h-4 text-slate-500" />
+            <p className="text-sm font-medium text-slate-300">
+              {(() => {
+                try {
+                  const [y, m, d] = date.split("-").map(Number);
+                  return new Date(y, m - 1, d).toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" });
+                } catch {
+                  return date;
+                }
+              })()}
+            </p>
+          </div>
+          <div className="space-y-2 ml-6 border-l-2 border-amber-500/20 pl-4">
+            {items.map((d, i) => (
+              <div key={i} className="bg-gradient-to-br from-amber-600/10 to-amber-800/5 rounded-xl border border-amber-500/20 p-4">
+                <div className="flex items-start gap-3">
+                  <ArrowRight className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" strokeWidth={2} />
+                  <div className="flex-1">
+                    <p className="text-sm text-slate-200">{d.directive}</p>
+                    <div className="flex items-center gap-2 mt-2 flex-wrap">
+                      <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium border ${
+                        d.priority === "high" ? "bg-red-500/20 text-red-400 border-red-500/30" :
+                        d.priority === "medium" ? "bg-amber-500/20 text-amber-400 border-amber-500/30" :
+                        "bg-slate-700/50 text-slate-400 border-slate-600/30"
+                      }`}>
+                        {d.priority?.toUpperCase() || "MEDIUM"}
+                      </span>
+                      {d.standupType && (
+                        <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-slate-700/50 text-slate-400 border border-slate-600/30">
+                          {d.standupEmoji} {d.standupType}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function ReportCard({ title, icon, report }: { title: string; icon: string; report: Report }) {
   const [expanded, setExpanded] = useState(false);
   const colors = getAgentColors(report.agent, report.role || title);
@@ -1038,7 +1168,7 @@ function StandupHistoryItem({
 }
 
 // ---- Tab Types ----
-type TabType = "history" | "scheduled" | "manage";
+type TabType = "history" | "scheduled" | "manage" | "directives";
 
 // ---- Scheduled Standup Types ----
 interface ScheduledStandupType {
@@ -2841,6 +2971,16 @@ function StandupsPageInner() {
           📋 History
         </button>
         <button
+          onClick={() => setActiveTab("directives")}
+          className={`px-4 py-2 rounded-t-lg text-sm font-medium transition-colors ${
+            activeTab === "directives"
+              ? "bg-primary-600/20 text-primary-400 border-t border-l border-r border-primary-500/30 border-b-transparent"
+              : "text-slate-500 hover:text-slate-400"
+          }`}
+        >
+          ⚡ CEO Directives
+        </button>
+        <button
           onClick={() => setActiveTab("scheduled")}
           className={`px-4 py-2 rounded-t-lg text-sm font-medium transition-colors ${
             activeTab === "scheduled"
@@ -2912,10 +3052,7 @@ function StandupsPageInner() {
         <>
           {/* Priorities/tasks section removed - functionality moved to Bulletin page */}
 
-          {/* CEO Directives */}
-          {selectedStandup?.ceoDirectives && selectedStandup.ceoDirectives.length > 0 && (
-            <DirectivesCard directives={selectedStandup.ceoDirectives} />
-          )}
+          {/* CEO Directives section moved to dedicated tab */}
 
           {/* Summary Stats */}
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
@@ -3027,6 +3164,8 @@ function StandupsPageInner() {
             </div>
           </div>
         </>
+      ) : activeTab === "directives" ? (
+        <DirectivesView />
       ) : activeTab === "scheduled" ? (
         <ScheduledView />
       ) : (

@@ -1,8 +1,10 @@
 {
   "counters": {
-    "adhoc-evening-wrap": 2
+    "adhoc-evening-wrap": 2,
+    "adhoc-evening-roster-test": 2
   },
   "abbreviations": {
-    "adhoc-evening-wrap": "STD"
+    "adhoc-evening-wrap": "STD",
+    "adhoc-evening-roster-test": "STD"
   }
 }

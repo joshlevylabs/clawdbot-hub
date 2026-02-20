@@ -329,12 +329,32 @@
       "estimatedCost": 0.20929999999999999,
       "model": "claude-opus-4-6",
       "duration": "58.900000000000006s"
+    },
+    {
+      "date": "2026-02-19",
+      "type": "adhoc-evening-roster-test",
+      "inputTokens": 2983,
+      "outputTokens": 2423,
+      "totalTokens": 5406,
+      "estimatedCost": 0.2265,
+      "model": "claude-opus-4-6",
+      "duration": "53.9s"
+    },
+    {
+      "date": "2026-02-19",
+      "type": "adhoc-evening-roster-test",
+      "inputTokens": 4839,
+      "outputTokens": 3644,
+      "totalTokens": 8483,
+      "estimatedCost": 0.3459,
+      "model": "claude-opus-4-6",
+      "duration": "75.1s"
     }
   ],
   "totals": {
-    "today": 1.3775,
-    "week": 4.9078,
-    "month": 4.9078,
-    "standupCount": 33
+    "today": 1.9499,
+    "week": 5.4802,
+    "month": 5.4802,
+    "standupCount": 35
   }
 }

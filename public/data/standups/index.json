@@ -2,6 +2,19 @@
   "standups": [
     {
       "date": "2026-02-19",
+      "time": "22:34",
+      "type": "adhoc-evening-roster-test",
+      "typeName": "Evening Roster Test",
+      "typeEmoji": "\ud83e\uddea",
+      "topic": "Evening Roster Test \u2014 Thursday Feb 19",
+      "file": "2026-02-19-adhoc-evening-roster-test.json",
+      "tokenCost": 0.3459,
+      "verticals": [],
+      "initiatives": [],
+      "instanceKey": "STD-2"
+    },
+    {
+      "date": "2026-02-19",
       "time": "21:58",
       "type": "adhoc-evening-wrap",
       "typeName": "Evening Wrap",

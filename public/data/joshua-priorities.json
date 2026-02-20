@@ -1,6 +1,6 @@
 {
   "date": "2026-02-20",
-  "generatedAt": "2026-02-20T02:01:23.583337-08:00",
+  "generatedAt": "2026-02-20T02:16:05.039079-08:00",
   "priorities": [
     {
       "text": "Evaluate deployment of idle cash ($75,340 available) \u2014 CEO decided keep liquid, flagged for ongoing review",
@@ -33,18 +33,6 @@
       "taskKey": "J-007"
     },
     {
-      "text": "Set week-one download target to calibrate launch promotion intensity",
-      "source": "overnight-sprint",
-      "urgency": "high",
-      "taskKey": "J-008"
-    },
-    {
-      "text": "Pick preferred newsletter subject line style from 3 variants Alex drafts",
-      "source": "overnight-sprint",
-      "urgency": "high",
-      "taskKey": "J-009"
-    },
-    {
       "text": "Execute same-day launch push if Apple approves before 2pm, next morning otherwise (standing directive)",
       "source": "overnight-sprint",
       "urgency": "high",
@@ -57,10 +45,16 @@
       "taskKey": "J-011"
     },
     {
-      "text": "Monitor download velocity against 150 target and decide on promotion escalation if below 100 by day 3",
+      "text": "Review and approve final newsletter copy (J-011) \u2014 draft will be in queue by morning",
       "source": "overnight-sprint",
-      "urgency": "medium",
-      "taskKey": "J-012"
+      "urgency": "high",
+      "taskKey": "J-013"
+    },
+    {
+      "text": "Decide whether empty state patches block launch push or ship as day-one update",
+      "source": "overnight-sprint",
+      "urgency": "high",
+      "taskKey": "J-014"
     }
   ],
   "agentHandled": [
@@ -363,6 +357,42 @@
       "assignee": "Steve Jobs",
       "status": "pending",
       "taskKey": "A-050"
+    },
+    {
+      "text": "Document empty state patch plan with Steve's copy for Family and Compass tabs (extend A-050)",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "taskKey": "A-051"
+    },
+    {
+      "text": "Finalize launch newsletter with story-driven subject line, hero CTA, App Store link placeholder \u2014 close A-047",
+      "assignee": "Alex",
+      "status": "pending",
+      "taskKey": "A-052"
+    },
+    {
+      "text": "Draft 1 missing podcast MDX file to advance A-048 sync gap",
+      "assignee": "Alex",
+      "status": "pending",
+      "taskKey": "A-053"
+    },
+    {
+      "text": "Finalize launch metrics dashboard spec with 150 target benchmark and day-3 escalation trigger \u2014 close A-049",
+      "assignee": "Dave",
+      "status": "pending",
+      "taskKey": "A-054"
+    },
+    {
+      "text": "Fix 3 faith lessons (vague takeaway, scripture anchor, tone) and close A-044",
+      "assignee": "faith",
+      "status": "pending",
+      "taskKey": "A-055"
+    },
+    {
+      "text": "Write empty state placeholder copy for Family and Compass tabs and hand to Elon",
+      "assignee": "Steve Jobs",
+      "status": "pending",
+      "taskKey": "A-056"
     }
   ]
 }

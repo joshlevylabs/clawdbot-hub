@@ -1,6 +1,6 @@
 {
-  "nextAgentId": 51,
-  "nextJoshuaId": 13,
+  "nextAgentId": 57,
+  "nextJoshuaId": 15,
   "tasks": [
     {
       "key": "J-001",
@@ -874,6 +874,119 @@
       "updatedAt": "2026-02-20T02:01:23.583337-08:00",
       "completedAt": "2026-02-20T02:01:48.512984-08:00",
       "resolution": "CEO decided: 150 downloads (modest organic + newsletter push) (via overnight-sprint 2026-02-20)"
+    },
+    {
+      "key": "A-051",
+      "text": "Document empty state patch plan with Steve's copy for Family and Compass tabs (extend A-050)",
+      "tag": "AGENT",
+      "priority": "high",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "sourceStandup": "STD-16",
+      "sourceStandupType": "overnight-sprint",
+      "sourceDate": "2026-02-20",
+      "createdAt": "2026-02-20T02:15:09.411483-08:00",
+      "updatedAt": "2026-02-20T02:15:09.411483-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "A-052",
+      "text": "Finalize launch newsletter with story-driven subject line, hero CTA, App Store link placeholder \u2014 close A-047",
+      "tag": "AGENT",
+      "priority": "high",
+      "assignee": "Alex",
+      "status": "pending",
+      "sourceStandup": "STD-16",
+      "sourceStandupType": "overnight-sprint",
+      "sourceDate": "2026-02-20",
+      "createdAt": "2026-02-20T02:15:09.411483-08:00",
+      "updatedAt": "2026-02-20T02:15:09.411483-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "A-053",
+      "text": "Draft 1 missing podcast MDX file to advance A-048 sync gap",
+      "tag": "AGENT",
+      "priority": "medium",
+      "assignee": "Alex",
+      "status": "pending",
+      "sourceStandup": "STD-16",
+      "sourceStandupType": "overnight-sprint",
+      "sourceDate": "2026-02-20",
+      "createdAt": "2026-02-20T02:15:09.411483-08:00",
+      "updatedAt": "2026-02-20T02:15:09.411483-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "A-054",
+      "text": "Finalize launch metrics dashboard spec with 150 target benchmark and day-3 escalation trigger \u2014 close A-049",
+      "tag": "AGENT",
+      "priority": "high",
+      "assignee": "Dave",
+      "status": "pending",
+      "sourceStandup": "STD-16",
+      "sourceStandupType": "overnight-sprint",
+      "sourceDate": "2026-02-20",
+      "createdAt": "2026-02-20T02:15:09.411483-08:00",
+      "updatedAt": "2026-02-20T02:15:09.411483-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "A-055",
+      "text": "Fix 3 faith lessons (vague takeaway, scripture anchor, tone) and close A-044",
+      "tag": "AGENT",
+      "priority": "medium",
+      "assignee": "faith",
+      "status": "pending",
+      "sourceStandup": "STD-16",
+      "sourceStandupType": "overnight-sprint",
+      "sourceDate": "2026-02-20",
+      "createdAt": "2026-02-20T02:15:09.411483-08:00",
+      "updatedAt": "2026-02-20T02:15:09.411483-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "A-056",
+      "text": "Write empty state placeholder copy for Family and Compass tabs and hand to Elon",
+      "tag": "AGENT",
+      "priority": "high",
+      "assignee": "Steve Jobs",
+      "status": "pending",
+      "sourceStandup": "STD-16",
+      "sourceStandupType": "overnight-sprint",
+      "sourceDate": "2026-02-20",
+      "createdAt": "2026-02-20T02:15:09.411483-08:00",
+      "updatedAt": "2026-02-20T02:15:09.411483-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "J-013",
+      "text": "Review and approve final newsletter copy (J-011) \u2014 draft will be in queue by morning",
+      "tag": "JOSHUA",
+      "priority": "high",
+      "assignee": "Joshua",
+      "status": "pending",
+      "sourceStandup": "STD-16",
+      "sourceStandupType": "overnight-sprint",
+      "sourceDate": "2026-02-20",
+      "createdAt": "2026-02-20T02:15:09.411483-08:00",
+      "updatedAt": "2026-02-20T02:15:09.411483-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "J-014",
+      "text": "Decide whether empty state patches block launch push or ship as day-one update",
+      "tag": "JOSHUA",
+      "priority": "high",
+      "assignee": "Joshua",
+      "status": "done",
+      "sourceStandup": "STD-16",
+      "sourceStandupType": "overnight-sprint",
+      "sourceDate": "2026-02-20",
+      "createdAt": "2026-02-20T02:15:09.411483-08:00",
+      "updatedAt": "2026-02-20T02:15:09.411483-08:00",
+      "completedAt": "2026-02-20T02:16:27.424667-08:00",
+      "resolution": "CEO decided: Launch as-is, ship empty state patch as day-one update (via overnight-sprint 2026-02-20)"
     }
   ]
 }

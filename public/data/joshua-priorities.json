@@ -1,6 +1,6 @@
 {
   "date": "2026-02-20",
-  "generatedAt": "2026-02-20T02:16:05.039079-08:00",
+  "generatedAt": "2026-02-20T02:45:59.978059-08:00",
   "priorities": [
     {
       "text": "Evaluate deployment of idle cash ($75,340 available) \u2014 CEO decided keep liquid, flagged for ongoing review",
@@ -51,10 +51,10 @@
       "taskKey": "J-013"
     },
     {
-      "text": "Decide whether empty state patches block launch push or ship as day-one update",
+      "text": "Review and approve final newsletter copy for launch readiness (J-013)",
       "source": "overnight-sprint",
       "urgency": "high",
-      "taskKey": "J-014"
+      "taskKey": "J-015"
     }
   ],
   "agentHandled": [
@@ -393,6 +393,30 @@
       "assignee": "Steve Jobs",
       "status": "pending",
       "taskKey": "A-056"
+    },
+    {
+      "text": "Merge podcast rendering fix, commit hub file, and pre-build empty state patch with Steve's copy (close A-039, A-038, A-051)",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "taskKey": "A-057"
+    },
+    {
+      "text": "Finalize launch newsletter copy with story-driven hook and App Store CTA placeholder (close A-052)",
+      "assignee": "Alex",
+      "status": "pending",
+      "taskKey": "A-058"
+    },
+    {
+      "text": "Extend analytics implementation guide with crash breadcrumb system (extend A-042)",
+      "assignee": "James Truchard",
+      "status": "pending",
+      "taskKey": "A-059"
+    },
+    {
+      "text": "Fix third faith lesson (lesson 7 tone adjustment) to close A-055",
+      "assignee": "faith",
+      "status": "pending",
+      "taskKey": "A-060"
     }
   ]
 }

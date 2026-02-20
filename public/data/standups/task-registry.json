@@ -1,6 +1,6 @@
 {
-  "nextAgentId": 57,
-  "nextJoshuaId": 15,
+  "nextAgentId": 61,
+  "nextJoshuaId": 16,
   "tasks": [
     {
       "key": "J-001",
@@ -987,6 +987,76 @@
       "updatedAt": "2026-02-20T02:15:09.411483-08:00",
       "completedAt": "2026-02-20T02:16:27.424667-08:00",
       "resolution": "CEO decided: Launch as-is, ship empty state patch as day-one update (via overnight-sprint 2026-02-20)"
+    },
+    {
+      "key": "A-057",
+      "text": "Merge podcast rendering fix, commit hub file, and pre-build empty state patch with Steve's copy (close A-039, A-038, A-051)",
+      "tag": "AGENT",
+      "priority": "high",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "sourceStandup": "STD-18",
+      "sourceStandupType": "overnight-sprint",
+      "sourceDate": "2026-02-20",
+      "createdAt": "2026-02-20T02:45:05.774763-08:00",
+      "updatedAt": "2026-02-20T02:45:05.774763-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "A-058",
+      "text": "Finalize launch newsletter copy with story-driven hook and App Store CTA placeholder (close A-052)",
+      "tag": "AGENT",
+      "priority": "high",
+      "assignee": "Alex",
+      "status": "pending",
+      "sourceStandup": "STD-18",
+      "sourceStandupType": "overnight-sprint",
+      "sourceDate": "2026-02-20",
+      "createdAt": "2026-02-20T02:45:05.774763-08:00",
+      "updatedAt": "2026-02-20T02:45:05.774763-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "J-015",
+      "text": "Review and approve final newsletter copy for launch readiness (J-013)",
+      "tag": "JOSHUA",
+      "priority": "high",
+      "assignee": "Joshua",
+      "status": "pending",
+      "sourceStandup": "STD-18",
+      "sourceStandupType": "overnight-sprint",
+      "sourceDate": "2026-02-20",
+      "createdAt": "2026-02-20T02:45:05.774763-08:00",
+      "updatedAt": "2026-02-20T02:45:05.774763-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "A-059",
+      "text": "Extend analytics implementation guide with crash breadcrumb system (extend A-042)",
+      "tag": "AGENT",
+      "priority": "medium",
+      "assignee": "James Truchard",
+      "status": "pending",
+      "sourceStandup": "STD-18",
+      "sourceStandupType": "overnight-sprint",
+      "sourceDate": "2026-02-20",
+      "createdAt": "2026-02-20T02:45:05.774763-08:00",
+      "updatedAt": "2026-02-20T02:45:05.774763-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "A-060",
+      "text": "Fix third faith lesson (lesson 7 tone adjustment) to close A-055",
+      "tag": "AGENT",
+      "priority": "medium",
+      "assignee": "faith",
+      "status": "pending",
+      "sourceStandup": "STD-18",
+      "sourceStandupType": "overnight-sprint",
+      "sourceDate": "2026-02-20",
+      "createdAt": "2026-02-20T02:45:05.774763-08:00",
+      "updatedAt": "2026-02-20T02:45:05.774763-08:00",
+      "completedAt": null
     }
   ]
 }

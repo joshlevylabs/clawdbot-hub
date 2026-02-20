@@ -1,6 +1,6 @@
 {
   "date": "2026-02-20",
-  "generatedAt": "2026-02-20T03:16:11.226447-08:00",
+  "generatedAt": "2026-02-20T04:16:10.455914-08:00",
   "priorities": [
     {
       "text": "Evaluate deployment of idle cash ($75,340 available) \u2014 CEO decided keep liquid, flagged for ongoing review",
@@ -33,34 +33,22 @@
       "taskKey": "J-007"
     },
     {
-      "text": "Execute same-day launch push if Apple approves before 2pm, next morning otherwise (standing directive)",
-      "source": "overnight-sprint",
-      "urgency": "high",
-      "taskKey": "J-010"
-    },
-    {
       "text": "Review and approve final newsletter copy once Alex delivers story-driven draft",
       "source": "overnight-sprint",
       "urgency": "medium",
       "taskKey": "J-011"
     },
     {
-      "text": "Review and approve final newsletter copy (J-011) \u2014 draft will be in queue by morning",
+      "text": "Review pre-scheduled newsletter via Slack screenshot in the morning and confirm send-readiness (J-016)",
       "source": "overnight-sprint",
       "urgency": "high",
-      "taskKey": "J-013"
+      "taskKey": "J-017"
     },
     {
-      "text": "Review and approve final newsletter copy for launch readiness (J-013)",
+      "text": "Approve or reject welcome modal addition to day-one patch",
       "source": "overnight-sprint",
-      "urgency": "high",
-      "taskKey": "J-015"
-    },
-    {
-      "text": "Review pre-scheduled newsletter in the morning and confirm send-readiness via Slack (J-015)",
-      "source": "overnight-sprint",
-      "urgency": "high",
-      "taskKey": "J-016"
+      "urgency": "medium",
+      "taskKey": "J-018"
     }
   ],
   "agentHandled": [
@@ -459,6 +447,48 @@
       "assignee": "James Truchard",
       "status": "pending",
       "taskKey": "A-066"
+    },
+    {
+      "text": "Write welcome modal copy (3 sentences, warm orientation) and hand to Elon",
+      "assignee": "Steve Jobs",
+      "status": "pending",
+      "taskKey": "A-067"
+    },
+    {
+      "text": "Commit 3 uncommitted hub files and wire Compass empty state + welcome modal copy into day-one patch build",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "taskKey": "A-068"
+    },
+    {
+      "text": "Clean up 3 dead-code TODOs (zero-risk removals) to reduce codebase noise",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "taskKey": "A-069"
+    },
+    {
+      "text": "Scaffold analytics Swift hooks in codebase per James's implementation guide (A-042) so validation can begin",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "taskKey": "A-070"
+    },
+    {
+      "text": "Draft faith lessons 8 and 9 (content expansion toward 15-20 target)",
+      "assignee": "Alex",
+      "status": "pending",
+      "taskKey": "A-071"
+    },
+    {
+      "text": "Prep analytics validation test environment so event firing can be verified once Elon's scaffolding lands (advance A-066)",
+      "assignee": "James Truchard",
+      "status": "pending",
+      "taskKey": "A-072"
+    },
+    {
+      "text": "Support Alex on faith lessons 8-9 drafting \u2014 ensure dimensional coverage and tone consistency",
+      "assignee": "faith",
+      "status": "pending",
+      "taskKey": "A-073"
     }
   ]
 }

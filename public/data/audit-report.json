@@ -1,123 +1,57 @@
 {
-  "timestamp": "2026-02-20T05:45:05.199690+00:00",
+  "timestamp": "2026-02-20T06:03:50.804144+00:00",
   "summary": {
-    "total_tasks": 18,
-    "verified_done": 16,
+    "total_tasks": 7,
+    "verified_done": 2,
     "done_but_unverified": 0,
-    "pending": 0,
-    "stale": 1
+    "pending": 5,
+    "stale": 0
   },
   "items": [
     {
-      "text": "Address 1 critical ecosystem sync gap(s)",
-      "status": "verified_done",
-      "assignee": "Elon",
-      "verification": "PASSED: Verify no critical sync gaps remain in ecosystem map (excludes headers)"
-    },
-    {
-      "text": "Sync 2 podcast episode(s) to website",
-      "status": "verified_done",
-      "assignee": "Alex",
-      "verification": "PASSED: Verify all hub podcast episodes exist on website (sync gap = 0)"
-    },
-    {
-      "text": "Commit 1 uncommitted hub change (A-090)",
-      "status": "verified_done",
-      "assignee": "Elon",
-      "verification": "PASSED: Verify hub has no uncommitted changes"
-    },
-    {
-      "text": "Review 1 ecosystem attention item(s)",
-      "status": "verified_done",
-      "assignee": "Elon",
-      "verification": "PASSED: Verify no attention items remain in ecosystem map (excludes headers)"
-    },
-    {
-      "text": "Continue monitoring Fear & Greed index at 38 (A-077)",
+      "text": "Monitor Fear & Greed index (currently 39) for threshold changes",
       "status": "verified_done",
       "assignee": "Dave",
-      "verification": "PASSED: Verify MRE signals exported today (auto-passes weekends and outside market hours 6AM-2PM PT)"
+      "verification": "PASSED: Verify MRE signals exported today (auto-passes weekends and outside market hours 6AM-2PM PT)",
+      "audit_note": "Completed outside dispatcher"
     },
     {
-      "text": "Draft next blog post for joshlevylabs.com",
-      "status": "resolved",
-      "assignee": "Alex",
-      "verification": "Resolved: not automatable via dispatch"
-    },
-    {
-      "text": "Generate daily devotional content based on 8 faith dimensions (A-075)",
-      "status": "resolved",
-      "assignee": "Alex",
-      "verification": "Resolved: not automatable via dispatch"
-    },
-    {
-      "text": "Draft faith lesson content \u2014 push from 7 to 10 lessons (A-074)",
-      "status": "resolved",
-      "assignee": "Alex",
-      "verification": "Resolved: not automatable via dispatch"
-    },
-    {
-      "text": "Prepare Jett's vaccine reminder (A-076)",
-      "status": "done",
-      "assignee": "Alex",
-      "verification": "No verification rule found"
-    },
-    {
-      "text": "Draft feature spec for expanding Family tab (currently 455 lines)",
-      "status": "resolved",
-      "assignee": "Elon",
-      "verification": "Resolved: not automatable via dispatch"
-    },
-    {
-      "text": "Review family touchpoint tracker design (A-073) in context of A-042",
-      "status": "resolved",
-      "assignee": "Elon",
-      "verification": "Resolved: not automatable via dispatch"
-    },
-    {
-      "text": "Extend A-042 to flag architectural decision gate before spec advances",
-      "status": "done",
-      "assignee": "Theo",
-      "verification": "No verification rule found"
-    },
-    {
-      "text": "Draft preliminary Lever revenue model sketch",
-      "status": "resolved",
-      "assignee": "Dave",
-      "verification": "Resolved: not automatable via dispatch"
-    },
-    {
-      "text": "Batch-commit 4 uncommitted hub changes (A-072, A-090)",
+      "text": "Commit 2 uncommitted hub changes",
       "status": "verified_done",
       "assignee": "Elon",
-      "verification": "PASSED: Verify hub has no uncommitted changes"
+      "verification": "PASSED: Verify hub has no uncommitted changes",
+      "audit_note": "Completed outside dispatcher"
     },
     {
-      "text": "Complete faith lesson 10 of 10 to close out A-093",
-      "status": "stale",
+      "text": "Generate daily devotional content based on 8 faith dimensions",
+      "status": "pending",
       "assignee": "Alex",
       "verification": "No verification rule found"
     },
     {
-      "text": "Mark A-094 (Jett vaccine reminder) as complete",
-      "status": "done",
-      "assignee": "Theo",
+      "text": "Draft faith lesson content for the Lever app (currently 7 lessons)",
+      "status": "pending",
+      "assignee": "Alex",
       "verification": "No verification rule found"
     },
     {
-      "text": "Continue Fear & Greed index monitoring at 38 (A-096)",
-      "status": "done",
-      "assignee": "Dave",
+      "text": "Prepare reminders for upcoming family events: Jett's vaccine",
+      "status": "pending",
+      "assignee": "Alex",
       "verification": "No verification rule found"
     },
     {
-      "text": "Extend A-042 Family tab spec once J-021 and J-022 are decided",
-      "status": "in-progress",
+      "text": "Draft feature spec for expanding Family tab (currently 455 lines) with monetization potential annotations",
+      "status": "pending",
+      "assignee": "Elon",
+      "verification": "No verification rule found"
+    },
+    {
+      "text": "Review family touchpoint tracker design for 3 family members",
+      "status": "pending",
       "assignee": "Elon",
       "verification": "No verification rule found"
     }
   ],
-  "escalations": [
-    "\ud83d\udd34 STALE [Alex]: Complete faith lesson 10 of 10 to close out A-093 \u2014 unresolved for 120 min"
-  ]
+  "escalations": []
 }

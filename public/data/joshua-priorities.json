@@ -1,12 +1,18 @@
 {
   "date": "2026-02-19",
-  "generatedAt": "2026-02-19T22:47:35.624064-08:00",
+  "generatedAt": "2026-02-19T23:31:04.229272-08:00",
   "priorities": [
     {
       "text": "Evaluate deployment of idle cash ($75,340 available) \u2014 CEO decided keep liquid, flagged for ongoing review",
       "source": "adhoc-evening-roster-test",
       "urgency": "medium",
       "taskKey": "J-001"
+    },
+    {
+      "text": "Evaluate deployment of idle cash ($75,340 available) \u2014 continue monitoring, no action per CEO directive",
+      "source": "overnight-sprint",
+      "urgency": "medium",
+      "taskKey": "J-002"
     }
   ],
   "agentHandled": [
@@ -75,6 +81,18 @@
       "assignee": "Elon",
       "status": "pending",
       "taskKey": "A-011"
+    },
+    {
+      "text": "Sync 1 podcast episode to website to close content gap",
+      "assignee": "Alex",
+      "status": "pending",
+      "taskKey": "A-012"
+    },
+    {
+      "text": "Draft faith lesson content for the Lever app (currently 7 lessons, target 15-20)",
+      "assignee": "Alex",
+      "status": "pending",
+      "taskKey": "A-013"
     }
   ]
 }

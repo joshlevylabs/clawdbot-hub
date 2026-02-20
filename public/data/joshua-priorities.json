@@ -1,6 +1,6 @@
 {
   "date": "2026-02-20",
-  "generatedAt": "2026-02-20T00:03:34.912057-08:00",
+  "generatedAt": "2026-02-20T00:45:55.152213-08:00",
   "priorities": [
     {
       "text": "Evaluate deployment of idle cash ($75,340 available) \u2014 CEO decided keep liquid, flagged for ongoing review",
@@ -19,6 +19,12 @@
       "source": "overnight-sprint",
       "urgency": "high",
       "taskKey": "J-004"
+    },
+    {
+      "text": "Evaluate deployment of idle cash ($75,340 available)",
+      "source": "overnight-sprint",
+      "urgency": "medium",
+      "taskKey": "J-005"
     }
   ],
   "agentHandled": [
@@ -147,6 +153,24 @@
       "assignee": "Dave",
       "status": "pending",
       "taskKey": "A-021"
+    },
+    {
+      "text": "Commit 7 uncommitted hub change(s)",
+      "assignee": "Elon",
+      "status": "pending",
+      "taskKey": "A-022"
+    },
+    {
+      "text": "Address 3 critical ecosystem sync gap(s)",
+      "assignee": "Elon",
+      "status": "pending",
+      "taskKey": "A-023"
+    },
+    {
+      "text": "Review 5 ecosystem attention item(s)",
+      "assignee": "Elon",
+      "status": "pending",
+      "taskKey": "A-024"
     }
   ]
 }

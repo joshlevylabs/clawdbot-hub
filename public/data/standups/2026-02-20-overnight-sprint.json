@@ -1,9 +1,9 @@
 {
   "date": "2026-02-20",
   "time": "23:30",
-  "generatedAt": "2026-02-20T00:03:34.912057-08:00",
+  "generatedAt": "2026-02-20T00:45:55.152213-08:00",
   "topic": "Overnight Sprint \u2014 Friday Feb 20",
-  "summary": "App Store listing awaits Joshua review; parallel work closes 3 critical sync gaps and content mismatches.",
+  "summary": "App Store build packaged and approved \u2014 submitting tonight with crash reporting verification as final gate.",
   "status": "completed",
   "participants": [
     {
@@ -55,7 +55,7 @@
       "description": ""
     }
   ],
-  "duration": "53.3s",
+  "duration": "64.69999999999999s",
   "reports": {
     "cto": {
       "agent": "Elon Musk",
@@ -69,21 +69,21 @@
         "James Bach"
       ],
       "highlights": [
-        "723 commits this week",
-        "Hub latest: 548a096 data: fleet usage update",
+        "725 commits this week",
+        "Hub latest: bfb3b59 data: fleet usage update",
         "Build status: healthy"
       ],
       "concerns": [
-        "Uncommitted changes: Hub (7), Monorepo (0)",
+        "Uncommitted changes: Hub (8), Monorepo (0)",
         "3 critical sync gaps",
         "7 TODOs/FIXMEs"
       ],
       "metrics": {
-        "recentCommits": 723,
+        "recentCommits": 725,
         "openIssues": 8,
         "buildHealthy": true,
         "todosFixmes": 7,
-        "uncommittedHub": 7,
+        "uncommittedHub": 8,
         "uncommittedMono": 0
       }
     },
@@ -148,89 +148,97 @@
     {
       "speaker": "Theo",
       "role": "COO",
-      "message": "Alright team, overnight sprint, February 20th. Let me set the table quickly. We're at 723 commits in seven days \u2014 build is healthy. The App Store listing draft was routed through Joshua for review per last standup's decision \u2014 that's our critical path. We have three critical sync gaps still open, five attention items, and Jett's vaccine is today. The question tonight: what can we actually ship in the next 15 minutes to keep momentum toward that App Store submission? Let's go around. Elon, you're carrying the heaviest load. Elon (CTO): Three critical sync gaps are still open \u2014 podcast MDX mismatch, blog rendering, and the app not being on the App Store yet. The App Store piece is blocked on Joshua's review of the listing draft, so I can't touch that. What I can do right now is attack the podcast MDX sync and the blog rendering issue. That's A-001 and A-018 territory. One uncommitted hub file sitting there too \u2014 trivial, I'll flush that as part of the sync work. The five attention items from A-014 I'll review in parallel but they're lower priority than closing these critical gaps."
+      "message": "Good evening team. Friday overnight sprint, let's make this count. Key status: CEO approved the App Store listing last standup and greenlit submission. Build is healthy, 725 commits across the ecosystem this week. We have 7 uncommitted hub files to clean up, 3 critical sync gaps still open, and Jett's vaccine is today \u2014 that's tracked. The singular question tonight: did we actually get the build packaged and submitted? Elon, status. Elon (CTO): Straight answer \u2014 A-017 is still in progress. The build is packaged, privacy policy is hosted, listing assets are drafted and CEO-approved. But I haven't confirmed the actual submission went through yet. That's the single highest-priority item right now. Beyond that, we've got 7 uncommitted hub files sitting there, which is sloppy hygiene. I can commit those in the next 15 minutes. The 3 critical sync gaps \u2014 podcast MDX mismatch, blog rendering, and the App Store submission itself \u2014 two of those are content-side and one is the submission we're closing tonight."
     },
     {
       "speaker": "Steve Jobs",
       "role": "CPO",
-      "message": "The listing draft is sitting in Joshua's queue \u2014 that's the single highest-leverage approval we're waiting on. Crash reporting confirmation on A-016 is still pending. I want to make sure we're not submitting a build that can't tell us when it breaks. That needs to be verified before we package anything. Everything else is noise until we get through the App Store gate."
+      "message": "The build is ready. The listing is approved. If this isn't submitted by the next standup, we've failed the sprint. Everything else is noise until that binary state changes from \"not on the App Store\" to \"in review.\" Period. Also \u2014 crash reporting, A-016, I still need confirmation it's active in the build we're submitting. Elon, don't skip that."
     },
     {
       "speaker": "Alex",
       "role": "CMO",
-      "message": "I've got A-012 and A-019 \u2014 syncing that missing podcast episode to the website. That's concrete, I can ship that in 15 minutes. On faith content, A-013 has us at 7 lessons targeting 15-20, but that's not on the critical path for submission since the CEO already said ship with 7. I'll focus on closing the content sync gap tonight and leave lesson expansion for post-submission."
+      "message": "Content side \u2014 I've got the podcast sync gap at 1 episode missing from the website. That's A-012 and A-019, same work. I can publish that missing episode tonight. Blog post \"AI as Your Co-Founder\" landed yesterday, so we're at 3 blog posts live. Faith lesson drafting continues at A-013 \u2014 we're at 7 lessons, targeting 15-20, but that's post-submission work. Tonight I'm focused on closing that podcast sync gap so our website isn't embarrassingly thin when App Store reviewers check our brand."
     },
     {
       "speaker": "Dave",
       "role": "CRO",
-      "message": "Revenue streams active: zero. That number doesn't change until we get through the App Store. Cash position is $75,340, Fear and Greed at 39 \u2014 still in fear territory. Per J-001 and J-002, CEO said stay liquid, I'm staying liquid. The only revenue-relevant thing I can push forward is making sure we have the paid tier designed and ready to toggle on post-launch, per the CEO directive. But that's a next-sprint item. Nothing actionable from me this cycle beyond continued monitoring."
+      "message": "Revenue reality check \u2014 we have zero active revenue streams. The App Store submission is literally the gate to our first monetization path. Every hour we delay is real money. Cash position is $75,340, CEO said keep liquid, no change there per J-001. Fear and Greed at 39, market's scared, which actually validates the hold-cash directive. Once we're in the App Store, I need Joshua to decide on the paid tier toggle timeline \u2014 but that's a next-standup question, not tonight."
     },
     {
       "speaker": "James Truchard",
       "role": "CTIO",
-      "message": "A-020 has analytics instrumentation queued for the Apple review window \u2014 tab switches, lesson completions, session duration. I can start speccing the exact event schema now so we're ready to commit the moment the build is submitted. That's productive use of the waiting period. But the pre-approved action list doesn't include new work for me tonight, so I'll stay in standby and prep offline."
+      "message": "Analytics instrumentation, A-020, is queued for the Apple review window. That's the right sequencing \u2014 submit first, instrument during the review period. I'll have the tab-switch and lesson-completion event specs ready so we can patch immediately once we're in review. No blockers on my side tonight."
     },
     {
       "speaker": "Chris Vermeullen",
       "role": "CFTO",
-      "message": "Markets are sideways, SPY regime confirming that. Four positions holding \u2014 XLV, AEE, EWA, AKAM \u2014 zero buy signals. Paper equity at $99,849. Nothing to act on. The fear reading at 39 actually supports the CEO's decision to keep cash liquid. I'll flag if anything shifts but this is a watch-and-wait market."
+      "message": "Portfolio's holding steady \u2014 paper equity at $99,849, four positions, zero buy signals, SPY sideways. Nothing requiring action. The 39 Fear and Greed reading suggests we stay patient. Cash stays liquid per directive. I'm monitoring but there's nothing to escalate."
     },
     {
       "speaker": "faith",
       "role": "FAITH",
-      "message": "Jett's vaccine is today, February 20th \u2014 J-004 is tracked and confirmed. That's the one real-world event on the calendar. Everything else in my domain \u2014 the 7 faith lessons, the 8 dimensions \u2014 is stable and shipping with the current build as the CEO decided."
+      "message": "Jett's vaccine is today, February 20th \u2014 that's tracked at J-004. Faith lessons are at 7 of 15-20 target. The 8 dimensions are structured and the standalone faith section is solid for the initial submission. Post-launch, we expand lesson depth. Family tab is healthy at 455 lines with 3 members tracked."
     },
     {
       "speaker": "Theo",
       "role": "COO",
-      "message": "Good. Quick cross-talk \u2014 Steve, does Elon's sync work on podcast MDX and blog rendering have any dependency on the App Store submission path?"
+      "message": "Quick cross-talk. Elon \u2014 Steve's asking about crash reporting. Is it confirmed active? Elon (CTO): Crash reporting should be wired in from the standard build config, but I haven't explicitly verified it's firing in this specific build. I'll confirm that as part of the submission packaging \u2014 takes 2 minutes to check the init call. Fair flag from Steve."
     },
     {
       "speaker": "Steve Jobs",
       "role": "CPO",
-      "message": "No, they're independent. The website sync gaps and the App Store submission are parallel tracks. Elon should close those sync issues regardless \u2014 they affect brand credibility on joshlevylabs.com. The only hard blocker for submission is Joshua's review of the listing draft. Elon (CTO): Agreed. I'll close the ecosystem sync gaps now and the moment Joshua approves the listing, I package and submit. No wasted cycles."
+      "message": "Good. Confirm it, screenshot the init, and then submit. That's the sequence. Don't submit blind."
     },
     {
       "speaker": "Theo",
       "role": "COO",
-      "message": "Perfect. Here's the summary. Critical path is Joshua reviewing the App Store listing draft \u2014 that's the single gate. In parallel, Elon closes the three critical ecosystem sync gaps per A-001. Alex ships the missing podcast episode to close the content gap. Dave continues cash monitoring. Everything else is queued for post-submission. Three items, no fluff, let's ship."
+      "message": "Alright, closing this out. Crystal clear priorities for the next 15 minutes. Number one \u2014 Elon confirms crash reporting is active, then packages and submits the build to the App Store. This is the entire sprint. Number two \u2014 Elon commits those 7 uncommitted hub files, clean hygiene. Number three \u2014 Elon addresses the 3 critical ecosystem sync gaps in parallel. Number four \u2014 Elon reviews the 5 ecosystem attention items. And Joshua \u2014 we need you to confirm the submission went through once Apple processes it. Let's ship."
     },
     {
       "speaker": "Theo",
       "role": "COO",
-      "message": "**Theo (COO) \u2014 Closing Remarks:**\n\nJoshua has approved the App Store listing draft as-is \u2014 the gate is open. Elon, you are greenlit to package and submit immediately. That moves the App Store submission from \"blocked\" to \"in progress\" effective right now. In parallel, the ecosystem sync work and Alex's podcast episode ship continue \u2014 nothing changes there. This is the highest-leverage decision we've been waiting on all sprint. Let's not waste a single minute. Elon packages, Alex ships content, a"
+      "message": "**Theo (COO) \u2014 Closing Remarks:**\n\nJoshua's decisions are in and they're clean. First \u2014 analytics instrumentation takes priority over faith lesson expansion once we're in review. That means James, the moment Apple confirms the build is in review, you're live on A-020. Tab-switch events, lesson-completion tracking, the full spec \u2014 we need data flowing before we even think about expanding content. Second \u2014 paid tier timing is deferred until we have real download numbers. Dave, that means no premat"
     }
   ],
   "actionItems": [
     {
-      "text": "Evaluate deployment of idle cash ($75,340 available) \u2014 continue monitoring per CEO directive, no action",
+      "text": "Evaluate deployment of idle cash ($75,340 available)",
       "priority": "medium",
       "assignee": "Dave",
       "completed": false,
       "tag": "JOSHUA",
-      "taskKey": "J-002"
+      "taskKey": "J-005"
     },
     {
-      "text": "Address 3 critical ecosystem sync gaps (podcast MDX mismatch, blog post rendering, App Store submission prep)",
+      "text": "Commit 7 uncommitted hub change(s)",
+      "priority": "low",
+      "assignee": "Elon",
+      "completed": false,
+      "tag": "AGENT",
+      "taskKey": "A-022"
+    },
+    {
+      "text": "Address 3 critical ecosystem sync gap(s)",
       "priority": "high",
       "assignee": "Elon",
       "completed": false,
       "tag": "AGENT",
-      "taskKey": "A-001"
+      "taskKey": "A-023"
     },
     {
-      "text": "Review 5 ecosystem attention items (newsletter CMS, Compass UI duplication, Plays dashboard, content sync, dual Supabase)",
+      "text": "Review 5 ecosystem attention item(s)",
       "priority": "medium",
       "assignee": "Elon",
       "completed": false,
       "tag": "AGENT",
-      "taskKey": "A-014"
+      "taskKey": "A-024"
     }
   ],
   "topPriorities": [
-    "Joshua reviews and approves App Store listing draft to unblock submission",
-    "Close 3 critical ecosystem sync gaps (podcast MDX, blog rendering, App Store prep)",
-    "Sync missing podcast episode to website to close content gap"
+    "Submit Lever app build to App Store tonight (A-017) after confirming crash reporting (A-016)",
+    "Commit 7 uncommitted hub files for clean repo hygiene (A-011)",
+    "Close 3 critical ecosystem sync gaps including podcast MDX and blog rendering (A-001/A-010)"
   ],
   "ceoDirectives": [
     {
@@ -292,6 +300,12 @@
       "decided": "2026-02-19T23:46:14.160182-08:00",
       "source": "overnight-sprint 2026-02-19",
       "priority": "high"
+    },
+    {
+      "directive": "Have you reviewed the App Store listing draft (A-015)? The build is ready to package and submit the moment you approve. \u2192 Approve listing as-is and greenlight submission",
+      "decided": "2026-02-20T00:03:53.540760-08:00",
+      "source": "overnight-sprint 2026-02-20",
+      "priority": "high"
     }
   ],
   "type": "overnight-sprint",
@@ -300,16 +314,16 @@
   "conversationMode": "ai",
   "model": "claude-opus-4-6",
   "tokenUsage": {
-    "input_tokens": 5576,
-    "output_tokens": 2272,
-    "total_tokens": 7848,
-    "duration": 53.3,
+    "input_tokens": 5648,
+    "output_tokens": 2702,
+    "total_tokens": 8350,
+    "duration": 64.69999999999999,
     "model": "claude-opus-4-6",
-    "estimated_cost": 0.254,
+    "estimated_cost": 0.2874,
     "interactive": true,
     "phases": 2
   },
-  "instanceKey": "STD-6",
+  "instanceKey": "STD-9",
   "verticals": [],
   "initiatives": [],
   "verticalDetails": [],
@@ -367,15 +381,27 @@
   "interactive": true,
   "ceoDecisions": [
     {
-      "question": "Have you reviewed the App Store listing draft (A-015)? The build is ready to package and submit the moment you approve.",
+      "question": "Once the App Store submission goes through and enters review, should we immediately begin instrumenting analytics (A-020) or prioritize expanding faith lessons to 15-20 (A-013)?",
       "answer": "0",
-      "answerText": "Approve listing as-is and greenlight submission",
+      "answerText": "Analytics instrumentation first \u2014 we need data before expanding content",
       "options": [
-        "Approve listing as-is and greenlight submission",
-        "Request specific revisions before submission",
-        "Defer review to tomorrow morning"
+        "Analytics instrumentation first \u2014 we need data before expanding content",
+        "Faith lesson expansion first \u2014 more content improves retention at launch",
+        "Both in parallel \u2014 split the sprint capacity"
       ],
       "recommended": 0
+    },
+    {
+      "question": "Should we set a target date for enabling the paid tier in the Lever app?",
+      "answer": "3",
+      "answerText": "Defer decision until we see initial download data",
+      "options": [
+        "Time-based: enable paid tier 2 weeks after App Store approval",
+        "Usage-based: enable after 100 active users",
+        "Feature-based: enable after analytics and 15+ faith lessons are live",
+        "Defer decision until we see initial download data"
+      ],
+      "recommended": 3
     }
   ]
 }

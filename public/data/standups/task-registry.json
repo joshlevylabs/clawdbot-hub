@@ -1235,13 +1235,14 @@
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "Alex",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "MP-4",
       "sourceStandupType": "morning-priorities",
       "sourceDate": "2026-02-19",
       "createdAt": "2026-02-19T05:45:05.918793-08:00",
       "updatedAt": "2026-02-19T05:45:05.918793-08:00",
-      "completedAt": null
+      "completedAt": "2026-02-19T21:15:36.455360-08:00",
+      "resolution": "Vaccine reminder script is active and firing daily. Confirmed working."
     },
     {
       "key": "A-095",
@@ -1263,13 +1264,14 @@
       "tag": "AGENT",
       "priority": "low",
       "assignee": "Dave",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "MP-4",
       "sourceStandupType": "morning-priorities",
       "sourceDate": "2026-02-19",
       "createdAt": "2026-02-19T05:45:05.918793-08:00",
       "updatedAt": "2026-02-19T05:45:05.918793-08:00",
-      "completedAt": null
+      "completedAt": "2026-02-19T21:15:36.455360-08:00",
+      "resolution": "Fear & Greed monitoring continues via cron. Index at 38, no action threshold hit."
     },
     {
       "key": "J-023",
@@ -1327,7 +1329,8 @@
       "sourceDate": "2026-02-19",
       "createdAt": "2026-02-19T19:00:19.734974-08:00",
       "updatedAt": "2026-02-19T19:00:19.734974-08:00",
-      "completedAt": null
+      "completedAt": null,
+      "note": "Content work \u2014 queue for morning agent sprint"
     },
     {
       "key": "A-099",
@@ -1335,13 +1338,14 @@
       "tag": "AGENT",
       "priority": "low",
       "assignee": "Theo",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "EW-3",
       "sourceStandupType": "evening-wrap",
       "sourceDate": "2026-02-19",
       "createdAt": "2026-02-19T19:00:19.734974-08:00",
       "updatedAt": "2026-02-19T19:00:19.734974-08:00",
-      "completedAt": null
+      "completedAt": "2026-02-19T21:15:36.455360-08:00",
+      "resolution": "A-094 confirmed active \u2014 vaccine reminder sending day-before alerts. Closing."
     },
     {
       "key": "A-100",
@@ -1349,13 +1353,14 @@
       "tag": "AGENT",
       "priority": "high",
       "assignee": "Elon",
-      "status": "pending",
+      "status": "in-progress",
       "sourceStandup": "EW-3",
       "sourceStandupType": "evening-wrap",
       "sourceDate": "2026-02-19",
       "createdAt": "2026-02-19T19:00:19.734974-08:00",
       "updatedAt": "2026-02-19T19:00:19.734974-08:00",
-      "completedAt": null
+      "completedAt": null,
+      "note": "Unblocked: J-021 decided hybrid, J-022 decided standalone faith. Ready for morning sprint."
     },
     {
       "key": "J-025",

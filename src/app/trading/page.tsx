@@ -696,6 +696,7 @@ export default function TradingPage() {
               {/* Performance vs S&P 500 — PROMINENT */}
               <PerformanceChart
                 snapshots={snapshots}
+                intradaySnapshots={intradaySnapshots}
                 startingCapital={startingCapital}
               />
 

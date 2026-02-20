@@ -6,20 +6,21 @@
   "summary": "Fear elevated (38), markets sideways. Joe/Openclaw call 10 AM. Jett's vaccine today. Relationship temperature critical - focus on repair.",
   "sections": {
     "prayer": {
-      "title": "🕐️ Morning Prayer",
+      "title": "\ud83d\udd50\ufe0f Morning Prayer",
       "date": "Friday, February 20, 2026",
       "hebrew_date": "22 Cheshvan",
       "parsha": "Vayeshev",
       "parsha_theme": "setbacks as setups, patience, providence",
-      "modeh_ani": "מודה אני לפניך — I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
-      "blessing": "Blessed are You who opens the eyes of the blind — help me see opportunities today.",
+      "modeh_ani": "\u05de\u05d5\u05d3\u05d4 \u05d0\u05e0\u05d9 \u05dc\u05e4\u05e0\u05d9\u05da \u2014 I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
+      "blessing": "Blessed are You who opens the eyes of the blind \u2014 help me see opportunities today.",
       "psalm": "**Psalm 37:5**: \"Commit your way to the Lord; trust in Him and He will act.\"",
       "proverb": "**Proverbs 16:9**: \"The heart of man plans his way, but the Lord establishes his steps.\"",
       "intention": "Open doors that no one can shut, and close doors that would lead me astray.",
-      "closing": "May your work today be a pleasing offering. May your rest tonight be deep and restorative."
+      "closing": "May your work today be a pleasing offering. May your rest tonight be deep and restorative.",
+      "audio": "/audio/brief-2026-02-20-prayer.ogg"
     },
     "weather": {
-      "title": "🌤️ Weather",
+      "title": "\ud83c\udf24\ufe0f Weather",
       "location": "Temecula, CA",
       "current": {
         "temp_f": 42,
@@ -34,17 +35,20 @@
         "today_low_f": 39,
         "today_low_c": 4,
         "condition": "Sunny",
-        "tomorrow": "Partly cloudy, high 75°F"
-      }
+        "tomorrow": "Partly cloudy, high 75\u00b0F"
+      },
+      "audio": "/audio/brief-2026-02-20-weather.ogg"
     },
     "calendar": {
-      "title": "📅 Calendar",
+      "title": "\ud83d\udcc5 Calendar",
       "today": [
         {
           "time": "10:00 AM - 10:30 AM",
           "title": "Joe <> Josh - Openclaw",
           "location": "Microsoft Teams Meeting",
-          "attendees": ["Joe Dewulf"],
+          "attendees": [
+            "Joe Dewulf"
+          ],
           "description": "Partnership discussion with joe@partnrup.ai"
         }
       ],
@@ -65,10 +69,11 @@
           "title": "Brendon Schmidt's birthday",
           "type": "birthday"
         }
-      ]
+      ],
+      "audio": "/audio/brief-2026-02-20-calendar.ogg"
     },
     "email": {
-      "title": "📧 Email Highlights",
+      "title": "\ud83d\udce7 Email Highlights",
       "unread_count": 5,
       "highlights": [
         {
@@ -91,10 +96,11 @@
           "time": "Yesterday",
           "priority": "low"
         }
-      ]
+      ],
+      "audio": "/audio/brief-2026-02-20-email.ogg"
     },
     "mre": {
-      "title": "📊 MRE Trading",
+      "title": "\ud83d\udcca MRE Trading",
       "fear_greed": 38,
       "fear_greed_rating": "fear",
       "regime": "sideways",
@@ -122,10 +128,11 @@
         }
       ],
       "vix": 20.98,
-      "volatility": "ELEVATED"
+      "volatility": "ELEVATED",
+      "audio": "/audio/brief-2026-02-20-mre.ogg"
     },
     "family": {
-      "title": "👨‍👩‍👧‍👦 Family Focus",
+      "title": "\ud83d\udc68\u200d\ud83d\udc69\u200d\ud83d\udc67\u200d\ud83d\udc66 Family Focus",
       "relationship_temp": "critical",
       "priority_actions": [
         "URGENT: Jett's vaccine appointment TODAY",
@@ -140,7 +147,7 @@
       "repair_needed": true
     },
     "world_news": {
-      "title": "🌍 World News",
+      "title": "\ud83c\udf0d World News",
       "israel": [
         {
           "headline": "Gaza ceasefire tensions continue",
@@ -169,7 +176,7 @@
       ]
     },
     "ai_news": {
-      "title": "🤖 AI News",
+      "title": "\ud83e\udd16 AI News",
       "highlights": [
         {
           "headline": "Anthropic releases Claude Sonnet 4.6",

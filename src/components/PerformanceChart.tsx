@@ -26,8 +26,25 @@ interface PortfolioSnapshot {
   total_pnl_pct?: number | null;
 }
 
+interface IntradaySnapshot {
+  id: string;
+  timestamp: string;
+  equity: number;
+  cash: number;
+  positions_value: number;
+  daily_pnl: number | null;
+  daily_pnl_pct: number | null;
+  total_pnl: number | null;
+  total_pnl_pct: number | null;
+  spy_price: number | null;
+  spy_baseline: number | null;
+  open_positions: number | null;
+}
+
 interface PerformanceChartProps {
   snapshots: PortfolioSnapshot[];
+  /** Intraday snapshots for fine-grained 1D/1W views */
+  intradaySnapshots?: IntradaySnapshot[];
   /** Compact mode for embedding in smaller spaces */
   compact?: boolean;
   /** Starting capital for % calculations */
@@ -111,53 +128,76 @@ function CustomTooltip({ active, payload, label }: any) {
 
 export default function PerformanceChart({
   snapshots,
+  intradaySnapshots = [],
   compact = false,
   startingCapital = 100000,
   className = "",
 }: PerformanceChartProps) {
   const [timeRange, setTimeRange] = useState<TimeRange>("1D");
 
+  // Convert intraday snapshots to PortfolioSnapshot format for unified processing
+  const intradayAsPortfolio = useMemo<PortfolioSnapshot[]>(() => {
+    return intradaySnapshots.map((s) => ({
+      date: s.timestamp, // timestamp has "T" so it's detected as intraday
+      equity: s.equity,
+      spy_price: s.spy_price,
+      spy_baseline: s.spy_baseline,
+      cash: s.cash,
+      positions_value: s.positions_value,
+      daily_pnl: s.daily_pnl,
+      total_pnl: s.total_pnl,
+      total_pnl_pct: s.total_pnl_pct,
+    }));
+  }, [intradaySnapshots]);
+
   // Detect if snapshot has intraday timestamp (contains "T")
   const isIntraday = (s: PortfolioSnapshot) => s.date.includes("T");
 
+  // Merge daily + intraday snapshots for unified processing
+  const allSnapshots = useMemo(() => {
+    return [...snapshots, ...intradayAsPortfolio].sort(
+      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+    );
+  }, [snapshots, intradayAsPortfolio]);
+
   // Filter snapshots by selected time range
   const filteredSnapshots = useMemo(() => {
-    if (!snapshots || snapshots.length === 0) return [];
+    if (!allSnapshots || allSnapshots.length === 0) return [];
 
     const cutoff = Date.now() - TIME_RANGE_MS[timeRange];
     
     // For 1D view, show only TODAY's intraday snapshots, anchored to previous day's close
     if (timeRange === "1D") {
       const todayStr = new Date().toISOString().slice(0, 10); // "YYYY-MM-DD"
-      const todayOnly = snapshots
+      const todayOnly = allSnapshots
         .filter(isIntraday)
         .filter((s) => s.date.startsWith(todayStr));
       if (todayOnly.length >= 2) {
         // Find last non-intraday (daily) snapshot as the previous close anchor
-        const dailySnapshots = snapshots.filter((s) => !isIntraday(s));
+        const dailySnapshots = allSnapshots.filter((s) => !isIntraday(s));
         const lastDaily = dailySnapshots.length > 0 ? dailySnapshots[dailySnapshots.length - 1] : null;
         // Prepend previous day's close so chart starts at 0% baseline
         return lastDaily ? [lastDaily, ...todayOnly] : todayOnly;
       }
       // If no today intraday data yet, fall back to last 24h of any intraday
       const oneDayAgo = Date.now() - 24 * 60 * 60 * 1000;
-      const recentIntraday = snapshots
+      const recentIntraday = allSnapshots
         .filter(isIntraday)
         .filter((s) => new Date(s.date).getTime() >= oneDayAgo);
       if (recentIntraday.length >= 2) {
-        const dailySnapshots = snapshots.filter((s) => !isIntraday(s));
+        const dailySnapshots = allSnapshots.filter((s) => !isIntraday(s));
         const lastDaily = dailySnapshots.length > 0 ? dailySnapshots[dailySnapshots.length - 1] : null;
         return lastDaily ? [lastDaily, ...recentIntraday] : recentIntraday;
       }
     }
     
-    const filtered = snapshots.filter((s) => {
+    const filtered = allSnapshots.filter((s) => {
       const dateStr = s.date.includes("T") ? s.date : s.date + "T00:00";
       return new Date(dateStr).getTime() >= cutoff;
     });
 
-    return filtered.length >= 2 ? filtered : snapshots;
-  }, [snapshots, timeRange]);
+    return filtered.length >= 2 ? filtered : allSnapshots;
+  }, [allSnapshots, timeRange]);
 
   // Whether we're showing all data because the range had insufficient data
   const isShowingAllData = useMemo(() => {

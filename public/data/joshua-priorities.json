@@ -231,17 +231,17 @@
     {
       "text": "Mark A-094 (Jett vaccine reminder) as complete",
       "assignee": "Theo",
-      "status": "pending"
+      "status": "done"
     },
     {
       "text": "Continue Fear & Greed index monitoring at 38 (A-096)",
       "assignee": "Dave",
-      "status": "pending"
+      "status": "done"
     },
     {
       "text": "Extend A-042 Family tab spec once J-021 and J-022 are decided",
       "assignee": "Elon",
-      "status": "pending"
+      "status": "in-progress"
     }
   ]
 }

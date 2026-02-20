@@ -8,7 +8,7 @@
       "typeEmoji": "\ud83c\udf06",
       "topic": "Evening Wrap \u2014 Thursday Feb 19",
       "file": "2026-02-19-evening-wrap.json",
-      "tokenCost": 0.1534,
+      "tokenCost": 0.2558,
       "verticals": [
         "hub",
         "joshlevylabs",
@@ -21,7 +21,7 @@
         "hub-standup-system",
         "lever-dashboard"
       ],
-      "instanceKey": "EW-3"
+      "instanceKey": "EW-4"
     },
     {
       "date": "2026-02-19",

@@ -1,6 +1,6 @@
 {
-  "nextAgentId": 25,
-  "nextJoshuaId": 6,
+  "nextAgentId": 31,
+  "nextJoshuaId": 7,
   "tasks": [
     {
       "key": "J-001",
@@ -407,6 +407,104 @@
       "sourceDate": "2026-02-20",
       "createdAt": "2026-02-20T00:45:08.723141-08:00",
       "updatedAt": "2026-02-20T00:45:08.723141-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "A-025",
+      "text": "Finalize analytics instrumentation spec (tab switches, lesson completions, session duration, attribution source) for A-020 \u2014 ready to deploy as post-approval patch",
+      "tag": "AGENT",
+      "priority": "high",
+      "assignee": "James Truchard",
+      "status": "pending",
+      "sourceStandup": "STD-10",
+      "sourceStandupType": "overnight-sprint",
+      "sourceDate": "2026-02-20",
+      "createdAt": "2026-02-20T01:15:05.505353-08:00",
+      "updatedAt": "2026-02-20T01:15:05.505353-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "A-026",
+      "text": "Draft missing podcast episode MDX file and commit to website repo to close A-012/A-019 sync gap",
+      "tag": "AGENT",
+      "priority": "high",
+      "assignee": "Alex",
+      "status": "pending",
+      "sourceStandup": "STD-10",
+      "sourceStandupType": "overnight-sprint",
+      "sourceDate": "2026-02-20",
+      "createdAt": "2026-02-20T01:15:05.505353-08:00",
+      "updatedAt": "2026-02-20T01:15:05.505353-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "A-027",
+      "text": "Fix podcast rendering on website so synced MDX displays correctly \u2014 close A-001 and A-018",
+      "tag": "AGENT",
+      "priority": "high",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "sourceStandup": "STD-10",
+      "sourceStandupType": "overnight-sprint",
+      "sourceDate": "2026-02-20",
+      "createdAt": "2026-02-20T01:15:05.505353-08:00",
+      "updatedAt": "2026-02-20T01:15:05.505353-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "A-028",
+      "text": "Commit last uncommitted hub file to close A-022",
+      "tag": "AGENT",
+      "priority": "low",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "sourceStandup": "STD-10",
+      "sourceStandupType": "overnight-sprint",
+      "sourceDate": "2026-02-20",
+      "createdAt": "2026-02-20T01:15:05.505353-08:00",
+      "updatedAt": "2026-02-20T01:15:05.505353-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "J-006",
+      "text": "Review and decide on launch strategy (soft vs. promoted) once Apple approves the build",
+      "tag": "JOSHUA",
+      "priority": "high",
+      "assignee": "Dave",
+      "status": "pending",
+      "sourceStandup": "STD-10",
+      "sourceStandupType": "overnight-sprint",
+      "sourceDate": "2026-02-20",
+      "createdAt": "2026-02-20T01:15:05.505353-08:00",
+      "updatedAt": "2026-02-20T01:15:05.505353-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "A-029",
+      "text": "Monitor App Store review status and alert team when status changes",
+      "tag": "AGENT",
+      "priority": "medium",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "sourceStandup": "STD-10",
+      "sourceStandupType": "overnight-sprint",
+      "sourceDate": "2026-02-20",
+      "createdAt": "2026-02-20T01:15:05.505353-08:00",
+      "updatedAt": "2026-02-20T01:15:05.505353-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "A-030",
+      "text": "Continue monitoring Fear & Greed index and cash position per standing directives (A-007, A-021)",
+      "tag": "AGENT",
+      "priority": "low",
+      "assignee": "Dave",
+      "status": "pending",
+      "sourceStandup": "STD-10",
+      "sourceStandupType": "overnight-sprint",
+      "sourceDate": "2026-02-20",
+      "createdAt": "2026-02-20T01:15:05.505353-08:00",
+      "updatedAt": "2026-02-20T01:15:05.505353-08:00",
       "completedAt": null
     }
   ]

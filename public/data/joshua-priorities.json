@@ -1,6 +1,6 @@
 {
   "date": "2026-02-20",
-  "generatedAt": "2026-02-20T00:45:55.152213-08:00",
+  "generatedAt": "2026-02-20T01:16:01.690066-08:00",
   "priorities": [
     {
       "text": "Evaluate deployment of idle cash ($75,340 available) \u2014 CEO decided keep liquid, flagged for ongoing review",
@@ -25,6 +25,12 @@
       "source": "overnight-sprint",
       "urgency": "medium",
       "taskKey": "J-005"
+    },
+    {
+      "text": "Review and decide on launch strategy (soft vs. promoted) once Apple approves the build",
+      "source": "overnight-sprint",
+      "urgency": "high",
+      "taskKey": "J-006"
     }
   ],
   "agentHandled": [
@@ -171,6 +177,42 @@
       "assignee": "Elon",
       "status": "pending",
       "taskKey": "A-024"
+    },
+    {
+      "text": "Finalize analytics instrumentation spec (tab switches, lesson completions, session duration, attribution source) for A-020 \u2014 ready to deploy as post-approval patch",
+      "assignee": "James Truchard",
+      "status": "pending",
+      "taskKey": "A-025"
+    },
+    {
+      "text": "Draft missing podcast episode MDX file and commit to website repo to close A-012/A-019 sync gap",
+      "assignee": "Alex",
+      "status": "pending",
+      "taskKey": "A-026"
+    },
+    {
+      "text": "Fix podcast rendering on website so synced MDX displays correctly \u2014 close A-001 and A-018",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "taskKey": "A-027"
+    },
+    {
+      "text": "Commit last uncommitted hub file to close A-022",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "taskKey": "A-028"
+    },
+    {
+      "text": "Monitor App Store review status and alert team when status changes",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "taskKey": "A-029"
+    },
+    {
+      "text": "Continue monitoring Fear & Greed index and cash position per standing directives (A-007, A-021)",
+      "assignee": "Dave",
+      "status": "pending",
+      "taskKey": "A-030"
     }
   ]
 }

@@ -153,9 +153,17 @@ export default function PerformanceChart({
   // Detect if snapshot has intraday timestamp (contains "T")
   const isIntraday = (s: PortfolioSnapshot) => s.date.includes("T");
 
-  // Merge daily + intraday snapshots for unified processing
+  // Merge daily + intraday snapshots for unified processing, deduplicating by timestamp
   const allSnapshots = useMemo(() => {
-    return [...snapshots, ...intradayAsPortfolio].sort(
+    const merged = [...snapshots, ...intradayAsPortfolio];
+    // Deduplicate: if both tables have the same timestamp, prefer the intraday table version
+    const seen = new Map<string, PortfolioSnapshot>();
+    for (const s of merged) {
+      const key = s.date;
+      // Intraday table entries (from intradayAsPortfolio) come second, so they overwrite
+      seen.set(key, s);
+    }
+    return Array.from(seen.values()).sort(
       (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
     );
   }, [snapshots, intradayAsPortfolio]);
@@ -166,17 +174,27 @@ export default function PerformanceChart({
 
     const cutoff = Date.now() - TIME_RANGE_MS[timeRange];
     
-    // For 1D view, show only TODAY's intraday snapshots, anchored to previous day's close
+    // For 1D view, show only TODAY's intraday snapshots
+    // Anchor to last intraday snapshot from yesterday (not daily summary, which may have stale equity)
     if (timeRange === "1D") {
       const todayStr = new Date().toISOString().slice(0, 10); // "YYYY-MM-DD"
       const todayOnly = allSnapshots
         .filter(isIntraday)
         .filter((s) => s.date.startsWith(todayStr));
       if (todayOnly.length >= 2) {
-        // Find last non-intraday (daily) snapshot as the previous close anchor
+        // Use last intraday snapshot from yesterday as anchor (more accurate than daily summary)
+        const yesterdayIntraday = allSnapshots
+          .filter(isIntraday)
+          .filter((s) => !s.date.startsWith(todayStr));
+        const lastYesterdayIntraday = yesterdayIntraday.length > 0
+          ? yesterdayIntraday[yesterdayIntraday.length - 1]
+          : null;
+        // Fall back to daily snapshot only if no yesterday intraday exists
+        if (lastYesterdayIntraday) {
+          return [lastYesterdayIntraday, ...todayOnly];
+        }
         const dailySnapshots = allSnapshots.filter((s) => !isIntraday(s));
         const lastDaily = dailySnapshots.length > 0 ? dailySnapshots[dailySnapshots.length - 1] : null;
-        // Prepend previous day's close so chart starts at 0% baseline
         return lastDaily ? [lastDaily, ...todayOnly] : todayOnly;
       }
       // If no today intraday data yet, fall back to last 24h of any intraday
@@ -185,9 +203,7 @@ export default function PerformanceChart({
         .filter(isIntraday)
         .filter((s) => new Date(s.date).getTime() >= oneDayAgo);
       if (recentIntraday.length >= 2) {
-        const dailySnapshots = allSnapshots.filter((s) => !isIntraday(s));
-        const lastDaily = dailySnapshots.length > 0 ? dailySnapshots[dailySnapshots.length - 1] : null;
-        return lastDaily ? [lastDaily, ...recentIntraday] : recentIntraday;
+        return recentIntraday; // Already intraday-only, no daily summary anchor needed
       }
     }
     
@@ -196,7 +212,23 @@ export default function PerformanceChart({
       return new Date(dateStr).getTime() >= cutoff;
     });
 
-    return filtered.length >= 2 ? filtered : allSnapshots;
+    // For ranges with intraday data, exclude daily summary rows for dates that have
+    // intraday coverage — daily summaries can have stale equity (synced at a different
+    // time than the intraday snapshots), causing false spikes/drops in the chart.
+    const intradayDates = new Set<string>();
+    for (const s of filtered) {
+      if (isIntraday(s)) {
+        intradayDates.add(s.date.slice(0, 10));
+      }
+    }
+    const deduped = filtered.filter((s) => {
+      if (!isIntraday(s) && intradayDates.has(s.date.slice(0, 10))) {
+        return false; // Skip daily summary if we have intraday for this date
+      }
+      return true;
+    });
+
+    return deduped.length >= 2 ? deduped : filtered.length >= 2 ? filtered : allSnapshots;
   }, [allSnapshots, timeRange]);
 
   // Whether we're showing all data because the range had insufficient data
@@ -214,7 +246,9 @@ export default function PerformanceChart({
     if (!filteredSnapshots || filteredSnapshots.length === 0) return [];
 
     const startEquity = filteredSnapshots[0].equity || startingCapital;
-    const startSpy = filteredSnapshots[0].spy_baseline || filteredSnapshots[0].spy_price || 1;
+    // Always use the first snapshot's spy_price as the consistent baseline for the range.
+    // Don't use spy_baseline — it resets on every intraday snapshot and causes incorrect returns.
+    const startSpy = filteredSnapshots[0].spy_price || 1;
 
     return filteredSnapshots.map((s) => {
       const portfolioReturn = ((s.equity - startEquity) / startEquity) * 100;

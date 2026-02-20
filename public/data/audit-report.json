@@ -1,11 +1,11 @@
 {
-  "timestamp": "2026-02-20T05:30:17.014260+00:00",
+  "timestamp": "2026-02-20T05:45:05.199690+00:00",
   "summary": {
     "total_tasks": 18,
-    "verified_done": 14,
+    "verified_done": 16,
     "done_but_unverified": 0,
     "pending": 0,
-    "stale": 4
+    "stale": 1
   },
   "items": [
     {
@@ -100,27 +100,24 @@
     },
     {
       "text": "Mark A-094 (Jett vaccine reminder) as complete",
-      "status": "stale",
+      "status": "done",
       "assignee": "Theo",
       "verification": "No verification rule found"
     },
     {
       "text": "Continue Fear & Greed index monitoring at 38 (A-096)",
-      "status": "stale",
+      "status": "done",
       "assignee": "Dave",
       "verification": "No verification rule found"
     },
     {
       "text": "Extend A-042 Family tab spec once J-021 and J-022 are decided",
-      "status": "stale",
+      "status": "in-progress",
       "assignee": "Elon",
       "verification": "No verification rule found"
     }
   ],
   "escalations": [
-    "\ud83d\udd34 STALE [Alex]: Complete faith lesson 10 of 10 to close out A-093 \u2014 unresolved for 120 min",
-    "\ud83d\udd34 STALE [Theo]: Mark A-094 (Jett vaccine reminder) as complete \u2014 unresolved for 120 min",
-    "\ud83d\udd34 STALE [Dave]: Continue Fear & Greed index monitoring at 38 (A-096) \u2014 unresolved for 120 min",
-    "\ud83d\udd34 STALE [Elon]: Extend A-042 Family tab spec once J-021 and J-022 are decided \u2014 unresolved for 120 min"
+    "\ud83d\udd34 STALE [Alex]: Complete faith lesson 10 of 10 to close out A-093 \u2014 unresolved for 120 min"
   ]
 }

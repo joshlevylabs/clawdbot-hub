@@ -1323,14 +1323,14 @@
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "Alex",
-      "status": "pending",
+      "status": "backlog",
       "sourceStandup": "EW-3",
       "sourceStandupType": "evening-wrap",
       "sourceDate": "2026-02-19",
       "createdAt": "2026-02-19T19:00:19.734974-08:00",
       "updatedAt": "2026-02-19T19:00:19.734974-08:00",
       "completedAt": null,
-      "note": "Content work \u2014 queue for morning agent sprint"
+      "note": "Queued for morning agent sprint \u2014 not actionable during evening hours"
     },
     {
       "key": "A-099",

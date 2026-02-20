@@ -499,12 +499,32 @@
       "estimatedCost": 0.3256,
       "model": "claude-opus-4-6",
       "duration": "69.7s"
+    },
+    {
+      "date": "2026-02-20",
+      "type": "overnight-sprint",
+      "inputTokens": 5091,
+      "outputTokens": 2395,
+      "totalTokens": 7486,
+      "estimatedCost": 0.256,
+      "model": "claude-opus-4-6",
+      "duration": "55.0s"
+    },
+    {
+      "date": "2026-02-20",
+      "type": "overnight-sprint",
+      "inputTokens": 6857,
+      "outputTokens": 3372,
+      "totalTokens": 10229,
+      "estimatedCost": 0.3558,
+      "model": "claude-opus-4-6",
+      "duration": "74.9s"
     }
   ],
   "totals": {
-    "today": 2.1587,
-    "week": 9.0162,
-    "month": 9.0162,
-    "standupCount": 50
+    "today": 2.7705,
+    "week": 9.628,
+    "month": 9.628,
+    "standupCount": 52
   }
 }

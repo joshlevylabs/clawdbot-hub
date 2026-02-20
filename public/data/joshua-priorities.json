@@ -1,6 +1,6 @@
 {
   "date": "2026-02-20",
-  "generatedAt": "2026-02-20T01:45:57.008502-08:00",
+  "generatedAt": "2026-02-20T02:01:23.583337-08:00",
   "priorities": [
     {
       "text": "Evaluate deployment of idle cash ($75,340 available) \u2014 CEO decided keep liquid, flagged for ongoing review",
@@ -27,16 +27,40 @@
       "taskKey": "J-005"
     },
     {
-      "text": "Review and decide on launch strategy (soft vs. promoted) once Apple approves the build",
-      "source": "overnight-sprint",
-      "urgency": "high",
-      "taskKey": "J-006"
-    },
-    {
       "text": "Decide newsletter send timing relative to Apple approval",
       "source": "overnight-sprint",
       "urgency": "high",
       "taskKey": "J-007"
+    },
+    {
+      "text": "Set week-one download target to calibrate launch promotion intensity",
+      "source": "overnight-sprint",
+      "urgency": "high",
+      "taskKey": "J-008"
+    },
+    {
+      "text": "Pick preferred newsletter subject line style from 3 variants Alex drafts",
+      "source": "overnight-sprint",
+      "urgency": "high",
+      "taskKey": "J-009"
+    },
+    {
+      "text": "Execute same-day launch push if Apple approves before 2pm, next morning otherwise (standing directive)",
+      "source": "overnight-sprint",
+      "urgency": "high",
+      "taskKey": "J-010"
+    },
+    {
+      "text": "Review and approve final newsletter copy once Alex delivers story-driven draft",
+      "source": "overnight-sprint",
+      "urgency": "medium",
+      "taskKey": "J-011"
+    },
+    {
+      "text": "Monitor download velocity against 150 target and decide on promotion escalation if below 100 by day 3",
+      "source": "overnight-sprint",
+      "urgency": "medium",
+      "taskKey": "J-012"
     }
   ],
   "agentHandled": [
@@ -261,6 +285,84 @@
       "assignee": "Elon Musk",
       "status": "pending",
       "taskKey": "A-037"
+    },
+    {
+      "text": "Commit 1 uncommitted hub file (fleet usage update) to close A-028",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "taskKey": "A-038"
+    },
+    {
+      "text": "Merge podcast rendering fix and verify display to advance A-031 and close A-027",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "taskKey": "A-039"
+    },
+    {
+      "text": "Document TODO/FIXME triage \u2014 flag 2 user-facing items for post-approval patch, close A-032",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "taskKey": "A-040"
+    },
+    {
+      "text": "Finalize launch newsletter with 3 subject line variants and direct App Store CTA \u2014 advance A-033",
+      "assignee": "Alex",
+      "status": "pending",
+      "taskKey": "A-041"
+    },
+    {
+      "text": "Complete analytics implementation guide with Swift snippets for all 6 event types \u2014 close A-034",
+      "assignee": "James Truchard",
+      "status": "pending",
+      "taskKey": "A-042"
+    },
+    {
+      "text": "Finalize launch metrics dashboard spec with download targets and conversion funnel \u2014 close A-035",
+      "assignee": "Dave",
+      "status": "pending",
+      "taskKey": "A-043"
+    },
+    {
+      "text": "Quality review all 7 faith lessons for tone, accuracy, and clear takeaways \u2014 close A-036",
+      "assignee": "faith",
+      "status": "pending",
+      "taskKey": "A-044"
+    },
+    {
+      "text": "Review 2 user-facing TODO items (empty states) flagged by Elon and decide patch priority",
+      "assignee": "Steve Jobs",
+      "status": "pending",
+      "taskKey": "A-045"
+    },
+    {
+      "text": "Commit hub file (A-028), merge podcast rendering fix (A-031), document TODO triage with user-facing flags (A-032)",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "taskKey": "A-046"
+    },
+    {
+      "text": "Finalize launch newsletter with story-driven subject line ('I built an app. Here's why.' style), hero CTA, and App Store link (A-033)",
+      "assignee": "Alex",
+      "status": "pending",
+      "taskKey": "A-047"
+    },
+    {
+      "text": "Draft 2 missing podcast MDX files to close podcast sync gap (A-026)",
+      "assignee": "Alex",
+      "status": "pending",
+      "taskKey": "A-048"
+    },
+    {
+      "text": "Finalize launch metrics dashboard spec benchmarked to 150 week-one downloads, with escalation trigger at <100 by day 3 (A-035)",
+      "assignee": "Dave",
+      "status": "pending",
+      "taskKey": "A-049"
+    },
+    {
+      "text": "Review 2 user-facing TODO empty states (Family/Compass tabs) flagged by Elon and decide patch-critical status",
+      "assignee": "Steve Jobs",
+      "status": "pending",
+      "taskKey": "A-050"
     }
   ]
 }

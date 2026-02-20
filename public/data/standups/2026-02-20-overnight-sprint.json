@@ -1,9 +1,9 @@
 {
   "date": "2026-02-20",
   "time": "23:30",
-  "generatedAt": "2026-02-20T01:45:57.008502-08:00",
+  "generatedAt": "2026-02-20T02:01:23.583337-08:00",
   "topic": "Overnight Sprint \u2014 Friday Feb 20",
-  "summary": "Apple review window sprint: closing sync gaps, finalizing analytics spec, and prepping launch assets.",
+  "summary": "CEO set 150 week-one downloads target and story-driven newsletter; 15-min sprint shipping now.",
   "status": "completed",
   "participants": [
     {
@@ -55,7 +55,7 @@
       "description": ""
     }
   ],
-  "duration": "69.7s",
+  "duration": "74.9s",
   "reports": {
     "cto": {
       "agent": "Elon Musk",
@@ -69,8 +69,8 @@
         "James Bach"
       ],
       "highlights": [
-        "729 commits this week",
-        "Hub latest: 039136a data: fleet usage update",
+        "731 commits this week",
+        "Hub latest: 1bedc87 data: fleet usage update",
         "Build status: healthy"
       ],
       "concerns": [
@@ -79,7 +79,7 @@
         "7 TODOs/FIXMEs"
       ],
       "metrics": {
-        "recentCommits": 729,
+        "recentCommits": 731,
         "openIssues": 8,
         "buildHealthy": true,
         "todosFixmes": 7,
@@ -148,160 +148,165 @@
     {
       "speaker": "Theo",
       "role": "COO",
-      "message": "Alright team, overnight sprint, let's move fast. Key data: build is submitted and in Apple review. 729 commits in the last 7 days \u2014 velocity is strong. We still have 3 critical sync gaps, 1 uncommitted hub file, and the app is sitting in Apple's queue. CEO already decided: medium push launch via newsletter and one podcast mention once approved. Analytics instrumentation is priority over content expansion. Tonight's question is simple \u2014 what ships in the next 15 minutes while we wait for Apple?"
+      "message": "Alright team, Friday overnight sprint. Let me set the table quickly. Build is healthy, 731 commits this week \u2014 that's exceptional velocity. The big picture: App Store submission is live and in Apple's queue. We're now in the review window. CEO has already decided \u2014 same-day launch push if approved before 2pm, next morning otherwise. The newsletter copy draft is in flight via A-033. We've got 1 uncommitted hub file, 3 critical sync gaps still open, and 7 TODOs in the codebase. Tonight's question is simple: what do we ship in the next 15 minutes while we wait for Apple? Let's go around. Elon, status on the build and sync gaps."
     },
     {
       "speaker": "Elon Musk",
       "role": "CTO",
-      "message": "The 1 uncommitted hub file is trivial \u2014 I'll commit that right now to close A-028. On the critical sync gaps, podcast MDX is the biggest win. We have 3 episodes in the Hub but only 1 on the website. I can draft the rendering fix for A-027 in 15 minutes \u2014 that unblocks Alex's content sync. The 7 TODOs and FIXMEs in the codebase are minor but I want to audit them while we're in the review window so we don't ship tech debt into the first patch."
+      "message": "Build is packaged and submitted \u2014 we're in Apple's hands now. The 1 uncommitted hub file from A-028 is a fleet usage data update, trivial \u2014 I'll commit that in under a minute. On sync gaps: the podcast MDX issue is the biggest one. We have 3 episodes in Hub but only 1 MDX on the website. A-031 has the rendering fix drafted but not merged. I can merge that fix and draft the 2 missing MDX files in 15 minutes. That closes A-027, A-031, and makes progress on A-026. The blog post gap is less urgent \u2014 we already have the \"AI as Your Co-Founder\" post committed as of today."
+    },
+    {
+      "speaker": "Steve Jobs",
+      "role": "CPO",
+      "message": "The app is out of our hands for the moment, which means this is the window to polish everything the user touches on day one. The 7 TODOs and FIXMEs in the codebase \u2014 A-032 \u2014 have we actually triaged those? If any of them are user-facing, they need to go into the post-approval patch alongside analytics. I also want eyes on the faith lesson quality review, A-036. Seven lessons need to feel like seven *great* lessons, not seven drafts."
+    },
+    {
+      "speaker": "James Truchard",
+      "role": "CTIO",
+      "message": "The analytics event schema in A-034 is nearly finalized. I need 15 minutes to write the implementation guide \u2014 concrete Swift snippets for tab switches, lesson opened, lesson completed with time-on-lesson, session duration, and attribution source. That gives Elon everything he needs to instrument the moment Apple approves. This is the critical path to the data we need before expanding content or enabling paid tiers."
     },
     {
       "speaker": "Alex",
       "role": "CMO",
-      "message": "I've got the missing podcast MDX files half-drafted for A-026. Once Elon's rendering fix lands, I can push 2 episodes to the website and close that sync gap entirely. That matters because when we do the medium push launch, people will hit joshlevylabs.com and the podcast page needs to look complete \u2014 not half-empty. I can also draft the newsletter announcement copy for the app launch so it's ready the moment Apple approves. We want that in the chamber."
-    },
-    {
-      "speaker": "Steve Jobs",
-      "role": "CPO",
-      "message": "The launch newsletter and podcast mention need to be precise. One clear message: \"Lever is live \u2014 finance, faith, family, compass \u2014 all in one place, free.\" Don't over-explain. The website sync matters more than people think \u2014 if someone hears the podcast, visits the site, and sees missing episodes, that's a broken experience before they even download the app. Fix the website first, then announce."
-    },
-    {
-      "speaker": "James Truchard",
-      "role": "CTIO",
-      "message": "I've been refining the analytics instrumentation spec for A-025. Tab switches, lesson completions, session duration, and attribution source \u2014 all scoped. The CEO was clear: analytics before content expansion. I can finalize the implementation-ready spec tonight so the moment Apple approves and we push the first patch, we're capturing data from day one of real users. I need 15 minutes to lock down the event schema and write the integration guide for Elon's team."
+      "message": "Launch newsletter draft for A-033 is 80% done. I need to finalize the CTA and subject line variants \u2014 I'm writing three subject lines so Joshua can pick. I can also knock out the 2 missing podcast MDX files if Elon handles the rendering fix. That way we parallelize and close the entire podcast sync gap tonight. On content: we published the blog post yesterday, so the website looks alive. Good timing for anyone who clicks through from the newsletter."
     },
     {
       "speaker": "Dave",
       "role": "CRO",
-      "message": "Revenue context: zero active streams, Fear & Greed at 39, cash at $75,340 staying liquid per directive. The moment this app goes live, our first revenue milestone is download velocity \u2014 that's the leading indicator for when we toggle on a paid tier. I'll draft the launch metrics dashboard spec so we know exactly what numbers to watch: downloads, DAU, session depth, and conversion funnel once paid goes live. Also monitoring App Store review status per A-029."
+      "message": "Revenue reality check \u2014 we're at zero active revenue streams. The app launching is the unlock for everything. I've got the launch metrics dashboard spec in A-035 about half-drafted. Tonight I'll finalize it: downloads, DAU, session depth, lesson completion rate, and a conversion funnel placeholder for when we toggle on paid. Fear & Greed is at 39, still in fear territory. Cash stays liquid per CEO directive \u2014 nothing to action there. The real question for me is whether Joshua has thought about what \"good\" looks like for week-one downloads."
     },
     {
       "speaker": "Chris Vermeullen",
       "role": "CFTO",
-      "message": "Paper equity at $99,849 across 4 positions, zero buy signals, SPY sideways in a fear regime. No action needed on the trading side \u2014 the system is doing its job holding. Cash position is right where it should be given market conditions. I'll keep the monitoring cadence on A-030 and flag if Fear & Greed drops below 25, which would be a potential deployment trigger worth escalating."
+      "message": "Quick market context \u2014 SPY is sideways, all 4 positions are in hold mode, no buy signals. Paper equity at $99.8K. The $75.3K cash position is correct to keep liquid in this fear environment. Nothing actionable on the trading side tonight. I'd echo Dave \u2014 once the app is live, we need download targets to calibrate whether the medium-push launch strategy is working or if we need to escalate promotion."
     },
     {
       "speaker": "faith",
       "role": "FAITH",
-      "message": "Jett's vaccine appointment is today, February 20 \u2014 that's confirmed and tracked on J-004. On the faith content side, we're at 7 lessons across 8 dimensions. The CEO said analytics first, content expansion second, so I'll hold on drafting new lessons until we have data. But I can do a quality review of the existing 7 lessons tonight to make sure they're polished for new users hitting them at launch."
+      "message": "Jett's vaccine appointment is today \u2014 that's tracked in J-004 and confirmed. On the faith lesson review, A-036, I can do a quality pass on all 7 lessons in 15 minutes. I'll check theological accuracy, tone consistency, and make sure each lesson has a clear takeaway. If any need polish, I'll flag specific edits rather than vague notes."
     },
     {
       "speaker": "Theo",
       "role": "COO",
-      "message": "Good. Quick cross-talk \u2014 Steve, any concerns about the current 7 lessons being enough for launch?"
-    },
-    {
-      "speaker": "Steve Jobs",
-      "role": "CPO",
-      "message": "Seven lessons is fine for launch. Users don't need volume \u2014 they need one experience that makes them come back. If one lesson resonates, they'll return. If twenty lessons are mediocre, they won't. Faith's quality review is exactly the right move."
+      "message": "Good. Let's do cross-talk. Steve, you raised the TODO triage \u2014 Elon, can that happen tonight?"
     },
     {
       "speaker": "Elon Musk",
       "role": "CTO",
-      "message": "Agreed. James, can you include a specific event for \"faith lesson opened\" versus \"faith lesson completed\" in your schema? That delta tells us everything about content quality."
+      "message": "I triaged them already in my head. Four are code comments that are reminders, not bugs. Two are minor UI edge cases \u2014 empty states in Family and Compass tabs. One is a placeholder API call. The two UI ones should go in the post-approval patch with analytics. I'll document the triage in 5 minutes as part of closing A-032."
     },
     {
-      "speaker": "James Truchard",
-      "role": "CTIO",
-      "message": "Already in there \u2014 opened, time-on-lesson, and completed as three distinct events. We'll know exactly where users drop off."
+      "speaker": "Steve Jobs",
+      "role": "CPO",
+      "message": "Good. If either of those empty states is what a user sees on first launch, flag it to me. First impression matters more than any analytics event."
+    },
+    {
+      "speaker": "Dave",
+      "role": "CRO",
+      "message": "Alex, on the newsletter \u2014 make sure we include a direct App Store link and a one-line value prop. Don't bury the download CTA below the fold."
+    },
+    {
+      "speaker": "Alex",
+      "role": "CMO",
+      "message": "Already structured that way. Hero image, one sentence, big button. Three subject line variants for Joshua to pick."
     },
     {
       "speaker": "Theo",
       "role": "COO",
-      "message": "Perfect. Here's the closing summary. We're in the Apple review window \u2014 every minute is free time to polish. Five priorities for the next 15 minutes: One, Elon commits the last hub file and starts the podcast rendering fix. Two, Alex drafts the 2 missing podcast MDX files and the launch newsletter copy. Three, James finalizes the analytics event schema to implementation-ready. Four, Dave drafts the launch metrics dashboard spec. Five, Faith does a quality pass on the 7 existing lessons. One CEO decision needed: we need Joshua to confirm whether the launch newsletter should go same-day as Apple approval or be scheduled for the following morning to maximize open rates. Everything else is in motion. Let's ship."
+      "message": "Alright, here's the plan for the next 15 minutes. Elon: commit the hub file, merge the podcast rendering fix, and document the TODO triage \u2014 that closes A-028, advances A-031, and closes A-032. Alex: finalize the launch newsletter with subject line options and draft the 2 missing podcast MDX files \u2014 advances A-033 and closes A-026. James: finish the analytics implementation guide with Swift snippets \u2014 closes A-034. Dave: finalize the launch metrics dashboard spec with week-one target framework \u2014 closes A-035. Faith: quality review all 7 faith lessons with specific edit flags \u2014 closes A-036. Steve: review the two user-facing TODOs Elon flags and decide if they're patch-critical. One CEO question: Joshua needs to set a week-one download target so we can calibrate launch intensity. Let's ship."
     },
     {
       "speaker": "Theo",
       "role": "COO",
-      "message": "**Theo (COO) \u2014 Closing Remarks:**\n\nCEO decision is locked in: launch newsletter goes same-day if Apple approves before 2pm, next morning if after. That's smart \u2014 we get urgency without sacrificing open rates. Alex, that means your newsletter copy needs to be fully loaded and ready to fire in either window \u2014 build it so we can pull the trigger the moment we get the green light, no last-minute edits.\n\nAlright, everything is confirmed and in motion. Five tasks, 15 minutes, zero ambiguity. Elon's cl"
+      "message": "Joshua locked both decisions \u2014 150 downloads week one as our calibration target, story-driven subject line for the launch newsletter. No paid escalation unless we're below 100 by day three. Dave, build the dashboard around 150. Alex, the newsletter is our primary launch lever \u2014 finalize with the story-driven angle and make it sharp. Everyone else, your 15-minute assignments stand. Ship and reconvene when Apple responds. Meeting closed."
     }
   ],
   "actionItems": [
     {
-      "text": "Commit last uncommitted hub file to close A-022/A-028",
-      "priority": "low",
-      "assignee": "Elon Musk",
-      "completed": false,
-      "tag": "AGENT",
-      "taskKey": "A-028"
-    },
-    {
-      "text": "Draft podcast rendering fix for website to close A-027",
+      "text": "Commit hub file (A-028), merge podcast rendering fix (A-031), document TODO triage with user-facing flags (A-032)",
       "priority": "high",
       "assignee": "Elon Musk",
       "completed": false,
       "tag": "AGENT",
-      "taskKey": "A-031"
+      "taskKey": "A-046"
     },
     {
-      "text": "Audit 7 TODOs/FIXMEs in codebase and triage for post-approval patch",
-      "priority": "medium",
-      "assignee": "Elon Musk",
-      "completed": false,
-      "tag": "AGENT",
-      "taskKey": "A-032"
-    },
-    {
-      "text": "Draft 2 missing podcast MDX files and commit to website repo to close A-026",
+      "text": "Finalize launch newsletter with story-driven subject line ('I built an app. Here's why.' style), hero CTA, and App Store link (A-033)",
       "priority": "high",
       "assignee": "Alex",
       "completed": false,
       "tag": "AGENT",
-      "taskKey": "A-026"
+      "taskKey": "A-047"
     },
     {
-      "text": "Draft launch newsletter copy for medium-push announcement (ready to send on Apple approval)",
+      "text": "Draft 2 missing podcast MDX files to close podcast sync gap (A-026)",
       "priority": "high",
       "assignee": "Alex",
       "completed": false,
       "tag": "AGENT",
-      "taskKey": "A-033"
+      "taskKey": "A-048"
     },
     {
-      "text": "Finalize analytics event schema with implementation guide \u2014 tab switches, lesson opened/completed/time-on-lesson, session duration, attribution (extend A-025)",
+      "text": "Complete analytics implementation guide with Swift snippets for all key events (A-034)",
       "priority": "high",
       "assignee": "James Truchard",
       "completed": false,
       "tag": "AGENT",
-      "taskKey": "A-034"
+      "taskKey": "A-042"
     },
     {
-      "text": "Draft launch metrics dashboard spec: downloads, DAU, session depth, conversion funnel",
-      "priority": "medium",
-      "assignee": "Dave",
-      "completed": false,
-      "tag": "AGENT",
-      "taskKey": "A-035"
-    },
-    {
-      "text": "Quality review existing 7 faith lessons for polish and launch readiness",
-      "priority": "medium",
-      "assignee": "faith",
-      "completed": false,
-      "tag": "AGENT",
-      "taskKey": "A-036"
-    },
-    {
-      "text": "Continue monitoring App Store review status and alert team on status change (A-029)",
-      "priority": "medium",
-      "assignee": "Elon Musk",
-      "completed": false,
-      "tag": "AGENT",
-      "taskKey": "A-037"
-    },
-    {
-      "text": "Decide newsletter send timing relative to Apple approval",
+      "text": "Finalize launch metrics dashboard spec benchmarked to 150 week-one downloads, with escalation trigger at <100 by day 3 (A-035)",
       "priority": "high",
       "assignee": "Dave",
       "completed": false,
+      "tag": "AGENT",
+      "taskKey": "A-049"
+    },
+    {
+      "text": "Quality review all 7 faith lessons \u2014 flag specific edits for theological accuracy, tone, and clear takeaways (A-036)",
+      "priority": "high",
+      "assignee": "faith",
+      "completed": false,
+      "tag": "AGENT",
+      "taskKey": "A-044"
+    },
+    {
+      "text": "Review 2 user-facing TODO empty states (Family/Compass tabs) flagged by Elon and decide patch-critical status",
+      "priority": "high",
+      "assignee": "Steve Jobs",
+      "completed": false,
+      "tag": "AGENT",
+      "taskKey": "A-050"
+    },
+    {
+      "text": "Execute same-day launch push if Apple approves before 2pm, next morning otherwise (standing directive)",
+      "priority": "high",
+      "assignee": "Joshua",
+      "completed": false,
       "tag": "JOSHUA",
-      "taskKey": "J-007"
+      "taskKey": "J-010"
+    },
+    {
+      "text": "Review and approve final newsletter copy once Alex delivers story-driven draft",
+      "priority": "medium",
+      "assignee": "Joshua",
+      "completed": false,
+      "tag": "JOSHUA",
+      "taskKey": "J-011"
+    },
+    {
+      "text": "Monitor download velocity against 150 target and decide on promotion escalation if below 100 by day 3",
+      "priority": "medium",
+      "assignee": "Joshua",
+      "completed": false,
+      "tag": "JOSHUA",
+      "taskKey": "J-012"
     }
   ],
   "topPriorities": [
-    "Close podcast website sync gap \u2014 render fix (A-027) plus 2 missing MDX files (A-026)",
-    "Finalize analytics instrumentation spec to implementation-ready (A-025)",
-    "Prep launch assets: newsletter copy and metrics dashboard spec for medium-push launch"
+    "Close all sync gaps and TODO triage in tonight's 15-min sprint (A-026, A-028, A-031, A-032)",
+    "Finalize launch newsletter with story-driven subject line as primary download driver (A-033)",
+    "Complete analytics implementation guide and launch dashboard spec benchmarked to 150 downloads (A-034, A-035)"
   ],
   "ceoDirectives": [
     {
@@ -393,6 +398,12 @@
       "decided": "2026-02-20T01:16:29.368080-08:00",
       "source": "overnight-sprint 2026-02-20",
       "priority": "high"
+    },
+    {
+      "directive": "When Apple approves the app, should the launch newsletter go out same-day or be scheduled for the following morning? \u2192 Same-day if approved before 2pm, otherwise next morning",
+      "decided": "2026-02-20T01:46:24.561680-08:00",
+      "source": "overnight-sprint 2026-02-20",
+      "priority": "high"
     }
   ],
   "type": "overnight-sprint",
@@ -401,16 +412,16 @@
   "conversationMode": "ai",
   "model": "claude-opus-4-6",
   "tokenUsage": {
-    "input_tokens": 6285,
-    "output_tokens": 3084,
-    "total_tokens": 9369,
-    "duration": 69.7,
+    "input_tokens": 6857,
+    "output_tokens": 3372,
+    "total_tokens": 10229,
+    "duration": 74.9,
     "model": "claude-opus-4-6",
-    "estimated_cost": 0.3256,
+    "estimated_cost": 0.3558,
     "interactive": true,
     "phases": 2
   },
-  "instanceKey": "STD-13",
+  "instanceKey": "STD-15",
   "verticals": [],
   "initiatives": [],
   "verticalDetails": [],
@@ -468,15 +479,26 @@
   "interactive": true,
   "ceoDecisions": [
     {
-      "question": "When Apple approves the app, should the launch newsletter go out same-day or be scheduled for the following morning?",
-      "answer": "2",
-      "answerText": "Same-day if approved before 2pm, otherwise next morning",
+      "question": "What is your week-one download target for the Lever app to calibrate launch promotion intensity?",
+      "answer": "1",
+      "answerText": "150 downloads (modest organic + newsletter push)",
       "options": [
-        "Same-day as Apple approval",
-        "Following morning at optimal send time (8-9am)",
-        "Same-day if approved before 2pm, otherwise next morning"
+        "50 downloads (friends & family baseline)",
+        "150 downloads (modest organic + newsletter push)",
+        "500 downloads (aggressive \u2014 add social, podcast series, paid promotion)"
       ],
-      "recommended": 2
+      "recommended": 1
+    },
+    {
+      "question": "Which newsletter subject line style do you prefer for the launch announcement?",
+      "answer": "1",
+      "answerText": "Story-driven (e.g. 'I built an app. Here's why.')",
+      "options": [
+        "Direct/product-focused (e.g. 'Lever is live \u2014 download now')",
+        "Story-driven (e.g. 'I built an app. Here's why.')",
+        "Curiosity/teaser (e.g. 'The thing I've been working on is finally here')"
+      ],
+      "recommended": 1
     }
   ]
 }

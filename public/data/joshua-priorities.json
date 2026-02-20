@@ -1,6 +1,6 @@
 {
   "date": "2026-02-20",
-  "generatedAt": "2026-02-20T01:16:01.690066-08:00",
+  "generatedAt": "2026-02-20T01:45:57.008502-08:00",
   "priorities": [
     {
       "text": "Evaluate deployment of idle cash ($75,340 available) \u2014 CEO decided keep liquid, flagged for ongoing review",
@@ -31,6 +31,12 @@
       "source": "overnight-sprint",
       "urgency": "high",
       "taskKey": "J-006"
+    },
+    {
+      "text": "Decide newsletter send timing relative to Apple approval",
+      "source": "overnight-sprint",
+      "urgency": "high",
+      "taskKey": "J-007"
     }
   ],
   "agentHandled": [
@@ -213,6 +219,48 @@
       "assignee": "Dave",
       "status": "pending",
       "taskKey": "A-030"
+    },
+    {
+      "text": "Draft podcast rendering fix for website to close A-027",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "taskKey": "A-031"
+    },
+    {
+      "text": "Audit 7 TODOs/FIXMEs in codebase and triage for post-approval patch",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "taskKey": "A-032"
+    },
+    {
+      "text": "Draft launch newsletter copy for medium-push announcement (ready to send on Apple approval)",
+      "assignee": "Alex",
+      "status": "pending",
+      "taskKey": "A-033"
+    },
+    {
+      "text": "Finalize analytics event schema with implementation guide \u2014 tab switches, lesson opened/completed/time-on-lesson, session duration, attribution (extend A-025)",
+      "assignee": "James Truchard",
+      "status": "pending",
+      "taskKey": "A-034"
+    },
+    {
+      "text": "Draft launch metrics dashboard spec: downloads, DAU, session depth, conversion funnel",
+      "assignee": "Dave",
+      "status": "pending",
+      "taskKey": "A-035"
+    },
+    {
+      "text": "Quality review existing 7 faith lessons for polish and launch readiness",
+      "assignee": "faith",
+      "status": "pending",
+      "taskKey": "A-036"
+    },
+    {
+      "text": "Continue monitoring App Store review status and alert team on status change (A-029)",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "taskKey": "A-037"
     }
   ]
 }

@@ -1,9 +1,9 @@
 {
   "date": "2026-02-20",
   "time": "23:30",
-  "generatedAt": "2026-02-20T01:16:01.690066-08:00",
+  "generatedAt": "2026-02-20T01:45:57.008502-08:00",
   "topic": "Overnight Sprint \u2014 Friday Feb 20",
-  "summary": "App Store build submitted and in Apple review \u2014 sprint focus shifts to analytics instrumentation and closing sync gaps.",
+  "summary": "Apple review window sprint: closing sync gaps, finalizing analytics spec, and prepping launch assets.",
   "status": "completed",
   "participants": [
     {
@@ -55,7 +55,7 @@
       "description": ""
     }
   ],
-  "duration": "77.3s",
+  "duration": "69.7s",
   "reports": {
     "cto": {
       "agent": "Elon Musk",
@@ -69,8 +69,8 @@
         "James Bach"
       ],
       "highlights": [
-        "727 commits this week",
-        "Hub latest: e7cfb5e data: fleet usage update",
+        "729 commits this week",
+        "Hub latest: 039136a data: fleet usage update",
         "Build status: healthy"
       ],
       "concerns": [
@@ -79,7 +79,7 @@
         "7 TODOs/FIXMEs"
       ],
       "metrics": {
-        "recentCommits": 727,
+        "recentCommits": 729,
         "openIssues": 8,
         "buildHealthy": true,
         "todosFixmes": 7,
@@ -148,86 +148,77 @@
     {
       "speaker": "Theo",
       "role": "COO",
-      "message": "Alright team, it's late Friday night. Let's make this count. Key data: the App Store build was packaged and approved last standup. CEO greenlighted submission. The question is \u2014 did it go out? Elon, status on the actual submission. We also have 7 uncommitted hub changes per A-022, 3 critical sync gaps still open, and analytics instrumentation queued as the next priority per CEO directive. Let's go around fast. Elon (CTO): Submission went out. The build is in Apple's review queue as of about two hours ago. A-017 is effectively done \u2014 waiting on Apple's side now. Privacy policy and terms are live, listing assets are deployed. On the uncommitted changes, A-022 shows 1 file still uncommitted in hub \u2014 the other 6 got cleaned up in the last push. I can close that in under five minutes tonight. The 3 critical sync gaps from A-023 \u2014 podcast MDX mismatch and blog rendering \u2014 those are still open. I want to knock out the podcast MDX sync tonight since it's the most visible gap."
+      "message": "Alright team, overnight sprint, let's move fast. Key data: build is submitted and in Apple review. 729 commits in the last 7 days \u2014 velocity is strong. We still have 3 critical sync gaps, 1 uncommitted hub file, and the app is sitting in Apple's queue. CEO already decided: medium push launch via newsletter and one podcast mention once approved. Analytics instrumentation is priority over content expansion. Tonight's question is simple \u2014 what ships in the next 15 minutes while we wait for Apple?"
     },
     {
-      "speaker": "Steve Jobs",
-      "role": "CPO",
-      "message": "The app is in review. That's the milestone. Now we need to think about what the user sees in the first 48 hours after it goes live. Right now we have 7 faith lessons across 8 dimensions \u2014 that's thin. But the CEO said analytics first, content second, and I agree. We need to know which tabs people actually open before we write 13 more lessons nobody reads. James, how fast can you get basic instrumentation specced?"
-    },
-    {
-      "speaker": "James Truchard",
-      "role": "CTIO",
-      "message": "I've already started scoping A-020. Tab switches, lesson completions, and session duration \u2014 three events, clean schema. I can have the instrumentation spec finalized tonight and the actual event hooks coded as a patch ready to ship the moment Apple approves. We're talking lightweight \u2014 no third-party SDK, just Supabase inserts. Fifteen minutes for the spec, another sprint for implementation."
+      "speaker": "Elon Musk",
+      "role": "CTO",
+      "message": "The 1 uncommitted hub file is trivial \u2014 I'll commit that right now to close A-028. On the critical sync gaps, podcast MDX is the biggest win. We have 3 episodes in the Hub but only 1 on the website. I can draft the rendering fix for A-027 in 15 minutes \u2014 that unblocks Alex's content sync. The 7 TODOs and FIXMEs in the codebase are minor but I want to audit them while we're in the review window so we don't ship tech debt into the first patch."
     },
     {
       "speaker": "Alex",
       "role": "CMO",
-      "message": "Content side \u2014 A-012 and A-019 are the same work: syncing that missing podcast episode to the website. I can get the MDX file drafted and committed tonight. That closes one of our three critical sync gaps. On faith lessons, I'm holding per CEO directive until analytics data comes in, but I have outlines ready for all 8 dimensions so we can move fast when the signal says go. Also \u2014 Jett's vaccine is today, J-004. Faith, is that handled?"
-    },
-    {
-      "speaker": "faith",
-      "role": "FAITH",
-      "message": "Jett's vaccine appointment is confirmed for today, February 20th. That's tracked and the family is aware. On the faith content front, the 7 lessons we have are solid foundations. When the time comes to expand, I'd suggest we prioritize the dimensions that show the highest engagement in James's analytics \u2014 let the data guide which dimensions get depth first."
-    },
-    {
-      "speaker": "Dave",
-      "role": "CRO",
-      "message": "Revenue reality check: we still have zero active revenue streams. The app is in review, which is great, but even when it goes live it's free-only. CEO deferred the paid tier decision until we see download data \u2014 smart. What I want to focus on tonight is making sure we have attribution tracking ready. When downloads start, I need to know where they're coming from. James, can your instrumentation spec include a source parameter on first launch? Also, A-007 \u2014 Fear and Greed is at 39, still fear territory. Cash stays liquid per directive. No action needed."
-    },
-    {
-      "speaker": "Chris Vermeullen",
-      "role": "CFTO",
-      "message": "Market context is straightforward. SPY is sideways, paper equity at $99,849, four positions holding. Zero buy signals today. The 39 on Fear and Greed tells me we stay patient. The $75,340 in cash isn't going anywhere per Joshua's directive, and I wouldn't change that recommendation in this regime. Focus stays on the product launch \u2014 that's where the real equity is being built."
-    },
-    {
-      "speaker": "James Truchard",
-      "role": "CTIO",
-      "message": "Dave, yes \u2014 adding a source parameter on first launch is trivial. I'll include it in the analytics spec tonight. One Supabase insert on app open with an attribution field. Done. Elon (CTO): Alex, if you draft the podcast MDX, I'll handle the build-side rendering fix so the website actually displays it correctly. We can close A-001 and A-012 in parallel tonight. Two critical sync gaps down in one sprint."
+      "message": "I've got the missing podcast MDX files half-drafted for A-026. Once Elon's rendering fix lands, I can push 2 episodes to the website and close that sync gap entirely. That matters because when we do the medium push launch, people will hit joshlevylabs.com and the podcast page needs to look complete \u2014 not half-empty. I can also draft the newsletter announcement copy for the app launch so it's ready the moment Apple approves. We want that in the chamber."
     },
     {
       "speaker": "Steve Jobs",
       "role": "CPO",
-      "message": "One thing I want flagged \u2014 we have Compass living in both the website and the app with separate UIs. That's a yellow item but it's going to become a red item fast once real users are in both places. We should decide on a unified Compass direction soon, but not tonight. Tonight we ship."
+      "message": "The launch newsletter and podcast mention need to be precise. One clear message: \"Lever is live \u2014 finance, faith, family, compass \u2014 all in one place, free.\" Don't over-explain. The website sync matters more than people think \u2014 if someone hears the podcast, visits the site, and sees missing episodes, that's a broken experience before they even download the app. Fix the website first, then announce."
+    },
+    {
+      "speaker": "James Truchard",
+      "role": "CTIO",
+      "message": "I've been refining the analytics instrumentation spec for A-025. Tab switches, lesson completions, session duration, and attribution source \u2014 all scoped. The CEO was clear: analytics before content expansion. I can finalize the implementation-ready spec tonight so the moment Apple approves and we push the first patch, we're capturing data from day one of real users. I need 15 minutes to lock down the event schema and write the integration guide for Elon's team."
+    },
+    {
+      "speaker": "Dave",
+      "role": "CRO",
+      "message": "Revenue context: zero active streams, Fear & Greed at 39, cash at $75,340 staying liquid per directive. The moment this app goes live, our first revenue milestone is download velocity \u2014 that's the leading indicator for when we toggle on a paid tier. I'll draft the launch metrics dashboard spec so we know exactly what numbers to watch: downloads, DAU, session depth, and conversion funnel once paid goes live. Also monitoring App Store review status per A-029."
+    },
+    {
+      "speaker": "Chris Vermeullen",
+      "role": "CFTO",
+      "message": "Paper equity at $99,849 across 4 positions, zero buy signals, SPY sideways in a fear regime. No action needed on the trading side \u2014 the system is doing its job holding. Cash position is right where it should be given market conditions. I'll keep the monitoring cadence on A-030 and flag if Fear & Greed drops below 25, which would be a potential deployment trigger worth escalating."
+    },
+    {
+      "speaker": "faith",
+      "role": "FAITH",
+      "message": "Jett's vaccine appointment is today, February 20 \u2014 that's confirmed and tracked on J-004. On the faith content side, we're at 7 lessons across 8 dimensions. The CEO said analytics first, content expansion second, so I'll hold on drafting new lessons until we have data. But I can do a quality review of the existing 7 lessons tonight to make sure they're polished for new users hitting them at launch."
     },
     {
       "speaker": "Theo",
       "role": "COO",
-      "message": "Perfect. Here's where we land. App is in Apple's review queue \u2014 that's the big win. Tonight's sprint has four concrete deliverables: Elon commits the last uncommitted hub file and fixes podcast rendering. Alex drafts the missing podcast MDX. James finalizes the analytics instrumentation spec with Dave's attribution parameter. Everything else holds. The Compass unification question Steve raised is real \u2014 we'll bring that to Joshua next standup. Let's execute."
+      "message": "Good. Quick cross-talk \u2014 Steve, any concerns about the current 7 lessons being enough for launch?"
+    },
+    {
+      "speaker": "Steve Jobs",
+      "role": "CPO",
+      "message": "Seven lessons is fine for launch. Users don't need volume \u2014 they need one experience that makes them come back. If one lesson resonates, they'll return. If twenty lessons are mediocre, they won't. Faith's quality review is exactly the right move."
+    },
+    {
+      "speaker": "Elon Musk",
+      "role": "CTO",
+      "message": "Agreed. James, can you include a specific event for \"faith lesson opened\" versus \"faith lesson completed\" in your schema? That delta tells us everything about content quality."
+    },
+    {
+      "speaker": "James Truchard",
+      "role": "CTIO",
+      "message": "Already in there \u2014 opened, time-on-lesson, and completed as three distinct events. We'll know exactly where users drop off."
     },
     {
       "speaker": "Theo",
       "role": "COO",
-      "message": "\n\n**Theo (COO) \u2014 Closing Remarks:**\n\nGood calls from Joshua on both. Deferring Compass unification until analytics tells us where users actually live \u2014 that's consistent with the data-first approach we've been running all night. And the medium push on launch is the right gear: we're not hiding the app, but we're not burning our biggest channels on day one either. Newsletter plus one podcast mention gives us a real signal without over-committing.\n\nThis means Alex and Dave have new work the moment"
+      "message": "Perfect. Here's the closing summary. We're in the Apple review window \u2014 every minute is free time to polish. Five priorities for the next 15 minutes: One, Elon commits the last hub file and starts the podcast rendering fix. Two, Alex drafts the 2 missing podcast MDX files and the launch newsletter copy. Three, James finalizes the analytics event schema to implementation-ready. Four, Dave drafts the launch metrics dashboard spec. Five, Faith does a quality pass on the 7 existing lessons. One CEO decision needed: we need Joshua to confirm whether the launch newsletter should go same-day as Apple approval or be scheduled for the following morning to maximize open rates. Everything else is in motion. Let's ship."
+    },
+    {
+      "speaker": "Theo",
+      "role": "COO",
+      "message": "**Theo (COO) \u2014 Closing Remarks:**\n\nCEO decision is locked in: launch newsletter goes same-day if Apple approves before 2pm, next morning if after. That's smart \u2014 we get urgency without sacrificing open rates. Alex, that means your newsletter copy needs to be fully loaded and ready to fire in either window \u2014 build it so we can pull the trigger the moment we get the green light, no last-minute edits.\n\nAlright, everything is confirmed and in motion. Five tasks, 15 minutes, zero ambiguity. Elon's cl"
     }
   ],
   "actionItems": [
     {
-      "text": "Finalize analytics instrumentation spec (tab switches, lesson completions, session duration, attribution source) for A-020 \u2014 ready to deploy as post-approval patch",
-      "priority": "high",
-      "assignee": "James Truchard",
-      "completed": false,
-      "tag": "AGENT",
-      "taskKey": "A-025"
-    },
-    {
-      "text": "Draft missing podcast episode MDX file and commit to website repo to close A-012/A-019 sync gap",
-      "priority": "high",
-      "assignee": "Alex",
-      "completed": false,
-      "tag": "AGENT",
-      "taskKey": "A-026"
-    },
-    {
-      "text": "Fix podcast rendering on website so synced MDX displays correctly \u2014 close A-001 and A-018",
-      "priority": "high",
-      "assignee": "Elon Musk",
-      "completed": false,
-      "tag": "AGENT",
-      "taskKey": "A-027"
-    },
-    {
-      "text": "Commit last uncommitted hub file to close A-022",
+      "text": "Commit last uncommitted hub file to close A-022/A-028",
       "priority": "low",
       "assignee": "Elon Musk",
       "completed": false,
@@ -235,34 +226,82 @@
       "taskKey": "A-028"
     },
     {
-      "text": "Review and decide on launch strategy (soft vs. promoted) once Apple approves the build",
+      "text": "Draft podcast rendering fix for website to close A-027",
       "priority": "high",
-      "assignee": "Dave",
+      "assignee": "Elon Musk",
       "completed": false,
-      "tag": "JOSHUA",
-      "taskKey": "J-006"
+      "tag": "AGENT",
+      "taskKey": "A-031"
     },
     {
-      "text": "Monitor App Store review status and alert team when status changes",
+      "text": "Audit 7 TODOs/FIXMEs in codebase and triage for post-approval patch",
       "priority": "medium",
       "assignee": "Elon Musk",
       "completed": false,
       "tag": "AGENT",
-      "taskKey": "A-029"
+      "taskKey": "A-032"
     },
     {
-      "text": "Continue monitoring Fear & Greed index and cash position per standing directives (A-007, A-021)",
-      "priority": "low",
+      "text": "Draft 2 missing podcast MDX files and commit to website repo to close A-026",
+      "priority": "high",
+      "assignee": "Alex",
+      "completed": false,
+      "tag": "AGENT",
+      "taskKey": "A-026"
+    },
+    {
+      "text": "Draft launch newsletter copy for medium-push announcement (ready to send on Apple approval)",
+      "priority": "high",
+      "assignee": "Alex",
+      "completed": false,
+      "tag": "AGENT",
+      "taskKey": "A-033"
+    },
+    {
+      "text": "Finalize analytics event schema with implementation guide \u2014 tab switches, lesson opened/completed/time-on-lesson, session duration, attribution (extend A-025)",
+      "priority": "high",
+      "assignee": "James Truchard",
+      "completed": false,
+      "tag": "AGENT",
+      "taskKey": "A-034"
+    },
+    {
+      "text": "Draft launch metrics dashboard spec: downloads, DAU, session depth, conversion funnel",
+      "priority": "medium",
       "assignee": "Dave",
       "completed": false,
       "tag": "AGENT",
-      "taskKey": "A-030"
+      "taskKey": "A-035"
+    },
+    {
+      "text": "Quality review existing 7 faith lessons for polish and launch readiness",
+      "priority": "medium",
+      "assignee": "faith",
+      "completed": false,
+      "tag": "AGENT",
+      "taskKey": "A-036"
+    },
+    {
+      "text": "Continue monitoring App Store review status and alert team on status change (A-029)",
+      "priority": "medium",
+      "assignee": "Elon Musk",
+      "completed": false,
+      "tag": "AGENT",
+      "taskKey": "A-037"
+    },
+    {
+      "text": "Decide newsletter send timing relative to Apple approval",
+      "priority": "high",
+      "assignee": "Dave",
+      "completed": false,
+      "tag": "JOSHUA",
+      "taskKey": "J-007"
     }
   ],
   "topPriorities": [
-    "Finalize analytics instrumentation spec (A-020) with attribution tracking, ready to deploy on Apple approval",
-    "Close podcast MDX sync gap \u2014 draft missing episode MDX and fix rendering (A-001, A-012, A-018)",
-    "Commit last uncommitted hub file to clean repo state (A-022)"
+    "Close podcast website sync gap \u2014 render fix (A-027) plus 2 missing MDX files (A-026)",
+    "Finalize analytics instrumentation spec to implementation-ready (A-025)",
+    "Prep launch assets: newsletter copy and metrics dashboard spec for medium-push launch"
   ],
   "ceoDirectives": [
     {
@@ -342,6 +381,18 @@
       "decided": "2026-02-20T00:46:19.978419-08:00",
       "source": "overnight-sprint 2026-02-20",
       "priority": "high"
+    },
+    {
+      "directive": "Should we unify the Compass UI across website and mobile app before users encounter both, or keep them separate for now? \u2192 Defer until we see which surface gets more usage via analytics",
+      "decided": "2026-02-20T01:16:29.367976-08:00",
+      "source": "overnight-sprint 2026-02-20",
+      "priority": "high"
+    },
+    {
+      "directive": "When the app clears review, should we do a soft launch (no promotion, organic only) or immediately push it through newsletter and podcast? \u2192 Medium push \u2014 announce via newsletter and one podcast mention",
+      "decided": "2026-02-20T01:16:29.368080-08:00",
+      "source": "overnight-sprint 2026-02-20",
+      "priority": "high"
     }
   ],
   "type": "overnight-sprint",
@@ -350,16 +401,16 @@
   "conversationMode": "ai",
   "model": "claude-opus-4-6",
   "tokenUsage": {
-    "input_tokens": 5883,
-    "output_tokens": 2999,
-    "total_tokens": 8882,
-    "duration": 77.3,
+    "input_tokens": 6285,
+    "output_tokens": 3084,
+    "total_tokens": 9369,
+    "duration": 69.7,
     "model": "claude-opus-4-6",
-    "estimated_cost": 0.3131,
+    "estimated_cost": 0.3256,
     "interactive": true,
     "phases": 2
   },
-  "instanceKey": "STD-11",
+  "instanceKey": "STD-13",
   "verticals": [],
   "initiatives": [],
   "verticalDetails": [],
@@ -417,26 +468,15 @@
   "interactive": true,
   "ceoDecisions": [
     {
-      "question": "Should we unify the Compass UI across website and mobile app before users encounter both, or keep them separate for now?",
-      "answer": "1",
-      "answerText": "Defer until we see which surface gets more usage via analytics",
+      "question": "When Apple approves the app, should the launch newsletter go out same-day or be scheduled for the following morning?",
+      "answer": "2",
+      "answerText": "Same-day if approved before 2pm, otherwise next morning",
       "options": [
-        "Unify now before app goes live",
-        "Defer until we see which surface gets more usage via analytics",
-        "Kill the website version and keep Compass app-only"
+        "Same-day as Apple approval",
+        "Following morning at optimal send time (8-9am)",
+        "Same-day if approved before 2pm, otherwise next morning"
       ],
-      "recommended": 1
-    },
-    {
-      "question": "When the app clears review, should we do a soft launch (no promotion, organic only) or immediately push it through newsletter and podcast?",
-      "answer": "1",
-      "answerText": "Medium push \u2014 announce via newsletter and one podcast mention",
-      "options": [
-        "Soft launch \u2014 let it go live quietly, gather data for 1-2 weeks",
-        "Medium push \u2014 announce via newsletter and one podcast mention",
-        "Full launch \u2014 coordinated push across all channels immediately"
-      ],
-      "recommended": 1
+      "recommended": 2
     }
   ]
 }

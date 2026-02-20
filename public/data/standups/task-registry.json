@@ -1,5 +1,36 @@
 {
   "nextAgentId": 1,
-  "nextJoshuaId": 1,
-  "tasks": []
+  "nextJoshuaId": 4,
+  "tasks": [
+    {
+      "key": "J-001",
+      "text": "Decide Lever direction: personal tool vs. product",
+      "tag": "JOSHUA",
+      "priority": "high",
+      "assignee": "Joshua",
+      "status": "done",
+      "completedAt": "2026-02-19T21:58:09.993847-08:00",
+      "resolution": "CEO decided: Hybrid \u2014 personal tool now with product optionality built in"
+    },
+    {
+      "key": "J-002",
+      "text": "Decide Family tab integration approach with faith content",
+      "tag": "JOSHUA",
+      "priority": "high",
+      "assignee": "Joshua",
+      "status": "done",
+      "completedAt": "2026-02-19T21:58:09.993847-08:00",
+      "resolution": "CEO decided: Keep faith content as separate standalone section"
+    },
+    {
+      "key": "J-003",
+      "text": "Evaluate deployment of idle cash",
+      "tag": "JOSHUA",
+      "priority": "medium",
+      "assignee": "Joshua",
+      "status": "done",
+      "completedAt": "2026-02-19T21:58:09.993847-08:00",
+      "resolution": "CEO decided: No action \u2014 keep cash liquid"
+    }
+  ]
 }

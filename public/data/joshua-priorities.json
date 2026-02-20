@@ -1,6 +1,6 @@
 {
   "date": "2026-02-19",
-  "generatedAt": "2026-02-19T16:04:11.032010-08:00",
+  "generatedAt": "2026-02-19T19:00:19.734974-08:00",
   "priorities": [
     {
       "text": "Review current positions: AEE, EFA, XLV, XLE, VNQ, TLT, GLD",
@@ -119,6 +119,16 @@
       "text": "Evaluate deployment of idle cash ($75,340 available)",
       "source": "afternoon-checkpoint",
       "urgency": "medium"
+    },
+    {
+      "text": "Decide Lever direction: personal tool vs. family product vs. community platform (J-021)",
+      "source": "evening-wrap",
+      "urgency": "high"
+    },
+    {
+      "text": "Evaluate idle cash deployment strategy \u2014 $75,340 available (J-023)",
+      "source": "evening-wrap",
+      "urgency": "medium"
     }
   ],
   "agentHandled": [
@@ -220,6 +230,31 @@
       "assignee": "Dave",
       "status": "backlog",
       "note": "Moved to backlog \u2014 standup-generated, awaiting prioritization"
+    },
+    {
+      "text": "Batch-commit 4 uncommitted hub changes (A-072, A-090)",
+      "assignee": "Elon",
+      "status": "pending"
+    },
+    {
+      "text": "Complete faith lesson 10 of 10 to close out A-093",
+      "assignee": "Alex",
+      "status": "pending"
+    },
+    {
+      "text": "Mark A-094 (Jett vaccine reminder) as complete",
+      "assignee": "Theo",
+      "status": "pending"
+    },
+    {
+      "text": "Continue Fear & Greed index monitoring at 38 (A-096)",
+      "assignee": "Dave",
+      "status": "pending"
+    },
+    {
+      "text": "Extend A-042 Family tab spec once J-021 and J-022 are decided",
+      "assignee": "Elon",
+      "status": "pending"
     }
   ]
 }

@@ -1,6 +1,6 @@
 {
-  "nextAgentId": 97,
-  "nextJoshuaId": 24,
+  "nextAgentId": 101,
+  "nextJoshuaId": 25,
   "tasks": [
     {
       "key": "A-001",
@@ -1281,6 +1281,76 @@
       "sourceDate": "2026-02-19",
       "createdAt": "2026-02-19T12:00:42.125145-08:00",
       "updatedAt": "2026-02-19T12:00:42.125145-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "J-024",
+      "text": "Evaluate idle cash deployment strategy \u2014 $75,340 available (J-023)",
+      "tag": "JOSHUA",
+      "priority": "medium",
+      "assignee": "Joshua",
+      "status": "pending",
+      "sourceStandup": "EW-3",
+      "sourceStandupType": "evening-wrap",
+      "sourceDate": "2026-02-19",
+      "createdAt": "2026-02-19T19:00:19.734974-08:00",
+      "updatedAt": "2026-02-19T19:00:19.734974-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "A-097",
+      "text": "Batch-commit 4 uncommitted hub changes (A-072, A-090)",
+      "tag": "AGENT",
+      "priority": "low",
+      "assignee": "Elon",
+      "status": "pending",
+      "sourceStandup": "EW-3",
+      "sourceStandupType": "evening-wrap",
+      "sourceDate": "2026-02-19",
+      "createdAt": "2026-02-19T19:00:19.734974-08:00",
+      "updatedAt": "2026-02-19T19:00:19.734974-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "A-098",
+      "text": "Complete faith lesson 10 of 10 to close out A-093",
+      "tag": "AGENT",
+      "priority": "medium",
+      "assignee": "Alex",
+      "status": "pending",
+      "sourceStandup": "EW-3",
+      "sourceStandupType": "evening-wrap",
+      "sourceDate": "2026-02-19",
+      "createdAt": "2026-02-19T19:00:19.734974-08:00",
+      "updatedAt": "2026-02-19T19:00:19.734974-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "A-099",
+      "text": "Mark A-094 (Jett vaccine reminder) as complete",
+      "tag": "AGENT",
+      "priority": "low",
+      "assignee": "Theo",
+      "status": "pending",
+      "sourceStandup": "EW-3",
+      "sourceStandupType": "evening-wrap",
+      "sourceDate": "2026-02-19",
+      "createdAt": "2026-02-19T19:00:19.734974-08:00",
+      "updatedAt": "2026-02-19T19:00:19.734974-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "A-100",
+      "text": "Extend A-042 Family tab spec once J-021 and J-022 are decided",
+      "tag": "AGENT",
+      "priority": "high",
+      "assignee": "Elon",
+      "status": "pending",
+      "sourceStandup": "EW-3",
+      "sourceStandupType": "evening-wrap",
+      "sourceDate": "2026-02-19",
+      "createdAt": "2026-02-19T19:00:19.734974-08:00",
+      "updatedAt": "2026-02-19T19:00:19.734974-08:00",
       "completedAt": null
     }
   ]

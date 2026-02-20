@@ -2,6 +2,29 @@
   "standups": [
     {
       "date": "2026-02-19",
+      "time": "19:00",
+      "type": "evening-wrap",
+      "typeName": "Evening Wrap",
+      "typeEmoji": "\ud83c\udf06",
+      "topic": "Evening Wrap \u2014 Thursday Feb 19",
+      "file": "2026-02-19-evening-wrap.json",
+      "tokenCost": 0.1534,
+      "verticals": [
+        "hub",
+        "joshlevylabs",
+        "ecosystem",
+        "lever"
+      ],
+      "initiatives": [
+        "content-growth",
+        "podcast-distribution",
+        "hub-standup-system",
+        "lever-dashboard"
+      ],
+      "instanceKey": "EW-3"
+    },
+    {
+      "date": "2026-02-19",
       "time": "12:00",
       "type": "afternoon-checkpoint",
       "typeName": "Afternoon Checkpoint",

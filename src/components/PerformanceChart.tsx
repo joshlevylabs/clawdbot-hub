@@ -153,13 +153,18 @@ export default function PerformanceChart({
   // Detect if snapshot has intraday timestamp (contains "T")
   const isIntraday = (s: PortfolioSnapshot) => s.date.includes("T");
 
-  // Merge daily + intraday snapshots for unified processing, deduplicating by timestamp
+  // Merge daily + intraday snapshots for unified processing, deduplicating by timestamp.
+  // The two source tables use different timestamp formats:
+  //   paper_portfolio_snapshots: "2026-02-20T10:45" (local PT, no timezone)
+  //   paper_portfolio_snapshots_intraday: "2026-02-20T18:45:00+00:00" (UTC with offset)
+  // We must normalize to epoch ms for proper deduplication.
   const allSnapshots = useMemo(() => {
     const merged = [...snapshots, ...intradayAsPortfolio];
-    // Deduplicate: if both tables have the same timestamp, prefer the intraday table version
-    const seen = new Map<string, PortfolioSnapshot>();
+    // Round to nearest 5 minutes (300000ms) to match snapshots that represent the same interval
+    const roundTo5Min = (ms: number) => Math.round(ms / 300000) * 300000;
+    const seen = new Map<number, PortfolioSnapshot>();
     for (const s of merged) {
-      const key = s.date;
+      const key = roundTo5Min(new Date(s.date).getTime());
       // Intraday table entries (from intradayAsPortfolio) come second, so they overwrite
       seen.set(key, s);
     }

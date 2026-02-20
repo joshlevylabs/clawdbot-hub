@@ -249,17 +249,52 @@ const fetchers: Record<string, DataFetcher> = {
         .order('date', { ascending: true })
         .limit(500);
 
-      // Use intraday for 1w, daily for longer ranges
-      let chartData = (daily || []) as Array<Record<string, unknown>>;
-      if (range === '1w' && intraday && intraday.length > 0) {
-        const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
-        chartData = intraday.filter((s: Record<string, unknown>) => String(s.timestamp) >= oneWeekAgo);
+      // Merge daily + intraday with dedup (same logic as PerformanceChart).
+      // The two tables use different timestamp formats (PT vs UTC) and can have
+      // different equity values for the same moment. Prefer intraday table data.
+      const roundTo5Min = (ms: number) => Math.round(ms / 300000) * 300000;
+      const allData: Array<Record<string, unknown>> = [];
+      const seen = new Map<number, Record<string, unknown>>();
+
+      // Add daily first
+      for (const s of (daily || [])) {
+        const dateStr = String(s.date).includes('T') ? String(s.date) : String(s.date) + 'T00:00';
+        const key = roundTo5Min(new Date(dateStr).getTime());
+        seen.set(key, { ...s, date: s.date, timestamp: s.date });
+      }
+      // Intraday overwrites (preferred source)
+      for (const s of (intraday || [])) {
+        const key = roundTo5Min(new Date(String(s.timestamp)).getTime());
+        seen.set(key, { ...s, date: s.timestamp });
+      }
+      // Sort by time
+      const merged = Array.from(seen.values()).sort(
+        (a, b) => new Date(String(a.date)).getTime() - new Date(String(b.date)).getTime()
+      );
+
+      // For dates with intraday coverage, exclude daily summary rows
+      const intradayDates = new Set<string>();
+      for (const s of merged) {
+        const d = String(s.date || s.timestamp || '');
+        if (d.includes('T') && d.length > 11) intradayDates.add(d.slice(0, 10));
+      }
+      const deduped = merged.filter((s) => {
+        const d = String(s.date || '');
+        if (!d.includes('T') && intradayDates.has(d.slice(0, 10))) return false;
+        return true;
+      });
+
+      // Apply range filter
+      let chartData = deduped;
+      if (range === '1w') {
+        const cutoff = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).getTime();
+        chartData = deduped.filter((s) => new Date(String(s.date || s.timestamp)).getTime() >= cutoff);
       } else if (range === '1m') {
-        const oneMonthAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
-        chartData = (daily || []).filter((s: Record<string, unknown>) => String(s.date) >= oneMonthAgo);
+        const cutoff = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).getTime();
+        chartData = deduped.filter((s) => new Date(String(s.date || s.timestamp)).getTime() >= cutoff);
       }
 
-      if (chartData.length === 0) chartData = (daily || []) as Array<Record<string, unknown>>;
+      if (chartData.length === 0) chartData = deduped;
 
       // Calculate returns from first to last
       const first = chartData[0] || {};

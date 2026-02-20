@@ -1,52 +1,6 @@
 {
   "date": "2026-02-19",
   "generatedAt": "2026-02-19T22:00:49.793006-08:00",
-  "priorities": [
-    {
-      "text": "Evaluate deployment of idle cash ($75,340 available) \u2014 keep monitoring, no action per CEO decision",
-      "source": "adhoc-evening-wrap",
-      "urgency": "medium"
-    }
-  ],
-  "agentHandled": [
-    {
-      "text": "Monitor Fear & Greed index (currently 39) for threshold changes",
-      "assignee": "Dave",
-      "status": "done",
-      "verified": true,
-      "audit_note": "Completed outside dispatcher"
-    },
-    {
-      "text": "Commit 2 uncommitted hub changes",
-      "assignee": "Elon",
-      "status": "done",
-      "verified": true,
-      "audit_note": "Completed outside dispatcher"
-    },
-    {
-      "text": "Generate daily devotional content based on 8 faith dimensions",
-      "assignee": "Alex",
-      "status": "pending"
-    },
-    {
-      "text": "Draft faith lesson content for the Lever app (currently 7 lessons)",
-      "assignee": "Alex",
-      "status": "pending"
-    },
-    {
-      "text": "Prepare reminders for upcoming family events: Jett's vaccine",
-      "assignee": "Alex",
-      "status": "pending"
-    },
-    {
-      "text": "Draft feature spec for expanding Family tab (currently 455 lines) with monetization potential annotations",
-      "assignee": "Elon",
-      "status": "pending"
-    },
-    {
-      "text": "Review family touchpoint tracker design for 3 family members",
-      "assignee": "Elon",
-      "status": "pending"
-    }
-  ]
+  "priorities": [],
+  "agentHandled": []
 }

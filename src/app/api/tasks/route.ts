@@ -88,18 +88,64 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// PATCH /api/tasks - Update sprint-ready flag (persisted to Supabase)
+// PATCH /api/tasks - Update task fields (status, priority, sprint-ready)
 export async function PATCH(request: NextRequest) {
   try {
     const body = await request.json();
-    const { taskKey, sprintReady } = body;
+    const { taskKey, sprintReady, status, priority, resolution } = body;
 
     if (!taskKey) {
       return NextResponse.json({ error: "taskKey is required" }, { status: 400 });
     }
 
+    // Handle status/priority updates (persisted to task-registry.json)
+    if (status || priority || resolution !== undefined) {
+      const registry = await loadRegistry();
+      const taskIndex = registry.tasks.findIndex(t => t.key === taskKey);
+      if (taskIndex === -1) {
+        return NextResponse.json({ error: "Task not found" }, { status: 404 });
+      }
+
+      const task = registry.tasks[taskIndex];
+      const now = new Date().toISOString();
+
+      if (status) {
+        const validStatuses = ["pending", "in-progress", "done", "done_but_unverified"];
+        if (!validStatuses.includes(status)) {
+          return NextResponse.json({ error: `Invalid status. Must be one of: ${validStatuses.join(", ")}` }, { status: 400 });
+        }
+        task.status = status;
+        task.updatedAt = now;
+        if (status === "done" || status === "done_but_unverified") {
+          task.completedAt = now;
+        } else {
+          task.completedAt = null;
+        }
+      }
+
+      if (priority) {
+        const validPriorities = ["high", "medium", "low"];
+        if (!validPriorities.includes(priority)) {
+          return NextResponse.json({ error: `Invalid priority. Must be one of: ${validPriorities.join(", ")}` }, { status: 400 });
+        }
+        task.priority = priority;
+        task.updatedAt = now;
+      }
+
+      if (resolution !== undefined) {
+        (task as any).resolution = resolution;
+        task.updatedAt = now;
+      }
+
+      registry.tasks[taskIndex] = task;
+      await fs.writeFile(TASK_REGISTRY_PATH, JSON.stringify(registry, null, 2));
+
+      return NextResponse.json({ success: true, task });
+    }
+
+    // Handle sprint-ready flag (legacy path)
     if (typeof sprintReady !== "boolean") {
-      return NextResponse.json({ error: "sprintReady (boolean) is required" }, { status: 400 });
+      return NextResponse.json({ error: "No valid update fields provided (status, priority, sprintReady)" }, { status: 400 });
     }
 
     const id = `sprint:${taskKey}`;

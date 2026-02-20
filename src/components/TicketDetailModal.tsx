@@ -87,14 +87,18 @@ const priorityOptions = [
   { value: "high", label: "High", color: "red", bg: "bg-red-600", icon: "↑" }
 ] as const;
 
-function StatusBadge({ status }: { status: Task["status"] }) {
+function StatusBadge({ status, onClick }: { status: Task["status"]; onClick?: () => void }) {
   const currentStatus = statusOptions.find(s => s.value === status)!;
   const Icon = currentStatus.icon;
 
   return (
-    <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium text-white ${currentStatus.bg}`}>
+    <div 
+      onClick={onClick}
+      className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium text-white ${currentStatus.bg} ${onClick ? 'cursor-pointer hover:opacity-80 transition-opacity' : ''}`}
+    >
       <Icon className="w-4 h-4" />
       {currentStatus.label}
+      {onClick && <Edit className="w-3 h-3 ml-1 opacity-60" />}
     </div>
   );
 }
@@ -106,6 +110,55 @@ function PriorityBadge({ priority }: { priority: Task["priority"] }) {
     <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium text-white ${currentPriority.bg}`}>
       <span>{currentPriority.icon}</span>
       {currentPriority.label}
+    </div>
+  );
+}
+
+// Interactive status selector for CEO tickets
+function StatusSelector({ 
+  currentStatus, 
+  onSelect, 
+  onCancel 
+}: { 
+  currentStatus: Task["status"]; 
+  onSelect: (status: Task["status"]) => void;
+  onCancel: () => void;
+}) {
+  return (
+    <div className="fixed inset-0 z-[60] bg-black/40 flex items-center justify-center" onClick={onCancel}>
+      <div className="bg-slate-800 border border-slate-600 rounded-xl p-4 shadow-2xl min-w-[280px]" onClick={e => e.stopPropagation()}>
+        <h3 className="text-sm font-semibold text-slate-300 mb-3">Update Status</h3>
+        <div className="space-y-2">
+          {statusOptions.map(opt => {
+            const Icon = opt.icon;
+            const isActive = opt.value === currentStatus;
+            return (
+              <button
+                key={opt.value}
+                onClick={() => onSelect(opt.value as Task["status"])}
+                className={`w-full flex items-center gap-3 p-3 rounded-lg text-left transition-all ${
+                  isActive 
+                    ? `${opt.bg} text-white` 
+                    : 'bg-slate-700/50 text-slate-300 hover:bg-slate-700'
+                }`}
+              >
+                <Icon className="w-5 h-5" />
+                <div>
+                  <p className="font-medium text-sm">{opt.label}</p>
+                  <p className={`text-xs ${isActive ? 'text-white/70' : 'text-slate-500'}`}>{opt.description}</p>
+                </div>
+                {isActive && <CheckCircle className="w-4 h-4 ml-auto" />}
+              </button>
+            );
+          })}
+        </div>
+        <button 
+          onClick={onCancel}
+          className="w-full mt-3 px-3 py-2 text-sm text-slate-400 hover:text-slate-300 transition-colors"
+        >
+          Cancel
+        </button>
+      </div>
     </div>
   );
 }
@@ -445,6 +498,8 @@ export default function TicketDetailModal({ task, onClose, onUpdate }: TicketDet
   const [localTask, setLocalTask] = useState(task);
   const [verticals, setVerticals] = useState<string[]>([]);
   const [initiatives, setInitiatives] = useState<string[]>([]);
+  const [showStatusSelector, setShowStatusSelector] = useState(false);
+  const [statusSaving, setStatusSaving] = useState(false);
 
   useEffect(() => {
     setLocalTask(task);
@@ -464,6 +519,30 @@ export default function TicketDetailModal({ task, onClose, onUpdate }: TicketDet
       })
       .catch(console.error);
   }, [task.sourceStandup]);
+
+  const isCeoTicket = localTask.tag === "JOSHUA";
+
+  const handleStatusChange = async (newStatus: Task["status"]) => {
+    setStatusSaving(true);
+    const prevStatus = localTask.status;
+    setLocalTask(prev => ({ ...prev, status: newStatus, updatedAt: new Date().toISOString(), completedAt: (newStatus === "done" || newStatus === "done_but_unverified") ? new Date().toISOString() : null }));
+    setShowStatusSelector(false);
+
+    try {
+      const res = await fetch("/api/tasks", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ taskKey: localTask.key, status: newStatus }),
+      });
+      if (!res.ok) throw new Error("Failed to save");
+      onUpdate({ status: newStatus });
+    } catch (error) {
+      console.error("Failed to update status:", error);
+      setLocalTask(prev => ({ ...prev, status: prevStatus }));
+    } finally {
+      setStatusSaving(false);
+    }
+  };
 
   const handleSprintReadyToggle = async () => {
     const newSprintReady = !localTask.sprintReady;
@@ -503,7 +582,11 @@ export default function TicketDetailModal({ task, onClose, onUpdate }: TicketDet
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-2">
                   <span className="text-lg font-mono text-primary-400 font-bold">{localTask.key}</span>
-                  <StatusBadge status={localTask.status} />
+                  <StatusBadge 
+                    status={localTask.status} 
+                    onClick={isCeoTicket ? () => setShowStatusSelector(true) : undefined}
+                  />
+                  {statusSaving && <span className="text-xs text-slate-500 animate-pulse">Saving...</span>}
                   {localTask.sprintReady && (
                     <div className="flex items-center gap-1 px-2 py-1 bg-emerald-600/20 text-emerald-400 rounded-lg text-xs font-medium">
                       <Zap className="w-3 h-3" />
@@ -565,7 +648,10 @@ export default function TicketDetailModal({ task, onClose, onUpdate }: TicketDet
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-slate-400">Status</span>
-                  <StatusBadge status={localTask.status} />
+                  <StatusBadge 
+                    status={localTask.status} 
+                    onClick={isCeoTicket ? () => setShowStatusSelector(true) : undefined}
+                  />
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-slate-400">Priority</span>
@@ -676,12 +762,23 @@ export default function TicketDetailModal({ task, onClose, onUpdate }: TicketDet
             <div>
               <h3 className="font-medium text-slate-200 mb-3">Notes</h3>
               <div className="p-3 bg-slate-800/30 border border-slate-700 rounded-lg text-xs text-slate-400 italic">
-                Task data is driven by standups. Use standups to update status, priority, and other task properties.
+                {isCeoTicket 
+                  ? "Click the status badge to update this ticket's status." 
+                  : "Task data is driven by standups. Use standups to update status, priority, and other task properties."}
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Status Selector Overlay */}
+      {showStatusSelector && (
+        <StatusSelector 
+          currentStatus={localTask.status}
+          onSelect={handleStatusChange}
+          onCancel={() => setShowStatusSelector(false)}
+        />
+      )}
     </div>
   );
 }

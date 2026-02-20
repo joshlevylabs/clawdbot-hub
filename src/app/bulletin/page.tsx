@@ -347,8 +347,18 @@ export default function BulletinPage() {
 
   const handleTaskUpdate = async (updates: Partial<Task>) => {
     if (!selectedTask) return;
-    // TODO: Implement task update via API
+    // Update the selected task locally
     setSelectedTask(prev => prev ? { ...prev, ...updates } : null);
+    // Also update the task in the registry state so the list reflects changes
+    setTaskRegistry(prev => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        tasks: prev.tasks.map(t => 
+          t.key === selectedTask.key ? { ...t, ...updates, updatedAt: new Date().toISOString() } : t
+        ),
+      };
+    });
   };
 
   const handleToggleSprintReady = async (task: Task, e: React.MouseEvent) => {

@@ -1,6 +1,6 @@
 {
-  "date": "2026-02-19",
-  "generatedAt": "2026-02-19T23:45:52.458861-08:00",
+  "date": "2026-02-20",
+  "generatedAt": "2026-02-20T00:03:34.912057-08:00",
   "priorities": [
     {
       "text": "Evaluate deployment of idle cash ($75,340 available) \u2014 CEO decided keep liquid, flagged for ongoing review",
@@ -13,12 +13,6 @@
       "source": "overnight-sprint",
       "urgency": "medium",
       "taskKey": "J-002"
-    },
-    {
-      "text": "Review and approve App Store listing draft before submission",
-      "source": "overnight-sprint",
-      "urgency": "high",
-      "taskKey": "J-003"
     },
     {
       "text": "Jett vaccine appointment tomorrow February 20 \u2014 tracked and confirmed",

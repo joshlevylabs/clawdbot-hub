@@ -1,1 +1,17 @@
-[]
+{
+  "standups": [
+    {
+      "date": "2026-02-19",
+      "time": "21:58",
+      "type": "adhoc-evening-wrap",
+      "typeName": "Evening Wrap",
+      "typeEmoji": "\ud83c\udf06",
+      "topic": "Evening Wrap \u2014 Thursday Feb 19",
+      "file": "2026-02-19-adhoc-evening-wrap.json",
+      "tokenCost": 0.20929999999999999,
+      "verticals": [],
+      "initiatives": [],
+      "instanceKey": "STD-2"
+    }
+  ]
+}

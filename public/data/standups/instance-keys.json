@@ -1,1 +1,8 @@
-{}
+{
+  "counters": {
+    "adhoc-evening-wrap": 2
+  },
+  "abbreviations": {
+    "adhoc-evening-wrap": "STD"
+  }
+}

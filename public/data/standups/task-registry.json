@@ -1,6 +1,6 @@
 {
-  "nextAgentId": 61,
-  "nextJoshuaId": 16,
+  "nextAgentId": 67,
+  "nextJoshuaId": 17,
   "tasks": [
     {
       "key": "J-001",
@@ -838,13 +838,14 @@
       "tag": "JOSHUA",
       "priority": "high",
       "assignee": "Joshua",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "STD-15",
       "sourceStandupType": "overnight-sprint",
       "sourceDate": "2026-02-20",
       "createdAt": "2026-02-20T02:01:23.583337-08:00",
       "updatedAt": "2026-02-20T02:01:23.583337-08:00",
-      "completedAt": null
+      "completedAt": "2026-02-20T03:16:36.517622-08:00",
+      "resolution": "CEO decided: Slack screenshot review (faster, async) (via overnight-sprint 2026-02-20)"
     },
     {
       "key": "J-011",
@@ -965,13 +966,14 @@
       "tag": "JOSHUA",
       "priority": "high",
       "assignee": "Joshua",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "STD-16",
       "sourceStandupType": "overnight-sprint",
       "sourceDate": "2026-02-20",
       "createdAt": "2026-02-20T02:15:09.411483-08:00",
       "updatedAt": "2026-02-20T02:15:09.411483-08:00",
-      "completedAt": null
+      "completedAt": "2026-02-20T03:16:36.517796-08:00",
+      "resolution": "CEO decided: Slack screenshot review (faster, async) (via overnight-sprint 2026-02-20)"
     },
     {
       "key": "J-014",
@@ -1022,13 +1024,14 @@
       "tag": "JOSHUA",
       "priority": "high",
       "assignee": "Joshua",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "STD-18",
       "sourceStandupType": "overnight-sprint",
       "sourceDate": "2026-02-20",
       "createdAt": "2026-02-20T02:45:05.774763-08:00",
       "updatedAt": "2026-02-20T02:45:05.774763-08:00",
-      "completedAt": null
+      "completedAt": "2026-02-20T03:16:36.517867-08:00",
+      "resolution": "CEO decided: Slack screenshot review (faster, async) (via overnight-sprint 2026-02-20)"
     },
     {
       "key": "A-059",
@@ -1057,6 +1060,105 @@
       "createdAt": "2026-02-20T02:45:05.774763-08:00",
       "updatedAt": "2026-02-20T02:45:05.774763-08:00",
       "completedAt": null
+    },
+    {
+      "key": "A-061",
+      "text": "Batch-push three commits: podcast rendering fix (A-039), hub file (A-038), empty state patch with Steve's Compass copy (A-051)",
+      "tag": "AGENT",
+      "priority": "high",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "sourceStandup": "STD-20",
+      "sourceStandupType": "overnight-sprint",
+      "sourceDate": "2026-02-20",
+      "createdAt": "2026-02-20T03:15:09.351111-08:00",
+      "updatedAt": "2026-02-20T03:15:09.351111-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "A-062",
+      "text": "Deliver Compass tab empty state copy to Elon within 10 minutes (close A-056)",
+      "tag": "AGENT",
+      "priority": "high",
+      "assignee": "Steve Jobs",
+      "status": "pending",
+      "sourceStandup": "STD-20",
+      "sourceStandupType": "overnight-sprint",
+      "sourceDate": "2026-02-20",
+      "createdAt": "2026-02-20T03:15:09.351111-08:00",
+      "updatedAt": "2026-02-20T03:15:09.351111-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "A-063",
+      "text": "Finalize launch newsletter and pre-schedule in CMS with Slack-confirmation gate (close A-058)",
+      "tag": "AGENT",
+      "priority": "high",
+      "assignee": "Alex",
+      "status": "pending",
+      "sourceStandup": "STD-20",
+      "sourceStandupType": "overnight-sprint",
+      "sourceDate": "2026-02-20",
+      "createdAt": "2026-02-20T03:15:09.351111-08:00",
+      "updatedAt": "2026-02-20T03:15:09.351111-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "A-064",
+      "text": "Complete lesson 7 tone adjustment to finish faith lesson polish (close A-055, A-060)",
+      "tag": "AGENT",
+      "priority": "medium",
+      "assignee": "faith",
+      "status": "pending",
+      "sourceStandup": "STD-20",
+      "sourceStandupType": "overnight-sprint",
+      "sourceDate": "2026-02-20",
+      "createdAt": "2026-02-20T03:15:09.351111-08:00",
+      "updatedAt": "2026-02-20T03:15:09.351111-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "A-065",
+      "text": "Test CMS pre-schedule flow end-to-end to confirm one-click send works on launch day",
+      "tag": "AGENT",
+      "priority": "high",
+      "assignee": "Dave",
+      "status": "pending",
+      "sourceStandup": "STD-20",
+      "sourceStandupType": "overnight-sprint",
+      "sourceDate": "2026-02-20",
+      "createdAt": "2026-02-20T03:15:09.351111-08:00",
+      "updatedAt": "2026-02-20T03:15:09.351111-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "A-066",
+      "text": "Draft lightweight analytics data validation test spec to verify event firing before patch ship",
+      "tag": "AGENT",
+      "priority": "medium",
+      "assignee": "James Truchard",
+      "status": "pending",
+      "sourceStandup": "STD-20",
+      "sourceStandupType": "overnight-sprint",
+      "sourceDate": "2026-02-20",
+      "createdAt": "2026-02-20T03:15:09.351111-08:00",
+      "updatedAt": "2026-02-20T03:15:09.351111-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "J-016",
+      "text": "Review pre-scheduled newsletter in the morning and confirm send-readiness via Slack (J-015)",
+      "tag": "JOSHUA",
+      "priority": "high",
+      "assignee": "Joshua",
+      "status": "done",
+      "sourceStandup": "STD-20",
+      "sourceStandupType": "overnight-sprint",
+      "sourceDate": "2026-02-20",
+      "createdAt": "2026-02-20T03:15:09.351111-08:00",
+      "updatedAt": "2026-02-20T03:15:09.351111-08:00",
+      "completedAt": "2026-02-20T03:16:36.517899-08:00",
+      "resolution": "CEO decided: Slack screenshot review (faster, async) (via overnight-sprint 2026-02-20)"
     }
   ]
 }

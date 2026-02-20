@@ -1,6 +1,6 @@
 {
   "date": "2026-02-20",
-  "generatedAt": "2026-02-20T02:45:59.978059-08:00",
+  "generatedAt": "2026-02-20T03:16:11.226447-08:00",
   "priorities": [
     {
       "text": "Evaluate deployment of idle cash ($75,340 available) \u2014 CEO decided keep liquid, flagged for ongoing review",
@@ -55,6 +55,12 @@
       "source": "overnight-sprint",
       "urgency": "high",
       "taskKey": "J-015"
+    },
+    {
+      "text": "Review pre-scheduled newsletter in the morning and confirm send-readiness via Slack (J-015)",
+      "source": "overnight-sprint",
+      "urgency": "high",
+      "taskKey": "J-016"
     }
   ],
   "agentHandled": [
@@ -417,6 +423,42 @@
       "assignee": "faith",
       "status": "pending",
       "taskKey": "A-060"
+    },
+    {
+      "text": "Batch-push three commits: podcast rendering fix (A-039), hub file (A-038), empty state patch with Steve's Compass copy (A-051)",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "taskKey": "A-061"
+    },
+    {
+      "text": "Deliver Compass tab empty state copy to Elon within 10 minutes (close A-056)",
+      "assignee": "Steve Jobs",
+      "status": "pending",
+      "taskKey": "A-062"
+    },
+    {
+      "text": "Finalize launch newsletter and pre-schedule in CMS with Slack-confirmation gate (close A-058)",
+      "assignee": "Alex",
+      "status": "pending",
+      "taskKey": "A-063"
+    },
+    {
+      "text": "Complete lesson 7 tone adjustment to finish faith lesson polish (close A-055, A-060)",
+      "assignee": "faith",
+      "status": "pending",
+      "taskKey": "A-064"
+    },
+    {
+      "text": "Test CMS pre-schedule flow end-to-end to confirm one-click send works on launch day",
+      "assignee": "Dave",
+      "status": "pending",
+      "taskKey": "A-065"
+    },
+    {
+      "text": "Draft lightweight analytics data validation test spec to verify event firing before patch ship",
+      "assignee": "James Truchard",
+      "status": "pending",
+      "taskKey": "A-066"
     }
   ]
 }

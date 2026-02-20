@@ -498,7 +498,7 @@ function DirectivesCard({ directives }: { directives: CEODirective[] }) {
 }
 
 function DirectivesView() {
-  const [directives, setDirectives] = useState<{directive: string; setDate: string; priority: string; standupType?: string; standupEmoji?: string}[]>([]);
+  const [directives, setDirectives] = useState<{directive: string; setDate: string; priority: string; standupType?: string; standupEmoji?: string; standupDate?: string}[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

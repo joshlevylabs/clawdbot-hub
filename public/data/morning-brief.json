@@ -1,104 +1,198 @@
 {
-  "date": "2026-02-19",
-  "timestamp": "2026-02-19T06:00:00-08:00",
+  "version": "1.0",
+  "generated_at": "2026-02-20T06:00:29Z",
+  "date": "2026-02-20",
+  "day": "Friday",
+  "summary": "Fear elevated (38), markets sideways. Joe/Openclaw call 10 AM. Jett's vaccine today. Relationship temperature critical - focus on repair.",
   "sections": {
     "prayer": {
-      "title": "\ud83d\udd50\ufe0f Morning Prayer",
-      "date": "Thursday, February 19, 2026",
-      "hebrew_date": "21 Cheshvan",
+      "title": "🕐️ Morning Prayer",
+      "date": "Friday, February 20, 2026",
+      "hebrew_date": "22 Cheshvan",
       "parsha": "Vayeshev",
       "parsha_theme": "setbacks as setups, patience, providence",
-      "modeh_ani": "\u05de\u05d5\u05d3\u05d4 \u05d0\u05e0\u05d9 \u05dc\u05e4\u05e0\u05d9\u05da \u2014 I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
-      "blessing": "Blessed are You who girds Israel with strength \u2014 fortify me for the work ahead.",
+      "modeh_ani": "מודה אני לפניך — I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
+      "blessing": "Blessed are You who opens the eyes of the blind — help me see opportunities today.",
       "psalm": "**Psalm 37:5**: \"Commit your way to the Lord; trust in Him and He will act.\"",
-      "proverb": "**Proverbs 27:23**: \"Know well the condition of your flocks, and give attention to your herds.\"",
-      "intention": "Give me wisdom to know when to push forward and when to rest.",
-      "closing": "Go in peace. Build with purpose. Return with gratitude.",
-      "audio": "/audio/brief-2026-02-19-prayer.ogg"
+      "proverb": "**Proverbs 16:9**: \"The heart of man plans his way, but the Lord establishes his steps.\"",
+      "intention": "Open doors that no one can shut, and close doors that would lead me astray.",
+      "closing": "May your work today be a pleasing offering. May your rest tonight be deep and restorative."
     },
     "weather": {
-      "title": "\ud83c\udf24\ufe0f Weather",
+      "title": "🌤️ Weather",
       "location": "Temecula, CA",
-      "today": {
-        "conditions": "Showers likely before 10am, then rain between 10am-4pm, then chance of rain and thunderstorms after 4pm",
-        "high": 54,
-        "wind": "Southwest 25-30 mph, gusts up to 40 mph",
-        "precipitation": "100% chance, quarter to half inch possible"
+      "current": {
+        "temp_f": 42,
+        "temp_c": 6,
+        "condition": "Clear",
+        "wind_speed": "9.7 km/h",
+        "wind_direction": "SW"
       },
-      "tonight": {
-        "conditions": "Chance of rain and thunderstorms before 7pm, then scattered showers",
-        "low": 36,
-        "frost": "Patchy frost after 4am"
-      },
-      "outlook": {
-        "friday": "Mostly sunny, high 55\u00b0F",
-        "weekend": "Sunny, highs 67-72\u00b0F",
-        "next_week": "Mostly sunny, highs 76-77\u00b0F"
-      },
-      "audio": "/audio/brief-2026-02-19-weather.ogg"
+      "forecast": {
+        "today_high_f": 72,
+        "today_high_c": 22,
+        "today_low_f": 39,
+        "today_low_c": 4,
+        "condition": "Sunny",
+        "tomorrow": "Partly cloudy, high 75°F"
+      }
     },
     "calendar": {
-      "title": "\ud83d\udcc5 Calendar",
-      "today": "No events scheduled",
-      "this_week": "No events scheduled",
-      "upcoming": [
+      "title": "📅 Calendar",
+      "today": [
         {
-          "date": "2026-03-06",
-          "event": "Brendon Schmidt's birthday"
+          "time": "10:00 AM - 10:30 AM",
+          "title": "Joe <> Josh - Openclaw",
+          "location": "Microsoft Teams Meeting",
+          "attendees": ["Joe Dewulf"],
+          "description": "Partnership discussion with joe@partnrup.ai"
         }
       ],
-      "audio": "/audio/brief-2026-02-19-calendar.ogg"
+      "week": [
+        {
+          "date": "Feb 20",
+          "events": [
+            {
+              "time": "10:00 AM",
+              "title": "Joe <> Josh - Openclaw"
+            }
+          ]
+        }
+      ],
+      "month": [
+        {
+          "date": "Mar 6",
+          "title": "Brendon Schmidt's birthday",
+          "type": "birthday"
+        }
+      ]
     },
-    "emails": {
-      "title": "\ud83d\udce7 Email Highlights",
+    "email": {
+      "title": "📧 Email Highlights",
+      "unread_count": 5,
       "highlights": [
-        "AWS Marketplace: ELK stack update notification",
-        "Indeed: New acoustic engineer job in Tempe, AZ",
-        "HeyGen: 2026 product strategy executive AMA",
-        "LinkedIn: Messages and network updates",
-        "ZipRecruiter: Howmet Aerospace hiring alert"
+        {
+          "from": "Vercel",
+          "subject": "Failed production deployment on team 'joshlevylabs' projects'",
+          "time": "5:24 AM",
+          "priority": "urgent",
+          "action": "Check deployment logs"
+        },
+        {
+          "from": "Vercel",
+          "subject": "Vercel Billing: Your on-demand spend is at 75% of budget",
+          "time": "Yesterday",
+          "priority": "medium",
+          "action": "Monitor spending"
+        },
+        {
+          "from": "Indeed",
+          "subject": "Lead Systems Engineer/Architect positions in Tempe, AZ",
+          "time": "Yesterday",
+          "priority": "low"
+        }
       ]
     },
     "mre": {
-      "title": "\ud83d\udcca MRE Trading",
-      "fear_greed": 39.8,
+      "title": "📊 MRE Trading",
+      "fear_greed": 38,
       "fear_greed_rating": "fear",
       "regime": "sideways",
       "todays_plays": [],
-      "all_signals": "HOLD",
       "pending_triggers": [],
-      "thesis": "Fear at 40, sideways regime. No active signals - all assets on HOLD. Market volatility elevated (VIX 20.3). Wait for clearer directional signals.",
-      "audio": "/audio/brief-2026-02-19-mre.ogg"
-    },
-    "relationship": {
-      "title": "\ud83d\udc9d Family Focus",
-      "status": "CRITICAL - Needs Attention",
-      "temperature": "critical",
-      "trend": "urgent",
-      "recommendations": [
-        "PRIORITY: Focus on repair. Acknowledge recent conflicts without defending.",
-        "Increase acts of service dramatically this week.",
-        "Create space for her to express frustrations without fixing."
+      "thesis": "Fear elevated (38), sideways regime. All signals HOLD - no new entries yet. Watch for oversold bounces.",
+      "market_overview": [
+        {
+          "symbol": "SPY",
+          "price": 684.48,
+          "change_pct": -0.26,
+          "trend": "sideways"
+        },
+        {
+          "symbol": "QQQ",
+          "price": 603.47,
+          "change_pct": -0.38,
+          "trend": "sideways"
+        },
+        {
+          "symbol": "IWM",
+          "price": 264.6,
+          "change_pct": 0.23,
+          "trend": "bull"
+        }
       ],
-      "love_languages": [
-        "Quality Time",
-        "Acts of Service"
+      "vix": 20.98,
+      "volatility": "ELEVATED"
+    },
+    "family": {
+      "title": "👨‍👩‍👧‍👦 Family Focus",
+      "relationship_temp": "critical",
+      "priority_actions": [
+        "URGENT: Jett's vaccine appointment TODAY",
+        "Acknowledge recent conflicts without defending",
+        "Increase acts of service dramatically this week",
+        "Put phone away for 30 min after kids' bedtime - give Jillian full attention"
+      ],
+      "love_languages": {
+        "primary": "Quality Time",
+        "secondary": "Acts of Service"
+      },
+      "repair_needed": true
+    },
+    "world_news": {
+      "title": "🌍 World News",
+      "israel": [
+        {
+          "headline": "Gaza ceasefire tensions continue",
+          "summary": "IDF eliminated Palestinian terror operative who crossed ceasefire line, posed threat to Golani Brigade soldiers",
+          "source": "Times of Israel",
+          "time": "3 hours ago"
+        },
+        {
+          "headline": "Gaza casualties mount despite ceasefire",
+          "summary": "Israeli strikes have killed ~600 people since ceasefire began according to Gaza health officials",
+          "source": "NY Times",
+          "time": "19 hours ago"
+        }
+      ],
+      "us_politics": [
+        {
+          "headline": "Trump considers Gaza military base",
+          "summary": "Peace plans clash with reality as administration explores military presence in Gaza reconstruction",
+          "source": "NY Times"
+        },
+        {
+          "headline": "DOJ intervenes in LA school segregation lawsuit",
+          "summary": "Conservative group claims decades-old desegregation efforts now discriminate",
+          "source": "Guardian"
+        }
       ]
     },
-    "news": {
-      "title": "\ud83c\udf0d News Highlights",
-      "israel_middle_east": [
-        "Ramadan begins - Israel managing security cautiously without escalating tensions",
-        "Police extend Temple Mount visiting hours for non-Muslims during Ramadan",
-        "Ongoing discussions about October 7 narrative and Gaza war policy"
-      ],
-      "ai_tech": [
-        "Google.org Impact Challenges 2026: Up to $3M funding for AI projects in government innovation",
-        "OpenAI 2026 roadmap features GPT-5 'Orion' model and autonomous 'Operator' web agent",
-        "$100B Stargate supercomputer project announced",
-        "India AI Impact Summit 2026 begins February 16 in New Delhi"
-      ],
-      "audio": "/audio/brief-2026-02-19-news.ogg"
+    "ai_news": {
+      "title": "🤖 AI News",
+      "highlights": [
+        {
+          "headline": "Anthropic releases Claude Sonnet 4.6",
+          "summary": "Performance previously requiring Opus-class models now available in Sonnet 4.6 for real-world office tasks",
+          "source": "CNBC",
+          "time": "3 days ago",
+          "relevance": "high"
+        },
+        {
+          "headline": "Anthropic raises $30B Series G at $380B valuation",
+          "summary": "Massive funding round continues AI investment boom, Chris Liddell joins board",
+          "source": "Anthropic",
+          "time": "Feb 12",
+          "relevance": "high"
+        },
+        {
+          "headline": "AI chatbot advertising battle",
+          "summary": "Anthropic commits Claude remains ad-free to preserve 'genuinely helpful assistant' role vs OpenAI's ad integration",
+          "source": "Guardian",
+          "time": "2 weeks ago",
+          "relevance": "medium"
+        }
+      ]
     }
   }
 }

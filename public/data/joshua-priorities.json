@@ -1,6 +1,6 @@
 {
   "date": "2026-02-19",
-  "generatedAt": "2026-02-19T23:31:04.229272-08:00",
+  "generatedAt": "2026-02-19T23:45:52.458861-08:00",
   "priorities": [
     {
       "text": "Evaluate deployment of idle cash ($75,340 available) \u2014 CEO decided keep liquid, flagged for ongoing review",
@@ -13,6 +13,18 @@
       "source": "overnight-sprint",
       "urgency": "medium",
       "taskKey": "J-002"
+    },
+    {
+      "text": "Review and approve App Store listing draft before submission",
+      "source": "overnight-sprint",
+      "urgency": "high",
+      "taskKey": "J-003"
+    },
+    {
+      "text": "Jett vaccine appointment tomorrow February 20 \u2014 tracked and confirmed",
+      "source": "overnight-sprint",
+      "urgency": "high",
+      "taskKey": "J-004"
     }
   ],
   "agentHandled": [
@@ -93,6 +105,54 @@
       "assignee": "Alex",
       "status": "pending",
       "taskKey": "A-013"
+    },
+    {
+      "text": "Review 5 ecosystem attention items (newsletter CMS, Compass UI duplication, Plays dashboard, content sync, dual Supabase)",
+      "assignee": "Elon",
+      "status": "pending",
+      "taskKey": "A-014"
+    },
+    {
+      "text": "Draft full App Store listing: app name, subtitle, description, promotional text, keywords, and screenshot specifications",
+      "assignee": "Alex",
+      "status": "pending",
+      "taskKey": "A-015"
+    },
+    {
+      "text": "Confirm crash reporting is active and functional in the current build",
+      "assignee": "Steve Jobs",
+      "status": "pending",
+      "taskKey": "A-016"
+    },
+    {
+      "text": "Package build and submit to App Store once Joshua approves listing",
+      "assignee": "Elon",
+      "status": "pending",
+      "taskKey": "A-017"
+    },
+    {
+      "text": "Close podcast MDX sync gap and blog rendering issues (A-001, A-010) in parallel",
+      "assignee": "Elon",
+      "status": "pending",
+      "taskKey": "A-018"
+    },
+    {
+      "text": "Close A-012: publish missing podcast episode to website",
+      "assignee": "Alex",
+      "status": "pending",
+      "taskKey": "A-019"
+    },
+    {
+      "text": "Instrument analytics (tab switches, lesson completions, session duration) as post-submission patch during Apple review window",
+      "assignee": "James Truchard",
+      "status": "pending",
+      "taskKey": "A-020"
+    },
+    {
+      "text": "Continue monitoring cash position and market signals per J-001 directive",
+      "assignee": "Dave",
+      "status": "pending",
+      "taskKey": "A-021"
     }
   ]
 }

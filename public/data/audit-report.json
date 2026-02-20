@@ -1,10 +1,10 @@
 {
-  "timestamp": "2026-02-20T02:45:05.559830+00:00",
+  "timestamp": "2026-02-20T03:01:33.101428+00:00",
   "summary": {
-    "total_tasks": 13,
-    "verified_done": 13,
+    "total_tasks": 18,
+    "verified_done": 14,
     "done_but_unverified": 0,
-    "pending": 0,
+    "pending": 4,
     "stale": 0
   },
   "items": [
@@ -85,6 +85,37 @@
       "status": "resolved",
       "assignee": "Dave",
       "verification": "Resolved: not automatable via dispatch"
+    },
+    {
+      "text": "Batch-commit 4 uncommitted hub changes (A-072, A-090)",
+      "status": "verified_done",
+      "assignee": "Elon",
+      "verification": "PASSED: Verify hub has no uncommitted changes",
+      "audit_note": "Completed outside dispatcher"
+    },
+    {
+      "text": "Complete faith lesson 10 of 10 to close out A-093",
+      "status": "pending",
+      "assignee": "Alex",
+      "verification": "No verification rule found"
+    },
+    {
+      "text": "Mark A-094 (Jett vaccine reminder) as complete",
+      "status": "pending",
+      "assignee": "Theo",
+      "verification": "No verification rule found"
+    },
+    {
+      "text": "Continue Fear & Greed index monitoring at 38 (A-096)",
+      "status": "pending",
+      "assignee": "Dave",
+      "verification": "No verification rule found"
+    },
+    {
+      "text": "Extend A-042 Family tab spec once J-021 and J-022 are decided",
+      "status": "pending",
+      "assignee": "Elon",
+      "verification": "No verification rule found"
     }
   ],
   "escalations": []

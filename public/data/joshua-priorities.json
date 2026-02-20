@@ -104,31 +104,6 @@
       "text": "Review and approve MVP product spec once drafted (J-020)",
       "source": "evening-wrap",
       "urgency": "high"
-    },
-    {
-      "text": "Decide Lever direction: personal tool vs. product",
-      "source": "morning-priorities",
-      "urgency": "high"
-    },
-    {
-      "text": "Decide Family tab integration approach with faith content",
-      "source": "morning-priorities",
-      "urgency": "high"
-    },
-    {
-      "text": "Evaluate deployment of idle cash ($75,340 available)",
-      "source": "afternoon-checkpoint",
-      "urgency": "medium"
-    },
-    {
-      "text": "Decide Lever direction: personal tool vs. family product vs. community platform (J-021)",
-      "source": "evening-wrap",
-      "urgency": "high"
-    },
-    {
-      "text": "Evaluate idle cash deployment strategy \u2014 $75,340 available (J-023)",
-      "source": "evening-wrap",
-      "urgency": "medium"
     }
   ],
   "agentHandled": [
@@ -234,7 +209,9 @@
     {
       "text": "Batch-commit 4 uncommitted hub changes (A-072, A-090)",
       "assignee": "Elon",
-      "status": "pending"
+      "status": "done",
+      "verified": true,
+      "audit_note": "Completed outside dispatcher"
     },
     {
       "text": "Complete faith lesson 10 of 10 to close out A-093",

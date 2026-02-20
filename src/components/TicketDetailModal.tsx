@@ -584,13 +584,14 @@ export default function TicketDetailModal({ task, onClose, onUpdate }: TicketDet
     <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm" onClick={onClose}>
       {/* Close button - floating top-right, always visible */}
       <button
-        onClick={onClose}
+        onClick={(e) => { e.stopPropagation(); onClose(); }}
         className="fixed top-4 right-4 z-[55] p-3 bg-slate-800 border border-slate-600 rounded-full text-slate-300 hover:text-white hover:bg-slate-700 transition-all shadow-lg"
         title="Close (Esc)"
       >
         <X className="w-5 h-5" />
       </button>
       <div className="flex h-full" onClick={(e) => e.stopPropagation()}>
+
         {/* Main Content Panel (65%) */}
         <div className="flex-1 max-w-4xl bg-slate-900 border-r border-slate-700 overflow-auto">
           <div className="p-6 space-y-6">
@@ -781,7 +782,6 @@ export default function TicketDetailModal({ task, onClose, onUpdate }: TicketDet
             </div>
           </div>
         </div>
-      </div>
       </div>
 
       {/* Status Selector Overlay */}

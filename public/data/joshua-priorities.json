@@ -1,6 +1,80 @@
 {
   "date": "2026-02-19",
-  "generatedAt": "2026-02-19T22:00:49.793006-08:00",
-  "priorities": [],
-  "agentHandled": []
+  "generatedAt": "2026-02-19T22:47:35.624064-08:00",
+  "priorities": [
+    {
+      "text": "Evaluate deployment of idle cash ($75,340 available) \u2014 CEO decided keep liquid, flagged for ongoing review",
+      "source": "adhoc-evening-roster-test",
+      "urgency": "medium",
+      "taskKey": "J-001"
+    }
+  ],
+  "agentHandled": [
+    {
+      "text": "Address 3 critical ecosystem sync gaps (podcast MDX mismatch, blog post rendering, App Store submission)",
+      "assignee": "Elon",
+      "status": "pending",
+      "taskKey": "A-001"
+    },
+    {
+      "text": "Review 5 ecosystem attention items with architecture specs",
+      "assignee": "Elon",
+      "status": "pending",
+      "taskKey": "A-002"
+    },
+    {
+      "text": "Commit 1 uncommitted hub change",
+      "assignee": "Elon",
+      "status": "pending",
+      "taskKey": "A-003"
+    },
+    {
+      "text": "Draft faith lesson content for the Lever app \u2014 breadth-first across 8 dimensions, from 7 toward 15-20 lessons",
+      "assignee": "Alex",
+      "status": "pending",
+      "taskKey": "A-004"
+    },
+    {
+      "text": "Generate daily devotional content based on 8 faith dimensions",
+      "assignee": "Alex",
+      "status": "pending",
+      "taskKey": "A-005"
+    },
+    {
+      "text": "Prepare reminders for upcoming family events: Jetts vaccine (Feb 20)",
+      "assignee": "Alex",
+      "status": "pending",
+      "taskKey": "A-006"
+    },
+    {
+      "text": "Monitor Fear & Greed index (currently 39)",
+      "assignee": "Dave",
+      "status": "pending",
+      "taskKey": "A-007"
+    },
+    {
+      "text": "Draft feature spec for expanding Family tab (currently 455 lines)",
+      "assignee": "Elon",
+      "status": "pending",
+      "taskKey": "A-008"
+    },
+    {
+      "text": "Review family touchpoint tracker design for 3 family members",
+      "assignee": "Elon",
+      "status": "pending",
+      "taskKey": "A-009"
+    },
+    {
+      "text": "Address 3 critical ecosystem sync gaps and extend A-001 to include App Store listing assets (screenshots, description, keywords)",
+      "assignee": "Elon",
+      "status": "pending",
+      "taskKey": "A-010"
+    },
+    {
+      "text": "Commit 2 uncommitted hub changes",
+      "assignee": "Elon",
+      "status": "pending",
+      "taskKey": "A-011"
+    }
+  ]
 }

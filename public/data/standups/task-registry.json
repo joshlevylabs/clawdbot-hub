@@ -1,5 +1,5 @@
 {
-  "nextAgentId": 10,
+  "nextAgentId": 12,
   "nextJoshuaId": 2,
   "tasks": [
     {
@@ -140,6 +140,34 @@
       "sourceDate": "2026-02-19",
       "createdAt": "2026-02-19T22:34:38.737258-08:00",
       "updatedAt": "2026-02-19T22:34:38.737258-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "A-010",
+      "text": "Address 3 critical ecosystem sync gaps and extend A-001 to include App Store listing assets (screenshots, description, keywords)",
+      "tag": "AGENT",
+      "priority": "high",
+      "assignee": "Elon",
+      "status": "pending",
+      "sourceStandup": "STD-1",
+      "sourceStandupType": "adhoc-phase-3-smoke-test",
+      "sourceDate": "2026-02-19",
+      "createdAt": "2026-02-19T22:44:25.478632-08:00",
+      "updatedAt": "2026-02-19T22:44:25.478632-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "A-011",
+      "text": "Commit 2 uncommitted hub changes",
+      "tag": "AGENT",
+      "priority": "low",
+      "assignee": "Elon",
+      "status": "pending",
+      "sourceStandup": "STD-1",
+      "sourceStandupType": "adhoc-phase-3-smoke-test",
+      "sourceDate": "2026-02-19",
+      "createdAt": "2026-02-19T22:44:25.478632-08:00",
+      "updatedAt": "2026-02-19T22:44:25.478632-08:00",
       "completedAt": null
     }
   ]

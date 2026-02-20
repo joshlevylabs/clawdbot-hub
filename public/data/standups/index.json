@@ -2,6 +2,19 @@
   "standups": [
     {
       "date": "2026-02-19",
+      "time": "22:44",
+      "type": "adhoc-phase-3-smoke-test",
+      "typeName": "Phase 3 Smoke Test",
+      "typeEmoji": "\ud83e\uddea",
+      "topic": "Phase 3 Smoke Test \u2014 Thursday Feb 19",
+      "file": "2026-02-19-adhoc-phase-3-smoke-test.json",
+      "tokenCost": 0.2924,
+      "verticals": [],
+      "initiatives": [],
+      "instanceKey": "STD-2"
+    },
+    {
+      "date": "2026-02-19",
       "time": "22:34",
       "type": "adhoc-evening-roster-test",
       "typeName": "Evening Roster Test",

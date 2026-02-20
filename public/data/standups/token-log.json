@@ -349,12 +349,32 @@
       "estimatedCost": 0.3459,
       "model": "claude-opus-4-6",
       "duration": "75.1s"
+    },
+    {
+      "date": "2026-02-19",
+      "type": "adhoc-phase-3-smoke-test",
+      "inputTokens": 3459,
+      "outputTokens": 1873,
+      "totalTokens": 5332,
+      "estimatedCost": 0.1924,
+      "model": "claude-opus-4-6",
+      "duration": "46.7s"
+    },
+    {
+      "date": "2026-02-19",
+      "type": "adhoc-phase-3-smoke-test",
+      "inputTokens": 4972,
+      "outputTokens": 2904,
+      "totalTokens": 7876,
+      "estimatedCost": 0.2924,
+      "model": "claude-opus-4-6",
+      "duration": "67.80000000000001s"
     }
   ],
   "totals": {
-    "today": 1.9499,
-    "week": 5.4802,
-    "month": 5.4802,
-    "standupCount": 35
+    "today": 2.4347,
+    "week": 5.965,
+    "month": 5.965,
+    "standupCount": 37
   }
 }

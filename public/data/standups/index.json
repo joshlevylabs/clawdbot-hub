@@ -8,10 +8,49 @@
       "typeEmoji": "\ud83c\udf19",
       "topic": "Overnight Sprint \u2014 Friday Feb 20",
       "file": "2026-02-20-overnight-sprint.json",
-      "tokenCost": 0.4058,
+      "tokenCost": 0.2818,
       "verticals": [],
       "initiatives": [],
-      "instanceKey": "STD-23"
+      "instanceKey": "STD-24"
+    },
+    {
+      "date": "2026-02-20",
+      "time": "20:00",
+      "type": "evening-session",
+      "typeName": "Evening Session",
+      "typeEmoji": "\ud83c\udf06",
+      "topic": "Evening Session \u2014 Friday Feb 20",
+      "file": "2026-02-20-evening-session.json",
+      "tokenCost": 0.45690000000000003,
+      "verticals": [],
+      "initiatives": [],
+      "instanceKey": "STD-2"
+    },
+    {
+      "date": "2026-02-20",
+      "time": "12:00",
+      "type": "midday-checkpoint",
+      "typeName": "Midday Checkpoint",
+      "typeEmoji": "\u2600\ufe0f",
+      "topic": "Midday Checkpoint \u2014 Friday Feb 20",
+      "file": "2026-02-20-midday-checkpoint.json",
+      "tokenCost": 0.42419999999999997,
+      "verticals": [],
+      "initiatives": [],
+      "instanceKey": "STD-2"
+    },
+    {
+      "date": "2026-02-20",
+      "time": "05:00",
+      "type": "morning-kickoff",
+      "typeName": "Morning Kickoff",
+      "typeEmoji": "\ud83c\udf05",
+      "topic": "Morning Kickoff \u2014 Friday Feb 20",
+      "file": "2026-02-20-morning-kickoff.json",
+      "tokenCost": 0.4299,
+      "verticals": [],
+      "initiatives": [],
+      "instanceKey": "STD-2"
     },
     {
       "date": "2026-02-19",

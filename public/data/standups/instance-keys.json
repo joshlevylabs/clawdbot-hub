@@ -3,12 +3,18 @@
     "adhoc-evening-wrap": 2,
     "adhoc-evening-roster-test": 2,
     "adhoc-phase-3-smoke-test": 2,
-    "overnight-sprint": 23
+    "overnight-sprint": 24,
+    "morning-kickoff": 2,
+    "midday-checkpoint": 2,
+    "evening-session": 2
   },
   "abbreviations": {
     "adhoc-evening-wrap": "STD",
     "adhoc-evening-roster-test": "STD",
     "adhoc-phase-3-smoke-test": "STD",
-    "overnight-sprint": "STD"
+    "overnight-sprint": "STD",
+    "morning-kickoff": "STD",
+    "midday-checkpoint": "STD",
+    "evening-session": "STD"
   }
 }

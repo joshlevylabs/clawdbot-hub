@@ -599,12 +599,82 @@
       "estimatedCost": 0.4058,
       "model": "claude-opus-4-6",
       "duration": "81.5s"
+    },
+    {
+      "date": "2026-02-20",
+      "type": "overnight-sprint",
+      "inputTokens": 7660,
+      "outputTokens": 2225,
+      "totalTokens": 9885,
+      "estimatedCost": 0.2818,
+      "model": "claude-opus-4-6",
+      "duration": "55.5s"
+    },
+    {
+      "date": "2026-02-20",
+      "type": "morning-kickoff",
+      "inputTokens": 8028,
+      "outputTokens": 2556,
+      "totalTokens": 10584,
+      "estimatedCost": 0.3121,
+      "model": "claude-opus-4-6",
+      "duration": "64.0s"
+    },
+    {
+      "date": "2026-02-20",
+      "type": "morning-kickoff",
+      "inputTokens": 9989,
+      "outputTokens": 3734,
+      "totalTokens": 13723,
+      "estimatedCost": 0.4299,
+      "model": "claude-opus-4-6",
+      "duration": "87.9s"
+    },
+    {
+      "date": "2026-02-20",
+      "type": "midday-checkpoint",
+      "inputTokens": 8529,
+      "outputTokens": 2424,
+      "totalTokens": 10953,
+      "estimatedCost": 0.3097,
+      "model": "claude-opus-4-6",
+      "duration": "59.1s"
+    },
+    {
+      "date": "2026-02-20",
+      "type": "midday-checkpoint",
+      "inputTokens": 10354,
+      "outputTokens": 3586,
+      "totalTokens": 13940,
+      "estimatedCost": 0.42419999999999997,
+      "model": "claude-opus-4-6",
+      "duration": "82.7s"
+    },
+    {
+      "date": "2026-02-20",
+      "type": "evening-session",
+      "inputTokens": 9210,
+      "outputTokens": 2632,
+      "totalTokens": 11842,
+      "estimatedCost": 0.3356,
+      "model": "claude-opus-4-6",
+      "duration": "67.5s"
+    },
+    {
+      "date": "2026-02-20",
+      "type": "evening-session",
+      "inputTokens": 11139,
+      "outputTokens": 3863,
+      "totalTokens": 15002,
+      "estimatedCost": 0.45690000000000003,
+      "model": "claude-opus-4-6",
+      "duration": "90.7s"
     }
   ],
   "totals": {
-    "today": 5.3065,
-    "week": 12.164,
-    "month": 12.164,
-    "standupCount": 60
+    "today": 7.8567,
+    "week": 14.7142,
+    "month": 14.7142,
+    "standupCount": 67
   }
 }

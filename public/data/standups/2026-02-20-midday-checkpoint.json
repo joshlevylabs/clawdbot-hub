@@ -1,9 +1,9 @@
 {
   "date": "2026-02-20",
-  "time": "23:30",
-  "generatedAt": "2026-02-20T04:30:26.845572-08:00",
-  "topic": "Overnight Sprint \u2014 Friday Feb 20",
-  "summary": "Day-one patch assembly is the critical path overnight; content expansion pushing toward 10 faith lessons by morning.",
+  "time": "12:00",
+  "generatedAt": "2026-02-20T05:06:21.177916-08:00",
+  "topic": "Midday Checkpoint \u2014 Friday Feb 20",
+  "summary": "Day-one patch staged and ready; awaiting Joshua's morning task confirmations and Apple review decision.",
   "status": "completed",
   "participants": [
     {
@@ -49,13 +49,13 @@
       "description": "Chris Vermeulen \u2014 CFTO owning all financial tools and products."
     },
     {
-      "name": "faith",
-      "role": "FAITH",
-      "emoji": "",
-      "description": ""
+      "name": "Peterson",
+      "role": "Dir. Faith & Family",
+      "emoji": "\ud83d\udd4a\ufe0f",
+      "description": "Moral Order + Psychological Responsibility. Ethical product review."
     }
   ],
-  "duration": "55.5s",
+  "duration": "82.7s",
   "reports": {
     "cto": {
       "agent": "Elon Musk",
@@ -69,21 +69,21 @@
         "James Bach"
       ],
       "highlights": [
-        "739 commits this week",
-        "Hub latest: 3fe280a data: fleet usage update",
+        "740 commits this week",
+        "Hub latest: fe49ce1 data: fleet usage update",
         "Build status: healthy"
       ],
       "concerns": [
-        "Uncommitted changes: Hub (3), Monorepo (0)",
+        "Uncommitted changes: Hub (12), Monorepo (0)",
         "3 critical sync gaps",
         "7 TODOs/FIXMEs"
       ],
       "metrics": {
-        "recentCommits": 739,
+        "recentCommits": 740,
         "openIssues": 8,
         "buildHealthy": true,
         "todosFixmes": 7,
-        "uncommittedHub": 3,
+        "uncommittedHub": 12,
         "uncommittedMono": 0
       }
     },
@@ -148,160 +148,160 @@
     {
       "speaker": "Theo",
       "role": "COO",
-      "message": "Alright team, it's late Friday night. Let me frame where we are. Build is healthy, 739 commits in seven days \u2014 that's velocity. The big picture: App Store submission is approved and we're in review limbo. Day-one patch is scoped and expanding \u2014 welcome modal, empty states, analytics scaffolding. Content expansion is underway with faith lessons 8 and 9 in draft. Three hub files still uncommitted. The overnight question is simple: what ships before Joshua wakes up? Let's go around. Elon, status on the patch build and those commits."
+      "message": "Alright team, midday checkpoint. It's Friday, February 20th. Let me frame where we are. Joshua had a 2-hour build window this morning \u2014 newsletter screenshot review, crash reporting check, and analytics scaffolding were the priorities. We're in a holding pattern on Apple review. The app has been submitted, and if it clears before 2pm today, we launch same-day per CEO directive. If not, we push to tomorrow morning. Key numbers: 740 commits in 7 days, build is healthy, Fear & Greed at 38, cash at $75,340 staying liquid. Let's go around. Elon, what moved on your end since morning?"
     },
     {
       "speaker": "Elon Musk",
       "role": "CTO",
-      "message": "Three hub files still uncommitted \u2014 I'll batch those in the next cycle. The day-one patch build is the real priority: I need Steve's welcome modal copy and his Compass empty state copy wired in, plus the analytics Swift hooks scaffolded per James's implementation guide. A-068 and A-070 are my critical path. The three dead-code TODO cleanups from A-069 are trivial \u2014 I'll knock those out in the same commit. Podcast rendering fix from A-039 is still dangling and I want that merged tonight so the website isn't broken when people land there from the newsletter."
-    },
-    {
-      "speaker": "Steve Jobs",
-      "role": "CPO",
-      "message": "The welcome modal copy and Compass empty state copy \u2014 both are drafted and ready to hand off. A-062 and A-067 should be marked closeable the moment Elon pulls them in. My attention is now on the user's first sixty seconds in the app. We have the modal, we have the empty states with intentional copy instead of blank screens. That's the minimum dignity threshold for launch. Nothing else from product blocks tonight."
-    },
-    {
-      "speaker": "Alex",
-      "role": "CMO",
-      "message": "Newsletter is pre-scheduled in CMS per A-063, screenshot queued for Joshua's Slack review in the morning. Faith lessons 8 and 9 are in draft \u2014 lesson 8 covers the Service dimension, lesson 9 hits Rest. I'm coordinating with faith on tone. The second podcast MDX file for the website sync gap is half-done \u2014 I can finish that and close out A-048 this cycle. That gets us from 1 podcast on the site to 3, which matters when newsletter traffic hits the domain."
-    },
-    {
-      "speaker": "faith",
-      "role": "FAITH",
-      "message": "Lesson 7 tone adjustment from A-064 is complete \u2014 it reads warmer now, less clinical. I'm reviewing Alex's drafts for lessons 8 and 9 to make sure the dimensional coverage stays balanced and the scripture anchors feel organic, not forced. Once those pass review, we'll be at 9 lessons \u2014 halfway to the 15-20 target. I'd like to push for lesson 10 tonight if the drafts clear quickly."
+      "message": "Three things. First, the batch commit from A-074 is staged \u2014 hub files, podcast rendering fix, and the welcome modal plus Compass empty state copy are all wired into the day-one patch build. Waiting on Joshua to merge. Second, analytics Swift hooks from A-075 \u2014 I've got the scaffolding spec from James but this is blocked on Joshua's build window, which was supposed to happen this morning. Need to know if he got to it. Third, we still have 11 uncommitted hub files. I'll clean those up this afternoon regardless. The dead-code TODO removals from A-083 are also staged and ready for a quick merge."
     },
     {
       "speaker": "James Truchard",
       "role": "CTIO",
-      "message": "Analytics implementation guide with Swift snippets is finalized \u2014 A-042 is ready for Elon to scaffold from. The crash breadcrumb extension from A-059 is documented. My focus now is A-072: prepping the validation test environment so the moment Elon's hooks land, we can verify events fire correctly. I also drafted the lightweight data validation test spec from A-066. Six event types, each with an expected payload shape and a pass/fail check. Clean and testable."
-    },
-    {
-      "speaker": "Dave",
-      "role": "CRO",
-      "message": "Launch metrics dashboard spec is locked \u2014 150 week-one target, day-3 escalation trigger at sub-100 downloads, conversion funnel from newsletter click to download to first session. A-054 is closeable. Fear & Greed at 38, cash at $75,340, no action per standing directive. The real revenue question is post-launch: we need subscriber tracking infrastructure ready so when we toggle the paid tier on, we have baseline free-user data. That's not tonight's problem, but it's next week's."
-    },
-    {
-      "speaker": "Chris Vermeullen",
-      "role": "CFTO",
-      "message": "Markets are in fear territory, SPY sideways. Paper equity at $99,849 across four positions, zero buy signals today. Nothing actionable on the trading side. I'll note that the 24 assets on HOLD means we're positioned conservatively, which aligns with keeping cash liquid. When download data starts flowing and we see if this app generates any revenue signal, that informs the cash deployment conversation from J-001 more than any market indicator will."
-    },
-    {
-      "speaker": "Theo",
-      "role": "COO",
-      "message": "Good. Quick cross-talk \u2014 anything blocking anyone?"
-    },
-    {
-      "speaker": "Elon Musk",
-      "role": "CTO",
-      "message": "Steve, is the Compass copy in a file I can pull from, or do I need you to drop it in Slack?"
+      "message": "Analytics validation test environment is prepped per A-084. I've got pass/fail checks for all six event types ready to run the moment the hooks land in the codebase. The crash breadcrumb extension from A-059 is also documented. The bottleneck is simple \u2014 did Joshua scaffold the Swift hooks this morning? If yes, I can validate within the hour. If no, we need to know when that's happening because analytics is the CEO's top priority before content expansion."
     },
     {
       "speaker": "Steve Jobs",
       "role": "CPO",
-      "message": "It's in the task registry under A-062. Three lines: headline, subtext, and a CTA hint. Pull it directly \u2014 no ambiguity."
+      "message": "Welcome modal copy and Compass empty state copy are both delivered \u2014 A-062 and A-067 are done on my end. Elon has them wired in. The product is launch-ready as-is per Joshua's directive. One thing I want to flag: we have no visibility into whether crash reporting is actually functional. A-016 has been sitting there. Joshua was supposed to check it this morning in his 5-minute window. If the app crashes on day one and we're blind to it, that's a bad first impression for our 150 target users."
     },
     {
       "speaker": "Alex",
       "role": "CMO",
-      "message": "Faith \u2014 if lessons 8 and 9 clear your review tonight, I'll immediately start lesson 10 covering the Community dimension. That gets us to 10 before Joshua's morning check-in, which is a better number to report than 9."
+      "message": "Newsletter is pre-scheduled in the CMS per A-063. Story-driven subject line, hero CTA with App Store link placeholder ready to swap in the live URL. Screenshot was queued for Joshua's Slack review this morning \u2014 I need confirmation he saw it and approved. On content: faith lessons 8 and 9 drafts are done per A-071, Peterson is reviewing them now. Lesson 10 on Community is drafted per A-082. We're on track for the 15-20 target. Also, the missing podcast MDX file from A-053 is drafted and ready to commit."
     },
     {
-      "speaker": "faith",
-      "role": "FAITH",
-      "message": "Agreed. I'll prioritize the review. If the Service lesson's takeaway is concrete enough, we can move fast."
+      "speaker": "Dave",
+      "role": "CRO",
+      "message": "CMS pre-schedule flow has been tested end-to-end per A-081. Manual click-to-send works. The Monday follow-up reminder newsletter per CEO directive \u2014 that's a new item Alex and I need to coordinate on. Launch metrics dashboard spec from A-054 is finalized: 150 week-one target, day-3 escalation trigger at sub-100 downloads. I'll be monitoring download velocity the moment we go live. No buy signals today, market is sideways, cash stays liquid per standing directive."
+    },
+    {
+      "speaker": "Chris Vermeullen",
+      "role": "CFTO",
+      "message": "Quick market context. Fear & Greed dropped a point to 38, still in fear territory. SPY is sideways. Our four positions \u2014 XLV, AEE, EWA, AKAM \u2014 are all holds, paper equity just under $100K. No action needed. The $75K cash position is well-placed given the sentiment. If we see Fear & Greed dip below 30, I'd want to revisit deployment options, but that's not today's conversation."
+    },
+    {
+      "speaker": "Peterson",
+      "role": "Dir. Faith & Family",
+      "message": "Two items. First, Jett's vaccine appointment is today \u2014 A-086. I need confirmation Joshua has it on his calendar. This is a real-world obligation that takes priority over build work. Second, I'm reviewing faith lessons 8 and 9 right now per A-078. Lesson 8 is solid. Lesson 9 needs a stronger scripture anchor \u2014 I'll have notes back to Alex within the hour. The existing 7 lessons have been polished per A-055, with lesson 7's tone adjustment complete."
     },
     {
       "speaker": "Theo",
       "role": "COO",
-      "message": "Perfect. Here's the overnight priority stack. First: Elon batch-pushes the three hub commits, merges the podcast rendering fix, and wires Steve's copy into the day-one patch with analytics hooks scaffolded. That's the engineering critical path. Second: Alex finishes the two podcast MDX files and drafts lesson 10 once faith clears 8 and 9. Third: James validates the test environment is ready to verify analytics the moment hooks land. Fourth: Dave confirms the CMS pre-schedule is airtight for morning. Joshua's only morning action is the Slack screenshot review of the newsletter \u2014 everything else should be done. One decision we need from Joshua is about the content milestone. Let's ship."
+      "message": "Good. Cross-talk \u2014 what needs resolution right now?"
+    },
+    {
+      "speaker": "James Truchard",
+      "role": "CTIO",
+      "message": "Elon, if Joshua didn't get to the analytics scaffolding this morning, can you and I pair on it? I have the implementation guide with Swift snippets ready. We could stage it so Joshua just has to review and merge rather than write from scratch."
+    },
+    {
+      "speaker": "Elon Musk",
+      "role": "CTO",
+      "message": "Yes. Let's do that. I'll scaffold the hooks from your guide this afternoon and stage the PR. That way Joshua's involvement drops from an hour of coding to a 5-minute review and merge. Same approach as the batch commits \u2014 reduce his bottleneck surface area."
+    },
+    {
+      "speaker": "Steve Jobs",
+      "role": "CPO",
+      "message": "That's the right call. But someone needs to chase the crash reporting verification. If Joshua didn't do the 5-minute check this morning, we need him to do it before any launch push. Non-negotiable."
+    },
+    {
+      "speaker": "Theo",
+      "role": "COO",
+      "message": "Agreed. Alright, here's where we land. Three critical unknowns from Joshua's morning window: did he review the newsletter screenshot, did he verify crash reporting, and did he start analytics scaffolding? Elon and James are de-risking the analytics path by staging the PR themselves. The day-one patch build is ready to merge. Content is on track. Peterson, get the lesson 9 notes to Alex within the hour. Dave and Alex, coordinate on the Monday reminder newsletter draft. And Peterson \u2014 make sure Joshua knows about Jett's appointment. That's real life, it comes first. We reconvene if Apple approves."
+    },
+    {
+      "speaker": "Theo",
+      "role": "COO",
+      "message": "**Theo (COO) \u2014 Closing Remarks:**\n\nGood. Two out of three morning tasks done \u2014 newsletter screenshot is approved, crash reporting is verified and functional. That clears two blockers in one shot. Analytics scaffolding didn't get started, but Joshua's approved the de-risk path: Elon and James will stage the Swift hooks PR this afternoon, and Joshua reviews and merges in a 5-minute window. That's the right call \u2014 we keep the CEO's bottleneck surface area minimal. Alex, you've got your marching ord"
     }
   ],
   "actionItems": [
     {
-      "text": "Batch-push 3 uncommitted hub files, merge podcast rendering fix (A-039), wire welcome modal copy (A-067) and Compass empty state copy (A-062) into day-one patch build (closes A-068, A-038, A-039)",
-      "priority": "high",
-      "assignee": "Elon Musk",
-      "completed": false,
-      "tag": "AGENT",
-      "taskKey": "A-074"
-    },
-    {
-      "text": "Scaffold analytics Swift hooks per James's implementation guide into day-one patch codebase (advance A-070)",
-      "priority": "high",
-      "assignee": "Elon Musk",
-      "completed": false,
-      "tag": "AGENT",
-      "taskKey": "A-075"
-    },
-    {
-      "text": "Remove 3 dead-code TODOs (zero-risk) to close A-069",
-      "priority": "medium",
-      "assignee": "Elon Musk",
-      "completed": false,
-      "tag": "AGENT",
-      "taskKey": "A-076"
-    },
-    {
-      "text": "Finish 2 podcast MDX files and commit to website repo to close A-048 and A-026 podcast sync gap",
-      "priority": "high",
-      "assignee": "Alex",
-      "completed": false,
-      "tag": "AGENT",
-      "taskKey": "A-026"
-    },
-    {
-      "text": "Draft faith lesson 10 (Community dimension) once faith clears lessons 8-9 review (advance A-071)",
-      "priority": "high",
-      "assignee": "Alex",
-      "completed": false,
-      "tag": "AGENT",
-      "taskKey": "A-077"
-    },
-    {
-      "text": "Review faith lessons 8-9 drafts for dimensional balance, tone, and scripture anchors (advance A-073)",
-      "priority": "high",
-      "assignee": "faith",
-      "completed": false,
-      "tag": "AGENT",
-      "taskKey": "A-078"
-    },
-    {
-      "text": "Prep analytics validation test environment with pass/fail checks for 6 event types (advance A-072, A-066)",
-      "priority": "high",
-      "assignee": "James Truchard",
-      "completed": false,
-      "tag": "AGENT",
-      "taskKey": "A-079"
-    },
-    {
-      "text": "Confirm CMS pre-schedule flow is airtight and screenshot is queued for Joshua's Slack review (verify A-063, A-065)",
-      "priority": "medium",
-      "assignee": "Dave",
-      "completed": false,
-      "tag": "AGENT",
-      "taskKey": "A-080"
-    },
-    {
-      "text": "Review pre-scheduled newsletter via Slack screenshot and confirm send-readiness (J-017)",
+      "text": "Confirm newsletter screenshot approval, crash reporting status, and analytics scaffolding progress from this morning's build window",
       "priority": "high",
       "assignee": "Joshua",
       "completed": false,
       "tag": "JOSHUA",
-      "taskKey": "J-017"
+      "taskKey": "J-020"
     },
     {
-      "text": "Monitor App Store review status and alert team immediately on any status change (A-037)",
+      "text": "Stage analytics Swift hooks PR from James's implementation guide so Joshua only needs review-and-merge (advance A-075)",
+      "priority": "high",
+      "assignee": "Elon Musk",
+      "completed": false,
+      "tag": "AGENT",
+      "taskKey": "A-087"
+    },
+    {
+      "text": "Run analytics validation tests within 1 hour of hooks landing in codebase (advance A-084)",
+      "priority": "high",
+      "assignee": "James Truchard",
+      "completed": false,
+      "tag": "AGENT",
+      "taskKey": "A-088"
+    },
+    {
+      "text": "Return lesson 9 scripture anchor notes to Alex within 1 hour (advance A-078)",
+      "priority": "high",
+      "assignee": "Peterson",
+      "completed": false,
+      "tag": "AGENT",
+      "taskKey": "A-089"
+    },
+    {
+      "text": "Commit 11 uncommitted hub files and merge staged dead-code TODO removals (advance A-083, A-038)",
       "priority": "medium",
       "assignee": "Elon Musk",
       "completed": false,
       "tag": "AGENT",
-      "taskKey": "A-029"
+      "taskKey": "A-090"
+    },
+    {
+      "text": "Coordinate with Alex on Monday follow-up reminder newsletter draft per CEO directive",
+      "priority": "medium",
+      "assignee": "Dave",
+      "completed": false,
+      "tag": "AGENT",
+      "taskKey": "A-091"
+    },
+    {
+      "text": "Review and merge day-one patch build (welcome modal, empty states, podcast fix) once confirmed ready",
+      "priority": "high",
+      "assignee": "Joshua",
+      "completed": false,
+      "tag": "JOSHUA",
+      "taskKey": "J-021"
+    },
+    {
+      "text": "Verify crash reporting is active and functional before any launch push (close A-016)",
+      "priority": "high",
+      "assignee": "Joshua",
+      "completed": false,
+      "tag": "JOSHUA",
+      "taskKey": "J-022"
+    },
+    {
+      "text": "Commit drafted podcast MDX file to close sync gap (advance A-053)",
+      "priority": "medium",
+      "assignee": "Alex",
+      "completed": false,
+      "tag": "AGENT",
+      "taskKey": "A-092"
+    },
+    {
+      "text": "Monitor Apple review status and alert team immediately on approval (A-037)",
+      "priority": "high",
+      "assignee": "Elon Musk",
+      "completed": false,
+      "tag": "AGENT",
+      "taskKey": "A-093"
     }
   ],
   "topPriorities": [
-    "Elon: batch-push 3 hub commits, merge podcast fix, wire welcome modal + empty state copy + analytics hooks into day-one patch",
-    "Alex: finish 2 podcast MDX files for website sync, draft faith lesson 10 pending faith's review of 8-9",
-    "James: prep analytics validation test environment so event verification starts the moment hooks land"
+    "Confirm Joshua completed morning tasks: newsletter screenshot approval, crash reporting check, analytics scaffolding status",
+    "Elon and James to stage analytics Swift hooks PR to reduce Joshua's implementation burden",
+    "Monitor Apple review status \u2014 same-day launch push if approved before 2pm per CEO directive"
   ],
   "ceoDirectives": [
     {
@@ -441,22 +441,36 @@
       "decided": "2026-02-20T04:16:34.141107-08:00",
       "source": "overnight-sprint 2026-02-20",
       "priority": "high"
+    },
+    {
+      "directive": "How should Joshua allocate the 2-hour build window this morning? \u2192 Newsletter screenshot review first (2 min), then crash reporting check (5 min), then analytics scaffolding (remaining time)",
+      "decided": "2026-02-20T05:04:59.328321-08:00",
+      "source": "morning-kickoff 2026-02-20",
+      "priority": "high"
+    },
+    {
+      "directive": "If Apple approves the app today (Friday), do you want to launch-push today or hold for Monday morning for better newsletter open rates? \u2192 Same-day push but schedule a follow-up Monday reminder newsletter",
+      "decided": "2026-02-20T05:04:59.328352-08:00",
+      "source": "morning-kickoff 2026-02-20",
+      "priority": "high"
     }
   ],
-  "type": "overnight-sprint",
-  "typeName": "Overnight Sprint",
-  "typeEmoji": "\ud83c\udf19",
+  "type": "midday-checkpoint",
+  "typeName": "Midday Checkpoint",
+  "typeEmoji": "\u2600\ufe0f",
   "conversationMode": "ai",
   "model": "claude-opus-4-6",
   "tokenUsage": {
-    "input_tokens": 7660,
-    "output_tokens": 2225,
-    "total_tokens": 9885,
-    "duration": 55.5,
+    "input_tokens": 10354,
+    "output_tokens": 3586,
+    "total_tokens": 13940,
+    "duration": 82.7,
     "model": "claude-opus-4-6",
-    "estimated_cost": 0.2818
+    "estimated_cost": 0.42419999999999997,
+    "interactive": true,
+    "phases": 2
   },
-  "instanceKey": "STD-24",
+  "instanceKey": "STD-2",
   "verticals": [],
   "initiatives": [],
   "verticalDetails": [],
@@ -504,24 +518,48 @@
       "emoji": "\ud83d\udcc8",
       "description": "Chris Vermeulen \u2014 CFTO owning all financial tools and products."
     },
-    "faith": {
-      "name": "faith",
-      "title": "",
-      "emoji": "",
-      "description": ""
+    "faithfam": {
+      "name": "Peterson",
+      "title": "Dir. Faith & Family",
+      "emoji": "\ud83d\udd4a\ufe0f",
+      "description": "Moral Order + Psychological Responsibility. Ethical product review."
     }
   },
-  "ceo_questions": [
+  "interactive": true,
+  "ceoDecisions": [
     {
-      "question": "Should we aim to have faith lessons 8-10 included in the day-one patch (shipping with empty states and welcome modal), or keep them as a separate content update later in week one?",
-      "context": "Alex and faith are on pace to finish 3 new lessons overnight, but bundling them into the day-one patch adds scope and testing surface to Elon's build.",
+      "question": "Did you complete the three morning tasks: (1) newsletter screenshot review/approval, (2) crash reporting verification, (3) analytics scaffolding?",
+      "answer": "1",
+      "answerText": "Newsletter + crash done, analytics not started",
       "options": [
-        "Bundle lessons 8-10 into the day-one patch",
-        "Ship day-one patch as technical fixes only, push new lessons as a separate update mid-week",
-        "Include lessons 8-9 in the patch, hold lesson 10 for the next update"
+        "All three done",
+        "Newsletter + crash done, analytics not started",
+        "Only newsletter reviewed",
+        "None completed yet \u2014 ran out of time"
       ],
       "recommended": 1
+    },
+    {
+      "question": "Elon and James want to stage the analytics Swift hooks PR so you only need to review and merge (5 min) instead of coding it yourself (~60 min). Approve this approach?",
+      "answer": "0",
+      "answerText": "Yes \u2014 let them stage it, I'll review and merge",
+      "options": [
+        "Yes \u2014 let them stage it, I'll review and merge",
+        "No \u2014 I want to write it myself to understand the codebase",
+        "Stage it but I'll review Monday, not today"
+      ],
+      "recommended": 0
+    },
+    {
+      "question": "Should Alex draft the Monday follow-up reminder newsletter now or wait until we see initial download numbers after launch?",
+      "answer": "2",
+      "answerText": "Draft a generic version now and personalize with data Sunday night",
+      "options": [
+        "Draft now \u2014 have it ready to go",
+        "Wait until we see Saturday download numbers and tailor the message",
+        "Draft a generic version now and personalize with data Sunday night"
+      ],
+      "recommended": 2
     }
-  ],
-  "phase": "waiting_for_ceo"
+  ]
 }

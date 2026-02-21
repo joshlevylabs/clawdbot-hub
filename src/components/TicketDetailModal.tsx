@@ -500,6 +500,7 @@ export default function TicketDetailModal({ task, onClose, onUpdate }: TicketDet
   const [initiatives, setInitiatives] = useState<string[]>([]);
   const [showStatusSelector, setShowStatusSelector] = useState(false);
   const [statusSaving, setStatusSaving] = useState(false);
+  const [showMobileSidebar, setShowMobileSidebar] = useState(false);
 
   useEffect(() => {
     setLocalTask(task);
@@ -584,18 +585,19 @@ export default function TicketDetailModal({ task, onClose, onUpdate }: TicketDet
     <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm" onClick={onClose}>
       <div className="flex flex-col md:flex-row h-full" onClick={(e) => e.stopPropagation()}>
 
-        {/* Main Content Panel (65% on desktop, full width on mobile) */}
-        <div className="flex-1 md:max-w-4xl bg-slate-900 md:border-r border-slate-700 overflow-auto order-1">
-          <div className="p-4 sm:p-6 space-y-6">
+        {/* Main Content Panel */}
+        <div className="flex-1 md:max-w-4xl bg-slate-900 md:border-r border-slate-700 overflow-auto">
+          <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
             {/* Header with close button */}
-            <div className="flex items-start justify-between">
-              <div className="flex-1">
-                <div className="flex items-center gap-3 mb-2">
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 sm:gap-3 mb-2 flex-wrap">
                   <span className="text-lg font-mono text-primary-400 font-bold">{localTask.key}</span>
                   <StatusBadge 
                     status={localTask.status} 
                     onClick={isCeoTicket ? () => setShowStatusSelector(true) : undefined}
                   />
+                  <PriorityBadge priority={localTask.priority} />
                   {statusSaving && <span className="text-xs text-slate-500 animate-pulse">Saving...</span>}
                   {localTask.sprintReady && (
                     <div className="flex items-center gap-1 px-2 py-1 bg-emerald-600/20 text-emerald-400 rounded-lg text-xs font-medium">
@@ -604,18 +606,65 @@ export default function TicketDetailModal({ task, onClose, onUpdate }: TicketDet
                     </div>
                   )}
                 </div>
-                <h1 className="text-lg sm:text-2xl font-semibold text-white mb-4">{localTask.text}</h1>
+                <h1 className="text-lg sm:text-2xl font-semibold text-white mb-2">{localTask.text}</h1>
+                {/* Mobile-only compact info row */}
+                <div className="flex items-center gap-3 text-xs text-slate-400 md:hidden mb-2">
+                  <span><User className="w-3 h-3 inline mr-1" />{localTask.assignee}</span>
+                  <span><Calendar className="w-3 h-3 inline mr-1" />{new Date(localTask.createdAt).toLocaleDateString()}</span>
+                  <button
+                    onClick={() => setShowMobileSidebar(!showMobileSidebar)}
+                    className="ml-auto text-primary-400 hover:text-primary-300 font-medium"
+                  >
+                    {showMobileSidebar ? 'Hide details ▲' : 'More details ▼'}
+                  </button>
+                </div>
               </div>
               <button
                 onClick={onClose}
-                className="p-2.5 bg-slate-800 border border-slate-600 rounded-lg text-slate-300 hover:text-white hover:bg-red-600/80 hover:border-red-500 transition-all"
+                className="p-2 sm:p-2.5 bg-slate-800 border border-slate-600 rounded-lg text-slate-300 hover:text-white hover:bg-red-600/80 hover:border-red-500 transition-all shrink-0"
                 title="Close (Esc)"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            {/* New Left Panel Sections */}
+            {/* Mobile sidebar (collapsible) */}
+            {showMobileSidebar && (
+              <div className="md:hidden bg-slate-800/50 border border-slate-700 rounded-lg p-4 space-y-4">
+                <div className="grid grid-cols-2 gap-3 text-sm">
+                  <div>
+                    <span className="text-slate-500 text-xs">Source</span>
+                    <p className="text-slate-200 font-medium text-xs">{localTask.sourceStandup}</p>
+                  </div>
+                  <div>
+                    <span className="text-slate-500 text-xs">Updated</span>
+                    <p className="text-slate-200 text-xs">{formatDate(localTask.updatedAt)}</p>
+                  </div>
+                </div>
+                {(verticals.length > 0 || initiatives.length > 0) && (
+                  <div className="flex flex-wrap gap-1">
+                    {verticals.map(v => (
+                      <span key={v} className="px-2 py-0.5 rounded text-[10px] font-medium bg-primary-500/15 text-primary-400 border border-primary-500/30">{v}</span>
+                    ))}
+                    {initiatives.map(i => (
+                      <span key={i} className="px-2 py-0.5 rounded text-[10px] font-medium bg-cyan-500/15 text-cyan-400 border border-cyan-500/30">{i}</span>
+                    ))}
+                  </div>
+                )}
+                <button 
+                  onClick={() => {
+                    const url = `/standups?standup=${encodeURIComponent(localTask.sourceStandup)}`;
+                    window.open(url, '_blank');
+                  }}
+                  className="w-full flex items-center justify-center gap-2 px-3 py-1.5 bg-slate-700/50 hover:bg-slate-700 text-slate-300 rounded text-xs transition-colors"
+                >
+                  <ExternalLink className="w-3 h-3" />
+                  View Source Standup
+                </button>
+              </div>
+            )}
+
+            {/* Main Sections */}
             <DescriptionSection task={localTask} onUpdate={onUpdate} />
             <AcceptanceCriteriaSection task={localTask} onUpdate={onUpdate} />
             <SourceStandupLinkSection task={localTask} />
@@ -627,7 +676,7 @@ export default function TicketDetailModal({ task, onClose, onUpdate }: TicketDet
                 <label className="text-sm font-medium text-slate-400 mb-2 block">Sprint Ready</label>
                 <div className="flex items-center justify-between px-3 py-2 bg-slate-800/50 border border-slate-700 rounded-lg">
                   <div>
-                    <p className="text-slate-200 text-sm">Mark for "Sprint!" command</p>
+                    <p className="text-slate-200 text-sm">Mark for &quot;Sprint!&quot; command</p>
                     <p className="text-xs text-slate-500">Joshua uses this to batch sprint tasks</p>
                   </div>
                   <button
@@ -650,8 +699,8 @@ export default function TicketDetailModal({ task, onClose, onUpdate }: TicketDet
           </div>
         </div>
 
-        {/* Sidebar (35% on desktop, compact strip on mobile shown above main content) */}
-        <div className="w-full md:w-96 bg-slate-850 p-4 sm:p-6 overflow-auto order-first md:order-2 border-b md:border-b-0 border-slate-700 shrink-0 md:shrink md:max-h-full">
+        {/* Desktop Sidebar (hidden on mobile — info shown inline above) */}
+        <div className="hidden md:block w-96 bg-slate-850 p-6 overflow-auto">
           <div className="space-y-6">
             {/* Quick Status */}
             <div>

@@ -582,11 +582,11 @@ export default function TicketDetailModal({ task, onClose, onUpdate }: TicketDet
 
   return (
     <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm" onClick={onClose}>
-      <div className="flex h-full" onClick={(e) => e.stopPropagation()}>
+      <div className="flex flex-col md:flex-row h-full" onClick={(e) => e.stopPropagation()}>
 
-        {/* Main Content Panel (65%) */}
-        <div className="flex-1 max-w-4xl bg-slate-900 border-r border-slate-700 overflow-auto">
-          <div className="p-6 space-y-6">
+        {/* Main Content Panel (65% on desktop, full width on mobile) */}
+        <div className="flex-1 md:max-w-4xl bg-slate-900 md:border-r border-slate-700 overflow-auto order-1">
+          <div className="p-4 sm:p-6 space-y-6">
             {/* Header with close button */}
             <div className="flex items-start justify-between">
               <div className="flex-1">
@@ -604,7 +604,7 @@ export default function TicketDetailModal({ task, onClose, onUpdate }: TicketDet
                     </div>
                   )}
                 </div>
-                <h1 className="text-2xl font-semibold text-white mb-4">{localTask.text}</h1>
+                <h1 className="text-lg sm:text-2xl font-semibold text-white mb-4">{localTask.text}</h1>
               </div>
               <button
                 onClick={onClose}
@@ -650,8 +650,8 @@ export default function TicketDetailModal({ task, onClose, onUpdate }: TicketDet
           </div>
         </div>
 
-        {/* Sidebar (35%) */}
-        <div className="w-96 bg-slate-850 p-6 overflow-auto">
+        {/* Sidebar (35% on desktop, compact strip on mobile shown above main content) */}
+        <div className="w-full md:w-96 bg-slate-850 p-4 sm:p-6 overflow-auto order-first md:order-2 border-b md:border-b-0 border-slate-700 shrink-0 md:shrink md:max-h-full">
           <div className="space-y-6">
             {/* Quick Status */}
             <div>

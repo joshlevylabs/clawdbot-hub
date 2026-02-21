@@ -4,10 +4,11 @@
     "adhoc-evening-roster-test": 2,
     "adhoc-phase-3-smoke-test": 2,
     "overnight-sprint": 24,
-    "morning-kickoff": 2,
+    "morning-kickoff": 4,
     "midday-checkpoint": 2,
     "evening-session": 4,
-    "adhoc-podcast-planning-episode-4-how-i-use-ai-agents-to-run-my-entire-podcast-and-newsletter-pipeline": 1
+    "adhoc-podcast-planning-episode-4-how-i-use-ai-agents-to-run-my-entire-podcast-and-newsletter-pipeline": 1,
+    "night-wrap": 1
   },
   "abbreviations": {
     "adhoc-evening-wrap": "STD",
@@ -17,6 +18,7 @@
     "morning-kickoff": "STD",
     "midday-checkpoint": "STD",
     "evening-session": "STD",
-    "adhoc-podcast-planning-episode-4-how-i-use-ai-agents-to-run-my-entire-podcast-and-newsletter-pipeline": "STD"
+    "adhoc-podcast-planning-episode-4-how-i-use-ai-agents-to-run-my-entire-podcast-and-newsletter-pipeline": "STD",
+    "night-wrap": "STD"
   }
 }

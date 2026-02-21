@@ -3,20 +3,21 @@
   "time": "6:00 AM PT",
   "sections": {
     "prayer": {
-      "title": "🕐️ Morning Prayer",
+      "title": "\ud83d\udd50\ufe0f Morning Prayer",
       "date": "Saturday, February 21, 2026",
       "hebrew_date": "23 Cheshvan",
       "parsha": "Vayeshev",
       "parsha_theme": "setbacks as setups, patience, providence",
-      "modeh_ani": "מודה אני לפניך — I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
-      "blessing": "Blessed are You who spreads the earth upon the waters — ground me in stability.",
+      "modeh_ani": "\u05de\u05d5\u05d3\u05d4 \u05d0\u05e0\u05d9 \u05dc\u05e4\u05e0\u05d9\u05da \u2014 I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
+      "blessing": "Blessed are You who spreads the earth upon the waters \u2014 ground me in stability.",
       "psalm": "**Psalm 127:1**: \"Unless the Lord builds the house, the builders labor in vain.\"",
       "proverb": "**Proverbs 16:9**: \"The heart of man plans his way, but the Lord establishes his steps.\"",
       "intention": "Let today's small faithfulness lead to tomorrow's greater stewardship.",
-      "closing": "Baruch atah Adonai — Blessed are You, Lord, who renews creation daily with goodness."
+      "closing": "Baruch atah Adonai \u2014 Blessed are You, Lord, who renews creation daily with goodness.",
+      "audio": "/audio/brief-2026-02-21-prayer.ogg"
     },
     "relationship": {
-      "title": "💝 Relationship Focus",
+      "title": "\ud83d\udc9d Relationship Focus",
       "status": "CRITICAL - Urgent Attention Needed",
       "temperature": "critical",
       "trend": "urgent",
@@ -31,15 +32,16 @@
       }
     },
     "weather": {
-      "title": "🌤️ Weather Outlook",
-      "current": "Clear, 34°F (feels like 29°F)",
-      "today": "Beautiful Saturday - sunny skies, high 70°F, low 34°F",
-      "tomorrow": "Even warmer Sunday - sunny, high 77°F, low 45°F",
-      "week_ahead": "Perfect weather continues - mostly sunny, highs 76-83°F through next week",
-      "summary": "Gorgeous weekend weather - perfect for outdoor activities with family"
+      "title": "\ud83c\udf24\ufe0f Weather Outlook",
+      "current": "Clear, 34\u00b0F (feels like 29\u00b0F)",
+      "today": "Beautiful Saturday - sunny skies, high 70\u00b0F, low 34\u00b0F",
+      "tomorrow": "Even warmer Sunday - sunny, high 77\u00b0F, low 45\u00b0F",
+      "week_ahead": "Perfect weather continues - mostly sunny, highs 76-83\u00b0F through next week",
+      "summary": "Gorgeous weekend weather - perfect for outdoor activities with family",
+      "audio": "/audio/brief-2026-02-21-weather.ogg"
     },
     "mre": {
-      "title": "📊 MRE Trading",
+      "title": "\ud83d\udcca MRE Trading",
       "fear_greed": 43,
       "fear_greed_rating": "fear",
       "regime": "bull",
@@ -51,42 +53,44 @@
         "QQQ consolidating while SPY trends - tech weakness vs broad market strength",
         "XLK and XLF in bear regimes while overall market bullish",
         "International (INDA, FXI) sideways - watching for breakouts"
-      ]
+      ],
+      "audio": "/audio/brief-2026-02-21-mre.ogg"
     },
     "world_news": {
-      "title": "🌍 World & Policy",
+      "title": "\ud83c\udf0d World & Policy",
       "highlights": [
-        "🇮🇱 **Gaza Development**: Trump declares war 'over,' warns Hamas will be met 'harshly' if doesn't disarm",
-        "🇺🇸 **Middle East Policy**: US Ambassador Huckabee suggests Biblical justification for Israeli territorial expansion",
-        "📊 **Israeli Opinion**: 59% of Israelis support joining US-led action against Iran (TV poll)",
-        "🏛️ **Stabilization Force**: Gaza force to include 20K soldiers, 12K police officers under US command"
+        "\ud83c\uddee\ud83c\uddf1 **Gaza Development**: Trump declares war 'over,' warns Hamas will be met 'harshly' if doesn't disarm",
+        "\ud83c\uddfa\ud83c\uddf8 **Middle East Policy**: US Ambassador Huckabee suggests Biblical justification for Israeli territorial expansion",
+        "\ud83d\udcca **Israeli Opinion**: 59% of Israelis support joining US-led action against Iran (TV poll)",
+        "\ud83c\udfdb\ufe0f **Stabilization Force**: Gaza force to include 20K soldiers, 12K police officers under US command"
       ]
     },
     "ai_news": {
-      "title": "🤖 AI Developments", 
+      "title": "\ud83e\udd16 AI Developments",
       "highlights": [
-        "💰 **Mega Funding**: Nvidia close to $30B investment in OpenAI's funding round",
-        "🧠 **World Models**: Yann LeCun left Meta to start world model lab, seeking $5B valuation",
-        "🏛️ **Government AI**: Google.org launching $3M challenges for AI in government innovation",
-        "🌎 **Regional AI**: Latin America develops Indigenous language models with modest funding",
-        "📈 **2026 Trend**: Industry moving from AI hype to practical implementation phase"
+        "\ud83d\udcb0 **Mega Funding**: Nvidia close to $30B investment in OpenAI's funding round",
+        "\ud83e\udde0 **World Models**: Yann LeCun left Meta to start world model lab, seeking $5B valuation",
+        "\ud83c\udfdb\ufe0f **Government AI**: Google.org launching $3M challenges for AI in government innovation",
+        "\ud83c\udf0e **Regional AI**: Latin America develops Indigenous language models with modest funding",
+        "\ud83d\udcc8 **2026 Trend**: Industry moving from AI hype to practical implementation phase"
       ]
     },
     "calendar": {
-      "title": "📅 Today's Schedule",
+      "title": "\ud83d\udcc5 Today's Schedule",
       "note": "Weekend - family time priority",
       "reminders": [
         "Relationship status critical - prioritize quality time with Jillian",
         "Beautiful weather - consider outdoor activities with Jones",
         "No urgent work items - sabbath rest"
-      ]
+      ],
+      "audio": "/audio/brief-2026-02-21-calendar.ogg"
     }
   },
   "priorities": [
-    "🚨 **Relationship Repair**: Critical status - focus on quality time and acts of service with Jillian",
-    "👨‍👩‍👧‍👦 **Family First**: Beautiful weather weekend - outdoor activities with Jones and Jett",
-    "🕐️ **Sabbath Rest**: Weekend reflection and preparation for upcoming week",
-    "📈 **Market Watch**: All HOLD signals - no urgent trading actions needed"
+    "\ud83d\udea8 **Relationship Repair**: Critical status - focus on quality time and acts of service with Jillian",
+    "\ud83d\udc68\u200d\ud83d\udc69\u200d\ud83d\udc67\u200d\ud83d\udc66 **Family First**: Beautiful weather weekend - outdoor activities with Jones and Jett",
+    "\ud83d\udd50\ufe0f **Sabbath Rest**: Weekend reflection and preparation for upcoming week",
+    "\ud83d\udcc8 **Market Watch**: All HOLD signals - no urgent trading actions needed"
   ],
   "generated_at": "2026-02-21T06:00:13-08:00"
 }

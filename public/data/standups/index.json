@@ -1,6 +1,19 @@
 {
   "standups": [
     {
+      "date": "2026-02-21",
+      "time": "05:00",
+      "type": "morning-kickoff",
+      "typeName": "Morning Kickoff",
+      "typeEmoji": "\ud83c\udf05",
+      "topic": "Morning Kickoff \u2014 Saturday Feb 21",
+      "file": "2026-02-21-morning-kickoff.json",
+      "tokenCost": 0.35819999999999996,
+      "verticals": [],
+      "initiatives": [],
+      "instanceKey": "STD-4"
+    },
+    {
       "date": "2026-02-20",
       "time": "23:30",
       "type": "overnight-sprint",
@@ -12,6 +25,19 @@
       "verticals": [],
       "initiatives": [],
       "instanceKey": "STD-24"
+    },
+    {
+      "date": "2026-02-20",
+      "time": "22:30",
+      "type": "night-wrap",
+      "typeName": "Night Wrap",
+      "typeEmoji": "\ud83c\udf19",
+      "topic": "Night Wrap \u2014 Friday Feb 20",
+      "file": "2026-02-20-night-wrap.json",
+      "tokenCost": 0.3256,
+      "verticals": [],
+      "initiatives": [],
+      "instanceKey": "STD-1"
     },
     {
       "date": "2026-02-20",

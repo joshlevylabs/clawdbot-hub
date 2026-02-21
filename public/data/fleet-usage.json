@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-02-20T22:30:05.057022",
-  "active_sessions": 1,
+  "generated_at": "2026-02-20T23:01:51.736965",
+  "active_sessions": 2,
   "billing_model": "subscription",
   "subscriptions": {
     "Claude Max": {
@@ -15,14 +15,14 @@
     "today": 6.67,
     "week": 46.67,
     "month": 200.0,
-    "api_equivalent_today": 47.2438,
-    "api_equivalent_week": 91.0159,
-    "api_equivalent_month": 113.6801,
-    "savings_today": 40.58,
+    "api_equivalent_today": 47.8904,
+    "api_equivalent_week": 91.2642,
+    "api_equivalent_month": 113.9284,
+    "savings_today": 41.22,
     "savings_month": 0,
     "subscription_daily": 6.67,
     "subscription_monthly": 200.0,
-    "tokens_today": 79184904
+    "tokens_today": 80482039
   },
   "by_model": {
     "Claude Opus 4": {
@@ -35,13 +35,13 @@
       "calls_today": 426
     },
     "Claude Sonnet 4": {
-      "cost_today": 16.5816,
-      "cost_week": 22.2325,
-      "cost_month": 22.2325,
-      "tokens_today": 35011677,
-      "tokens_week": 44738951,
-      "tokens_month": 44738951,
-      "calls_today": 731
+      "cost_today": 17.2282,
+      "cost_week": 22.4808,
+      "cost_month": 22.4808,
+      "tokens_today": 36308812,
+      "tokens_week": 45353239,
+      "tokens_month": 45353239,
+      "calls_today": 772
     }
   },
   "by_agent": {
@@ -54,18 +54,18 @@
       "department": "other"
     },
     "theo": {
-      "cost_today": 11.7562,
-      "cost_week": 11.7562,
-      "cost_month": 11.7562,
-      "tokens_today": 17085746,
+      "cost_today": 12.1274,
+      "cost_week": 12.1274,
+      "cost_month": 12.1274,
+      "tokens_today": 17954092,
       "primary_model": "Claude Sonnet 4",
       "department": "executive"
     },
     "cron": {
-      "cost_today": 9.3256,
-      "cost_week": 17.7538,
-      "cost_month": 40.418,
-      "tokens_today": 19935058,
+      "cost_today": 9.601,
+      "cost_week": 17.6308,
+      "cost_month": 40.2951,
+      "tokens_today": 20363847,
       "primary_model": "Claude Sonnet 4",
       "department": "other"
     }
@@ -84,7 +84,7 @@
     "2026-02-16": 0.30010665000000003,
     "2026-02-17": 2.5585090000000004,
     "2026-02-18": 3.6774319000000006,
-    "2026-02-19": 31.54788065000002,
-    "2026-02-20": 47.24380134999998
+    "2026-02-19": 31.14954680000002,
+    "2026-02-20": 47.89041519999998
   }
 }

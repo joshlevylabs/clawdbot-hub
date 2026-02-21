@@ -729,12 +729,32 @@
       "estimatedCost": 0.35819999999999996,
       "model": "claude-opus-4-6",
       "duration": "84.30000000000001s"
+    },
+    {
+      "date": "2026-02-21",
+      "type": "midday-checkpoint",
+      "inputTokens": 5750,
+      "outputTokens": 2004,
+      "totalTokens": 7754,
+      "estimatedCost": 0.2365,
+      "model": "claude-opus-4-6",
+      "duration": "51.5s"
+    },
+    {
+      "date": "2026-02-21",
+      "type": "midday-checkpoint",
+      "inputTokens": 7337,
+      "outputTokens": 3136,
+      "totalTokens": 10473,
+      "estimatedCost": 0.3452,
+      "model": "claude-opus-4-6",
+      "duration": "74.5s"
     }
   ],
   "totals": {
-    "today": 0.6104,
-    "week": 16.6217,
-    "month": 16.6217,
-    "standupCount": 73
+    "today": 1.1921,
+    "week": 17.2034,
+    "month": 17.2034,
+    "standupCount": 75
   }
 }

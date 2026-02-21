@@ -2,6 +2,19 @@
   "standups": [
     {
       "date": "2026-02-21",
+      "time": "12:00",
+      "type": "midday-checkpoint",
+      "typeName": "Midday Checkpoint",
+      "typeEmoji": "\u2600\ufe0f",
+      "topic": "Midday Checkpoint \u2014 Saturday Feb 21",
+      "file": "2026-02-21-midday-checkpoint.json",
+      "tokenCost": 0.3452,
+      "verticals": [],
+      "initiatives": [],
+      "instanceKey": "STD-4"
+    },
+    {
+      "date": "2026-02-21",
       "time": "05:00",
       "type": "morning-kickoff",
       "typeName": "Morning Kickoff",

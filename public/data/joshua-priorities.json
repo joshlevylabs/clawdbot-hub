@@ -1,6 +1,6 @@
 {
   "date": "2026-02-21",
-  "generatedAt": "2026-02-21T06:33:50.315279-08:00",
+  "generatedAt": "2026-02-21T12:34:23.632577-08:00",
   "priorities": [
     {
       "text": "Decide newsletter send timing relative to Apple approval",
@@ -83,16 +83,16 @@
       "taskKey": "A-129"
     },
     {
-      "text": "Monitor Fear & Greed index (currently 38)",
-      "assignee": "Dave",
-      "status": "pending",
-      "taskKey": "A-130"
-    },
-    {
-      "text": "Commit 10 uncommitted hub change(s)",
+      "text": "Commit 2 uncommitted hub change(s)",
       "assignee": "Elon",
       "status": "pending",
-      "taskKey": "A-131"
+      "taskKey": "A-132"
+    },
+    {
+      "text": "Monitor Fear & Greed index (currently 42)",
+      "assignee": "Dave",
+      "status": "pending",
+      "taskKey": "A-133"
     }
   ]
 }

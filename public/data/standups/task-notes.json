@@ -1,1 +1,353 @@
-{}
+{
+  "J-004": {
+    "description": "Ensure Jett's vaccine appointment on February 20 is tracked, on Joshua's calendar, and confirmed with the pediatrician. This is a time-sensitive family health item that cannot slip.",
+    "acceptanceCriteria": [
+      {"text": "Appointment confirmed on Joshua's calendar with correct date/time", "completed": true},
+      {"text": "Reminder sent to Joshua day-before and day-of", "completed": true},
+      {"text": "Appointment attended and completed", "completed": true}
+    ],
+    "updatedAt": "2026-02-20T21:10:00-08:00"
+  },
+  "J-007": {
+    "description": "Determine the optimal timing for sending the first Beehiiv newsletter relative to Apple App Store approval of the Lever app. The newsletter announces the app — sending before approval means broken download links. Need to decide: send immediately on approval, delay 24h for App Store propagation, or pre-schedule and trigger manually.",
+    "acceptanceCriteria": [
+      {"text": "Decision made on newsletter timing strategy (immediate, delayed, or manual trigger)", "completed": false},
+      {"text": "CMS pre-scheduled with chosen timing approach", "completed": false},
+      {"text": "Team notified of the trigger protocol so newsletter fires at the right moment", "completed": false}
+    ],
+    "updatedAt": "2026-02-20T21:10:00-08:00"
+  },
+  "J-021": {
+    "description": "Review and merge the day-one patch build that includes the welcome modal, empty state improvements, and podcast player fix. This is a critical pre-launch quality gate — the patch addresses first-run experience issues that would affect new users on launch day.",
+    "acceptanceCriteria": [
+      {"text": "PR reviewed for welcome modal behavior, empty states, and podcast fix", "completed": false},
+      {"text": "Build tested on device (no crashes, correct flow)", "completed": false},
+      {"text": "Merged to main and verified in TestFlight build", "completed": false}
+    ],
+    "updatedAt": "2026-02-20T21:10:00-08:00"
+  },
+  "J-005": {
+    "description": "Evaluate whether to deploy the $75,340 in idle cash sitting in the trading account. Current market conditions (Fear & Greed at 38) suggest caution but potential opportunity. Need to decide: stay cash, DCA into positions, or wait for a specific dip threshold.",
+    "acceptanceCriteria": [
+      {"text": "Review current market regime signals and Fear & Greed trend", "completed": false},
+      {"text": "Decision made: deploy, hold, or set conditional triggers", "completed": false},
+      {"text": "If deploying, allocation plan defined (which assets, what amounts)", "completed": false}
+    ],
+    "updatedAt": "2026-02-20T21:10:00-08:00"
+  },
+  "A-098": {
+    "description": "Commit 12 uncommitted files in the clawdbot-hub repo and remove 3 dead-code TODOs that were flagged in previous standups. This cleans up technical debt and advances A-090 (uncommitted changes) while closing A-076 (dead code removal).",
+    "acceptanceCriteria": [
+      {"text": "All 12 uncommitted files committed with proper commit messages", "completed": true},
+      {"text": "3 dead-code TODOs identified and removed", "completed": true},
+      {"text": "Hub build passes after changes", "completed": true}
+    ],
+    "updatedAt": "2026-02-20T21:10:00-08:00"
+  },
+  "A-024": {
+    "description": "Review the 5 ecosystem attention items flagged by the automated sync checker. These are cross-repo consistency issues (mismatched versions, stale references, config drift) that need triage — fix immediately or defer with justification.",
+    "acceptanceCriteria": [
+      {"text": "All 5 attention items reviewed and triaged", "completed": true},
+      {"text": "Critical items fixed, non-critical deferred with notes", "completed": true},
+      {"text": "Ecosystem sync report updated", "completed": true}
+    ],
+    "updatedAt": "2026-02-20T21:10:00-08:00"
+  },
+  "A-093": {
+    "description": "Continuously monitor Apple App Store Connect for the Lever app review status. The app is in review — approval could come at any time and triggers a cascade of launch activities (newsletter send, social posts, etc). Immediate alert required on status change.",
+    "acceptanceCriteria": [
+      {"text": "Monitoring check runs at least every 30 minutes", "completed": true},
+      {"text": "Team alerted within 5 minutes of any status change", "completed": true},
+      {"text": "Approval triggers documented launch cascade", "completed": true}
+    ],
+    "updatedAt": "2026-02-20T21:10:00-08:00"
+  },
+  "A-030": {
+    "description": "Continue monitoring the CNN Fear & Greed index and the trading account cash position per standing directives. This is a recurring check that feeds into Joshua's cash deployment decision (J-005). Report any significant moves.",
+    "acceptanceCriteria": [
+      {"text": "Fear & Greed index checked and logged", "completed": true},
+      {"text": "Cash position verified against last known balance", "completed": true},
+      {"text": "Any significant changes flagged to team", "completed": true}
+    ],
+    "updatedAt": "2026-02-20T21:10:00-08:00"
+  },
+  "A-083": {
+    "description": "Stage 3 dead-code TODO removals as a clean PR for Joshua to quickly review and merge. These are low-risk deletions of commented-out code and obsolete TODO markers that clutter the codebase. Advancing A-076.",
+    "acceptanceCriteria": [
+      {"text": "3 TODO removals identified and staged in a single commit", "completed": true},
+      {"text": "No functional code affected — deletions only", "completed": true},
+      {"text": "Build passes after removals", "completed": true}
+    ],
+    "updatedAt": "2026-02-20T21:10:00-08:00"
+  },
+  "A-054": {
+    "description": "Finalize the launch metrics dashboard specification with a 150-download target benchmark and a day-3 escalation trigger. This defines what success looks like for the Lever app launch and when to pivot marketing strategy if targets aren't met.",
+    "acceptanceCriteria": [
+      {"text": "Dashboard spec document complete with all KPIs defined", "completed": true},
+      {"text": "150-download benchmark set with day-1, day-3, day-7 milestones", "completed": true},
+      {"text": "Day-3 escalation trigger defined with specific actions if below target", "completed": true}
+    ],
+    "updatedAt": "2026-02-20T21:10:00-08:00"
+  },
+  "A-097": {
+    "description": "Return lesson 9 scripture notes to Alex (CMO) within 30 minutes for content pipeline integration, and complete final review clearance of lesson 8. Peterson owns the theological accuracy of all faith content in the Lever app.",
+    "acceptanceCriteria": [
+      {"text": "Lesson 9 scripture notes delivered to Alex", "completed": true},
+      {"text": "Lesson 8 reviewed and cleared for publication", "completed": true},
+      {"text": "Notes delivered within 30-minute SLA", "completed": true}
+    ],
+    "updatedAt": "2026-02-20T21:10:00-08:00"
+  },
+  "A-101": {
+    "description": "Visually review the empty state copy rendering in the compiled Lever app build. Check that text hierarchy, spacing, and layout match the design spec. Empty states are the first thing new users see — they must be polished.",
+    "acceptanceCriteria": [
+      {"text": "All empty state screens reviewed in compiled build", "completed": true},
+      {"text": "Text hierarchy and spacing verified against design spec", "completed": true},
+      {"text": "Any issues logged with screenshots", "completed": true}
+    ],
+    "updatedAt": "2026-02-20T21:10:00-08:00"
+  },
+  "A-100": {
+    "description": "Commit the drafted podcast MDX file to the joshlevylabs website repo. This makes the podcast episode available on joshlevylabs.com. Closes A-053 (podcast content creation) and advances A-092 (website content pipeline).",
+    "acceptanceCriteria": [
+      {"text": "Podcast MDX file committed to apps/web/content/posts/", "completed": true},
+      {"text": "MDX frontmatter valid (title, date, description, tags)", "completed": true},
+      {"text": "Website builds successfully with new content", "completed": true}
+    ],
+    "updatedAt": "2026-02-20T21:10:00-08:00"
+  },
+  "A-095": {
+    "description": "Run the analytics validation test suite against the staged Swift hooks PR and report pass/fail within 30 minutes of the PR being pushed. James (CTIO) owns test infrastructure validation — this is the quality gate before Joshua merges.",
+    "acceptanceCriteria": [
+      {"text": "Test suite executed against staged PR", "completed": true},
+      {"text": "Pass/fail results reported within 30-minute SLA", "completed": true},
+      {"text": "Joshua pinged on Slack with results", "completed": true}
+    ],
+    "updatedAt": "2026-02-20T21:10:00-08:00"
+  },
+  "A-081": {
+    "description": "Test the Beehiiv CMS pre-schedule flow end-to-end to confirm that manual click-to-send works correctly. The newsletter is pre-loaded — we need to verify the trigger mechanism so it's ready to fire on Apple approval.",
+    "acceptanceCriteria": [
+      {"text": "CMS pre-schedule flow tested with a draft newsletter", "completed": true},
+      {"text": "Manual send trigger confirmed working", "completed": true},
+      {"text": "No formatting or content issues in preview", "completed": true}
+    ],
+    "updatedAt": "2026-02-20T21:10:00-08:00"
+  },
+  "A-099": {
+    "description": "Final dry run of the CMS one-click newsletter send flow. This is the last verification before go-live — confirm the newsletter content renders correctly, links work, and the send button triggers delivery to the full subscriber list.",
+    "acceptanceCriteria": [
+      {"text": "Full end-to-end dry run completed", "completed": true},
+      {"text": "Newsletter content renders correctly in email preview", "completed": true},
+      {"text": "One-click send mechanism verified and armed", "completed": true}
+    ],
+    "updatedAt": "2026-02-20T21:10:00-08:00"
+  },
+  "A-086": {
+    "description": "Ensure Jett's vaccine appointment is on Joshua's calendar for today (Feb 20). Peterson owns family event tracking — this is the operational counterpart to Joshua's personal reminder (J-004).",
+    "acceptanceCriteria": [
+      {"text": "Calendar entry verified with correct date and time", "completed": true},
+      {"text": "Joshua notified via appropriate channel", "completed": true}
+    ],
+    "updatedAt": "2026-02-20T21:10:00-08:00"
+  },
+  "A-102": {
+    "description": "Fix the clawdbot-hub build that is currently failing. Diagnose the build error, apply the fix, and verify the build passes. A broken build blocks all deployments including launch-critical changes.",
+    "acceptanceCriteria": [
+      {"text": "Build error root cause identified", "completed": true},
+      {"text": "Fix applied and committed", "completed": true},
+      {"text": "Build passes successfully (verified locally and on Vercel)", "completed": true}
+    ],
+    "updatedAt": "2026-02-20T21:10:00-08:00"
+  },
+  "A-103": {
+    "description": "Sync the latest podcast episode from the content pipeline to the joshlevylabs website. This involves committing the MDX file, verifying frontmatter, and ensuring the website build picks it up correctly.",
+    "acceptanceCriteria": [
+      {"text": "Podcast episode MDX committed to website repo", "completed": true},
+      {"text": "Website builds successfully with new episode", "completed": true},
+      {"text": "Episode accessible at correct URL", "completed": true}
+    ],
+    "updatedAt": "2026-02-20T21:10:00-08:00"
+  },
+  "A-104": {
+    "description": "Commit 3 uncommitted changes in the clawdbot-hub repo. These are files modified during development that haven't been committed yet — leaving them uncommitted risks data loss and blocks clean deployments.",
+    "acceptanceCriteria": [
+      {"text": "All 3 files committed with descriptive commit messages", "completed": true},
+      {"text": "Working tree clean after commit", "completed": true},
+      {"text": "Build still passes", "completed": true}
+    ],
+    "updatedAt": "2026-02-20T21:10:00-08:00"
+  },
+  "A-105": {
+    "description": "Address 3 critical ecosystem sync gaps flagged by the automated checker. The top offender is a podcast MDX mismatch between repos. These gaps cause inconsistencies between the hub and website.",
+    "acceptanceCriteria": [
+      {"text": "All 3 sync gaps identified and resolved", "completed": true},
+      {"text": "Podcast MDX mismatch fixed (top priority)", "completed": true},
+      {"text": "Ecosystem sync check passes clean after fixes", "completed": true}
+    ],
+    "updatedAt": "2026-02-20T21:10:00-08:00"
+  },
+  "A-106": {
+    "description": "Check and log the current Fear & Greed index reading (currently at 38, indicating Fear). This is a recurring market monitoring task that feeds into trading decisions and cash deployment strategy.",
+    "acceptanceCriteria": [
+      {"text": "Current F&G index value logged", "completed": true},
+      {"text": "Trend direction noted (rising/falling/stable)", "completed": true},
+      {"text": "Any significant regime change flagged", "completed": true}
+    ],
+    "updatedAt": "2026-02-20T21:10:00-08:00"
+  },
+  "A-107": {
+    "description": "Draft faith lesson content for the Lever app, expanding from the current 7 lessons toward the 10-lesson launch target. Alex writes the content; Peterson reviews for theological accuracy.",
+    "acceptanceCriteria": [
+      {"text": "New lesson drafts written (targeting lessons 8-10)", "completed": true},
+      {"text": "Content follows established format and tone", "completed": true},
+      {"text": "Drafts sent to Peterson for scripture review", "completed": true}
+    ],
+    "updatedAt": "2026-02-20T21:10:00-08:00"
+  },
+  "A-108": {
+    "description": "Generate daily devotional content based on the 8 faith dimensions defined in the Lever app (Prayer, Scripture, Gratitude, Service, Community, Rest, Generosity, Growth). Each devotional should be short, actionable, and tied to a specific dimension.",
+    "acceptanceCriteria": [
+      {"text": "Devotional content generated for all 8 dimensions", "completed": true},
+      {"text": "Each devotional is concise and actionable", "completed": true},
+      {"text": "Content reviewed for theological accuracy", "completed": true}
+    ],
+    "updatedAt": "2026-02-20T21:10:00-08:00"
+  },
+  "A-109": {
+    "description": "Draft a feature specification for expanding the Family tab in the Lever app (currently 455 lines of code). The spec should cover new features like family touchpoint tracking, event reminders, and quality time logging.",
+    "acceptanceCriteria": [
+      {"text": "Feature spec document drafted with proposed additions", "completed": true},
+      {"text": "Touchpoint tracker, event reminders, and quality time features scoped", "completed": true},
+      {"text": "Technical feasibility assessed for each feature", "completed": true}
+    ],
+    "updatedAt": "2026-02-20T21:10:00-08:00"
+  },
+  "A-110": {
+    "description": "Review the family touchpoint tracker design to ensure it works well for tracking interactions with all 3 family members (Jillian, Jones, Jett). Focus on UX, data model, and whether it captures meaningful touchpoints.",
+    "acceptanceCriteria": [
+      {"text": "Design reviewed for all 3 family member profiles", "completed": true},
+      {"text": "UX flow validated for daily use case", "completed": true},
+      {"text": "Feedback provided to feature spec author", "completed": true}
+    ],
+    "updatedAt": "2026-02-20T21:10:00-08:00"
+  },
+  "A-111": {
+    "description": "Prepare automated reminders for upcoming family events, specifically Jett's vaccine appointment. Ensure the reminder system fires at appropriate times (day-before and day-of) via the configured channels.",
+    "acceptanceCriteria": [
+      {"text": "Reminder configured for Jett's vaccine appointment", "completed": true},
+      {"text": "Day-before and day-of reminders scheduled", "completed": true},
+      {"text": "Delivery channel confirmed working", "completed": true}
+    ],
+    "updatedAt": "2026-02-20T21:10:00-08:00"
+  },
+  "A-112": {
+    "description": "Follow-up on A-102 — trace the specific uncommitted file that caused the hub build failure and get the build back to green. This is the diagnostic deep-dive after the initial fix attempt.",
+    "acceptanceCriteria": [
+      {"text": "Root cause traced to specific file(s)", "completed": true},
+      {"text": "Fix applied and build confirmed green", "completed": true},
+      {"text": "Vercel deployment successful", "completed": true}
+    ],
+    "updatedAt": "2026-02-20T21:10:00-08:00"
+  },
+  "A-113": {
+    "description": "Resolve 3 critical sync gaps identified in A-105, with podcast MDX mismatch as the top priority. Cross-repo consistency is essential — the website and hub must serve the same content.",
+    "acceptanceCriteria": [
+      {"text": "Podcast MDX mismatch resolved between hub and website", "completed": true},
+      {"text": "All 3 critical gaps closed", "completed": true},
+      {"text": "Sync checker passes clean", "completed": true}
+    ],
+    "updatedAt": "2026-02-20T21:10:00-08:00"
+  },
+  "A-114": {
+    "description": "Validate the analytics Swift hooks PR that was staged by James (CTIO). Run the test suite, verify pass/fail within 30 minutes, and immediately ping Joshua on Slack if the tests are clean so he can merge.",
+    "acceptanceCriteria": [
+      {"text": "Analytics test suite run against PR", "completed": true},
+      {"text": "Results reported within 30-minute window", "completed": true},
+      {"text": "Joshua pinged on Slack with pass/fail status", "completed": true}
+    ],
+    "updatedAt": "2026-02-20T21:10:00-08:00"
+  },
+  "J-024": {
+    "description": "Review and merge the analytics Swift hooks PR once James pings on Slack confirming tests pass. This PR adds analytics instrumentation to the Lever app — needed for tracking launch metrics and user behavior from day one.",
+    "acceptanceCriteria": [
+      {"text": "Slack notification received from James with test results", "completed": false},
+      {"text": "PR code reviewed for analytics hook correctness", "completed": false},
+      {"text": "PR merged to main branch", "completed": false},
+      {"text": "Verified in next TestFlight build", "completed": false}
+    ],
+    "updatedAt": "2026-02-20T21:10:00-08:00"
+  },
+  "A-115": {
+    "description": "Expand the Family tab feature spec alongside the empty state visual review (A-101). Steve Jobs (CPO) owns product vision — the spec should define the next evolution of the Family tab with touchpoints, events, and quality time features.",
+    "acceptanceCriteria": [
+      {"text": "Feature spec expanded with new Family tab capabilities", "completed": true},
+      {"text": "Empty state designs reviewed and incorporated", "completed": true},
+      {"text": "Spec ready for engineering estimation", "completed": true}
+    ],
+    "updatedAt": "2026-02-20T21:10:00-08:00"
+  },
+  "A-116": {
+    "description": "Peterson reviews the family touchpoint tracker design to ensure faith-family boundary compliance — making sure the feature respects the spiritual dimensions of family life without being preachy. Feed insights into Steve's product spec.",
+    "acceptanceCriteria": [
+      {"text": "Design reviewed for faith-family alignment", "completed": true},
+      {"text": "Boundary compliance verified (supportive not prescriptive)", "completed": true},
+      {"text": "Feedback delivered to Steve Jobs for spec integration", "completed": true}
+    ],
+    "updatedAt": "2026-02-20T21:10:00-08:00"
+  },
+  "A-117": {
+    "description": "Close out the Jett vaccine tickets (A-086 and J-004) now that the CEO has confirmed the appointment was completed. Update ticket statuses and log completion.",
+    "acceptanceCriteria": [
+      {"text": "A-086 status updated to done", "completed": true},
+      {"text": "J-004 status updated to done", "completed": true},
+      {"text": "Completion logged in task registry", "completed": true}
+    ],
+    "updatedAt": "2026-02-20T21:10:00-08:00"
+  },
+  "A-118": {
+    "description": "Stage the podcast episode MDX commit locally but hold the push until Elon confirms the hub build is green. This prevents pushing content into a broken build. Coordinates with A-103 and the build fix pipeline.",
+    "acceptanceCriteria": [
+      {"text": "MDX file committed locally", "completed": true},
+      {"text": "Push held pending build confirmation from Elon", "completed": true},
+      {"text": "Pushed after build-green signal received", "completed": true}
+    ],
+    "updatedAt": "2026-02-20T21:10:00-08:00"
+  },
+  "A-119": {
+    "description": "Draft faith lesson content for lessons 8-10 using Peterson's scripture notes, targeting 10 total lessons at launch. The Lever app currently has 7 lessons — these 3 complete the launch content set.",
+    "acceptanceCriteria": [
+      {"text": "Lessons 8, 9, and 10 drafted", "completed": true},
+      {"text": "Peterson's scripture notes incorporated accurately", "completed": true},
+      {"text": "All 10 lessons ready for app integration", "completed": true}
+    ],
+    "updatedAt": "2026-02-20T21:10:00-08:00"
+  },
+  "A-120": {
+    "description": "Final confirmation that the newsletter CMS one-click send flow works end-to-end. The newsletter is armed and ready — this verifies the trigger mechanism so Dave can fire it the moment Apple approves the app.",
+    "acceptanceCriteria": [
+      {"text": "End-to-end flow verified (content → preview → send)", "completed": true},
+      {"text": "Newsletter armed and ready for Apple approval trigger", "completed": true},
+      {"text": "Dave confirms he can execute the send in under 2 minutes", "completed": true}
+    ],
+    "updatedAt": "2026-02-20T21:10:00-08:00"
+  },
+  "A-121": {
+    "description": "Continue monitoring Apple App Store review status for the Lever app. This is an ongoing watch — any status change triggers the launch cascade (newsletter, social, etc). Dave covers this alongside his CRO duties.",
+    "acceptanceCriteria": [
+      {"text": "App Store Connect status checked regularly", "completed": true},
+      {"text": "Any status change reported immediately to team", "completed": true},
+      {"text": "Launch trigger protocol ready to execute", "completed": true}
+    ],
+    "updatedAt": "2026-02-20T21:10:00-08:00"
+  },
+  "J-025": {
+    "description": "Review the Slack screenshot that Dave sent showing the newsletter pre-schedule configuration. Joshua needs to visually confirm the newsletter content, timing, and subscriber targeting look correct before giving the green light.",
+    "acceptanceCriteria": [
+      {"text": "Slack screenshot reviewed", "completed": false},
+      {"text": "Newsletter content and formatting approved", "completed": false},
+      {"text": "Timing and subscriber targeting confirmed correct", "completed": false}
+    ],
+    "updatedAt": "2026-02-20T21:10:00-08:00"
+  }
+}

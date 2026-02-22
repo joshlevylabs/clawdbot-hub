@@ -4,28 +4,28 @@
   "generated_at": "2026-02-22T06:00:00-08:00",
   "location": "Temecula, CA",
   "weather": {
-    "title": "🌤️ Weather",
-    "current": "67°F, Sunny",
-    "high": "69°F",
-    "low": "44°F",
+    "title": "\ud83c\udf24\ufe0f Weather",
+    "current": "67\u00b0F, Sunny",
+    "high": "69\u00b0F",
+    "low": "44\u00b0F",
     "conditions": "Sunny and pleasant",
     "wind": "Light northerly winds ~3mph"
   },
   "prayer": {
-    "title": "🕙️ Morning Prayer",
+    "title": "\ud83d\udd59\ufe0f Morning Prayer",
     "date": "Sunday, February 22, 2026",
     "hebrew_date": "24 Cheshvan",
     "parsha": "Vayeshev",
     "parsha_theme": "setbacks as setups, patience, providence",
-    "modeh_ani": "מודה אני לפניך — I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
-    "blessing": "Blessed are You who girds Israel with strength — fortify me for the work ahead.",
+    "modeh_ani": "\u05de\u05d5\u05d3\u05d4 \u05d0\u05e0\u05d9 \u05dc\u05e4\u05e0\u05d9\u05da \u2014 I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
+    "blessing": "Blessed are You who girds Israel with strength \u2014 fortify me for the work ahead.",
     "psalm": "Psalm 118:25: 'Lord, save us! Lord, grant us success!'",
     "proverb": "Proverbs 11:1: 'Dishonest scales are an abomination to the Lord, but accurate weights are His delight.'",
-    "intention": "Help me see people as You see them — partners, not obstacles.",
-    "closing": "Baruch atah Adonai — Blessed are You, Lord, who renews creation daily with goodness."
+    "intention": "Help me see people as You see them \u2014 partners, not obstacles.",
+    "closing": "Baruch atah Adonai \u2014 Blessed are You, Lord, who renews creation daily with goodness."
   },
   "mre": {
-    "title": "📊 MRE Trading",
+    "title": "\ud83d\udcca MRE Trading",
     "fear_greed": 43,
     "fear_greed_rating": "fear",
     "regime": "bull",
@@ -35,7 +35,7 @@
     "summary": "Markets fearful but structure remains bullish. No action items today."
   },
   "family": {
-    "title": "❤️ Family Focus",
+    "title": "\u2764\ufe0f Family Focus",
     "relationship_status": "critical - urgent repair needed",
     "jillian_focus": "Quality time + acts of service",
     "recommendations": [
@@ -47,19 +47,22 @@
     "jett_note": "7 months old - needs consistent care and attention"
   },
   "calendar": {
-    "title": "📅 Today's Schedule",
+    "title": "\ud83d\udcc5 Today's Schedule",
     "status": "Authentication issues with Google Calendar - manual check needed",
     "today_events": [],
     "note": "Check calendar manually for any events"
   },
   "email": {
-    "title": "📧 Email Highlights",
+    "title": "\ud83d\udce7 Email Highlights",
     "status": "Authentication issues with Gmail - manual check needed",
-    "accounts": ["joshua.seth.levy@gmail.com", "josh@joshlevylabs.com"],
+    "accounts": [
+      "joshua.seth.levy@gmail.com",
+      "josh@joshlevylabs.com"
+    ],
     "note": "Check email manually for urgent items"
   },
   "world_news": {
-    "title": "🌍 World News",
+    "title": "\ud83c\udf0d World News",
     "items": [
       {
         "topic": "Israel/Gaza",
@@ -69,7 +72,7 @@
     ]
   },
   "ai_news": {
-    "title": "🤖 AI News",
+    "title": "\ud83e\udd16 AI News",
     "items": [
       {
         "topic": "Claude Sonnet 4.6 Release",
@@ -84,7 +87,7 @@
     ]
   },
   "focus_areas": {
-    "title": "🎯 Today's Focus",
+    "title": "\ud83c\udfaf Today's Focus",
     "priorities": [
       "Family repair - quality time with Jillian, acknowledge conflicts",
       "Jones birthday celebration (turning 3 today!)",

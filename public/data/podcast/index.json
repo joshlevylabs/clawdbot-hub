@@ -42,13 +42,16 @@
     },
     {
       "number": 4,
-      "title": "Eight Employees, Zero Paychecks — Inside the AI Operation That Runs Itself",
+      "title": "8 AI Employees for $40/Month",
       "pillar": "ai",
-      "filename": "episode-004-2026-02-20-ai-podcast-pipeline.md",
-      "created": "2026-02-20",
-      "finalized": "2026-02-21",
+      "filename": null,
+      "created": "2026-02-22",
+      "finalized": "2026-02-22",
       "status": "finalized",
-      "links": {}
+      "links": {
+        "youtube": "https://youtube.com/watch?v=WBnVSjGa4kM",
+        "spotify": "https://open.spotify.com/episode/4pad7gR7OIzJqtq7f6xMXg"
+      }
     }
   ],
   "lastEpisodeNumber": 4,
@@ -60,5 +63,5 @@
     "legacy": 0,
     "all": 1
   },
-  "lastUpdated": "2026-02-20"
+  "lastUpdated": "2026-02-22"
 }

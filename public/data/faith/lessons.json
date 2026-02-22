@@ -1,0 +1,201 @@
+{
+  "lessons": [
+    {
+      "id": "lesson_008",
+      "number": 8,
+      "title": "The Weight of Sacred Words",
+      "topic": "Scripture Authority",
+      "dimensions": ["scripture_authority", "divine_nature"],
+      "scenario": "A close friend asks for your advice about a major life decision. You remember reading something relevant in a sacred text, but you're not sure if you should quote it directly, interpret its meaning, or simply share the wisdom you derived from it.",
+      "question": "When sacred texts address life's challenges, how should their guidance be applied?",
+      "reflection_prompts": [
+        "Do sacred texts speak directly to modern situations?",
+        "Who has the authority to interpret divine guidance?",
+        "How do you balance ancient wisdom with contemporary context?"
+      ],
+      "perspectives": [
+        {
+          "tradition": "Protestant Christianity",
+          "icon": "✝️",
+          "perspective": "Scripture alone (sola scriptura) provides sufficient guidance for all of life. When your friend seeks advice, the biblical text itself contains the answer. While personal application matters, the words of Scripture are clear and authoritative. You should share the relevant passage and help them understand how it directly applies to their situation."
+        },
+        {
+          "tradition": "Catholic Christianity",
+          "icon": "⛪",
+          "perspective": "Sacred Scripture works in harmony with Church tradition and teaching authority. While the biblical text is foundational, its proper interpretation comes through the Church's magisterium. You might share the passage but would encourage your friend to also consider how Church teaching has understood this guidance throughout history."
+        },
+        {
+          "tradition": "Orthodox Christianity",
+          "icon": "☦️",
+          "perspective": "Scripture is understood through the lens of Holy Tradition and the collective wisdom of the Church Fathers. The text's meaning emerges through liturgical life and patristic interpretation. You would share both the passage and how it has been understood in Orthodox tradition, emphasizing the communal nature of scriptural interpretation."
+        },
+        {
+          "tradition": "Islam",
+          "icon": "☪️",
+          "perspective": "The Quran is the direct word of Allah, and its guidance is timeless and universal. However, understanding comes through proper knowledge of Arabic, context (asbab al-nuzul), and scholarly interpretation. You would share the relevant Quranic principle while acknowledging that deeper understanding may require consulting learned scholars."
+        },
+        {
+          "tradition": "Judaism",
+          "icon": "✡️",
+          "perspective": "Torah study is both a commandment and a way of life. The text's meaning unfolds through centuries of rabbinic discussion and interpretation. You would share the relevant teaching but emphasize that understanding comes through study, debate, and application within the Jewish community's ongoing conversation with the text."
+        },
+        {
+          "tradition": "Hinduism",
+          "icon": "🕉️",
+          "perspective": "Sacred texts like the Vedas and Upanishads contain eternal truths (sanatana dharma) that manifest differently in each age. The guidance is there, but its application depends on your friend's spiritual development, life stage, and personal dharma. A qualified guru or spiritual teacher would best help interpret how ancient wisdom applies to modern circumstances."
+        },
+        {
+          "tradition": "Buddhism",
+          "icon": "☸️",
+          "perspective": "The Dharma teachings are skillful means pointing toward liberation from suffering. Buddha's words should be tested against experience and reason. You would share the relevant teaching but emphasize that your friend must ultimately verify its truth through their own practice and understanding."
+        },
+        {
+          "tradition": "Sikhism",
+          "icon": "☬",
+          "perspective": "The Guru Granth Sahib is the living Guru whose wisdom applies to all situations. The Gurbani contains practical guidance for worldly life while pointing toward spiritual truth. You would encourage your friend to approach the Granth Sahib directly through prayer and reflection, as the Guru speaks personally to each devotee."
+        },
+        {
+          "tradition": "Bahá'í",
+          "icon": "🌟",
+          "perspective": "Bahá'u'lláh's writings provide guidance for humanity's spiritual and social evolution. While the principles are eternal, their application must consider the progressive nature of divine revelation and humanity's developing capacity for understanding. You would share the relevant principle while encouraging independent investigation of truth."
+        }
+      ],
+      "created": "2026-02-21T20:45:00-08:00",
+      "status": "ship_ready"
+    },
+    {
+      "id": "lesson_009",
+      "number": 9,
+      "title": "When Good People Suffer",
+      "topic": "Divine Justice and Suffering",
+      "dimensions": ["divine_nature", "afterlife_understanding", "moral_framework"],
+      "scenario": "A colleague who has always been kind, generous, and ethical receives devastating news: their young child has been diagnosed with a terminal illness. Meanwhile, a notoriously corrupt local politician enjoys perfect health and prosperity. Your colleague asks you, 'Where is the justice in this world?'",
+      "question": "How do you understand the relationship between virtue, suffering, and divine justice?",
+      "reflection_prompts": [
+        "Why do good people sometimes suffer while evil seems to prosper?",
+        "Is suffering always meaningful or sometimes random?",
+        "How does divine justice work across time and circumstance?"
+      ],
+      "perspectives": [
+        {
+          "tradition": "Protestant Christianity",
+          "icon": "✝️",
+          "perspective": "We live in a fallen world where sin has corrupted the natural order. Suffering affects both righteous and unrighteous because we all inherit the consequences of humanity's broken relationship with God. Yet God works all things together for good for those who love Him. Your colleague's suffering, while heartbreaking, can deepen faith and serve God's ultimate purposes. Divine justice will be fully revealed in eternity."
+        },
+        {
+          "tradition": "Catholic Christianity",
+          "icon": "⛪",
+          "perspective": "Suffering can be redemptive when united with Christ's passion. Your colleague's pain, while not caused by God, can become a participation in Christ's saving work. The corrupt politician may prosper temporarily, but ultimate justice belongs to God's eternal perspective. We're called to support your colleague practically while trusting in divine providence that sees beyond our limited understanding."
+        },
+        {
+          "tradition": "Orthodox Christianity",
+          "icon": "☦️",
+          "perspective": "Death entered the world through humanity's separation from God, but Christ has trampled down death by death. Your colleague's suffering is real and tragic, but not the final word. The Church teaches that death is not natural to human existence—it's an enemy that Christ has ultimately defeated. We mourn with those who mourn while holding onto the hope of resurrection."
+        },
+        {
+          "tradition": "Islam",
+          "icon": "☪️",
+          "perspective": "Allah tests those He loves, and no soul is given a burden greater than it can bear. Your colleague's trial may be a test of faith or a means of purification. The corrupt politician's apparent prosperity may actually be Allah giving them more rope, as worldly success can be a form of spiritual test. True justice (Al-Adl) will be perfectly rendered on the Day of Judgment."
+        },
+        {
+          "tradition": "Judaism",
+          "icon": "✡️",
+          "perspective": "This is the ancient question of Job. The righteous sometimes suffer while the wicked prosper—this tension is acknowledged throughout Jewish thought. Some teaching suggests that the righteous receive their punishment in this world to be rewarded in the world to come, while the wicked receive their rewards now. Ultimately, we trust in God's justice while working to repair the world (tikkun olam)."
+        },
+        {
+          "tradition": "Hinduism",
+          "icon": "🕉️",
+          "perspective": "Both your colleague and the politician are experiencing the fruits of past actions (karma) from this and previous lifetimes. What appears unjust from our limited perspective makes sense within the cosmic order of cause and effect. Your colleague's current suffering may be balancing past karmic debts, while the politician accumulates negative karma despite present prosperity. Divine justice (dharma) operates across many lifetimes."
+        },
+        {
+          "tradition": "Buddhism",
+          "icon": "☸️",
+          "perspective": "Suffering (dukkha) is inherent to existence in samsara. Your colleague's pain arises from attachment and the impermanent nature of all conditioned things. The politician's apparent happiness is also impermanent and rooted in delusion. Both situations demonstrate the Four Noble Truths. Compassion for both the grieving parent and the deluded politician arises naturally when we understand the universality of suffering."
+        },
+        {
+          "tradition": "Sikhism",
+          "icon": "☬",
+          "perspective": "Everything happens according to God's will (hukam), but this doesn't mean we passively accept injustice. Your colleague's suffering is real and calls for our compassion and practical help. The corrupt politician acts against dharma and will face consequences. We serve others while remembering that ultimate justice belongs to Waheguru, and our duty is to act with integrity regardless of outcomes."
+        },
+        {
+          "tradition": "Bahá'í",
+          "icon": "🌟",
+          "perspective": "Tests and difficulties refine the human spirit like fire refines gold. Your colleague's trial, while painful, can develop spiritual qualities impossible to cultivate in comfort. The politician's moral corruption, despite material success, represents spiritual poverty. Justice operates on both individual and collective levels as humanity progresses toward a more just global society."
+        }
+      ],
+      "created": "2026-02-21T20:45:00-08:00",
+      "status": "ship_ready"
+    },
+    {
+      "id": "lesson_010",
+      "number": 10,
+      "title": "The Ultimate Purpose",
+      "topic": "Life's Meaning and Spiritual Destiny",
+      "dimensions": ["salvation_path", "afterlife_understanding", "worldview_integration"],
+      "scenario": "At a dinner party, the conversation turns philosophical. Someone asks the table: 'If you could live forever—truly forever—would you want to? And what would you hope to become?' The responses reveal deep differences in how people view the ultimate purpose and destiny of human existence.",
+      "question": "What is the highest goal of human life, and what happens to us after we die?",
+      "reflection_prompts": [
+        "What would give eternal existence meaning and joy?",
+        "Is there a purpose to life beyond personal happiness?",
+        "How do beliefs about afterlife shape how you live now?"
+      ],
+      "perspectives": [
+        {
+          "tradition": "Protestant Christianity",
+          "icon": "✝️",
+          "perspective": "Yes, I would want to live forever because eternity with God is the purpose for which we were created. The highest goal is to know God and enjoy Him forever. After death, those who have accepted Christ's salvation enter God's presence, where we'll worship, serve, and grow in understanding of divine love for all eternity. The relationship with God gives infinite meaning to eternal existence."
+        },
+        {
+          "tradition": "Catholic Christianity",
+          "icon": "⛪",
+          "perspective": "Eternal life is the beatific vision—seeing God face to face. Yes, I would want this forever because our hearts are restless until they rest in God. The highest goal is union with God through grace, achieved through faith, hope, and charity. After death, we hope for purification and eventual complete communion with the Trinity, joined with all the saints in perfect love and understanding."
+        },
+        {
+          "tradition": "Orthodox Christianity",
+          "icon": "☦️",
+          "perspective": "Eternal life is theosis—becoming by grace what God is by nature. I would want forever because it means endless growth in divine life. The highest goal is deification through participation in God's energies. After death, we hope for resurrection and transformation, where our humanity becomes fully united with divinity while remaining distinctly human—the ultimate fulfillment of our created purpose."
+        },
+        {
+          "tradition": "Islam",
+          "icon": "☪️",
+          "perspective": "Paradise (Jannah) offers eternal bliss in Allah's presence. Yes, I would want forever in such a state because it represents the perfection of human nature in submission to Allah. The highest goal is to worship Allah and serve as His khalifa (steward) on earth. After death, the faithful enter gardens beneath which rivers flow, experiencing perfect peace and closeness to the Divine."
+        },
+        {
+          "tradition": "Judaism",
+          "icon": "✡️",
+          "perspective": "The afterlife (Olam HaBa) is mysterious, but partnership with God in repairing this world (tikkun olam) gives life meaning. I might want forever if it meant continuing to study Torah and serve others. The highest goal is to live ethically and help build God's kingdom on earth. Death is not the end, but the nature of what follows is less defined than our obligation to act justly in this life."
+        },
+        {
+          "tradition": "Hinduism",
+          "icon": "🕉️",
+          "perspective": "Liberation (moksha) means release from the cycle of rebirth into union with Brahman. Eternal existence as a separate self would be suffering, but eternal existence as one with ultimate reality would be perfect bliss (sat-chit-ananda). The highest goal is self-realization. After death, we either continue reincarnating until we achieve liberation, or merge with the absolute."
+        },
+        {
+          "tradition": "Buddhism",
+          "icon": "☸️",
+          "perspective": "Nirvana is the cessation of suffering through the extinguishing of craving and the illusion of separate selfhood. I wouldn't want forever as 'me,' but the liberation from the cycle of suffering would be perfect peace. The highest goal is the end of dukkha for all beings. After death, either continued rebirth until enlightenment, or the deathless state beyond birth and death."
+        },
+        {
+          "tradition": "Sikhism",
+          "icon": "☬",
+          "perspective": "Union with Waheguru is the ultimate goal—merging like a drop of water with the ocean while retaining the capacity for service. Yes, I would want forever in such a state because it means eternal bliss in God's presence. The highest goal is to escape the cycle of rebirth through devotion and service. After death, either continued reincarnation or merger with the Divine."
+        },
+        {
+          "tradition": "Bahá'í",
+          "icon": "🌟",
+          "perspective": "The soul continues progressing through spiritual worlds after death, eternally approaching but never fully comprehending God's infinite nature. Yes, I would want forever because it means endless spiritual development. The highest goal is to know and worship God while advancing human civilization. Death is birth into a broader existence where we continue growing in capacity and service."
+        }
+      ],
+      "created": "2026-02-21T20:45:00-08:00",
+      "status": "ship_ready"
+    }
+  ],
+  "metadata": {
+    "total_lessons": 10,
+    "target_launch": 10,
+    "lessons_8_10_status": "ship_ready",
+    "author": "Alex",
+    "task": "A-135",
+    "created": "2026-02-21T20:45:00-08:00"
+  }
+}

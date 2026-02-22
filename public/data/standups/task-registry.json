@@ -1,6 +1,6 @@
 {
-  "nextAgentId": 141,
-  "nextJoshuaId": 30,
+  "nextAgentId": 145,
+  "nextJoshuaId": 32,
   "tasks": [
     {
       "key": "J-004",
@@ -872,6 +872,91 @@
       "updatedAt": "2026-02-21T20:17:00.618411-08:00",
       "completedAt": "2026-02-21T20:17:30.742678-08:00",
       "resolution": "CEO decided: team recommendation (via evening-session 2026-02-21)"
+    },
+    {
+      "key": "A-141",
+      "text": "Draft welcome modal visual spec with layout, colors, typography, and card structure",
+      "tag": "AGENT",
+      "priority": "high",
+      "assignee": "Steve Jobs",
+      "status": "pending",
+      "sourceStandup": "STD-1",
+      "sourceStandupType": "adhoc-welcome-modal-design",
+      "sourceDate": "2026-02-21",
+      "createdAt": "2026-02-21T20:25:46.481238-08:00",
+      "updatedAt": "2026-02-21T20:25:46.481238-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "A-142",
+      "text": "Write final copy for all three welcome modal pillar cards",
+      "tag": "AGENT",
+      "priority": "high",
+      "assignee": "Alex",
+      "status": "pending",
+      "sourceStandup": "STD-1",
+      "sourceStandupType": "adhoc-welcome-modal-design",
+      "sourceDate": "2026-02-21",
+      "createdAt": "2026-02-21T20:25:46.481238-08:00",
+      "updatedAt": "2026-02-21T20:25:46.481238-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "A-143",
+      "text": "Define analytics event schema for welcome modal interactions",
+      "tag": "AGENT",
+      "priority": "high",
+      "assignee": "Dave",
+      "status": "pending",
+      "sourceStandup": "STD-1",
+      "sourceStandupType": "adhoc-welcome-modal-design",
+      "sourceDate": "2026-02-21",
+      "createdAt": "2026-02-21T20:25:46.481238-08:00",
+      "updatedAt": "2026-02-21T20:25:46.481238-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "J-030",
+      "text": "Review and approve welcome modal copy and scripture selection",
+      "tag": "JOSHUA",
+      "priority": "high",
+      "assignee": "Joshua",
+      "status": "done",
+      "sourceStandup": "STD-1",
+      "sourceStandupType": "adhoc-welcome-modal-design",
+      "sourceDate": "2026-02-21",
+      "createdAt": "2026-02-21T20:25:46.481238-08:00",
+      "updatedAt": "2026-02-21T20:25:46.481238-08:00",
+      "completedAt": "2026-02-21T20:30:24.782920-08:00",
+      "resolution": "CEO decided: Approve as designed (via adhoc-welcome-modal-design 2026-02-21)"
+    },
+    {
+      "key": "A-144",
+      "text": "Implement welcome modal in SwiftUI based on approved spec and copy",
+      "tag": "AGENT",
+      "priority": "high",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "sourceStandup": "STD-1",
+      "sourceStandupType": "adhoc-welcome-modal-design",
+      "sourceDate": "2026-02-21",
+      "createdAt": "2026-02-21T20:25:46.481238-08:00",
+      "updatedAt": "2026-02-21T20:25:46.481238-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "J-031",
+      "text": "Merge J-021 (day-one patch) and J-024 (analytics PR) per CEO decision J-029",
+      "tag": "JOSHUA",
+      "priority": "high",
+      "assignee": "Joshua",
+      "status": "pending",
+      "sourceStandup": "STD-1",
+      "sourceStandupType": "adhoc-welcome-modal-design",
+      "sourceDate": "2026-02-21",
+      "createdAt": "2026-02-21T20:25:46.481238-08:00",
+      "updatedAt": "2026-02-21T20:25:46.481238-08:00",
+      "completedAt": null
     }
   ]
 }

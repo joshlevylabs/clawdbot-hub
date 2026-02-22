@@ -2,6 +2,19 @@
   "standups": [
     {
       "date": "2026-02-21",
+      "time": "20:25",
+      "type": "adhoc-welcome-modal-design",
+      "typeName": "Welcome Modal Design",
+      "typeEmoji": "\ud83c\udfa8",
+      "topic": "Welcome Modal Design \u2014 Saturday Feb 21",
+      "file": "2026-02-21-adhoc-welcome-modal-design.json",
+      "tokenCost": 0.3833,
+      "verticals": [],
+      "initiatives": [],
+      "instanceKey": "STD-2"
+    },
+    {
+      "date": "2026-02-21",
       "time": "20:00",
       "type": "evening-session",
       "typeName": "Evening Session",

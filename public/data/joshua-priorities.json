@@ -1,6 +1,6 @@
 {
   "date": "2026-02-21",
-  "generatedAt": "2026-02-21T20:17:00.618411-08:00",
+  "generatedAt": "2026-02-21T20:30:00.311322-08:00",
   "priorities": [
     {
       "text": "Decide newsletter send timing relative to Apple approval",
@@ -21,10 +21,16 @@
       "taskKey": "J-026"
     },
     {
-      "text": "Merge J-021 (day-one patch) and J-024 (analytics PR) \u2014 now 48+ hours staged",
-      "source": "evening-session",
+      "text": "Review and approve welcome modal copy and scripture selection",
+      "source": "adhoc-welcome-modal-design",
       "urgency": "high",
-      "taskKey": "J-029"
+      "taskKey": "J-030"
+    },
+    {
+      "text": "Merge J-021 (day-one patch) and J-024 (analytics PR) per CEO decision J-029",
+      "source": "adhoc-welcome-modal-design",
+      "urgency": "high",
+      "taskKey": "J-031"
     }
   ],
   "agentHandled": [
@@ -129,6 +135,30 @@
       "assignee": "James Truchard",
       "status": "pending",
       "taskKey": "A-140"
+    },
+    {
+      "text": "Draft welcome modal visual spec with layout, colors, typography, and card structure",
+      "assignee": "Steve Jobs",
+      "status": "pending",
+      "taskKey": "A-141"
+    },
+    {
+      "text": "Write final copy for all three welcome modal pillar cards",
+      "assignee": "Alex",
+      "status": "pending",
+      "taskKey": "A-142"
+    },
+    {
+      "text": "Define analytics event schema for welcome modal interactions",
+      "assignee": "Dave",
+      "status": "pending",
+      "taskKey": "A-143"
+    },
+    {
+      "text": "Implement welcome modal in SwiftUI based on approved spec and copy",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "taskKey": "A-144"
     }
   ]
 }

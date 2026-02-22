@@ -8,7 +8,8 @@
     "midday-checkpoint": 4,
     "evening-session": 7,
     "adhoc-podcast-planning-episode-4-how-i-use-ai-agents-to-run-my-entire-podcast-and-newsletter-pipeline": 1,
-    "night-wrap": 1
+    "night-wrap": 1,
+    "adhoc-welcome-modal-design": 2
   },
   "abbreviations": {
     "adhoc-evening-wrap": "STD",
@@ -19,6 +20,7 @@
     "midday-checkpoint": "STD",
     "evening-session": "STD",
     "adhoc-podcast-planning-episode-4-how-i-use-ai-agents-to-run-my-entire-podcast-and-newsletter-pipeline": "STD",
-    "night-wrap": "STD"
+    "night-wrap": "STD",
+    "adhoc-welcome-modal-design": "STD"
   }
 }

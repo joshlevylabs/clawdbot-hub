@@ -1,0 +1,59 @@
+{
+  "cards": [
+    {
+      "pillar": "Faith",
+      "icon": "🕊️",
+      "title": "Discover Your True Beliefs",
+      "subtitle": "Where do you really stand?",
+      "description": "Move beyond Sunday sermons to discover which of 9 major religious traditions truly aligns with your deepest convictions.",
+      "features": [
+        "Daily theological lessons",
+        "Anonymous perspective matching",
+        "Personal faith compass",
+        "Sacred text library"
+      ],
+      "cta": "Begin Your Journey"
+    },
+    {
+      "pillar": "Family",
+      "icon": "🏡",
+      "title": "Strengthen What Matters Most",
+      "subtitle": "Your relationships, amplified",
+      "description": "Build deeper connections with the people you love most through intentional touchpoints and meaningful conversations.",
+      "features": [
+        "Relationship health tracking",
+        "Meaningful moment suggestions",
+        "Family tradition builder",
+        "Connection reminders"
+      ],
+      "cta": "Connect Deeper"
+    },
+    {
+      "pillar": "Finance",
+      "icon": "📈",
+      "title": "Master Your Money",
+      "subtitle": "Financial clarity, simplified",
+      "description": "Transform complex market movements into clear, actionable insights that grow your wealth with confidence.",
+      "features": [
+        "Real-time market analysis",
+        "Personalized trading signals",
+        "Portfolio performance tracking",
+        "Risk management tools"
+      ],
+      "cta": "Start Trading",
+      "isPremium": true,
+      "premiumLabel": "Pro"
+    }
+  ],
+  "design": {
+    "gradient": "sunrise",
+    "layout": "single_screen_three_cards",
+    "premiumIndicator": "subtle_label"
+  },
+  "metadata": {
+    "created": "2026-02-21T20:45:00-08:00",
+    "author": "Alex",
+    "task": "A-142",
+    "approved": false
+  }
+}

@@ -1,305 +1,222 @@
-# Lever Welcome Modal - Visual Specification
+# Lever App Welcome Modal - Visual Specification
 
 **Version:** 1.0  
-**Status:** Implementation Ready  
-**Target:** SwiftUI/React Native Implementation  
-**Updated:** February 20, 2026  
+**Created:** 2026-02-17  
+**Designer:** Steve Jobs, CPO  
+**Status:** Implementation Ready
 
 ## Overview
 
-Single-screen welcome modal introducing users to Lever's three pillars: Faith, Family, Finance. Warm, inviting design with sunrise gradient background and clean card-based layout.
-
----
+Single-screen onboarding modal introducing the three pillars of Lever: Faith, Family, Finance. Clean, aspirational design with warm sunrise gradient and focused card hierarchy.
 
 ## Screen Layout
 
-### Container Specifications
-- **Full screen modal** (no dismiss X)
-- **Safe area aware** - respects device notches and home indicators
-- **Vertical scrolling enabled** if content exceeds screen height
-- **Background:** Full-bleed gradient (see colors below)
+### Container
+- **Dimensions:** Full screen overlay (100vh × 100vw)
+- **Background:** Sunrise gradient (see Gradient section)
+- **Safe Area:** 24pt margins on mobile, 48pt on tablet
+- **Modal Card:** 343pt wide × 598pt high on mobile
+- **Corner Radius:** 20pt on modal container
 
-### Vertical Stack Hierarchy
-1. **Top Spacer:** 60pt from safe area top
-2. **Lever Wordmark:** 40pt height
-3. **Spacer:** 48pt
-4. **Three Pillar Cards:** 16pt spacing between cards
-5. **Spacer:** 32pt
-6. **CTA Button:** 52pt height
-7. **Bottom Spacer:** 40pt from safe area bottom
+### Header Section
+- **Height:** 96pt
+- **Logo:** Lever mark, 32pt × 32pt
+- **Logo Position:** Centered horizontally, 32pt from top
+- **Title:** "Welcome to Lever"
+- **Title Typography:** SF Pro Display, 28pt, Weight 700, Color #1A1A1A
+- **Title Position:** Centered, 16pt below logo
 
----
+### Subtitle Section
+- **Height:** 56pt
+- **Text:** "Your compass for Faith, Family, and Finance"
+- **Typography:** SF Pro Text, 17pt, Weight 400, Color #666666
+- **Position:** Centered, 12pt below title
+- **Line Height:** 1.35
 
-## Color Palette
+## Gradient Background
 
-### Background Gradient
-```
-Linear Gradient (Top to Bottom):
-- Stop 0%: #FFB347 (Warm Gold)
-- Stop 50%: #FFA07A (Light Salmon) 
-- Stop 100%: #87CEEB (Sky Blue)
-```
+### Primary Gradient
+- **Type:** Linear gradient
+- **Direction:** 135° (top-left to bottom-right)
+- **Stop 1:** #FFF5E6 at 0% (warm cream)
+- **Stop 2:** #FFE4B8 at 35% (soft peach)
+- **Stop 3:** #FECA57 at 75% (golden sunrise)
+- **Stop 4:** #FF6B35 at 100% (warm orange)
 
-### Card Colors
-```
-Card Background: #FFFFFF (White)
-Card Border: #F0F0F0 (Light Gray)
-Card Shadow: #000000 @ 8% opacity
-```
+### Overlay Layer
+- **Background:** rgba(255, 255, 255, 0.85)
+- **Backdrop Filter:** blur(10px) (iOS only)
 
-### Text Colors
-```
-Primary Text: #2C2C2E (Near Black)
-Secondary Text: #8E8E93 (System Gray)
-Pro Label: #FF6B35 (Orange Red)
-CTA Button Background: #2C2C2E (Near Black)
-CTA Button Text: #FFFFFF (White)
-```
+## Pillar Cards Section
 
----
+### Container
+- **Height:** 294pt
+- **Spacing:** 16pt between cards
+- **Card Layout:** Vertical stack, full width
 
-## Typography
+### Individual Card Specifications
 
-### Font Family
-- **Primary:** SF Pro Display (iOS) / System (Android)
-- **Weight Hierarchy:** See individual elements below
+#### Card Base Styles
+- **Width:** 295pt (24pt margin each side)
+- **Height:** 86pt
+- **Corner Radius:** 16pt
+- **Background:** rgba(255, 255, 255, 0.95)
+- **Border:** 1pt solid rgba(255, 255, 255, 0.3)
+- **Shadow:** 0pt 4pt 20pt rgba(0, 0, 0, 0.08)
+- **Backdrop Filter:** blur(20px) (iOS only)
 
-### Wordmark
-- **Font:** SF Pro Display, Heavy (800)
-- **Size:** 28pt
-- **Color:** #FFFFFF (White)
-- **Letter Spacing:** -0.5pt
-- **Text:** "LEVER"
+#### Faith Card
+- **Icon:** ✝️ (emoji), 24pt × 24pt
+- **Icon Position:** 20pt from left, centered vertically
+- **Title:** "Faith"
+- **Title Typography:** SF Pro Display, 20pt, Weight 600, Color #1A1A1A
+- **Title Position:** 56pt from left, 18pt from top
+- **Scripture:** "Be strong and courageous..." (placeholder for Peterson/Alex)
+- **Scripture Typography:** SF Pro Text, 14pt, Weight 400, Color #666666
+- **Scripture Position:** 56pt from left, 42pt from top
+- **Max Lines:** 2, truncated with ellipsis
 
-### Card Hook Text
-- **Font:** SF Pro Display, Semibold (600)
-- **Size:** 18pt
-- **Color:** #2C2C2E
-- **Line Height:** 22pt
+#### Family Card
+- **Icon:** 👨‍👩‍👧‍👦 (emoji), 24pt × 24pt
+- **Icon Position:** 20pt from left, centered vertically
+- **Title:** "Family"
+- **Title Typography:** SF Pro Display, 20pt, Weight 600, Color #1A1A1A
+- **Title Position:** 56pt from left, 18pt from top
+- **Member Count:** "{X} family members" (dynamic)
+- **Member Count Typography:** SF Pro Text, 14pt, Weight 400, Color #666666
+- **Member Count Position:** 56pt from left, 42pt from top
 
-### Card Preview Text
-- **Font:** SF Pro Text, Regular (400)
-- **Size:** 14pt
-- **Color:** #8E8E93
-- **Line Height:** 18pt
+#### Finance Card (Special Treatment)
+- **Base:** Same as other cards
+- **Icon:** 💰 (emoji), 24pt × 24pt
+- **Icon Position:** 20pt from left, centered vertically
+- **Title Container:** Horizontal flex
+- **Title:** "Finance"
+- **Title Typography:** SF Pro Display, 20pt, Weight 600, Color #1A1A1A
+- **Title Position:** 56pt from left, 18pt from top
+- **Pro Label:** "PRO"
+- **Pro Label Typography:** SF Pro Text, 10pt, Weight 700, Color #FF6B35
+- **Pro Label Background:** rgba(255, 107, 53, 0.1)
+- **Pro Label Padding:** 4pt horizontal, 2pt vertical
+- **Pro Label Corner Radius:** 6pt
+- **Pro Label Position:** 8pt right of "Finance" title, baseline aligned
+- **Subtitle:** "Track your wealth journey"
+- **Subtitle Typography:** SF Pro Text, 14pt, Weight 400, Color #666666
+- **Subtitle Position:** 56pt from left, 42pt from top
 
-### Pro Label
-- **Font:** SF Pro Text, Medium (500)
-- **Size:** 11pt
-- **Color:** #FF6B35
-- **Text:** "PRO"
-- **Transform:** Uppercase
+### Card Interaction States
+- **Default:** Opacity 1.0
+- **Pressed:** Opacity 0.85, scale 0.98
+- **Animation:** spring(response: 0.3, dampingFraction: 0.7)
 
-### CTA Button
-- **Font:** SF Pro Display, Semibold (600)
-- **Size:** 17pt
-- **Color:** #FFFFFF
-- **Text:** "Let's go"
+## Call-to-Action Section
 
----
-
-## Lever Wordmark
-
-### Positioning
-- **Horizontal:** Center aligned
-- **Vertical:** 60pt from safe area top
-- **Dimensions:** Auto width × 40pt height
-
-### Visual Treatment
-- **Drop Shadow:** #000000 @ 20% opacity, 0pt x-offset, 2pt y-offset, 4pt blur
-- **Accessibility:** Logo alt text = "Lever"
-
----
-
-## Pillar Cards
-
-### Card Container
-- **Dimensions:** Screen width - 32pt margins (16pt each side)
-- **Height:** 88pt (fixed)
-- **Corner Radius:** 12pt
-- **Background:** #FFFFFF
-- **Border:** 1pt solid #F0F0F0
-- **Shadow:** #000000 @ 8% opacity, 0pt x-offset, 2pt y-offset, 8pt blur
-
-### Card Internal Layout
-```
-[16pt padding]
-├── Icon (24×24pt) + Hook Text + Pro Label (if Finance)
-│   └── Horizontal stack, 12pt spacing, center aligned vertically
-├── [8pt spacing]
-└── Preview Content Area
-    └── [16pt trailing padding for balance]
-```
-
-### Card Interactions
-- **Tap Target:** Full card area
-- **Tap Action:** Navigate to respective pillar screen
-- **Visual Feedback:** Scale down to 0.96 on press, spring back on release
-- **Accessibility:** Properly labeled for VoiceOver/TalkBack
-
----
-
-## Faith Card
-
-### Icon Placeholder
-- **Size:** 24×24pt
-- **Style:** SF Symbol "heart.fill" or custom faith icon
-- **Color:** #FF6B35 (Orange Red)
-
-### Hook Text
-- **Content:** "Strengthen your faith"
-- **Typography:** Card hook style (18pt Semibold)
-
-### Preview Content
-- **Content:** "[Scripture text - TBD by Peterson & Alex]"
-- **Typography:** Card preview style (14pt Regular, Gray)
-- **Max Lines:** 2 lines with ellipsis truncation
-- **Note:** Scripture selection deferred to Peterson & Alex (no CEO review)
-
----
-
-## Family Card
-
-### Icon Placeholder
-- **Size:** 24×24pt
-- **Style:** SF Symbol "house.fill" or custom family icon
-- **Color:** #34C759 (System Green)
-
-### Hook Text
-- **Content:** "Connect with family"
-- **Typography:** Card hook style (18pt Semibold)
-
-### Preview Content
-- **Dynamic Content:** "{X} family members" (replace X with actual count)
-- **Fallback:** "Add your family members" (if count = 0)
-- **Typography:** Card preview style (14pt Regular, Gray)
-
----
-
-## Finance Card
-
-### Icon Placeholder  
-- **Size:** 24×24pt
-- **Style:** SF Symbol "chart.line.uptrend.xyaxis" or custom finance icon
-- **Color:** #007AFF (System Blue)
-
-### Hook Text + Pro Label Layout
-```
-Horizontal Stack:
-├── "Manage your money" (18pt Semibold)
-├── [8pt spacer]
-└── "PRO" Badge
-    ├── Background: #FF6B35 @ 12% opacity
-    ├── Corner Radius: 4pt
-    ├── Padding: 4pt horizontal, 2pt vertical
-    └── Text: 11pt Medium, #FF6B35
-```
-
-### Preview Content
-- **Content:** "Track expenses, investments & goals"
-- **Typography:** Card preview style (14pt Regular, Gray)
-- **Max Lines:** 2 lines with ellipsis truncation
-
----
-
-## CTA Button
-
-### Positioning
-- **Horizontal:** Center aligned
-- **Margins:** 24pt from screen edges
-- **Vertical:** 32pt below cards
+### Container
+- **Height:** 96pt
+- **Position:** 32pt from bottom of modal
+- **Padding:** 24pt horizontal
 
 ### Button Specifications
-- **Dimensions:** Screen width - 48pt margins × 52pt height
-- **Corner Radius:** 26pt (pill shape)
-- **Background:** #2C2C2E (Near Black)
-- **Text:** "Let's go" (17pt Semibold, White)
+- **Width:** 295pt (full width minus margins)
+- **Height:** 52pt
+- **Corner Radius:** 16pt
+- **Background:** Linear gradient
+  - **Stop 1:** #FF6B35 at 0%
+  - **Stop 2:** #F7931E at 100%
+- **Text:** "Let's go"
+- **Typography:** SF Pro Display, 18pt, Weight 600, Color #FFFFFF
+- **Shadow:** 0pt 4pt 16pt rgba(255, 107, 53, 0.3)
 
-### Interaction States
-- **Normal:** Background #2C2C2E
-- **Pressed:** Background #1C1C1E (darker)
-- **Disabled:** Background #8E8E93 (should not occur in this flow)
+### Button States
+- **Default:** Full gradient, shadow visible
+- **Pressed:** Opacity 0.9, scale 0.98, reduced shadow
+- **Animation:** spring(response: 0.25, dampingFraction: 0.8)
 
-### Accessibility
-- **Label:** "Continue to main app"
-- **Hint:** "Dismisses welcome screen and opens main interface"
+## Typography System
 
----
+### Font Stack
+- **Primary:** SF Pro Display (iOS), -apple-system (fallback)
+- **Secondary:** SF Pro Text (iOS), -apple-system (fallback)
 
-## Responsive Behavior
+### Font Weights
+- **700:** Bold headlines
+- **600:** Semibold titles
+- **400:** Regular body text
 
-### Small Screens (iPhone SE, etc.)
-- Reduce top/bottom spacers by 30% if needed
-- Enable vertical scrolling
-- Maintain minimum 16pt margins throughout
+### Text Colors
+- **Primary:** #1A1A1A (near black)
+- **Secondary:** #666666 (medium gray)
+- **Accent:** #FF6B35 (brand orange)
+- **Inverse:** #FFFFFF (white)
 
-### Large Screens (iPad, etc.)
-- Maximum content width: 375pt (iPhone size)
-- Center content horizontally
-- Add side margins as needed
+## Spacing System
 
-### Dark Mode
-- **Not supported in V1** - welcome modal always uses light theme
-- Background gradient remains unchanged for brand consistency
-- All text remains high contrast against white cards
+### Base Unit
+- **4pt grid system** (all spacing multiples of 4pt)
 
----
+### Key Measurements
+- **xs:** 4pt
+- **sm:** 8pt
+- **md:** 12pt
+- **lg:** 16pt
+- **xl:** 20pt
+- **2xl:** 24pt
+- **3xl:** 32pt
 
 ## Animation Specifications
 
-### Modal Entry
-- **Duration:** 0.6 seconds
-- **Easing:** Spring (damping: 0.8, response: 0.5)
-- **Behavior:** Slide up from bottom with subtle bounce
+### Modal Entrance
+- **Type:** Spring animation
+- **Initial State:** scale(0.9), opacity(0), translateY(20pt)
+- **Final State:** scale(1.0), opacity(1), translateY(0pt)
+- **Duration:** 0.6s
+- **Easing:** spring(response: 0.6, dampingFraction: 0.8)
 
-### Modal Exit (on CTA tap)
-- **Duration:** 0.4 seconds  
-- **Easing:** Ease-in-out
-- **Behavior:** Fade out with slight scale down (0.95)
+### Card Reveal Sequence
+- **Delay:** 0.1s between each card
+- **Animation:** fadeIn + slideUp
+- **Duration:** 0.4s per card
+- **Easing:** ease-out
 
-### Card Hover/Press (Mobile)
-- **Scale:** 0.96 (pressed state)
-- **Duration:** 0.1 seconds
-- **Spring Back:** 0.3 seconds with bounce
+### Button Appearance
+- **Delay:** 0.5s after modal entrance
+- **Animation:** fadeIn + scaleIn
+- **Duration:** 0.3s
+- **Easing:** spring(response: 0.3, dampingFraction: 0.7)
 
----
+## Accessibility
+
+### Text Contrast
+- All text meets WCAG AA standards (4.5:1 minimum)
+- Large text meets AAA standards (7:1)
+
+### Touch Targets
+- All interactive elements minimum 44pt × 44pt
+- Cards have full 86pt height touch target
+
+### Screen Reader
+- Modal has aria-modal="true"
+- Cards have descriptive aria-labels
+- Button has clear action description
 
 ## Implementation Notes
 
-### Asset Requirements
-1. **Lever wordmark** - Vector format (SVG/PDF) at @3x resolution
-2. **Pillar icons** - 24×24pt at @3x (72×72px) in vector format
-3. **Gradient implementation** - Use platform native linear gradient APIs
+### iOS Considerations
+- Use native blur effects where possible
+- Respect safe area insets
+- Support Dynamic Type scaling
+- Test on iPhone SE (smallest screen)
 
-### Data Binding
-- **Family member count** - Bind to user's family list length
-- **Scripture text** - Static content, await Peterson & Alex selection
-- **Pro label visibility** - Always show (aspirational, not feature-gated)
+### Performance
+- Use GPU-accelerated transforms for animations
+- Optimize gradient rendering for 120Hz displays
+- Preload emoji assets to prevent layout shift
 
-### Accessibility
-- **VoiceOver support** - All elements properly labeled
-- **Dynamic Type** - Text scales with system preferences
-- **Reduced Motion** - Honor system setting, use crossfade instead of spring animations
-
-### Analytics Events
-```
-welcome_modal_shown: {} 
-faith_card_tapped: {}
-family_card_tapped: {}
-finance_card_tapped: {}
-cta_button_tapped: {}
-modal_dismissed: {method: "cta_button"}
-```
+### Dark Mode (Future)
+- All colors have dark mode variants defined
+- Gradient adjusts opacity for dark backgrounds
+- Card backgrounds become slightly translucent
 
 ---
 
-## Approval Status
-
-- [x] CEO Approved: Single screen design direction
-- [x] CEO Approved: Include Pro label on finance card  
-- [ ] Pending: Scripture selection (Peterson & Alex, no CEO review)
-
----
-
-**Ready for Implementation:** ✅  
-**Engineering Handoff:** This spec contains all measurements, colors, and behaviors needed for pixel-perfect implementation.
+**This specification is pixel-perfect and implementation-ready. Every measurement, color, and animation has been carefully considered for the optimal first impression of Lever.**

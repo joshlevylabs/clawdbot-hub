@@ -1,0 +1,57 @@
+{
+  "dimensions": [
+    {
+      "id": "scripture_authority",
+      "name": "Scripture Authority",
+      "description": "How divine texts should be interpreted and applied",
+      "weight": 1.0
+    },
+    {
+      "id": "salvation_path",
+      "name": "Salvation Path",
+      "description": "How humans achieve spiritual salvation or enlightenment",
+      "weight": 1.0
+    },
+    {
+      "id": "divine_nature",
+      "name": "Divine Nature",
+      "description": "The fundamental nature and characteristics of the divine",
+      "weight": 1.0
+    },
+    {
+      "id": "afterlife_understanding",
+      "name": "Afterlife Understanding",
+      "description": "What happens after physical death",
+      "weight": 1.0
+    },
+    {
+      "id": "moral_framework",
+      "name": "Moral Framework",
+      "description": "The source and nature of ethical guidelines",
+      "weight": 1.0
+    },
+    {
+      "id": "spiritual_practices",
+      "name": "Spiritual Practices",
+      "description": "Essential rituals, prayers, and observances",
+      "weight": 1.0
+    },
+    {
+      "id": "community_role",
+      "name": "Community Role",
+      "description": "The importance of religious community and institutions",
+      "weight": 1.0
+    },
+    {
+      "id": "worldview_integration",
+      "name": "Worldview Integration",
+      "description": "How faith intersects with daily life and society",
+      "weight": 1.0
+    }
+  ],
+  "metadata": {
+    "created": "2026-02-21T20:45:00-08:00",
+    "author": "Alex",
+    "task": "A-135"
+  }
+}

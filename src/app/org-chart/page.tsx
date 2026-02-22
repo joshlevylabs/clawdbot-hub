@@ -137,6 +137,7 @@ const ID_TO_DIR: Record<string, string> = {
   compstd: "compliance",
   cpo: "cpo",
   faithfam: "faith-family",
+  cffo: "faith-family",
   aiinfra: "ai-infra",
   conshw: "consumer-hw",
   roboauto: "robotics",
@@ -704,7 +705,7 @@ function getDefaultAgents(): Record<string, AgentState> {
       id: "coo", name: "Theo", title: "COO", emoji: "🔺",
       model: "Claude Opus 4", status: "active", department: "Executive",
       description: "Orchestrates all operations. The right hand.",
-      reportsTo: "ceo", directReports: ["cto", "cmo", "cro", "cfto", "ctio", "cpo", "auditor"],
+      reportsTo: "ceo", directReports: ["cto", "cmo", "cro", "cfto", "ctio", "cpo", "cffo", "auditor"],
     },
     auditor: {
       id: "auditor", name: "Auditor", title: "Task Auditor", emoji: "🔎",
@@ -838,13 +839,13 @@ function getDefaultAgents(): Record<string, AgentState> {
       id: "cpo", name: "Jobs", title: "CPO", emoji: "🧭",
       model: "Claude Sonnet 4", status: "active", department: "Executive",
       description: "Taste + Vision + Market Timing. Ruthless focus, simplicity as discipline, product intuition.",
-      reportsTo: "coo", directReports: ["faithfam", "aiinfra", "conshw", "roboauto", "digplat"],
+      reportsTo: "coo", directReports: ["aiinfra", "conshw", "roboauto", "digplat"],
     },
-    faithfam: {
-      id: "faithfam", name: "Peterson", title: "Dir. Faith & Family", emoji: "🕊️",
+    cffo: {
+      id: "faithfam", name: "Jordan Peterson", title: "CFFO", emoji: "🕊️",
       model: "Sonnet 4", status: "active", department: "Executive",
-      description: "Moral Order + Psychological Responsibility. Ethical product review, family impact, civilizational thinking.",
-      reportsTo: "cpo", directReports: [],
+      description: "Chief Family & Faith Officer. Moral Order + Psychological Responsibility. Ethical product review, family impact, civilizational thinking.",
+      reportsTo: "coo", directReports: [],
     },
     aiinfra: {
       id: "aiinfra", name: "Hassabis", title: "Dir. AI Infrastructure", emoji: "🧠",
@@ -911,6 +912,7 @@ function getAgentIcon(agent: AgentState, isCLevel: boolean): ReactNode {
     compstd: <BookOpen className={iconClass} />,
     cpo: <Zap className={iconClass} />,
     faithfam: <Heart className={iconClass} />,
+    cffo: <Heart className={iconClass} />,
     aiinfra: <Brain className={iconClass} />,
     conshw: <Cpu className={iconClass} />,
     roboauto: <Bot className={iconClass} />,

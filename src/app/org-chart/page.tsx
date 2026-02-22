@@ -137,7 +137,6 @@ const ID_TO_DIR: Record<string, string> = {
   compstd: "compliance",
   cpo: "cpo",
   faithfam: "faith-family",
-  cffo: "faith-family",
   aiinfra: "ai-infra",
   conshw: "consumer-hw",
   roboauto: "robotics",
@@ -705,7 +704,7 @@ function getDefaultAgents(): Record<string, AgentState> {
       id: "coo", name: "Theo", title: "COO", emoji: "🔺",
       model: "Claude Opus 4", status: "active", department: "Executive",
       description: "Orchestrates all operations. The right hand.",
-      reportsTo: "ceo", directReports: ["cto", "cmo", "cro", "cfto", "ctio", "cpo", "cffo", "auditor"],
+      reportsTo: "ceo", directReports: ["cto", "cmo", "cro", "cfto", "ctio", "cpo", "faithfam", "auditor"],
     },
     auditor: {
       id: "auditor", name: "Auditor", title: "Task Auditor", emoji: "🔎",
@@ -841,7 +840,7 @@ function getDefaultAgents(): Record<string, AgentState> {
       description: "Taste + Vision + Market Timing. Ruthless focus, simplicity as discipline, product intuition.",
       reportsTo: "coo", directReports: ["aiinfra", "conshw", "roboauto", "digplat"],
     },
-    cffo: {
+    faithfam: {
       id: "faithfam", name: "Jordan Peterson", title: "CFFO", emoji: "🕊️",
       model: "Sonnet 4", status: "active", department: "Executive",
       description: "Chief Family & Faith Officer. Moral Order + Psychological Responsibility. Ethical product review, family impact, civilizational thinking.",
@@ -912,7 +911,6 @@ function getAgentIcon(agent: AgentState, isCLevel: boolean): ReactNode {
     compstd: <BookOpen className={iconClass} />,
     cpo: <Zap className={iconClass} />,
     faithfam: <Heart className={iconClass} />,
-    cffo: <Heart className={iconClass} />,
     aiinfra: <Brain className={iconClass} />,
     conshw: <Cpu className={iconClass} />,
     roboauto: <Bot className={iconClass} />,

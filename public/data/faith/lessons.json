@@ -1,6 +1,447 @@
 {
   "lessons": [
     {
+      "id": "lesson_001",
+      "number": 1,
+      "title": "The Sacred in Everyday Life",
+      "topic": "Worldview Integration", 
+      "dimensions": ["worldview_integration", "spiritual_practices"],
+      "scenario": "You're rushing through your morning routine when you notice a homeless person outside the coffee shop you frequent. Some people walk by without acknowledgment, others offer money, and a few stop to have genuine conversations. You realize this moment reveals something about how people integrate their spiritual beliefs with daily life.",
+      "question": "How should faith shape your response to unexpected encounters with human need?",
+      "reflection_prompts": [
+        "Where do you see the sacred in ordinary moments?",
+        "How do your deepest beliefs influence daily decisions?",
+        "What practices help you stay spiritually aware throughout the day?"
+      ],
+      "perspectives": [
+        {
+          "tradition": "Protestant Christianity",
+          "icon": "✝️",
+          "perspective": "Every person is made in God's image, so this encounter is an opportunity to love your neighbor as yourself. Christ calls us to see Him in 'the least of these.' While you can't solve homelessness, you can offer dignity, acknowledgment, and practical help within your means. Your faith should make you more attentive to opportunities for compassion."
+        },
+        {
+          "tradition": "Catholic Christianity", 
+          "icon": "⛪",
+          "perspective": "This is a moment for practicing the corporal works of mercy—feeding the hungry, clothing the naked, sheltering the homeless. The preferential option for the poor means seeing Christ present in those who suffer. Whether offering money, food, or simply recognition of their human dignity, you participate in God's love for the marginalized."
+        },
+        {
+          "tradition": "Orthodox Christianity",
+          "icon": "☦️",
+          "perspective": "The liturgy teaches us that the world is a cosmic temple where we encounter God through others. This homeless person is an icon of Christ's presence among us. Your response becomes a form of liturgy after the liturgy—extending the worship and communion you experience in church into the world through acts of mercy."
+        },
+        {
+          "tradition": "Islam",
+          "icon": "☪️",
+          "perspective": "This encounter tests your commitment to social justice (adl) and charity (zakat). Islam teaches that wealth is a trust from Allah, and those in need have a right to it. Whether you give money or not, you should acknowledge this person's dignity and remember that your provisions are Allah's blessings to be shared."
+        },
+        {
+          "tradition": "Judaism",
+          "icon": "✡️",
+          "perspective": "Tikkun olam (repairing the world) begins with individual acts of righteousness. The mitzvah of tzedakah isn't just charity—it's justice, acknowledging that this person deserves dignity and support. Your encounter is an opportunity to partner with God in healing the world's brokenness, one relationship at a time."
+        },
+        {
+          "tradition": "Hinduism",
+          "icon": "🕉️",
+          "perspective": "The Atman (divine self) within you recognizes the same Atman within this person. Their material circumstances don't diminish their spiritual reality. Dharma calls you to act according to your role and capacity—offering help while seeing beyond surface appearances to the eternal self that inhabits all beings."
+        },
+        {
+          "tradition": "Buddhism",
+          "icon": "☸️",
+          "perspective": "This moment offers practice in compassion (karuna) and mindfulness. Homelessness reveals the truth of suffering (dukkha) that affects all beings. Your response—whether material help or simple acknowledgment—can be an expression of loving-kindness that recognizes your interconnectedness with all sentient beings."
+        },
+        {
+          "tradition": "Sikhism",
+          "icon": "☬",
+          "perspective": "Seva (selfless service) is central to Sikh life. This person is a manifestation of Waheguru deserving respect and aid. The principle of sharing (vand chhakna) means offering help within your means while remembering that true wealth lies in spiritual connection with the Divine Name."
+        },
+        {
+          "tradition": "Bahá'í",
+          "icon": "🌟",
+          "perspective": "The oneness of humanity means this person is your spiritual sibling. Bahá'í teachings emphasize both individual charity and systemic change to address poverty's root causes. Your encounter is an opportunity for both immediate compassion and reflection on how society can better embody principles of justice and unity."
+        }
+      ],
+      "created": "2026-02-21T20:50:00-08:00",
+      "status": "draft"
+    },
+    {
+      "id": "lesson_002",
+      "number": 2,
+      "title": "The Community Question",
+      "topic": "Community Role",
+      "dimensions": ["community_role", "spiritual_practices"],
+      "scenario": "A friend invites you to their religious service, but you're not sure you believe everything their community teaches. You appreciate their friendship and are curious about their faith, but you wonder: Is it respectful to participate in rituals you don't fully embrace? Should spiritual community be reserved for those who share identical beliefs?",
+      "question": "What role should religious community play in spiritual life, and how inclusive should it be?",
+      "reflection_prompts": [
+        "Can meaningful spiritual community exist across theological differences?",
+        "What do you gain from worshiping or practicing with others?",
+        "How do you balance personal beliefs with communal participation?"
+      ],
+      "perspectives": [
+        {
+          "tradition": "Protestant Christianity",
+          "icon": "✝️",
+          "perspective": "While you're welcome to visit and learn, authentic Christian community centers on shared faith in Jesus Christ. The church is the body of Christ, unified by common belief and commitment. Respectful observation is fine, but full participation in communion and membership requires genuine conversion and agreement with core doctrines."
+        },
+        {
+          "tradition": "Catholic Christianity",
+          "icon": "⛪",
+          "perspective": "The Church welcomes seekers and offers a path for those interested in joining through RCIA. While some sacraments are reserved for Catholics, you can participate in much of the liturgy respectfully. The Church sees itself as Christ's mystical body, but recognizes elements of truth in other faith traditions."
+        },
+        {
+          "tradition": "Orthodox Christianity",
+          "icon": "☦️",
+          "perspective": "Orthodox worship invites participation in the divine liturgy as a foretaste of heavenly worship. While communion is reserved for Orthodox members, visitors can experience the beauty and truth of liturgical life. The Church is understood as the ark of salvation, but God's mercy extends beyond visible boundaries."
+        },
+        {
+          "tradition": "Islam",
+          "icon": "☪️",
+          "perspective": "The ummah (community) is central to Islamic life, but non-Muslims can respectfully observe mosque services and ask questions. True belonging requires shahada (declaration of faith), but Islam teaches that Allah alone judges hearts. Community strengthens faith through mutual support and collective worship."
+        },
+        {
+          "tradition": "Judaism",
+          "icon": "✡️",
+          "perspective": "Jewish community welcomes respectful visitors to most services, and conversion is possible for those genuinely called to Jewish life. The minyan (quorum of ten) maintains communal worship, while study groups often include interfaith participants. Community preserves tradition while remaining open to sincere seekers."
+        },
+        {
+          "tradition": "Hinduism",
+          "icon": "🕉️",
+          "perspective": "Hinduism's diversity means many temples and communities welcome sincere participants regardless of background. Spiritual community (satsang) benefits anyone seeking truth. While certain rituals may have specific requirements, the underlying pursuit of divine realization transcends sectarian boundaries."
+        },
+        {
+          "tradition": "Buddhism",
+          "icon": "☸️",
+          "perspective": "The sangha (community) is one of the Three Jewels of Buddhism, supporting practitioners on the path to enlightenment. Many Buddhist communities welcome sincere participants regardless of formal membership. The dharma is offered freely to all who seek liberation from suffering."
+        },
+        {
+          "tradition": "Sikhism",
+          "icon": "☬",
+          "perspective": "Sikh gurdwaras welcome all people regardless of faith background—the langar (community kitchen) embodies this inclusivity. While certain ceremonies require formal commitment to Sikh principles, the community's openness reflects the universal nature of divine truth accessible to all sincere seekers."
+        },
+        {
+          "tradition": "Bahá'í",
+          "icon": "🌟",
+          "perspective": "Bahá'í communities warmly welcome seekers and participants from all backgrounds, as the faith emphasizes the unity of humanity and progressive revelation. While certain community roles require formal membership, Bahá'í gatherings often include diverse participants exploring spiritual truth together."
+        }
+      ],
+      "created": "2026-02-21T20:50:00-08:00",
+      "status": "draft"
+    },
+    {
+      "id": "lesson_003",
+      "number": 3,
+      "title": "The Prayer Dilemma", 
+      "topic": "Spiritual Practices",
+      "dimensions": ["spiritual_practices", "divine_nature"],
+      "scenario": "Your family faces a health crisis, and people from different faith backgrounds offer to pray for your loved one. Some suggest specific prayer techniques, others offer to include your family in their religious services, and still others encourage you to appeal to particular saints or deities. You're grateful for their concern but confused about how prayer actually works.",
+      "question": "What is prayer, and does it matter how or to whom you pray?",
+      "reflection_prompts": [
+        "Is prayer primarily for the one praying or the one being prayed for?",
+        "Can prayers from different faith traditions all be effective?",
+        "What role does specific religious language or practice play in prayer?"
+      ],
+      "perspectives": [
+        {
+          "tradition": "Protestant Christianity",
+          "icon": "✝️",
+          "perspective": "Prayer is communication with God through Jesus Christ, who intercedes for us. While you should be grateful for others' concern, effective prayer comes through faith in Christ. God hears the prayers of believers and responds according to His will. The specific words matter less than the faith behind them and alignment with biblical truth."
+        },
+        {
+          "tradition": "Catholic Christianity",
+          "icon": "⛪",
+          "perspective": "Prayer works through the communion of saints and the intercession of Mary and the saints who pray with us. Different prayer forms—liturgical, contemplative, petitionary—all have value. While prayers from non-Catholics may have spiritual benefit, the fullness of prayer's power flows through the Church's sacramental life."
+        },
+        {
+          "tradition": "Orthodox Christianity",
+          "icon": "☦️",
+          "perspective": "Prayer is participating in the divine energies through Christ in the Holy Spirit. The Jesus Prayer and liturgical worship connect us to centuries of Christian mystical experience. While God may respond to sincere prayers from any source, Orthodox prayer practices provide tested pathways into divine communion."
+        },
+        {
+          "tradition": "Islam",
+          "icon": "☪️",
+          "perspective": "Du'a (supplication) is direct communication with Allah, who alone has power to heal and help. While you can appreciate others' intentions, Islamic prayer follows specific guidelines revealed in Quran and Sunnah. Allah is merciful and may respond to sincere requests, but shirk (associating partners with Allah) should be avoided."
+        },
+        {
+          "tradition": "Judaism",
+          "icon": "✡️",
+          "perspective": "Prayer is service of the heart (avodah shebalev) directed to the one God. Jewish liturgy provides structured ways to approach the Divine, while personal prayers express immediate needs. God hears all sincere prayers, though Jewish tradition emphasizes specific blessings and practices refined over millennia."
+        },
+        {
+          "tradition": "Hinduism",
+          "icon": "🕉️",
+          "perspective": "Prayer (prarthana) and worship (puja) can take many forms directed to various aspects of the divine. Different deities and practices suit different temperaments and needs. All sincere prayers ultimately reach Brahman, the ultimate reality, regardless of the specific form or tradition through which they're offered."
+        },
+        {
+          "tradition": "Buddhism",
+          "icon": "☸️",
+          "perspective": "Prayer in Buddhism often focuses on generating merit, compassion, and mindfulness rather than petitioning supernatural intervention. Meditation and loving-kindness practices create positive mental states that benefit both practitioner and others. While not theistic prayer, these practices can bring peace and clarity during difficult times."
+        },
+        {
+          "tradition": "Sikhism",
+          "icon": "☬",
+          "perspective": "Ardas (prayer) connects the devotee directly with Waheguru through remembrance of the Divine Name. While appreciating others' prayers, Sikhs believe true prayer comes through devotion to the one God revealed through the Guru Granth Sahib. Sincere prayer from any tradition may have benefit, but Sikh prayer practices offer tested pathways."
+        },
+        {
+          "tradition": "Bahá'í",
+          "icon": "🌟",
+          "perspective": "Prayer is conversation between the soul and God, with revealed prayers providing particularly powerful connection points. Bahá'í teachings recognize the efficacy of sincere prayer from all traditions while emphasizing prayers revealed by Bahá'u'lláh and other Manifestations of God as especially potent for spiritual transformation."
+        }
+      ],
+      "created": "2026-02-21T20:50:00-08:00",
+      "status": "draft"
+    },
+    {
+      "id": "lesson_004",
+      "number": 4,
+      "title": "The Moral Compass",
+      "topic": "Moral Framework",
+      "dimensions": ["moral_framework", "worldview_integration"],
+      "scenario": "A close friend asks you to lie for them to cover up their infidelity. They argue that honesty would destroy their marriage and hurt their children, while a small deception would preserve the family. They appeal to you: 'Wouldn't love require protecting my family from this pain?' You realize this moment forces you to examine the foundation of your moral decision-making.",
+      "question": "Where do moral obligations come from, and how do you resolve conflicts between competing goods?",
+      "reflection_prompts": [
+        "Are moral rules absolute or contextual?",
+        "What do you do when love and truth seem to conflict?",
+        "How do consequences factor into moral decisions?"
+      ],
+      "perspectives": [
+        {
+          "tradition": "Protestant Christianity",
+          "icon": "✝️",
+          "perspective": "God's moral law, revealed in Scripture, provides absolute standards that transcend circumstances. While you should show compassion for your friend's situation, participating in deception violates God's command for truth-telling. True love requires honesty, even when painful. You might refuse to lie while encouraging your friend toward confession and reconciliation."
+        },
+        {
+          "tradition": "Catholic Christianity",
+          "icon": "⛪",
+          "perspective": "Natural law and Church teaching provide moral guidance, but prudential judgment considers circumstances and intentions. While lying is generally wrong, the principle of double effect might suggest ways to avoid complicity without causing additional harm. You could refuse involvement while encouraging your friend to seek pastoral counsel for this complex situation."
+        },
+        {
+          "tradition": "Orthodox Christianity",
+          "icon": "☦️",
+          "perspective": "Christian ethics emphasize both divine law and pastoral economia—applying truth with mercy. While deception is wrong, the Church's approach would focus on healing and restoration rather than rigid rule-following. You might decline to lie but offer to support your friend in finding a truthful path toward reconciliation."
+        },
+        {
+          "tradition": "Islam",
+          "icon": "☪️",
+          "perspective": "Islamic ethics balance justice (adl) with mercy (rahma). While lying is generally haram (forbidden), protecting a family from harm might invoke considerations of maslaha (public interest). However, participating in deception to cover major sins like adultery conflicts with Islamic principles. You might refuse while encouraging tawbah (repentance) and reconciliation."
+        },
+        {
+          "tradition": "Judaism",
+          "icon": "✡️",
+          "perspective": "Jewish ethics sometimes permit deception to prevent greater harm (pikuach nefesh), but this situation involves complex considerations of lashon hara (harmful speech) and truthfulness. Rabbinic discussion would weigh protecting the family against enabling continued wrongdoing. You might seek rabbinical guidance while refusing immediate participation in deception."
+        },
+        {
+          "tradition": "Hinduism",
+          "icon": "🕉️",
+          "perspective": "Dharma (righteous duty) varies according to circumstances, relationships, and life stage. The Mahabharata teaches that dharma is subtle and sometimes requires difficult choices between competing obligations. Your svadharma (personal duty) as a friend must be balanced against broader dharmic principles. Truth (satya) is generally preferred, but ahimsa (non-harm) also matters."
+        },
+        {
+          "tradition": "Buddhism",
+          "icon": "☸️",
+          "perspective": "Buddhist ethics emphasize intention and consequences. Right Speech is one of the Noble Eightfold Path's components, generally requiring truthfulness. However, if lying would prevent greater suffering, compassionate action might take precedence. You'd need to examine your motivations carefully—are you truly serving compassion or enabling harmful patterns?"
+        },
+        {
+          "tradition": "Sikhism",
+          "icon": "☬",
+          "perspective": "Sikh ethics emphasize truthfulness (sat) as fundamental to spiritual life. While compassion matters, participating in deception contradicts the principle of honest living. You might express empathy for your friend's dilemma while maintaining that truth ultimately serves love better than deception, even when the immediate consequences seem harsh."
+        },
+        {
+          "tradition": "Bahá'í",
+          "icon": "🌟",
+          "perspective": "Bahá'í ethics emphasize both truthfulness and unity. While you shouldn't participate in deception, you might encourage consultation—involving trusted counselors who can help your friend find truthful approaches to healing family relationships. The goal would be justice tempered with mercy, seeking solutions that ultimately strengthen rather than weaken family bonds."
+        }
+      ],
+      "created": "2026-02-21T20:50:00-08:00",
+      "status": "draft"
+    },
+    {
+      "id": "lesson_005",
+      "number": 5,
+      "title": "The Suffering Question",
+      "topic": "Divine Justice",
+      "dimensions": ["divine_nature", "afterlife_understanding"],
+      "scenario": "A natural disaster strikes a developing nation, killing thousands of innocent people including many children. At the same time, news breaks that a corrupt billionaire has just purchased another private island. Your neighbor, struggling with their own faith, asks you: 'If there's a loving God, how can such injustice exist? Why do the innocent suffer while the guilty prosper?'",
+      "question": "How do you reconcile belief in divine goodness with the reality of seemingly unjust suffering?",
+      "reflection_prompts": [
+        "Is suffering always meaningful or sometimes random?",
+        "How does divine justice relate to temporal justice?",
+        "What role should mystery play in faith?"
+      ],
+      "perspectives": [
+        {
+          "tradition": "Protestant Christianity",
+          "icon": "✝️",
+          "perspective": "We live in a fallen world corrupted by sin, where natural disasters and human evil cause suffering that affects righteous and unrighteous alike. God grieves with us over these tragedies. While we may not understand His purposes in this life, we trust that He will ultimately make all things right. The cross shows that God doesn't remain distant from suffering but enters into it."
+        },
+        {
+          "tradition": "Catholic Christianity",
+          "icon": "⛪",
+          "perspective": "Suffering can be redemptive when united with Christ's passion, though this doesn't mean God causes it. The Church teaches that temporal justice often fails, but God's perfect justice will be revealed in eternity. We're called to work against injustice while trusting in divine providence that sees beyond our limited perspective."
+        },
+        {
+          "tradition": "Orthodox Christianity",
+          "icon": "☦️",
+          "perspective": "Death and suffering entered the world through humanity's separation from God, but Christ has conquered death itself. While we can't explain why specific tragedies occur, we know that God suffers with creation and that His ultimate victory over death gives meaning to our present struggles."
+        },
+        {
+          "tradition": "Islam",
+          "icon": "☪️",
+          "perspective": "Allah tests both the righteous and the wicked in different ways. Natural disasters are part of the temporary nature of this world (dunya), while the corrupt billionaire may be receiving his rewards now but will face perfect justice on the Day of Judgment. Our limited perspective can't comprehend Allah's ultimate wisdom and justice."
+        },
+        {
+          "tradition": "Judaism",
+          "icon": "✡️",
+          "perspective": "This is the ancient question of Job—why do the righteous suffer while the wicked prosper? Jewish thought offers multiple perspectives: hidden justice across lifetimes, suffering as spiritual refinement, or simply the mystery of divine ways beyond human understanding. Our response should be to increase justice and mercy in the world."
+        },
+        {
+          "tradition": "Hinduism",
+          "icon": "🕉️",
+          "perspective": "Both the disaster victims and the corrupt billionaire are experiencing the fruits of karma from past actions across multiple lifetimes. What appears unjust from our limited perspective makes sense within the cosmic order of cause and effect operating across many births. Divine justice works through karma, but also through divine compassion that can transcend karmic law."
+        },
+        {
+          "tradition": "Buddhism",
+          "icon": "☸️",
+          "perspective": "Suffering is inherent to existence in samsara. Natural disasters demonstrate impermanence and the universality of dukkha. The billionaire's wealth, while appearing fortunate, may actually represent spiritual poverty and future suffering. True compassion recognizes the suffering present in both situations and works to alleviate it."
+        },
+        {
+          "tradition": "Sikhism",
+          "icon": "☬",
+          "perspective": "Everything happens according to God's will (hukam), but this doesn't mean passive acceptance of injustice. Both suffering and prosperity are temporary conditions in the divine play. Our duty is to serve those who suffer while remembering that ultimate justice belongs to Waheguru, whose wisdom transcends human understanding."
+        },
+        {
+          "tradition": "Bahá'í",
+          "icon": "🌟",
+          "perspective": "Tests and difficulties refine the human spirit, though not all suffering serves this purpose—some results from human injustice that we must work to eliminate. The corrupt billionaire's actions represent spiritual poverty despite material wealth. Divine justice operates through both individual spiritual development and humanity's collective progress toward a more just world."
+        }
+      ],
+      "created": "2026-02-21T20:50:00-08:00",
+      "status": "draft"
+    },
+    {
+      "id": "lesson_006",
+      "number": 6,
+      "title": "The Salvation Paradox",
+      "topic": "Salvation Path",
+      "dimensions": ["salvation_path", "community_role"],
+      "scenario": "You're having dinner with friends from different religious backgrounds. The conversation turns to what happens after death, and you realize each person has sincere, deeply held beliefs that seem to contradict the others. Your Christian friend believes salvation comes through faith in Jesus. Your Muslim friend insists on submission to Allah as revealed to Muhammad. Your Buddhist friend talks about liberation through eliminating attachment. Each seems convinced their path is correct. How do you process this diversity of ultimate claims?",
+      "question": "Can multiple religious paths lead to the same spiritual destination, or must there be one true way?",
+      "reflection_prompts": [
+        "What would it mean if only one religious path were correct?",
+        "Is religious diversity a problem to solve or a reality to accept?",
+        "How do you hold conviction while remaining humble about ultimate truth?"
+      ],
+      "perspectives": [
+        {
+          "tradition": "Protestant Christianity",
+          "icon": "✝️",
+          "perspective": "Jesus declared, 'I am the way, the truth, and the life. No one comes to the Father except through me.' While I respect my friends' sincerity, Scripture teaches that salvation comes only through faith in Christ. This doesn't diminish their worth as people, but eternal life requires recognizing Jesus as Lord and Savior. Truth is sometimes exclusive."
+        },
+        {
+          "tradition": "Catholic Christianity",
+          "icon": "⛪",
+          "perspective": "The Catholic Church teaches that while Christ is the universal savior, God's grace can work through various means. Those who through no fault of their own don't know Christ may still be saved if they follow their conscience and live according to the natural law. The Church offers the fullest means of salvation, but God's mercy extends beyond its visible boundaries."
+        },
+        {
+          "tradition": "Orthodox Christianity",
+          "icon": "☦️",
+          "perspective": "Orthodox theology emphasizes that we know where the Church is but cannot definitively say where it isn't. While the Orthodox Church provides the fullest expression of Christian truth, God's mercy may extend to sincere seekers in other traditions. We make no final judgments about individual salvation while maintaining the truth of Orthodox teaching."
+        },
+        {
+          "tradition": "Islam",
+          "icon": "☪️",
+          "perspective": "The Quran teaches that Islam is the final revelation completing previous messages sent to all peoples. While Christians and Jews are 'People of the Book' with special recognition, true submission to Allah requires accepting Muhammad as the final prophet. However, Allah alone judges hearts, and those who never received the clear message may be judged differently."
+        },
+        {
+          "tradition": "Judaism",
+          "icon": "✡️",
+          "perspective": "Judaism teaches that righteous people of all nations have a place in the world to come. The Noahide laws provide a universal ethical framework for non-Jews. While Jews have special covenantal obligations, salvation doesn't require conversion to Judaism. God judges each person according to their knowledge and opportunities."
+        },
+        {
+          "tradition": "Hinduism",
+          "icon": "🕉️",
+          "perspective": "Different spiritual paths (margas) suit different temperaments and stages of development, all ultimately leading to realization of Brahman. As the Rig Veda states, 'Truth is one; sages call it by many names.' Your friends' paths may all be valid approaches to the same ultimate reality, expressed through different cultural and psychological frameworks."
+        },
+        {
+          "tradition": "Buddhism",
+          "icon": "☸️",
+          "perspective": "The Buddha taught many skillful means appropriate to different individuals' capacities and circumstances. While the Noble Eightfold Path offers the most direct route to liberation, other sincere spiritual practices may provide partial truths or stepping stones toward enlightenment. Attachment to exclusive truth claims can itself become a form of spiritual hindrance."
+        },
+        {
+          "tradition": "Sikhism",
+          "icon": "☬",
+          "perspective": "While Sikhism provides the most direct path to God through the Guru's teachings, the Divine exists within all sincere seekers regardless of tradition. Different paths may lead to the same destination, like rivers flowing into the ocean. However, the Guru Granth Sahib offers the clearest guidance for this age."
+        },
+        {
+          "tradition": "Bahá'í",
+          "icon": "🌟",
+          "perspective": "The great world religions represent progressive stages in humanity's spiritual evolution, each appropriate for its time and place. While Bahá'u'lláh brings the most recent revelation for this age, sincere followers of previous religions can attain spiritual salvation. Truth is relative to historical context while also being progressively revealed."
+        }
+      ],
+      "created": "2026-02-21T20:50:00-08:00",
+      "status": "draft"
+    },
+    {
+      "id": "lesson_007",
+      "number": 7,
+      "title": "The Final Mystery",
+      "topic": "Afterlife Understanding",
+      "dimensions": ["afterlife_understanding", "salvation_path"],
+      "scenario": "Your elderly grandmother, who has lived a beautiful, generous life, is dying. In her final days, she expresses both peace about her faith and worry about what comes next. She asks you, 'Do you think I'll see your grandfather again? Will I still be me? What if I've been wrong about everything?' Her questions force you to consider what you really believe about death and what follows.",
+      "question": "What happens to human consciousness and identity after physical death?",
+      "reflection_prompts": [
+        "Does personal identity continue after death, or does something else persist?",
+        "How do beliefs about afterlife affect how you live now?",
+        "What evidence or experience shapes your afterlife beliefs?"
+      ],
+      "perspectives": [
+        {
+          "tradition": "Protestant Christianity",
+          "icon": "✝️",
+          "perspective": "Yes, you'll see grandfather again in heaven, and you'll still be you—perfected and glorified, but recognizably yourself. Death is not the end but graduation into eternal life with God for those who trust in Christ. While our bodies will be resurrected and transformed, our personalities and relationships continue in perfect form."
+        },
+        {
+          "tradition": "Catholic Christianity",
+          "icon": "⛪",
+          "perspective": "The Church teaches personal resurrection and eternal communion with God. After possible purification in purgatory, faithful souls enjoy the beatific vision—seeing God face to face while remaining distinct persons. Marriage bonds may be transcended in heaven, but the love between you and grandfather will find its perfect fulfillment in God."
+        },
+        {
+          "tradition": "Orthodox Christianity",
+          "icon": "☦️",
+          "perspective": "Death is conquered through Christ's resurrection. Your identity as God's image-bearer continues, but transformed through theosis—becoming by grace what God is by nature. Relationships are fulfilled rather than eliminated in the resurrection, where all things are made new while remaining recognizably themselves."
+        },
+        {
+          "tradition": "Islam",
+          "icon": "☪️",
+          "perspective": "Allah promises reunion with believing loved ones in Jannah (paradise). Your identity continues, purified and perfected, in bodies that never age or suffer. The relationships of this world find their completion in the next, where separation and death no longer exist. Trust in Allah's mercy and the Prophet's promise of eternal bliss for the faithful."
+        },
+        {
+          "tradition": "Judaism",
+          "icon": "✡️",
+          "perspective": "Jewish teaching about the afterlife varies, but generally affirms that something of you continues in the Olam HaBa (world to come). Whether through resurrection, spiritual continuation, or being gathered to your people, death is not final separation. Focus on living righteously now while trusting that God's justice and mercy extend beyond the grave."
+        },
+        {
+          "tradition": "Hinduism",
+          "icon": "🕉️",
+          "perspective": "Your individual identity (ego) is temporary, but your true Self (Atman) is eternal and identical with Brahman. Death is like sleep—the body dies, but consciousness continues its journey through reincarnation until liberation. You and grandfather are expressions of the same eternal consciousness that never truly dies."
+        },
+        {
+          "tradition": "Buddhism",
+          "icon": "☸️",
+          "perspective": "What we call 'self' is a collection of ever-changing processes without permanent essence. Death is transformation, not annihilation—like a candle lighting another candle. Your consciousness stream continues until enlightenment, when the illusion of separate selfhood dissolves into nirvana's deathless peace."
+        },
+        {
+          "tradition": "Sikhism",
+          "icon": "☬",
+          "perspective": "The soul continues its journey toward merger with Waheguru. If you've lived according to the Guru's teachings, you may escape the cycle of reincarnation and merge with God like a drop returning to the ocean. Your individual identity dissolves, but in the most blissful way—becoming one with infinite consciousness."
+        },
+        {
+          "tradition": "Bahá'í",
+          "icon": "🌟",
+          "perspective": "The soul progresses through spiritual worlds after death, eternally developing closer to God but never fully comprehending infinite reality. You'll recognize loved ones, as spiritual relationships transcend physical death. Death is birth into a broader existence where spiritual growth continues without material limitations."
+        }
+      ],
+      "created": "2026-02-21T20:50:00-08:00",
+      "status": "draft"
+    },
+    {
       "id": "lesson_008",
       "number": 8,
       "title": "The Weight of Sacred Words",

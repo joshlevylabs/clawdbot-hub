@@ -1,0 +1,257 @@
+{
+  "framework": {
+    "name": "Monday Follow-Up Newsletter Personalization",
+    "purpose": "Create personalized follow-up content for newsletter subscribers based on their engagement patterns, interests, and behavioral signals",
+    "cadence": "Weekly, every Monday"
+  },
+  "segmentation_strategy": {
+    "primary_dimensions": [
+      {
+        "dimension": "engagement_level",
+        "segments": [
+          {
+            "name": "highly_engaged",
+            "criteria": "Opened last 4/5 newsletters + clicked 2+ times in past month",
+            "percentage": "15-20%",
+            "tone": "Insider, advanced content, early access previews"
+          },
+          {
+            "name": "moderately_engaged", 
+            "criteria": "Opened 2-3/5 newsletters + 1 click in past month",
+            "percentage": "35-40%",
+            "tone": "Encouraging, bite-sized insights, clear value props"
+          },
+          {
+            "name": "low_engaged",
+            "criteria": "Opened 1/5 newsletters or no clicks in past month",
+            "percentage": "40-45%",
+            "tone": "Re-engagement focused, curiosity-driven subject lines"
+          }
+        ]
+      },
+      {
+        "dimension": "content_affinity",
+        "segments": [
+          {
+            "name": "faith_focused",
+            "criteria": "Higher engagement with faith-related content",
+            "personalization": "Lead with spiritual insights, philosophical questions"
+          },
+          {
+            "name": "family_focused", 
+            "criteria": "Higher engagement with relationship/family content",
+            "personalization": "Emphasize connection, intentional parenting themes"
+          },
+          {
+            "name": "finance_focused",
+            "criteria": "Higher engagement with market analysis, trading content",
+            "personalization": "Data-driven insights, market psychology, tactical advice"
+          },
+          {
+            "name": "lifestyle_focused",
+            "criteria": "Broader engagement across multiple topics",
+            "personalization": "Holistic life design, integration themes"
+          }
+        ]
+      }
+    ]
+  },
+  "personalization_elements": {
+    "subject_lines": {
+      "highly_engaged_faith": [
+        "The theological question that changed my week",
+        "Monday depth: Where your beliefs really come from",
+        "Advanced faith exploration (+ your compass update)"
+      ],
+      "highly_engaged_finance": [
+        "The market signal everyone missed this week", 
+        "Monday edge: 3 contrarian plays I'm watching",
+        "Advanced trading psychology (+ portfolio insights)"
+      ],
+      "highly_engaged_family": [
+        "The relationship experiment that surprised me",
+        "Monday connection: Advanced intimacy strategies", 
+        "Deeper family bonds (+ intentional parenting wins)"
+      ],
+      "moderately_engaged_faith": [
+        "One simple question that reveals your true beliefs",
+        "5-minute Monday faith check-in",
+        "This week's spiritual insight (easy read)"
+      ],
+      "moderately_engaged_finance": [
+        "The market story everyone's talking about",
+        "Quick Monday market pulse (3-min read)",
+        "This week's money lesson (simplified)"
+      ],
+      "moderately_engaged_family": [
+        "The relationship hack that actually works",
+        "Quick Monday connection tip",
+        "This week's family win (simple strategy)"
+      ],
+      "low_engaged": [
+        "Why I almost quit everything (and what stopped me)",
+        "The mistake that taught me everything",
+        "Monday confession: I was completely wrong about this",
+        "The question that changed everything",
+        "What nobody tells you about [topic]"
+      ]
+    },
+    "content_blocks": {
+      "personal_reflection": {
+        "template": "This week I've been thinking about {topic}. Specifically, {specific_insight}. It reminded me of {connection_to_reader_experience}.",
+        "variables": {
+          "topic": "Dynamic based on weekly theme",
+          "specific_insight": "Personal revelation or learning",
+          "connection_to_reader_experience": "Universal application"
+        }
+      },
+      "curated_recommendation": {
+        "faith_focused": "📖 This week's spiritual deepdive: {resource_title} - {why_relevant}",
+        "finance_focused": "📈 Market insight I'm sharing: {resource_title} - {why_relevant}",
+        "family_focused": "🏡 Relationship resource: {resource_title} - {why_relevant}",
+        "default": "🎯 Worth your time this week: {resource_title} - {why_relevant}"
+      },
+      "question_for_reflection": {
+        "highly_engaged": "Advanced question: {complex_philosophical_question}",
+        "moderately_engaged": "Consider this: {accessible_question}",
+        "low_engaged": "Simple question: {entry_level_question}"
+      },
+      "community_spotlight": {
+        "template": "Reader {anonymized_name} shared an insight about {topic} that stopped me in my tracks: \"{quote}\". It's a reminder that {broader_lesson}."
+      }
+    }
+  },
+  "dynamic_content_rules": {
+    "app_users": {
+      "include_lever_stats": true,
+      "content": "Your Lever journey: {personal_stats_summary} + {gentle_engagement_encouragement}"
+    },
+    "non_app_users": {
+      "include_app_invite": true,
+      "content": "Speaking of {current_topic}, this connects to something we're exploring in the Lever app. {soft_cta_to_download}"
+    },
+    "premium_subscribers": {
+      "exclusive_content": "Premium insight: {advanced_analysis_or_tool}",
+      "early_access": "First look at {upcoming_feature_or_content}"
+    }
+  },
+  "automation_triggers": {
+    "behavioral_triggers": [
+      {
+        "trigger": "first_app_download",
+        "wait": "3 days",
+        "content_theme": "onboarding_success",
+        "personalization": "Welcome to the deeper journey"
+      },
+      {
+        "trigger": "no_email_opens_14_days",
+        "content_theme": "re_engagement", 
+        "personalization": "Missing you - what's changed?"
+      },
+      {
+        "trigger": "high_app_engagement",
+        "content_theme": "power_user",
+        "personalization": "Advanced strategies for committed users"
+      }
+    ],
+    "temporal_triggers": [
+      {
+        "trigger": "monday_morning",
+        "time": "6:00 AM PT",
+        "content_focus": "week_ahead_reflection"
+      },
+      {
+        "trigger": "seasonal_themes",
+        "examples": ["new_year_reflection", "summer_slowing", "back_to_school_intentions"]
+      }
+    ]
+  },
+  "measurement_framework": {
+    "key_metrics": [
+      {
+        "metric": "open_rate_by_segment",
+        "target": "Highly engaged: 65%+, Moderately engaged: 35%+, Low engaged: 20%+"
+      },
+      {
+        "metric": "click_through_rate",
+        "target": "Overall 8%+, Faith-focused 10%+, Finance-focused 12%+"
+      },
+      {
+        "metric": "app_conversion_rate",
+        "target": "Non-users clicking app CTA: 3%+"
+      },
+      {
+        "metric": "engagement_progression", 
+        "target": "10% of low-engaged moving to moderate monthly"
+      }
+    ],
+    "a_b_tests": [
+      "Personal vs. analytical tone",
+      "Question-based vs. insight-based subject lines", 
+      "Long-form vs. bite-sized content for different segments"
+    ]
+  },
+  "content_calendar_integration": {
+    "weekly_themes": [
+      "Week 1: New beginnings/fresh starts",
+      "Week 2: Deep work/focus themes",
+      "Week 3: Relationship/connection focus",
+      "Week 4: Reflection/integration"
+    ],
+    "seasonal_overlays": [
+      "January: Identity and purpose",
+      "February: Love and relationships", 
+      "March: Growth and change",
+      "April: Renewal and rebirth",
+      "May: Abundance and gratitude",
+      "June: Community and celebration",
+      "July: Freedom and adventure",
+      "August: Harvest and preparation", 
+      "September: Learning and wisdom",
+      "October: Reflection and memory",
+      "November: Gratitude and gathering",
+      "December: Peace and presence"
+    ]
+  },
+  "technical_implementation": {
+    "data_requirements": [
+      "Email engagement history (opens, clicks, time spent)",
+      "App usage patterns (if applicable)",
+      "Content category preferences (inferred from behavior)",
+      "Subscription date and lifecycle stage",
+      "Geographic location (for timing optimization)"
+    ],
+    "integration_points": [
+      "Email service provider (Beehiiv) for delivery",
+      "Analytics platform for behavior tracking",
+      "App database for user activity sync",
+      "Content management system for dynamic insertion"
+    ]
+  },
+  "quality_assurance": {
+    "review_checklist": [
+      "Personalization tokens populated correctly",
+      "Segment-appropriate tone and complexity",
+      "Clear value proposition in first 2 sentences",
+      "Single, clear call-to-action",
+      "Mobile-optimized formatting",
+      "Proofreading for Joshua's voice consistency"
+    ],
+    "failsafe_content": {
+      "purpose": "Default content when personalization fails",
+      "tone": "Warm but generic, focusing on universal themes"
+    }
+  },
+  "metadata": {
+    "created": "2026-02-21T20:55:00-08:00",
+    "author": "Alex",
+    "task": "A-138",
+    "status": "draft_complete",
+    "next_steps": [
+      "Technical implementation planning",
+      "Content template creation", 
+      "A/B testing framework setup",
+      "Integration with existing newsletter workflow"
+    ]
+  }
+}

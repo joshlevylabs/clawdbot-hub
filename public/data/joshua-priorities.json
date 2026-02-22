@@ -1,6 +1,6 @@
 {
   "date": "2026-02-22",
-  "generatedAt": "2026-02-22T05:03:54.428177-08:00",
+  "generatedAt": "2026-02-22T05:44:05.475538-08:00",
   "priorities": [
     {
       "text": "Decide newsletter send timing relative to Apple approval",
@@ -25,6 +25,18 @@
       "source": "morning-kickoff",
       "urgency": "high",
       "taskKey": "J-031"
+    },
+    {
+      "text": "Merge J-031 (day-one patch + analytics PR)",
+      "source": "morning-kickoff",
+      "urgency": "high",
+      "taskKey": "J-032"
+    },
+    {
+      "text": "Complete Slack screenshot review of launch newsletter (J-025)",
+      "source": "morning-kickoff",
+      "urgency": "high",
+      "taskKey": "J-033"
     }
   ],
   "agentHandled": [
@@ -93,6 +105,30 @@
       "assignee": "Elon",
       "status": "pending",
       "taskKey": "A-152"
+    },
+    {
+      "text": "Verify build and submit to App Store immediately after J-031 merge",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "taskKey": "A-153"
+    },
+    {
+      "text": "Draft faith lessons 11-15 across eight dimensions",
+      "assignee": "Alex",
+      "status": "pending",
+      "taskKey": "A-154"
+    },
+    {
+      "text": "Bundle podcast MDX and blog sync fixes into single consolidated PR (A-139)",
+      "assignee": "James Truchard",
+      "status": "pending",
+      "taskKey": "A-155"
+    },
+    {
+      "text": "Finalize welcome modal scripture selection and copy",
+      "assignee": "Jordan Peterson",
+      "status": "pending",
+      "taskKey": "A-156"
     }
   ]
 }

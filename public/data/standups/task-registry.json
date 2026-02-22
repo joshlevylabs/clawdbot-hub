@@ -724,13 +724,13 @@
       "tag": "AGENT",
       "priority": "low",
       "assignee": "Dave",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "STD-3",
       "sourceStandupType": "midday-checkpoint",
       "sourceDate": "2026-02-21",
       "createdAt": "2026-02-21T12:00:31.959905-08:00",
       "updatedAt": "2026-02-21T12:00:31.959905-08:00",
-      "completedAt": null
+      "completedAt": "2026-02-21T20:32:31.024526"
     },
     {
       "key": "J-027",
@@ -879,13 +879,13 @@
       "tag": "AGENT",
       "priority": "high",
       "assignee": "Steve Jobs",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "STD-1",
       "sourceStandupType": "adhoc-welcome-modal-design",
       "sourceDate": "2026-02-21",
       "createdAt": "2026-02-21T20:25:46.481238-08:00",
       "updatedAt": "2026-02-21T20:25:46.481238-08:00",
-      "completedAt": null
+      "completedAt": "2026-02-21T20:32:45.714753"
     },
     {
       "key": "A-142",
@@ -907,13 +907,13 @@
       "tag": "AGENT",
       "priority": "high",
       "assignee": "Dave",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "STD-1",
       "sourceStandupType": "adhoc-welcome-modal-design",
       "sourceDate": "2026-02-21",
       "createdAt": "2026-02-21T20:25:46.481238-08:00",
       "updatedAt": "2026-02-21T20:25:46.481238-08:00",
-      "completedAt": null
+      "completedAt": "2026-02-21T20:32:31.024526"
     },
     {
       "key": "J-030",

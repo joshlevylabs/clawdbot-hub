@@ -166,7 +166,7 @@ export default function MREWidget() {
 
       {/* Today's Plays */}
       <div className="border-t border-slate-800 pt-3">
-        <p className="text-xs text-slate-500 uppercase mb-2">Today's Plays</p>
+        <p className="text-xs text-slate-500 uppercase mb-2">Today&apos;s Plays</p>
         {todaysPlays.length === 0 ? (
           <p className="text-sm text-slate-500">No active signals — market in wait mode</p>
         ) : (

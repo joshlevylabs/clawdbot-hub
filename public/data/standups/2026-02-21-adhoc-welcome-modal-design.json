@@ -100,7 +100,8 @@
       "assignee": "Steve Jobs",
       "completed": false,
       "tag": "AGENT",
-      "taskKey": "A-141"
+      "taskKey": "A-141",
+      "key": "A-141"
     },
     {
       "text": "Write final copy for all three welcome modal pillar cards",
@@ -108,7 +109,8 @@
       "assignee": "Alex",
       "completed": false,
       "tag": "AGENT",
-      "taskKey": "A-142"
+      "taskKey": "A-142",
+      "key": "A-142"
     },
     {
       "text": "Define analytics event schema for welcome modal interactions",
@@ -116,7 +118,8 @@
       "assignee": "Dave",
       "completed": false,
       "tag": "AGENT",
-      "taskKey": "A-143"
+      "taskKey": "A-143",
+      "key": "A-143"
     },
     {
       "text": "Review and approve welcome modal copy and scripture selection",
@@ -124,7 +127,8 @@
       "assignee": "Joshua",
       "completed": false,
       "tag": "JOSHUA",
-      "taskKey": "J-030"
+      "taskKey": "J-030",
+      "key": "J-030"
     },
     {
       "text": "Implement welcome modal in SwiftUI based on approved spec and copy",
@@ -132,7 +136,8 @@
       "assignee": "Elon Musk",
       "completed": false,
       "tag": "AGENT",
-      "taskKey": "A-144"
+      "taskKey": "A-144",
+      "key": "A-144"
     },
     {
       "text": "Merge J-021 (day-one patch) and J-024 (analytics PR) per CEO decision J-029",
@@ -140,7 +145,8 @@
       "assignee": "Joshua",
       "completed": false,
       "tag": "JOSHUA",
-      "taskKey": "J-031"
+      "taskKey": "J-031",
+      "key": "J-029"
     }
   ],
   "topPriorities": [

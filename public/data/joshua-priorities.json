@@ -1,6 +1,6 @@
 {
   "date": "2026-02-22",
-  "generatedAt": "2026-02-22T05:44:05.475538-08:00",
+  "generatedAt": "2026-02-22T12:40:28.498515-08:00",
   "priorities": [
     {
       "text": "Decide newsletter send timing relative to Apple approval",
@@ -21,12 +21,6 @@
       "taskKey": "J-026"
     },
     {
-      "text": "Merge J-021 (day-one patch) and J-024 (analytics PR) per CEO decision J-029",
-      "source": "morning-kickoff",
-      "urgency": "high",
-      "taskKey": "J-031"
-    },
-    {
       "text": "Merge J-031 (day-one patch + analytics PR)",
       "source": "morning-kickoff",
       "urgency": "high",
@@ -34,9 +28,21 @@
     },
     {
       "text": "Complete Slack screenshot review of launch newsletter (J-025)",
-      "source": "morning-kickoff",
+      "source": "midday-checkpoint",
       "urgency": "high",
       "taskKey": "J-033"
+    },
+    {
+      "text": "Complete J-032 merge (day-one patch + analytics PR) to unlock App Store submission",
+      "source": "midday-checkpoint",
+      "urgency": "high",
+      "taskKey": "J-034"
+    },
+    {
+      "text": "Execute J-031 merge to unlock App Store submission",
+      "source": "midday-checkpoint",
+      "urgency": "high",
+      "taskKey": "J-035"
     }
   ],
   "agentHandled": [
@@ -129,6 +135,30 @@
       "assignee": "Jordan Peterson",
       "status": "pending",
       "taskKey": "A-156"
+    },
+    {
+      "text": "Trigger immediate App Store submission via A-153 after merge",
+      "assignee": "Elon (CTO)",
+      "status": "pending",
+      "taskKey": "A-157"
+    },
+    {
+      "text": "Complete A-154 drafting lessons 11-15 in parallel",
+      "assignee": "Alex (CMO)",
+      "status": "pending",
+      "taskKey": "A-158"
+    },
+    {
+      "text": "Finalize A-155 consolidated PR without merge conflicts",
+      "assignee": "James (CTIO)",
+      "status": "pending",
+      "taskKey": "A-159"
+    },
+    {
+      "text": "Close J-007 newsletter timing ticket as stale/abandoned",
+      "assignee": "Dave (CRO)",
+      "status": "pending",
+      "taskKey": "A-160"
     }
   ]
 }

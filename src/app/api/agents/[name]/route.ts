@@ -13,6 +13,14 @@ const DIR_TO_ID: Record<string, string> = {
   muse: "cmo",
   venture: "cro",
   pit: "the-pit",
+  "faith-family": "faithfam",
+  "ai-infra": "aiinfra",
+  "consumer-hw": "conshw",
+  "robotics": "roboauto",
+  "digital-platforms": "digplat",
+  "data-integrity": "dataint",
+  "automation-tooling": "autotool",
+  "compliance": "compstd",
 };
 
 function dirToAgentId(dirName: string): string {

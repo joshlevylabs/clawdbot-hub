@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { faithSupabase, isFaithSupabaseConfigured } from '@/lib/faith-supabase';
 
-const JOSHUA_USER_ID = '2255450f-a3c8-4006-9aef-4bfc4afcda61';
-
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, OPTIONS',
@@ -16,6 +14,7 @@ export async function OPTIONS() {
 /**
  * GET /api/faith/guide/conversations
  * Returns list of guide conversations for the user, with lesson topic joined.
+ * Requires user_id query param for data isolation.
  */
 export async function GET(request: NextRequest) {
   if (!isFaithSupabaseConfigured()) {
@@ -23,13 +22,18 @@ export async function GET(request: NextRequest) {
   }
 
   const { searchParams } = new URL(request.url);
+  const userId = searchParams.get('user_id');
   const limit = Math.min(parseInt(searchParams.get('limit') || '50', 10), 100);
   const offset = parseInt(searchParams.get('offset') || '0', 10);
+
+  if (!userId) {
+    return NextResponse.json({ error: 'user_id is required' }, { status: 400, headers: corsHeaders });
+  }
 
   const { data, error } = await faithSupabase
     .from('faith_guide_conversations')
     .select('id, lesson_id, messages, selected_perspectives, committed_tradition_id, status, created_at, updated_at, lesson:faith_lessons(topic, date, scripture_ref)')
-    .eq('user_id', JOSHUA_USER_ID)
+    .eq('user_id', userId)
     .order('updated_at', { ascending: false })
     .range(offset, offset + limit - 1);
 
@@ -41,7 +45,7 @@ export async function GET(request: NextRequest) {
   const { count } = await faithSupabase
     .from('faith_guide_conversations')
     .select('id', { count: 'exact', head: true })
-    .eq('user_id', JOSHUA_USER_ID);
+    .eq('user_id', userId);
 
   const conversations = (data || []).map((c: any) => ({
     id: c.id,

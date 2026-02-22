@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { faithSupabase, isFaithSupabaseConfigured } from '@/lib/faith-supabase';
 
-const JOSHUA_USER_ID = '2255450f-a3c8-4006-9aef-4bfc4afcda61';
-
 // Haiku 3.5 pricing (per 1K tokens)
 const HAIKU_PRICING = { input: 0.001, output: 0.005 };
 const COST_MULTIPLIER = 3.0;
@@ -135,15 +133,19 @@ export async function GET(request: NextRequest) {
 
   const { searchParams } = new URL(request.url);
   const lessonId = searchParams.get('lesson_id');
+  const userId = searchParams.get('user_id');
 
   if (!lessonId) {
     return NextResponse.json({ error: 'lesson_id required' }, { status: 400, headers: corsHeaders });
+  }
+  if (!userId) {
+    return NextResponse.json({ error: 'user_id required' }, { status: 400, headers: corsHeaders });
   }
 
   const { data, error } = await faithSupabase
     .from('faith_guide_conversations')
     .select('*')
-    .eq('user_id', JOSHUA_USER_ID)
+    .eq('user_id', userId)
     .eq('lesson_id', lessonId)
     .single();
 
@@ -166,25 +168,28 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json();
-  const { lesson_id, message, selected_tradition_ids, stream: streamMode = true } = body;
+  const { lesson_id, message, selected_tradition_ids, user_id, stream: streamMode = true } = body;
 
   if (!lesson_id || !message) {
     return NextResponse.json({ error: 'lesson_id and message required' }, { status: 400 });
   }
+  if (!user_id) {
+    return NextResponse.json({ error: 'user_id required' }, { status: 400 });
+  }
 
   // Fetch all context in parallel
   const [compassRes, historyRes, lessonRes, traditionsRes, existingConvoRes] = await Promise.all([
-    faithSupabase.from('faith_compass_state').select('*').eq('user_id', JOSHUA_USER_ID).single(),
+    faithSupabase.from('faith_compass_state').select('*').eq('user_id', user_id).single(),
     faithSupabase.from('faith_responses')
       .select('selected_tradition_id, date, lesson:faith_lessons(topic), tradition:faith_traditions(name)')
-      .eq('user_id', JOSHUA_USER_ID)
+      .eq('user_id', user_id)
       .order('date', { ascending: false })
       .limit(10),
     faithSupabase.from('faith_lessons').select('*').eq('id', lesson_id).single(),
     faithSupabase.from('faith_traditions').select('*'),
     faithSupabase.from('faith_guide_conversations')
       .select('*')
-      .eq('user_id', JOSHUA_USER_ID)
+      .eq('user_id', user_id)
       .eq('lesson_id', lesson_id)
       .single(),
   ]);
@@ -248,7 +253,7 @@ export async function POST(request: NextRequest) {
     const { data: profileData, error: profileError } = await faithSupabase
       .from('profiles')
       .select('watt_balance')
-      .eq('id', JOSHUA_USER_ID)
+      .eq('id', user_id)
       .single();
 
     if (profileError) {
@@ -302,13 +307,13 @@ export async function POST(request: NextRequest) {
     await faithSupabase
       .from('profiles')
       .update({ watt_balance: newBalance })
-      .eq('id', JOSHUA_USER_ID);
+      .eq('id', user_id);
 
     // Log watt usage
     await faithSupabase
       .from('watt_usage')
       .insert({
-        user_id: JOSHUA_USER_ID,
+        user_id: user_id,
         watts_used: wattCost,
         action: 'faith_guide_message',
         feature: 'Faith Guide',
@@ -345,7 +350,7 @@ export async function POST(request: NextRequest) {
     await faithSupabase
       .from('faith_guide_conversations')
       .upsert({
-        user_id: JOSHUA_USER_ID,
+        user_id: user_id,
         lesson_id,
         messages: updatedMessages,
         selected_perspectives: selectedTraditionIds,
@@ -469,7 +474,7 @@ export async function POST(request: NextRequest) {
                   await faithSupabase
                     .from('faith_guide_conversations')
                     .upsert({
-                      user_id: JOSHUA_USER_ID,
+                      user_id: user_id,
                       lesson_id,
                       messages: updatedMessages,
                       selected_perspectives: selectedTraditionIds,

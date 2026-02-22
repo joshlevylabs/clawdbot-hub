@@ -8,10 +8,9 @@
       "typeEmoji": "\ud83c\udfa8",
       "topic": "Welcome Modal Design \u2014 Saturday Feb 21",
       "file": "2026-02-21-adhoc-welcome-modal-design.json",
-      "tokenCost": 0.3833,
-      "verticals": [],
-      "initiatives": [],
-      "instanceKey": "STD-2"
+      "tokenCost": 0,
+      "phase": "",
+      "standup_id": "2026-02-21-adhoc-welcome-modal-design"
     },
     {
       "date": "2026-02-21",
@@ -21,10 +20,9 @@
       "typeEmoji": "\ud83c\udf06",
       "topic": "Evening Session \u2014 Saturday Feb 21",
       "file": "2026-02-21-evening-session.json",
-      "tokenCost": 0.41519999999999996,
-      "verticals": [],
-      "initiatives": [],
-      "instanceKey": "STD-7"
+      "tokenCost": 0,
+      "phase": "",
+      "standup_id": "2026-02-21-evening-session"
     },
     {
       "date": "2026-02-21",
@@ -34,10 +32,9 @@
       "typeEmoji": "\u2600\ufe0f",
       "topic": "Midday Checkpoint \u2014 Saturday Feb 21",
       "file": "2026-02-21-midday-checkpoint.json",
-      "tokenCost": 0.3452,
-      "verticals": [],
-      "initiatives": [],
-      "instanceKey": "STD-4"
+      "tokenCost": 0,
+      "phase": "",
+      "standup_id": "2026-02-21-midday-checkpoint"
     },
     {
       "date": "2026-02-21",
@@ -47,10 +44,9 @@
       "typeEmoji": "\ud83c\udf05",
       "topic": "Morning Kickoff \u2014 Saturday Feb 21",
       "file": "2026-02-21-morning-kickoff.json",
-      "tokenCost": 0.35819999999999996,
-      "verticals": [],
-      "initiatives": [],
-      "instanceKey": "STD-4"
+      "tokenCost": 0,
+      "phase": "",
+      "standup_id": "2026-02-21-morning-kickoff"
     },
     {
       "date": "2026-02-20",
@@ -60,10 +56,9 @@
       "typeEmoji": "\ud83c\udf19",
       "topic": "Overnight Sprint \u2014 Friday Feb 20",
       "file": "2026-02-20-overnight-sprint.json",
-      "tokenCost": 0.2818,
-      "verticals": [],
-      "initiatives": [],
-      "instanceKey": "STD-24"
+      "tokenCost": 0,
+      "phase": "waiting_for_ceo",
+      "standup_id": "2026-02-20-overnight-sprint"
     },
     {
       "date": "2026-02-20",
@@ -73,10 +68,9 @@
       "typeEmoji": "\ud83c\udf19",
       "topic": "Night Wrap \u2014 Friday Feb 20",
       "file": "2026-02-20-night-wrap.json",
-      "tokenCost": 0.3256,
-      "verticals": [],
-      "initiatives": [],
-      "instanceKey": "STD-1"
+      "tokenCost": 0,
+      "phase": "waiting_for_ceo",
+      "standup_id": "2026-02-20-night-wrap"
     },
     {
       "date": "2026-02-20",
@@ -86,10 +80,9 @@
       "typeEmoji": "\ud83c\udf06",
       "topic": "Evening Session \u2014 Friday Feb 20",
       "file": "2026-02-20-evening-session.json",
-      "tokenCost": 0.39999999999999997,
-      "verticals": [],
-      "initiatives": [],
-      "instanceKey": "STD-4"
+      "tokenCost": 0,
+      "phase": "",
+      "standup_id": "2026-02-20-evening-session"
     },
     {
       "date": "2026-02-20",
@@ -99,10 +92,9 @@
       "typeEmoji": "\ud83e\uddea",
       "topic": "Evening Session \u2014 Friday Feb 20",
       "file": "2026-02-20-test-3.json",
-      "tokenCost": 0.45690000000000003,
-      "verticals": [],
-      "initiatives": [],
-      "instanceKey": "STD-2"
+      "tokenCost": 0,
+      "phase": "",
+      "standup_id": "2026-02-20-test-3"
     },
     {
       "date": "2026-02-20",
@@ -112,10 +104,9 @@
       "typeEmoji": "\ud83c\udf99\ufe0f",
       "topic": "Podcast Planning \u2014 Episode 4: How I Use AI Agents to Run My Entire Podcast and Newsletter Pipeline \u2014 Friday Feb 20",
       "file": "2026-02-20-adhoc-podcast-planning-episode-4-how-i-use-ai-agents-to-run-my-entire-podcast-and-newsletter-pipeline.json",
-      "tokenCost": 0.2886,
-      "verticals": [],
-      "initiatives": [],
-      "instanceKey": "STD-1"
+      "tokenCost": 0,
+      "phase": "",
+      "standup_id": "2026-02-20-adhoc-podcast-planning-episode-4-how-i-use-ai-agents-to-run-my-entire-podcast-and-newsletter-pipeline"
     },
     {
       "date": "2026-02-20",
@@ -125,10 +116,9 @@
       "typeEmoji": "\ud83e\uddea",
       "topic": "Midday Checkpoint \u2014 Friday Feb 20",
       "file": "2026-02-20-test-2.json",
-      "tokenCost": 0.42419999999999997,
-      "verticals": [],
-      "initiatives": [],
-      "instanceKey": "STD-2"
+      "tokenCost": 0,
+      "phase": "",
+      "standup_id": "2026-02-20-test-2"
     },
     {
       "date": "2026-02-20",
@@ -138,10 +128,9 @@
       "typeEmoji": "\ud83e\uddea",
       "topic": "Morning Kickoff \u2014 Friday Feb 20",
       "file": "2026-02-20-test-1.json",
-      "tokenCost": 0.4299,
-      "verticals": [],
-      "initiatives": [],
-      "instanceKey": "STD-2"
+      "tokenCost": 0,
+      "phase": "",
+      "standup_id": "2026-02-20-test-1"
     },
     {
       "date": "2026-02-19",
@@ -151,10 +140,9 @@
       "typeEmoji": "\ud83c\udf19",
       "topic": "Overnight Sprint \u2014 Thursday Feb 19",
       "file": "2026-02-19-overnight-sprint.json",
-      "tokenCost": 0.2548,
-      "verticals": [],
-      "initiatives": [],
-      "instanceKey": "STD-4"
+      "tokenCost": 0,
+      "phase": "",
+      "standup_id": "2026-02-19-overnight-sprint"
     },
     {
       "date": "2026-02-19",
@@ -164,10 +152,9 @@
       "typeEmoji": "\ud83e\uddea",
       "topic": "Phase 3 Smoke Test \u2014 Thursday Feb 19",
       "file": "2026-02-19-adhoc-phase-3-smoke-test.json",
-      "tokenCost": 0.2924,
-      "verticals": [],
-      "initiatives": [],
-      "instanceKey": "STD-2"
+      "tokenCost": 0,
+      "phase": "",
+      "standup_id": "2026-02-19-adhoc-phase-3-smoke-test"
     },
     {
       "date": "2026-02-19",
@@ -177,10 +164,9 @@
       "typeEmoji": "\ud83e\uddea",
       "topic": "Evening Roster Test \u2014 Thursday Feb 19",
       "file": "2026-02-19-adhoc-evening-roster-test.json",
-      "tokenCost": 0.3459,
-      "verticals": [],
-      "initiatives": [],
-      "instanceKey": "STD-2"
+      "tokenCost": 0,
+      "phase": "",
+      "standup_id": "2026-02-19-adhoc-evening-roster-test"
     },
     {
       "date": "2026-02-19",
@@ -190,10 +176,9 @@
       "typeEmoji": "\ud83c\udf06",
       "topic": "Evening Wrap \u2014 Thursday Feb 19",
       "file": "2026-02-19-adhoc-evening-wrap.json",
-      "tokenCost": 0.20929999999999999,
-      "verticals": [],
-      "initiatives": [],
-      "instanceKey": "STD-2"
+      "tokenCost": 0,
+      "phase": "",
+      "standup_id": "2026-02-19-adhoc-evening-wrap"
     }
   ]
 }

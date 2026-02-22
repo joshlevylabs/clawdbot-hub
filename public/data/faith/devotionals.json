@@ -1,0 +1,87 @@
+{
+  "framework": {
+    "rotation_cycle": 8,
+    "daily_structure": {
+      "opening_verse": "A relevant scripture or sacred text quote",
+      "reflection": "2-3 paragraphs exploring the dimension",
+      "personal_application": "Practical question or action",
+      "closing_prayer": "Brief prayer or meditation"
+    },
+    "dimensions_cycle": [
+      "scripture_authority",
+      "salvation_path", 
+      "divine_nature",
+      "afterlife_understanding",
+      "moral_framework",
+      "spiritual_practices",
+      "community_role",
+      "worldview_integration"
+    ]
+  },
+  "sample_devotionals": [
+    {
+      "id": "devotional_001",
+      "date": "2026-02-21",
+      "dimension": "scripture_authority",
+      "title": "The Living Word",
+      "verse": "All Scripture is breathed out by God and profitable for teaching, for reproof, for correction, and for training in righteousness. (2 Timothy 3:16)",
+      "reflection": "In our age of information overload, we often struggle to know which voices to trust. Ancient wisdom traditions understood that some texts carry a different weight—not just human insight, but divine breath. Whether you find this in the Bible, Quran, Torah, or other sacred writings, the question remains: how do we recognize and respond to authentic spiritual authority?\n\nThe word 'breathed' in today's verse suggests something alive, not static. Sacred texts aren't museum pieces but living documents that speak into our current circumstances. Yet this creates tension: if these words are truly divine, how do we interpret them responsibly? Different faith traditions answer this differently—some emphasizing individual study, others communal interpretation, still others requiring scholarly guidance.",
+      "application": "Today, when you encounter any source of spiritual wisdom—whether ancient scripture or modern insight—ask yourself: 'What makes this authoritative for my life?' Notice the criteria you use to evaluate spiritual truth.",
+      "prayer": "Divine Source of Truth, help me discern wisdom from noise. Give me humility to receive instruction and courage to live by what I discover to be true. May I honor authentic spiritual authority while maintaining the freedom to grow in understanding.",
+      "metadata": {
+        "estimated_reading_time": "3 minutes",
+        "difficulty": "intermediate",
+        "cross_traditional": true
+      }
+    },
+    {
+      "id": "devotional_002", 
+      "date": "2026-02-22",
+      "dimension": "salvation_path",
+      "title": "The Way Forward",
+      "verse": "Enter through the narrow gate. For wide is the gate and broad is the road that leads to destruction, and many enter through it. (Matthew 7:13)",
+      "reflection": "Every spiritual tradition recognizes that human life contains both potential for transcendence and tendency toward self-destruction. The paths offered vary dramatically—some emphasize faith, others works, still others knowledge or surrender. Yet all acknowledge that transformation requires intentionality.\n\nThe 'narrow gate' metaphor appears across traditions in different forms. Buddhism speaks of the Middle Way between extremes. Islam describes the Straight Path (Sirat al-Mustaqeem). Hinduism outlines multiple yogas suited to different temperaments. What unites these teachings is recognition that salvation—however defined—demands more than wishful thinking.\n\nYet here we encounter mystery: if the path is narrow, what about those who choose different gates? Does spiritual truth have room for multiple valid approaches, or does authentic salvation require a specific pathway?",
+      "application": "Reflect on your own spiritual journey. What practices, beliefs, or commitments have you found most transformative? How do you balance confidence in your path with respect for others choosing different gates?",
+      "prayer": "Guide of all paths, illuminate the way forward for my life. Help me walk faithfully on the road I believe leads to truth, while maintaining compassion for fellow travelers on different journeys. May my steps today move toward greater light.",
+      "metadata": {
+        "estimated_reading_time": "3 minutes",
+        "difficulty": "intermediate",
+        "cross_traditional": true
+      }
+    },
+    {
+      "id": "devotional_003",
+      "date": "2026-02-23", 
+      "dimension": "divine_nature",
+      "title": "Beyond Human Categories",
+      "verse": "For my thoughts are not your thoughts, neither are your ways my ways, declares the Lord. (Isaiah 55:8)",
+      "reflection": "Human language strains to capture divine reality. We use words like 'love,' 'justice,' and 'power,' but divine love differs qualitatively from human affection, divine justice transcends human fairness, and divine power operates by different rules than earthly force.\n\nThis creates both humility and confusion. If God truly transcends human categories, how can we relate meaningfully to the Divine? Some traditions emphasize God's utter transcendence (tanzih in Islam), while others stress divine immanence (God's presence within creation). Christianity uniquely claims both through incarnation—infinite God taking finite human form.\n\nYet mystery remains. The moment we think we've captured God in our concepts, something essential slips away. Divine nature seems to require both rigorous thinking and willingness to encounter what lies beyond thought.",
+      "application": "Notice today where your understanding of the Divine feels most limited. Instead of frustration, can you find wonder in the mystery? How might this recognition affect your approach to prayer or spiritual practice?",
+      "prayer": "Incomprehensible Mystery, I acknowledge the limits of my understanding. Help me approach you with both seeking mind and surrendered heart. May I never mistake my concepts for your reality, yet continue growing in knowledge of your character.",
+      "metadata": {
+        "estimated_reading_time": "3 minutes",
+        "difficulty": "advanced",
+        "cross_traditional": true
+      }
+    }
+  ],
+  "generation_instructions": {
+    "daily_process": [
+      "1. Determine current day in 8-day dimension cycle",
+      "2. Select relevant scripture/text from multiple traditions", 
+      "3. Write 2-3 paragraph reflection exploring the dimension",
+      "4. Create practical application question/exercise",
+      "5. Compose closing prayer accessible to various traditions",
+      "6. Review for cross-traditional sensitivity"
+    ],
+    "tone": "contemplative, inclusive, intellectually honest",
+    "length": "800-1000 words total",
+    "audience": "thoughtful seekers from various faith backgrounds"
+  },
+  "metadata": {
+    "created": "2026-02-21T20:45:00-08:00",
+    "author": "Alex",
+    "task": "A-128",
+    "status": "framework_complete"
+  }
+}

@@ -1,24 +1,12 @@
 {
   "date": "2026-02-21",
-  "generatedAt": "2026-02-21T12:34:23.632577-08:00",
+  "generatedAt": "2026-02-21T20:17:00.618411-08:00",
   "priorities": [
     {
       "text": "Decide newsletter send timing relative to Apple approval",
       "source": "overnight-sprint",
       "urgency": "high",
       "taskKey": "J-007"
-    },
-    {
-      "text": "Review and merge day-one patch build (welcome modal, empty states, podcast fix) once confirmed ready",
-      "source": "midday-checkpoint",
-      "urgency": "high",
-      "taskKey": "J-021"
-    },
-    {
-      "text": "Review and merge analytics PR tonight upon Slack ping from James",
-      "source": "evening-session",
-      "urgency": "high",
-      "taskKey": "J-024"
     },
     {
       "text": "Complete Slack screenshot review for newsletter pre-schedule per standing directive",
@@ -31,6 +19,12 @@
       "source": "morning-kickoff",
       "urgency": "medium",
       "taskKey": "J-026"
+    },
+    {
+      "text": "Merge J-021 (day-one patch) and J-024 (analytics PR) \u2014 now 48+ hours staged",
+      "source": "evening-session",
+      "urgency": "high",
+      "taskKey": "J-029"
     }
   ],
   "agentHandled": [
@@ -93,6 +87,48 @@
       "assignee": "Dave",
       "status": "pending",
       "taskKey": "A-133"
+    },
+    {
+      "text": "Get build green and package App Store archive upon merge confirmation",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "taskKey": "A-134"
+    },
+    {
+      "text": "Finalize faith lessons 8, 9, and 10 to ship-ready status",
+      "assignee": "Alex",
+      "status": "pending",
+      "taskKey": "A-135"
+    },
+    {
+      "text": "Triage 6 TODOs/FIXMEs and draft fixes for non-merge-blocked items",
+      "assignee": "James Truchard",
+      "status": "pending",
+      "taskKey": "A-136"
+    },
+    {
+      "text": "Commit outstanding hub changes and begin sync gap triage",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "taskKey": "A-137"
+    },
+    {
+      "text": "Draft Monday follow-up newsletter personalization framework",
+      "assignee": "Alex",
+      "status": "pending",
+      "taskKey": "A-138"
+    },
+    {
+      "text": "Resolve podcast MDX and blog post critical sync gaps",
+      "assignee": "James Truchard",
+      "status": "pending",
+      "taskKey": "A-139"
+    },
+    {
+      "text": "Complete TODO/FIXME triage and draft remaining fixes (A-136)",
+      "assignee": "James Truchard",
+      "status": "pending",
+      "taskKey": "A-140"
     }
   ]
 }

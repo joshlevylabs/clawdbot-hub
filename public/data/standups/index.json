@@ -2,6 +2,19 @@
   "standups": [
     {
       "date": "2026-02-21",
+      "time": "20:00",
+      "type": "evening-session",
+      "typeName": "Evening Session",
+      "typeEmoji": "\ud83c\udf06",
+      "topic": "Evening Session \u2014 Saturday Feb 21",
+      "file": "2026-02-21-evening-session.json",
+      "tokenCost": 0.41519999999999996,
+      "verticals": [],
+      "initiatives": [],
+      "instanceKey": "STD-7"
+    },
+    {
+      "date": "2026-02-21",
       "time": "12:00",
       "type": "midday-checkpoint",
       "typeName": "Midday Checkpoint",

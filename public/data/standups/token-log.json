@@ -749,12 +749,42 @@
       "estimatedCost": 0.3452,
       "model": "claude-opus-4-6",
       "duration": "74.5s"
+    },
+    {
+      "date": "2026-02-21",
+      "type": "evening-session",
+      "inputTokens": 5759,
+      "outputTokens": 2724,
+      "totalTokens": 8483,
+      "estimatedCost": 0.2907,
+      "model": "claude-opus-4-6",
+      "duration": "66.4s"
+    },
+    {
+      "date": "2026-02-21",
+      "type": "evening-session",
+      "inputTokens": 5863,
+      "outputTokens": 2930,
+      "totalTokens": 8793,
+      "estimatedCost": 0.3077,
+      "model": "claude-opus-4-6",
+      "duration": "71.6s"
+    },
+    {
+      "date": "2026-02-21",
+      "type": "evening-session",
+      "inputTokens": 7556,
+      "outputTokens": 4025,
+      "totalTokens": 11581,
+      "estimatedCost": 0.41519999999999996,
+      "model": "claude-opus-4-6",
+      "duration": "95.6s"
     }
   ],
   "totals": {
-    "today": 1.1921,
-    "week": 17.2034,
-    "month": 17.2034,
-    "standupCount": 75
+    "today": 2.2057,
+    "week": 18.217,
+    "month": 18.217,
+    "standupCount": 78
   }
 }

@@ -1,6 +1,19 @@
 {
   "standups": [
     {
+      "date": "2026-02-22",
+      "time": "05:00",
+      "type": "morning-kickoff",
+      "typeName": "Morning Kickoff",
+      "typeEmoji": "\ud83c\udf05",
+      "topic": "Morning Kickoff \u2014 Sunday Feb 22",
+      "file": "2026-02-22-morning-kickoff.json",
+      "tokenCost": 0.44610000000000005,
+      "verticals": [],
+      "initiatives": [],
+      "instanceKey": "STD-6"
+    },
+    {
       "date": "2026-02-21",
       "time": "20:25",
       "type": "adhoc-welcome-modal-design",

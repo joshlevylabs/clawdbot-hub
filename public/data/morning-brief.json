@@ -1,99 +1,106 @@
 {
-  "date": "2026-02-22",
-  "day": "Sunday",
-  "generated_at": "2026-02-22T06:00:00-08:00",
-  "location": "Temecula, CA",
-  "weather": {
-    "title": "\ud83c\udf24\ufe0f Weather",
-    "current": "67\u00b0F, Sunny",
-    "high": "69\u00b0F",
-    "low": "44\u00b0F",
-    "conditions": "Sunny and pleasant",
-    "wind": "Light northerly winds ~3mph"
-  },
-  "prayer": {
-    "title": "\ud83d\udd59\ufe0f Morning Prayer",
-    "date": "Sunday, February 22, 2026",
-    "hebrew_date": "24 Cheshvan",
-    "parsha": "Vayeshev",
-    "parsha_theme": "setbacks as setups, patience, providence",
-    "modeh_ani": "\u05de\u05d5\u05d3\u05d4 \u05d0\u05e0\u05d9 \u05dc\u05e4\u05e0\u05d9\u05da \u2014 I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
-    "blessing": "Blessed are You who girds Israel with strength \u2014 fortify me for the work ahead.",
-    "psalm": "Psalm 118:25: 'Lord, save us! Lord, grant us success!'",
-    "proverb": "Proverbs 11:1: 'Dishonest scales are an abomination to the Lord, but accurate weights are His delight.'",
-    "intention": "Help me see people as You see them \u2014 partners, not obstacles.",
-    "closing": "Baruch atah Adonai \u2014 Blessed are You, Lord, who renews creation daily with goodness."
-  },
-  "mre": {
-    "title": "\ud83d\udcca MRE Trading",
-    "fear_greed": 43,
-    "fear_greed_rating": "fear",
-    "regime": "bull",
-    "todays_plays": [],
-    "pending_triggers": [],
-    "thesis": "Fear at 43, bull regime intact. All assets holding. SPY in bull mode but QQQ sideways. XLK and XLF in bear regimes - watch for sector rotation. No new buy signals today - patience required.",
-    "summary": "Markets fearful but structure remains bullish. No action items today."
-  },
-  "family": {
-    "title": "\u2764\ufe0f Family Focus",
-    "relationship_status": "critical - urgent repair needed",
-    "jillian_focus": "Quality time + acts of service",
-    "recommendations": [
-      "PRIORITY: Focus on repair. Acknowledge recent conflicts without defending.",
-      "Increase acts of service dramatically this week.",
-      "Create space for her to express frustrations without fixing."
-    ],
-    "jones_note": "Almost 3 years old (birthday Feb 22, 2023) - give 100% attention when awake",
-    "jett_note": "7 months old - needs consistent care and attention"
-  },
-  "calendar": {
-    "title": "\ud83d\udcc5 Today's Schedule",
-    "status": "Authentication issues with Google Calendar - manual check needed",
-    "today_events": [],
-    "note": "Check calendar manually for any events"
-  },
-  "email": {
-    "title": "\ud83d\udce7 Email Highlights",
-    "status": "Authentication issues with Gmail - manual check needed",
-    "accounts": [
-      "joshua.seth.levy@gmail.com",
-      "josh@joshlevylabs.com"
-    ],
-    "note": "Check email manually for urgent items"
-  },
-  "world_news": {
-    "title": "\ud83c\udf0d World News",
-    "items": [
-      {
-        "topic": "Israel/Gaza",
-        "summary": "Continued tensions during Ramadan. Israeli strikes in Gaza killed 2 Palestinians yesterday. Escalated raids and settler attacks in West Bank.",
-        "perspective": "Ongoing security concerns for Israel amid regional instability."
-      }
-    ]
-  },
-  "ai_news": {
-    "title": "\ud83e\udd16 AI News",
-    "items": [
-      {
-        "topic": "Claude Sonnet 4.6 Release",
-        "summary": "Anthropic released Claude Sonnet 4.6 5 days ago, continuing the fast pace of AI model development to compete with OpenAI and Google.",
-        "relevance": "New capabilities potentially available for builders"
+  "date": "2026-02-23",
+  "day": "Monday",
+  "generated_at": "2026-02-23T06:00:34",
+  "sections": {
+    "prayer": {
+      "title": "🕐️ Morning Prayer",
+      "date": "Monday, February 23, 2026",
+      "hebrew_date": "25 Cheshvan",
+      "parsha": "Miketz",
+      "parsha_theme": "sudden elevation, preparation meeting opportunity",
+      "modeh_ani": "מודה אני לפניך — I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
+      "blessing": "Blessed are You who crowns Israel with glory — let my work bring You honor.",
+      "psalm": "**Psalm 121:8**: \"The Lord will watch over your coming and going both now and forevermore.\"",
+      "proverb": "**Proverbs 16:3**: \"Commit your work to the Lord, and your plans will be established.\"",
+      "intention": "Protect my family while I work. Guard their hearts and minds.",
+      "closing": "May your work today be a pleasing offering. May your rest tonight be deep and restorative."
+    },
+    "weather": {
+      "title": "🌤️ Weather",
+      "location": "Temecula, CA",
+      "current": {
+        "temp": "45°F (7°C)",
+        "feels_like": "42°F (6°C)",
+        "condition": "Partly cloudy",
+        "humidity": "87%",
+        "wind": "NNE 6 mph",
+        "visibility": "9 miles"
       },
-      {
-        "topic": "Anthropic-Pentagon Tensions",
-        "summary": "Dispute between Defense Department and Anthropic over AI safety and defense contracts worth $200M. Claude is the most widely used AI on classified systems.",
-        "relevance": "AI safety vs. national security applications - important precedent for industry"
+      "summary": "Cool and partly cloudy morning. High humidity with light winds from the northeast."
+    },
+    "mre": {
+      "title": "📊 MRE Trading",
+      "fear_greed": 42,
+      "fear_greed_rating": "fear",
+      "regime": "bull",
+      "spy_price": 689.43,
+      "spy_change": "+0.72%",
+      "qqq_regime": "sideways",
+      "todays_plays": [],
+      "pending_triggers": [],
+      "thesis": "Fear at 42, markets mixed with SPY bull/QQQ sideways. No active signals — wait for opportunities.",
+      "outliers": [
+        "XLK & XLF in bear regimes while market bull",
+        "QQQ consolidating, watch for breakout"
+      ],
+      "summary": "Market sentiment fearful but SPY maintaining uptrend. Tech weakness notable with XLK bearish."
+    },
+    "relationship": {
+      "title": "💝 Family Focus",
+      "status": "critical",
+      "trend": "urgent",
+      "stats": {
+        "total": 11,
+        "positive": 6,
+        "negative": 5
+      },
+      "priority_actions": [
+        "PRIORITY: Focus on repair. Acknowledge recent conflicts without defending.",
+        "Increase acts of service dramatically this week.",
+        "Create space for her to express frustrations without fixing."
+      ],
+      "love_languages": {
+        "primary": "quality_time",
+        "secondary": "acts_of_service"
       }
-    ]
-  },
-  "focus_areas": {
-    "title": "\ud83c\udfaf Today's Focus",
-    "priorities": [
-      "Family repair - quality time with Jillian, acknowledge conflicts",
-      "Jones birthday celebration (turning 3 today!)",
-      "Sunday rest and reflection",
-      "Review next week's Builder's Frequency launch prep",
-      "Check emails and calendar manually (auth issues)"
-    ]
+    },
+    "calendar": {
+      "title": "📅 Today's Schedule",
+      "today": "No events scheduled",
+      "week_ahead": "No upcoming events visible (OAuth tokens need refresh)",
+      "note": "Calendar access requires authentication renewal"
+    },
+    "email": {
+      "title": "📧 Email Highlights",
+      "account": "josh@joshlevylabs.com",
+      "unread_count": 4,
+      "highlights": [
+        "Dropbox storage reminder (15 days until deletion)",
+        "Indeed: 1 new acoustic engineer job in Tempe, AZ",
+        "LinkedIn: 1 new message",
+        "OpusClip: Projects about to expire"
+      ],
+      "action_needed": "Check Dropbox storage, review OpusClip projects"
+    },
+    "world_news": {
+      "title": "🌍 World News",
+      "focus": "Israel & Geopolitics",
+      "headlines": [
+        "US Ambassador Huckabee's controversial comments on Israel's biblical territorial claims draw sharp condemnation from Arab/Muslim nations",
+        "Arab Israeli news anchor harassed by far-right mob, calls them 'Netanyahu's goons'",
+        "Tensions remain high in Middle East as Trump administration takes different approach"
+      ]
+    },
+    "ai_news": {
+      "title": "🤖 AI News",
+      "headlines": [
+        "Nvidia close to $30 billion investment in OpenAI mega funding round",
+        "Grand Valley State University awarded $1M for AI consortium in West Michigan",
+        "USC researchers build artificial neurons using ion-based diffusive memristors",
+        "ProAmpac uses AI to simulate materials, reducing plastic waste in supply chains"
+      ],
+      "focus": "Significant funding rounds and practical applications in materials/neuroscience"
+    }
   }
 }

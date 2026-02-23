@@ -1,5 +1,5 @@
 {
-  "nextAgentId": 178,
+  "nextAgentId": 182,
   "nextJoshuaId": 38,
   "tasks": [
     {
@@ -1485,11 +1485,11 @@
       "priority": "high",
       "assignee": "Joshua",
       "status": "pending",
-      "sourceStandup": "STD-28",
+      "sourceStandup": "STD-29",
       "sourceStandupType": "adhoc-mre-signal-flow-visualization-hub-signals-page-overhaul",
       "sourceDate": "2026-02-23",
       "createdAt": "2026-02-23T11:15:17.619385-08:00",
-      "updatedAt": "2026-02-23T11:15:17.619385-08:00",
+      "updatedAt": "2026-02-23T11:18:21.941947-08:00",
       "completedAt": null
     },
     {
@@ -1504,6 +1504,62 @@
       "sourceDate": "2026-02-23",
       "createdAt": "2026-02-23T11:15:17.619385-08:00",
       "updatedAt": "2026-02-23T11:15:17.619385-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "A-178",
+      "text": "Design comprehensive database schema for MRE signal flow with graph and time-series components",
+      "tag": "AGENT",
+      "priority": "high",
+      "assignee": "James Truchard",
+      "status": "pending",
+      "sourceStandup": "STD-29",
+      "sourceStandupType": "adhoc-mre-signal-flow-visualization-hub-signals-page-overhaul",
+      "sourceDate": "2026-02-23",
+      "createdAt": "2026-02-23T11:18:21.941947-08:00",
+      "updatedAt": "2026-02-23T11:18:21.941947-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "A-179",
+      "text": "Build multi-tiered WebSocket infrastructure for real-time signal updates",
+      "tag": "AGENT",
+      "priority": "high",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "sourceStandup": "STD-29",
+      "sourceStandupType": "adhoc-mre-signal-flow-visualization-hub-signals-page-overhaul",
+      "sourceDate": "2026-02-23",
+      "createdAt": "2026-02-23T11:18:21.941947-08:00",
+      "updatedAt": "2026-02-23T11:18:21.941947-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "A-180",
+      "text": "Create D3-React hybrid visualization with modal detail system",
+      "tag": "AGENT",
+      "priority": "high",
+      "assignee": "Steve Jobs",
+      "status": "pending",
+      "sourceStandup": "STD-29",
+      "sourceStandupType": "adhoc-mre-signal-flow-visualization-hub-signals-page-overhaul",
+      "sourceDate": "2026-02-23",
+      "createdAt": "2026-02-23T11:18:21.941947-08:00",
+      "updatedAt": "2026-02-23T11:18:21.941947-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "A-181",
+      "text": "Define attribution metrics specification for strategy-ticker modals",
+      "tag": "AGENT",
+      "priority": "medium",
+      "assignee": "Chris Vermeullen",
+      "status": "pending",
+      "sourceStandup": "STD-29",
+      "sourceStandupType": "adhoc-mre-signal-flow-visualization-hub-signals-page-overhaul",
+      "sourceDate": "2026-02-23",
+      "createdAt": "2026-02-23T11:18:21.941947-08:00",
+      "updatedAt": "2026-02-23T11:18:21.941947-08:00",
       "completedAt": null
     }
   ]

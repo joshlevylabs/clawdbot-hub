@@ -1,6 +1,6 @@
 {
   "date": "2026-02-23",
-  "generatedAt": "2026-02-23T11:15:17.619385-08:00",
+  "generatedAt": "2026-02-23T11:18:21.941947-08:00",
   "priorities": [
     {
       "text": "Decide newsletter send timing relative to Apple approval",
@@ -117,6 +117,30 @@
       "assignee": "Chris Vermeullen",
       "status": "pending",
       "taskKey": "A-177"
+    },
+    {
+      "text": "Design comprehensive database schema for MRE signal flow with graph and time-series components",
+      "assignee": "James Truchard",
+      "status": "pending",
+      "taskKey": "A-178"
+    },
+    {
+      "text": "Build multi-tiered WebSocket infrastructure for real-time signal updates",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "taskKey": "A-179"
+    },
+    {
+      "text": "Create D3-React hybrid visualization with modal detail system",
+      "assignee": "Steve Jobs",
+      "status": "pending",
+      "taskKey": "A-180"
+    },
+    {
+      "text": "Define attribution metrics specification for strategy-ticker modals",
+      "assignee": "Chris Vermeullen",
+      "status": "pending",
+      "taskKey": "A-181"
     }
   ]
 }

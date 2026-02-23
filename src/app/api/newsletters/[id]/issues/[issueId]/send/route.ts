@@ -2,11 +2,41 @@ import { NextRequest, NextResponse } from 'next/server';
 import { isAuthenticated } from '@/lib/auth';
 import { newsletterSupabase as supabase, isNewsletterConfigured } from '@/lib/newsletter-supabase';
 import { sendNewsletter, closeMailer } from '@/lib/mailer';
+import crypto from 'crypto';
 
 const SEND_DELAY_MS = 200;
 
 function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+// Get or generate HMAC secret for unsubscribe URLs
+function getUnsubscribeSecret(): string {
+  if (process.env.UNSUBSCRIBE_SECRET) {
+    return process.env.UNSUBSCRIBE_SECRET;
+  }
+  
+  // Fallback to a stable generated secret
+  return crypto
+    .createHash('sha256')
+    .update('clawdbot-hub-unsubscribe-secret-' + (process.env.AUTH_SECRET || 'fallback'))
+    .digest('hex');
+}
+
+// Generate signed unsubscribe URL
+function generateUnsubscribeUrl(subscriberId: string, newsletterId: string): string {
+  const secret = getUnsubscribeSecret();
+  const payload = `${subscriberId}:${newsletterId}`;
+  const signature = crypto
+    .createHmac('sha256', secret)
+    .update(payload)
+    .digest('hex');
+  
+  const baseUrl = process.env.NEXT_PUBLIC_VERCEL_URL 
+    ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}` 
+    : 'https://clawdbot-hub.vercel.app';
+    
+  return `${baseUrl}/api/newsletters/unsubscribe?sid=${subscriberId}&nid=${newsletterId}&sig=${signature}`;
 }
 
 // POST /api/newsletters/[id]/issues/[issueId]/send — Send issue via email
@@ -87,13 +117,20 @@ export async function POST(
     for (let i = 0; i < subscribers.length; i++) {
       const sub = subscribers[i];
       try {
+        // Generate unique unsubscribe URL for this subscriber
+        const unsubscribeUrl = generateUnsubscribeUrl(sub.id, id);
+        
+        // Replace unsubscribe placeholder with actual URL
+        const personalizedHtml = issue.body_html.replace(/\{\{UNSUBSCRIBE_URL\}\}/g, unsubscribeUrl);
+        
         await sendNewsletter({
           to: sub.email,
           toName: sub.name || undefined,
           subject: issue.subject,
-          html: issue.body_html,
+          html: personalizedHtml,
           senderName,
           replyTo: process.env.SMTP_USER || 'josh@joshlevylabs.com',
+          unsubscribeUrl,
         });
         successCount++;
       } catch (err) {

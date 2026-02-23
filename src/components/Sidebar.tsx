@@ -19,6 +19,7 @@ import {
   Cpu,
   Layers,
   ClipboardList,
+  Activity,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -29,6 +30,7 @@ const navItems = [
   { href: "/fleet", icon: Cpu, label: "Fleet" },
   { href: "/standups", icon: MessageSquare, label: "Standups" },
   { href: "/trading", icon: TrendingUp, label: "Finance" },
+  { href: "/signals", icon: Activity, label: "Signals" },
   { href: "/morning-brief", icon: Clock, label: "Morning Brief" },
   { href: "/podcast", icon: Mic, label: "Podcast" },
   { href: "/newsletter", icon: Mail, label: "Newsletter" },

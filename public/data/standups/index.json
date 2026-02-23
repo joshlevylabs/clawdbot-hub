@@ -2,6 +2,19 @@
   "standups": [
     {
       "date": "2026-02-23",
+      "time": "12:00",
+      "type": "midday-checkpoint",
+      "typeName": "Midday Checkpoint",
+      "typeEmoji": "\u2600\ufe0f",
+      "topic": "Midday Checkpoint \u2014 Monday Feb 23",
+      "file": "2026-02-23-midday-checkpoint.json",
+      "tokenCost": 0.0677,
+      "verticals": [],
+      "initiatives": [],
+      "instanceKey": "STD-31"
+    },
+    {
+      "date": "2026-02-23",
       "time": "11:18",
       "type": "adhoc-mre-signal-flow-visualization-hub-signals-page-overhaul",
       "typeName": "MRE Signal Flow Visualization \u2014 Hub Signals Page Overhaul",

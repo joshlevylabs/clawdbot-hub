@@ -1,6 +1,6 @@
 {
   "date": "2026-02-22",
-  "generatedAt": "2026-02-22T12:40:28.498515-08:00",
+  "generatedAt": "2026-02-22T20:34:05.201743-08:00",
   "priorities": [
     {
       "text": "Decide newsletter send timing relative to Apple approval",
@@ -40,7 +40,7 @@
     },
     {
       "text": "Execute J-031 merge to unlock App Store submission",
-      "source": "midday-checkpoint",
+      "source": "evening-session",
       "urgency": "high",
       "taskKey": "J-035"
     }
@@ -159,6 +159,18 @@
       "assignee": "Dave (CRO)",
       "status": "pending",
       "taskKey": "A-160"
+    },
+    {
+      "text": "Commit hub cleanup changes (5 minutes)",
+      "assignee": "Elon",
+      "status": "pending",
+      "taskKey": "A-161"
+    },
+    {
+      "text": "Complete A-155 consolidated PR",
+      "assignee": "James Truchard",
+      "status": "pending",
+      "taskKey": "A-162"
     }
   ]
 }

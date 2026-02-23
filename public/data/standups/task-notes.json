@@ -349,5 +349,55 @@
       {"text": "Timing and subscriber targeting confirmed correct", "completed": false}
     ],
     "updatedAt": "2026-02-20T21:10:00-08:00"
+  },
+  "J-037": {
+    "description": "Review and approve the comprehensive technical requirements for the MRE signal flow visualization system that handles 676 tickers across 5 strategies. This approval gates the entire architecture — database design, WebSocket infrastructure, and UI framework decisions all depend on these core requirements being validated.",
+    "acceptanceCriteria": [
+      {"text": "Review graph database + time-series architecture proposal (Neo4j + InfluxDB)", "completed": false},
+      {"text": "Approve multi-tiered WebSocket refresh rates (100ms ticks, 1s signals, 5s attribution)", "completed": false},
+      {"text": "Validate D3-React hybrid approach for 676+ node performance", "completed": false},
+      {"text": "Sign off on progressive disclosure UX for modal attribution details", "completed": false}
+    ],
+    "updatedAt": "2026-02-23T11:18:21.941947-08:00"
+  },
+  "A-178": {
+    "description": "Design a comprehensive database schema that combines graph relationships (Neo4j) with time-series performance data (InfluxDB) for the MRE signal flow system. The schema must handle real-time data from 676 tickers across 5 strategies while supporting complex queries for attribution analysis and correlation mapping.",
+    "acceptanceCriteria": [
+      {"text": "Neo4j graph schema designed for strategy-ticker relationships and signal flow paths", "completed": false},
+      {"text": "InfluxDB time-series schema designed for high-frequency price/signal data with multiple granularities", "completed": false},
+      {"text": "Sample queries documented for common attribution scenarios (win rate, correlation, drawdown)", "completed": false},
+      {"text": "Cross-database query patterns defined for graph+time-series joins", "completed": false}
+    ],
+    "updatedAt": "2026-02-23T11:18:21.941947-08:00"
+  },
+  "A-179": {
+    "description": "Build a multi-tiered WebSocket infrastructure with Redis pub/sub buffering to handle real-time updates for 676 tickers without overwhelming clients. The system needs different refresh rates: 100ms for price ticks, 1s for signals, 5s for attribution data, with intelligent message queuing and fallback mechanisms.",
+    "acceptanceCriteria": [
+      {"text": "Redis pub/sub messaging system implemented with topic-based routing", "completed": false},
+      {"text": "Tiered refresh rate system: 100ms ticks, 1s signals, 5s attribution with client subscription management", "completed": false},
+      {"text": "Message buffering and burst handling to prevent frame drops during high-volume periods", "completed": false},
+      {"text": "Fallback polling system activated if WebSocket connections fail", "completed": false}
+    ],
+    "updatedAt": "2026-02-23T11:18:21.941947-08:00"
+  },
+  "A-180": {
+    "description": "Create a D3-React hybrid visualization system that renders interactive flowcharts for 676+ tickers with modal detail views. D3 handles the graph performance while React manages modal state and UI interactions. The system must support force-directed layouts, filtering, and progressive disclosure without browser performance degradation.",
+    "acceptanceCriteria": [
+      {"text": "D3.js force-directed graph layout implemented for 676+ nodes with optimized rendering", "completed": false},
+      {"text": "React modal system designed with strategy-ticker detail views and attribution metrics", "completed": false},
+      {"text": "Component hierarchy established with clean D3-React boundaries (D3 owns SVG, React owns UI)", "completed": false},
+      {"text": "Interactive filtering system: by strategy, by performance, by sector with persistent session state", "completed": false}
+    ],
+    "updatedAt": "2026-02-23T11:18:21.941947-08:00"
+  },
+  "A-181": {
+    "description": "Define a comprehensive attribution metrics specification for strategy-ticker modal views that connects signal flow to P&L impact. Metrics include win rate, average return per signal, maximum drawdown periods, and portfolio correlation analysis with configurable timeframes (daily, weekly, monthly views).",
+    "acceptanceCriteria": [
+      {"text": "Win rate calculation defined: successful signals vs. total signals per strategy-ticker pair", "completed": false},
+      {"text": "Return metrics specified: average return, max gain, max loss per signal with time decay analysis", "completed": false},
+      {"text": "Drawdown analysis: maximum drawdown period, recovery time, and frequency per strategy", "completed": false},
+      {"text": "Correlation metrics: strategy-to-portfolio correlation, ticker cross-correlations, and regime dependency", "completed": false}
+    ],
+    "updatedAt": "2026-02-23T11:18:21.941947-08:00"
   }
 }

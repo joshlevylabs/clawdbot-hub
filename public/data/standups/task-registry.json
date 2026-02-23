@@ -1437,48 +1437,6 @@
       "completedAt": "2026-02-23T07:18:03-08:00"
     },
     {
-      "key": "A-174",
-      "text": "Draft technical architecture specification for MRE Signal Flow Visualization",
-      "tag": "AGENT",
-      "priority": "high",
-      "assignee": "Elon Musk",
-      "status": "pending",
-      "sourceStandup": "STD-28",
-      "sourceStandupType": "adhoc-mre-signal-flow-visualization-hub-signals-page-overhaul",
-      "sourceDate": "2026-02-23",
-      "createdAt": "2026-02-23T11:15:17.619385-08:00",
-      "updatedAt": "2026-02-23T11:15:17.619385-08:00",
-      "completedAt": null
-    },
-    {
-      "key": "A-175",
-      "text": "Design component hierarchy and user interaction flow for signal visualization",
-      "tag": "AGENT",
-      "priority": "high",
-      "assignee": "Steve Jobs",
-      "status": "pending",
-      "sourceStandup": "STD-28",
-      "sourceStandupType": "adhoc-mre-signal-flow-visualization-hub-signals-page-overhaul",
-      "sourceDate": "2026-02-23",
-      "createdAt": "2026-02-23T11:15:17.619385-08:00",
-      "updatedAt": "2026-02-23T11:15:17.619385-08:00",
-      "completedAt": null
-    },
-    {
-      "key": "A-176",
-      "text": "Architect WebSocket data acquisition layer with redundancy",
-      "tag": "AGENT",
-      "priority": "high",
-      "assignee": "James Truchard",
-      "status": "pending",
-      "sourceStandup": "STD-28",
-      "sourceStandupType": "adhoc-mre-signal-flow-visualization-hub-signals-page-overhaul",
-      "sourceDate": "2026-02-23",
-      "createdAt": "2026-02-23T11:15:17.619385-08:00",
-      "updatedAt": "2026-02-23T11:15:17.619385-08:00",
-      "completedAt": null
-    },
-    {
       "key": "J-037",
       "text": "Review and approve signal flow visualization requirements",
       "tag": "JOSHUA",
@@ -1490,21 +1448,14 @@
       "sourceDate": "2026-02-23",
       "createdAt": "2026-02-23T11:15:17.619385-08:00",
       "updatedAt": "2026-02-23T11:18:21.941947-08:00",
-      "completedAt": null
-    },
-    {
-      "key": "A-177",
-      "text": "Define performance attribution metrics for strategy visualization",
-      "tag": "AGENT",
-      "priority": "medium",
-      "assignee": "Chris Vermeullen",
-      "status": "pending",
-      "sourceStandup": "STD-28",
-      "sourceStandupType": "adhoc-mre-signal-flow-visualization-hub-signals-page-overhaul",
-      "sourceDate": "2026-02-23",
-      "createdAt": "2026-02-23T11:15:17.619385-08:00",
-      "updatedAt": "2026-02-23T11:15:17.619385-08:00",
-      "completedAt": null
+      "completedAt": null,
+      "description": "Review and approve the comprehensive technical requirements for the MRE signal flow visualization system that handles 676 tickers across 5 strategies. This approval gates the entire architecture — database design, WebSocket infrastructure, and UI framework decisions all depend on these core requirements being validated.",
+      "acceptanceCriteria": [
+        "Review graph database + time-series architecture proposal (Neo4j + InfluxDB)",
+        "Approve multi-tiered WebSocket refresh rates (100ms ticks, 1s signals, 5s attribution)",
+        "Validate D3-React hybrid approach for 676+ node performance",
+        "Sign off on progressive disclosure UX for modal attribution details"
+      ]
     },
     {
       "key": "A-178",
@@ -1512,13 +1463,21 @@
       "tag": "AGENT",
       "priority": "high",
       "assignee": "James Truchard",
-      "status": "pending",
+      "status": "done_but_unverified",
       "sourceStandup": "STD-29",
       "sourceStandupType": "adhoc-mre-signal-flow-visualization-hub-signals-page-overhaul",
       "sourceDate": "2026-02-23",
       "createdAt": "2026-02-23T11:18:21.941947-08:00",
-      "updatedAt": "2026-02-23T11:18:21.941947-08:00",
-      "completedAt": null
+      "updatedAt": "2026-02-23T12:51:00.000000-08:00",
+      "completedAt": "2026-02-23T12:51:00.000000-08:00",
+      "resolution": "Created comprehensive database schema specification at ~/clawd/clawdbot-hub/public/data/specs/mre-signal-flow-db-schema.md. Includes Neo4j graph schema, InfluxDB time-series schema, sample queries, and cross-database join patterns.",
+      "description": "Design a comprehensive database schema that combines graph relationships (Neo4j) with time-series performance data (InfluxDB) for the MRE signal flow system. The schema must handle real-time data from 676 tickers across 5 strategies while supporting complex queries for attribution analysis and correlation mapping.",
+      "acceptanceCriteria": [
+        "Neo4j graph schema designed for strategy-ticker relationships and signal flow paths",
+        "InfluxDB time-series schema designed for high-frequency price/signal data with multiple granularities",
+        "Sample queries documented for common attribution scenarios (win rate, correlation, drawdown)",
+        "Cross-database query patterns defined for graph+time-series joins"
+      ]
     },
     {
       "key": "A-179",
@@ -1526,13 +1485,21 @@
       "tag": "AGENT",
       "priority": "high",
       "assignee": "Elon Musk",
-      "status": "pending",
+      "status": "done_but_unverified",
       "sourceStandup": "STD-29",
       "sourceStandupType": "adhoc-mre-signal-flow-visualization-hub-signals-page-overhaul",
       "sourceDate": "2026-02-23",
       "createdAt": "2026-02-23T11:18:21.941947-08:00",
-      "updatedAt": "2026-02-23T11:18:21.941947-08:00",
-      "completedAt": null
+      "updatedAt": "2026-02-23T12:51:30.000000-08:00",
+      "completedAt": "2026-02-23T12:51:30.000000-08:00",
+      "resolution": "Created WebSocket architecture specification at ~/clawd/clawdbot-hub/public/data/specs/mre-signal-flow-websocket-arch.md. Includes multi-tiered refresh rates, Redis pub/sub design, message buffering, rate limiting, and fallback systems.",
+      "description": "Build a multi-tiered WebSocket infrastructure with Redis pub/sub buffering to handle real-time updates for 676 tickers without overwhelming clients. The system needs different refresh rates: 100ms for price ticks, 1s for signals, 5s for attribution data, with intelligent message queuing and fallback mechanisms.",
+      "acceptanceCriteria": [
+        "Redis pub/sub messaging system implemented with topic-based routing",
+        "Tiered refresh rate system: 100ms ticks, 1s signals, 5s attribution with client subscription management",
+        "Message buffering and burst handling to prevent frame drops during high-volume periods",
+        "Fallback polling system activated if WebSocket connections fail"
+      ]
     },
     {
       "key": "A-180",
@@ -1540,13 +1507,21 @@
       "tag": "AGENT",
       "priority": "high",
       "assignee": "Steve Jobs",
-      "status": "pending",
+      "status": "done_but_unverified",
       "sourceStandup": "STD-29",
       "sourceStandupType": "adhoc-mre-signal-flow-visualization-hub-signals-page-overhaul",
       "sourceDate": "2026-02-23",
       "createdAt": "2026-02-23T11:18:21.941947-08:00",
-      "updatedAt": "2026-02-23T11:18:21.941947-08:00",
-      "completedAt": null
+      "updatedAt": "2026-02-23T12:52:00.000000-08:00",
+      "completedAt": "2026-02-23T12:52:00.000000-08:00",
+      "resolution": "Created D3-React UI specification at ~/clawd/clawdbot-hub/public/data/specs/mre-signal-flow-ui-spec.md. Includes component hierarchy, layout algorithms, modal system design, progressive disclosure system, and performance optimization strategies.",
+      "description": "Create a D3-React hybrid visualization system that renders interactive flowcharts for 676+ tickers with modal detail views. D3 handles the graph performance while React manages modal state and UI interactions. The system must support force-directed layouts, filtering, and progressive disclosure without browser performance degradation.",
+      "acceptanceCriteria": [
+        "D3.js force-directed graph layout implemented for 676+ nodes with optimized rendering",
+        "React modal system designed with strategy-ticker detail views and attribution metrics",
+        "Component hierarchy established with clean D3-React boundaries (D3 owns SVG, React owns UI)",
+        "Interactive filtering system: by strategy, by performance, by sector with persistent session state"
+      ]
     },
     {
       "key": "A-181",
@@ -1554,13 +1529,21 @@
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "Chris Vermeullen",
-      "status": "pending",
+      "status": "done_but_unverified",
       "sourceStandup": "STD-29",
       "sourceStandupType": "adhoc-mre-signal-flow-visualization-hub-signals-page-overhaul",
       "sourceDate": "2026-02-23",
       "createdAt": "2026-02-23T11:18:21.941947-08:00",
-      "updatedAt": "2026-02-23T11:18:21.941947-08:00",
-      "completedAt": null
+      "updatedAt": "2026-02-23T12:52:30.000000-08:00",
+      "completedAt": "2026-02-23T12:52:30.000000-08:00",
+      "resolution": "Created attribution metrics specification at ~/clawd/clawdbot-hub/public/data/specs/mre-signal-flow-attribution-metrics.md. Includes win rate analysis, return metrics, drawdown calculations, correlation analysis, regime dependency, and modal display specifications.",
+      "description": "Define a comprehensive attribution metrics specification for strategy-ticker modal views that connects signal flow to P&L impact. Metrics include win rate, average return per signal, maximum drawdown periods, and portfolio correlation analysis with configurable timeframes (daily, weekly, monthly views).",
+      "acceptanceCriteria": [
+        "Win rate calculation defined: successful signals vs. total signals per strategy-ticker pair",
+        "Return metrics specified: average return, max gain, max loss per signal with time decay analysis",
+        "Drawdown analysis: maximum drawdown period, recovery time, and frequency per strategy",
+        "Correlation metrics: strategy-to-portfolio correlation, ticker cross-correlations, and regime dependency"
+      ]
     }
   ]
 }

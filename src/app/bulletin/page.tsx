@@ -21,10 +21,10 @@ import TicketDetailModal from "@/components/TicketDetailModal";
 interface Task {
   key: string;
   text: string;
-  tag: "AGENT" | "JOSHUA";
+  tag: "AGENT" | "JOSHUA" | "PLAN";
   priority: "high" | "medium" | "low";
   assignee: string;
-  status: "pending" | "in-progress" | "done" | "done_but_unverified";
+  status: "pending" | "in-progress" | "done" | "done_but_unverified" | "approved";
   sourceStandup: string;
   sourceStandupType: string;
   sourceDate: string;
@@ -32,6 +32,7 @@ interface Task {
   updatedAt: string;
   completedAt?: string | null;
   sprintReady?: boolean;
+  specFile?: string;
 }
 
 interface TaskRegistry {
@@ -146,6 +147,12 @@ const statusConfig = {
     bgColor: "from-slate-850 to-emerald-950/20",
     icon: CheckCircle
   },
+  approved: { 
+    label: "Approved", 
+    color: "emerald", 
+    bgColor: "from-slate-850 to-emerald-950/20",
+    icon: CheckCircle
+  },
 };
 
 function TaskCard({ task, onClick }: { task: Task; onClick: (task: Task) => void }) {
@@ -153,7 +160,8 @@ function TaskCard({ task, onClick }: { task: Task; onClick: (task: Task) => void
     pending: "border-amber-500/30",
     "in-progress": "border-blue-500/30",
     done_but_unverified: "border-yellow-500/30", 
-    done: "border-emerald-500/30"
+    done: "border-emerald-500/30",
+    approved: "border-emerald-500/30"
   };
 
   const priorityColors = {
@@ -187,6 +195,10 @@ function TaskCard({ task, onClick }: { task: Task; onClick: (task: Task) => void
           {task.tag === "AGENT" ? (
             <span className="inline-block px-2 py-0.5 rounded text-xs font-semibold bg-cyan-500/15 text-cyan-400 border border-cyan-500/30">
               🤖 AGENT
+            </span>
+          ) : task.tag === "PLAN" ? (
+            <span className="inline-block px-2 py-0.5 rounded text-xs font-semibold bg-violet-500/15 text-violet-400 border border-violet-500/30">
+              📋 PLAN
             </span>
           ) : (
             <span className="inline-block px-2 py-0.5 rounded text-xs font-semibold bg-purple-500/15 text-purple-400 border border-purple-500/30">
@@ -321,7 +333,8 @@ export default function BulletinPage() {
   const totalTasks = taskRegistry?.tasks.length || 0;
   const agentTasks = taskRegistry?.tasks.filter((t: Task) => t.tag === "AGENT").length || 0;
   const joshuaTasks = taskRegistry?.tasks.filter((t: Task) => t.tag === "JOSHUA").length || 0;
-  const doneTasks = taskRegistry?.tasks.filter((t: Task) => t.status === "done").length || 0;
+  const planTasks = taskRegistry?.tasks.filter((t: Task) => t.tag === "PLAN").length || 0;
+  const doneTasks = taskRegistry?.tasks.filter((t: Task) => t.status === "done" || t.status === "approved").length || 0;
   const completionPercent = totalTasks > 0 ? Math.round((doneTasks / totalTasks) * 100) : 0;
 
   // Get unique standup types for filter
@@ -338,7 +351,8 @@ export default function BulletinPage() {
     pending: filteredTasks.filter(t => t.status === 'pending'),
     "in-progress": filteredTasks.filter(t => t.status === 'in-progress'),
     done_but_unverified: filteredTasks.filter(t => t.status === 'done_but_unverified'),
-    done: filteredTasks.filter(t => t.status === 'done')
+    done: filteredTasks.filter(t => t.status === 'done'),
+    approved: filteredTasks.filter(t => t.status === 'approved')
   };
 
   const handleTaskClick = (task: Task) => {
@@ -456,7 +470,7 @@ export default function BulletinPage() {
       </div>
 
       {/* Stats Bar */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
         <div className="bg-slate-900/50 rounded-xl border border-slate-800 p-3 text-center">
           <p className="text-xl font-bold text-slate-100">{totalTasks}</p>
           <p className="text-[10px] text-slate-500 mt-0.5">Total Tasks</p>
@@ -468,6 +482,10 @@ export default function BulletinPage() {
         <div className="bg-slate-900/50 rounded-xl border border-slate-800 p-3 text-center">
           <p className="text-xl font-bold text-purple-400">{joshuaTasks}</p>
           <p className="text-[10px] text-slate-500 mt-0.5">👤 Joshua</p>
+        </div>
+        <div className="bg-slate-900/50 rounded-xl border border-slate-800 p-3 text-center">
+          <p className="text-xl font-bold text-violet-400">{planTasks}</p>
+          <p className="text-[10px] text-slate-500 mt-0.5">📋 Plan</p>
         </div>
         <div className="bg-slate-900/50 rounded-xl border border-slate-800 p-3 text-center">
           <p className="text-xl font-bold text-emerald-400">{doneTasks}</p>
@@ -491,7 +509,8 @@ export default function BulletinPage() {
               label="Type"
               options={[
                 {value: "agent", label: "🤖 Agent"},
-                {value: "joshua", label: "👤 Joshua"}
+                {value: "joshua", label: "👤 Joshua"},
+                {value: "plan", label: "📋 Plan"}
               ]}
               selected={typeFilter}
               onChange={setTypeFilter}
@@ -507,7 +526,8 @@ export default function BulletinPage() {
                 {value: "pending", label: "Pending"},
                 {value: "in-progress", label: "In Progress"},
                 {value: "done_but_unverified", label: "Review"},
-                {value: "done", label: "Done"}
+                {value: "done", label: "Done"},
+                {value: "approved", label: "Approved"}
               ]}
               selected={statusFilter}
               onChange={setStatusFilter}
@@ -598,12 +618,14 @@ export default function BulletinPage() {
                       "in-progress": "bg-blue-500/15 text-blue-400 border-blue-500/30",
                       done: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30",
                       done_but_unverified: "bg-yellow-500/15 text-yellow-400 border-yellow-500/30",
+                      approved: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30",
                     };
                     const statusLabels: Record<string, string> = {
                       pending: "PENDING",
                       "in-progress": "IN PROGRESS",
                       done: "DONE",
                       done_but_unverified: "REVIEW",
+                      approved: "APPROVED",
                     };
                     return (
                       <tr
@@ -638,6 +660,8 @@ export default function BulletinPage() {
                         <td className="px-4 py-3">
                           {task.tag === "AGENT" ? (
                             <span className="inline-block px-2 py-1 rounded text-[11px] font-semibold bg-cyan-500/15 text-cyan-400 border border-cyan-500/30">🤖 AGENT</span>
+                          ) : task.tag === "PLAN" ? (
+                            <span className="inline-block px-2 py-1 rounded text-[11px] font-semibold bg-violet-500/15 text-violet-400 border border-violet-500/30">📋 PLAN</span>
                           ) : (
                             <span className="inline-block px-2 py-1 rounded text-[11px] font-semibold bg-purple-500/15 text-purple-400 border border-purple-500/30">👤 CEO</span>
                           )}

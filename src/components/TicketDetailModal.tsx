@@ -25,10 +25,10 @@ import {
 interface Task {
   key: string;
   text: string;
-  tag: "AGENT" | "JOSHUA";
+  tag: "AGENT" | "JOSHUA" | "PLAN";
   priority: "high" | "medium" | "low";
   assignee: string;
-  status: "pending" | "in-progress" | "done" | "done_but_unverified";
+  status: "pending" | "in-progress" | "done" | "done_but_unverified" | "approved";
   sourceStandup: string;
   sourceStandupType: string;
   sourceDate: string;
@@ -36,6 +36,7 @@ interface Task {
   updatedAt: string;
   completedAt?: string | null;
   sprintReady?: boolean;
+  specFile?: string;
 }
 
 interface TicketDetailModalProps {
@@ -78,6 +79,14 @@ const statusOptions = [
     icon: CheckCircle,
     description: "Completed and verified"
   },
+  { 
+    value: "approved", 
+    label: "Approved", 
+    color: "emerald", 
+    bg: "bg-emerald-600",
+    icon: CheckCircle,
+    description: "Approved by CEO (PLAN tickets only)"
+  },
 ] as const;
 
 // Priority options
@@ -117,19 +126,29 @@ function PriorityBadge({ priority }: { priority: Task["priority"] }) {
 // Interactive status selector for CEO tickets
 function StatusSelector({ 
   currentStatus, 
+  taskTag,
   onSelect, 
   onCancel 
 }: { 
   currentStatus: Task["status"]; 
+  taskTag: Task["tag"];
   onSelect: (status: Task["status"]) => void;
   onCancel: () => void;
 }) {
+  // Filter status options - only show "approved" for PLAN tickets
+  const availableOptions = statusOptions.filter(opt => {
+    if (opt.value === "approved") {
+      return taskTag === "PLAN";
+    }
+    return true;
+  });
+
   return (
     <div className="fixed inset-0 z-[60] bg-black/40 flex items-center justify-center" onClick={onCancel}>
       <div className="bg-slate-800 border border-slate-600 rounded-xl p-4 shadow-2xl min-w-[280px]" onClick={e => e.stopPropagation()}>
         <h3 className="text-sm font-semibold text-slate-300 mb-3">Update Status</h3>
         <div className="space-y-2">
-          {statusOptions.map(opt => {
+          {availableOptions.map(opt => {
             const Icon = opt.icon;
             const isActive = opt.value === currentStatus;
             return (
@@ -427,6 +446,71 @@ function SourceStandupLinkSection({ task }: { task: Task }) {
   );
 }
 
+// Spec Document Section Component (for PLAN tickets)
+function SpecDocumentSection({ task }: { task: Task }) {
+  const [specContent, setSpecContent] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (task.specFile) {
+      setIsLoading(true);
+      setError(null);
+      
+      // Fetch spec file content
+      fetch(`/api/specs?path=${encodeURIComponent(task.specFile)}`)
+        .then(res => {
+          if (!res.ok) throw new Error('Failed to fetch spec file');
+          return res.text();
+        })
+        .then(content => {
+          setSpecContent(content);
+        })
+        .catch(err => {
+          console.error('Failed to load spec file:', err);
+          setError('Failed to load specification document');
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    }
+  }, [task.specFile]);
+
+  if (!task.specFile) return null;
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center gap-2">
+        <BookOpen className="w-4 h-4 text-violet-400" />
+        <h2 className="text-sm font-semibold text-slate-300 uppercase tracking-wider">Spec Document</h2>
+      </div>
+      
+      {isLoading && (
+        <div className="flex items-center gap-2 text-slate-500 text-sm">
+          <div className="w-4 h-4 border-2 border-slate-600 border-t-violet-400 rounded-full animate-spin"></div>
+          Loading specification...
+        </div>
+      )}
+      
+      {error && (
+        <div className="p-3 bg-red-900/20 border border-red-700 rounded-lg text-red-300 text-sm">
+          {error}
+        </div>
+      )}
+      
+      {specContent && (
+        <div className="bg-slate-800/30 border border-slate-700 rounded-lg p-4 max-h-96 overflow-auto">
+          <div className="prose prose-slate prose-invert prose-sm max-w-none">
+            <pre className="whitespace-pre-wrap text-slate-300 text-sm leading-relaxed">
+              {specContent}
+            </pre>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // Notes for Theo Section Component
 function NotesForTheoSection({ task, onUpdate }: { task: Task; onUpdate: (updates: Partial<Task>) => void }) {
   const [notes, setNotes] = useState("");
@@ -522,8 +606,9 @@ export default function TicketDetailModal({ task, onClose, onUpdate }: TicketDet
   }, [task.sourceStandup]);
 
   const isCeoTicket = localTask.tag === "JOSHUA";
-  // Allow status changes for ALL tickets in review, not just CEO tickets
-  const canChangeStatus = isCeoTicket || localTask.status === "done_but_unverified";
+  const isPlanTicket = localTask.tag === "PLAN";
+  // Allow status changes for CEO tickets, PLAN tickets, and any ticket in review
+  const canChangeStatus = isCeoTicket || isPlanTicket || localTask.status === "done_but_unverified";
 
   // Close on Escape key
   useEffect(() => {
@@ -668,6 +753,7 @@ export default function TicketDetailModal({ task, onClose, onUpdate }: TicketDet
 
             {/* Main Sections */}
             <DescriptionSection task={localTask} onUpdate={onUpdate} />
+            {localTask.tag === "PLAN" && <SpecDocumentSection task={localTask} />}
             <AcceptanceCriteriaSection task={localTask} onUpdate={onUpdate} />
             <SourceStandupLinkSection task={localTask} />
             <NotesForTheoSection task={localTask} onUpdate={onUpdate} />
@@ -837,6 +923,7 @@ export default function TicketDetailModal({ task, onClose, onUpdate }: TicketDet
       {showStatusSelector && (
         <StatusSelector 
           currentStatus={localTask.status}
+          taskTag={localTask.tag}
           onSelect={handleStatusChange}
           onCancel={() => setShowStatusSelector(false)}
         />

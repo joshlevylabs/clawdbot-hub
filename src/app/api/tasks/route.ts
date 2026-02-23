@@ -16,10 +16,10 @@ const supabaseHeaders = {
 interface Task {
   key: string;
   text: string;
-  tag: "AGENT" | "JOSHUA";
+  tag: "AGENT" | "JOSHUA" | "PLAN";
   priority: "high" | "medium" | "low";
   assignee: string;
-  status: "pending" | "in-progress" | "done" | "done_but_unverified" | "resolved";
+  status: "pending" | "in-progress" | "done" | "done_but_unverified" | "resolved" | "approved";
   sourceStandup: string;
   sourceStandupType: string;
   sourceDate: string;
@@ -28,6 +28,7 @@ interface Task {
   completedAt?: string | null;
   sprintReady?: boolean;
   resolution?: string;
+  specFile?: string;
 }
 
 interface TaskRegistry {
@@ -136,7 +137,7 @@ export async function PATCH(request: NextRequest) {
 
     // Handle status updates (persisted to Supabase)
     if (status) {
-      const validStatuses = ["pending", "in-progress", "done", "done_but_unverified"];
+      const validStatuses = ["pending", "in-progress", "done", "done_but_unverified", "approved"];
       if (!validStatuses.includes(status)) {
         return NextResponse.json({ error: `Invalid status. Must be one of: ${validStatuses.join(", ")}` }, { status: 400 });
       }

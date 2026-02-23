@@ -96,6 +96,15 @@ interface StageDetails {
 }
 
 // Calculate pipeline stages from MRE data
+interface StrategyVoteStage {
+  name: string;
+  key: string;
+  inputCount: number;
+  outputCount: number;
+  passed: MRESignal[];
+  filtered: MRESignal[];
+}
+
 function calculatePipelineStages(signals: MRESignal[], dataType: 'core' | 'universe') {
   const totalTickers = signals.length;
   
@@ -104,46 +113,53 @@ function calculatePipelineStages(signals: MRESignal[], dataType: 'core' | 'unive
     inputCount: totalTickers,
     outputCount: totalTickers,
     passed: signals,
-    filtered: []
+    filtered: [] as MRESignal[]
   };
   
-  // Step 2: Strategy Screening (only meaningful for universe data with strategy_votes)
-  let strategyScreenPassed = signals;
-  let strategyScreenFiltered: MRESignal[] = [];
+  // Step 2: Individual Strategy Votes (5 strategies, each evaluates all tickers)
+  const strategyNames = [
+    { key: 'fear_greed', name: 'Fear & Greed' },
+    { key: 'regime_confirmation', name: 'Regime Confirm' },
+    { key: 'rsi_oversold', name: 'RSI Oversold' },
+    { key: 'mean_reversion', name: 'Mean Reversion' },
+    { key: 'momentum', name: 'Momentum' },
+  ];
   
-  if (dataType === 'universe') {
-    // Tickers with at least one BUY vote from the 5 strategies
-    strategyScreenPassed = signals.filter(s => {
-      if (!s.strategy_votes) return false;
-      return Object.values(s.strategy_votes).some(vote => vote === true);
+  const strategyVotes: StrategyVoteStage[] = strategyNames.map(({ key, name }) => {
+    const passed = signals.filter(s => {
+      if (s.strategy_votes) return s.strategy_votes[key as keyof typeof s.strategy_votes] === true;
+      // Core tickers don't have strategy_votes — use signal_track as proxy for fear_greed
+      if (key === 'fear_greed') return s.signal_track !== 'none' && s.signal_track !== undefined;
+      return false;
     });
-    strategyScreenFiltered = signals.filter(s => {
-      if (!s.strategy_votes) return true; // No strategy votes = filtered
-      return !Object.values(s.strategy_votes).some(vote => vote === true);
-    });
-  } else {
-    // For core data, use signal_strength > 0 as proxy for strategy screening
-    strategyScreenPassed = signals.filter(s => s.signal_strength > 0 || s.signal_track !== 'none');
-    strategyScreenFiltered = signals.filter(s => s.signal_strength === 0 && s.signal_track === 'none');
-  }
+    const filtered = signals.filter(s => !passed.includes(s));
+    return { name, key, inputCount: totalTickers, outputCount: passed.length, passed, filtered };
+  });
   
-  const strategyStage = {
+  // Tickers that got at least one BUY vote from any strategy
+  const anyVotePassed = signals.filter(s => {
+    if (s.strategy_votes) return Object.values(s.strategy_votes).some(v => v === true);
+    return s.signal_strength > 0 || (s.signal_track !== 'none' && s.signal_track !== undefined);
+  });
+  const anyVoteFiltered = signals.filter(s => !anyVotePassed.includes(s));
+  
+  const strategyMerge = {
     inputCount: totalTickers,
-    outputCount: strategyScreenPassed.length,
-    passed: strategyScreenPassed,
-    filtered: strategyScreenFiltered
+    outputCount: anyVotePassed.length,
+    passed: anyVotePassed,
+    filtered: anyVoteFiltered
   };
   
   // Step 3: Signal Gating (sell suppress + bear suppress)
-  const signalGatePassed = strategyScreenPassed.filter(s => 
+  const signalGatePassed = anyVotePassed.filter(s => 
     !s.bear_suppressed && !s.sell_suppressed
   );
-  const signalGateFiltered = strategyScreenPassed.filter(s => 
+  const signalGateFiltered = anyVotePassed.filter(s => 
     s.bear_suppressed || s.sell_suppressed
   );
   
   const signalGateStage = {
-    inputCount: strategyScreenPassed.length,
+    inputCount: anyVotePassed.length,
     outputCount: signalGatePassed.length,
     passed: signalGatePassed,
     filtered: signalGateFiltered
@@ -175,13 +191,14 @@ function calculatePipelineStages(signals: MRESignal[], dataType: 'core' | 'unive
   const outputStage = {
     inputCount: finalPassed.length,
     outputCount: finalPassed.length,
-    passed: finalPassed.sort((a, b) => b.signal_strength - a.signal_strength), // Sort by confidence desc
-    filtered: []
+    passed: [...finalPassed].sort((a, b) => b.signal_strength - a.signal_strength),
+    filtered: [] as MRESignal[]
   };
   
   return {
     input: inputStage,
-    strategyScreen: strategyStage,
+    strategyVotes,
+    strategyMerge,
     signalGating: signalGateStage,
     confidenceTuning: confidenceStage,
     finalFilters: finalStage,
@@ -242,7 +259,20 @@ export default function SignalFlowTab() {
     const currentData = dataMode === 'core' ? coreData : universeData;
     if (!currentData?.signals?.by_asset_class) return null;
     
-    return calculatePipelineStages(currentData.signals.by_asset_class, dataMode);
+    let signals = currentData.signals.by_asset_class;
+    
+    // For universe mode: merge core 24 tickers (they're missing from universe file)
+    if (dataMode === 'universe' && coreData?.signals?.by_asset_class) {
+      const uniSymbols = new Set(signals.map((s: MRESignal) => s.symbol));
+      const missingCore = coreData.signals.by_asset_class.filter(
+        (s: MRESignal) => !uniSymbols.has(s.symbol)
+      );
+      if (missingCore.length > 0) {
+        signals = [...signals, ...missingCore];
+      }
+    }
+    
+    return calculatePipelineStages(signals, dataMode);
   }, [coreData, universeData, dataMode]);
   
   const currentData = dataMode === 'core' ? coreData : universeData;
@@ -251,8 +281,35 @@ export default function SignalFlowTab() {
   const handleStageClick = (stageKey: string) => {
     if (!pipelineData) return;
     
+    // Handle individual strategy vote clicks
+    if (stageKey.startsWith('strategy_')) {
+      const stratKey = stageKey.replace('strategy_', '');
+      const sv = pipelineData.strategyVotes.find(s => s.key === stratKey);
+      if (!sv) return;
+      
+      setSelectedStage({
+        name: `${sv.name} Strategy`,
+        description: `Tickers where ${sv.name} voted BUY`,
+        stageType: 'filter',
+        inputCount: sv.inputCount,
+        outputCount: sv.outputCount,
+        filteredTickers: sv.filtered.slice(0, 50).map(t => ({
+          symbol: t.symbol,
+          reason: `${sv.name} did not vote BUY`,
+          signal: t.signal,
+          currentPrice: t.price
+        })),
+        passedTickers: sv.passed.map(t => ({
+          symbol: t.symbol,
+          signal: t.signal,
+          currentPrice: t.price
+        }))
+      });
+      return;
+    }
+    
     const stageData = pipelineData[stageKey as keyof typeof pipelineData];
-    if (!stageData) return;
+    if (!stageData || Array.isArray(stageData)) return;
     
     // Create stage details for the panel
     let stageDetails: StageDetails;
@@ -261,12 +318,12 @@ export default function SignalFlowTab() {
       case 'input':
         stageDetails = {
           name: 'Universe Input',
-          description: `${dataMode === 'core' ? '24 core' : '676'} tickers entering the MRE pipeline`,
+          description: `${pipelineData.input.inputCount.toLocaleString()} tickers entering the MRE pipeline`,
           stageType: 'input',
           inputCount: stageData.inputCount,
           outputCount: stageData.outputCount,
           filteredTickers: [],
-          passedTickers: stageData.passed.map(t => ({
+          passedTickers: stageData.passed.slice(0, 50).map(t => ({
             symbol: t.symbol,
             signal: t.signal,
             currentPrice: t.price
@@ -274,18 +331,16 @@ export default function SignalFlowTab() {
         };
         break;
         
-      case 'strategyScreen':
+      case 'strategyMerge':
         stageDetails = {
-          name: 'Strategy Screening',
-          description: '5 strategies vote BUY/no-buy per ticker',
+          name: 'Strategy Merge',
+          description: 'Tickers with at least one BUY vote from any strategy',
           stageType: 'filter',
           inputCount: stageData.inputCount,
           outputCount: stageData.outputCount,
-          filteredTickers: stageData.filtered.map(t => ({
+          filteredTickers: stageData.filtered.slice(0, 50).map(t => ({
             symbol: t.symbol,
-            reason: dataMode === 'universe' 
-              ? `No BUY votes from 5 strategies (F&G: ${Math.round(t.current_fg)})` 
-              : `Signal strength 0, F&G ${Math.round(t.current_fg)} above thresholds`,
+            reason: `No BUY votes from any strategy (F&G: ${Math.round(t.current_fg)})`,
             signal: t.signal,
             currentPrice: t.price
           })),
@@ -532,62 +587,119 @@ export default function SignalFlowTab() {
       </div>
 
       {/* Pipeline Visualization */}
-      <div className="bg-slate-800/30 rounded-xl border border-slate-700/50 p-8">
-        <div className="flex items-center overflow-x-auto pb-4 space-x-0">
-          <PipelineStage
-            name="Universe Input"
-            description={`${dataMode === 'core' ? '24 core' : '676'} tickers entering pipeline`}
-            inputCount={pipelineData.input.inputCount}
-            outputCount={pipelineData.input.outputCount}
-            onClick={() => handleStageClick('input')}
-            stageType="input"
-          />
+      <div className="bg-slate-800/30 rounded-xl border border-slate-700/50 p-6 overflow-x-auto">
+        <div className="flex items-stretch min-w-[1200px]">
           
-          <PipelineStage
-            name="Strategy Screen"
-            description="5 strategies vote BUY/no-buy"
-            inputCount={pipelineData.strategyScreen.inputCount}
-            outputCount={pipelineData.strategyScreen.outputCount}
-            onClick={() => handleStageClick('strategyScreen')}
-            stageType="filter"
-          />
+          {/* Stage 1: Universe Input */}
+          <div className="flex items-center">
+            <PipelineStage
+              name="Universe Input"
+              description={`${pipelineData.input.inputCount.toLocaleString()} tickers`}
+              inputCount={pipelineData.input.inputCount}
+              outputCount={pipelineData.input.outputCount}
+              onClick={() => handleStageClick('input')}
+              stageType="input"
+            />
+          </div>
           
-          <PipelineStage
-            name="Signal Gating"
-            description="Sell suppress + bear suppress"
-            inputCount={pipelineData.signalGating.inputCount}
-            outputCount={pipelineData.signalGating.outputCount}
-            onClick={() => handleStageClick('signalGating')}
-            stageType="filter"
-          />
+          {/* Arrow → */}
+          <div className="flex items-center px-2">
+            <div className="text-slate-600 text-xl">→</div>
+          </div>
           
-          <PipelineStage
-            name="Confidence Tuning"
-            description="Regime, role, rotation, sideways, Kalshi"
-            inputCount={pipelineData.confidenceTuning.inputCount}
-            outputCount={pipelineData.confidenceTuning.outputCount}
-            onClick={() => handleStageClick('confidenceTuning')}
-            stageType="modifier"
-          />
+          {/* Stage 2: 5 Strategy Votes (fanned out vertically) */}
+          <div className="flex flex-col gap-1.5 justify-center">
+            <div className="text-xs font-semibold text-slate-400 text-center mb-1">Strategy Votes</div>
+            {pipelineData.strategyVotes.map((sv) => (
+              <div
+                key={sv.key}
+                onClick={() => handleStageClick(`strategy_${sv.key}`)}
+                className="flex items-center justify-between gap-3 px-3 py-1.5 bg-slate-800/80 rounded-lg border border-slate-700/50 hover:border-primary-500/50 cursor-pointer transition-all min-w-[200px]"
+              >
+                <span className="text-xs font-medium text-slate-300 truncate">{sv.name}</span>
+                <div className="flex items-center gap-2">
+                  <span className={`text-xs font-bold ${sv.outputCount > 0 ? 'text-emerald-400' : 'text-slate-500'}`}>
+                    {sv.outputCount}
+                  </span>
+                  <span className="text-[10px] text-slate-600">BUY</span>
+                </div>
+              </div>
+            ))}
+            {/* Merge summary */}
+            <div className="mt-1 pt-1.5 border-t border-slate-700/50 flex items-center justify-between px-3">
+              <span className="text-[10px] text-slate-500">Any vote →</span>
+              <span className="text-xs font-bold text-emerald-400">{pipelineData.strategyMerge.outputCount}</span>
+            </div>
+          </div>
           
-          <PipelineStage
-            name="Final Filters"
-            description="Cluster limit, asset confidence, crash mode"
-            inputCount={pipelineData.finalFilters.inputCount}
-            outputCount={pipelineData.finalFilters.outputCount}
-            onClick={() => handleStageClick('finalFilters')}
-            stageType="filter"
-          />
+          {/* Arrow → */}
+          <div className="flex items-center px-2">
+            <div className="text-slate-600 text-xl">→</div>
+          </div>
           
-          <PipelineStage
-            name="BUY Signals"
-            description="Final output with confidence scores"
-            inputCount={pipelineData.output.inputCount}
-            outputCount={pipelineData.output.outputCount}
-            onClick={() => handleStageClick('output')}
-            stageType="output"
-            isLast={true}
-          />
+          {/* Stage 3: Signal Gating */}
+          <div className="flex items-center">
+            <PipelineStage
+              name="Signal Gating"
+              description="Bear suppress + sell suppress"
+              inputCount={pipelineData.signalGating.inputCount}
+              outputCount={pipelineData.signalGating.outputCount}
+              onClick={() => handleStageClick('signalGating')}
+              stageType="filter"
+            />
+          </div>
+          
+          {/* Arrow → */}
+          <div className="flex items-center px-2">
+            <div className="text-slate-600 text-xl">→</div>
+          </div>
+          
+          {/* Stage 4: Confidence Tuning */}
+          <div className="flex items-center">
+            <PipelineStage
+              name="Confidence Tuning"
+              description="Regime, role, rotation, sideways, Kalshi"
+              inputCount={pipelineData.confidenceTuning.inputCount}
+              outputCount={pipelineData.confidenceTuning.outputCount}
+              onClick={() => handleStageClick('confidenceTuning')}
+              stageType="modifier"
+            />
+          </div>
+          
+          {/* Arrow → */}
+          <div className="flex items-center px-2">
+            <div className="text-slate-600 text-xl">→</div>
+          </div>
+          
+          {/* Stage 5: Final Filters */}
+          <div className="flex items-center">
+            <PipelineStage
+              name="Final Filters"
+              description="Cluster, confidence, crash, cap"
+              inputCount={pipelineData.finalFilters.inputCount}
+              outputCount={pipelineData.finalFilters.outputCount}
+              onClick={() => handleStageClick('finalFilters')}
+              stageType="filter"
+            />
+          </div>
+          
+          {/* Arrow → */}
+          <div className="flex items-center px-2">
+            <div className="text-slate-600 text-xl">→</div>
+          </div>
+          
+          {/* Stage 6: Output */}
+          <div className="flex items-center">
+            <PipelineStage
+              name="BUY Signals"
+              description="Final output"
+              inputCount={pipelineData.output.inputCount}
+              outputCount={pipelineData.output.outputCount}
+              onClick={() => handleStageClick('output')}
+              stageType="output"
+              isLast={true}
+            />
+          </div>
         </div>
         
         {/* Current State Summary */}

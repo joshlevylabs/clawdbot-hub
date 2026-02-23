@@ -337,7 +337,7 @@ export default function SignalFlowTab() {
         stageType: 'filter',
         inputCount: sv.inputCount,
         outputCount: sv.outputCount,
-        filteredTickers: sv.filtered.slice(0, 50).map(t => ({
+        filteredTickers: sv.filtered.map(t => ({
           symbol: t.symbol,
           reason: `${sv.name} did not vote BUY`,
           signal: t.signal,
@@ -346,7 +346,7 @@ export default function SignalFlowTab() {
         })),
         passedTickers: sv.passed.map(t => ({
           symbol: t.symbol,
-          signal: t.signal,
+          signal: 'BUY' as const,
           currentPrice: t.price,
           rawData: t
         }))

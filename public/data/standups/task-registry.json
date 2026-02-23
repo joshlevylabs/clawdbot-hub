@@ -1035,13 +1035,13 @@
       "tag": "AGENT",
       "priority": "low",
       "assignee": "Dave",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "STD-6",
       "sourceStandupType": "morning-kickoff",
       "sourceDate": "2026-02-22",
       "createdAt": "2026-02-22T05:02:37.987157-08:00",
       "updatedAt": "2026-02-22T05:03:54.428177-08:00",
-      "completedAt": null
+      "completedAt": "2026-02-23T12:07:39.737117"
     },
     {
       "key": "A-151",
@@ -1597,13 +1597,13 @@
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "Dave",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "STD-31",
       "sourceStandupType": "midday-checkpoint",
       "sourceDate": "2026-02-23",
       "createdAt": "2026-02-23T12:05:16.596332-08:00",
       "updatedAt": "2026-02-23T12:05:16.596332-08:00",
-      "completedAt": null
+      "completedAt": "2026-02-23T12:07:39.737133"
     },
     {
       "key": "A-186",

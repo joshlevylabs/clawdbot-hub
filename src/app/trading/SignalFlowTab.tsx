@@ -76,13 +76,22 @@ interface MRESignal {
     current_price: number;
     swing_high: number;
     swing_low: number;
+    swing_high_date?: string;
+    swing_low_date?: string;
+    swing_high_idx?: number;
+    swing_low_idx?: number;
     trend: string;
-    retracements?: { level: number; price: number }[];
-    extensions?: { level: number; price: number }[];
+    swing_quality?: string;
+    lookback_period?: string;
+    retracements?: Record<string, number>;  // {"0.0": 288.35, "23.6": 260.06, ...}
+    extensions?: Record<string, number>;     // {"100.0": 363.07, ...}
     nearest_support?: number;
     nearest_resistance?: number;
-    entry_zone?: { min: number; max: number };
-    profit_targets?: { level: number; price: number }[];
+    entry_zone?: string;                     // "242.56 - 214.27" (STRING!)
+    profit_targets?: number[];               // [395.67, 437.15] (number array!)
+    extension_type?: string;
+    pullback_low?: number;
+    pullback_date?: string;
   };
 }
 

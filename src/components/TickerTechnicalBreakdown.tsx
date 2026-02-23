@@ -15,10 +15,11 @@ import {
   CheckCircle,
   XCircle,
   AlertTriangle,
-  Info
+  Info,
+  ExternalLink
 } from "lucide-react";
 
-// Define the MRESignal interface locally to avoid circular imports
+// Define the MRESignal interface locally with CORRECT types matching actual JSON data
 interface MRESignal {
   symbol: string;
   signal: 'BUY' | 'HOLD' | 'SELL' | 'WATCH';
@@ -75,13 +76,22 @@ interface MRESignal {
     current_price: number;
     swing_high: number;
     swing_low: number;
+    swing_high_date?: string;
+    swing_low_date?: string;
+    swing_high_idx?: number;
+    swing_low_idx?: number;
     trend: string;
-    retracements?: { level: number; price: number }[];
-    extensions?: { level: number; price: number }[];
+    swing_quality?: string;
+    lookback_period?: string;
+    retracements?: Record<string, number>;  // {"0.0": 288.35, "23.6": 260.06, ...}
+    extensions?: Record<string, number>;     // {"100.0": 363.07, ...}
     nearest_support?: number;
     nearest_resistance?: number;
-    entry_zone?: { min: number; max: number };
-    profit_targets?: { level: number; price: number }[];
+    entry_zone?: string;                     // "242.56 - 214.27" (STRING!)
+    profit_targets?: number[];               // [395.67, 437.15] (number array!)
+    extension_type?: string;
+    pullback_low?: number;
+    pullback_date?: string;
   };
 }
 
@@ -336,7 +346,7 @@ export default function TickerTechnicalBreakdown({
   );
 }
 
-// Overview Tab Component
+// Overview Tab Component - FOCUSED ON CURRENT STRATEGY ONLY
 function OverviewTab({ 
   rawData, 
   reason, 
@@ -348,52 +358,52 @@ function OverviewTab({
   generatePipelineDecision: () => string;
   stageName: string;
 }) {
+  
+  // Determine which strategy to focus on based on stageName
+  const getRelevantStrategy = (stageName: string) => {
+    if (stageName.includes('Fear & Greed')) return 'fear_greed';
+    if (stageName.includes('Regime Confirm')) return 'regime_confirmation';
+    if (stageName.includes('RSI Oversold')) return 'rsi_oversold';
+    if (stageName.includes('Mean Reversion')) return 'mean_reversion';
+    if (stageName.includes('Momentum')) return 'momentum';
+    return null; // For non-strategy stages, show all
+  };
+
+  const relevantStrategy = getRelevantStrategy(stageName);
+
   return (
     <div className="space-y-4">
-      {/* Strategy Votes Summary */}
-      {rawData.strategy_votes && (
+      {/* Financial Chart - TradingView Link */}
+      <div>
+        <h4 className="text-sm font-semibold text-slate-300 mb-3 flex items-center gap-2">
+          <BarChart3 className="w-4 h-4" />
+          Financial Chart
+        </h4>
+        <div className="bg-slate-900/50 rounded p-3">
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-slate-300">View live chart with technical indicators</span>
+            <a
+              href={`https://www.tradingview.com/chart/?symbol=${rawData.symbol}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 px-3 py-1.5 bg-primary-600 hover:bg-primary-700 text-white text-sm rounded transition-colors"
+            >
+              <ExternalLink className="w-3 h-3" />
+              View Chart
+            </a>
+          </div>
+        </div>
+      </div>
+
+      {/* Strategy Analysis - FOCUSED ON CURRENT STRATEGY */}
+      {rawData.strategy_votes && relevantStrategy && (
         <div>
           <h4 className="text-sm font-semibold text-slate-300 mb-3 flex items-center gap-2">
             <CheckCircle className="w-4 h-4" />
-            Strategy Votes Summary
+            {stageName} Analysis
           </h4>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-            {Object.entries(rawData.strategy_votes).map(([strategy, voted]) => {
-              let explanation = "";
-              switch (strategy) {
-                case 'fear_greed':
-                  explanation = `F&G at ${rawData.current_fg.toFixed(0)} vs threshold ${rawData.fear_threshold}`;
-                  break;
-                case 'regime_confirmation':
-                  explanation = `${rawData.regime} regime`;
-                  break;
-                case 'rsi_oversold':
-                  explanation = `RSI at ${rawData.rsi_14?.toFixed(1) || 'N/A'}`;
-                  break;
-                case 'mean_reversion':
-                  explanation = `5d return: ${rawData.return_5d?.toFixed(1) || 'N/A'}%`;
-                  break;
-                case 'momentum':
-                  explanation = `20d momentum: ${rawData.momentum_20d?.toFixed(1) || 'N/A'}%`;
-                  break;
-              }
-              
-              return (
-                <div key={strategy} className="flex items-center justify-between px-3 py-2 bg-slate-900/50 rounded">
-                  <div className="flex items-center gap-2">
-                    {voted ? (
-                      <CheckCircle className="w-4 h-4 text-emerald-400" />
-                    ) : (
-                      <XCircle className="w-4 h-4 text-red-400" />
-                    )}
-                    <span className="text-sm text-slate-300 capitalize">
-                      {strategy.replace('_', ' ')}
-                    </span>
-                  </div>
-                  <span className="text-xs text-slate-400">{explanation}</span>
-                </div>
-              );
-            })}
+          <div className="bg-slate-900/50 rounded p-3">
+            {renderStrategyAnalysis(relevantStrategy, rawData)}
           </div>
         </div>
       )}
@@ -443,6 +453,142 @@ function OverviewTab({
       </div>
     </div>
   );
+}
+
+// Helper function to render strategy-specific analysis
+function renderStrategyAnalysis(strategy: string, rawData: MRESignal) {
+  const voted = rawData.strategy_votes?.[strategy as keyof typeof rawData.strategy_votes];
+  
+  switch (strategy) {
+    case 'fear_greed':
+      return (
+        <div className="space-y-2">
+          <div className="flex items-center gap-2">
+            {voted ? (
+              <CheckCircle className="w-4 h-4 text-emerald-400" />
+            ) : (
+              <XCircle className="w-4 h-4 text-red-400" />
+            )}
+            <span className={`text-sm font-medium ${voted ? 'text-emerald-400' : 'text-red-400'}`}>
+              {voted ? 'BUY Vote' : 'No BUY Vote'}
+            </span>
+          </div>
+          <div className="text-sm text-slate-300">
+            Fear & Greed Index: <span className="font-medium">{rawData.current_fg.toFixed(0)}</span> vs threshold{' '}
+            <span className="font-medium">{rawData.fear_threshold}</span>
+          </div>
+          <div className="text-xs text-slate-400">
+            {voted 
+              ? 'Market fear below threshold - contrarian buying opportunity detected'
+              : 'Market not fearful enough for contrarian entry'
+            }
+          </div>
+        </div>
+      );
+    
+    case 'regime_confirmation':
+      return (
+        <div className="space-y-2">
+          <div className="flex items-center gap-2">
+            {voted ? (
+              <CheckCircle className="w-4 h-4 text-emerald-400" />
+            ) : (
+              <XCircle className="w-4 h-4 text-red-400" />
+            )}
+            <span className={`text-sm font-medium ${voted ? 'text-emerald-400' : 'text-red-400'}`}>
+              {voted ? 'BUY Vote' : 'No BUY Vote'}
+            </span>
+          </div>
+          <div className="text-sm text-slate-300">
+            Current regime: <span className="font-medium capitalize">{rawData.regime}</span>
+          </div>
+          <div className="text-xs text-slate-400">
+            {voted 
+              ? 'Bull regime confirmed - trades align with trend direction'
+              : 'Bear/sideways regime - BUY signals not confirmed'
+            }
+          </div>
+        </div>
+      );
+    
+    case 'rsi_oversold':
+      return (
+        <div className="space-y-2">
+          <div className="flex items-center gap-2">
+            {voted ? (
+              <CheckCircle className="w-4 h-4 text-emerald-400" />
+            ) : (
+              <XCircle className="w-4 h-4 text-red-400" />
+            )}
+            <span className={`text-sm font-medium ${voted ? 'text-emerald-400' : 'text-red-400'}`}>
+              {voted ? 'BUY Vote' : 'No BUY Vote'}
+            </span>
+          </div>
+          <div className="text-sm text-slate-300">
+            RSI (14): <span className="font-medium">{rawData.rsi_14?.toFixed(1) || 'N/A'}</span>
+          </div>
+          <div className="text-xs text-slate-400">
+            {voted 
+              ? 'RSI below 30 - asset oversold and likely to bounce'
+              : 'RSI above 30 - asset not oversold enough'
+            }
+          </div>
+        </div>
+      );
+    
+    case 'mean_reversion':
+      return (
+        <div className="space-y-2">
+          <div className="flex items-center gap-2">
+            {voted ? (
+              <CheckCircle className="w-4 h-4 text-emerald-400" />
+            ) : (
+              <XCircle className="w-4 h-4 text-red-400" />
+            )}
+            <span className={`text-sm font-medium ${voted ? 'text-emerald-400' : 'text-red-400'}`}>
+              {voted ? 'BUY Vote' : 'No BUY Vote'}
+            </span>
+          </div>
+          <div className="text-sm text-slate-300">
+            5-day return: <span className="font-medium">{rawData.return_5d?.toFixed(1) || 'N/A'}%</span>
+          </div>
+          <div className="text-xs text-slate-400">
+            {voted 
+              ? 'Significant price drop detected - betting on reversion to mean'
+              : 'Price drop insufficient for mean reversion signal'
+            }
+          </div>
+        </div>
+      );
+    
+    case 'momentum':
+      return (
+        <div className="space-y-2">
+          <div className="flex items-center gap-2">
+            {voted ? (
+              <CheckCircle className="w-4 h-4 text-emerald-400" />
+            ) : (
+              <XCircle className="w-4 h-4 text-red-400" />
+            )}
+            <span className={`text-sm font-medium ${voted ? 'text-emerald-400' : 'text-red-400'}`}>
+              {voted ? 'BUY Vote' : 'No BUY Vote'}
+            </span>
+          </div>
+          <div className="text-sm text-slate-300">
+            20-day momentum: <span className="font-medium">{rawData.momentum_20d?.toFixed(1) || 'N/A'}%</span>
+          </div>
+          <div className="text-xs text-slate-400">
+            {voted 
+              ? 'Strong positive momentum - riding the trend'
+              : 'Momentum insufficient or negative'
+            }
+          </div>
+        </div>
+      );
+    
+    default:
+      return <div className="text-sm text-slate-400">Strategy analysis not available</div>;
+  }
 }
 
 // Technical Tab Component
@@ -659,7 +805,7 @@ function RegimeTab({ rawData }: { rawData: MRESignal }) {
   );
 }
 
-// Fibonacci Tab Component
+// Fibonacci Tab Component - FIXED to handle actual JSON data types
 function FibonacciTab({ rawData }: { rawData: MRESignal }) {
   const fib = rawData.fibonacci;
   if (!fib) return <div>No Fibonacci data available</div>;
@@ -725,14 +871,46 @@ function FibonacciTab({ rawData }: { rawData: MRESignal }) {
         )}
       </div>
 
-      {/* Entry Zone */}
+      {/* Entry Zone - FIXED: now expects string, not object */}
       {fib.entry_zone && (
         <div className="bg-slate-900/50 rounded-lg p-4">
           <h5 className="text-sm font-medium text-slate-300 mb-2">Entry Zone</h5>
-          <div className="flex justify-between">
-            <span className="text-emerald-400">${fib.entry_zone.min.toFixed(2)}</span>
-            <span className="text-slate-400">to</span>
-            <span className="text-emerald-400">${fib.entry_zone.max.toFixed(2)}</span>
+          <div className="text-sm text-slate-200">
+            {fib.entry_zone}
+          </div>
+        </div>
+      )}
+
+      {/* Retracements - FIXED: now expects Record<string, number> not array */}
+      {fib.retracements && (
+        <div className="bg-slate-900/50 rounded-lg p-4">
+          <h5 className="text-sm font-medium text-slate-300 mb-3">Fibonacci Retracements</h5>
+          <div className="space-y-2">
+            {Object.entries(fib.retracements)
+              .sort(([a], [b]) => parseFloat(a) - parseFloat(b))
+              .map(([level, price]) => (
+              <div key={level} className="flex justify-between text-sm">
+                <span>{parseFloat(level).toFixed(1)}%:</span>
+                <span className="text-amber-400">${price.toFixed(2)}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Extensions - FIXED: now expects Record<string, number> not array */}
+      {fib.extensions && (
+        <div className="bg-slate-900/50 rounded-lg p-4">
+          <h5 className="text-sm font-medium text-slate-300 mb-3">Fibonacci Extensions</h5>
+          <div className="space-y-2">
+            {Object.entries(fib.extensions)
+              .sort(([a], [b]) => parseFloat(a) - parseFloat(b))
+              .map(([level, price]) => (
+              <div key={level} className="flex justify-between text-sm">
+                <span>{parseFloat(level).toFixed(1)}%:</span>
+                <span className="text-emerald-400">${price.toFixed(2)}</span>
+              </div>
+            ))}
           </div>
         </div>
       )}
@@ -769,7 +947,7 @@ function FibonacciTab({ rawData }: { rawData: MRESignal }) {
         </div>
       </div>
 
-      {/* Profit Targets */}
+      {/* Profit Targets - FIXED: now expects number[] not {level, price}[] */}
       {fib.profit_targets && fib.profit_targets.length > 0 && (
         <div className="bg-slate-900/50 rounded-lg p-4">
           <h5 className="text-sm font-medium text-slate-300 mb-3">Profit Targets</h5>
@@ -777,7 +955,7 @@ function FibonacciTab({ rawData }: { rawData: MRESignal }) {
             {fib.profit_targets.slice(0, 3).map((target, idx) => (
               <div key={idx} className="flex justify-between text-sm">
                 <span>Target {idx + 1}:</span>
-                <span className="text-emerald-400">${target.price.toFixed(2)}</span>
+                <span className="text-emerald-400">${target.toFixed(2)}</span>
               </div>
             ))}
           </div>

@@ -1,7 +1,7 @@
 "use client";
 
-import { X, TrendingUp, TrendingDown, Filter, Minus, DollarSign, Activity } from 'lucide-react';
-import { useEffect } from 'react';
+import { X, TrendingUp, TrendingDown, Filter, Minus, DollarSign, Activity, Search } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import TickerTechnicalBreakdown from './TickerTechnicalBreakdown';
 
 // Define MRESignal interface for rawData
@@ -61,13 +61,22 @@ interface MRESignal {
     current_price: number;
     swing_high: number;
     swing_low: number;
+    swing_high_date?: string;
+    swing_low_date?: string;
+    swing_high_idx?: number;
+    swing_low_idx?: number;
     trend: string;
-    retracements?: { level: number; price: number }[];
-    extensions?: { level: number; price: number }[];
+    swing_quality?: string;
+    lookback_period?: string;
+    retracements?: Record<string, number>;  // {"0.0": 288.35, "23.6": 260.06, ...}
+    extensions?: Record<string, number>;     // {"100.0": 363.07, ...}
     nearest_support?: number;
     nearest_resistance?: number;
-    entry_zone?: { min: number; max: number };
-    profit_targets?: { level: number; price: number }[];
+    entry_zone?: string;                     // "242.56 - 214.27" (STRING!)
+    profit_targets?: number[];               // [395.67, 437.15] (number array!)
+    extension_type?: string;
+    pullback_low?: number;
+    pullback_date?: string;
   };
 }
 
@@ -99,10 +108,25 @@ interface PipelineDetailPanelProps {
   onClose: () => void;
 }
 
+// Strategy descriptions mapping
+const STRATEGY_DESCRIPTIONS: Record<string, string> = {
+  'Fear & Greed Strategy': "Triggers BUY when the CNN Fear & Greed Index drops below the ticker's fear threshold, indicating extreme market fear as a contrarian buying opportunity.",
+  'Regime Confirm Strategy': "Confirms BUY signals only when the ticker is in a bull regime (price above SMA), ensuring trades align with the broader trend direction.",
+  'RSI Oversold Strategy': "Triggers BUY when the 14-period RSI drops below 30, indicating the asset is oversold and likely to bounce.",
+  'Mean Reversion Strategy': "Triggers BUY when the 5-day price drop exceeds a threshold, betting on a reversion to the mean price.",
+  'Momentum Strategy': "Triggers BUY when 20-day momentum is strongly positive, riding the trend with confirmed directional strength.",
+  'Signal Gating': "Suppresses BUY signals in bear regimes (bear suppress) and converts SELL signals to HOLD (sell suppress) to reduce risk.",
+  'Confidence Tuning': "Adjusts signal confidence using regime weight, asset role evaluation, sector rotation, sideways penalty, and Kalshi prediction market data.",
+  'Final Filters': "Applies cluster limits (max 2 per sector), asset confidence thresholds, crash mode protection, and multiplier caps.",
+};
+
 export default function PipelineDetailPanel({
   stageDetails,
   onClose
 }: PipelineDetailPanelProps) {
+  const [activeTab, setActiveTab] = useState<'output' | 'filtered'>('output');
+  const [searchQuery, setSearchQuery] = useState('');
+
   // Close on escape key
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -131,160 +155,174 @@ export default function PipelineDetailPanel({
   const filteredCount = stageDetails.filteredTickers.length;
   const passedCount = stageDetails.passedTickers.length;
 
+  // Get strategy description
+  const strategyDescription = STRATEGY_DESCRIPTIONS[stageDetails.name] || stageDetails.description;
+
+  // Filter tickers based on search query
+  const filterTickers = (tickers: TickerDetail[]) => {
+    if (!searchQuery) return tickers;
+    return tickers.filter(ticker => 
+      ticker.symbol.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  };
+
+  const filteredOutput = filterTickers(stageDetails.passedTickers);
+  const filteredFiltered = filterTickers(stageDetails.filteredTickers);
+
   return (
     <>
       {/* Backdrop */}
       <div 
-        className="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-40"
+        className="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50"
         onClick={onClose}
       />
       
-      {/* Panel */}
-      <div className="fixed right-0 top-0 h-full w-full max-w-2xl bg-slate-900 border-l border-slate-700/50 z-50 overflow-hidden flex flex-col">
-        {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-slate-700/50">
-          <div className="flex items-center gap-3">
-            {getStageIcon()}
-            <div>
-              <h2 className="text-xl font-bold text-slate-100">{stageDetails.name}</h2>
-              <p className="text-sm text-slate-400 mt-1">{stageDetails.description}</p>
+      {/* Centered Modal */}
+      <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
+        <div className="bg-slate-900 rounded-xl shadow-2xl max-w-5xl w-full max-h-[85vh] overflow-hidden border border-slate-700/50 flex flex-col">
+          {/* Header */}
+          <div className="flex items-center justify-between p-6 border-b border-slate-700/50">
+            <div className="flex items-center gap-3">
+              {getStageIcon()}
+              <div>
+                <h2 className="text-xl font-bold text-slate-100">{stageDetails.name}</h2>
+                <p className="text-sm text-slate-400 mt-1">{stageDetails.description}</p>
+              </div>
+            </div>
+            <button
+              onClick={onClose}
+              className="p-2 rounded-lg hover:bg-slate-800 transition-colors"
+            >
+              <X className="w-5 h-5 text-slate-400" />
+            </button>
+          </div>
+
+          {/* Strategy Description Card */}
+          <div className="p-6 border-b border-slate-700/50 bg-slate-800/30">
+            <h3 className="text-lg font-semibold text-slate-200 mb-2">How This Strategy Works</h3>
+            <p className="text-slate-300 text-sm leading-relaxed">{strategyDescription}</p>
+          </div>
+          
+          {/* Summary Stats */}
+          <div className="p-6 border-b border-slate-700/50">
+            <div className="grid grid-cols-3 gap-4">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-slate-200">{stageDetails.inputCount.toLocaleString()}</div>
+                <div className="text-sm text-slate-400">Input</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-emerald-400">{stageDetails.outputCount.toLocaleString()}</div>
+                <div className="text-sm text-slate-400">Output</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-red-400">{filteredCount.toLocaleString()}</div>
+                <div className="text-sm text-slate-400">Filtered</div>
+              </div>
             </div>
           </div>
-          <button
-            onClick={onClose}
-            className="p-2 rounded-lg hover:bg-slate-800 transition-colors"
-          >
-            <X className="w-5 h-5 text-slate-400" />
-          </button>
-        </div>
-        
-        {/* Summary Stats */}
-        <div className="p-6 border-b border-slate-700/50">
-          <div className="grid grid-cols-3 gap-4">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-slate-200">{stageDetails.inputCount.toLocaleString()}</div>
-              <div className="text-sm text-slate-400">Input</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-emerald-400">{stageDetails.outputCount.toLocaleString()}</div>
-              <div className="text-sm text-slate-400">Output</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-red-400">{filteredCount.toLocaleString()}</div>
-              <div className="text-sm text-slate-400">Filtered</div>
+
+          {/* Search Bar */}
+          <div className="p-6 border-b border-slate-700/50">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Search symbols..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full bg-slate-800/50 border border-slate-700/50 rounded-lg pl-10 pr-3 py-2 text-sm text-slate-100 focus:outline-none focus:ring-2 focus:ring-primary-500"
+              />
             </div>
           </div>
-        </div>
-        
-        {/* Content */}
-        <div className="flex-1 overflow-y-auto">
-          <div className="p-6 space-y-6">
-            {/* Filtered Tickers (for filter stages) */}
-            {stageDetails.stageType === 'filter' && filteredCount > 0 && (
-              <div>
-                <h3 className="text-lg font-semibold text-slate-200 mb-4 flex items-center gap-2">
-                  <TrendingDown className="w-5 h-5 text-red-400" />
-                  Filtered Out ({filteredCount})
-                </h3>
+
+          {/* Tab Controls */}
+          <div className="flex border-b border-slate-700/50 bg-slate-800/20">
+            <button
+              onClick={() => setActiveTab('output')}
+              className={`px-6 py-3 text-sm font-medium transition-all relative ${
+                activeTab === 'output'
+                  ? 'text-emerald-400 bg-slate-800/50'
+                  : 'text-slate-400 hover:text-slate-300 hover:bg-slate-800/30'
+              }`}
+            >
+              Output ({filteredOutput.length})
+              {activeTab === 'output' && (
+                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-400" />
+              )}
+            </button>
+            <button
+              onClick={() => setActiveTab('filtered')}
+              className={`px-6 py-3 text-sm font-medium transition-all relative ${
+                activeTab === 'filtered'
+                  ? 'text-red-400 bg-slate-800/50'
+                  : 'text-slate-400 hover:text-slate-300 hover:bg-slate-800/30'
+              }`}
+            >
+              Filtered ({filteredFiltered.length})
+              {activeTab === 'filtered' && (
+                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-red-400" />
+              )}
+            </button>
+          </div>
+          
+          {/* Content */}
+          <div className="flex-1 overflow-y-auto">
+            <div className="p-6">
+              {activeTab === 'output' && (
                 <div className="space-y-3">
-                  {stageDetails.filteredTickers.map((ticker, idx) => (
-                    <TickerTechnicalBreakdown
-                      key={idx}
-                      symbol={ticker.symbol}
-                      signal={ticker.signal}
-                      signalStrength={ticker.signalStrength}
-                      currentPrice={ticker.currentPrice}
-                      rawData={ticker.rawData}
-                      reason={ticker.reason}
-                      stageType={stageDetails.stageType}
-                      stageName={stageDetails.name}
-                    />
-                  ))}
-                </div>
-              </div>
-            )}
-            
-            {/* Modifier Adjustments (for modifier stages) */}
-            {stageDetails.stageType === 'modifier' && passedCount > 0 && (
-              <div>
-                <h3 className="text-lg font-semibold text-slate-200 mb-4 flex items-center gap-2">
-                  <Activity className="w-5 h-5 text-amber-400" />
-                  Adjustments Applied ({passedCount})
-                </h3>
-                <div className="space-y-3">
-                  {stageDetails.passedTickers.map((ticker, idx) => (
-                    <TickerTechnicalBreakdown
-                      key={idx}
-                      symbol={ticker.symbol}
-                      signal={ticker.signal}
-                      signalStrength={ticker.signalStrength}
-                      currentPrice={ticker.currentPrice}
-                      rawData={ticker.rawData}
-                      reason={ticker.adjustmentValue !== undefined ? 
-                        `Adjustment: ${ticker.adjustmentValue >= 0 ? '+' : ''}${(ticker.adjustmentValue * 100).toFixed(1)}%` : 
-                        undefined}
-                      stageType={stageDetails.stageType}
-                      stageName={stageDetails.name}
-                    />
-                  ))}
-                </div>
-              </div>
-            )}
-            
-            {/* Final Output (for output stage) */}
-            {stageDetails.stageType === 'output' && passedCount > 0 && (
-              <div>
-                <h3 className="text-lg font-semibold text-slate-200 mb-4 flex items-center gap-2">
-                  <TrendingUp className="w-5 h-5 text-emerald-400" />
-                  Final BUY Signals ({passedCount})
-                </h3>
-                <div className="space-y-3">
-                  {stageDetails.passedTickers
-                    .sort((a, b) => (b.signalStrength || 0) - (a.signalStrength || 0))
-                    .map((ticker, idx) => (
-                    <TickerTechnicalBreakdown
-                      key={idx}
-                      symbol={ticker.symbol}
-                      signal={ticker.signal}
-                      signalStrength={ticker.signalStrength}
-                      currentPrice={ticker.currentPrice}
-                      rawData={ticker.rawData}
-                      stageType={stageDetails.stageType}
-                      stageName={stageDetails.name}
-                    />
-                  ))}
-                </div>
-              </div>
-            )}
-            
-            {/* Asset Class Breakdown (for input stage) */}
-            {stageDetails.stageType === 'input' && (
-              <div>
-                <h3 className="text-lg font-semibold text-slate-200 mb-4 flex items-center gap-2">
-                  <TrendingUp className="w-5 h-5 text-blue-400" />
-                  Universe Breakdown ({stageDetails.passedTickers.length})
-                </h3>
-                <div className="space-y-3 max-h-96 overflow-y-auto">
-                  {stageDetails.passedTickers.slice(0, 100).map((ticker, idx) => (
-                    <TickerTechnicalBreakdown
-                      key={idx}
-                      symbol={ticker.symbol}
-                      signal={ticker.signal}
-                      signalStrength={ticker.signalStrength}
-                      currentPrice={ticker.currentPrice}
-                      rawData={ticker.rawData}
-                      stageType={stageDetails.stageType}
-                      stageName={stageDetails.name}
-                    />
-                  ))}
-                  {stageDetails.passedTickers.length > 100 && (
-                    <div className="text-center text-slate-400 text-sm py-4">
-                      ... and {stageDetails.passedTickers.length - 100} more tickers
+                  {filteredOutput.length > 0 ? (
+                    filteredOutput
+                      .sort((a, b) => (b.signalStrength || 0) - (a.signalStrength || 0))
+                      .map((ticker, idx) => (
+                        <TickerTechnicalBreakdown
+                          key={idx}
+                          symbol={ticker.symbol}
+                          signal={ticker.signal}
+                          signalStrength={ticker.signalStrength}
+                          currentPrice={ticker.currentPrice}
+                          rawData={ticker.rawData}
+                          reason={ticker.reason}
+                          stageType={stageDetails.stageType}
+                          stageName={stageDetails.name}
+                        />
+                      ))
+                  ) : (
+                    <div className="text-center text-slate-400 py-8">
+                      {searchQuery ? `No tickers found matching "${searchQuery}"` : "No output tickers"}
                     </div>
                   )}
                 </div>
-              </div>
-            )}
+              )}
+
+              {activeTab === 'filtered' && (
+                <div className="space-y-3">
+                  {filteredFiltered.length > 0 ? (
+                    filteredFiltered.slice(0, 100).map((ticker, idx) => (
+                      <TickerTechnicalBreakdown
+                        key={idx}
+                        symbol={ticker.symbol}
+                        signal={ticker.signal}
+                        signalStrength={ticker.signalStrength}
+                        currentPrice={ticker.currentPrice}
+                        rawData={ticker.rawData}
+                        reason={ticker.reason}
+                        stageType={stageDetails.stageType}
+                        stageName={stageDetails.name}
+                      />
+                    ))
+                  ) : (
+                    <div className="text-center text-slate-400 py-8">
+                      {searchQuery ? `No filtered tickers found matching "${searchQuery}"` : "No filtered tickers"}
+                    </div>
+                  )}
+                  {filteredFiltered.length > 100 && !searchQuery && (
+                    <div className="text-center text-slate-400 text-sm py-4">
+                      ... and {filteredFiltered.length - 100} more filtered tickers
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>

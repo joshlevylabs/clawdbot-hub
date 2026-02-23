@@ -4,33 +4,35 @@
   "generated_at": "2026-02-23T06:00:34",
   "sections": {
     "prayer": {
-      "title": "🕐️ Morning Prayer",
+      "title": "\ud83d\udd50\ufe0f Morning Prayer",
       "date": "Monday, February 23, 2026",
       "hebrew_date": "25 Cheshvan",
       "parsha": "Miketz",
       "parsha_theme": "sudden elevation, preparation meeting opportunity",
-      "modeh_ani": "מודה אני לפניך — I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
-      "blessing": "Blessed are You who crowns Israel with glory — let my work bring You honor.",
+      "modeh_ani": "\u05de\u05d5\u05d3\u05d4 \u05d0\u05e0\u05d9 \u05dc\u05e4\u05e0\u05d9\u05da \u2014 I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
+      "blessing": "Blessed are You who crowns Israel with glory \u2014 let my work bring You honor.",
       "psalm": "**Psalm 121:8**: \"The Lord will watch over your coming and going both now and forevermore.\"",
       "proverb": "**Proverbs 16:3**: \"Commit your work to the Lord, and your plans will be established.\"",
       "intention": "Protect my family while I work. Guard their hearts and minds.",
-      "closing": "May your work today be a pleasing offering. May your rest tonight be deep and restorative."
+      "closing": "May your work today be a pleasing offering. May your rest tonight be deep and restorative.",
+      "audio": "/audio/brief-2026-02-23-prayer.ogg"
     },
     "weather": {
-      "title": "🌤️ Weather",
+      "title": "\ud83c\udf24\ufe0f Weather",
       "location": "Temecula, CA",
       "current": {
-        "temp": "45°F (7°C)",
-        "feels_like": "42°F (6°C)",
+        "temp": "45\u00b0F (7\u00b0C)",
+        "feels_like": "42\u00b0F (6\u00b0C)",
         "condition": "Partly cloudy",
         "humidity": "87%",
         "wind": "NNE 6 mph",
         "visibility": "9 miles"
       },
-      "summary": "Cool and partly cloudy morning. High humidity with light winds from the northeast."
+      "summary": "Cool and partly cloudy morning. High humidity with light winds from the northeast.",
+      "audio": "/audio/brief-2026-02-23-weather.ogg"
     },
     "mre": {
-      "title": "📊 MRE Trading",
+      "title": "\ud83d\udcca MRE Trading",
       "fear_greed": 42,
       "fear_greed_rating": "fear",
       "regime": "bull",
@@ -39,15 +41,16 @@
       "qqq_regime": "sideways",
       "todays_plays": [],
       "pending_triggers": [],
-      "thesis": "Fear at 42, markets mixed with SPY bull/QQQ sideways. No active signals — wait for opportunities.",
+      "thesis": "Fear at 42, markets mixed with SPY bull/QQQ sideways. No active signals \u2014 wait for opportunities.",
       "outliers": [
         "XLK & XLF in bear regimes while market bull",
         "QQQ consolidating, watch for breakout"
       ],
-      "summary": "Market sentiment fearful but SPY maintaining uptrend. Tech weakness notable with XLK bearish."
+      "summary": "Market sentiment fearful but SPY maintaining uptrend. Tech weakness notable with XLK bearish.",
+      "audio": "/audio/brief-2026-02-23-mre.ogg"
     },
     "relationship": {
-      "title": "💝 Family Focus",
+      "title": "\ud83d\udc9d Family Focus",
       "status": "critical",
       "trend": "urgent",
       "stats": {
@@ -66,13 +69,14 @@
       }
     },
     "calendar": {
-      "title": "📅 Today's Schedule",
+      "title": "\ud83d\udcc5 Today's Schedule",
       "today": "No events scheduled",
       "week_ahead": "No upcoming events visible (OAuth tokens need refresh)",
-      "note": "Calendar access requires authentication renewal"
+      "note": "Calendar access requires authentication renewal",
+      "audio": "/audio/brief-2026-02-23-calendar.ogg"
     },
     "email": {
-      "title": "📧 Email Highlights",
+      "title": "\ud83d\udce7 Email Highlights",
       "account": "josh@joshlevylabs.com",
       "unread_count": 4,
       "highlights": [
@@ -81,10 +85,11 @@
         "LinkedIn: 1 new message",
         "OpusClip: Projects about to expire"
       ],
-      "action_needed": "Check Dropbox storage, review OpusClip projects"
+      "action_needed": "Check Dropbox storage, review OpusClip projects",
+      "audio": "/audio/brief-2026-02-23-email.ogg"
     },
     "world_news": {
-      "title": "🌍 World News",
+      "title": "\ud83c\udf0d World News",
       "focus": "Israel & Geopolitics",
       "headlines": [
         "US Ambassador Huckabee's controversial comments on Israel's biblical territorial claims draw sharp condemnation from Arab/Muslim nations",
@@ -93,7 +98,7 @@
       ]
     },
     "ai_news": {
-      "title": "🤖 AI News",
+      "title": "\ud83e\udd16 AI News",
       "headlines": [
         "Nvidia close to $30 billion investment in OpenAI mega funding round",
         "Grand Valley State University awarded $1M for AI consortium in West Michigan",

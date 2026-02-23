@@ -205,44 +205,24 @@ export default function SignalFlowTab() {
       try {
         setLoading(true);
         
-        // Fetch from API first, fall back to direct file import
+        // Fetch directly from public JSON files (the raw MRE signal data)
         const [coreResponse, universeResponse] = await Promise.allSettled([
-          fetch('/api/signal-flow'),
-          fetch('/api/signal-flow?type=universe')
+          fetch('/data/trading/mre-signals.json'),
+          fetch('/data/trading/mre-signals-universe.json')
         ]);
         
-        // Core data
         if (coreResponse.status === 'fulfilled' && coreResponse.value.ok) {
           const coreJson = await coreResponse.value.json();
           setCoreData(coreJson);
         } else {
-          // Fallback to direct fetch from public folder
-          try {
-            const coreFileResponse = await fetch('/data/trading/mre-signals.json');
-            if (coreFileResponse.ok) {
-              const coreJson = await coreFileResponse.json();
-              setCoreData(coreJson);
-            }
-          } catch (err) {
-            console.log('Could not load core signals data');
-          }
+          console.log('Could not load core signals data');
         }
         
-        // Universe data
         if (universeResponse.status === 'fulfilled' && universeResponse.value.ok) {
           const universeJson = await universeResponse.value.json();
           setUniverseData(universeJson);
         } else {
-          // Fallback to direct fetch from public folder
-          try {
-            const universeFileResponse = await fetch('/data/trading/mre-signals-universe.json');
-            if (universeFileResponse.ok) {
-              const universeJson = await universeFileResponse.json();
-              setUniverseData(universeJson);
-            }
-          } catch (err) {
-            console.log('Could not load universe signals data');
-          }
+          console.log('Could not load universe signals data');
         }
       } catch (error) {
         console.error('Error loading signal data:', error);

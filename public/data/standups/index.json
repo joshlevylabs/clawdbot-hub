@@ -2,16 +2,16 @@
   "standups": [
     {
       "date": "2026-02-23",
-      "time": "11:05",
+      "time": "11:11",
       "type": "adhoc-mre-signal-flow-visualization-hub-signals-page-overhaul",
       "typeName": "MRE Signal Flow Visualization \u2014 Hub Signals Page Overhaul",
       "typeEmoji": "\ud83d\udcca",
       "topic": "MRE Signal Flow Visualization \u2014 Hub Signals Page Overhaul \u2014 Monday Feb 23",
       "file": "2026-02-23-adhoc-mre-signal-flow-visualization-hub-signals-page-overhaul.json",
-      "tokenCost": 0.039,
+      "tokenCost": 0.0405,
       "verticals": [],
       "initiatives": [],
-      "instanceKey": "STD-26"
+      "instanceKey": "STD-27"
     },
     {
       "date": "2026-02-23",

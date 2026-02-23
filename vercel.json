@@ -16,6 +16,21 @@
           "value": "0"
         }
       ]
+    },
+    {
+      "source": "/audio/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
     }
-  ]
+  ],
+  "git": {
+    "deploymentEnabled": {
+      "main": true
+    }
+  },
+  "ignoreCommand": "git diff --name-only HEAD~1 HEAD | grep -qvE \"^public/(data|audio)/\""
 }

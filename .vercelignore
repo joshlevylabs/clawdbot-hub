@@ -1,0 +1,6 @@
+# Ignore audio files in function bundles — these are served as static assets
+# but should NOT be included in serverless function bundles
+public/audio/*
+
+# Large data files that don't need to trigger function rebuilds
+public/data/trading/charts/*

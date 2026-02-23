@@ -5,7 +5,13 @@ const nextConfig = {
     // Skip ESLint during builds
     ignoreDuringBuilds: true,
   },
+  // Exclude large static assets from serverless function bundles
+  outputFileTracingExcludes: {
+    '*': [
+      './public/audio/**',
+      './public/data/trading/charts/**',
+    ],
+  },
 }
 
 module.exports = nextConfig
-// Trigger rebuild 1770130257

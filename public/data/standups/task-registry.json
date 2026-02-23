@@ -1,6 +1,6 @@
 {
-  "nextAgentId": 174,
-  "nextJoshuaId": 37,
+  "nextAgentId": 178,
+  "nextJoshuaId": 38,
   "tasks": [
     {
       "key": "J-004",
@@ -1435,6 +1435,76 @@
       "createdAt": "2026-02-23T07:00:09.168774-08:00",
       "updatedAt": "2026-02-23T07:00:09.168774-08:00",
       "completedAt": "2026-02-23T07:18:03-08:00"
+    },
+    {
+      "key": "A-174",
+      "text": "Draft technical architecture specification for MRE Signal Flow Visualization",
+      "tag": "AGENT",
+      "priority": "high",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "sourceStandup": "STD-28",
+      "sourceStandupType": "adhoc-mre-signal-flow-visualization-hub-signals-page-overhaul",
+      "sourceDate": "2026-02-23",
+      "createdAt": "2026-02-23T11:15:17.619385-08:00",
+      "updatedAt": "2026-02-23T11:15:17.619385-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "A-175",
+      "text": "Design component hierarchy and user interaction flow for signal visualization",
+      "tag": "AGENT",
+      "priority": "high",
+      "assignee": "Steve Jobs",
+      "status": "pending",
+      "sourceStandup": "STD-28",
+      "sourceStandupType": "adhoc-mre-signal-flow-visualization-hub-signals-page-overhaul",
+      "sourceDate": "2026-02-23",
+      "createdAt": "2026-02-23T11:15:17.619385-08:00",
+      "updatedAt": "2026-02-23T11:15:17.619385-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "A-176",
+      "text": "Architect WebSocket data acquisition layer with redundancy",
+      "tag": "AGENT",
+      "priority": "high",
+      "assignee": "James Truchard",
+      "status": "pending",
+      "sourceStandup": "STD-28",
+      "sourceStandupType": "adhoc-mre-signal-flow-visualization-hub-signals-page-overhaul",
+      "sourceDate": "2026-02-23",
+      "createdAt": "2026-02-23T11:15:17.619385-08:00",
+      "updatedAt": "2026-02-23T11:15:17.619385-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "J-037",
+      "text": "Review and approve signal flow visualization requirements",
+      "tag": "JOSHUA",
+      "priority": "high",
+      "assignee": "Joshua",
+      "status": "pending",
+      "sourceStandup": "STD-28",
+      "sourceStandupType": "adhoc-mre-signal-flow-visualization-hub-signals-page-overhaul",
+      "sourceDate": "2026-02-23",
+      "createdAt": "2026-02-23T11:15:17.619385-08:00",
+      "updatedAt": "2026-02-23T11:15:17.619385-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "A-177",
+      "text": "Define performance attribution metrics for strategy visualization",
+      "tag": "AGENT",
+      "priority": "medium",
+      "assignee": "Chris Vermeullen",
+      "status": "pending",
+      "sourceStandup": "STD-28",
+      "sourceStandupType": "adhoc-mre-signal-flow-visualization-hub-signals-page-overhaul",
+      "sourceDate": "2026-02-23",
+      "createdAt": "2026-02-23T11:15:17.619385-08:00",
+      "updatedAt": "2026-02-23T11:15:17.619385-08:00",
+      "completedAt": null
     }
   ]
 }

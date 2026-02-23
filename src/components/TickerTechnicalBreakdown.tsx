@@ -1,0 +1,788 @@
+"use client";
+
+import { useState } from "react";
+import { 
+  ChevronDown, 
+  ChevronRight, 
+  TrendingUp, 
+  TrendingDown, 
+  Activity, 
+  Target,
+  BarChart3,
+  Gauge,
+  Calendar,
+  DollarSign,
+  CheckCircle,
+  XCircle,
+  AlertTriangle,
+  Info
+} from "lucide-react";
+
+// Define the MRESignal interface locally to avoid circular imports
+interface MRESignal {
+  symbol: string;
+  signal: 'BUY' | 'HOLD' | 'SELL' | 'WATCH';
+  signal_strength: number;
+  signal_source: string;
+  strategies_agreeing: number;
+  current_fg: number;
+  fear_threshold: number;
+  fear_threshold_conservative: number;
+  fear_threshold_opportunistic: number;
+  regime: string;
+  role: string;
+  role_action: string;
+  rotation_modifier: number;
+  sideways_applied: boolean;
+  kalshi_applied: boolean;
+  cluster_limited: boolean;
+  asset_confidence: number;
+  cap_applied: boolean;
+  crash_action: string;
+  bear_suppressed: boolean;
+  sell_suppressed: boolean;
+  strategy_votes?: {
+    fear_greed: boolean;
+    regime_confirmation: boolean;
+    rsi_oversold: boolean;
+    mean_reversion: boolean;
+    momentum: boolean;
+  };
+  price?: number;
+  asset_class?: string;
+  sector?: string;
+  rsi_14?: number;
+  bb_position?: string;
+  dip_5d_pct?: number;
+  return_5d?: number;
+  momentum_20d?: number;
+  volatility_20d?: number;
+  regime_details?: {
+    ema_20: number;
+    ema_50: number;
+    ema_200: number;
+    above_ema_20: boolean;
+    above_ema_50: boolean;
+    above_ema_200: boolean;
+    regime_days: number;
+    regime_stage: string;
+    confidence: number;
+    momentum_20d: number;
+    ema_spread_pct: number;
+  };
+  fibonacci?: {
+    symbol: string;
+    current_price: number;
+    swing_high: number;
+    swing_low: number;
+    trend: string;
+    retracements?: { level: number; price: number }[];
+    extensions?: { level: number; price: number }[];
+    nearest_support?: number;
+    nearest_resistance?: number;
+    entry_zone?: { min: number; max: number };
+    profit_targets?: { level: number; price: number }[];
+  };
+}
+
+interface TickerTechnicalBreakdownProps {
+  symbol: string;
+  signal?: string;
+  signalStrength?: number;
+  currentPrice?: number;
+  rawData?: MRESignal;
+  reason?: string;
+  stageType: 'input' | 'filter' | 'modifier' | 'output';
+  stageName: string;
+}
+
+// Helper functions
+const getSignalColor = (signal?: string) => {
+  switch (signal) {
+    case 'BUY': return 'text-emerald-400';
+    case 'HOLD': return 'text-amber-400';
+    case 'SELL': return 'text-red-400';
+    case 'WATCH': return 'text-slate-400';
+    default: return 'text-slate-300';
+  }
+};
+
+const getSignalBg = (signal?: string) => {
+  switch (signal) {
+    case 'BUY': return 'bg-emerald-900/50 border-emerald-700/50';
+    case 'HOLD': return 'bg-amber-900/50 border-amber-700/50';
+    case 'SELL': return 'bg-red-900/50 border-red-700/50';
+    case 'WATCH': return 'bg-slate-900/50 border-slate-700/50';
+    default: return 'bg-slate-800/50 border-slate-700/50';
+  }
+};
+
+export default function TickerTechnicalBreakdown({
+  symbol,
+  signal,
+  signalStrength,
+  currentPrice,
+  rawData,
+  reason,
+  stageType,
+  stageName
+}: TickerTechnicalBreakdownProps) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [activeTab, setActiveTab] = useState<'overview' | 'technical' | 'regime' | 'fibonacci'>('overview');
+
+  if (!rawData) {
+    // Fallback for when no raw data is available
+    return (
+      <div className="bg-slate-800/50 rounded-lg p-4 border border-slate-700/50">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <span className="font-mono font-semibold text-slate-200">{symbol}</span>
+            {signal && (
+              <span className={`px-2 py-1 rounded text-xs font-medium border ${getSignalBg(signal)}`}>
+                {signal}
+              </span>
+            )}
+          </div>
+          {currentPrice && (
+            <div className="flex items-center gap-1 text-slate-400">
+              <DollarSign className="w-3 h-3" />
+              <span className="text-sm">{currentPrice.toFixed(2)}</span>
+            </div>
+          )}
+        </div>
+        {reason && (
+          <div className="mt-2 text-sm text-slate-400">{reason}</div>
+        )}
+      </div>
+    );
+  }
+
+  const getRsiColor = (rsi?: number) => {
+    if (!rsi) return 'text-slate-400';
+    if (rsi < 30) return 'text-emerald-400'; // Oversold - good for buying
+    if (rsi > 70) return 'text-red-400';     // Overbought - avoid buying
+    return 'text-amber-400';                 // Neutral
+  };
+
+  const getBBPositionColor = (position?: string) => {
+    switch (position) {
+      case 'below_lower': return 'text-emerald-400'; // Good for buying
+      case 'above_upper': return 'text-red-400';     // Avoid buying
+      default: return 'text-slate-400';              // Within bands
+    }
+  };
+
+  const getReturnColor = (returnPct?: number) => {
+    if (!returnPct) return 'text-slate-400';
+    return returnPct >= 0 ? 'text-emerald-400' : 'text-red-400';
+  };
+
+  const generatePipelineDecision = () => {
+    if (!rawData) return "No detailed data available.";
+    
+    const { signal, signal_strength, signal_source, regime, momentum_20d, rsi_14, bear_suppressed, sell_suppressed } = rawData;
+    
+    if (signal === 'BUY') {
+      return `${symbol} passed via ${signal_source} strategy with ${momentum_20d ? `${momentum_20d.toFixed(1)}% 20d momentum` : 'momentum data'} in ${regime} regime. RSI ${rsi_14 ? `at ${rsi_14.toFixed(1)}` : 'neutral'}. Signal strength: ${signal_strength.toFixed(1)}.`;
+    }
+    
+    if (signal === 'HOLD') {
+      if (bear_suppressed) {
+        return `${symbol} bear_suppressed: BUY signal blocked due to ${regime} regime despite meeting ${signal_source} criteria.`;
+      }
+      if (sell_suppressed) {
+        return `${symbol} sell_suppressed: Signal adjusted to HOLD for risk management.`;
+      }
+      const failedVotes = rawData.strategy_votes ? Object.entries(rawData.strategy_votes).filter(([_, voted]) => !voted).map(([strategy, _]) => strategy).join(', ') : 'strategies';
+      return `${symbol} failed ${failedVotes}. ${regime} regime with ${momentum_20d ? `${momentum_20d.toFixed(1)}%` : 'negative'} momentum. RSI at ${rsi_14 || 'unknown'}.`;
+    }
+    
+    return `${symbol} signal: ${signal}. ${reason || 'See technical details for more information.'}`;
+  };
+
+  return (
+    <div className="bg-slate-800/50 rounded-lg border border-slate-700/50 overflow-hidden transition-all duration-200">
+      {/* Main Row - Always Visible */}
+      <div 
+        className="p-4 cursor-pointer hover:bg-slate-800/80 transition-colors"
+        onClick={() => setIsExpanded(!isExpanded)}
+      >
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            {isExpanded ? (
+              <ChevronDown className="w-4 h-4 text-slate-400" />
+            ) : (
+              <ChevronRight className="w-4 h-4 text-slate-400" />
+            )}
+            <span className="font-mono font-semibold text-slate-200">{symbol}</span>
+            {signal && (
+              <span className={`px-2 py-1 rounded text-xs font-medium border ${getSignalBg(signal)}`}>
+                {signal}
+              </span>
+            )}
+            {rawData.asset_class && (
+              <span className="text-xs text-slate-500 capitalize">{rawData.asset_class}</span>
+            )}
+          </div>
+          
+          <div className="flex items-center gap-4">
+            {/* Quick indicators */}
+            <div className="flex items-center gap-2 text-xs">
+              {rawData.rsi_14 && (
+                <span className={`${getRsiColor(rawData.rsi_14)}`}>
+                  RSI: {rawData.rsi_14.toFixed(0)}
+                </span>
+              )}
+              {rawData.momentum_20d && (
+                <span className={`${getReturnColor(rawData.momentum_20d)}`}>
+                  20d: {rawData.momentum_20d >= 0 ? '+' : ''}{rawData.momentum_20d.toFixed(1)}%
+                </span>
+              )}
+            </div>
+            {signalStrength !== undefined && signalStrength > 0 && (
+              <div className="text-sm">
+                <span className="text-slate-400">Conf: </span>
+                <span className="text-emerald-400 font-medium">{Math.round(signalStrength)}</span>
+              </div>
+            )}
+            {currentPrice && (
+              <div className="flex items-center gap-1 text-slate-400">
+                <DollarSign className="w-3 h-3" />
+                <span className="text-sm">{currentPrice.toFixed(2)}</span>
+              </div>
+            )}
+          </div>
+        </div>
+        
+        {reason && !isExpanded && (
+          <div className="mt-2 text-sm text-slate-400">{reason}</div>
+        )}
+      </div>
+
+      {/* Expanded Content */}
+      {isExpanded && (
+        <div className="border-t border-slate-700/50">
+          {/* Tab Navigation */}
+          <div className="flex border-b border-slate-700/50">
+            <button
+              onClick={() => setActiveTab('overview')}
+              className={`px-4 py-2 text-sm font-medium transition-colors ${
+                activeTab === 'overview' 
+                  ? 'border-b-2 border-primary-500 text-primary-400' 
+                  : 'text-slate-400 hover:text-slate-300'
+              }`}
+            >
+              Overview
+            </button>
+            <button
+              onClick={() => setActiveTab('technical')}
+              className={`px-4 py-2 text-sm font-medium transition-colors ${
+                activeTab === 'technical' 
+                  ? 'border-b-2 border-primary-500 text-primary-400' 
+                  : 'text-slate-400 hover:text-slate-300'
+              }`}
+            >
+              Technical
+            </button>
+            {rawData.regime_details && (
+              <button
+                onClick={() => setActiveTab('regime')}
+                className={`px-4 py-2 text-sm font-medium transition-colors ${
+                  activeTab === 'regime' 
+                    ? 'border-b-2 border-primary-500 text-primary-400' 
+                    : 'text-slate-400 hover:text-slate-300'
+                }`}
+              >
+                Regime
+              </button>
+            )}
+            {rawData.fibonacci && (
+              <button
+                onClick={() => setActiveTab('fibonacci')}
+                className={`px-4 py-2 text-sm font-medium transition-colors ${
+                  activeTab === 'fibonacci' 
+                    ? 'border-b-2 border-primary-500 text-primary-400' 
+                    : 'text-slate-400 hover:text-slate-300'
+                }`}
+              >
+                Fibonacci
+              </button>
+            )}
+          </div>
+
+          {/* Tab Content */}
+          <div className="p-4">
+            {activeTab === 'overview' && (
+              <OverviewTab 
+                rawData={rawData} 
+                reason={reason} 
+                generatePipelineDecision={generatePipelineDecision}
+                stageName={stageName}
+              />
+            )}
+            {activeTab === 'technical' && (
+              <TechnicalTab rawData={rawData} />
+            )}
+            {activeTab === 'regime' && rawData.regime_details && (
+              <RegimeTab rawData={rawData} />
+            )}
+            {activeTab === 'fibonacci' && rawData.fibonacci && (
+              <FibonacciTab rawData={rawData} />
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Overview Tab Component
+function OverviewTab({ 
+  rawData, 
+  reason, 
+  generatePipelineDecision, 
+  stageName 
+}: { 
+  rawData: MRESignal; 
+  reason?: string; 
+  generatePipelineDecision: () => string;
+  stageName: string;
+}) {
+  return (
+    <div className="space-y-4">
+      {/* Strategy Votes Summary */}
+      {rawData.strategy_votes && (
+        <div>
+          <h4 className="text-sm font-semibold text-slate-300 mb-3 flex items-center gap-2">
+            <CheckCircle className="w-4 h-4" />
+            Strategy Votes Summary
+          </h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+            {Object.entries(rawData.strategy_votes).map(([strategy, voted]) => {
+              let explanation = "";
+              switch (strategy) {
+                case 'fear_greed':
+                  explanation = `F&G at ${rawData.current_fg.toFixed(0)} vs threshold ${rawData.fear_threshold}`;
+                  break;
+                case 'regime_confirmation':
+                  explanation = `${rawData.regime} regime`;
+                  break;
+                case 'rsi_oversold':
+                  explanation = `RSI at ${rawData.rsi_14?.toFixed(1) || 'N/A'}`;
+                  break;
+                case 'mean_reversion':
+                  explanation = `5d return: ${rawData.return_5d?.toFixed(1) || 'N/A'}%`;
+                  break;
+                case 'momentum':
+                  explanation = `20d momentum: ${rawData.momentum_20d?.toFixed(1) || 'N/A'}%`;
+                  break;
+              }
+              
+              return (
+                <div key={strategy} className="flex items-center justify-between px-3 py-2 bg-slate-900/50 rounded">
+                  <div className="flex items-center gap-2">
+                    {voted ? (
+                      <CheckCircle className="w-4 h-4 text-emerald-400" />
+                    ) : (
+                      <XCircle className="w-4 h-4 text-red-400" />
+                    )}
+                    <span className="text-sm text-slate-300 capitalize">
+                      {strategy.replace('_', ' ')}
+                    </span>
+                  </div>
+                  <span className="text-xs text-slate-400">{explanation}</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Pipeline Decision */}
+      <div>
+        <h4 className="text-sm font-semibold text-slate-300 mb-2 flex items-center gap-2">
+          <Info className="w-4 h-4" />
+          Pipeline Decision
+        </h4>
+        <div className="bg-slate-900/50 rounded p-3 text-sm text-slate-300">
+          {generatePipelineDecision()}
+        </div>
+        {reason && (
+          <div className="mt-2 text-xs text-slate-500">
+            Stage reason: {reason}
+          </div>
+        )}
+      </div>
+
+      {/* Key Modifiers */}
+      <div>
+        <h4 className="text-sm font-semibold text-slate-300 mb-3 flex items-center gap-2">
+          <AlertTriangle className="w-4 h-4" />
+          Applied Modifiers
+        </h4>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+          <div className="bg-slate-900/50 rounded p-2">
+            <div className="text-xs text-slate-500">Bear Suppressed</div>
+            <div className={`text-sm font-medium ${rawData.bear_suppressed ? 'text-red-400' : 'text-slate-400'}`}>
+              {rawData.bear_suppressed ? 'Yes' : 'No'}
+            </div>
+          </div>
+          <div className="bg-slate-900/50 rounded p-2">
+            <div className="text-xs text-slate-500">Asset Confidence</div>
+            <div className="text-sm font-medium text-slate-300">
+              {(rawData.asset_confidence * 100).toFixed(0)}%
+            </div>
+          </div>
+          <div className="bg-slate-900/50 rounded p-2">
+            <div className="text-xs text-slate-500">Cluster Limited</div>
+            <div className={`text-sm font-medium ${rawData.cluster_limited ? 'text-amber-400' : 'text-slate-400'}`}>
+              {rawData.cluster_limited ? 'Yes' : 'No'}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Technical Tab Component
+function TechnicalTab({ rawData }: { rawData: MRESignal }) {
+  const getRsiColor = (rsi?: number) => {
+    if (!rsi) return 'text-slate-400';
+    if (rsi < 30) return 'text-emerald-400';
+    if (rsi > 70) return 'text-red-400';
+    return 'text-amber-400';
+  };
+
+  const getRsiGauge = (rsi?: number) => {
+    if (!rsi) return 50;
+    return Math.min(100, Math.max(0, rsi));
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* RSI */}
+        {rawData.rsi_14 && (
+          <div className="bg-slate-900/50 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium text-slate-300">RSI (14)</span>
+              <span className={`text-lg font-bold ${getRsiColor(rawData.rsi_14)}`}>
+                {rawData.rsi_14.toFixed(1)}
+              </span>
+            </div>
+            <div className="w-full bg-slate-700/50 rounded-full h-2">
+              <div 
+                className={`h-2 rounded-full transition-all ${
+                  rawData.rsi_14 < 30 ? 'bg-emerald-400' : 
+                  rawData.rsi_14 > 70 ? 'bg-red-400' : 'bg-amber-400'
+                }`}
+                style={{ width: `${getRsiGauge(rawData.rsi_14)}%` }}
+              />
+            </div>
+            <div className="flex justify-between text-xs text-slate-500 mt-1">
+              <span>0</span>
+              <span>30</span>
+              <span>70</span>
+              <span>100</span>
+            </div>
+          </div>
+        )}
+
+        {/* Bollinger Bands */}
+        {rawData.bb_position && (
+          <div className="bg-slate-900/50 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium text-slate-300">Bollinger Bands</span>
+              <span className={`text-sm font-medium ${
+                rawData.bb_position === 'below_lower' ? 'text-emerald-400' :
+                rawData.bb_position === 'above_upper' ? 'text-red-400' : 'text-amber-400'
+              }`}>
+                {rawData.bb_position.replace('_', ' ').toUpperCase()}
+              </span>
+            </div>
+          </div>
+        )}
+
+        {/* 5-Day Return */}
+        {rawData.return_5d !== undefined && (
+          <div className="bg-slate-900/50 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium text-slate-300">5-Day Return</span>
+              <span className={`text-lg font-bold ${rawData.return_5d >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                {rawData.return_5d >= 0 ? '+' : ''}{rawData.return_5d.toFixed(1)}%
+              </span>
+            </div>
+          </div>
+        )}
+
+        {/* 20-Day Momentum */}
+        {rawData.momentum_20d !== undefined && (
+          <div className="bg-slate-900/50 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium text-slate-300">20-Day Momentum</span>
+              <div className="flex items-center gap-2">
+                {rawData.momentum_20d > 0 ? (
+                  <TrendingUp className="w-4 h-4 text-emerald-400" />
+                ) : (
+                  <TrendingDown className="w-4 h-4 text-red-400" />
+                )}
+                <span className={`text-lg font-bold ${rawData.momentum_20d >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                  {rawData.momentum_20d >= 0 ? '+' : ''}{rawData.momentum_20d.toFixed(1)}%
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Volatility */}
+        {rawData.volatility_20d !== undefined && (
+          <div className="bg-slate-900/50 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium text-slate-300">20-Day Volatility</span>
+              <span className={`text-lg font-bold ${
+                rawData.volatility_20d < 20 ? 'text-emerald-400' :
+                rawData.volatility_20d > 40 ? 'text-red-400' : 'text-amber-400'
+              }`}>
+                {rawData.volatility_20d.toFixed(1)}%
+              </span>
+            </div>
+            <div className="text-xs text-slate-500">
+              {rawData.volatility_20d < 20 ? 'Low Risk' :
+               rawData.volatility_20d > 40 ? 'High Risk' : 'Moderate Risk'}
+            </div>
+          </div>
+        )}
+
+        {/* Signal Strength */}
+        <div className="bg-slate-900/50 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm font-medium text-slate-300">Signal Strength</span>
+            <span className="text-lg font-bold text-primary-400">
+              {rawData.signal_strength.toFixed(1)}
+            </span>
+          </div>
+          <div className="text-xs text-slate-500">
+            Source: {rawData.signal_source}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Regime Tab Component
+function RegimeTab({ rawData }: { rawData: MRESignal }) {
+  const regime = rawData.regime_details;
+  if (!regime) return <div>No regime data available</div>;
+
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Current Regime */}
+        <div className="bg-slate-900/50 rounded-lg p-4">
+          <h5 className="text-sm font-medium text-slate-300 mb-2">Current Regime</h5>
+          <div className="text-lg font-bold text-accent-400 capitalize">
+            {rawData.regime} - {regime.regime_stage}
+          </div>
+          <div className="text-sm text-slate-400 mt-1">
+            {regime.regime_days} days • {regime.confidence.toFixed(0)}% confidence
+          </div>
+        </div>
+
+        {/* EMA Stack */}
+        <div className="bg-slate-900/50 rounded-lg p-4">
+          <h5 className="text-sm font-medium text-slate-300 mb-2">EMA Stack</h5>
+          <div className="space-y-1">
+            <div className="flex justify-between text-sm">
+              <span>EMA 20:</span>
+              <span className={regime.above_ema_20 ? 'text-emerald-400' : 'text-red-400'}>
+                {regime.ema_20.toFixed(2)} {regime.above_ema_20 ? '✓' : '✗'}
+              </span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span>EMA 50:</span>
+              <span className={regime.above_ema_50 ? 'text-emerald-400' : 'text-red-400'}>
+                {regime.ema_50.toFixed(2)} {regime.above_ema_50 ? '✓' : '✗'}
+              </span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span>EMA 200:</span>
+              <span className={regime.above_ema_200 ? 'text-emerald-400' : 'text-red-400'}>
+                {regime.ema_200.toFixed(2)} {regime.above_ema_200 ? '✓' : '✗'}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* EMA Spread */}
+        <div className="bg-slate-900/50 rounded-lg p-4">
+          <h5 className="text-sm font-medium text-slate-300 mb-2">EMA Spread</h5>
+          <div className="text-lg font-bold text-slate-200">
+            {regime.ema_spread_pct.toFixed(1)}%
+          </div>
+          <div className="text-xs text-slate-500">
+            Separation between EMAs
+          </div>
+        </div>
+
+        {/* Momentum */}
+        <div className="bg-slate-900/50 rounded-lg p-4">
+          <h5 className="text-sm font-medium text-slate-300 mb-2">Regime Momentum</h5>
+          <div className={`text-lg font-bold ${regime.momentum_20d >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+            {regime.momentum_20d >= 0 ? '+' : ''}{regime.momentum_20d.toFixed(1)}%
+          </div>
+        </div>
+      </div>
+
+      {/* Visual EMA Alignment */}
+      <div className="bg-slate-900/50 rounded-lg p-4">
+        <h5 className="text-sm font-medium text-slate-300 mb-3">EMA Alignment Indicator</h5>
+        <div className="space-y-2">
+          {[
+            { name: 'Current Price', value: rawData.price, above: true },
+            { name: 'EMA 20', value: regime.ema_20, above: regime.above_ema_20 },
+            { name: 'EMA 50', value: regime.ema_50, above: regime.above_ema_50 },
+            { name: 'EMA 200', value: regime.ema_200, above: regime.above_ema_200 },
+          ].map((item, idx) => (
+            <div key={idx} className="flex items-center gap-3">
+              <div className={`w-3 h-3 rounded-full ${
+                idx === 0 ? 'bg-white' : item.above ? 'bg-emerald-400' : 'bg-red-400'
+              }`} />
+              <span className="text-sm text-slate-300 w-24">{item.name}:</span>
+              <span className="text-sm text-slate-200">{item.value?.toFixed(2)}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Fibonacci Tab Component
+function FibonacciTab({ rawData }: { rawData: MRESignal }) {
+  const fib = rawData.fibonacci;
+  if (!fib) return <div>No Fibonacci data available</div>;
+
+  const currentPrice = fib.current_price;
+  const swingRange = fib.swing_high - fib.swing_low;
+
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Current Position */}
+        <div className="bg-slate-900/50 rounded-lg p-4">
+          <h5 className="text-sm font-medium text-slate-300 mb-2">Current Position</h5>
+          <div className="text-lg font-bold text-slate-200">
+            ${currentPrice.toFixed(2)}
+          </div>
+          <div className="text-sm text-slate-400">
+            Trend: {fib.trend}
+          </div>
+        </div>
+
+        {/* Swing Range */}
+        <div className="bg-slate-900/50 rounded-lg p-4">
+          <h5 className="text-sm font-medium text-slate-300 mb-2">Swing Range</h5>
+          <div className="space-y-1">
+            <div className="flex justify-between text-sm">
+              <span>High:</span>
+              <span className="text-emerald-400">${fib.swing_high.toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span>Low:</span>
+              <span className="text-red-400">${fib.swing_low.toFixed(2)}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Support/Resistance */}
+        {(fib.nearest_support || fib.nearest_resistance) && (
+          <>
+            {fib.nearest_support && (
+              <div className="bg-slate-900/50 rounded-lg p-4">
+                <h5 className="text-sm font-medium text-slate-300 mb-2">Nearest Support</h5>
+                <div className="text-lg font-bold text-emerald-400">
+                  ${fib.nearest_support.toFixed(2)}
+                </div>
+                <div className="text-xs text-slate-500">
+                  {((currentPrice - fib.nearest_support) / currentPrice * 100).toFixed(1)}% below
+                </div>
+              </div>
+            )}
+            {fib.nearest_resistance && (
+              <div className="bg-slate-900/50 rounded-lg p-4">
+                <h5 className="text-sm font-medium text-slate-300 mb-2">Nearest Resistance</h5>
+                <div className="text-lg font-bold text-red-400">
+                  ${fib.nearest_resistance.toFixed(2)}
+                </div>
+                <div className="text-xs text-slate-500">
+                  {((fib.nearest_resistance - currentPrice) / currentPrice * 100).toFixed(1)}% above
+                </div>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+
+      {/* Entry Zone */}
+      {fib.entry_zone && (
+        <div className="bg-slate-900/50 rounded-lg p-4">
+          <h5 className="text-sm font-medium text-slate-300 mb-2">Entry Zone</h5>
+          <div className="flex justify-between">
+            <span className="text-emerald-400">${fib.entry_zone.min.toFixed(2)}</span>
+            <span className="text-slate-400">to</span>
+            <span className="text-emerald-400">${fib.entry_zone.max.toFixed(2)}</span>
+          </div>
+        </div>
+      )}
+
+      {/* Visual Level Diagram */}
+      <div className="bg-slate-900/50 rounded-lg p-4">
+        <h5 className="text-sm font-medium text-slate-300 mb-3">Price Levels</h5>
+        <div className="relative h-32 bg-slate-800/50 rounded">
+          {/* Current price indicator */}
+          <div 
+            className="absolute w-full border-t-2 border-white"
+            style={{
+              bottom: `${((currentPrice - fib.swing_low) / swingRange) * 100}%`
+            }}
+          >
+            <div className="absolute right-2 -top-3 bg-white text-black px-1 rounded text-xs">
+              ${currentPrice.toFixed(2)}
+            </div>
+          </div>
+          
+          {/* Swing high */}
+          <div className="absolute w-full border-t border-emerald-400 top-0">
+            <div className="absolute right-2 -top-3 text-emerald-400 text-xs">
+              ${fib.swing_high.toFixed(2)}
+            </div>
+          </div>
+          
+          {/* Swing low */}
+          <div className="absolute w-full border-t border-red-400 bottom-0">
+            <div className="absolute right-2 -bottom-4 text-red-400 text-xs">
+              ${fib.swing_low.toFixed(2)}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Profit Targets */}
+      {fib.profit_targets && fib.profit_targets.length > 0 && (
+        <div className="bg-slate-900/50 rounded-lg p-4">
+          <h5 className="text-sm font-medium text-slate-300 mb-3">Profit Targets</h5>
+          <div className="space-y-2">
+            {fib.profit_targets.slice(0, 3).map((target, idx) => (
+              <div key={idx} className="flex justify-between text-sm">
+                <span>Target {idx + 1}:</span>
+                <span className="text-emerald-400">${target.price.toFixed(2)}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

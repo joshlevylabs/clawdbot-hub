@@ -22,17 +22,20 @@ interface MRESignal {
   signal: 'BUY' | 'HOLD' | 'SELL' | 'WATCH';
   signal_strength: number;
   signal_track: string;
+  signal_source: string;
+  strategies_agreeing: number;
   current_fg: number;
+  fear_threshold: number;
   fear_threshold_conservative: number;
   fear_threshold_opportunistic: number;
   regime: string;
-  regime_weight: number;
+  regime_weight?: number;
   role: string;
   role_action: string;
   rotation_modifier: number;
   sideways_applied: boolean;
   kalshi_applied: boolean;
-  kalshi_adjustment: number;
+  kalshi_adjustment?: number;
   cluster_limited: boolean;
   asset_confidence: number;
   cap_applied: boolean;
@@ -48,6 +51,39 @@ interface MRESignal {
   };
   price?: number;
   asset_class?: string;
+  sector?: string;
+  rsi_14?: number;
+  bb_position?: string;
+  dip_5d_pct?: number;
+  return_5d?: number;
+  momentum_20d?: number;
+  volatility_20d?: number;
+  regime_details?: {
+    ema_20: number;
+    ema_50: number;
+    ema_200: number;
+    above_ema_20: boolean;
+    above_ema_50: boolean;
+    above_ema_200: boolean;
+    regime_days: number;
+    regime_stage: string;
+    confidence: number;
+    momentum_20d: number;
+    ema_spread_pct: number;
+  };
+  fibonacci?: {
+    symbol: string;
+    current_price: number;
+    swing_high: number;
+    swing_low: number;
+    trend: string;
+    retracements?: { level: number; price: number }[];
+    extensions?: { level: number; price: number }[];
+    nearest_support?: number;
+    nearest_resistance?: number;
+    entry_zone?: { min: number; max: number };
+    profit_targets?: { level: number; price: number }[];
+  };
 }
 
 interface MREData {
@@ -71,28 +107,27 @@ interface MREData {
   };
 }
 
+interface TickerDetail {
+  symbol: string;
+  reason?: string;
+  beforeValue?: number;
+  afterValue?: number;
+  signal?: string;
+  signalStrength?: number;
+  currentPrice?: number;
+  adjustmentValue?: number;
+  // Add full raw data
+  rawData?: MRESignal;
+}
+
 interface StageDetails {
   name: string;
   description: string;
   stageType: 'input' | 'filter' | 'modifier' | 'output';
   inputCount: number;
   outputCount: number;
-  filteredTickers: Array<{
-    symbol: string;
-    reason?: string;
-    beforeValue?: number;
-    afterValue?: number;
-    signal?: string;
-    signalStrength?: number;
-    currentPrice?: number;
-  }>;
-  passedTickers: Array<{
-    symbol: string;
-    signal?: string;
-    signalStrength?: number;
-    currentPrice?: number;
-    adjustmentValue?: number;
-  }>;
+  filteredTickers: TickerDetail[];
+  passedTickers: TickerDetail[];
 }
 
 // Calculate pipeline stages from MRE data
@@ -297,12 +332,14 @@ export default function SignalFlowTab() {
           symbol: t.symbol,
           reason: `${sv.name} did not vote BUY`,
           signal: t.signal,
-          currentPrice: t.price
+          currentPrice: t.price,
+          rawData: t
         })),
         passedTickers: sv.passed.map(t => ({
           symbol: t.symbol,
           signal: t.signal,
-          currentPrice: t.price
+          currentPrice: t.price,
+          rawData: t
         }))
       });
       return;
@@ -326,7 +363,8 @@ export default function SignalFlowTab() {
           passedTickers: stageData.passed.slice(0, 50).map(t => ({
             symbol: t.symbol,
             signal: t.signal,
-            currentPrice: t.price
+            currentPrice: t.price,
+            rawData: t
           }))
         };
         break;
@@ -342,12 +380,14 @@ export default function SignalFlowTab() {
             symbol: t.symbol,
             reason: `No BUY votes from any strategy (F&G: ${Math.round(t.current_fg)})`,
             signal: t.signal,
-            currentPrice: t.price
+            currentPrice: t.price,
+            rawData: t
           })),
           passedTickers: stageData.passed.map(t => ({
             symbol: t.symbol,
             signal: t.signal,
-            currentPrice: t.price
+            currentPrice: t.price,
+            rawData: t
           }))
         };
         break;
@@ -365,12 +405,14 @@ export default function SignalFlowTab() {
               ? `BUY suppressed (${t.regime} regime)` 
               : 'Sell signal suppressed to HOLD',
             signal: t.signal,
-            currentPrice: t.price
+            currentPrice: t.price,
+            rawData: t
           })),
           passedTickers: stageData.passed.map(t => ({
             symbol: t.symbol,
             signal: t.signal,
-            currentPrice: t.price
+            currentPrice: t.price,
+            rawData: t
           }))
         };
         break;
@@ -386,14 +428,16 @@ export default function SignalFlowTab() {
             symbol: t.symbol,
             reason: 'Confidence adjusted to HOLD',
             signal: t.signal,
-            currentPrice: t.price
+            currentPrice: t.price,
+            rawData: t
           })),
           passedTickers: stageData.passed.map(t => ({
             symbol: t.symbol,
             signal: t.signal,
             signalStrength: t.signal_strength,
             currentPrice: t.price,
-            adjustmentValue: (t.regime_weight * t.rotation_modifier * t.asset_confidence) - 1
+            adjustmentValue: ((t.regime_weight || 1) * t.rotation_modifier * t.asset_confidence) - 1,
+            rawData: t
           }))
         };
         break;
@@ -413,13 +457,15 @@ export default function SignalFlowTab() {
                 ? 'Multiplier capped' 
                 : 'Asset confidence or crash mode filter',
             signal: t.signal,
-            currentPrice: t.price
+            currentPrice: t.price,
+            rawData: t
           })),
           passedTickers: stageData.passed.map(t => ({
             symbol: t.symbol,
             signal: t.signal,
             signalStrength: t.signal_strength,
-            currentPrice: t.price
+            currentPrice: t.price,
+            rawData: t
           }))
         };
         break;
@@ -436,7 +482,8 @@ export default function SignalFlowTab() {
             symbol: t.symbol,
             signal: t.signal,
             signalStrength: t.signal_strength,
-            currentPrice: t.price
+            currentPrice: t.price,
+            rawData: t
           }))
         };
         break;

@@ -73,12 +73,18 @@ interface GraphData {
     strength: number;
   }>;
   metrics: {
-    totalBuy: number;
-    totalHold: number;
-    totalSell: number;
+    totalBuy?: number;
+    totalHold?: number;
+    totalSell?: number;
     totalWatch?: number;
+    // API returns these names from calculateFlowMetrics
+    buySignals?: number;
+    holdSignals?: number;
+    watchSignals?: number;
+    totalSignals?: number;
     fearGreed: number | { current: number; rating: string; summary?: string };
     regime: string | { global: string };
+    [key: string]: any;
   };
 }
 
@@ -175,6 +181,12 @@ export default function SignalFlowTab() {
   const fgValue = getFearGreedValue(graphData.metrics.fearGreed);
   const fgRating = getFearGreedRating(graphData.metrics.fearGreed);
   const regimeValue = getRegimeValue(graphData.metrics.regime);
+  
+  // Handle both API field names (buySignals) and mock field names (totalBuy)
+  const buyCount = graphData.metrics.totalBuy ?? graphData.metrics.buySignals ?? 0;
+  const holdCount = graphData.metrics.totalHold ?? graphData.metrics.holdSignals ?? 0;
+  const sellCount = graphData.metrics.totalSell ?? 0;
+  const watchCount = graphData.metrics.totalWatch ?? graphData.metrics.watchSignals ?? 0;
 
   return (
     <>
@@ -186,7 +198,7 @@ export default function SignalFlowTab() {
             <span className="text-xs text-slate-400">BUY</span>
           </div>
           <div className="text-xl font-bold text-emerald-400">
-            {graphData.metrics.totalBuy}
+            {buyCount}
           </div>
         </div>
         <div className="bg-slate-800/50 rounded-lg p-3 border border-slate-700/50">
@@ -195,7 +207,7 @@ export default function SignalFlowTab() {
             <span className="text-xs text-slate-400">HOLD</span>
           </div>
           <div className="text-xl font-bold text-amber-400">
-            {graphData.metrics.totalHold}
+            {holdCount}
           </div>
         </div>
         <div className="bg-slate-800/50 rounded-lg p-3 border border-slate-700/50">
@@ -204,7 +216,7 @@ export default function SignalFlowTab() {
             <span className="text-xs text-slate-400">SELL</span>
           </div>
           <div className="text-xl font-bold text-red-400">
-            {graphData.metrics.totalSell}
+            {sellCount}
           </div>
         </div>
         <div className="bg-slate-800/50 rounded-lg p-3 border border-slate-700/50">
@@ -213,7 +225,7 @@ export default function SignalFlowTab() {
             <span className="text-xs text-slate-400">WATCH</span>
           </div>
           <div className="text-xl font-bold text-slate-400">
-            {graphData.metrics.totalWatch || 0}
+            {watchCount}
           </div>
         </div>
         <div className="bg-slate-800/50 rounded-lg p-3 border border-slate-700/50">
@@ -336,6 +348,10 @@ export default function SignalFlowTab() {
                   ...graphData,
                   metrics: {
                     ...graphData.metrics,
+                    totalBuy: buyCount,
+                    totalHold: holdCount,
+                    totalSell: sellCount,
+                    totalWatch: watchCount,
                     fearGreed: fgValue,
                     regime: regimeValue,
                   }

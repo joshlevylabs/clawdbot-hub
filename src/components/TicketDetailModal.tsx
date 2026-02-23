@@ -522,6 +522,8 @@ export default function TicketDetailModal({ task, onClose, onUpdate }: TicketDet
   }, [task.sourceStandup]);
 
   const isCeoTicket = localTask.tag === "JOSHUA";
+  // Allow status changes for ALL tickets in review, not just CEO tickets
+  const canChangeStatus = isCeoTicket || localTask.status === "done_but_unverified";
 
   // Close on Escape key
   useEffect(() => {
@@ -595,7 +597,7 @@ export default function TicketDetailModal({ task, onClose, onUpdate }: TicketDet
                   <span className="text-lg font-mono text-primary-400 font-bold">{localTask.key}</span>
                   <StatusBadge 
                     status={localTask.status} 
-                    onClick={isCeoTicket ? () => setShowStatusSelector(true) : undefined}
+                    onClick={canChangeStatus ? () => setShowStatusSelector(true) : undefined}
                   />
                   <PriorityBadge priority={localTask.priority} />
                   {statusSaving && <span className="text-xs text-slate-500 animate-pulse">Saving...</span>}
@@ -710,7 +712,7 @@ export default function TicketDetailModal({ task, onClose, onUpdate }: TicketDet
                   <span className="text-sm text-slate-400">Status</span>
                   <StatusBadge 
                     status={localTask.status} 
-                    onClick={isCeoTicket ? () => setShowStatusSelector(true) : undefined}
+                    onClick={canChangeStatus ? () => setShowStatusSelector(true) : undefined}
                   />
                 </div>
                 <div className="flex items-center justify-between">
@@ -822,7 +824,7 @@ export default function TicketDetailModal({ task, onClose, onUpdate }: TicketDet
             <div>
               <h3 className="font-medium text-slate-200 mb-3">Notes</h3>
               <div className="p-3 bg-slate-800/30 border border-slate-700 rounded-lg text-xs text-slate-400 italic">
-                {isCeoTicket 
+                {canChangeStatus 
                   ? "Click the status badge to update this ticket's status." 
                   : "Task data is driven by standups. Use standups to update status, priority, and other task properties."}
               </div>

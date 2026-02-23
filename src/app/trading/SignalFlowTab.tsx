@@ -193,7 +193,7 @@ export default function SignalFlowTab() {
   const [coreData, setCoreData] = useState<MREData | null>(null);
   const [universeData, setUniverseData] = useState<MREData | null>(null);
   const [selectedStage, setSelectedStage] = useState<StageDetails | null>(null);
-  const [dataMode, setDataMode] = useState<'core' | 'universe'>('core');
+  const [dataMode, setDataMode] = useState<'core' | 'universe'>('universe');
   const [loading, setLoading] = useState(false);
   const [filters, setFilters] = useState({
     searchQuery: '',

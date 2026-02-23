@@ -1,6 +1,6 @@
 {
   "date": "2026-02-23",
-  "generatedAt": "2026-02-23T07:00:09.168774-08:00",
+  "generatedAt": "2026-02-23T10:59:47.642223-08:00",
   "priorities": [
     {
       "text": "Decide newsletter send timing relative to Apple approval",
@@ -53,136 +53,10 @@
   ],
   "agentHandled": [
     {
-      "text": "Triage 6 TODOs/FIXMEs and draft fixes for non-merge-blocked items",
-      "assignee": "James Truchard",
-      "status": "pending",
-      "taskKey": "A-136"
-    },
-    {
-      "text": "Resolve podcast MDX and blog post critical sync gaps",
-      "assignee": "James Truchard",
-      "status": "pending",
-      "taskKey": "A-139"
-    },
-    {
-      "text": "Complete TODO/FIXME triage and draft remaining fixes (A-136)",
-      "assignee": "James Truchard",
-      "status": "pending",
-      "taskKey": "A-140"
-    },
-    {
-      "text": "Address 3 critical ecosystem sync gaps",
-      "assignee": "Elon",
-      "status": "pending",
-      "taskKey": "A-145"
-    },
-    {
-      "text": "Commit 3 uncommitted hub changes",
-      "assignee": "Elon",
-      "status": "pending",
-      "taskKey": "A-146"
-    },
-    {
-      "text": "Review 5 ecosystem attention items",
-      "assignee": "Elon",
-      "status": "pending",
-      "taskKey": "A-147"
-    },
-    {
-      "text": "Generate daily devotional content based on 8 faith dimensions",
-      "assignee": "Alex",
-      "status": "pending",
-      "taskKey": "A-148"
-    },
-    {
-      "text": "Draft faith lesson content for the Lever app (currently 7 lessons)",
-      "assignee": "Alex",
-      "status": "pending",
-      "taskKey": "A-149"
-    },
-    {
       "text": "Monitor Fear & Greed index (currently 42)",
       "assignee": "Dave",
       "status": "pending",
       "taskKey": "A-150"
-    },
-    {
-      "text": "Draft feature spec for expanding Family tab (currently 455 lines)",
-      "assignee": "Elon",
-      "status": "pending",
-      "taskKey": "A-151"
-    },
-    {
-      "text": "Review family touchpoint tracker design for 6 family members",
-      "assignee": "Elon",
-      "status": "pending",
-      "taskKey": "A-152"
-    },
-    {
-      "text": "Verify build and submit to App Store immediately after J-031 merge",
-      "assignee": "Elon Musk",
-      "status": "pending",
-      "taskKey": "A-153"
-    },
-    {
-      "text": "Draft faith lessons 11-15 across eight dimensions",
-      "assignee": "Alex",
-      "status": "pending",
-      "taskKey": "A-154"
-    },
-    {
-      "text": "Bundle podcast MDX and blog sync fixes into single consolidated PR (A-139)",
-      "assignee": "James Truchard",
-      "status": "pending",
-      "taskKey": "A-155"
-    },
-    {
-      "text": "Finalize welcome modal scripture selection and copy",
-      "assignee": "Jordan Peterson",
-      "status": "pending",
-      "taskKey": "A-156"
-    },
-    {
-      "text": "Trigger immediate App Store submission via A-153 after merge",
-      "assignee": "Elon (CTO)",
-      "status": "pending",
-      "taskKey": "A-157"
-    },
-    {
-      "text": "Complete A-154 drafting lessons 11-15 in parallel",
-      "assignee": "Alex (CMO)",
-      "status": "pending",
-      "taskKey": "A-158"
-    },
-    {
-      "text": "Finalize A-155 consolidated PR without merge conflicts",
-      "assignee": "James (CTIO)",
-      "status": "pending",
-      "taskKey": "A-159"
-    },
-    {
-      "text": "Commit hub cleanup changes (5 minutes)",
-      "assignee": "Elon",
-      "status": "pending",
-      "taskKey": "A-161"
-    },
-    {
-      "text": "Complete A-155 consolidated PR",
-      "assignee": "James Truchard",
-      "status": "pending",
-      "taskKey": "A-162"
-    },
-    {
-      "text": "Draft technical architecture spec for paper trading portfolio management system",
-      "assignee": "atlas",
-      "status": "pending",
-      "taskKey": "A-163"
-    },
-    {
-      "text": "Create UX mockups and user flow for paper trading feature with Robinhood-inspired design",
-      "assignee": "Steve Jobs",
-      "status": "pending",
-      "taskKey": "A-164"
     },
     {
       "text": "Research market data provider options and create cost-benefit analysis",
@@ -213,30 +87,6 @@
       "assignee": "Venture",
       "status": "pending",
       "taskKey": "A-169"
-    },
-    {
-      "text": "Trigger App Store submission pipeline within minutes of J-031 merge",
-      "assignee": "Elon",
-      "status": "pending",
-      "taskKey": "A-170"
-    },
-    {
-      "text": "Bundle and deploy 3 critical ecosystem sync fixes",
-      "assignee": "James Truchard",
-      "status": "pending",
-      "taskKey": "A-171"
-    },
-    {
-      "text": "Continue paper trading UX mockups for finance tab (clean, no educational prompts)",
-      "assignee": "Steve Jobs",
-      "status": "pending",
-      "taskKey": "A-172"
-    },
-    {
-      "text": "Finalize paper trading engine architecture for development sprint",
-      "assignee": "James Truchard",
-      "status": "pending",
-      "taskKey": "A-173"
     }
   ]
 }

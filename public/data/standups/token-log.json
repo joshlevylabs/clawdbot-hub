@@ -909,12 +909,22 @@
       "estimatedCost": 0.0621,
       "model": "claude-sonnet-4-20250514",
       "duration": "60.800000000000004s"
+    },
+    {
+      "date": "2026-02-23",
+      "type": "adhoc-mre-signal-flow-visualization-hub-signals-page-overhaul",
+      "inputTokens": 5882,
+      "outputTokens": 1232,
+      "totalTokens": 7114,
+      "estimatedCost": 0.0361,
+      "model": "claude-sonnet-4-20250514",
+      "duration": "32.5s"
     }
   ],
   "totals": {
-    "today": 0.1121,
-    "week": 20.4491,
-    "month": 20.4491,
-    "standupCount": 91
+    "today": 0.1482,
+    "week": 20.4852,
+    "month": 20.4852,
+    "standupCount": 92
   }
 }

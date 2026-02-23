@@ -38,6 +38,7 @@ import OptimizerResults from "./OptimizerResults";
 import PositionCharts from "@/components/PositionCharts";
 import SignalAnalysisModal from "@/components/SignalAnalysisModal";
 import MarketCycles from "./MarketCycles";
+import SignalFlowTab from "./SignalFlowTab";
 
 // ===== Types =====
 
@@ -357,10 +358,20 @@ function SignalAccuracyPanel({ stats }: { stats: SignalStats }) {
 
 // ===== Unified Trading Page with Single Tab Bar =====
 
-type ActiveTab = "overview" | "plays" | "positions" | "trades" | "signals" | "mre" | "universe" | "optimizer" | "markets" | "cycles" | "validation";
+type ActiveTab = "overview" | "plays" | "positions" | "trades" | "signals" | "signal-flow" | "mre" | "universe" | "optimizer" | "markets" | "cycles" | "validation";
 
 export default function TradingPage() {
-  const [activeTab, setActiveTab] = useState<ActiveTab>("overview");
+  // Support ?tab= query param for deep linking
+  const [activeTab, setActiveTab] = useState<ActiveTab>(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const tab = params.get('tab') as ActiveTab | null;
+      if (tab && ["overview","plays","positions","trades","signals","signal-flow","mre","universe","optimizer","markets","cycles","validation"].includes(tab)) {
+        return tab;
+      }
+    }
+    return "overview";
+  });
   const [data, setData] = useState<PaperTradingData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -520,6 +531,7 @@ export default function TradingPage() {
     { key: "positions", label: "Positions" },
     { key: "trades", label: "Trades" },
     { key: "signals", label: "Signals" },
+    { key: "signal-flow", label: "Signal Flow" },
     { key: "mre", label: "MRE" },
     { key: "universe", label: "Universe" },
     { key: "optimizer", label: "Optimizer" },
@@ -1253,6 +1265,9 @@ export default function TradingPage() {
           {activeTab === "cycles" && <MarketCycles />}
 
           {activeTab === "validation" && <ValidationTab />}
+
+          {/* ===== SIGNAL FLOW TAB ===== */}
+          {activeTab === "signal-flow" && <SignalFlowTab />}
 
         </div>
       </div>

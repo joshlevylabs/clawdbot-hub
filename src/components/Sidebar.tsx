@@ -30,7 +30,7 @@ const navItems = [
   { href: "/fleet", icon: Cpu, label: "Fleet" },
   { href: "/standups", icon: MessageSquare, label: "Standups" },
   { href: "/trading", icon: TrendingUp, label: "Finance" },
-  { href: "/signals", icon: Activity, label: "Signals" },
+  { href: "/trading?tab=signal-flow", icon: Activity, label: "Signal Flow" },
   { href: "/morning-brief", icon: Clock, label: "Morning Brief" },
   { href: "/podcast", icon: Mic, label: "Podcast" },
   { href: "/newsletter", icon: Mail, label: "Newsletter" },

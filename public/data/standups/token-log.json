@@ -869,12 +869,52 @@
       "estimatedCost": 0.0556,
       "model": "claude-sonnet-4-20250514",
       "duration": "63.3s"
+    },
+    {
+      "date": "2026-02-22",
+      "type": "adhoc-paper-trading-portfolio-management-in-lever",
+      "inputTokens": 6204,
+      "outputTokens": 1997,
+      "totalTokens": 8201,
+      "estimatedCost": 0.0486,
+      "model": "claude-sonnet-4-20250514",
+      "duration": "54.1s"
+    },
+    {
+      "date": "2026-02-22",
+      "type": "adhoc-paper-trading-portfolio-management-in-lever",
+      "inputTokens": 7410,
+      "outputTokens": 2450,
+      "totalTokens": 9860,
+      "estimatedCost": 0.059,
+      "model": "claude-sonnet-4-20250514",
+      "duration": "66.3s"
+    },
+    {
+      "date": "2026-02-23",
+      "type": "morning-kickoff",
+      "inputTokens": 6849,
+      "outputTokens": 1961,
+      "totalTokens": 8810,
+      "estimatedCost": 0.05,
+      "model": "claude-sonnet-4-20250514",
+      "duration": "50.2s"
+    },
+    {
+      "date": "2026-02-23",
+      "type": "morning-kickoff",
+      "inputTokens": 8049,
+      "outputTokens": 2528,
+      "totalTokens": 10577,
+      "estimatedCost": 0.0621,
+      "model": "claude-sonnet-4-20250514",
+      "duration": "60.800000000000004s"
     }
   ],
   "totals": {
-    "today": 1.3311,
-    "week": 20.2294,
-    "month": 20.2294,
-    "standupCount": 87
+    "today": 0.1121,
+    "week": 20.4491,
+    "month": 20.4491,
+    "standupCount": 91
   }
 }

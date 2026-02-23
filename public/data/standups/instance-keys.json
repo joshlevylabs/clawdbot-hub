@@ -4,12 +4,13 @@
     "adhoc-evening-roster-test": 2,
     "adhoc-phase-3-smoke-test": 2,
     "overnight-sprint": 24,
-    "morning-kickoff": 7,
+    "morning-kickoff": 9,
     "midday-checkpoint": 6,
     "evening-session": 9,
     "adhoc-podcast-planning-episode-4-how-i-use-ai-agents-to-run-my-entire-podcast-and-newsletter-pipeline": 1,
     "night-wrap": 1,
-    "adhoc-welcome-modal-design": 2
+    "adhoc-welcome-modal-design": 2,
+    "adhoc-paper-trading-portfolio-management-in-lever": 2
   },
   "abbreviations": {
     "adhoc-evening-wrap": "STD",
@@ -21,6 +22,7 @@
     "evening-session": "STD",
     "adhoc-podcast-planning-episode-4-how-i-use-ai-agents-to-run-my-entire-podcast-and-newsletter-pipeline": "STD",
     "night-wrap": "STD",
-    "adhoc-welcome-modal-design": "STD"
+    "adhoc-welcome-modal-design": "STD",
+    "adhoc-paper-trading-portfolio-management-in-lever": "STD"
   }
 }

@@ -4,9 +4,9 @@
   "_note": "Use Hub /trading dashboard or Supabase queries for current positions and performance data.",
   "account": {
     "starting_capital": 100000,
-    "cash": 81421.65,
+    "cash": 81421.6,
     "created_at": "2026-02-06T15:17:00-08:00",
-    "equity": 93340.73
+    "equity": 93453.16
   },
   "positions": [],
   "trades": [],
@@ -1956,6 +1956,62 @@
       "equity": 93340.73,
       "cash": 81421.65,
       "spy_price": 688.67,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-02-23",
+      "equity": 93453.16,
+      "cash": 81421.6,
+      "spy_price": 686.55,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-02-23T06:30",
+      "equity": 93379.17,
+      "cash": 81421.6,
+      "spy_price": 689.43,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-02-23T06:35",
+      "equity": 93430.36,
+      "cash": 81421.6,
+      "spy_price": 688.87,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-02-23T06:40",
+      "equity": 93461.52,
+      "cash": 81421.6,
+      "spy_price": 689.25,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-02-23T06:45",
+      "equity": 93474.44,
+      "cash": 81421.6,
+      "spy_price": 687.68,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-02-23T06:50",
+      "equity": 93458.1,
+      "cash": 81421.6,
+      "spy_price": 687.38,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-02-23T06:55",
+      "equity": 93453.16,
+      "cash": 81421.6,
+      "spy_price": 687.6,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-02-23T07:00",
+      "equity": 93453.16,
+      "cash": 81421.6,
+      "spy_price": 686.55,
       "spy_baseline": 690.62
     }
   ],

@@ -1,6 +1,32 @@
 {
   "standups": [
     {
+      "date": "2026-02-23",
+      "time": "05:00",
+      "type": "morning-kickoff",
+      "typeName": "Morning Kickoff",
+      "typeEmoji": "\ud83c\udf05",
+      "topic": "Morning Kickoff \u2014 Monday Feb 23",
+      "file": "2026-02-23-morning-kickoff.json",
+      "tokenCost": 0.0621,
+      "verticals": [],
+      "initiatives": [],
+      "instanceKey": "STD-9"
+    },
+    {
+      "date": "2026-02-22",
+      "time": "21:41",
+      "type": "adhoc-paper-trading-portfolio-management-in-lever",
+      "typeName": "Paper Trading & Portfolio Management in Lever",
+      "typeEmoji": "\ud83d\udcca",
+      "topic": "Paper Trading & Portfolio Management in Lever \u2014 Sunday Feb 22",
+      "file": "2026-02-22-adhoc-paper-trading-portfolio-management-in-lever.json",
+      "tokenCost": 0.059,
+      "verticals": [],
+      "initiatives": [],
+      "instanceKey": "STD-2"
+    },
+    {
       "date": "2026-02-22",
       "time": "20:00",
       "type": "evening-session",

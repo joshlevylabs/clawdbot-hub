@@ -1,0 +1,25 @@
+{
+  "cash": 8000.0999000999,
+  "trade_counter": 2,
+  "positions": {
+    "BTC/USD": {
+      "symbol": "BTC/USD",
+      "quantity": 0.012704957840960528,
+      "entry_price": 78630.8,
+      "entry_time": "2026-02-02T23:22:00.285679",
+      "strategy": "buy_the_dip",
+      "current_price": 78630.8,
+      "unrealized_pnl": 0.0
+    },
+    "ETH/USD": {
+      "symbol": "ETH/USD",
+      "quantity": 0.43045139326697024,
+      "entry_price": 2320.59,
+      "entry_time": "2026-02-02T23:22:01.436269",
+      "strategy": "buy_the_dip",
+      "current_price": 2320.59,
+      "unrealized_pnl": 0.0
+    }
+  },
+  "last_updated": "2026-02-02T23:22:01.437885"
+}

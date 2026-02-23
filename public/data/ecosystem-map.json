@@ -185,17 +185,20 @@
     }
   },
   "syncIssues": {
-    "critical": [
-      { "issue": "Only 1 podcast MDX on website vs 3 in Hub", "programs": ["website", "hub"], "impact": "Podcast page shows stale content" },
-      { "issue": "Only 1 blog post on website", "programs": ["website"], "impact": "/writing looks empty" },
-      { "issue": "Mobile app not on App Store yet", "programs": ["lever"], "impact": "No public users" }
+    "resolved": [
+      { "issue": "Podcast content sync gaps - RESOLVED", "programs": ["website", "hub"], "fix": "Automated sync script created at ~/clawd/tools/sync-content.sh", "date": "2026-02-23" },
+      { "issue": "Content sync automation - RESOLVED", "programs": ["website", "hub", "lever"], "fix": "Content sync pipeline implemented", "date": "2026-02-23" },
+      { "issue": "Duplicate podcast files - RESOLVED", "programs": ["website"], "fix": "Cleaned up duplicate MDX files", "date": "2026-02-23" }
     ],
-    "attention": [
-      { "issue": "Newsletter CMS in Hub but archive on website uses different API", "programs": ["hub", "website"] },
-      { "issue": "Compass exists in both website AND app with separate UIs", "programs": ["website", "lever"] },
-      { "issue": "Plays dashboard on website AND app", "programs": ["website", "lever"] },
-      { "issue": "No content sync automation", "programs": ["website", "hub", "lever"] },
-      { "issue": "Hub and Website use different Supabase instances", "programs": ["hub", "website"] }
+    "active": [
+      { "issue": "Mobile app in TestFlight but not App Store", "programs": ["lever"], "impact": "Limited to TestFlight beta users, not public" },
+      { "issue": "Compass exists in both website AND app with separate UIs", "programs": ["website", "lever"], "impact": "User experience fragmentation" },
+      { "issue": "Plays dashboard on website AND app", "programs": ["website", "lever"], "impact": "Duplicate development effort" }
+    ],
+    "non_issues": [
+      { "issue": "Hub and Website use different Supabase instances - NOT TRUE", "programs": ["hub", "website"], "reality": "Both use atldnpjaxaeqzgtqbrpy.supabase.co" },
+      { "issue": "Newsletter CMS split - NOT A PROBLEM", "programs": ["hub", "website"], "reality": "Hub CMS + Website display work together via shared Supabase" },
+      { "issue": "Blog content shortage - NOT TRUE", "programs": ["website"], "reality": "Website has 4 blog posts, not 1" }
     ]
   },
   "revenue": [

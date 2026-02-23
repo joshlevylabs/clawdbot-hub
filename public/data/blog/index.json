@@ -1,0 +1,33 @@
+{
+  "posts": [
+    {
+      "slug": "ai-as-your-co-founder",
+      "title": "AI as Your Co-Founder",
+      "filename": "ai-as-your-co-founder.md",
+      "created": "2026-02-20",
+      "status": "published"
+    },
+    {
+      "slug": "eight-employees-zero-paychecks", 
+      "title": "Eight Employees, Zero Paychecks",
+      "filename": "eight-employees-zero-paychecks.md",
+      "created": "2026-02-20",
+      "status": "published"
+    },
+    {
+      "slug": "stealth-builders-playbook",
+      "title": "The Stealth Builder's Playbook", 
+      "filename": "stealth-builders-playbook.md",
+      "created": "2026-02-15",
+      "status": "published"
+    },
+    {
+      "slug": "welcome",
+      "title": "Welcome to The Builder's Frequency",
+      "filename": "welcome.md", 
+      "created": "2026-01-27",
+      "status": "published"
+    }
+  ],
+  "lastUpdated": "2026-02-23"
+}

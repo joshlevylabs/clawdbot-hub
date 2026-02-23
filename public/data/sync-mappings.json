@@ -1,0 +1,31 @@
+{
+  "podcast_mappings": {
+    "hub_to_website": {
+      "episode-001-2026-01-27-why-i-started.md": "1-why-i-started.mdx",
+      "episode-002-2026-02-02-invisible-entrepreneur.md": "2-invisible-entrepreneur.mdx", 
+      "episode-003-2026-02-06-mre-trading-system.md": "3-mre-trading-system.mdx",
+      "episode-004-2026-02-20-ai-podcast-pipeline.md": "4-ai-podcast-pipeline.mdx"
+    },
+    "website_to_hub": {
+      "1-why-i-started.mdx": "episode-001-2026-01-27-why-i-started.md",
+      "2-invisible-entrepreneur.mdx": "episode-002-2026-02-02-invisible-entrepreneur.md",
+      "3-mre-trading-system.mdx": "episode-003-2026-02-06-mre-trading-system.md", 
+      "4-ai-podcast-pipeline.mdx": "episode-004-2026-02-20-ai-podcast-pipeline.md"
+    }
+  },
+  "blog_mappings": {
+    "hub_to_website": {
+      "ai-as-your-co-founder.md": "ai-as-your-co-founder.mdx",
+      "eight-employees-zero-paychecks.md": "eight-employees-zero-paychecks.mdx",
+      "stealth-builders-playbook.md": "the-stealth-builders-playbook.mdx",
+      "welcome.md": "welcome.mdx"
+    },
+    "website_to_hub": {
+      "ai-as-your-co-founder.mdx": "ai-as-your-co-founder.md",
+      "eight-employees-zero-paychecks.mdx": "eight-employees-zero-paychecks.md", 
+      "the-stealth-builders-playbook.mdx": "stealth-builders-playbook.md",
+      "welcome.mdx": "welcome.md"
+    }
+  },
+  "last_updated": "2026-02-23T07:30:00Z"
+}

@@ -51,11 +51,15 @@ const STRATEGY_COLORS = {
   regime_confirmation: "#3B82F6", // Blue  
   rsi_oversold: "#F59E0B",    // Orange
   mean_reversion: "#8B5CF6",  // Purple
-  momentum: "#EF4444"         // Red
+  momentum: "#EF4444",        // Red
+  time_series_momentum: "#06B6D4", // Cyan
+  qvm_factor: "#EC4899",      // Pink
+  vix_mean_reversion: "#F97316"    // Orange-500
 };
 
 export default function NoiseResilienceChart() {
   const [data, setData] = useState<NoiseResilienceData | null>(null);
+  const [versions, setVersions] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -64,13 +68,20 @@ export default function NoiseResilienceChart() {
       setLoading(true);
       setError(null);
       const ts = Date.now();
-      const response = await fetch(`/data/trading/optimization/noise_resilience.json?${ts}`);
+      const [noiseResponse, versionsResponse] = await Promise.all([
+        fetch(`/data/trading/optimization/noise_resilience.json?${ts}`),
+        fetch(`/data/trading/strategy-versions.json?${ts}`)
+      ]);
       
-      if (!response.ok) {
+      if (!noiseResponse.ok) {
         throw new Error("Failed to load noise resilience results");
       }
       
-      setData(await response.json());
+      setData(await noiseResponse.json());
+      
+      if (versionsResponse.ok) {
+        setVersions(await versionsResponse.json());
+      }
     } catch (e) {
       setError("Failed to load noise resilience data");
       console.error(e);
@@ -240,20 +251,31 @@ export default function NoiseResilienceChart() {
       </div>
 
       {/* Strategy resilience breakdown */}
-      <div className="mt-4 grid grid-cols-5 gap-2">
-        {data.strategies_tested.map(strategy => (
-          <div key={strategy} className="bg-slate-900/50 rounded-lg p-2 text-center">
-            <div className="text-xs text-slate-500 capitalize">
-              {strategy.replace(/_/g, " ")}
+      <div className="mt-4 flex flex-wrap gap-2">
+        {data.strategies_tested.map(strategy => {
+          // Handle regime_confirm vs regime_confirmation key mismatch
+          const versionKey = strategy === 'regime_confirmation' ? 'regime_confirm' : strategy;
+          const version = versions?.strategies?.[versionKey]?.currentVersion;
+          
+          return (
+            <div key={strategy} className="bg-slate-900/50 rounded-lg p-2 text-center min-w-[140px] flex-1">
+              <div className="text-xs text-slate-500 capitalize">
+                {strategy.replace(/_/g, " ")}
+              </div>
+              <div 
+                className="text-sm font-bold"
+                style={{ color: STRATEGY_COLORS[strategy as keyof typeof STRATEGY_COLORS] }}
+              >
+                {(data.summary.strategy_avg_resilience[strategy] * 100).toFixed(0)}%
+              </div>
+              {version && (
+                <div className="text-xs text-slate-600 mt-1">
+                  v{version}
+                </div>
+              )}
             </div>
-            <div 
-              className="text-sm font-bold"
-              style={{ color: STRATEGY_COLORS[strategy as keyof typeof STRATEGY_COLORS] }}
-            >
-              {(data.summary.strategy_avg_resilience[strategy] * 100).toFixed(0)}%
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       <div className="mt-3 text-xs text-slate-500 text-center">

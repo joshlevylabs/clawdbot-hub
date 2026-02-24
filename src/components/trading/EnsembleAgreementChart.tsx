@@ -89,22 +89,29 @@ export default function EnsembleAgreementChart() {
     );
   }
 
-  // Create histogram data for strategies agreeing (0, 1, 2, 3, 4, 5)
-  const agreementCounts = { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+  // Get the maximum number of strategies from the data
+  const maxStrategies = Math.max(...Object.values(data.results).map(result => result.strategies_total));
+  
+  // Create histogram data for strategies agreeing (0 to maxStrategies)
+  const agreementCounts: Record<number, number> = {};
+  for (let i = 0; i <= maxStrategies; i++) {
+    agreementCounts[i] = 0;
+  }
+  
   Object.values(data.results).forEach(result => {
-    const agreeing = Math.min(5, Math.max(0, result.strategies_agreeing));
-    agreementCounts[agreeing as keyof typeof agreementCounts]++;
+    const agreeing = Math.min(maxStrategies, Math.max(0, result.strategies_agreeing));
+    agreementCounts[agreeing]++;
   });
 
   const histogramData: AgreementBin[] = Object.entries(agreementCounts).map(([strategies, count]) => ({
     strategies_agreeing: strategies,
     count: count,
     percentage: (count / data.summary.total_tickers) * 100,
-    label: strategies === "5" ? "5 (Unanimous)" : `${strategies} strategies`,
+    label: strategies === maxStrategies.toString() ? `${strategies} (Unanimous)` : `${strategies} strategies`,
   }));
 
   const threshold = data.min_agreement_threshold;
-  const thresholdLine = threshold >= 0.6 ? 3 : threshold >= 0.4 ? 2 : 1; // Approximate mapping
+  const thresholdLine = Math.round(threshold * maxStrategies); // Scale threshold to strategy count
 
   return (
     <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50">

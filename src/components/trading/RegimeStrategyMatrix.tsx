@@ -35,14 +35,17 @@ interface MatrixCell {
 }
 
 const REGIMES = ['bull', 'bear', 'sideways', 'panic'];
-const STRATEGIES = ['fear_greed', 'regime_confirmation', 'rsi_oversold', 'mean_reversion', 'momentum'];
+const STRATEGIES = ['fear_greed', 'regime_confirmation', 'rsi_oversold', 'mean_reversion', 'momentum', 'time_series_momentum', 'qvm_factor', 'vix_mean_reversion'];
 
 const STRATEGY_DISPLAY_NAMES = {
   fear_greed: 'Fear & Greed',
   regime_confirmation: 'Regime Confirm',
   rsi_oversold: 'RSI Oversold',
   mean_reversion: 'Mean Reversion',
-  momentum: 'Momentum'
+  momentum: 'Momentum',
+  time_series_momentum: 'TS Momentum',
+  qvm_factor: 'QVM Factor',
+  vix_mean_reversion: 'VIX Reversion'
 };
 
 const REGIME_DISPLAY_NAMES = {
@@ -54,6 +57,7 @@ const REGIME_DISPLAY_NAMES = {
 
 export default function RegimeStrategyMatrix() {
   const [data, setData] = useState<CalibrationData | null>(null);
+  const [versions, setVersions] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -62,13 +66,20 @@ export default function RegimeStrategyMatrix() {
       setLoading(true);
       setError(null);
       const ts = Date.now();
-      const response = await fetch(`/data/trading/optimization/calibration_20260210.json?${ts}`);
+      const [calibrationResponse, versionsResponse] = await Promise.all([
+        fetch(`/data/trading/optimization/calibration_20260210.json?${ts}`),
+        fetch(`/data/trading/strategy-versions.json?${ts}`)
+      ]);
       
-      if (!response.ok) {
+      if (!calibrationResponse.ok) {
         throw new Error("Failed to load calibration results");
       }
       
-      setData(await response.json());
+      setData(await calibrationResponse.json());
+      
+      if (versionsResponse.ok) {
+        setVersions(await versionsResponse.json());
+      }
     } catch (e) {
       setError("Failed to load calibration data");
       console.error(e);
@@ -192,15 +203,26 @@ export default function RegimeStrategyMatrix() {
       <div className="overflow-x-auto">
         <div className="inline-block min-w-full">
           {/* Header row */}
-          <div className="grid grid-cols-6 gap-1 mb-1">
+          <div className="grid grid-cols-9 gap-1 mb-1">
             <div className="h-12"></div> {/* Empty corner */}
-            {STRATEGIES.map(strategy => (
-              <div key={strategy} className="bg-slate-700/30 rounded p-2 text-center">
-                <div className="text-xs text-slate-300 font-semibold">
-                  {STRATEGY_DISPLAY_NAMES[strategy as keyof typeof STRATEGY_DISPLAY_NAMES]}
+            {STRATEGIES.map(strategy => {
+              // Handle regime_confirm vs regime_confirmation key mismatch
+              const versionKey = strategy === 'regime_confirmation' ? 'regime_confirm' : strategy;
+              const version = versions?.strategies?.[versionKey]?.currentVersion;
+              
+              return (
+                <div key={strategy} className="bg-slate-700/30 rounded p-1 text-center">
+                  <div className="text-xs text-slate-300 font-semibold">
+                    {STRATEGY_DISPLAY_NAMES[strategy as keyof typeof STRATEGY_DISPLAY_NAMES]}
+                  </div>
+                  {version && (
+                    <div className="text-xs text-slate-500 mt-1">
+                      v{version}
+                    </div>
+                  )}
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           {/* Matrix rows */}
@@ -209,7 +231,7 @@ export default function RegimeStrategyMatrix() {
             if (!hasData) return null; // Skip regimes with no data
 
             return (
-              <div key={regime} className="grid grid-cols-6 gap-1 mb-1">
+              <div key={regime} className="grid grid-cols-9 gap-1 mb-1">
                 {/* Row header */}
                 <div className="bg-slate-700/30 rounded p-2 flex items-center justify-center">
                   <div className="text-xs text-slate-300 font-semibold text-center">

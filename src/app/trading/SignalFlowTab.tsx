@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import {
   Activity,
   TrendingUp,
@@ -14,7 +14,7 @@ import {
   Layers,
   Clock,
 } from "lucide-react";
-import PipelineStage from "@/components/PipelineStage";
+import WorkflowNode from "@/components/WorkflowNode";
 import PipelineDetailPanel from "@/components/PipelineDetailPanel";
 import SectorFearGreedPanel from "./SectorFearGreedPanel";
 
@@ -357,6 +357,320 @@ function calculatePipelineStages(signals: MRESignal[], dataType: 'core' | 'unive
     finalFilters: finalStage,
     output: outputStage
   };
+}
+
+// n8n-Style Workflow Visualization Component
+interface WorkflowVisualizationProps {
+  pipelineData: any;
+  mreVersions: any;
+  onStageClick: (stageKey: string) => void;
+}
+
+function WorkflowVisualization({ pipelineData, mreVersions, onStageClick }: WorkflowVisualizationProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const svgRef = useRef<SVGSVGElement>(null);
+  const nodeRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  
+  // Store node positions for connection lines
+  const [connections, setConnections] = useState<{ from: string; to: string; fromPos: { x: number; y: number }; toPos: { x: number; y: number } }[]>([]);
+
+  const updateConnections = useCallback(() => {
+    if (!containerRef.current) return;
+    
+    const containerRect = containerRef.current.getBoundingClientRect();
+    const newConnections: typeof connections = [];
+    
+    // Define the flow order
+    const flowOrder = [
+      'input',
+      'strategyVotes',
+      'voteConsensus', 
+      'persistence',
+      'signalGating',
+      'confidenceTuning', 
+      'finalFilters',
+      'output'
+    ];
+    
+    for (let i = 0; i < flowOrder.length - 1; i++) {
+      const fromKey = flowOrder[i];
+      const toKey = flowOrder[i + 1];
+      
+      const fromNode = nodeRefs.current[fromKey];
+      const toNode = nodeRefs.current[toKey];
+      
+      if (fromNode && toNode) {
+        const fromRect = fromNode.getBoundingClientRect();
+        const toRect = toNode.getBoundingClientRect();
+        
+        const fromPos = {
+          x: fromRect.right - containerRect.left,
+          y: fromRect.top + fromRect.height / 2 - containerRect.top
+        };
+        
+        const toPos = {
+          x: toRect.left - containerRect.left,
+          y: toRect.top + toRect.height / 2 - containerRect.top
+        };
+        
+        newConnections.push({ from: fromKey, to: toKey, fromPos, toPos });
+      }
+    }
+    
+    setConnections(newConnections);
+  }, []);
+
+  useEffect(() => {
+    updateConnections();
+    
+    // Update connections on resize
+    const resizeObserver = new ResizeObserver(updateConnections);
+    if (containerRef.current) {
+      resizeObserver.observe(containerRef.current);
+    }
+    
+    return () => resizeObserver.disconnect();
+  }, [updateConnections, pipelineData]);
+
+  // Create bezier curve path
+  const createBezierPath = (from: { x: number; y: number }, to: { x: number; y: number }) => {
+    const dx = to.x - from.x;
+    const controlPointOffset = Math.min(dx * 0.5, 100);
+    
+    return `M ${from.x} ${from.y} C ${from.x + controlPointOffset} ${from.y} ${to.x - controlPointOffset} ${to.y} ${to.x} ${to.y}`;
+  };
+
+  const pipelineVersion = pipelineData?.input?.passed?.[0]?.meta?.version || '3.1.0';
+
+  return (
+    <div className="bg-slate-900/80 rounded-xl border border-slate-700/50 p-8 overflow-x-auto relative">
+      <div 
+        ref={containerRef} 
+        className="relative min-w-[1400px] min-h-[500px]"
+        style={{ 
+          background: 'radial-gradient(circle at 20% 80%, rgba(15, 118, 110, 0.05) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.05) 0%, transparent 50%)',
+        }}
+      >
+        {/* SVG Layer for Connections */}
+        <svg 
+          ref={svgRef}
+          className="absolute inset-0 w-full h-full pointer-events-none"
+          style={{ zIndex: 1 }}
+        >
+          <defs>
+            <linearGradient id="connectionGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="rgb(148, 163, 184)" stopOpacity="0.6" />
+              <stop offset="50%" stopColor="rgb(59, 130, 246)" stopOpacity="0.4" />
+              <stop offset="100%" stopColor="rgb(148, 163, 184)" stopOpacity="0.6" />
+            </linearGradient>
+            <filter id="glow">
+              <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+              <feMerge> 
+                <feMergeNode in="coloredBlur"/>
+                <feMergeNode in="SourceGraphic"/> 
+              </feMerge>
+            </filter>
+          </defs>
+          
+          {connections.map((connection, index) => (
+            <path
+              key={`${connection.from}-${connection.to}`}
+              d={createBezierPath(connection.fromPos, connection.toPos)}
+              stroke="url(#connectionGradient)"
+              strokeWidth="2"
+              fill="none"
+              filter="url(#glow)"
+              opacity="0.8"
+            />
+          ))}
+        </svg>
+        
+        {/* Workflow Nodes */}
+        <div className="relative z-10 flex items-start gap-16 p-4">
+          
+          {/* Column 1: Universe Input */}
+          <div className="flex flex-col items-center gap-6">
+            <WorkflowNode
+              ref={(el) => { nodeRefs.current['input'] = el; }}
+              name="Universe Input" 
+              description={`${pipelineData.input.inputCount.toLocaleString()} tickers`}
+              inputCount={0}
+              outputCount={pipelineData.input.outputCount}
+              onClick={() => onStageClick('input')}
+              nodeType="input"
+              version={mreVersions?.signals || '2.0.0'}
+            />
+          </div>
+          
+          {/* Column 2: Strategy Votes (Stacked) */}
+          <div className="flex flex-col items-center gap-6">
+            <div className="text-xs font-semibold text-slate-400 text-center mb-2">Strategy Votes</div>
+            <div 
+              ref={(el) => { nodeRefs.current['strategyVotes'] = el; }}
+              className="flex flex-col gap-3"
+            >
+              {pipelineData.strategyVotes.map((sv: any, index: number) => {
+                const confirmed = sv.confirmedCount || 0;
+                const pending = sv.pendingCount || 0;
+                const description = sv.key === 'fear_greed' ? 'Per-sector blended F&G' : 'Strategic signal detection';
+                
+                return (
+                  <WorkflowNode
+                    key={sv.key}
+                    name={sv.name}
+                    description={description}
+                    inputCount={sv.inputCount}
+                    outputCount={sv.outputCount}
+                    confirmedCount={confirmed}
+                    pendingCount={pending}
+                    onClick={() => onStageClick(`strategy_${sv.key}`)}
+                    nodeType="strategy"
+                    isPending={pending > 0}
+                    className="max-w-[180px]"
+                  />
+                );
+              })}
+            </div>
+          </div>
+          
+          {/* Column 3: Vote Consensus Gate (Stacked) */}
+          <div className="flex flex-col items-center gap-6">
+            <div className="text-xs font-semibold text-slate-400 text-center mb-2">Vote Consensus</div>
+            <div 
+              ref={(el) => { nodeRefs.current['voteConsensus'] = el; }}
+              className="flex flex-col gap-2"
+            >
+              {pipelineData.voteConsensusGate.paths.slice().reverse().map((path: any) => (
+                <WorkflowNode
+                  key={path.voteCount}
+                  name={`${path.voteCount} of 8`}
+                  description={`${path.count} tickers`}
+                  inputCount={0}
+                  outputCount={path.count}
+                  onClick={() => onStageClick(`vote_consensus_${path.voteCount}`)}
+                  nodeType="consensus"
+                  className="max-w-[140px]"
+                />
+              ))}
+            </div>
+          </div>
+          
+          {/* Column 4: Persistence Gate */}
+          <div className="flex flex-col items-center gap-6">
+            <WorkflowNode
+              ref={(el) => { nodeRefs.current['persistence'] = el; }}
+              name="Persistence Gate"
+              description="2-day confirmation required"
+              inputCount={pipelineData.persistenceGate.inputCount}
+              outputCount={pipelineData.persistenceGate.outputCount}
+              confirmedCount={pipelineData.persistenceGate.outputCount}
+              pendingCount={pipelineData.persistenceGate.pendingCount}
+              onClick={() => onStageClick('persistenceGate')}
+              nodeType="persistence"
+              isPending={pipelineData.persistenceGate.pendingCount > 0}
+              version="4.0.0"
+            />
+          </div>
+          
+          {/* Column 5: Signal Gating */}
+          <div className="flex flex-col items-center gap-6">
+            <WorkflowNode
+              ref={(el) => { nodeRefs.current['signalGating'] = el; }}
+              name="Signal Gating"
+              description="Bear & sell suppression"
+              inputCount={pipelineData.signalGating.inputCount}
+              outputCount={pipelineData.signalGating.outputCount}
+              onClick={() => onStageClick('signalGating')}
+              nodeType="filter"
+              version={mreVersions?.signals || '2.0.0'}
+            />
+          </div>
+          
+          {/* Column 6: Confidence Tuning */}
+          <div className="flex flex-col items-center gap-6">
+            <WorkflowNode
+              ref={(el) => { nodeRefs.current['confidenceTuning'] = el; }}
+              name="Confidence Tuning"
+              description="Regime, role, rotation adjustments"
+              inputCount={pipelineData.confidenceTuning.inputCount}
+              outputCount={pipelineData.confidenceTuning.outputCount}
+              onClick={() => onStageClick('confidenceTuning')}
+              nodeType="modifier"
+              version={mreVersions?.pit || '1.1.0'}
+            />
+          </div>
+          
+          {/* Column 7: Final Filters */}
+          <div className="flex flex-col items-center gap-6">
+            <WorkflowNode
+              ref={(el) => { nodeRefs.current['finalFilters'] = el; }}
+              name="Final Filters"
+              description="Cluster, confidence, caps"
+              inputCount={pipelineData.finalFilters.inputCount}
+              outputCount={pipelineData.finalFilters.outputCount}
+              onClick={() => onStageClick('finalFilters')}
+              nodeType="filter"
+              version={mreVersions?.config || '2.0.0'}
+            />
+          </div>
+          
+          {/* Column 8: BUY Signals Output */}
+          <div className="flex flex-col items-center gap-6">
+            <WorkflowNode
+              ref={(el) => { nodeRefs.current['output'] = el; }}
+              name="BUY Signals"
+              description="Final confirmed signals"
+              inputCount={pipelineData.output.inputCount}
+              outputCount={pipelineData.output.outputCount}
+              onClick={() => onStageClick('output')}
+              nodeType="output"
+              version={pipelineVersion}
+            />
+          </div>
+        </div>
+      </div>
+      
+      {/* Current State Summary */}
+      <div className="mt-8 p-6 bg-slate-900/50 rounded-lg border border-slate-700/50">
+        <h3 className="text-lg font-semibold text-slate-200 mb-3">Current Pipeline State</h3>
+        <div className="text-sm text-slate-400 space-y-2">
+          <p>
+            <strong>{pipelineData.input.inputCount.toLocaleString()}</strong> tickers entered → 
+            <strong className="text-emerald-400 ml-1">{pipelineData.output.outputCount}</strong> BUY signals generated
+          </p>
+          {pipelineData.persistenceGate.pendingCount > 0 && (
+            <p className="flex items-center gap-2">
+              <Clock className="w-4 h-4 text-amber-400" />
+              <span>
+                <strong className="text-amber-400">{pipelineData.persistenceGate.pendingCount}</strong> signals pending day-2 confirmation
+                {pipelineData.persistenceGate.outputCount === 0 && (
+                  <span className="text-amber-300"> — first run of persistence system, signals will confirm tomorrow</span>
+                )}
+              </span>
+            </p>
+          )}
+          <p>
+            Fear & Greed at <strong>{pipelineData.input.passed?.[0]?.current_fg || 'N/A'}</strong> means strategic opportunities across sectors
+          </p>
+          {/* Strategy vote summary */}
+          <div className="mt-3 pt-3 border-t border-slate-700/50">
+            <p className="text-xs text-slate-500 mb-2">Strategy performance (raw votes before persistence):</p>
+            <div className="flex flex-wrap gap-2">
+              {pipelineData.strategyVotes.map((sv: any) => (
+                <span key={sv.key} className={`px-2 py-1 rounded text-xs ${
+                  sv.outputCount > 0 
+                    ? 'bg-slate-800 text-slate-300' 
+                    : 'bg-slate-900/50 text-slate-600'
+                }`}>
+                  {sv.name}: <strong className={sv.outputCount > 0 ? 'text-amber-400' : 'text-slate-500'}>{sv.outputCount}</strong>
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default function SignalFlowTab() {
@@ -835,295 +1149,12 @@ export default function SignalFlowTab() {
         globalFearGreed={fgValue}
       />
 
-      {/* Pipeline Visualization */}
-      <div className="bg-slate-800/30 rounded-xl border border-slate-700/50 p-6 overflow-x-auto">
-        <div className="flex items-stretch min-w-[1200px]">
-          
-          {/* Stage 1: Universe Input */}
-          <div className="flex items-center">
-            <PipelineStage
-              name="Universe Input"
-              description={`${pipelineData.input.inputCount.toLocaleString()} tickers`}
-              inputCount={pipelineData.input.inputCount}
-              outputCount={pipelineData.input.outputCount}
-              onClick={() => handleStageClick('input')}
-              stageType="input"
-              version={mreVersions?.signals || '2.0.0'}
-            />
-          </div>
-          
-          {/* Arrow → */}
-          <div className="flex items-center px-2">
-            <div className="text-slate-600 text-xl">→</div>
-          </div>
-          
-          {/* Stage 2: 5 Strategy Votes (fanned out vertically) */}
-          <div className="flex flex-col gap-1.5 justify-center">
-            <div className="text-xs font-semibold text-slate-400 text-center mb-1">Strategy Votes</div>
-            {pipelineData.strategyVotes.map((sv: any) => {
-              const confirmed = sv.confirmedCount || 0;
-              const pending = sv.pendingCount || 0;
-              const total = sv.outputCount;
-              return (
-                <div
-                  key={sv.key}
-                  onClick={() => handleStageClick(`strategy_${sv.key}`)}
-                  className="flex items-center justify-between gap-3 px-3 py-1.5 bg-slate-800/80 rounded-lg border border-slate-700/50 hover:border-primary-500/50 cursor-pointer transition-all min-w-[240px]"
-                >
-                  <div className="flex flex-col min-w-0">
-                    <span className="text-xs font-medium text-slate-300 truncate">{sv.name}</span>
-                    {sv.key === 'fear_greed' && (
-                      <span className="text-[10px] text-slate-500 truncate">Per-sector blended score</span>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    {total > 0 ? (
-                      <>
-                        {confirmed > 0 && (
-                          <span className="text-xs font-bold text-emerald-400" title="Confirmed (2+ days)">
-                            {confirmed}
-                          </span>
-                        )}
-                        {pending > 0 && confirmed > 0 && (
-                          <span className="text-[10px] text-slate-600">+</span>
-                        )}
-                        {pending > 0 && (
-                          <span className="text-xs font-bold text-amber-400" title="Pending confirmation (day 1)">
-                            {pending}
-                          </span>
-                        )}
-                        <span className="text-[10px] text-slate-600">
-                          {confirmed > 0 ? 'BUY' : '⏳'}
-                        </span>
-                      </>
-                    ) : (
-                      <>
-                        <span className="text-xs font-bold text-slate-500">0</span>
-                        <span className="text-[10px] text-slate-600">BUY</span>
-                      </>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-          
-          {/* Arrow → */}
-          <div className="flex items-center px-2">
-            <div className="text-slate-600 text-xl">→</div>
-          </div>
-          
-          {/* Stage 3: Vote Consensus Gate */}
-          <div className="flex flex-col gap-1.5 justify-center">
-            <div className="text-xs font-semibold text-slate-400 text-center mb-1">Vote Consensus Gate</div>
-            {pipelineData.voteConsensusGate.paths.slice().reverse().map((path) => (
-              <div
-                key={path.voteCount}
-                onClick={() => handleStageClick(`vote_consensus_${path.voteCount}`)}
-                className={`flex items-center justify-between gap-3 px-3 py-1.5 rounded-lg border transition-all min-w-[200px] ${
-                  path.count > 0 
-                    ? 'bg-slate-800/80 border-slate-700/50 hover:border-primary-500/50 cursor-pointer'
-                    : 'bg-slate-900/50 border-slate-800/50 cursor-pointer'
-                }`}
-              >
-                <span className={`text-xs font-medium truncate ${
-                  path.count > 0 ? 'text-slate-300' : 'text-slate-500'
-                }`}>
-                  {path.name}
-                </span>
-                <div className="flex items-center gap-2">
-                  {path.count > 0 ? (
-                    <span className="text-xs font-bold text-emerald-400">
-                      {path.count}
-                    </span>
-                  ) : (
-                    <span className="text-xs text-slate-500" title="No tickers currently reach this consensus level">
-                      None
-                    </span>
-                  )}
-                </div>
-              </div>
-            ))}
-            {/* Total summary */}
-            <div className="mt-1 pt-1.5 border-t border-slate-700/50 flex items-center justify-between px-3">
-              <span className="text-[10px] text-slate-500">Total →</span>
-              <span className="text-xs font-bold text-emerald-400">{pipelineData.voteConsensusGate.outputCount}</span>
-            </div>
-          </div>
-          
-          {/* Arrow → */}
-          <div className="flex items-center px-2">
-            <div className="text-slate-600 text-xl">→</div>
-          </div>
-          
-          {/* Stage 3.5: Signal Persistence Gate */}
-          <div className="flex items-center">
-            <div
-              onClick={() => handleStageClick('persistenceGate')}
-              className={`rounded-xl border-2 p-4 cursor-pointer transition-all hover:shadow-lg min-w-[160px] ${
-                pipelineData.persistenceGate.pendingCount > 0
-                  ? 'border-amber-500/60 bg-amber-950/30 hover:border-amber-400'
-                  : 'border-slate-700/50 bg-slate-800/50 hover:border-primary-500/50'
-              }`}
-            >
-              <div className="text-xs font-semibold text-slate-300 mb-2 flex items-center gap-1.5">
-                <Clock className="w-3.5 h-3.5 text-amber-400" />
-                Persistence Gate
-              </div>
-              <div className="text-[10px] text-slate-500 mb-3">2-day signal confirmation</div>
-              <div className="space-y-1.5">
-                <div className="flex justify-between text-xs">
-                  <span className="text-slate-500">Input:</span>
-                  <span className="text-slate-300 font-medium">{pipelineData.persistenceGate.inputCount}</span>
-                </div>
-                <div className="flex justify-between text-xs">
-                  <span className="text-emerald-500">Confirmed:</span>
-                  <span className="text-emerald-400 font-bold">{pipelineData.persistenceGate.outputCount}</span>
-                </div>
-                <div className="flex justify-between text-xs">
-                  <span className="text-amber-500">Pending (day 1):</span>
-                  <span className="text-amber-400 font-bold">{pipelineData.persistenceGate.pendingCount}</span>
-                </div>
-                {/* Progress bar */}
-                <div className="w-full bg-slate-700 rounded-full h-1.5 mt-2">
-                  {pipelineData.persistenceGate.inputCount > 0 && (
-                    <>
-                      <div
-                        className="bg-emerald-500 h-1.5 rounded-l-full inline-block"
-                        style={{ width: `${(pipelineData.persistenceGate.outputCount / pipelineData.persistenceGate.inputCount) * 100}%` }}
-                      />
-                      <div
-                        className="bg-amber-500 h-1.5 rounded-r-full inline-block"
-                        style={{ width: `${(pipelineData.persistenceGate.pendingCount / pipelineData.persistenceGate.inputCount) * 100}%` }}
-                      />
-                    </>
-                  )}
-                </div>
-              </div>
-              <div className="mt-2 text-[10px] text-slate-600">v4.0.0</div>
-            </div>
-          </div>
-          
-          {/* Arrow → */}
-          <div className="flex items-center px-2">
-            <div className="text-slate-600 text-xl">→</div>
-          </div>
-          
-          {/* Stage 4: Signal Gating */}
-          <div className="flex items-center">
-            <PipelineStage
-              name="Signal Gating"
-              description="Bear suppress + sell suppress"
-              inputCount={pipelineData.signalGating.inputCount}
-              outputCount={pipelineData.signalGating.outputCount}
-              onClick={() => handleStageClick('signalGating')}
-              stageType="filter"
-              version={mreVersions?.signals || '2.0.0'}
-            />
-          </div>
-          
-          {/* Arrow → */}
-          <div className="flex items-center px-2">
-            <div className="text-slate-600 text-xl">→</div>
-          </div>
-          
-          {/* Stage 5: Confidence Tuning */}
-          <div className="flex items-center">
-            <PipelineStage
-              name="Confidence Tuning"
-              description="Regime, role, rotation, sideways, Kalshi"
-              inputCount={pipelineData.confidenceTuning.inputCount}
-              outputCount={pipelineData.confidenceTuning.outputCount}
-              onClick={() => handleStageClick('confidenceTuning')}
-              stageType="modifier"
-              version={mreVersions?.pit || '1.1.0'}
-            />
-          </div>
-          
-          {/* Arrow → */}
-          <div className="flex items-center px-2">
-            <div className="text-slate-600 text-xl">→</div>
-          </div>
-          
-          {/* Stage 6: Final Filters */}
-          <div className="flex items-center">
-            <PipelineStage
-              name="Final Filters"
-              description="Cluster, confidence, crash, cap"
-              inputCount={pipelineData.finalFilters.inputCount}
-              outputCount={pipelineData.finalFilters.outputCount}
-              onClick={() => handleStageClick('finalFilters')}
-              stageType="filter"
-              version={mreVersions?.config || '2.0.0'}
-            />
-          </div>
-          
-          {/* Arrow → */}
-          <div className="flex items-center px-2">
-            <div className="text-slate-600 text-xl">→</div>
-          </div>
-          
-          {/* Stage 7: Output */}
-          <div className="flex items-center">
-            <PipelineStage
-              name="BUY Signals"
-              description="Final output"
-              inputCount={pipelineData.output.inputCount}
-              outputCount={pipelineData.output.outputCount}
-              onClick={() => handleStageClick('output')}
-              stageType="output"
-              isLast={true}
-              version={pipelineVersion}
-            />
-          </div>
-        </div>
-        
-        {/* Current State Summary */}
-        <div className="mt-8 p-6 bg-slate-900/50 rounded-lg border border-slate-700/50">
-          <h3 className="text-lg font-semibold text-slate-200 mb-3">Current Pipeline State</h3>
-          <div className="text-sm text-slate-400 space-y-2">
-            <p>
-              <strong>{pipelineData.input.inputCount.toLocaleString()}</strong> tickers entered → 
-              <strong className="text-emerald-400 ml-1">{pipelineData.output.outputCount}</strong> BUY signals generated
-            </p>
-            {pipelineData.persistenceGate.pendingCount > 0 && (
-              <p className="flex items-center gap-2">
-                <Clock className="w-4 h-4 text-amber-400" />
-                <span>
-                  <strong className="text-amber-400">{pipelineData.persistenceGate.pendingCount}</strong> signals pending day-2 confirmation
-                  {pipelineData.persistenceGate.outputCount === 0 && (
-                    <span className="text-amber-300"> — first run of persistence system, signals will confirm tomorrow</span>
-                  )}
-                </span>
-              </p>
-            )}
-            <p>
-              Fear & Greed at <strong>{fgValue}</strong> ({fgRating}) means {
-                fgValue <= 25 ? "extreme fear - prime buying opportunity" :
-                fgValue <= 45 ? "fear levels - watch for oversold bounces" :
-                fgValue <= 55 ? "neutral market - selective opportunities" :
-                fgValue <= 75 ? "greed levels - be cautious" :
-                "extreme greed - avoid buying"
-              }
-            </p>
-            {/* Strategy vote summary */}
-            <div className="mt-3 pt-3 border-t border-slate-700/50">
-              <p className="text-xs text-slate-500 mb-2">Raw strategy votes (before persistence):</p>
-              <div className="flex flex-wrap gap-2">
-                {pipelineData.strategyVotes.map((sv: any) => (
-                  <span key={sv.key} className={`px-2 py-1 rounded text-xs ${
-                    sv.outputCount > 0 
-                      ? 'bg-slate-800 text-slate-300' 
-                      : 'bg-slate-900/50 text-slate-600'
-                  }`}>
-                    {sv.name}: <strong className={sv.outputCount > 0 ? 'text-amber-400' : 'text-slate-500'}>{sv.outputCount}</strong>
-                  </span>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* Pipeline Visualization - n8n Style Workflow */}
+      <WorkflowVisualization 
+        pipelineData={pipelineData}
+        mreVersions={mreVersions}
+        onStageClick={handleStageClick}
+      />
 
       {/* Detail Panel */}
       <PipelineDetailPanel

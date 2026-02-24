@@ -209,12 +209,16 @@ export default function TickerTechnicalBreakdown({
         const price = rawData.price;
         const regime = rawData.regime;
         const rd = rawData.regime_details;
-        const ema200 = rd?.ema_200;
-        const ema50 = rd?.ema_50;
-        const ema20 = rd?.ema_20;
-        // Use best available EMA for comparison
-        const compareEma = ema200 || ema50 || ema20;
-        const compareLabel = ema200 ? 'EMA 200' : ema50 ? 'EMA 50' : ema20 ? 'EMA 20' : null;
+        // Fallback chain: 200 → slow → 50 → 20 (150/100 not yet in pipeline)
+        const emaChain: { value: number | undefined; label: string }[] = [
+          { value: rd?.ema_200, label: 'EMA 200' },
+          { value: rd?.ema_slow, label: 'EMA Slow' },
+          { value: rd?.ema_50, label: 'EMA 50' },
+          { value: rd?.ema_20, label: 'EMA 20' },
+        ];
+        const bestEma = emaChain.find(e => e.value !== undefined && e.value !== null && e.value > 0);
+        const compareEma = bestEma?.value;
+        const compareLabel = bestEma?.label ?? null;
         const pctAbove = price && compareEma ? ((price - compareEma) / compareEma * 100) : undefined;
         return (
           <div className="flex items-center gap-3 text-xs flex-wrap">

@@ -315,35 +315,37 @@ export default function PipelineDetailPanel({
       />
       
       {/* Centered Modal */}
-      <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
-        <div className="bg-slate-900 rounded-xl shadow-2xl max-w-full sm:max-w-5xl w-full max-h-[85vh] overflow-hidden border border-slate-700/50 flex flex-col">
-          {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b border-slate-700/50">
-            <div className="flex items-center gap-3">
+      <div className="fixed inset-0 flex items-center justify-center z-50 p-2 sm:p-4">
+        <div className="bg-slate-900 rounded-xl shadow-2xl max-w-full sm:max-w-5xl w-full max-h-[95vh] sm:max-h-[85vh] overflow-hidden border border-slate-700/50 flex flex-col">
+          {/* Header - sticky */}
+          <div className="flex items-center justify-between p-4 sm:p-6 border-b border-slate-700/50 shrink-0">
+            <div className="flex items-center gap-3 min-w-0">
               {getStageIcon()}
-              <div>
-                <h2 className="text-xl font-bold text-slate-100">{stageDetails.name}</h2>
-                <p className="text-sm text-slate-400 mt-1">{stageDetails.description}</p>
+              <div className="min-w-0">
+                <h2 className="text-lg sm:text-xl font-bold text-slate-100 truncate">{stageDetails.name}</h2>
+                <p className="text-sm text-slate-400 mt-1 line-clamp-2">{stageDetails.description}</p>
               </div>
             </div>
             <button
               onClick={onClose}
-              className="p-2 rounded-lg hover:bg-slate-800 transition-colors"
+              className="p-2 rounded-lg hover:bg-slate-800 transition-colors shrink-0 ml-2"
             >
               <X className="w-5 h-5 text-slate-400" />
             </button>
           </div>
 
+          {/* Scrollable body - everything below header scrolls on mobile */}
+          <div className="flex-1 overflow-y-auto overscroll-contain min-h-0">
           {/* Strategy Description Card */}
-          <div className="p-6 border-b border-slate-700/50 bg-slate-800/30">
-            <h3 className="text-lg font-semibold text-slate-200 mb-2">How This Strategy Works</h3>
+          <div className="p-4 sm:p-6 border-b border-slate-700/50 bg-slate-800/30">
+            <h3 className="text-base sm:text-lg font-semibold text-slate-200 mb-2">How This Strategy Works</h3>
             <p className="text-slate-300 text-sm leading-relaxed">{strategyDescription}</p>
           </div>
 
           {/* Strategy Parameters - Show for individual strategy gates */}
           {isIndividualStrategy(stageDetails.name) && (
-            <div className="p-6 border-b border-slate-700/50 bg-slate-800/20">
-              <h3 className="text-lg font-semibold text-slate-200 mb-2">Strategy Parameters (read-only)</h3>
+            <div className="p-4 sm:p-6 border-b border-slate-700/50 bg-slate-800/20">
+              <h3 className="text-base sm:text-lg font-semibold text-slate-200 mb-2">Strategy Parameters (read-only)</h3>
               <p className="text-xs text-slate-500 mb-4">Configuration coming soon</p>
               <StrategyParameters 
                 strategyName={stageDetails.name} 
@@ -353,25 +355,25 @@ export default function PipelineDetailPanel({
           )}
           
           {/* Summary Stats */}
-          <div className="p-6 border-b border-slate-700/50">
+          <div className="p-4 sm:p-6 border-b border-slate-700/50">
             <div className="grid grid-cols-3 gap-4">
               <div className="text-center">
-                <div className="text-2xl font-bold text-slate-200">{stageDetails.inputCount.toLocaleString()}</div>
-                <div className="text-sm text-slate-400">Input</div>
+                <div className="text-xl sm:text-2xl font-bold text-slate-200">{stageDetails.inputCount.toLocaleString()}</div>
+                <div className="text-xs sm:text-sm text-slate-400">Input</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-emerald-400">{stageDetails.outputCount.toLocaleString()}</div>
-                <div className="text-sm text-slate-400">Output</div>
+                <div className="text-xl sm:text-2xl font-bold text-emerald-400">{stageDetails.outputCount.toLocaleString()}</div>
+                <div className="text-xs sm:text-sm text-slate-400">Output</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-red-400">{filteredCount.toLocaleString()}</div>
-                <div className="text-sm text-slate-400">Filtered</div>
+                <div className="text-xl sm:text-2xl font-bold text-red-400">{filteredCount.toLocaleString()}</div>
+                <div className="text-xs sm:text-sm text-slate-400">Filtered</div>
               </div>
             </div>
           </div>
 
           {/* Search Bar */}
-          <div className="p-6 border-b border-slate-700/50">
+          <div className="p-4 sm:p-6 border-b border-slate-700/50">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
               <input
@@ -384,11 +386,11 @@ export default function PipelineDetailPanel({
             </div>
           </div>
 
-          {/* Tab Controls */}
-          <div className="flex border-b border-slate-700/50 bg-slate-800/20">
+          {/* Tab Controls - sticky within scroll */}
+          <div className="flex border-b border-slate-700/50 bg-slate-800/20 sticky top-0 z-10">
             <button
               onClick={() => setActiveTab('output')}
-              className={`px-6 py-3 text-sm font-medium transition-all relative ${
+              className={`px-4 sm:px-6 py-3 text-sm font-medium transition-all relative ${
                 activeTab === 'output'
                   ? 'text-emerald-400 bg-slate-800/50'
                   : 'text-slate-400 hover:text-slate-300 hover:bg-slate-800/30'
@@ -401,7 +403,7 @@ export default function PipelineDetailPanel({
             </button>
             <button
               onClick={() => setActiveTab('filtered')}
-              className={`px-6 py-3 text-sm font-medium transition-all relative ${
+              className={`px-4 sm:px-6 py-3 text-sm font-medium transition-all relative ${
                 activeTab === 'filtered'
                   ? 'text-red-400 bg-slate-800/50'
                   : 'text-slate-400 hover:text-slate-300 hover:bg-slate-800/30'
@@ -415,8 +417,7 @@ export default function PipelineDetailPanel({
           </div>
           
           {/* Content */}
-          <div className="flex-1 overflow-y-auto">
-            <div className="p-6">
+            <div className="p-4 sm:p-6">
               {activeTab === 'output' && (
                 <div className="space-y-3">
                   {filteredOutput.length > 0 ? (

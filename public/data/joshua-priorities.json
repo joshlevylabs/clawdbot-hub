@@ -1,6 +1,6 @@
 {
-  "date": "2026-02-23",
-  "generatedAt": "2026-02-23T22:44:35.077052-08:00",
+  "date": "2026-02-24",
+  "generatedAt": "2026-02-24T04:54:31.006191-08:00",
   "priorities": [
     {
       "text": "Decide newsletter send timing relative to Apple approval",
@@ -117,6 +117,30 @@
       "assignee": "Theo",
       "status": "in_progress",
       "taskKey": "A-200"
+    },
+    {
+      "text": "Fix hub build failure and commit outstanding change",
+      "assignee": "Elon",
+      "status": "pending",
+      "taskKey": "A-201"
+    },
+    {
+      "text": "Build trading engine with flexible schema for future premium features",
+      "assignee": "James Truchard",
+      "status": "pending",
+      "taskKey": "A-202"
+    },
+    {
+      "text": "Design user flows with locked premium features (performance attribution focus)",
+      "assignee": "Steve Jobs",
+      "status": "pending",
+      "taskKey": "A-203"
+    },
+    {
+      "text": "Create psychological education prompts for paper trading risks",
+      "assignee": "Jordan Peterson",
+      "status": "pending",
+      "taskKey": "A-204"
     }
   ]
 }

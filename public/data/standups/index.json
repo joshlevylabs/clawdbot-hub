@@ -1,6 +1,19 @@
 {
   "standups": [
     {
+      "date": "2026-02-24",
+      "time": "22:30",
+      "type": "night-wrap",
+      "typeName": "Night Wrap",
+      "typeEmoji": "\ud83c\udf19",
+      "topic": "Night Wrap \u2014 Tuesday Feb 24",
+      "file": "2026-02-24-night-wrap.json",
+      "tokenCost": 0.06609999999999999,
+      "verticals": [],
+      "initiatives": [],
+      "instanceKey": "STD-35"
+    },
+    {
       "date": "2026-02-23",
       "time": "22:30",
       "type": "night-wrap",

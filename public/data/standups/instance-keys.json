@@ -8,7 +8,7 @@
     "midday-checkpoint": 8,
     "evening-session": 11,
     "adhoc-podcast-planning-episode-4-how-i-use-ai-agents-to-run-my-entire-podcast-and-newsletter-pipeline": 1,
-    "night-wrap": 2,
+    "night-wrap": 3,
     "adhoc-welcome-modal-design": 2,
     "adhoc-paper-trading-portfolio-management-in-lever": 2,
     "adhoc-mre-signal-flow-visualization-hub-signals-page-overhaul": 5
@@ -26,5 +26,5 @@
     "adhoc-welcome-modal-design": "STD",
     "adhoc-paper-trading-portfolio-management-in-lever": "STD"
   },
-  "global_counter": 34
+  "global_counter": 35
 }

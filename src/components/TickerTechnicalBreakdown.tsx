@@ -958,6 +958,18 @@ function RegimeTab({ rawData }: { rawData: MRESignal }) {
               </span>
             </div>
             <div className="flex justify-between text-sm">
+              <span>EMA 100:</span>
+              <span className={regime.above_ema_100 ? 'text-emerald-400' : 'text-red-400'}>
+                {regime.ema_100.toFixed(2)} {regime.above_ema_100 ? '✓' : '✗'}
+              </span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span>EMA 150:</span>
+              <span className={regime.above_ema_150 ? 'text-emerald-400' : 'text-red-400'}>
+                {regime.ema_150.toFixed(2)} {regime.above_ema_150 ? '✓' : '✗'}
+              </span>
+            </div>
+            <div className="flex justify-between text-sm">
               <span>EMA 200:</span>
               <span className={regime.above_ema_200 ? 'text-emerald-400' : 'text-red-400'}>
                 {regime.ema_200.toFixed(2)} {regime.above_ema_200 ? '✓' : '✗'}
@@ -994,6 +1006,8 @@ function RegimeTab({ rawData }: { rawData: MRESignal }) {
             { name: 'Current Price', value: rawData.price, above: true },
             { name: 'EMA 20', value: regime.ema_20, above: regime.above_ema_20 },
             { name: 'EMA 50', value: regime.ema_50, above: regime.above_ema_50 },
+            { name: 'EMA 100', value: regime.ema_100, above: regime.above_ema_100 },
+            { name: 'EMA 150', value: regime.ema_150, above: regime.above_ema_150 },
             { name: 'EMA 200', value: regime.ema_200, above: regime.above_ema_200 },
           ].map((item, idx) => (
             <div key={idx} className="flex items-center gap-3">

@@ -46,9 +46,13 @@ interface MRESignal {
   regime_details?: {
     ema_20: number;
     ema_50: number;
+    ema_100: number;
+    ema_150: number;
     ema_200: number;
     above_ema_20: boolean;
     above_ema_50: boolean;
+    above_ema_100: boolean;
+    above_ema_150: boolean;
     above_ema_200: boolean;
     regime_days: number;
     regime_stage: string;

@@ -15,7 +15,11 @@ import {
   Clock,
   Filter,
   X,
+  Microscope,
 } from "lucide-react";
+
+import VoteConsensusModal from "@/components/VoteConsensusModal";
+import SignalAnalysisModal from "@/components/SignalAnalysisModal";
 
 // ============ TYPES ============
 
@@ -23,6 +27,14 @@ interface UniverseSignal {
   symbol: string;
   signal: string;
   signal_strength: number;
+  strategies_agreeing: number;
+  strategy_votes: {
+    fear_greed: boolean;
+    regime_confirmation: boolean;
+    rsi_oversold: boolean;
+    mean_reversion: boolean;
+    momentum: boolean;
+  };
   asset_class: string;
   sector: string;
   price: number;
@@ -72,6 +84,7 @@ type SortField =
   | "symbol"
   | "signal"
   | "signal_strength"
+  | "strategies_agreeing"
   | "price"
   | "regime"
   | "sector"
@@ -164,6 +177,10 @@ export default function UniverseTable() {
   const [data, setData] = useState<UniverseData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Modals
+  const [selectedSymbol, setSelectedSymbol] = useState<string | null>(null);
+  const [modalType, setModalType] = useState<"consensus" | "analysis" | null>(null);
 
   // Filters
   const [search, setSearch] = useState("");
@@ -281,6 +298,9 @@ export default function UniverseTable() {
           break;
         case "signal_strength":
           cmp = a.signal_strength - b.signal_strength;
+          break;
+        case "strategies_agreeing":
+          cmp = a.strategies_agreeing - b.strategies_agreeing;
           break;
         case "price":
           cmp = a.price - b.price;
@@ -587,6 +607,12 @@ export default function UniverseTable() {
                   Signal <SortIcon field="signal" sortField={sortField} sortDir={sortDir} />
                 </th>
                 <th
+                  className="text-left py-2.5 px-3 cursor-pointer hover:text-slate-300 transition-colors"
+                  onClick={() => handleSort("strategies_agreeing")}
+                >
+                  Consensus <SortIcon field="strategies_agreeing" sortField={sortField} sortDir={sortDir} />
+                </th>
+                <th
                   className="text-right py-2.5 px-3 cursor-pointer hover:text-slate-300 transition-colors"
                   onClick={() => handleSort("expected_accuracy")}
                 >
@@ -627,7 +653,7 @@ export default function UniverseTable() {
             <tbody>
               {pageSignals.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="py-12 text-center text-slate-500">
+                  <td colSpan={9} className="py-12 text-center text-slate-500">
                     No assets match your filters
                   </td>
                 </tr>
@@ -635,7 +661,11 @@ export default function UniverseTable() {
                 pageSignals.map((sig) => (
                   <tr
                     key={sig.symbol}
-                    className="border-b border-slate-800/50 hover:bg-slate-700/30 transition-colors"
+                    className="border-b border-slate-800/50 hover:bg-slate-700/30 transition-colors cursor-pointer"
+                    onClick={() => {
+                      setSelectedSymbol(sig.symbol);
+                      setModalType("consensus");
+                    }}
                   >
                     {/* Symbol */}
                     <td className="py-2 px-3 sticky left-0 bg-slate-900/80 z-10">
@@ -651,17 +681,57 @@ export default function UniverseTable() {
 
                     {/* Signal */}
                     <td className="py-2 px-3">
-                      <span
-                        className={`px-2 py-0.5 rounded text-xs font-bold ${
-                          sig.signal === "BUY"
-                            ? "bg-emerald-900/50 text-emerald-400"
-                            : sig.signal === "WATCH"
-                            ? "bg-amber-900/50 text-amber-400"
-                            : "bg-slate-700/50 text-slate-400"
-                        }`}
-                      >
-                        {sig.signal}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span
+                          className={`px-2 py-0.5 rounded text-xs font-bold ${
+                            sig.signal === "BUY"
+                              ? "bg-emerald-900/50 text-emerald-400"
+                              : sig.signal === "WATCH"
+                              ? "bg-amber-900/50 text-amber-400"
+                              : "bg-slate-700/50 text-slate-400"
+                          }`}
+                        >
+                          {sig.signal}
+                        </span>
+                        {/* Microscope icon for deep analysis */}
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedSymbol(sig.symbol);
+                            setModalType("analysis");
+                          }}
+                          className="p-1 rounded hover:bg-slate-600/50 transition-colors"
+                          title="Deep Analysis"
+                        >
+                          <Microscope className="w-3.5 h-3.5 text-slate-400 hover:text-slate-200" />
+                        </button>
+                      </div>
+                    </td>
+
+                    {/* Consensus */}
+                    <td className="py-2 px-3">
+                      <div className="flex items-center gap-2">
+                        {/* 5 dots showing strategy votes */}
+                        <div className="flex gap-0.5">
+                          {[
+                            sig.strategy_votes?.fear_greed || false,
+                            sig.strategy_votes?.regime_confirmation || false,
+                            sig.strategy_votes?.rsi_oversold || false,
+                            sig.strategy_votes?.mean_reversion || false,
+                            sig.strategy_votes?.momentum || false,
+                          ].map((isActive, i) => (
+                            <div
+                              key={i}
+                              className={`w-2 h-2 rounded-full ${
+                                isActive ? "bg-emerald-400" : "bg-slate-600"
+                              }`}
+                            />
+                          ))}
+                        </div>
+                        <span className="text-xs font-mono text-slate-400">
+                          {sig.strategies_agreeing || 0}/5
+                        </span>
+                      </div>
                     </td>
 
                     {/* Confidence / Expected Accuracy */}
@@ -770,6 +840,26 @@ export default function UniverseTable() {
           </div>
         )}
       </div>
+
+      {/* Modals */}
+      {selectedSymbol && modalType === "consensus" && (
+        <VoteConsensusModal
+          symbol={selectedSymbol}
+          onClose={() => {
+            setSelectedSymbol(null);
+            setModalType(null);
+          }}
+        />
+      )}
+      {selectedSymbol && modalType === "analysis" && (
+        <SignalAnalysisModal
+          symbol={selectedSymbol}
+          onClose={() => {
+            setSelectedSymbol(null);
+            setModalType(null);
+          }}
+        />
+      )}
     </div>
   );
 }

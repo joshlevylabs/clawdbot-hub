@@ -290,7 +290,7 @@
     },
     "regime_confirm": {
       "name": "Regime Confirmation Strategy",
-      "currentVersion": "16.0.0",
+      "currentVersion": "15.1.0",
       "description": "RegimeHold strategy enhanced with MRE confirmation filter. Buys on bull regime (20>50>200 EMA) + VIX<30 but only when F&G <40 for sentiment alignment. Includes inverse ETF support for bear markets.",
       "parameters": {
         "ema_periods": {
@@ -315,28 +315,6 @@
         }
       },
       "versions": [
-        {
-          "version": "16.0.0",
-          "date": "2026-02-24",
-          "changes": [
-            "Integrated with blended F&G system \u2014 uses effective_fg (sector-blended) instead of raw global F&G",
-            "MRE confirmation threshold uses per-sector blended score for more precise entry timing",
-            "Sector-specific regime detection enhanced with 676-asset universe data"
-          ],
-          "accuracy": {
-            "overall": 83.8,
-            "byAssetClass": {
-              "broad_market": 82.1,
-              "technology": 84.3,
-              "financials": 80.7,
-              "healthcare": 85.5,
-              "real_estate": 83.2
-            }
-          },
-          "winRate": 0.838,
-          "sharpe": 0.18,
-          "profitFactor": 2.65
-        },
         {
           "version": "15.1.0",
           "date": "2026-02-20",
@@ -484,7 +462,7 @@
     },
     "mean_reversion": {
       "name": "Mean Reversion Strategy (Cross-Asset Pairs)",
-      "currentVersion": "16.0.0",
+      "currentVersion": "15.1.0",
       "description": "Cross-asset mean reversion strategy based on high-probability pair divergence patterns. Top pairs: XLF/SPY (87% revert), IYR/TLT (86% revert), VNQ/TLT (85% revert). Includes cross-asset prediction and confirmation clustering.",
       "parameters": {
         "reversion_pairs": [
@@ -526,28 +504,6 @@
         }
       },
       "versions": [
-        {
-          "version": "16.0.0",
-          "date": "2026-02-24",
-          "changes": [
-            "Integrated with blended F&G system for sector-aware mean reversion signals",
-            "Divergence pair signals now factor in sector-specific sentiment divergence",
-            "Cross-asset prediction uses effective_fg for threshold comparisons"
-          ],
-          "accuracy": {
-            "overall": 83.8,
-            "byAssetClass": {
-              "broad_market": 80.8,
-              "financials": 85.0,
-              "real_estate": 84.2,
-              "healthcare": 82.6,
-              "technology": 83.1
-            }
-          },
-          "winRate": 0.838,
-          "sharpe": 0.18,
-          "profitFactor": 2.65
-        },
         {
           "version": "15.1.0",
           "date": "2026-02-20",
@@ -601,7 +557,7 @@
     },
     "momentum": {
       "name": "Momentum Strategy (Cross-Asset Predictor)",
-      "currentVersion": "16.0.0",
+      "currentVersion": "15.1.0",
       "description": "Cross-asset prediction strategy using energy sentiment to predict tech direction. Key insight: XLE (energy) sentiment negatively predicts tech returns (-0.45 correlation). Low XLE F&G suggests tech decline.",
       "parameters": {
         "predictions": [
@@ -632,26 +588,6 @@
         }
       },
       "versions": [
-        {
-          "version": "16.0.0",
-          "date": "2026-02-24",
-          "changes": [
-            "Cross-asset prediction now uses sector-blended F&G for energy\u2192tech correlation signals",
-            "Sector F&G divergence provides additional signal confirmation layer",
-            "Enhanced with 676-asset universe data for broader momentum detection"
-          ],
-          "accuracy": {
-            "overall": 83.8,
-            "byAssetClass": {
-              "technology": 85.8,
-              "energy": 81.2,
-              "broad_market": 82.5
-            }
-          },
-          "winRate": 0.838,
-          "sharpe": 0.18,
-          "profitFactor": 2.65
-        },
         {
           "version": "15.1.0",
           "date": "2026-02-20",

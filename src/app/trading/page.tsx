@@ -40,7 +40,7 @@ import VersionsTab from "./VersionsTab";
 import PositionCharts from "@/components/PositionCharts";
 import SignalAnalysisModal from "@/components/SignalAnalysisModal";
 import MarketCycles from "./MarketCycles";
-// import SignalFlowTab from "./SignalFlowTab";
+import SignalFlowTab from "./SignalFlowTab";
 
 // ===== Types =====
 
@@ -360,7 +360,7 @@ function SignalAccuracyPanel({ stats }: { stats: SignalStats }) {
 
 // ===== Unified Trading Page with Single Tab Bar =====
 
-type ActiveTab = "overview" | "plays" | "positions" | "trades" | "signals" | "mre" | "universe" | "optimizer" | "backtests" | "versions" | "markets" | "cycles" | "validation";
+type ActiveTab = "overview" | "plays" | "positions" | "trades" | "signals" | "signal-flow" | "mre" | "universe" | "optimizer" | "backtests" | "versions" | "markets" | "cycles" | "validation";
 
 export default function TradingPage() {
   // Support ?tab= query param for deep linking
@@ -368,7 +368,7 @@ export default function TradingPage() {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
       const tab = params.get('tab') as ActiveTab | null;
-      if (tab && ["overview","plays","positions","trades","signals","mre","universe","optimizer","backtests","versions","markets","cycles","validation"].includes(tab)) {
+      if (tab && ["overview","plays","positions","trades","signals","signal-flow","mre","universe","optimizer","backtests","versions","markets","cycles","validation"].includes(tab)) {
         return tab;
       }
     }
@@ -533,6 +533,7 @@ export default function TradingPage() {
     { key: "positions", label: "Positions" },
     { key: "trades", label: "Trades" },
     { key: "signals", label: "Signals" },
+    { key: "signal-flow", label: "Signal Flow" },
     { key: "mre", label: "MRE" },
     { key: "universe", label: "Universe" },
     { key: "optimizer", label: "Optimizer" },
@@ -1276,7 +1277,7 @@ export default function TradingPage() {
           {activeTab === "validation" && <ValidationTab />}
 
           {/* ===== SIGNAL FLOW TAB ===== */}
-          {/* Signal Flow tab removed */}
+          {activeTab === "signal-flow" && <SignalFlowTab />}
 
         </div>
       </div>

@@ -40,12 +40,17 @@
       },
       {
         "date": "2026-02-24",
-        "score": 66,
-        "accuracy": 66.5,
+        "score": 75,
+        "accuracy": 67.0,
         "winRate": 66.5,
         "sharpe": 0.133,
         "profitFactor": 2.45,
-        "notes": "Current - health score formula recalibrated"
+        "robustness": 67.0,
+        "noise_resilience": 65.8,
+        "anti_overfitting": 58.7,
+        "param_stability": 61.9,
+        "ensemble_quality": 11.6,
+        "notes": "MRE V6 \u2014 CPCV + Ensemble + Noise + Regime Params integrated"
       }
     ]
   },

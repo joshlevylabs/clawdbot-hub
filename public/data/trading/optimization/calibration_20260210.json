@@ -101,7 +101,12 @@
       "monte_carlo_5th_pct": -0.7947,
       "sector": "Consumer Discretionary",
       "asset_class": "broad_market",
-      "grid_composite_score": 0.1013
+      "grid_composite_score": 0.1013,
+      "regime_params": {
+        "enabled": true,
+        "last_updated": "2026-02-24T11:39:08.052038",
+        "source": "phase4_regime_optimization"
+      }
     },
     "GLD": {
       "confidence_multiplier": 0.85,
@@ -183,7 +188,12 @@
       "monte_carlo_5th_pct": -0.6598,
       "sector": "Communication Services",
       "asset_class": "technology",
-      "grid_composite_score": 0.1023
+      "grid_composite_score": 0.1023,
+      "regime_params": {
+        "enabled": true,
+        "last_updated": "2026-02-24T11:39:08.052041",
+        "source": "phase4_regime_optimization"
+      }
     },
     "IWM": {
       "confidence_multiplier": 0.84,
@@ -206,7 +216,12 @@
       "monte_carlo_5th_pct": -1.5078,
       "sector": "Broad Market",
       "asset_class": "broad_market",
-      "grid_composite_score": 0.092
+      "grid_composite_score": 0.092,
+      "regime_params": {
+        "enabled": true,
+        "last_updated": "2026-02-24T11:39:08.052043",
+        "source": "phase4_regime_optimization"
+      }
     },
     "JNJ": {
       "confidence_multiplier": 0.83,
@@ -230,7 +245,12 @@
       "monte_carlo_5th_pct": -1.5726,
       "sector": "Health Care",
       "asset_class": "healthcare",
-      "grid_composite_score": 0.3225
+      "grid_composite_score": 0.3225,
+      "regime_params": {
+        "enabled": true,
+        "last_updated": "2026-02-24T11:39:08.052044",
+        "source": "phase4_regime_optimization"
+      }
     },
     "JPM": {
       "confidence_multiplier": 0.8,
@@ -253,7 +273,12 @@
       "monte_carlo_5th_pct": -0.868,
       "sector": "Financials",
       "asset_class": "financials",
-      "grid_composite_score": 0.0902
+      "grid_composite_score": 0.0902,
+      "regime_params": {
+        "enabled": true,
+        "last_updated": "2026-02-24T11:39:08.052045",
+        "source": "phase4_regime_optimization"
+      }
     },
     "META": {
       "confidence_multiplier": 0.79,
@@ -276,7 +301,12 @@
       "monte_carlo_5th_pct": -1.4115,
       "sector": "Communication Services",
       "asset_class": "technology",
-      "grid_composite_score": 0.0529
+      "grid_composite_score": 0.0529,
+      "regime_params": {
+        "enabled": true,
+        "last_updated": "2026-02-24T11:39:08.052046",
+        "source": "phase4_regime_optimization"
+      }
     },
     "MSFT": {
       "confidence_multiplier": 0.87,
@@ -299,7 +329,12 @@
       "monte_carlo_5th_pct": -0.9751,
       "sector": "Information Technology",
       "asset_class": "technology",
-      "grid_composite_score": 0.106
+      "grid_composite_score": 0.106,
+      "regime_params": {
+        "enabled": true,
+        "last_updated": "2026-02-24T11:39:08.052047",
+        "source": "phase4_regime_optimization"
+      }
     },
     "NVDA": {
       "confidence_multiplier": 0.8,
@@ -322,7 +357,12 @@
       "monte_carlo_5th_pct": -1.4488,
       "sector": "Information Technology",
       "asset_class": "technology",
-      "grid_composite_score": 0.0424
+      "grid_composite_score": 0.0424,
+      "regime_params": {
+        "enabled": true,
+        "last_updated": "2026-02-24T11:39:08.052048",
+        "source": "phase4_regime_optimization"
+      }
     },
     "QQQ": {
       "confidence_multiplier": 0.87,
@@ -463,7 +503,12 @@
       "monte_carlo_5th_pct": -0.9768,
       "sector": "Fixed Income",
       "asset_class": "bonds",
-      "grid_composite_score": 0.0518
+      "grid_composite_score": 0.0518,
+      "regime_params": {
+        "enabled": true,
+        "last_updated": "2026-02-24T11:39:08.052049",
+        "source": "phase4_regime_optimization"
+      }
     },
     "TSLA": {
       "confidence_multiplier": 0.86,
@@ -486,7 +531,12 @@
       "monte_carlo_5th_pct": -0.6622,
       "sector": "Consumer Discretionary",
       "asset_class": "broad_market",
-      "grid_composite_score": 0.0908
+      "grid_composite_score": 0.0908,
+      "regime_params": {
+        "enabled": true,
+        "last_updated": "2026-02-24T11:39:08.052050",
+        "source": "phase4_regime_optimization"
+      }
     },
     "VNQ": {
       "confidence_multiplier": 0.81,
@@ -509,7 +559,12 @@
       "monte_carlo_5th_pct": -2.6365,
       "sector": "Real Estate",
       "asset_class": "real_estate",
-      "grid_composite_score": 0.144
+      "grid_composite_score": 0.144,
+      "regime_params": {
+        "enabled": true,
+        "last_updated": "2026-02-24T11:39:08.052051",
+        "source": "phase4_regime_optimization"
+      }
     },
     "XLE": {
       "confidence_multiplier": 0.86,
@@ -532,7 +587,12 @@
       "monte_carlo_5th_pct": -0.7756,
       "sector": "Energy",
       "asset_class": "energy",
-      "grid_composite_score": 0.1367
+      "grid_composite_score": 0.1367,
+      "regime_params": {
+        "enabled": true,
+        "last_updated": "2026-02-24T11:39:08.052052",
+        "source": "phase4_regime_optimization"
+      }
     },
     "XLF": {
       "confidence_multiplier": 0.89,
@@ -555,7 +615,12 @@
       "monte_carlo_5th_pct": -1.7163,
       "sector": "Financials",
       "asset_class": "financials",
-      "grid_composite_score": 0.076
+      "grid_composite_score": 0.076,
+      "regime_params": {
+        "enabled": true,
+        "last_updated": "2026-02-24T11:39:08.052053",
+        "source": "phase4_regime_optimization"
+      }
     },
     "XLK": {
       "confidence_multiplier": 0.88,
@@ -637,7 +702,12 @@
       "monte_carlo_5th_pct": -0.533,
       "sector": "Health Care",
       "asset_class": "healthcare",
-      "grid_composite_score": 0.1435
+      "grid_composite_score": 0.1435,
+      "regime_params": {
+        "enabled": true,
+        "last_updated": "2026-02-24T11:39:08.052054",
+        "source": "phase4_regime_optimization"
+      }
     },
     "XOM": {
       "confidence_multiplier": 0.86,
@@ -662,7 +732,12 @@
       "monte_carlo_5th_pct": -0.563,
       "sector": "Energy",
       "asset_class": "energy",
-      "grid_composite_score": 0.2591
+      "grid_composite_score": 0.2591,
+      "regime_params": {
+        "enabled": true,
+        "last_updated": "2026-02-24T11:39:08.052056",
+        "source": "phase4_regime_optimization"
+      }
     }
   },
   "regime_params_updated": "2026-02-24T11:37:33.414915"

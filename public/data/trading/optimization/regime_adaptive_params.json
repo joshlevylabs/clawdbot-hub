@@ -1,637 +1,2088 @@
 {
-  "generated": "2026-02-24T11:37:27.560008",
-  "pipeline": "regime_params.py",
-  "phase": "Phase 4: Regime-Adaptive Parameters",
-  "runtime_seconds": 5.8,
-  "regime_definitions": {
-    "bull": "Price > SMA50 * 1.02 AND F&G_proxy > 40",
-    "bear": "Price < SMA50 * 0.98 AND F&G_proxy < 40",
-    "sideways": "Neither bull nor bear",
-    "panic": "F&G < 20 OR VIX > 35"
-  },
-  "summary": {
-    "total_tickers": 5,
-    "skipped": 0,
+  "metadata": {
+    "optimization_completed": "2026-02-24T11:39:08.044050",
+    "runtime_minutes": 0.43,
+    "tickers_requested": 5,
+    "tickers_processed": 5,
+    "strategies_tested": [
+      "fear_greed",
+      "regime_confirmation",
+      "rsi_oversold",
+      "mean_reversion"
+    ],
+    "regime_windows_analyzed": 119,
     "regime_distribution": {
-      "bull": {
-        "avg_pct": 9.9,
-        "tickers_with_sufficient_data": 1
-      },
-      "bear": {
-        "avg_pct": 2.3,
-        "tickers_with_sufficient_data": 1
-      },
-      "sideways": {
-        "avg_pct": 84.8,
-        "tickers_with_sufficient_data": 5
-      },
-      "panic": {
-        "avg_pct": 3.1,
-        "tickers_with_sufficient_data": 1
-      }
+      "sideways": 55,
+      "bull": 36,
+      "bear": 15,
+      "panic": 13
     },
-    "best_strategy_per_regime": {
-      "sideways": {
-        "fear_greed": 4,
-        "rsi_oversold": 1
-      },
-      "bull": {
-        "mean_reversion": 1
-      },
-      "bear": {
-        "rsi_oversold": 1
-      },
-      "panic": {
-        "regime_confirmation": 1
-      }
+    "data_period": {
+      "fg_start": "2018-01-02",
+      "fg_end": "2026-02-23",
+      "total_trading_days": 2046
     }
   },
-  "tickers": {
+  "regime_windows": [
+    {
+      "start_date": "2018-01-02 00:00:00",
+      "end_date": "2018-02-01 00:00:00",
+      "regime": "bull",
+      "days": 31,
+      "avg_fg_score": 90.5
+    },
+    {
+      "start_date": "2018-02-13 00:00:00",
+      "end_date": "2018-02-25 00:00:00",
+      "regime": "sideways",
+      "days": 13,
+      "avg_fg_score": 54.4
+    },
+    {
+      "start_date": "2018-02-27 00:00:00",
+      "end_date": "2018-03-08 00:00:00",
+      "regime": "sideways",
+      "days": 10,
+      "avg_fg_score": 58.1
+    },
+    {
+      "start_date": "2018-03-19 00:00:00",
+      "end_date": "2018-04-16 00:00:00",
+      "regime": "sideways",
+      "days": 29,
+      "avg_fg_score": 51.0
+    },
+    {
+      "start_date": "2018-04-20 00:00:00",
+      "end_date": "2018-04-26 00:00:00",
+      "regime": "sideways",
+      "days": 7,
+      "avg_fg_score": 60.0
+    },
+    {
+      "start_date": "2018-04-27 00:00:00",
+      "end_date": "2018-05-28 00:00:00",
+      "regime": "bull",
+      "days": 32,
+      "avg_fg_score": 75.0
+    },
+    {
+      "start_date": "2018-05-30 00:00:00",
+      "end_date": "2018-06-24 00:00:00",
+      "regime": "bull",
+      "days": 26,
+      "avg_fg_score": 77.2
+    },
+    {
+      "start_date": "2018-06-27 00:00:00",
+      "end_date": "2018-07-01 00:00:00",
+      "regime": "sideways",
+      "days": 5,
+      "avg_fg_score": 60.0
+    },
+    {
+      "start_date": "2018-07-05 00:00:00",
+      "end_date": "2018-10-09 00:00:00",
+      "regime": "bull",
+      "days": 97,
+      "avg_fg_score": 78.2
+    },
+    {
+      "start_date": "2018-10-10 00:00:00",
+      "end_date": "2018-10-23 00:00:00",
+      "regime": "sideways",
+      "days": 14,
+      "avg_fg_score": 51.0
+    },
+    {
+      "start_date": "2018-10-25 00:00:00",
+      "end_date": "2018-12-17 00:00:00",
+      "regime": "sideways",
+      "days": 54,
+      "avg_fg_score": 51.2
+    },
+    {
+      "start_date": "2018-12-21 00:00:00",
+      "end_date": "2018-12-26 00:00:00",
+      "regime": "panic",
+      "days": 6,
+      "avg_fg_score": 15.0
+    },
+    {
+      "start_date": "2018-12-27 00:00:00",
+      "end_date": "2019-01-01 00:00:00",
+      "regime": "bear",
+      "days": 6,
+      "avg_fg_score": 30.0
+    },
+    {
+      "start_date": "2019-01-04 00:00:00",
+      "end_date": "2019-02-03 00:00:00",
+      "regime": "sideways",
+      "days": 31,
+      "avg_fg_score": 57.0
+    },
+    {
+      "start_date": "2019-02-08 00:00:00",
+      "end_date": "2019-02-13 00:00:00",
+      "regime": "bull",
+      "days": 6,
+      "avg_fg_score": 75.0
+    },
+    {
+      "start_date": "2019-02-15 00:00:00",
+      "end_date": "2019-03-06 00:00:00",
+      "regime": "bull",
+      "days": 20,
+      "avg_fg_score": 75.0
+    },
+    {
+      "start_date": "2019-03-11 00:00:00",
+      "end_date": "2019-03-21 00:00:00",
+      "regime": "bull",
+      "days": 11,
+      "avg_fg_score": 75.0
+    },
+    {
+      "start_date": "2019-03-26 00:00:00",
+      "end_date": "2019-05-06 00:00:00",
+      "regime": "bull",
+      "days": 42,
+      "avg_fg_score": 75.0
+    },
+    {
+      "start_date": "2019-05-07 00:00:00",
+      "end_date": "2019-05-15 00:00:00",
+      "regime": "sideways",
+      "days": 9,
+      "avg_fg_score": 57.9
+    },
+    {
+      "start_date": "2019-05-28 00:00:00",
+      "end_date": "2019-06-05 00:00:00",
+      "regime": "sideways",
+      "days": 9,
+      "avg_fg_score": 60.0
+    },
+    {
+      "start_date": "2019-06-10 00:00:00",
+      "end_date": "2019-06-24 00:00:00",
+      "regime": "bull",
+      "days": 15,
+      "avg_fg_score": 75.0
+    },
+    {
+      "start_date": "2019-06-27 00:00:00",
+      "end_date": "2019-07-30 00:00:00",
+      "regime": "bull",
+      "days": 34,
+      "avg_fg_score": 75.0
+    },
+    {
+      "start_date": "2019-07-31 00:00:00",
+      "end_date": "2019-08-20 00:00:00",
+      "regime": "sideways",
+      "days": 21,
+      "avg_fg_score": 55.0
+    },
+    {
+      "start_date": "2019-08-22 00:00:00",
+      "end_date": "2019-09-05 00:00:00",
+      "regime": "sideways",
+      "days": 15,
+      "avg_fg_score": 58.5
+    },
+    {
+      "start_date": "2019-09-06 00:00:00",
+      "end_date": "2019-09-23 00:00:00",
+      "regime": "bull",
+      "days": 18,
+      "avg_fg_score": 75.0
+    },
+    {
+      "start_date": "2019-09-26 00:00:00",
+      "end_date": "2019-10-10 00:00:00",
+      "regime": "sideways",
+      "days": 15,
+      "avg_fg_score": 57.3
+    },
+    {
+      "start_date": "2019-10-11 00:00:00",
+      "end_date": "2020-01-26 00:00:00",
+      "regime": "bull",
+      "days": 108,
+      "avg_fg_score": 75.8
+    },
+    {
+      "start_date": "2020-01-31 00:00:00",
+      "end_date": "2020-02-04 00:00:00",
+      "regime": "sideways",
+      "days": 5,
+      "avg_fg_score": 60.0
+    },
+    {
+      "start_date": "2020-02-05 00:00:00",
+      "end_date": "2020-02-20 00:00:00",
+      "regime": "bull",
+      "days": 16,
+      "avg_fg_score": 75.0
+    },
+    {
+      "start_date": "2020-02-27 00:00:00",
+      "end_date": "2020-05-07 00:00:00",
+      "regime": "panic",
+      "days": 71,
+      "avg_fg_score": 8.4
+    },
+    {
+      "start_date": "2020-05-12 00:00:00",
+      "end_date": "2020-05-17 00:00:00",
+      "regime": "panic",
+      "days": 6,
+      "avg_fg_score": 15.0
+    },
+    {
+      "start_date": "2020-05-20 00:00:00",
+      "end_date": "2020-06-04 00:00:00",
+      "regime": "bear",
+      "days": 16,
+      "avg_fg_score": 30.0
+    },
+    {
+      "start_date": "2020-06-11 00:00:00",
+      "end_date": "2020-06-30 00:00:00",
+      "regime": "panic",
+      "days": 20,
+      "avg_fg_score": 14.3
+    },
+    {
+      "start_date": "2020-07-01 00:00:00",
+      "end_date": "2020-07-12 00:00:00",
+      "regime": "bear",
+      "days": 12,
+      "avg_fg_score": 30.0
+    },
+    {
+      "start_date": "2020-07-14 00:00:00",
+      "end_date": "2020-07-19 00:00:00",
+      "regime": "bear",
+      "days": 6,
+      "avg_fg_score": 30.0
+    },
+    {
+      "start_date": "2020-07-29 00:00:00",
+      "end_date": "2020-08-30 00:00:00",
+      "regime": "sideways",
+      "days": 33,
+      "avg_fg_score": 45.0
+    },
+    {
+      "start_date": "2020-09-03 00:00:00",
+      "end_date": "2020-09-08 00:00:00",
+      "regime": "panic",
+      "days": 6,
+      "avg_fg_score": 15.0
+    },
+    {
+      "start_date": "2020-09-09 00:00:00",
+      "end_date": "2020-10-08 00:00:00",
+      "regime": "bear",
+      "days": 30,
+      "avg_fg_score": 30.0
+    },
+    {
+      "start_date": "2020-10-12 00:00:00",
+      "end_date": "2020-10-25 00:00:00",
+      "regime": "bear",
+      "days": 14,
+      "avg_fg_score": 30.0
+    },
+    {
+      "start_date": "2020-10-26 00:00:00",
+      "end_date": "2020-11-03 00:00:00",
+      "regime": "panic",
+      "days": 9,
+      "avg_fg_score": 13.6
+    },
+    {
+      "start_date": "2020-11-13 00:00:00",
+      "end_date": "2020-12-20 00:00:00",
+      "regime": "sideways",
+      "days": 38,
+      "avg_fg_score": 45.0
+    },
+    {
+      "start_date": "2020-12-22 00:00:00",
+      "end_date": "2021-01-03 00:00:00",
+      "regime": "sideways",
+      "days": 13,
+      "avg_fg_score": 45.0
+    },
+    {
+      "start_date": "2021-01-07 00:00:00",
+      "end_date": "2021-01-26 00:00:00",
+      "regime": "sideways",
+      "days": 20,
+      "avg_fg_score": 45.0
+    },
+    {
+      "start_date": "2021-01-27 00:00:00",
+      "end_date": "2021-02-01 00:00:00",
+      "regime": "panic",
+      "days": 6,
+      "avg_fg_score": 15.0
+    },
+    {
+      "start_date": "2021-02-03 00:00:00",
+      "end_date": "2021-02-24 00:00:00",
+      "regime": "sideways",
+      "days": 22,
+      "avg_fg_score": 46.0
+    },
+    {
+      "start_date": "2021-03-09 00:00:00",
+      "end_date": "2021-05-11 00:00:00",
+      "regime": "sideways",
+      "days": 64,
+      "avg_fg_score": 56.3
+    },
+    {
+      "start_date": "2021-05-13 00:00:00",
+      "end_date": "2021-06-10 00:00:00",
+      "regime": "sideways",
+      "days": 29,
+      "avg_fg_score": 56.2
+    },
+    {
+      "start_date": "2021-06-14 00:00:00",
+      "end_date": "2021-06-23 00:00:00",
+      "regime": "sideways",
+      "days": 10,
+      "avg_fg_score": 58.1
+    },
+    {
+      "start_date": "2021-06-24 00:00:00",
+      "end_date": "2021-06-28 00:00:00",
+      "regime": "bull",
+      "days": 5,
+      "avg_fg_score": 75.0
+    },
+    {
+      "start_date": "2021-06-30 00:00:00",
+      "end_date": "2021-07-05 00:00:00",
+      "regime": "bull",
+      "days": 6,
+      "avg_fg_score": 75.0
+    },
+    {
+      "start_date": "2021-07-06 00:00:00",
+      "end_date": "2021-08-11 00:00:00",
+      "regime": "sideways",
+      "days": 37,
+      "avg_fg_score": 59.4
+    },
+    {
+      "start_date": "2021-08-16 00:00:00",
+      "end_date": "2021-09-19 00:00:00",
+      "regime": "sideways",
+      "days": 35,
+      "avg_fg_score": 57.5
+    },
+    {
+      "start_date": "2021-09-21 00:00:00",
+      "end_date": "2021-10-18 00:00:00",
+      "regime": "sideways",
+      "days": 28,
+      "avg_fg_score": 53.2
+    },
+    {
+      "start_date": "2021-10-19 00:00:00",
+      "end_date": "2021-10-26 00:00:00",
+      "regime": "bull",
+      "days": 8,
+      "avg_fg_score": 75.0
+    },
+    {
+      "start_date": "2021-10-27 00:00:00",
+      "end_date": "2021-11-02 00:00:00",
+      "regime": "sideways",
+      "days": 7,
+      "avg_fg_score": 60.0
+    },
+    {
+      "start_date": "2021-11-05 00:00:00",
+      "end_date": "2021-11-25 00:00:00",
+      "regime": "sideways",
+      "days": 21,
+      "avg_fg_score": 60.0
+    },
+    {
+      "start_date": "2021-12-07 00:00:00",
+      "end_date": "2022-01-19 00:00:00",
+      "regime": "sideways",
+      "days": 44,
+      "avg_fg_score": 54.5
+    },
+    {
+      "start_date": "2022-01-20 00:00:00",
+      "end_date": "2022-01-24 00:00:00",
+      "regime": "bear",
+      "days": 5,
+      "avg_fg_score": 30.0
+    },
+    {
+      "start_date": "2022-01-31 00:00:00",
+      "end_date": "2022-02-10 00:00:00",
+      "regime": "sideways",
+      "days": 11,
+      "avg_fg_score": 46.7
+    },
+    {
+      "start_date": "2022-02-11 00:00:00",
+      "end_date": "2022-02-15 00:00:00",
+      "regime": "bear",
+      "days": 5,
+      "avg_fg_score": 30.0
+    },
+    {
+      "start_date": "2022-02-17 00:00:00",
+      "end_date": "2022-02-22 00:00:00",
+      "regime": "bear",
+      "days": 6,
+      "avg_fg_score": 30.0
+    },
+    {
+      "start_date": "2022-02-28 00:00:00",
+      "end_date": "2022-03-14 00:00:00",
+      "regime": "panic",
+      "days": 15,
+      "avg_fg_score": 15.0
+    },
+    {
+      "start_date": "2022-03-18 00:00:00",
+      "end_date": "2022-04-21 00:00:00",
+      "regime": "sideways",
+      "days": 35,
+      "avg_fg_score": 48.1
+    },
+    {
+      "start_date": "2022-05-05 00:00:00",
+      "end_date": "2022-05-12 00:00:00",
+      "regime": "panic",
+      "days": 8,
+      "avg_fg_score": 15.0
+    },
+    {
+      "start_date": "2022-05-13 00:00:00",
+      "end_date": "2022-05-17 00:00:00",
+      "regime": "bear",
+      "days": 5,
+      "avg_fg_score": 30.0
+    },
+    {
+      "start_date": "2022-05-19 00:00:00",
+      "end_date": "2022-06-01 00:00:00",
+      "regime": "bear",
+      "days": 14,
+      "avg_fg_score": 30.0
+    },
+    {
+      "start_date": "2022-06-16 00:00:00",
+      "end_date": "2022-06-21 00:00:00",
+      "regime": "panic",
+      "days": 6,
+      "avg_fg_score": 15.0
+    },
+    {
+      "start_date": "2022-06-22 00:00:00",
+      "end_date": "2022-07-07 00:00:00",
+      "regime": "bear",
+      "days": 16,
+      "avg_fg_score": 30.0
+    },
+    {
+      "start_date": "2022-07-19 00:00:00",
+      "end_date": "2022-08-25 00:00:00",
+      "regime": "sideways",
+      "days": 38,
+      "avg_fg_score": 48.2
+    },
+    {
+      "start_date": "2022-08-26 00:00:00",
+      "end_date": "2022-09-06 00:00:00",
+      "regime": "bear",
+      "days": 12,
+      "avg_fg_score": 30.0
+    },
+    {
+      "start_date": "2022-09-07 00:00:00",
+      "end_date": "2022-09-12 00:00:00",
+      "regime": "sideways",
+      "days": 6,
+      "avg_fg_score": 45.0
+    },
+    {
+      "start_date": "2022-09-13 00:00:00",
+      "end_date": "2022-09-25 00:00:00",
+      "regime": "bear",
+      "days": 13,
+      "avg_fg_score": 30.0
+    },
+    {
+      "start_date": "2022-09-26 00:00:00",
+      "end_date": "2022-10-03 00:00:00",
+      "regime": "panic",
+      "days": 8,
+      "avg_fg_score": 15.0
+    },
+    {
+      "start_date": "2022-10-06 00:00:00",
+      "end_date": "2022-10-19 00:00:00",
+      "regime": "panic",
+      "days": 14,
+      "avg_fg_score": 15.0
+    },
+    {
+      "start_date": "2022-10-20 00:00:00",
+      "end_date": "2022-11-03 00:00:00",
+      "regime": "bear",
+      "days": 15,
+      "avg_fg_score": 30.0
+    },
+    {
+      "start_date": "2022-11-10 00:00:00",
+      "end_date": "2023-03-12 00:00:00",
+      "regime": "sideways",
+      "days": 123,
+      "avg_fg_score": 49.8
+    },
+    {
+      "start_date": "2023-03-20 00:00:00",
+      "end_date": "2023-04-27 00:00:00",
+      "regime": "sideways",
+      "days": 39,
+      "avg_fg_score": 56.8
+    },
+    {
+      "start_date": "2023-05-01 00:00:00",
+      "end_date": "2023-05-31 00:00:00",
+      "regime": "sideways",
+      "days": 31,
+      "avg_fg_score": 58.6
+    },
+    {
+      "start_date": "2023-06-01 00:00:00",
+      "end_date": "2023-08-01 00:00:00",
+      "regime": "bull",
+      "days": 62,
+      "avg_fg_score": 75.0
+    },
+    {
+      "start_date": "2023-08-07 00:00:00",
+      "end_date": "2023-08-14 00:00:00",
+      "regime": "bull",
+      "days": 8,
+      "avg_fg_score": 75.0
+    },
+    {
+      "start_date": "2023-08-15 00:00:00",
+      "end_date": "2023-08-22 00:00:00",
+      "regime": "sideways",
+      "days": 8,
+      "avg_fg_score": 60.0
+    },
+    {
+      "start_date": "2023-08-25 00:00:00",
+      "end_date": "2023-09-20 00:00:00",
+      "regime": "bull",
+      "days": 27,
+      "avg_fg_score": 75.0
+    },
+    {
+      "start_date": "2023-09-21 00:00:00",
+      "end_date": "2023-11-01 00:00:00",
+      "regime": "sideways",
+      "days": 42,
+      "avg_fg_score": 57.0
+    },
+    {
+      "start_date": "2023-11-02 00:00:00",
+      "end_date": "2024-04-03 00:00:00",
+      "regime": "bull",
+      "days": 154,
+      "avg_fg_score": 75.0
+    },
+    {
+      "start_date": "2024-04-12 00:00:00",
+      "end_date": "2024-04-22 00:00:00",
+      "regime": "sideways",
+      "days": 11,
+      "avg_fg_score": 60.0
+    },
+    {
+      "start_date": "2024-04-23 00:00:00",
+      "end_date": "2024-07-18 00:00:00",
+      "regime": "bull",
+      "days": 87,
+      "avg_fg_score": 76.3
+    },
+    {
+      "start_date": "2024-07-24 00:00:00",
+      "end_date": "2024-08-04 00:00:00",
+      "regime": "sideways",
+      "days": 12,
+      "avg_fg_score": 58.1
+    },
+    {
+      "start_date": "2024-08-08 00:00:00",
+      "end_date": "2024-08-14 00:00:00",
+      "regime": "sideways",
+      "days": 7,
+      "avg_fg_score": 51.0
+    },
+    {
+      "start_date": "2024-08-15 00:00:00",
+      "end_date": "2024-08-20 00:00:00",
+      "regime": "bull",
+      "days": 6,
+      "avg_fg_score": 75.0
+    },
+    {
+      "start_date": "2024-08-29 00:00:00",
+      "end_date": "2024-09-02 00:00:00",
+      "regime": "bull",
+      "days": 5,
+      "avg_fg_score": 75.0
+    },
+    {
+      "start_date": "2024-09-03 00:00:00",
+      "end_date": "2024-09-22 00:00:00",
+      "regime": "sideways",
+      "days": 20,
+      "avg_fg_score": 56.8
+    },
+    {
+      "start_date": "2024-09-27 00:00:00",
+      "end_date": "2024-11-06 00:00:00",
+      "regime": "sideways",
+      "days": 41,
+      "avg_fg_score": 53.3
+    },
+    {
+      "start_date": "2024-11-07 00:00:00",
+      "end_date": "2024-11-14 00:00:00",
+      "regime": "bull",
+      "days": 8,
+      "avg_fg_score": 75.0
+    },
+    {
+      "start_date": "2024-11-22 00:00:00",
+      "end_date": "2024-12-17 00:00:00",
+      "regime": "bull",
+      "days": 26,
+      "avg_fg_score": 75.0
+    },
+    {
+      "start_date": "2024-12-19 00:00:00",
+      "end_date": "2024-12-23 00:00:00",
+      "regime": "sideways",
+      "days": 5,
+      "avg_fg_score": 55.0
+    },
+    {
+      "start_date": "2024-12-24 00:00:00",
+      "end_date": "2024-12-29 00:00:00",
+      "regime": "bull",
+      "days": 6,
+      "avg_fg_score": 75.0
+    },
+    {
+      "start_date": "2024-12-30 00:00:00",
+      "end_date": "2025-01-16 00:00:00",
+      "regime": "sideways",
+      "days": 18,
+      "avg_fg_score": 60.0
+    },
+    {
+      "start_date": "2025-01-17 00:00:00",
+      "end_date": "2025-01-26 00:00:00",
+      "regime": "bull",
+      "days": 10,
+      "avg_fg_score": 75.0
+    },
+    {
+      "start_date": "2025-01-31 00:00:00",
+      "end_date": "2025-02-04 00:00:00",
+      "regime": "sideways",
+      "days": 5,
+      "avg_fg_score": 60.0
+    },
+    {
+      "start_date": "2025-02-12 00:00:00",
+      "end_date": "2025-02-20 00:00:00",
+      "regime": "bull",
+      "days": 9,
+      "avg_fg_score": 75.0
+    },
+    {
+      "start_date": "2025-02-21 00:00:00",
+      "end_date": "2025-03-09 00:00:00",
+      "regime": "sideways",
+      "days": 17,
+      "avg_fg_score": 51.8
+    },
+    {
+      "start_date": "2025-03-12 00:00:00",
+      "end_date": "2025-04-02 00:00:00",
+      "regime": "sideways",
+      "days": 22,
+      "avg_fg_score": 51.6
+    },
+    {
+      "start_date": "2025-04-03 00:00:00",
+      "end_date": "2025-04-16 00:00:00",
+      "regime": "panic",
+      "days": 14,
+      "avg_fg_score": 11.0
+    },
+    {
+      "start_date": "2025-04-29 00:00:00",
+      "end_date": "2025-07-08 00:00:00",
+      "regime": "sideways",
+      "days": 71,
+      "avg_fg_score": 55.0
+    },
+    {
+      "start_date": "2025-07-11 00:00:00",
+      "end_date": "2025-07-22 00:00:00",
+      "regime": "sideways",
+      "days": 12,
+      "avg_fg_score": 60.0
+    },
+    {
+      "start_date": "2025-07-23 00:00:00",
+      "end_date": "2025-07-30 00:00:00",
+      "regime": "bull",
+      "days": 8,
+      "avg_fg_score": 75.0
+    },
+    {
+      "start_date": "2025-07-31 00:00:00",
+      "end_date": "2025-08-07 00:00:00",
+      "regime": "sideways",
+      "days": 8,
+      "avg_fg_score": 57.5
+    },
+    {
+      "start_date": "2025-08-12 00:00:00",
+      "end_date": "2025-08-20 00:00:00",
+      "regime": "bull",
+      "days": 9,
+      "avg_fg_score": 75.0
+    },
+    {
+      "start_date": "2025-08-22 00:00:00",
+      "end_date": "2025-09-01 00:00:00",
+      "regime": "bull",
+      "days": 11,
+      "avg_fg_score": 75.0
+    },
+    {
+      "start_date": "2025-09-04 00:00:00",
+      "end_date": "2025-09-15 00:00:00",
+      "regime": "bull",
+      "days": 12,
+      "avg_fg_score": 75.0
+    },
+    {
+      "start_date": "2025-09-17 00:00:00",
+      "end_date": "2025-09-21 00:00:00",
+      "regime": "bull",
+      "days": 5,
+      "avg_fg_score": 75.0
+    },
+    {
+      "start_date": "2025-09-29 00:00:00",
+      "end_date": "2025-10-15 00:00:00",
+      "regime": "sideways",
+      "days": 17,
+      "avg_fg_score": 56.5
+    },
+    {
+      "start_date": "2025-10-17 00:00:00",
+      "end_date": "2025-10-26 00:00:00",
+      "regime": "sideways",
+      "days": 10,
+      "avg_fg_score": 57.5
+    },
+    {
+      "start_date": "2025-10-28 00:00:00",
+      "end_date": "2025-11-19 00:00:00",
+      "regime": "sideways",
+      "days": 23,
+      "avg_fg_score": 57.4
+    },
+    {
+      "start_date": "2025-11-21 00:00:00",
+      "end_date": "2025-12-03 00:00:00",
+      "regime": "sideways",
+      "days": 13,
+      "avg_fg_score": 56.2
+    },
+    {
+      "start_date": "2025-12-10 00:00:00",
+      "end_date": "2025-12-14 00:00:00",
+      "regime": "bull",
+      "days": 5,
+      "avg_fg_score": 75.0
+    },
+    {
+      "start_date": "2025-12-19 00:00:00",
+      "end_date": "2026-01-13 00:00:00",
+      "regime": "bull",
+      "days": 26,
+      "avg_fg_score": 75.0
+    },
+    {
+      "start_date": "2026-01-15 00:00:00",
+      "end_date": "2026-01-19 00:00:00",
+      "regime": "bull",
+      "days": 5,
+      "avg_fg_score": 75.0
+    },
+    {
+      "start_date": "2026-01-23 00:00:00",
+      "end_date": "2026-02-23 00:00:00",
+      "regime": "sideways",
+      "days": 32,
+      "avg_fg_score": 55.0
+    }
+  ],
+  "ticker_results": {
     "SPY": {
-      "asset_class": "broad_market",
-      "sector": "Broad Market",
-      "regime_stats": {
-        "bull": {
-          "count": 0,
-          "pct": 0.0
-        },
-        "bear": {
-          "count": 0,
-          "pct": 0.0
-        },
-        "sideways": {
-          "count": 11391,
-          "pct": 100.0
-        },
-        "panic": {
-          "count": 0,
-          "pct": 0.0
-        }
-      },
-      "regime_bands": {
-        "bull": {
-          "strategy": "fear_greed",
-          "params": {
-            "momentum_threshold": -5,
-            "hold_period": 5
-          },
-          "confidence": 0.0,
-          "insufficient_data": true
-        },
-        "bear": {
-          "strategy": "fear_greed",
-          "params": {
-            "momentum_threshold": -5,
-            "hold_period": 5
-          },
-          "confidence": 0.0,
-          "insufficient_data": true
-        },
-        "sideways": {
-          "strategy": "fear_greed",
-          "params": {
-            "momentum_threshold": -10,
-            "hold_period": 7
-          },
-          "win_rate": 71.05,
-          "sharpe": 0.3267,
-          "avg_return": 1.8648,
-          "trade_count": 38,
-          "confidence": 0.4642
-        },
-        "panic": {
-          "strategy": "fear_greed",
-          "params": {
-            "momentum_threshold": -5,
-            "hold_period": 5
-          },
-          "confidence": 0.0,
-          "insufficient_data": true
-        }
-      },
-      "full_optimization": {
-        "sideways": {
-          "fear_greed": {
-            "best_params": {
-              "momentum_threshold": -10,
-              "hold_period": 7
-            },
-            "win_rate": 71.05,
-            "avg_return": 1.8648,
-            "sharpe": 0.3267,
-            "max_drawdown": -15.0138,
-            "trade_count": 38,
-            "composite_score": 0.2321
+      "fear_greed": {
+        "regime_params": {
+          "sideways": {
+            "momentum_threshold": -2,
+            "hold_period": 2
           }
-        }
+        },
+        "baseline_params": {
+          "momentum_threshold": -7.0,
+          "hold_period": 5.0
+        },
+        "adaptive_bands": {
+          "momentum_threshold": {
+            "min": -2,
+            "max": -2,
+            "mean": -2.0,
+            "median": -2.0,
+            "regime_specific": {
+              "sideways": -2
+            }
+          },
+          "hold_period": {
+            "min": 2,
+            "max": 2,
+            "mean": 2.0,
+            "median": 2.0,
+            "regime_specific": {
+              "sideways": 2
+            }
+          }
+        },
+        "performance_summary": {
+          "sideways": {
+            "win_rate": 100.0,
+            "sharpe": 2.3296,
+            "avg_return": 0.3541,
+            "trade_count": 10,
+            "composite_score": 2.3296
+          }
+        },
+        "regime_coverage": {
+          "sideways": {
+            "periods_count": 55,
+            "total_days": "1315",
+            "avg_fg_score": 54.8,
+            "avg_period_length": 23.9
+          }
+        },
+        "total_regimes": 1
+      },
+      "regime_confirmation": {
+        "regime_params": {
+          "bull": {
+            "sma_period": 20,
+            "dip_threshold": -0.5,
+            "hold_period": 10
+          },
+          "sideways": {
+            "sma_period": 20,
+            "dip_threshold": -0.5,
+            "hold_period": 10
+          }
+        },
+        "baseline_params": {
+          "sma_period": 100.0,
+          "dip_threshold": -3.0,
+          "hold_period": 5.0
+        },
+        "adaptive_bands": {
+          "dip_threshold": {
+            "min": -0.5,
+            "max": -0.5,
+            "mean": -0.5,
+            "median": -0.5,
+            "regime_specific": {
+              "bull": -0.5,
+              "sideways": -0.5
+            }
+          },
+          "sma_period": {
+            "min": 20,
+            "max": 20,
+            "mean": 20.0,
+            "median": 20.0,
+            "regime_specific": {
+              "bull": 20,
+              "sideways": 20
+            }
+          },
+          "hold_period": {
+            "min": 10,
+            "max": 10,
+            "mean": 10.0,
+            "median": 10.0,
+            "regime_specific": {
+              "bull": 10,
+              "sideways": 10
+            }
+          }
+        },
+        "performance_summary": {
+          "bull": {
+            "win_rate": 100.0,
+            "sharpe": 1.6908,
+            "avg_return": 1.8431,
+            "trade_count": 6,
+            "composite_score": 1.0145
+          },
+          "sideways": {
+            "win_rate": 70.0,
+            "sharpe": 0.4443,
+            "avg_return": 0.9662,
+            "trade_count": 10,
+            "composite_score": 0.311
+          }
+        },
+        "regime_coverage": {
+          "bull": {
+            "periods_count": 36,
+            "total_days": "964",
+            "avg_fg_score": 75.6,
+            "avg_period_length": 26.8
+          },
+          "sideways": {
+            "periods_count": 55,
+            "total_days": "1315",
+            "avg_fg_score": 54.8,
+            "avg_period_length": 23.9
+          }
+        },
+        "total_regimes": 2
+      },
+      "mean_reversion": {
+        "regime_params": {
+          "bull": {
+            "bb_width": 1.5,
+            "bb_period": 10,
+            "hold_period": 5
+          },
+          "sideways": {
+            "bb_width": 2.0,
+            "bb_period": 20,
+            "hold_period": 3
+          }
+        },
+        "baseline_params": {
+          "bb_width": 2.5,
+          "bb_period": 20.0,
+          "hold_period": 4.0
+        },
+        "adaptive_bands": {
+          "bb_period": {
+            "min": 10,
+            "max": 20,
+            "mean": 15.0,
+            "median": 15.0,
+            "regime_specific": {
+              "bull": 10,
+              "sideways": 20
+            }
+          },
+          "bb_width": {
+            "min": 1.5,
+            "max": 2.0,
+            "mean": 1.75,
+            "median": 1.75,
+            "regime_specific": {
+              "bull": 1.5,
+              "sideways": 2.0
+            }
+          },
+          "hold_period": {
+            "min": 3,
+            "max": 5,
+            "mean": 4.0,
+            "median": 4.0,
+            "regime_specific": {
+              "bull": 5,
+              "sideways": 3
+            }
+          }
+        },
+        "performance_summary": {
+          "bull": {
+            "win_rate": 100.0,
+            "sharpe": 115.4645,
+            "avg_return": 1.6432,
+            "trade_count": 2,
+            "composite_score": 23.0929
+          },
+          "sideways": {
+            "win_rate": 100.0,
+            "sharpe": 4.0425,
+            "avg_return": 1.1864,
+            "trade_count": 3,
+            "composite_score": 1.2128
+          }
+        },
+        "regime_coverage": {
+          "bull": {
+            "periods_count": 36,
+            "total_days": "964",
+            "avg_fg_score": 75.6,
+            "avg_period_length": 26.8
+          },
+          "sideways": {
+            "periods_count": 55,
+            "total_days": "1315",
+            "avg_fg_score": 54.8,
+            "avg_period_length": 23.9
+          }
+        },
+        "total_regimes": 2
       }
     },
     "QQQ": {
-      "asset_class": "broad_market",
-      "sector": "Broad Market",
-      "regime_stats": {
-        "bull": {
-          "count": 0,
-          "pct": 0.0
-        },
-        "bear": {
-          "count": 0,
-          "pct": 0.0
-        },
-        "sideways": {
-          "count": 11391,
-          "pct": 100.0
-        },
-        "panic": {
-          "count": 0,
-          "pct": 0.0
-        }
-      },
-      "regime_bands": {
-        "bull": {
-          "strategy": "fear_greed",
-          "params": {
+      "fear_greed": {
+        "regime_params": {
+          "sideways": {
             "momentum_threshold": -5,
-            "hold_period": 5
-          },
-          "confidence": 0.0,
-          "insufficient_data": true
-        },
-        "bear": {
-          "strategy": "fear_greed",
-          "params": {
-            "momentum_threshold": -5,
-            "hold_period": 5
-          },
-          "confidence": 0.0,
-          "insufficient_data": true
-        },
-        "sideways": {
-          "strategy": "fear_greed",
-          "params": {
-            "momentum_threshold": -5,
-            "hold_period": 15
-          },
-          "win_rate": 60.17,
-          "sharpe": 0.1518,
-          "avg_return": 1.2205,
-          "trade_count": 118,
-          "confidence": 0.1826
-        },
-        "panic": {
-          "strategy": "fear_greed",
-          "params": {
-            "momentum_threshold": -5,
-            "hold_period": 5
-          },
-          "confidence": 0.0,
-          "insufficient_data": true
-        }
-      },
-      "full_optimization": {
-        "sideways": {
-          "fear_greed": {
-            "best_params": {
-              "momentum_threshold": -5,
-              "hold_period": 15
-            },
-            "win_rate": 60.17,
-            "avg_return": 1.2205,
-            "sharpe": 0.1518,
-            "max_drawdown": -21.3729,
-            "trade_count": 118,
-            "composite_score": 0.0913
+            "hold_period": 1
           }
-        }
+        },
+        "baseline_params": {
+          "momentum_threshold": -7.0,
+          "hold_period": 5.0
+        },
+        "adaptive_bands": {
+          "momentum_threshold": {
+            "min": -5,
+            "max": -5,
+            "mean": -5.0,
+            "median": -5.0,
+            "regime_specific": {
+              "sideways": -5
+            }
+          },
+          "hold_period": {
+            "min": 1,
+            "max": 1,
+            "mean": 1.0,
+            "median": 1.0,
+            "regime_specific": {
+              "sideways": 1
+            }
+          }
+        },
+        "performance_summary": {
+          "sideways": {
+            "win_rate": 100.0,
+            "sharpe": 6015007662316033.0,
+            "avg_return": 0.3339,
+            "trade_count": 6,
+            "composite_score": 3609004597389619.5
+          }
+        },
+        "regime_coverage": {
+          "sideways": {
+            "periods_count": 55,
+            "total_days": "1315",
+            "avg_fg_score": 54.8,
+            "avg_period_length": 23.9
+          }
+        },
+        "total_regimes": 1
+      },
+      "regime_confirmation": {
+        "regime_params": {
+          "bull": {
+            "sma_period": 20,
+            "dip_threshold": -0.5,
+            "hold_period": 5
+          },
+          "sideways": {
+            "sma_period": 50,
+            "dip_threshold": -0.5,
+            "hold_period": 2
+          }
+        },
+        "baseline_params": {
+          "sma_period": 100.0,
+          "dip_threshold": -3.0,
+          "hold_period": 5.0
+        },
+        "adaptive_bands": {
+          "dip_threshold": {
+            "min": -0.5,
+            "max": -0.5,
+            "mean": -0.5,
+            "median": -0.5,
+            "regime_specific": {
+              "bull": -0.5,
+              "sideways": -0.5
+            }
+          },
+          "sma_period": {
+            "min": 20,
+            "max": 50,
+            "mean": 35.0,
+            "median": 35.0,
+            "regime_specific": {
+              "bull": 20,
+              "sideways": 50
+            }
+          },
+          "hold_period": {
+            "min": 2,
+            "max": 5,
+            "mean": 3.5,
+            "median": 3.5,
+            "regime_specific": {
+              "bull": 5,
+              "sideways": 2
+            }
+          }
+        },
+        "performance_summary": {
+          "bull": {
+            "win_rate": 100.0,
+            "sharpe": 5.2359,
+            "avg_return": 1.5857,
+            "trade_count": 11,
+            "composite_score": 5.2359
+          },
+          "sideways": {
+            "win_rate": 100.0,
+            "sharpe": 7668729445486482.0,
+            "avg_return": 0.8514,
+            "trade_count": 5,
+            "composite_score": 3834364722743241.0
+          }
+        },
+        "regime_coverage": {
+          "bull": {
+            "periods_count": 36,
+            "total_days": "964",
+            "avg_fg_score": 75.6,
+            "avg_period_length": 26.8
+          },
+          "sideways": {
+            "periods_count": 55,
+            "total_days": "1315",
+            "avg_fg_score": 54.8,
+            "avg_period_length": 23.9
+          }
+        },
+        "total_regimes": 2
+      },
+      "mean_reversion": {
+        "regime_params": {
+          "bull": {
+            "bb_width": 1.5,
+            "bb_period": 10,
+            "hold_period": 1
+          },
+          "sideways": {
+            "bb_width": 1.5,
+            "bb_period": 30,
+            "hold_period": 2
+          }
+        },
+        "baseline_params": {
+          "bb_width": 2.5,
+          "bb_period": 20.0,
+          "hold_period": 4.0
+        },
+        "adaptive_bands": {
+          "bb_period": {
+            "min": 10,
+            "max": 30,
+            "mean": 20.0,
+            "median": 20.0,
+            "regime_specific": {
+              "bull": 10,
+              "sideways": 30
+            }
+          },
+          "bb_width": {
+            "min": 1.5,
+            "max": 1.5,
+            "mean": 1.5,
+            "median": 1.5,
+            "regime_specific": {
+              "bull": 1.5,
+              "sideways": 1.5
+            }
+          },
+          "hold_period": {
+            "min": 1,
+            "max": 2,
+            "mean": 1.5,
+            "median": 1.5,
+            "regime_specific": {
+              "bull": 1,
+              "sideways": 2
+            }
+          }
+        },
+        "performance_summary": {
+          "bull": {
+            "win_rate": 88.89,
+            "sharpe": 1.1873,
+            "avg_return": 0.66,
+            "trade_count": 9,
+            "composite_score": 0.9498
+          },
+          "sideways": {
+            "win_rate": 100.0,
+            "sharpe": 6919330467492029.0,
+            "avg_return": 1.5364,
+            "trade_count": 3,
+            "composite_score": 2075799140247608.5
+          }
+        },
+        "regime_coverage": {
+          "bull": {
+            "periods_count": 36,
+            "total_days": "964",
+            "avg_fg_score": 75.6,
+            "avg_period_length": 26.8
+          },
+          "sideways": {
+            "periods_count": 55,
+            "total_days": "1315",
+            "avg_fg_score": 54.8,
+            "avg_period_length": 23.9
+          }
+        },
+        "total_regimes": 2
       }
     },
     "AAPL": {
-      "asset_class": "broad_market",
-      "sector": "Unknown",
-      "regime_stats": {
-        "bull": {
-          "count": 5615,
-          "pct": 49.3
-        },
-        "bear": {
-          "count": 1303,
-          "pct": 11.4
-        },
-        "sideways": {
-          "count": 2733,
-          "pct": 24.0
-        },
-        "panic": {
-          "count": 1740,
-          "pct": 15.3
-        }
-      },
-      "regime_bands": {
-        "bull": {
-          "strategy": "mean_reversion",
-          "params": {
-            "bb_width": 2.0,
-            "bb_period": 20,
+      "fear_greed": {
+        "regime_params": {
+          "bull": {
+            "momentum_threshold": -7,
+            "hold_period": 2
+          },
+          "sideways": {
+            "momentum_threshold": -5,
             "hold_period": 7
-          },
-          "win_rate": 60.0,
-          "sharpe": 0.7374,
-          "avg_return": 3.5196,
-          "trade_count": 10,
-          "confidence": 0.8848
-        },
-        "bear": {
-          "strategy": "rsi_oversold",
-          "params": {
-            "rsi_threshold": 25,
-            "sma_fast": 50,
-            "sma_slow": 200,
-            "hold_period": 7
-          },
-          "win_rate": 100.0,
-          "sharpe": 2.4754,
-          "avg_return": 3.0656,
-          "trade_count": 3,
-          "confidence": 1.0
-        },
-        "sideways": {
-          "strategy": "rsi_oversold",
-          "params": {
-            "rsi_threshold": 35,
-            "sma_fast": 50,
-            "sma_slow": 200,
-            "hold_period": 3
-          },
-          "win_rate": 63.64,
-          "sharpe": 0.4098,
-          "avg_return": 2.7811,
-          "trade_count": 11,
-          "confidence": 0.5216
-        },
-        "panic": {
-          "strategy": "regime_confirmation",
-          "params": {
-            "sma_period": 50,
-            "dip_threshold": -2,
-            "hold_period": 15
-          },
-          "win_rate": 70.59,
-          "sharpe": 0.6921,
-          "avg_return": 4.9411,
-          "trade_count": 17,
-          "confidence": 0.9772
-        }
-      },
-      "full_optimization": {
-        "bull": {
-          "regime_confirmation": {
-            "best_params": {
-              "sma_period": 50,
-              "dip_threshold": -5,
-              "hold_period": 3
-            },
-            "win_rate": 55.04,
-            "avg_return": 0.8698,
-            "sharpe": 0.1957,
-            "max_drawdown": -8.95,
-            "trade_count": 129,
-            "composite_score": 0.1077
-          },
-          "mean_reversion": {
-            "best_params": {
-              "bb_width": 2.0,
-              "bb_period": 20,
-              "hold_period": 7
-            },
-            "win_rate": 60.0,
-            "avg_return": 3.5196,
-            "sharpe": 0.7374,
-            "max_drawdown": -4.2135,
-            "trade_count": 10,
-            "composite_score": 0.4424
           }
         },
-        "bear": {
-          "fear_greed": {
-            "best_params": {
-              "momentum_threshold": -5,
-              "hold_period": 3
-            },
-            "win_rate": 52.0,
-            "avg_return": 0.3871,
-            "sharpe": 0.0831,
-            "max_drawdown": -16.0623,
-            "trade_count": 450,
-            "composite_score": 0.0432
+        "baseline_params": {
+          "momentum_threshold": -7.0,
+          "hold_period": 5.0
+        },
+        "adaptive_bands": {
+          "momentum_threshold": {
+            "min": -7,
+            "max": -5,
+            "mean": -6.0,
+            "median": -6.0,
+            "regime_specific": {
+              "bull": -7,
+              "sideways": -5
+            }
           },
-          "regime_confirmation": {
-            "best_params": {
-              "sma_period": 200,
-              "dip_threshold": -5,
-              "hold_period": 3
-            },
-            "win_rate": 63.95,
-            "avg_return": 1.5616,
-            "sharpe": 0.3272,
-            "max_drawdown": -16.0623,
-            "trade_count": 86,
-            "composite_score": 0.2092
-          },
-          "rsi_oversold": {
-            "best_params": {
-              "rsi_threshold": 25,
-              "sma_fast": 50,
-              "sma_slow": 200,
-              "hold_period": 7
-            },
+          "hold_period": {
+            "min": 2,
+            "max": 7,
+            "mean": 4.5,
+            "median": 4.5,
+            "regime_specific": {
+              "bull": 2,
+              "sideways": 7
+            }
+          }
+        },
+        "performance_summary": {
+          "bull": {
             "win_rate": 100.0,
-            "avg_return": 3.0656,
-            "sharpe": 2.4754,
-            "max_drawdown": 1.6929,
+            "sharpe": 7714666161685661.0,
+            "avg_return": 0.8565,
+            "trade_count": 6,
+            "composite_score": 4628799697011396.0
+          },
+          "sideways": {
+            "win_rate": 100.0,
+            "sharpe": 9.287,
+            "avg_return": 1.2202,
+            "trade_count": 5,
+            "composite_score": 4.6435
+          }
+        },
+        "regime_coverage": {
+          "bull": {
+            "periods_count": 36,
+            "total_days": "964",
+            "avg_fg_score": 75.6,
+            "avg_period_length": 26.8
+          },
+          "sideways": {
+            "periods_count": 55,
+            "total_days": "1315",
+            "avg_fg_score": 54.8,
+            "avg_period_length": 23.9
+          }
+        },
+        "total_regimes": 2
+      },
+      "regime_confirmation": {
+        "regime_params": {
+          "bull": {
+            "sma_period": 20,
+            "dip_threshold": -3,
+            "hold_period": 5
+          },
+          "sideways": {
+            "sma_period": 20,
+            "dip_threshold": -0.5,
+            "hold_period": 1
+          }
+        },
+        "baseline_params": {
+          "sma_period": 100.0,
+          "dip_threshold": -3.0,
+          "hold_period": 5.0
+        },
+        "adaptive_bands": {
+          "dip_threshold": {
+            "min": -3,
+            "max": -0.5,
+            "mean": -1.75,
+            "median": -1.75,
+            "regime_specific": {
+              "bull": -3,
+              "sideways": -0.5
+            }
+          },
+          "sma_period": {
+            "min": 20,
+            "max": 20,
+            "mean": 20.0,
+            "median": 20.0,
+            "regime_specific": {
+              "bull": 20,
+              "sideways": 20
+            }
+          },
+          "hold_period": {
+            "min": 1,
+            "max": 5,
+            "mean": 3.0,
+            "median": 3.0,
+            "regime_specific": {
+              "bull": 5,
+              "sideways": 1
+            }
+          }
+        },
+        "performance_summary": {
+          "bull": {
+            "win_rate": 100.0,
+            "sharpe": 2.5985,
+            "avg_return": 1.0893,
+            "trade_count": 2,
+            "composite_score": 0.5197
+          },
+          "sideways": {
+            "win_rate": 88.89,
+            "sharpe": 1.2859,
+            "avg_return": 0.769,
+            "trade_count": 9,
+            "composite_score": 1.0287
+          }
+        },
+        "regime_coverage": {
+          "bull": {
+            "periods_count": 36,
+            "total_days": "964",
+            "avg_fg_score": 75.6,
+            "avg_period_length": 26.8
+          },
+          "sideways": {
+            "periods_count": 55,
+            "total_days": "1315",
+            "avg_fg_score": 54.8,
+            "avg_period_length": 23.9
+          }
+        },
+        "total_regimes": 2
+      },
+      "mean_reversion": {
+        "regime_params": {
+          "bull": {
+            "bb_width": 1.5,
+            "bb_period": 30,
+            "hold_period": 2
+          },
+          "sideways": {
+            "bb_width": 1.5,
+            "bb_period": 30,
+            "hold_period": 2
+          }
+        },
+        "baseline_params": {
+          "bb_width": 2.5,
+          "bb_period": 20.0,
+          "hold_period": 4.0
+        },
+        "adaptive_bands": {
+          "bb_period": {
+            "min": 30,
+            "max": 30,
+            "mean": 30.0,
+            "median": 30.0,
+            "regime_specific": {
+              "bull": 30,
+              "sideways": 30
+            }
+          },
+          "bb_width": {
+            "min": 1.5,
+            "max": 1.5,
+            "mean": 1.5,
+            "median": 1.5,
+            "regime_specific": {
+              "bull": 1.5,
+              "sideways": 1.5
+            }
+          },
+          "hold_period": {
+            "min": 2,
+            "max": 2,
+            "mean": 2.0,
+            "median": 2.0,
+            "regime_specific": {
+              "bull": 2,
+              "sideways": 2
+            }
+          }
+        },
+        "performance_summary": {
+          "bull": {
+            "win_rate": 100.0,
+            "sharpe": 6636504410893162.0,
+            "avg_return": 0.1842,
+            "trade_count": 7,
+            "composite_score": 4645553087625213.0
+          },
+          "sideways": {
+            "win_rate": 100.0,
+            "sharpe": 8302836273020245.0,
+            "avg_return": 0.4609,
             "trade_count": 3,
-            "composite_score": 0.7426
-          },
-          "mean_reversion": {
-            "best_params": {
-              "bb_width": 2.5,
-              "bb_period": 20,
-              "hold_period": 3
-            },
-            "win_rate": 60.0,
-            "avg_return": 1.47,
-            "sharpe": 0.2454,
-            "max_drawdown": -16.0623,
-            "trade_count": 45,
-            "composite_score": 0.1472
+            "composite_score": 2490850881906073.5
           }
         },
-        "sideways": {
-          "fear_greed": {
-            "best_params": {
-              "momentum_threshold": -5,
-              "hold_period": 3
-            },
-            "win_rate": 50.82,
-            "avg_return": 0.2033,
-            "sharpe": 0.0469,
-            "max_drawdown": -12.3744,
-            "trade_count": 183,
-            "composite_score": 0.0238
+        "regime_coverage": {
+          "bull": {
+            "periods_count": 36,
+            "total_days": "964",
+            "avg_fg_score": 75.6,
+            "avg_period_length": 26.8
           },
-          "regime_confirmation": {
-            "best_params": {
-              "sma_period": 50,
-              "dip_threshold": -5,
-              "hold_period": 15
-            },
-            "win_rate": 62.32,
-            "avg_return": 2.8559,
-            "sharpe": 0.2981,
-            "max_drawdown": -21.2062,
-            "trade_count": 69,
-            "composite_score": 0.1858
-          },
-          "rsi_oversold": {
-            "best_params": {
-              "rsi_threshold": 35,
-              "sma_fast": 50,
-              "sma_slow": 200,
-              "hold_period": 3
-            },
-            "win_rate": 63.64,
-            "avg_return": 2.7811,
-            "sharpe": 0.4098,
-            "max_drawdown": -3.3282,
-            "trade_count": 11,
-            "composite_score": 0.2608
-          },
-          "mean_reversion": {
-            "best_params": {
-              "bb_width": 2.5,
-              "bb_period": 20,
-              "hold_period": 3
-            },
-            "win_rate": 55.56,
-            "avg_return": 1.0304,
-            "sharpe": 0.2579,
-            "max_drawdown": -4.5246,
-            "trade_count": 18,
-            "composite_score": 0.1433
+          "sideways": {
+            "periods_count": 55,
+            "total_days": "1315",
+            "avg_fg_score": 54.8,
+            "avg_period_length": 23.9
           }
         },
-        "panic": {
-          "fear_greed": {
-            "best_params": {
-              "momentum_threshold": -5,
-              "hold_period": 15
-            },
-            "win_rate": 47.52,
-            "avg_return": 0.8931,
-            "sharpe": 0.0674,
-            "max_drawdown": -60.8749,
-            "trade_count": 202,
-            "composite_score": 0.032
-          },
-          "regime_confirmation": {
-            "best_params": {
-              "sma_period": 50,
-              "dip_threshold": -2,
-              "hold_period": 15
-            },
-            "win_rate": 70.59,
-            "avg_return": 4.9411,
-            "sharpe": 0.6921,
-            "max_drawdown": -6.2414,
-            "trade_count": 17,
-            "composite_score": 0.4886
-          },
-          "rsi_oversold": {
-            "best_params": {
-              "rsi_threshold": 25,
-              "sma_fast": 50,
-              "sma_slow": 200,
-              "hold_period": 3
-            },
-            "win_rate": 62.5,
-            "avg_return": 2.0571,
-            "sharpe": 0.2201,
-            "max_drawdown": -9.1369,
-            "trade_count": 24,
-            "composite_score": 0.1376
-          },
-          "mean_reversion": {
-            "best_params": {
-              "bb_width": 2.5,
-              "bb_period": 20,
-              "hold_period": 3
-            },
-            "win_rate": 59.26,
-            "avg_return": 0.3404,
-            "sharpe": 0.0753,
-            "max_drawdown": -11.1464,
-            "trade_count": 54,
-            "composite_score": 0.0446
-          }
-        }
+        "total_regimes": 2
       }
     },
     "GLD": {
-      "asset_class": "commodities",
-      "sector": "Commodities",
-      "regime_stats": {
-        "bull": {
-          "count": 0,
-          "pct": 0.0
-        },
-        "bear": {
-          "count": 0,
-          "pct": 0.0
-        },
-        "sideways": {
-          "count": 11391,
-          "pct": 100.0
-        },
-        "panic": {
-          "count": 0,
-          "pct": 0.0
-        }
-      },
-      "regime_bands": {
-        "bull": {
-          "strategy": "fear_greed",
-          "params": {
-            "momentum_threshold": -5,
-            "hold_period": 5
+      "fear_greed": {
+        "regime_params": {
+          "bull": {
+            "momentum_threshold": -2,
+            "hold_period": 3
           },
-          "confidence": 0.0,
-          "insufficient_data": true
-        },
-        "bear": {
-          "strategy": "fear_greed",
-          "params": {
-            "momentum_threshold": -5,
-            "hold_period": 5
-          },
-          "confidence": 0.0,
-          "insufficient_data": true
-        },
-        "sideways": {
-          "strategy": "fear_greed",
-          "params": {
-            "momentum_threshold": -10,
-            "hold_period": 15
-          },
-          "win_rate": 66.67,
-          "sharpe": 0.3605,
-          "avg_return": 1.9811,
-          "trade_count": 12,
-          "confidence": 0.4806
-        },
-        "panic": {
-          "strategy": "fear_greed",
-          "params": {
-            "momentum_threshold": -5,
-            "hold_period": 5
-          },
-          "confidence": 0.0,
-          "insufficient_data": true
-        }
-      },
-      "full_optimization": {
-        "sideways": {
-          "fear_greed": {
-            "best_params": {
-              "momentum_threshold": -10,
-              "hold_period": 15
-            },
-            "win_rate": 66.67,
-            "avg_return": 1.9811,
-            "sharpe": 0.3605,
-            "max_drawdown": -7.6108,
-            "trade_count": 12,
-            "composite_score": 0.2403
+          "sideways": {
+            "momentum_threshold": -3,
+            "hold_period": 1
           }
-        }
+        },
+        "baseline_params": {
+          "momentum_threshold": -7.0,
+          "hold_period": 5.0
+        },
+        "adaptive_bands": {
+          "momentum_threshold": {
+            "min": -3,
+            "max": -2,
+            "mean": -2.5,
+            "median": -2.5,
+            "regime_specific": {
+              "bull": -2,
+              "sideways": -3
+            }
+          },
+          "hold_period": {
+            "min": 1,
+            "max": 3,
+            "mean": 2.0,
+            "median": 2.0,
+            "regime_specific": {
+              "bull": 3,
+              "sideways": 1
+            }
+          }
+        },
+        "performance_summary": {
+          "bull": {
+            "win_rate": 100.0,
+            "sharpe": 4.5204,
+            "avg_return": 0.6726,
+            "trade_count": 7,
+            "composite_score": 3.1643
+          },
+          "sideways": {
+            "win_rate": 100.0,
+            "sharpe": 3.164,
+            "avg_return": 0.2915,
+            "trade_count": 9,
+            "composite_score": 2.8476
+          }
+        },
+        "regime_coverage": {
+          "bull": {
+            "periods_count": 36,
+            "total_days": "964",
+            "avg_fg_score": 75.6,
+            "avg_period_length": 26.8
+          },
+          "sideways": {
+            "periods_count": 55,
+            "total_days": "1315",
+            "avg_fg_score": 54.8,
+            "avg_period_length": 23.9
+          }
+        },
+        "total_regimes": 2
+      },
+      "regime_confirmation": {
+        "regime_params": {
+          "bull": {
+            "sma_period": 20,
+            "dip_threshold": -1,
+            "hold_period": 7
+          },
+          "sideways": {
+            "sma_period": 50,
+            "dip_threshold": -1,
+            "hold_period": 1
+          }
+        },
+        "baseline_params": {
+          "sma_period": 100.0,
+          "dip_threshold": -3.0,
+          "hold_period": 5.0
+        },
+        "adaptive_bands": {
+          "dip_threshold": {
+            "min": -1,
+            "max": -1,
+            "mean": -1.0,
+            "median": -1.0,
+            "regime_specific": {
+              "bull": -1,
+              "sideways": -1
+            }
+          },
+          "sma_period": {
+            "min": 20,
+            "max": 50,
+            "mean": 35.0,
+            "median": 35.0,
+            "regime_specific": {
+              "bull": 20,
+              "sideways": 50
+            }
+          },
+          "hold_period": {
+            "min": 1,
+            "max": 7,
+            "mean": 4.0,
+            "median": 4.0,
+            "regime_specific": {
+              "bull": 7,
+              "sideways": 1
+            }
+          }
+        },
+        "performance_summary": {
+          "bull": {
+            "win_rate": 100.0,
+            "sharpe": 2.1635,
+            "avg_return": 0.3156,
+            "trade_count": 4,
+            "composite_score": 0.8654
+          },
+          "sideways": {
+            "win_rate": 100.0,
+            "sharpe": 7749794238779149.0,
+            "avg_return": 0.2151,
+            "trade_count": 3,
+            "composite_score": 2324938271633744.5
+          }
+        },
+        "regime_coverage": {
+          "bull": {
+            "periods_count": 36,
+            "total_days": "964",
+            "avg_fg_score": 75.6,
+            "avg_period_length": 26.8
+          },
+          "sideways": {
+            "periods_count": 55,
+            "total_days": "1315",
+            "avg_fg_score": 54.8,
+            "avg_period_length": 23.9
+          }
+        },
+        "total_regimes": 2
+      },
+      "mean_reversion": {
+        "regime_params": {
+          "bull": {
+            "bb_width": 2.0,
+            "bb_period": 20,
+            "hold_period": 10
+          },
+          "sideways": {
+            "bb_width": 1.5,
+            "bb_period": 15,
+            "hold_period": 5
+          }
+        },
+        "baseline_params": {
+          "bb_width": 2.5,
+          "bb_period": 20.0,
+          "hold_period": 4.0
+        },
+        "adaptive_bands": {
+          "bb_period": {
+            "min": 15,
+            "max": 20,
+            "mean": 17.5,
+            "median": 17.5,
+            "regime_specific": {
+              "bull": 20,
+              "sideways": 15
+            }
+          },
+          "bb_width": {
+            "min": 1.5,
+            "max": 2.0,
+            "mean": 1.75,
+            "median": 1.75,
+            "regime_specific": {
+              "bull": 2.0,
+              "sideways": 1.5
+            }
+          },
+          "hold_period": {
+            "min": 5,
+            "max": 10,
+            "mean": 7.5,
+            "median": 7.5,
+            "regime_specific": {
+              "bull": 10,
+              "sideways": 5
+            }
+          }
+        },
+        "performance_summary": {
+          "bull": {
+            "win_rate": 100.0,
+            "sharpe": 22.3602,
+            "avg_return": 1.7912,
+            "trade_count": 3,
+            "composite_score": 6.7081
+          },
+          "sideways": {
+            "win_rate": 77.78,
+            "sharpe": 1.276,
+            "avg_return": 1.0466,
+            "trade_count": 9,
+            "composite_score": 0.8932
+          }
+        },
+        "regime_coverage": {
+          "bull": {
+            "periods_count": 36,
+            "total_days": "964",
+            "avg_fg_score": 75.6,
+            "avg_period_length": 26.8
+          },
+          "sideways": {
+            "periods_count": 55,
+            "total_days": "1315",
+            "avg_fg_score": 54.8,
+            "avg_period_length": 23.9
+          }
+        },
+        "total_regimes": 2
       }
     },
     "XLK": {
-      "asset_class": "technology",
-      "sector": "Information Technology",
-      "regime_stats": {
-        "bull": {
-          "count": 0,
-          "pct": 0.0
+      "fear_greed": {
+        "regime_params": {
+          "sideways": {
+            "momentum_threshold": -5,
+            "hold_period": 1
+          }
         },
-        "bear": {
-          "count": 0,
-          "pct": 0.0
+        "baseline_params": {
+          "momentum_threshold": -7.0,
+          "hold_period": 5.0
         },
-        "sideways": {
-          "count": 11391,
-          "pct": 100.0
+        "adaptive_bands": {
+          "momentum_threshold": {
+            "min": -5,
+            "max": -5,
+            "mean": -5.0,
+            "median": -5.0,
+            "regime_specific": {
+              "sideways": -5
+            }
+          },
+          "hold_period": {
+            "min": 1,
+            "max": 1,
+            "mean": 1.0,
+            "median": 1.0,
+            "regime_specific": {
+              "sideways": 1
+            }
+          }
         },
-        "panic": {
-          "count": 0,
-          "pct": 0.0
-        }
+        "performance_summary": {
+          "sideways": {
+            "win_rate": 100.0,
+            "sharpe": 1.9922,
+            "avg_return": 0.3984,
+            "trade_count": 6,
+            "composite_score": 1.1953
+          }
+        },
+        "regime_coverage": {
+          "sideways": {
+            "periods_count": 55,
+            "total_days": "1315",
+            "avg_fg_score": 54.8,
+            "avg_period_length": 23.9
+          }
+        },
+        "total_regimes": 1
       },
-      "regime_bands": {
-        "bull": {
-          "strategy": "fear_greed",
-          "params": {
-            "momentum_threshold": -5,
-            "hold_period": 5
-          },
-          "confidence": 0.0,
-          "insufficient_data": true
-        },
-        "bear": {
-          "strategy": "fear_greed",
-          "params": {
-            "momentum_threshold": -5,
-            "hold_period": 5
-          },
-          "confidence": 0.0,
-          "insufficient_data": true
-        },
-        "sideways": {
-          "strategy": "fear_greed",
-          "params": {
-            "momentum_threshold": -10,
+      "regime_confirmation": {
+        "regime_params": {
+          "bull": {
+            "sma_period": 20,
+            "dip_threshold": -1,
             "hold_period": 7
           },
-          "win_rate": 55.26,
-          "sharpe": 0.0872,
-          "avg_return": 0.6544,
-          "trade_count": 76,
-          "confidence": 0.0964
-        },
-        "panic": {
-          "strategy": "fear_greed",
-          "params": {
-            "momentum_threshold": -5,
-            "hold_period": 5
-          },
-          "confidence": 0.0,
-          "insufficient_data": true
-        }
-      },
-      "full_optimization": {
-        "sideways": {
-          "fear_greed": {
-            "best_params": {
-              "momentum_threshold": -10,
-              "hold_period": 7
-            },
-            "win_rate": 55.26,
-            "avg_return": 0.6544,
-            "sharpe": 0.0872,
-            "max_drawdown": -16.2571,
-            "trade_count": 76,
-            "composite_score": 0.0482
+          "sideways": {
+            "sma_period": 20,
+            "dip_threshold": -0.5,
+            "hold_period": 15
           }
-        }
+        },
+        "baseline_params": {
+          "sma_period": 100.0,
+          "dip_threshold": -3.0,
+          "hold_period": 5.0
+        },
+        "adaptive_bands": {
+          "dip_threshold": {
+            "min": -1,
+            "max": -0.5,
+            "mean": -0.75,
+            "median": -0.75,
+            "regime_specific": {
+              "bull": -1,
+              "sideways": -0.5
+            }
+          },
+          "sma_period": {
+            "min": 20,
+            "max": 20,
+            "mean": 20.0,
+            "median": 20.0,
+            "regime_specific": {
+              "bull": 20,
+              "sideways": 20
+            }
+          },
+          "hold_period": {
+            "min": 7,
+            "max": 15,
+            "mean": 11.0,
+            "median": 11.0,
+            "regime_specific": {
+              "bull": 7,
+              "sideways": 15
+            }
+          }
+        },
+        "performance_summary": {
+          "bull": {
+            "win_rate": 100.0,
+            "sharpe": 12.7289,
+            "avg_return": 3.3635,
+            "trade_count": 7,
+            "composite_score": 8.9103
+          },
+          "sideways": {
+            "win_rate": 58.33,
+            "sharpe": 0.1677,
+            "avg_return": 0.6788,
+            "trade_count": 12,
+            "composite_score": 0.0978
+          }
+        },
+        "regime_coverage": {
+          "bull": {
+            "periods_count": 36,
+            "total_days": "964",
+            "avg_fg_score": 75.6,
+            "avg_period_length": 26.8
+          },
+          "sideways": {
+            "periods_count": 55,
+            "total_days": "1315",
+            "avg_fg_score": 54.8,
+            "avg_period_length": 23.9
+          }
+        },
+        "total_regimes": 2
+      },
+      "mean_reversion": {
+        "regime_params": {
+          "bull": {
+            "bb_width": 2.0,
+            "bb_period": 10,
+            "hold_period": 10
+          },
+          "sideways": {
+            "bb_width": 2.5,
+            "bb_period": 20,
+            "hold_period": 2
+          }
+        },
+        "baseline_params": {
+          "bb_width": 2.5,
+          "bb_period": 20.0,
+          "hold_period": 4.0
+        },
+        "adaptive_bands": {
+          "bb_period": {
+            "min": 10,
+            "max": 20,
+            "mean": 15.0,
+            "median": 15.0,
+            "regime_specific": {
+              "bull": 10,
+              "sideways": 20
+            }
+          },
+          "bb_width": {
+            "min": 2.0,
+            "max": 2.5,
+            "mean": 2.25,
+            "median": 2.25,
+            "regime_specific": {
+              "bull": 2.0,
+              "sideways": 2.5
+            }
+          },
+          "hold_period": {
+            "min": 2,
+            "max": 10,
+            "mean": 6.0,
+            "median": 6.0,
+            "regime_specific": {
+              "bull": 10,
+              "sideways": 2
+            }
+          }
+        },
+        "performance_summary": {
+          "bull": {
+            "win_rate": 100.0,
+            "sharpe": 16.7763,
+            "avg_return": 3.825,
+            "trade_count": 4,
+            "composite_score": 6.7105
+          },
+          "sideways": {
+            "win_rate": 100.0,
+            "sharpe": 16.8342,
+            "avg_return": 0.7176,
+            "trade_count": 2,
+            "composite_score": 3.3668
+          }
+        },
+        "regime_coverage": {
+          "bull": {
+            "periods_count": 36,
+            "total_days": "964",
+            "avg_fg_score": 75.6,
+            "avg_period_length": 26.8
+          },
+          "sideways": {
+            "periods_count": 55,
+            "total_days": "1315",
+            "avg_fg_score": 54.8,
+            "avg_period_length": 23.9
+          }
+        },
+        "total_regimes": 2
       }
+    }
+  },
+  "regime_thresholds": {
+    "panic": 20,
+    "bear": 35,
+    "sideways": 65,
+    "bull": 100
+  },
+  "param_grids_tested": {
+    "fear_greed": {
+      "momentum_threshold": [
+        -2,
+        -3,
+        -5,
+        -7,
+        -10,
+        -15,
+        -20
+      ],
+      "hold_period": [
+        1,
+        2,
+        3,
+        5,
+        7,
+        10,
+        15
+      ]
+    },
+    "regime_confirmation": {
+      "sma_period": [
+        20,
+        50,
+        100,
+        150,
+        200
+      ],
+      "dip_threshold": [
+        -0.5,
+        -1,
+        -2,
+        -3,
+        -5,
+        -7,
+        -10
+      ],
+      "hold_period": [
+        1,
+        2,
+        3,
+        5,
+        7,
+        10,
+        15
+      ]
+    },
+    "rsi_oversold": {
+      "rsi_threshold": [
+        15,
+        20,
+        25,
+        30,
+        35,
+        40
+      ],
+      "sma_fast": [
+        20,
+        50,
+        100
+      ],
+      "sma_slow": [
+        100,
+        150,
+        200
+      ],
+      "hold_period": [
+        1,
+        2,
+        3,
+        5,
+        7,
+        10
+      ]
+    },
+    "mean_reversion": {
+      "bb_width": [
+        1.5,
+        2.0,
+        2.5,
+        3.0,
+        3.5
+      ],
+      "bb_period": [
+        10,
+        15,
+        20,
+        25,
+        30
+      ],
+      "hold_period": [
+        1,
+        2,
+        3,
+        5,
+        7,
+        10
+      ]
     }
   }
 }

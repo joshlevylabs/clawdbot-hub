@@ -12,6 +12,7 @@ import {
   Zap,
   Target,
   Layers,
+  Clock,
 } from "lucide-react";
 import PipelineStage from "@/components/PipelineStage";
 import PipelineDetailPanel from "@/components/PipelineDetailPanel";
@@ -49,7 +50,18 @@ interface MRESignal {
     rsi_oversold: boolean;
     mean_reversion: boolean;
     momentum: boolean;
+    time_series_momentum?: boolean;
+    qvm_factor?: boolean;
+    vix_mean_reversion?: boolean;
   };
+  // Tier 3: Signal persistence tracking
+  persistence_by_strategy?: Record<string, number>;
+  persistence_days?: number;
+  vol_adjusted_size?: number;
+  vol_scaling_factor?: number;
+  rsi_percentile?: number;
+  momentum_percentile?: number;
+  volatility_percentile?: number;
   price?: number;
   asset_class?: string;
   sector?: string;
@@ -199,47 +211,83 @@ function calculatePipelineStages(signals: MRESignal[], dataType: 'core' | 'unive
     filtered: [] as MRESignal[]
   };
   
-  // Step 2: Individual Strategy Votes (5 strategies, each evaluates all tickers)
+  // Step 2: Individual Strategy Votes (8 strategies, each evaluates all tickers)
+  // Shows RAW votes (including persistence-pending signals via persistence_by_strategy > 0)
   const strategyNames = [
     { key: 'fear_greed', name: 'Blended F&G' },
-    { key: 'regime_confirmation', name: 'Regime Confirm' },
-    { key: 'rsi_oversold', name: 'RSI Oversold' },
-    { key: 'mean_reversion', name: 'Mean Reversion' },
-    { key: 'momentum', name: 'Momentum' },
+    { key: 'regime_confirmation', name: 'Multi-TF Trend' },
+    { key: 'rsi_oversold', name: 'ConnorsRSI' },
+    { key: 'mean_reversion', name: 'Dual Band MR' },
+    { key: 'momentum', name: 'Dual Momentum' },
+    { key: 'time_series_momentum', name: 'TS Momentum' },
+    { key: 'qvm_factor', name: 'QVM Factor' },
+    { key: 'vix_mean_reversion', name: 'VIX Reversion' },
   ];
   
+  // Check if a strategy fired (confirmed OR pending persistence)
+  const didStrategyFire = (s: MRESignal, key: string): boolean => {
+    // Check confirmed votes first
+    if (s.strategy_votes?.[key as keyof typeof s.strategy_votes] === true) return true;
+    // Check persistence-pending votes (day 1+, not yet confirmed)
+    if (s.persistence_by_strategy && (s.persistence_by_strategy[key] || 0) > 0) return true;
+    // Fallback for core tickers
+    if (key === 'fear_greed' && s.signal_track !== 'none' && s.signal_track !== undefined) return true;
+    return false;
+  };
+  
+  // Check if a strategy's vote is confirmed (persistence >= 2 days)
+  const isStrategyConfirmed = (s: MRESignal, key: string): boolean => {
+    if (s.strategy_votes?.[key as keyof typeof s.strategy_votes] === true) return true;
+    if (s.persistence_by_strategy && (s.persistence_by_strategy[key] || 0) >= 2) return true;
+    return false;
+  };
+  
   const strategyVotes: StrategyVoteStage[] = strategyNames.map(({ key, name }) => {
-    const passed = signals.filter(s => {
-      if (s.strategy_votes) return s.strategy_votes[key as keyof typeof s.strategy_votes] === true;
-      // Core tickers don't have strategy_votes — use signal_track as proxy for fear_greed
-      if (key === 'fear_greed') return s.signal_track !== 'none' && s.signal_track !== undefined;
-      return false;
-    });
-    const filtered = signals.filter(s => !passed.includes(s));
-    return { name, key, inputCount: totalTickers, outputCount: passed.length, passed, filtered };
+    const passed = signals.filter(s => didStrategyFire(s, key));
+    const filtered = signals.filter(s => !didStrategyFire(s, key));
+    // Count confirmed vs pending
+    const confirmedCount = signals.filter(s => isStrategyConfirmed(s, key)).length;
+    return { 
+      name, key, inputCount: totalTickers, outputCount: passed.length, passed, filtered,
+      confirmedCount, pendingCount: passed.length - confirmedCount,
+    } as StrategyVoteStage & { confirmedCount: number; pendingCount: number };
   });
   
-  // Tickers that got at least one BUY vote from any strategy
+  // Tickers that got at least one RAW BUY vote from any strategy (including persistence-pending)
   const anyVotePassed = signals.filter(s => {
-    if (s.strategy_votes) return Object.values(s.strategy_votes).some(v => v === true);
-    return s.signal_strength > 0 || (s.signal_track !== 'none' && s.signal_track !== undefined);
+    return strategyNames.some(({ key }) => didStrategyFire(s, key));
   });
   const anyVoteFiltered = signals.filter(s => !anyVotePassed.includes(s));
   
-  // Vote Consensus Gate: Group tickers by how many strategies voted BUY
+  // Signal Persistence Gate: how many raw votes get blocked by persistence
+  const persistenceConfirmed = anyVotePassed.filter(s => {
+    return strategyNames.some(({ key }) => isStrategyConfirmed(s, key));
+  });
+  const persistencePending = anyVotePassed.filter(s => {
+    return !strategyNames.some(({ key }) => isStrategyConfirmed(s, key));
+  });
+  
+  const persistenceGate = {
+    inputCount: anyVotePassed.length,
+    outputCount: persistenceConfirmed.length,
+    pendingCount: persistencePending.length,
+    passed: persistenceConfirmed,
+    pending: persistencePending,
+    filtered: persistencePending, // pending = filtered for now
+  };
+  
+  // Vote Consensus Gate: Group tickers by how many strategies voted BUY (raw, including pending)
   const voteConsensusPaths: VoteConsensusPath[] = [];
   
-  for (let voteCount = 1; voteCount <= 5; voteCount++) {
+  for (let voteCount = 1; voteCount <= 8; voteCount++) {
     const tickersWithThisVoteCount = anyVotePassed.filter(s => {
-      const actualVoteCount = s.strategy_votes 
-        ? Object.values(s.strategy_votes).filter(v => v === true).length 
-        : s.strategies_agreeing || 0;
+      const actualVoteCount = strategyNames.filter(({ key }) => didStrategyFire(s, key)).length;
       return actualVoteCount === voteCount;
     });
     
     voteConsensusPaths.push({
       voteCount,
-      name: `${voteCount}-of-5 votes`,
+      name: `${voteCount}-of-8 votes`,
       tickers: tickersWithThisVoteCount,
       count: tickersWithThisVoteCount.length
     });
@@ -253,16 +301,17 @@ function calculatePipelineStages(signals: MRESignal[], dataType: 'core' | 'unive
     paths: voteConsensusPaths
   };
   
-  // Step 3: Signal Gating (sell suppress + bear suppress)
-  const signalGatePassed = anyVotePassed.filter(s => 
+  // Step 3: Signal Gating (sell suppress + bear suppress) — operates on persistence-confirmed signals
+  const gatingInput = persistenceConfirmed.length > 0 ? persistenceConfirmed : anyVotePassed;
+  const signalGatePassed = gatingInput.filter(s => 
     !s.bear_suppressed && !s.sell_suppressed
   );
-  const signalGateFiltered = anyVotePassed.filter(s => 
+  const signalGateFiltered = gatingInput.filter(s => 
     s.bear_suppressed || s.sell_suppressed
   );
   
   const signalGateStage = {
-    inputCount: anyVotePassed.length,
+    inputCount: gatingInput.length,
     outputCount: signalGatePassed.length,
     passed: signalGatePassed,
     filtered: signalGateFiltered
@@ -302,6 +351,7 @@ function calculatePipelineStages(signals: MRESignal[], dataType: 'core' | 'unive
     input: inputStage,
     strategyVotes,
     voteConsensusGate,
+    persistenceGate,
     signalGating: signalGateStage,
     confidenceTuning: confidenceStage,
     finalFilters: finalStage,
@@ -448,6 +498,37 @@ export default function SignalFlowTab() {
           rawData: t
         })),
         passedTickers: path.tickers.map(t => ({
+          symbol: t.symbol,
+          signal: t.signal,
+          currentPrice: t.price,
+          rawData: t
+        }))
+      });
+      return;
+    }
+    
+    // Handle persistence gate click
+    if (stageKey === 'persistenceGate') {
+      const pg = pipelineData.persistenceGate;
+      setSelectedStage({
+        name: 'Signal Persistence Gate',
+        description: `Multi-day confirmation: signals must fire 2+ consecutive days before becoming BUY. Currently ${pg.pendingCount} signals pending (day 1), ${pg.outputCount} confirmed.`,
+        stageType: 'filter',
+        inputCount: pg.inputCount,
+        outputCount: pg.outputCount,
+        filteredTickers: pg.pending.map(t => {
+          const pendingStrats = Object.entries(t.persistence_by_strategy || {})
+            .filter(([, days]) => (days as number) > 0 && (days as number) < 2)
+            .map(([strat, days]) => `${strat} (day ${days})`);
+          return {
+            symbol: t.symbol,
+            reason: `Pending: ${pendingStrats.join(', ') || 'awaiting confirmation'}`,
+            signal: t.signal,
+            currentPrice: t.price,
+            rawData: t
+          };
+        }),
+        passedTickers: pg.passed.map(t => ({
           symbol: t.symbol,
           signal: t.signal,
           currentPrice: t.price,
@@ -779,26 +860,52 @@ export default function SignalFlowTab() {
           {/* Stage 2: 5 Strategy Votes (fanned out vertically) */}
           <div className="flex flex-col gap-1.5 justify-center">
             <div className="text-xs font-semibold text-slate-400 text-center mb-1">Strategy Votes</div>
-            {pipelineData.strategyVotes.map((sv) => (
-              <div
-                key={sv.key}
-                onClick={() => handleStageClick(`strategy_${sv.key}`)}
-                className="flex items-center justify-between gap-3 px-3 py-1.5 bg-slate-800/80 rounded-lg border border-slate-700/50 hover:border-primary-500/50 cursor-pointer transition-all min-w-[200px]"
-              >
-                <div className="flex flex-col min-w-0">
-                  <span className="text-xs font-medium text-slate-300 truncate">{sv.name}</span>
-                  {sv.key === 'fear_greed' && (
-                    <span className="text-[10px] text-slate-500 truncate">Per-sector blended score</span>
-                  )}
+            {pipelineData.strategyVotes.map((sv: any) => {
+              const confirmed = sv.confirmedCount || 0;
+              const pending = sv.pendingCount || 0;
+              const total = sv.outputCount;
+              return (
+                <div
+                  key={sv.key}
+                  onClick={() => handleStageClick(`strategy_${sv.key}`)}
+                  className="flex items-center justify-between gap-3 px-3 py-1.5 bg-slate-800/80 rounded-lg border border-slate-700/50 hover:border-primary-500/50 cursor-pointer transition-all min-w-[240px]"
+                >
+                  <div className="flex flex-col min-w-0">
+                    <span className="text-xs font-medium text-slate-300 truncate">{sv.name}</span>
+                    {sv.key === 'fear_greed' && (
+                      <span className="text-[10px] text-slate-500 truncate">Per-sector blended score</span>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {total > 0 ? (
+                      <>
+                        {confirmed > 0 && (
+                          <span className="text-xs font-bold text-emerald-400" title="Confirmed (2+ days)">
+                            {confirmed}
+                          </span>
+                        )}
+                        {pending > 0 && confirmed > 0 && (
+                          <span className="text-[10px] text-slate-600">+</span>
+                        )}
+                        {pending > 0 && (
+                          <span className="text-xs font-bold text-amber-400" title="Pending confirmation (day 1)">
+                            {pending}
+                          </span>
+                        )}
+                        <span className="text-[10px] text-slate-600">
+                          {confirmed > 0 ? 'BUY' : '⏳'}
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <span className="text-xs font-bold text-slate-500">0</span>
+                        <span className="text-[10px] text-slate-600">BUY</span>
+                      </>
+                    )}
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className={`text-xs font-bold ${sv.outputCount > 0 ? 'text-emerald-400' : 'text-slate-500'}`}>
-                    {sv.outputCount}
-                  </span>
-                  <span className="text-[10px] text-slate-600">BUY</span>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
           
           {/* Arrow → */}
@@ -841,6 +948,59 @@ export default function SignalFlowTab() {
             <div className="mt-1 pt-1.5 border-t border-slate-700/50 flex items-center justify-between px-3">
               <span className="text-[10px] text-slate-500">Total →</span>
               <span className="text-xs font-bold text-emerald-400">{pipelineData.voteConsensusGate.outputCount}</span>
+            </div>
+          </div>
+          
+          {/* Arrow → */}
+          <div className="flex items-center px-2">
+            <div className="text-slate-600 text-xl">→</div>
+          </div>
+          
+          {/* Stage 3.5: Signal Persistence Gate */}
+          <div className="flex items-center">
+            <div
+              onClick={() => handleStageClick('persistenceGate')}
+              className={`rounded-xl border-2 p-4 cursor-pointer transition-all hover:shadow-lg min-w-[160px] ${
+                pipelineData.persistenceGate.pendingCount > 0
+                  ? 'border-amber-500/60 bg-amber-950/30 hover:border-amber-400'
+                  : 'border-slate-700/50 bg-slate-800/50 hover:border-primary-500/50'
+              }`}
+            >
+              <div className="text-xs font-semibold text-slate-300 mb-2 flex items-center gap-1.5">
+                <Clock className="w-3.5 h-3.5 text-amber-400" />
+                Persistence Gate
+              </div>
+              <div className="text-[10px] text-slate-500 mb-3">2-day signal confirmation</div>
+              <div className="space-y-1.5">
+                <div className="flex justify-between text-xs">
+                  <span className="text-slate-500">Input:</span>
+                  <span className="text-slate-300 font-medium">{pipelineData.persistenceGate.inputCount}</span>
+                </div>
+                <div className="flex justify-between text-xs">
+                  <span className="text-emerald-500">Confirmed:</span>
+                  <span className="text-emerald-400 font-bold">{pipelineData.persistenceGate.outputCount}</span>
+                </div>
+                <div className="flex justify-between text-xs">
+                  <span className="text-amber-500">Pending (day 1):</span>
+                  <span className="text-amber-400 font-bold">{pipelineData.persistenceGate.pendingCount}</span>
+                </div>
+                {/* Progress bar */}
+                <div className="w-full bg-slate-700 rounded-full h-1.5 mt-2">
+                  {pipelineData.persistenceGate.inputCount > 0 && (
+                    <>
+                      <div
+                        className="bg-emerald-500 h-1.5 rounded-l-full inline-block"
+                        style={{ width: `${(pipelineData.persistenceGate.outputCount / pipelineData.persistenceGate.inputCount) * 100}%` }}
+                      />
+                      <div
+                        className="bg-amber-500 h-1.5 rounded-r-full inline-block"
+                        style={{ width: `${(pipelineData.persistenceGate.pendingCount / pipelineData.persistenceGate.inputCount) * 100}%` }}
+                      />
+                    </>
+                  )}
+                </div>
+              </div>
+              <div className="mt-2 text-[10px] text-slate-600">v4.0.0</div>
             </div>
           </div>
           
@@ -921,11 +1081,22 @@ export default function SignalFlowTab() {
         {/* Current State Summary */}
         <div className="mt-8 p-6 bg-slate-900/50 rounded-lg border border-slate-700/50">
           <h3 className="text-lg font-semibold text-slate-200 mb-3">Current Pipeline State</h3>
-          <div className="text-sm text-slate-400">
-            <p className="mb-2">
+          <div className="text-sm text-slate-400 space-y-2">
+            <p>
               <strong>{pipelineData.input.inputCount.toLocaleString()}</strong> tickers entered → 
               <strong className="text-emerald-400 ml-1">{pipelineData.output.outputCount}</strong> BUY signals generated
             </p>
+            {pipelineData.persistenceGate.pendingCount > 0 && (
+              <p className="flex items-center gap-2">
+                <Clock className="w-4 h-4 text-amber-400" />
+                <span>
+                  <strong className="text-amber-400">{pipelineData.persistenceGate.pendingCount}</strong> signals pending day-2 confirmation
+                  {pipelineData.persistenceGate.outputCount === 0 && (
+                    <span className="text-amber-300"> — first run of persistence system, signals will confirm tomorrow</span>
+                  )}
+                </span>
+              </p>
+            )}
             <p>
               Fear & Greed at <strong>{fgValue}</strong> ({fgRating}) means {
                 fgValue <= 25 ? "extreme fear - prime buying opportunity" :
@@ -935,6 +1106,21 @@ export default function SignalFlowTab() {
                 "extreme greed - avoid buying"
               }
             </p>
+            {/* Strategy vote summary */}
+            <div className="mt-3 pt-3 border-t border-slate-700/50">
+              <p className="text-xs text-slate-500 mb-2">Raw strategy votes (before persistence):</p>
+              <div className="flex flex-wrap gap-2">
+                {pipelineData.strategyVotes.map((sv: any) => (
+                  <span key={sv.key} className={`px-2 py-1 rounded text-xs ${
+                    sv.outputCount > 0 
+                      ? 'bg-slate-800 text-slate-300' 
+                      : 'bg-slate-900/50 text-slate-600'
+                  }`}>
+                    {sv.name}: <strong className={sv.outputCount > 0 ? 'text-amber-400' : 'text-slate-500'}>{sv.outputCount}</strong>
+                  </span>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </div>

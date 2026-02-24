@@ -979,12 +979,32 @@
       "estimatedCost": 0.0677,
       "model": "claude-sonnet-4-20250514",
       "duration": "78.10000000000001s"
+    },
+    {
+      "date": "2026-02-23",
+      "type": "evening-session",
+      "inputTokens": 6333,
+      "outputTokens": 2945,
+      "totalTokens": 9278,
+      "estimatedCost": 0.0632,
+      "model": "claude-sonnet-4-20250514",
+      "duration": "91.8s"
+    },
+    {
+      "date": "2026-02-23",
+      "type": "evening-session",
+      "inputTokens": 8573,
+      "outputTokens": 3607,
+      "totalTokens": 12180,
+      "estimatedCost": 0.07980000000000001,
+      "model": "claude-sonnet-4-20250514",
+      "duration": "104.5s"
     }
   ],
   "totals": {
-    "today": 0.4434,
-    "week": 20.7804,
-    "month": 20.7804,
-    "standupCount": 98
+    "today": 0.5864,
+    "week": 20.9234,
+    "month": 20.9234,
+    "standupCount": 100
   }
 }

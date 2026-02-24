@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-02-24T06:30:41.062307",
+  "generated_at": "2026-02-24T07:00:38.600593",
   "active_sessions": 4,
   "billing_model": "subscription",
   "subscriptions": {
@@ -15,24 +15,24 @@
     "today": 6.67,
     "week": 46.67,
     "month": 200.0,
-    "api_equivalent_today": 4.4134,
-    "api_equivalent_week": 74.3536,
-    "api_equivalent_month": 98.774,
+    "api_equivalent_today": 4.6971,
+    "api_equivalent_week": 74.6373,
+    "api_equivalent_month": 99.0577,
     "savings_today": 0,
     "savings_month": 0,
     "subscription_daily": 6.67,
     "subscription_monthly": 200.0,
-    "tokens_today": 8354873
+    "tokens_today": 9061699
   },
   "by_model": {
     "Claude Sonnet 4": {
-      "cost_today": 4.2623,
-      "cost_week": 20.6525,
-      "cost_month": 20.9526,
-      "tokens_today": 8330880,
-      "tokens_week": 42887165,
-      "tokens_month": 43267083,
-      "calls_today": 190
+      "cost_today": 4.546,
+      "cost_week": 20.9363,
+      "cost_month": 21.2364,
+      "tokens_today": 9037706,
+      "tokens_week": 43593991,
+      "tokens_month": 43973909,
+      "calls_today": 217
     },
     "Claude Opus 4": {
       "cost_today": 0.1511,
@@ -46,18 +46,18 @@
   },
   "by_agent": {
     "cron": {
-      "cost_today": 4.2168,
-      "cost_week": 12.651,
-      "cost_month": 37.0715,
-      "tokens_today": 8231764,
+      "cost_today": 4.2909,
+      "cost_week": 12.7251,
+      "cost_month": 37.1456,
+      "tokens_today": 8420678,
       "primary_model": "Claude Opus 4",
       "department": "other"
     },
     "theo": {
-      "cost_today": 0.1966,
-      "cost_week": 0.1966,
-      "cost_month": 0.1966,
-      "tokens_today": 123109,
+      "cost_today": 0.4062,
+      "cost_week": 0.4062,
+      "cost_month": 0.4062,
+      "tokens_today": 641021,
       "primary_model": "Claude Sonnet 4",
       "department": "executive"
     },
@@ -88,6 +88,6 @@
     "2026-02-20": 31.46951505000002,
     "2026-02-22": 0.3985869,
     "2026-02-23": 0.6866085,
-    "2026-02-24": 4.4133735
+    "2026-02-24": 4.697104649999999
   }
 }

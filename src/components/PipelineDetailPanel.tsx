@@ -260,20 +260,28 @@ function StrategyParameters({
   }
 
   if (strategyName.includes('RSI Oversold')) {
+    const rsiOversold = (data.rsi_14 || 100) < 35;
+    const strategyVoted = data.strategy_votes?.rsi_oversold === true;
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
         <div className="bg-slate-900/50 rounded-lg p-3">
           <div className="text-xs text-slate-500">Current RSI (14)</div>
-          <div className="text-lg font-bold text-slate-200">{data.rsi_14?.toFixed(1) || 'N/A'}</div>
+          <div className={`text-lg font-bold ${rsiOversold ? 'text-emerald-400' : 'text-slate-200'}`}>{data.rsi_14?.toFixed(1) || 'N/A'}</div>
         </div>
         <div className="bg-slate-900/50 rounded-lg p-3">
-          <div className="text-xs text-slate-500">Oversold Threshold</div>
-          <div className="text-lg font-bold text-slate-200">30</div>
+          <div className="text-xs text-slate-500">RSI Threshold</div>
+          <div className="text-lg font-bold text-slate-200">&lt; 35</div>
         </div>
         <div className="bg-slate-900/50 rounded-lg p-3">
-          <div className="text-xs text-slate-500">Status</div>
-          <div className={`text-sm font-medium ${(data.rsi_14 || 100) < 30 ? 'text-emerald-400' : 'text-red-400'}`}>
-            {(data.rsi_14 || 100) < 30 ? 'Oversold' : 'Not Oversold'}
+          <div className="text-xs text-slate-500">Trend (SMA50 &gt; SMA200)</div>
+          <div className={`text-sm font-medium ${data.regime === 'bull' ? 'text-emerald-400' : 'text-red-400'}`}>
+            {data.regime === 'bull' ? '✓ Uptrend' : '✗ No uptrend'}
+          </div>
+        </div>
+        <div className="bg-slate-900/50 rounded-lg p-3">
+          <div className="text-xs text-slate-500">Strategy Vote</div>
+          <div className={`text-sm font-medium ${strategyVoted ? 'text-emerald-400' : 'text-red-400'}`}>
+            {strategyVoted ? '✓ BUY' : rsiOversold ? '✗ RSI low but no uptrend' : '✗ Not triggered'}
           </div>
         </div>
       </div>

@@ -1,7 +1,7 @@
 "use client";
 
-import { X, TrendingUp, TrendingDown, Filter, Minus, DollarSign, Activity, Search, ChevronDown, ChevronRight, Calendar, Target, TrendingDownIcon } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { X, TrendingUp, TrendingDown, Filter, Minus, DollarSign, Activity, Search, ChevronDown, ChevronRight, Calendar, Target, TrendingDownIcon, Thermometer } from 'lucide-react';
+import { useEffect, useState, useMemo } from 'react';
 import TickerTechnicalBreakdown from './TickerTechnicalBreakdown';
 
 // Define MRESignal interface for rawData
@@ -164,6 +164,11 @@ const STRATEGY_KEY_MAPPING: Record<string, string> = {
   'Momentum Strategy (Cross-Asset Predictor)': 'momentum',
 };
 
+// Check if this is the Blended F&G strategy modal
+const isBlendedFGStrategy = (stageName: string): boolean => {
+  return stageName.includes('Blended F&G') || stageName === 'Fear & Greed Strategy';
+};
+
 // Strategy descriptions mapping
 const STRATEGY_DESCRIPTIONS: Record<string, string> = {
   'Blended F&G Strategy': "Triggers BUY when the sector-blended Fear & Greed score drops below the ticker's fear threshold. Uses a weighted blend of global CNN F&G and sector-specific F&G scores for more precise entry timing. Per-sector weights are optimized based on correlation strength and historical performance. Accounts for sector divergence from global sentiment to capture rotation opportunities.",
@@ -314,6 +319,207 @@ function StrategyParameters({
   return <div className="text-sm text-slate-400">Strategy parameters not available</div>;
 };
 
+// ============================================================
+// Blended F&G Sector Overview — shown at top of Blended F&G modal
+// ============================================================
+function BlendedFGSectorOverview({ tickers }: { tickers: TickerDetail[] }) {
+  const [sectorData, setSectorData] = useState<Record<string, { score: number; rating: string; sector_etf: string }> | null>(null);
+  const [globalFG, setGlobalFG] = useState<number | null>(null);
+
+  useEffect(() => {
+    const fetchSectorData = async () => {
+      try {
+        const res = await fetch('/data/trading/mre-signals.json');
+        if (res.ok) {
+          const data = await res.json();
+          setGlobalFG(data.fear_greed?.current ?? null);
+          if (data.sector_fear_greed?.sectors) {
+            setSectorData(data.sector_fear_greed.sectors);
+          }
+        }
+      } catch { /* ignore */ }
+    };
+    fetchSectorData();
+  }, []);
+
+  // Also extract thresholds from tickers
+  const thresholds = useMemo(() => {
+    const map: Record<string, { conservative: number; opportunistic: number }> = {};
+    for (const t of tickers) {
+      const ac = t.rawData?.asset_class;
+      if (ac && !map[ac]) {
+        map[ac] = {
+          conservative: t.rawData?.fear_threshold_conservative ?? 15,
+          opportunistic: t.rawData?.fear_threshold_opportunistic ?? 40,
+        };
+      }
+    }
+    return map;
+  }, [tickers]);
+
+  const getFGColor = (score: number) => {
+    if (score < 25) return 'text-red-400';
+    if (score < 40) return 'text-orange-400';
+    if (score < 60) return 'text-amber-400';
+    if (score < 75) return 'text-emerald-400';
+    return 'text-green-400';
+  };
+
+  const getFGBg = (score: number) => {
+    if (score < 25) return 'bg-red-900/30 border-red-700/40';
+    if (score < 40) return 'bg-orange-900/30 border-orange-700/40';
+    if (score < 60) return 'bg-amber-900/30 border-amber-700/40';
+    if (score < 75) return 'bg-emerald-900/30 border-emerald-700/40';
+    return 'bg-green-900/30 border-green-700/40';
+  };
+
+  const getRatingLabel = (score: number) => {
+    if (score < 25) return 'Extreme Fear';
+    if (score < 40) return 'Fear';
+    if (score < 60) return 'Neutral';
+    if (score < 75) return 'Greed';
+    return 'Extreme Greed';
+  };
+
+  const SECTOR_LABELS: Record<string, string> = {
+    broad_market: 'Broad Market',
+    technology: 'Technology',
+    healthcare: 'Healthcare',
+    financials: 'Financials',
+    real_estate: 'Real Estate',
+    energy: 'Energy',
+    bonds: 'Bonds',
+    international: 'International',
+    commodities: 'Commodities',
+  };
+
+  return (
+    <div className="p-4 sm:p-6 border-b border-slate-700/50 bg-slate-800/30">
+      {/* Global F&G */}
+      <div className="flex items-center gap-3 mb-4">
+        <Thermometer className="w-5 h-5 text-primary-400" />
+        <h3 className="text-base font-semibold text-slate-200">Fear & Greed Overview</h3>
+      </div>
+
+      {/* Global index card */}
+      {globalFG !== null && (
+        <div className={`rounded-lg p-4 border mb-4 ${getFGBg(globalFG)}`}>
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="text-xs text-slate-400 mb-1">Global CNN F&G Index</div>
+              <div className={`text-2xl font-bold ${getFGColor(globalFG)}`}>{globalFG.toFixed(0)}</div>
+              <div className="text-xs text-slate-400 mt-0.5">{getRatingLabel(globalFG)}</div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Sector gauges 3x3 grid */}
+      {sectorData ? (
+        <div className="grid grid-cols-3 gap-2">
+          {Object.entries(SECTOR_LABELS).map(([key, label]) => {
+            const sector = sectorData[key];
+            if (!sector) return null;
+            const score = sector.score;
+            const threshold = thresholds[key];
+            const divergence = globalFG !== null ? Math.abs(score - globalFG) : 0;
+
+            return (
+              <div key={key} className={`rounded-lg p-2.5 border ${getFGBg(score)} ${divergence > 15 ? 'animate-pulse' : ''}`}>
+                <div className="text-[10px] text-slate-400 truncate">{label}</div>
+                <div className="text-[10px] text-slate-500">{sector.sector_etf}</div>
+                <div className={`text-lg font-bold ${getFGColor(score)}`}>{score.toFixed(0)}</div>
+                {threshold && (
+                  <div className="text-[9px] text-slate-500 mt-0.5">
+                    Thresh: {threshold.conservative} / {threshold.opportunistic}
+                  </div>
+                )}
+                {divergence > 10 && (
+                  <div className="text-[9px] text-amber-400 mt-0.5">
+                    Δ {divergence.toFixed(0)} from global
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="text-sm text-slate-500 text-center py-4">Sector data pending...</div>
+      )}
+    </div>
+  );
+}
+
+// ============================================================
+// Blended F&G Ticker Row — simplified per-ticker view
+// ============================================================
+function BlendedFGTickerRow({ ticker }: { ticker: TickerDetail }) {
+  const raw = ticker.rawData;
+  if (!raw) return null;
+
+  const sectorFG = raw.sector_fg ?? raw.current_fg;
+  const globalFG = raw.global_fg ?? raw.current_fg;
+  const effectiveFG = raw.effective_fg ?? raw.current_fg;
+  const thresholdConservative = raw.fear_threshold_conservative ?? 15;
+  const thresholdOpportunistic = raw.fear_threshold_opportunistic ?? 40;
+
+  // Determine which threshold triggered and against which index
+  const triggeredConservative = effectiveFG <= thresholdConservative;
+  const triggeredOpportunistic = effectiveFG <= thresholdOpportunistic;
+  const triggered = triggeredConservative || triggeredOpportunistic;
+  const triggerLevel = triggeredConservative ? 'conservative' : triggeredOpportunistic ? 'opportunistic' : 'none';
+
+  const getFGColor = (score: number) => {
+    if (score < 25) return 'text-red-400';
+    if (score < 40) return 'text-orange-400';
+    if (score < 60) return 'text-amber-400';
+    return 'text-emerald-400';
+  };
+
+  return (
+    <div className="bg-slate-800/50 rounded-lg p-3 border border-slate-700/50">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <span className="font-mono font-semibold text-slate-200 text-sm">{raw.symbol}</span>
+          <span className="text-[10px] text-slate-500 capitalize">{raw.asset_class?.replace('_', ' ')}</span>
+        </div>
+        <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${
+          triggered 
+            ? triggerLevel === 'conservative' 
+              ? 'bg-emerald-900/50 text-emerald-400' 
+              : 'bg-blue-900/50 text-blue-400'
+            : 'bg-slate-700/50 text-slate-400'
+        }`}>
+          {triggered 
+            ? triggerLevel === 'conservative' ? '✓ Conservative' : '✓ Opportunistic'
+            : '✗ Not triggered'
+          }
+        </span>
+      </div>
+
+      <div className="flex items-center gap-3 mt-1.5 text-xs">
+        <span className="text-slate-400">
+          Sector: <span className={`font-medium ${getFGColor(sectorFG)}`}>{sectorFG?.toFixed(0)}</span>
+        </span>
+        <span className="text-slate-600">|</span>
+        <span className="text-slate-400">
+          Thresh: <span className="text-slate-300 font-medium">{thresholdConservative}</span>
+          <span className="text-slate-500"> / </span>
+          <span className="text-slate-300 font-medium">{thresholdOpportunistic}</span>
+        </span>
+        {raw.fg_divergence !== undefined && Math.abs(raw.fg_divergence) > 10 && (
+          <>
+            <span className="text-slate-600">|</span>
+            <span className="text-amber-400 text-[10px]">
+              Δ{raw.fg_divergence.toFixed(0)} from global
+            </span>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function PipelineDetailPanel({
   stageDetails,
   onClose
@@ -453,6 +659,106 @@ export default function PipelineDetailPanel({
 
           {/* Scrollable body - everything below header scrolls on mobile */}
           <div className="flex-1 overflow-y-auto overscroll-contain min-h-0">
+
+          {/* ======= BLENDED F&G CUSTOM MODAL ======= */}
+          {isBlendedFGStrategy(stageDetails.name) ? (
+            <>
+              {/* Sector Overview with global index + 9 sector gauges + thresholds */}
+              <BlendedFGSectorOverview tickers={[...stageDetails.passedTickers, ...stageDetails.filteredTickers]} />
+
+              {/* Summary Stats */}
+              <div className="p-4 sm:p-6 border-b border-slate-700/50">
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="text-center">
+                    <div className="text-xl sm:text-2xl font-bold text-slate-200">{stageDetails.inputCount.toLocaleString()}</div>
+                    <div className="text-xs sm:text-sm text-slate-400">Input</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-xl sm:text-2xl font-bold text-emerald-400">{stageDetails.outputCount.toLocaleString()}</div>
+                    <div className="text-xs sm:text-sm text-slate-400">Output</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-xl sm:text-2xl font-bold text-red-400">{filteredCount.toLocaleString()}</div>
+                    <div className="text-xs sm:text-sm text-slate-400">Filtered</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Search */}
+              <div className="p-4 sm:p-6 border-b border-slate-700/50">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <input
+                    type="text"
+                    placeholder="Search symbols..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full bg-slate-800/50 border border-slate-700/50 rounded-lg pl-10 pr-3 py-2 text-sm text-slate-100 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  />
+                </div>
+              </div>
+
+              {/* Tabs */}
+              <div className="flex border-b border-slate-700/50 bg-slate-800/20 sticky top-0 z-10">
+                <button
+                  onClick={() => setActiveTab('output')}
+                  className={`px-4 sm:px-6 py-3 text-sm font-medium transition-all relative ${
+                    activeTab === 'output' ? 'text-emerald-400 bg-slate-800/50' : 'text-slate-400 hover:text-slate-300 hover:bg-slate-800/30'
+                  }`}
+                >
+                  Output ({filteredOutput.length})
+                  {activeTab === 'output' && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-400" />}
+                </button>
+                <button
+                  onClick={() => setActiveTab('filtered')}
+                  className={`px-4 sm:px-6 py-3 text-sm font-medium transition-all relative ${
+                    activeTab === 'filtered' ? 'text-red-400 bg-slate-800/50' : 'text-slate-400 hover:text-slate-300 hover:bg-slate-800/30'
+                  }`}
+                >
+                  Filtered ({filteredFiltered.length})
+                  {activeTab === 'filtered' && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-red-400" />}
+                </button>
+              </div>
+
+              {/* Ticker list — simplified rows */}
+              <div className="p-4 sm:p-6">
+                {activeTab === 'output' && (
+                  <div className="space-y-2">
+                    {filteredOutput.length > 0 ? (
+                      filteredOutput.map((ticker, idx) => (
+                        <BlendedFGTickerRow key={idx} ticker={ticker} />
+                      ))
+                    ) : (
+                      <div className="text-center text-slate-400 py-8">
+                        {searchQuery ? `No tickers matching "${searchQuery}"` : 'No output tickers'}
+                      </div>
+                    )}
+                  </div>
+                )}
+                {activeTab === 'filtered' && (
+                  <div className="space-y-2">
+                    {filteredFiltered.length > 0 ? (
+                      filteredFiltered.slice(0, 100).map((ticker, idx) => (
+                        <BlendedFGTickerRow key={idx} ticker={ticker} />
+                      ))
+                    ) : (
+                      <div className="text-center text-slate-400 py-8">
+                        {searchQuery ? `No filtered tickers matching "${searchQuery}"` : 'No filtered tickers'}
+                      </div>
+                    )}
+                    {filteredFiltered.length > 100 && !searchQuery && (
+                      <div className="text-center text-slate-400 text-sm py-4">
+                        ... and {filteredFiltered.length - 100} more
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </>
+          ) : (
+          <>
+          {/* ======= DEFAULT MODAL (all other strategies) ======= */}
+
           {/* Strategy Description Card */}
           <div className="p-4 sm:p-6 border-b border-slate-700/50 bg-slate-800/30">
             <h3 className="text-base sm:text-lg font-semibold text-slate-200 mb-2">How This Strategy Works</h3>
@@ -832,6 +1138,8 @@ export default function PipelineDetailPanel({
                 </div>
               )}
             </div>
+          </>
+          )}
           </div>
         </div>
       </div>

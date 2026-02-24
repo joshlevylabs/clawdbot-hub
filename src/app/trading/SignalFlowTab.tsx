@@ -114,6 +114,10 @@ interface MREData {
     };
     by_asset_class: MRESignal[];
   };
+  meta?: {
+    version: string;
+    core_pipeline?: string;
+  };
 }
 
 interface TickerDetail {
@@ -147,6 +151,13 @@ interface StrategyVoteStage {
   outputCount: number;
   passed: MRESignal[];
   filtered: MRESignal[];
+}
+
+interface VoteConsensusPath {
+  voteCount: number;
+  name: string;
+  tickers: MRESignal[];
+  count: number;
 }
 
 function calculatePipelineStages(signals: MRESignal[], dataType: 'core' | 'universe') {
@@ -187,11 +198,31 @@ function calculatePipelineStages(signals: MRESignal[], dataType: 'core' | 'unive
   });
   const anyVoteFiltered = signals.filter(s => !anyVotePassed.includes(s));
   
-  const strategyMerge = {
-    inputCount: totalTickers,
+  // Vote Consensus Gate: Group tickers by how many strategies voted BUY
+  const voteConsensusPaths: VoteConsensusPath[] = [];
+  
+  for (let voteCount = 1; voteCount <= 5; voteCount++) {
+    const tickersWithThisVoteCount = anyVotePassed.filter(s => {
+      const actualVoteCount = s.strategy_votes 
+        ? Object.values(s.strategy_votes).filter(v => v === true).length 
+        : s.strategies_agreeing || 0;
+      return actualVoteCount === voteCount;
+    });
+    
+    voteConsensusPaths.push({
+      voteCount,
+      name: `${voteCount}-of-5 votes`,
+      tickers: tickersWithThisVoteCount,
+      count: tickersWithThisVoteCount.length
+    });
+  }
+  
+  const voteConsensusGate = {
+    inputCount: anyVotePassed.length,
     outputCount: anyVotePassed.length,
     passed: anyVotePassed,
-    filtered: anyVoteFiltered
+    filtered: anyVoteFiltered,
+    paths: voteConsensusPaths
   };
   
   // Step 3: Signal Gating (sell suppress + bear suppress)
@@ -242,7 +273,7 @@ function calculatePipelineStages(signals: MRESignal[], dataType: 'core' | 'unive
   return {
     input: inputStage,
     strategyVotes,
-    strategyMerge,
+    voteConsensusGate,
     signalGating: signalGateStage,
     confidenceTuning: confidenceStage,
     finalFilters: finalStage,
@@ -253,6 +284,7 @@ function calculatePipelineStages(signals: MRESignal[], dataType: 'core' | 'unive
 export default function SignalFlowTab() {
   const [coreData, setCoreData] = useState<MREData | null>(null);
   const [universeData, setUniverseData] = useState<MREData | null>(null);
+  const [mreVersions, setMreVersions] = useState<any>(null);
   const [selectedStage, setSelectedStage] = useState<StageDetails | null>(null);
   const [dataMode, setDataMode] = useState<'core' | 'universe'>('universe');
   const [loading, setLoading] = useState(false);
@@ -266,10 +298,11 @@ export default function SignalFlowTab() {
       try {
         setLoading(true);
         
-        // Fetch directly from public JSON files (the raw MRE signal data)
-        const [coreResponse, universeResponse] = await Promise.allSettled([
+        // Fetch directly from public JSON files (the raw MRE signal data + versions)
+        const [coreResponse, universeResponse, versionsResponse] = await Promise.allSettled([
           fetch('/data/trading/mre-signals.json'),
-          fetch('/data/trading/mre-signals-universe.json')
+          fetch('/data/trading/mre-signals-universe.json'),
+          fetch('/data/trading/mre-versions.json')
         ]);
         
         if (coreResponse.status === 'fulfilled' && coreResponse.value.ok) {
@@ -284,6 +317,13 @@ export default function SignalFlowTab() {
           setUniverseData(universeJson);
         } else {
           console.log('Could not load universe signals data');
+        }
+        
+        if (versionsResponse.status === 'fulfilled' && versionsResponse.value.ok) {
+          const versionsJson = await versionsResponse.value.json();
+          setMreVersions(versionsJson);
+        } else {
+          console.log('Could not load MRE versions data');
         }
       } catch (error) {
         console.error('Error loading signal data:', error);
@@ -354,6 +394,29 @@ export default function SignalFlowTab() {
       return;
     }
     
+    // Handle vote consensus path clicks
+    if (stageKey.startsWith('vote_consensus_')) {
+      const voteCount = parseInt(stageKey.replace('vote_consensus_', ''));
+      const path = pipelineData.voteConsensusGate.paths.find(p => p.voteCount === voteCount);
+      if (!path) return;
+      
+      setSelectedStage({
+        name: `${path.name.replace('votes', 'Vote Consensus')}`,
+        description: `Tickers where exactly ${voteCount} of 5 strategies voted BUY`,
+        stageType: 'filter',
+        inputCount: pipelineData.voteConsensusGate.inputCount,
+        outputCount: path.count,
+        filteredTickers: [],
+        passedTickers: path.tickers.map(t => ({
+          symbol: t.symbol,
+          signal: t.signal,
+          currentPrice: t.price,
+          rawData: t
+        }))
+      });
+      return;
+    }
+    
     const stageData = pipelineData[stageKey as keyof typeof pipelineData];
     if (!stageData || Array.isArray(stageData)) return;
     
@@ -378,10 +441,10 @@ export default function SignalFlowTab() {
         };
         break;
         
-      case 'strategyMerge':
+      case 'voteConsensusGate':
         stageDetails = {
-          name: 'Strategy Merge',
-          description: 'Tickers with at least one BUY vote from any strategy',
+          name: 'Vote Consensus Gate',
+          description: 'Tickers classified by how many strategies voted BUY',
           stageType: 'filter',
           inputCount: stageData.inputCount,
           outputCount: stageData.outputCount,
@@ -534,6 +597,9 @@ export default function SignalFlowTab() {
   const fgRating = currentData.fear_greed?.rating || 'Unknown';
   const regimeValue = currentData.regime?.global || 'Unknown';
   const summary = currentData.signals?.summary;
+  
+  // Get pipeline version from signal data meta
+  const pipelineVersion = currentData?.meta?.version || '3.1.0';
 
   return (
     <>
@@ -655,6 +721,7 @@ export default function SignalFlowTab() {
               outputCount={pipelineData.input.outputCount}
               onClick={() => handleStageClick('input')}
               stageType="input"
+              version={mreVersions?.signals || '2.0.0'}
             />
           </div>
           
@@ -681,10 +748,34 @@ export default function SignalFlowTab() {
                 </div>
               </div>
             ))}
-            {/* Merge summary */}
+          </div>
+          
+          {/* Arrow → */}
+          <div className="flex items-center px-2">
+            <div className="text-slate-600 text-xl">→</div>
+          </div>
+          
+          {/* Stage 3: Vote Consensus Gate */}
+          <div className="flex flex-col gap-1.5 justify-center">
+            <div className="text-xs font-semibold text-slate-400 text-center mb-1">Vote Consensus Gate</div>
+            {pipelineData.voteConsensusGate.paths.slice().reverse().map((path) => (
+              <div
+                key={path.voteCount}
+                onClick={() => handleStageClick(`vote_consensus_${path.voteCount}`)}
+                className="flex items-center justify-between gap-3 px-3 py-1.5 bg-slate-800/80 rounded-lg border border-slate-700/50 hover:border-primary-500/50 cursor-pointer transition-all min-w-[200px]"
+              >
+                <span className="text-xs font-medium text-slate-300 truncate">{path.name}</span>
+                <div className="flex items-center gap-2">
+                  <span className={`text-xs font-bold ${path.count > 0 ? 'text-emerald-400' : 'text-slate-500'}`}>
+                    {path.count}
+                  </span>
+                </div>
+              </div>
+            ))}
+            {/* Total summary */}
             <div className="mt-1 pt-1.5 border-t border-slate-700/50 flex items-center justify-between px-3">
-              <span className="text-[10px] text-slate-500">Any vote →</span>
-              <span className="text-xs font-bold text-emerald-400">{pipelineData.strategyMerge.outputCount}</span>
+              <span className="text-[10px] text-slate-500">Total →</span>
+              <span className="text-xs font-bold text-emerald-400">{pipelineData.voteConsensusGate.outputCount}</span>
             </div>
           </div>
           
@@ -693,7 +784,7 @@ export default function SignalFlowTab() {
             <div className="text-slate-600 text-xl">→</div>
           </div>
           
-          {/* Stage 3: Signal Gating */}
+          {/* Stage 4: Signal Gating */}
           <div className="flex items-center">
             <PipelineStage
               name="Signal Gating"
@@ -702,6 +793,7 @@ export default function SignalFlowTab() {
               outputCount={pipelineData.signalGating.outputCount}
               onClick={() => handleStageClick('signalGating')}
               stageType="filter"
+              version={mreVersions?.signals || '2.0.0'}
             />
           </div>
           
@@ -710,7 +802,7 @@ export default function SignalFlowTab() {
             <div className="text-slate-600 text-xl">→</div>
           </div>
           
-          {/* Stage 4: Confidence Tuning */}
+          {/* Stage 5: Confidence Tuning */}
           <div className="flex items-center">
             <PipelineStage
               name="Confidence Tuning"
@@ -719,6 +811,7 @@ export default function SignalFlowTab() {
               outputCount={pipelineData.confidenceTuning.outputCount}
               onClick={() => handleStageClick('confidenceTuning')}
               stageType="modifier"
+              version={mreVersions?.pit || '1.1.0'}
             />
           </div>
           
@@ -727,7 +820,7 @@ export default function SignalFlowTab() {
             <div className="text-slate-600 text-xl">→</div>
           </div>
           
-          {/* Stage 5: Final Filters */}
+          {/* Stage 6: Final Filters */}
           <div className="flex items-center">
             <PipelineStage
               name="Final Filters"
@@ -736,6 +829,7 @@ export default function SignalFlowTab() {
               outputCount={pipelineData.finalFilters.outputCount}
               onClick={() => handleStageClick('finalFilters')}
               stageType="filter"
+              version={mreVersions?.config || '2.0.0'}
             />
           </div>
           
@@ -744,7 +838,7 @@ export default function SignalFlowTab() {
             <div className="text-slate-600 text-xl">→</div>
           </div>
           
-          {/* Stage 6: Output */}
+          {/* Stage 7: Output */}
           <div className="flex items-center">
             <PipelineStage
               name="BUY Signals"
@@ -754,6 +848,7 @@ export default function SignalFlowTab() {
               onClick={() => handleStageClick('output')}
               stageType="output"
               isLast={true}
+              version={pipelineVersion}
             />
           </div>
         </div>

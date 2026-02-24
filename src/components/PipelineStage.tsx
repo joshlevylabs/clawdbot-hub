@@ -12,6 +12,7 @@ interface PipelineStageProps {
   onClick: () => void;
   isLast?: boolean;
   stageType?: 'input' | 'filter' | 'modifier' | 'output';
+  version?: string;
 }
 
 export default function PipelineStage({
@@ -23,7 +24,8 @@ export default function PipelineStage({
   passedTickers = [],
   onClick,
   isLast = false,
-  stageType = 'filter'
+  stageType = 'filter',
+  version
 }: PipelineStageProps) {
   const passRate = inputCount > 0 ? (outputCount / inputCount) * 100 : 0;
   const filteredCount = inputCount - outputCount;
@@ -126,8 +128,17 @@ export default function PipelineStage({
           </div>
         </div>
         
+        {/* Version badge (if provided) */}
+        {version && (
+          <div className="mt-2">
+            <span className="inline-block bg-slate-700/50 text-slate-400 px-2 py-0.5 rounded text-[10px] font-medium">
+              v{version}
+            </span>
+          </div>
+        )}
+        
         {/* Click indicator */}
-        <div className="mt-2 text-xs text-slate-500 flex items-center gap-1">
+        <div className={`${version ? 'mt-1' : 'mt-2'} text-xs text-slate-500 flex items-center gap-1`}>
           <span>Click for details</span>
           <ChevronRight className="w-3 h-3" />
         </div>

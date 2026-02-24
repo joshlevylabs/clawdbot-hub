@@ -1,111 +1,76 @@
 {
-  "date": "2026-02-23",
-  "day": "Monday",
-  "generated_at": "2026-02-23T06:00:34",
+  "date": "Tuesday, February 24, 2026",
+  "generated": "2026-02-24T06:00:56.921613",
   "sections": {
     "prayer": {
-      "title": "\ud83d\udd50\ufe0f Morning Prayer",
-      "date": "Monday, February 23, 2026",
-      "hebrew_date": "25 Cheshvan",
+      "title": "🕐️ Morning Prayer",
+      "date": "Tuesday, February 24, 2026",
+      "hebrew_date": "26 Cheshvan",
       "parsha": "Miketz",
       "parsha_theme": "sudden elevation, preparation meeting opportunity",
-      "modeh_ani": "\u05de\u05d5\u05d3\u05d4 \u05d0\u05e0\u05d9 \u05dc\u05e4\u05e0\u05d9\u05da \u2014 I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
-      "blessing": "Blessed are You who crowns Israel with glory \u2014 let my work bring You honor.",
+      "modeh_ani": "מודה אני לפניך — I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
+      "blessing": "Blessed are You who raises the lowly — lift me to accomplish Your purposes.",
       "psalm": "**Psalm 121:8**: \"The Lord will watch over your coming and going both now and forevermore.\"",
-      "proverb": "**Proverbs 16:3**: \"Commit your work to the Lord, and your plans will be established.\"",
-      "intention": "Protect my family while I work. Guard their hearts and minds.",
-      "closing": "May your work today be a pleasing offering. May your rest tonight be deep and restorative.",
-      "audio": "/audio/brief-2026-02-23-prayer.ogg"
+      "proverb": "**Proverbs 16:9**: \"The heart of man plans his way, but the Lord establishes his steps.\"",
+      "intention": "Help me lead with integrity. Let my yes be yes and my no be no.",
+      "closing": "Baruch atah Adonai — Blessed are You, Lord, who renews creation daily with goodness."
     },
     "weather": {
-      "title": "\ud83c\udf24\ufe0f Weather",
+      "title": "🌤️ Weather",
       "location": "Temecula, CA",
-      "current": {
-        "temp": "45\u00b0F (7\u00b0C)",
-        "feels_like": "42\u00b0F (6\u00b0C)",
-        "condition": "Partly cloudy",
-        "humidity": "87%",
-        "wind": "NNE 6 mph",
-        "visibility": "9 miles"
-      },
-      "summary": "Cool and partly cloudy morning. High humidity with light winds from the northeast.",
-      "audio": "/audio/brief-2026-02-23-weather.ogg"
-    },
-    "mre": {
-      "title": "\ud83d\udcca MRE Trading",
-      "fear_greed": 42,
-      "fear_greed_rating": "fear",
-      "regime": "bull",
-      "spy_price": 689.43,
-      "spy_change": "+0.72%",
-      "qqq_regime": "sideways",
-      "todays_plays": [],
-      "pending_triggers": [],
-      "thesis": "Fear at 42, markets mixed with SPY bull/QQQ sideways. No active signals \u2014 wait for opportunities.",
-      "outliers": [
-        "XLK & XLF in bear regimes while market bull",
-        "QQQ consolidating, watch for breakout"
-      ],
-      "summary": "Market sentiment fearful but SPY maintaining uptrend. Tech weakness notable with XLK bearish.",
-      "audio": "/audio/brief-2026-02-23-mre.ogg"
-    },
-    "relationship": {
-      "title": "\ud83d\udc9d Family Focus",
-      "status": "critical",
-      "trend": "urgent",
-      "stats": {
-        "total": 11,
-        "positive": 6,
-        "negative": 5
-      },
-      "priority_actions": [
-        "PRIORITY: Focus on repair. Acknowledge recent conflicts without defending.",
-        "Increase acts of service dramatically this week.",
-        "Create space for her to express frustrations without fixing."
-      ],
-      "love_languages": {
-        "primary": "quality_time",
-        "secondary": "acts_of_service"
-      }
+      "current_temp": "49°F",
+      "conditions": "Mostly Cloudy",
+      "wind": "3.8 km/h NW",
+      "summary": "Cool morning at 49°F with mostly cloudy skies. Light winds from the northwest."
     },
     "calendar": {
-      "title": "\ud83d\udcc5 Today's Schedule",
-      "today": "No events scheduled",
-      "week_ahead": "No upcoming events visible (OAuth tokens need refresh)",
-      "note": "Calendar access requires authentication renewal",
-      "audio": "/audio/brief-2026-02-23-calendar.ogg"
+      "title": "📅 Calendar",
+      "today": [],
+      "week": [],
+      "month": [],
+      "summary": "No calendar data available - email not configured. Check Google Calendar manually."
     },
     "email": {
-      "title": "\ud83d\udce7 Email Highlights",
-      "account": "josh@joshlevylabs.com",
-      "unread_count": 4,
-      "highlights": [
-        "Dropbox storage reminder (15 days until deletion)",
-        "Indeed: 1 new acoustic engineer job in Tempe, AZ",
-        "LinkedIn: 1 new message",
-        "OpusClip: Projects about to expire"
-      ],
-      "action_needed": "Check Dropbox storage, review OpusClip projects",
-      "audio": "/audio/brief-2026-02-23-email.ogg"
+      "title": "📧 Email Highlights",
+      "summary": "Email client not configured. Check josh@joshlevylabs.com and joshua.seth.levy@gmail.com manually.",
+      "unread_count": null,
+      "important_messages": []
     },
-    "world_news": {
-      "title": "\ud83c\udf0d World News",
-      "focus": "Israel & Geopolitics",
-      "headlines": [
-        "US Ambassador Huckabee's controversial comments on Israel's biblical territorial claims draw sharp condemnation from Arab/Muslim nations",
-        "Arab Israeli news anchor harassed by far-right mob, calls them 'Netanyahu's goons'",
-        "Tensions remain high in Middle East as Trump administration takes different approach"
+    "mre": {
+      "title": "📊 MRE Trading",
+      "fear_greed": 37.6,
+      "fear_greed_rating": "fear",
+      "regime": "sideways",
+      "todays_plays": [],
+      "pending_triggers": [],
+      "thesis": "Fear elevated (38), global regime sideways. All assets on HOLD - no buy signals."
+    },
+    "family": {
+      "title": "👨‍👩‍👧‍👦 Family Focus", 
+      "relationship_temperature": "critical",
+      "trend": "urgent",
+      "jillian_love_languages": ["quality time", "acts of service"],
+      "priority_actions": [
+        "PRIORITY: Focus on repair. Acknowledge recent conflicts without defending.",
+        "Increase acts of service dramatically this week.", 
+        "Create space for her to express frustrations without fixing."
+      ],
+      "family_notes": "Jones (2.5y) loves Super Wings and Blaze shows. Jett is 7 months old. Wedding anniversary March 26th."
+    },
+    "news": {
+      "title": "🌍 News Highlights",
+      "world": [
+        "US meeting Russia, China in Geneva to discuss nuclear issue after New START treaty expired Feb 5",
+        "Hamas Gaza disarmament plan expected in March - terrorist org would dismantle weapons",
+        "US Ambassador claims Israel has rights to much of Middle East - controversial statements"
+      ],
+      "ai_tech": [
+        "Anthropic raised $30B Series G at $380B valuation on Feb 12",
+        "OpenAI close to finalizing $100B+ funding round - record breaking", 
+        "Fei-Fei Li's World Labs raised $1B for novel AI approach",
+        "17 US AI companies raised $100M+ so far in 2026"
       ]
-    },
-    "ai_news": {
-      "title": "\ud83e\udd16 AI News",
-      "headlines": [
-        "Nvidia close to $30 billion investment in OpenAI mega funding round",
-        "Grand Valley State University awarded $1M for AI consortium in West Michigan",
-        "USC researchers build artificial neurons using ion-based diffusive memristors",
-        "ProAmpac uses AI to simulate materials, reducing plastic waste in supply chains"
-      ],
-      "focus": "Significant funding rounds and practical applications in materials/neuroscience"
     }
-  }
+  },
+  "summary": "Critical relationship status requires immediate attention. Markets sideways with fear at 38 - no trading signals. Major AI funding rounds ($30B Anthropic, $100B+ OpenAI) signal continued acceleration. Focus: family repair, prayer guidance on integrity, watch for market opportunities."
 }

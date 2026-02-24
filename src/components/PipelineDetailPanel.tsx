@@ -110,7 +110,7 @@ interface PipelineDetailPanelProps {
 
 // Strategy descriptions mapping
 const STRATEGY_DESCRIPTIONS: Record<string, string> = {
-  'Fear & Greed Strategy': "Triggers BUY when the CNN Fear & Greed Index drops below the ticker's fear threshold, indicating extreme market fear as a contrarian buying opportunity.",
+  'Fear & Greed Strategy': "Triggers BUY when the CNN Fear & Greed Index drops below the ticker's fear threshold. Thresholds vary by asset class: Energy (6) requires extreme panic, Technology/Broad Market/Financials (8) use aggressive entries, and Healthcare/Real Estate (15) are more conservative. Thresholds were optimized in V15.1 Phase 5 via universe-scale backtests.",
   'Regime Confirm Strategy': "Confirms BUY signals only when the ticker is in a bull regime (price above SMA), ensuring trades align with the broader trend direction.",
   'RSI Oversold Strategy': "Triggers BUY when the 14-period RSI drops below 30, indicating the asset is oversold and likely to bounce.",
   'Mean Reversion Strategy': "Triggers BUY when the 5-day price drop exceeds a threshold, betting on a reversion to the mean price.",

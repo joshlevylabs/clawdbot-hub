@@ -210,20 +210,29 @@ export default function TickerTechnicalBreakdown({
         const regime = rawData.regime;
         const rd = rawData.regime_details;
         const ema200 = rd?.ema_200;
-        const pctAbove = price && ema200 ? ((price - ema200) / ema200 * 100) : undefined;
+        const ema50 = rd?.ema_50;
+        const ema20 = rd?.ema_20;
+        // Use best available EMA for comparison
+        const compareEma = ema200 || ema50 || ema20;
+        const compareLabel = ema200 ? 'EMA 200' : ema50 ? 'EMA 50' : ema20 ? 'EMA 20' : null;
+        const pctAbove = price && compareEma ? ((price - compareEma) / compareEma * 100) : undefined;
         return (
-          <div className="flex items-center gap-3 text-xs">
+          <div className="flex items-center gap-3 text-xs flex-wrap">
             <span className="text-slate-400">Price: <span className="text-slate-200 font-medium">${price?.toFixed(2) ?? '—'}</span></span>
-            <span className="text-slate-500">|</span>
-            <span className="text-slate-400">EMA 200: <span className="text-slate-200 font-medium">{ema200 ? `$${ema200.toFixed(2)}` : '—'}</span></span>
-            {pctAbove !== undefined && (
+            {compareLabel && compareEma ? (
               <>
                 <span className="text-slate-500">|</span>
-                <span className={`font-medium ${pctAbove >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-                  {pctAbove >= 0 ? '+' : ''}{pctAbove.toFixed(1)}%
-                </span>
+                <span className="text-slate-400">{compareLabel}: <span className="text-slate-200 font-medium">${compareEma.toFixed(2)}</span></span>
+                {pctAbove !== undefined && (
+                  <>
+                    <span className="text-slate-500">|</span>
+                    <span className={`font-medium ${pctAbove >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                      {pctAbove >= 0 ? '+' : ''}{pctAbove.toFixed(1)}%
+                    </span>
+                  </>
+                )}
               </>
-            )}
+            ) : null}
             <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium capitalize ${regime === 'bull' ? 'bg-emerald-900/50 text-emerald-400' : regime === 'bear' ? 'bg-red-900/50 text-red-400' : 'bg-amber-900/50 text-amber-400'}`}>
               {regime ?? '—'}
             </span>

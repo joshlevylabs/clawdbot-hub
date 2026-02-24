@@ -5,7 +5,8 @@
   "summary": {
     "avg_confidence": 0.84,
     "median_confidence": 0.85,
-    "avg_robustness": 0.135
+    "avg_robustness": 0.6705,
+    "robustness_updated": "2026-02-24T11:28:44.156435"
   },
   "calibration": {
     "AAPL": {
@@ -21,7 +22,7 @@
         "bear": "fear_greed",
         "sideways": "fear_greed"
       },
-      "robustness_score": 0.0,
+      "robustness_score": 0.9232,
       "walk_forward_oos_wr": 49.41,
       "walk_forward_oos_sharpe": 0.511,
       "total_trades_25yr": 511,
@@ -44,7 +45,7 @@
         "bear": "fear_greed",
         "sideways": "fear_greed"
       },
-      "robustness_score": 0.392,
+      "robustness_score": 0.7481,
       "walk_forward_oos_wr": 54.43,
       "walk_forward_oos_sharpe": 0.9071,
       "total_trades_25yr": 188,
@@ -67,7 +68,7 @@
         "bear": "fear_greed",
         "sideways": "fear_greed"
       },
-      "robustness_score": 0.123,
+      "robustness_score": 0.6285,
       "walk_forward_oos_wr": 60.0,
       "walk_forward_oos_sharpe": 0.5063,
       "total_trades_25yr": 101,
@@ -90,7 +91,7 @@
         "bear": "fear_greed",
         "sideways": "fear_greed"
       },
-      "robustness_score": 0.0,
+      "robustness_score": 0.6334,
       "walk_forward_oos_wr": 55.41,
       "walk_forward_oos_sharpe": 1.7683,
       "total_trades_25yr": 302,
@@ -113,7 +114,7 @@
         "bear": "fear_greed",
         "sideways": "fear_greed"
       },
-      "robustness_score": 0.084,
+      "robustness_score": 0.6615,
       "walk_forward_oos_wr": 61.78,
       "walk_forward_oos_sharpe": 1.2289,
       "total_trades_25yr": 58,
@@ -137,7 +138,7 @@
         "bear": "fear_greed",
         "sideways": "fear_greed"
       },
-      "robustness_score": 0.056,
+      "robustness_score": 0.6535,
       "walk_forward_oos_wr": 52.19,
       "walk_forward_oos_sharpe": 1.023,
       "total_trades_25yr": 51,
@@ -160,7 +161,7 @@
         "bear": "fear_greed",
         "sideways": "fear_greed"
       },
-      "robustness_score": 0.149,
+      "robustness_score": 0.7693,
       "walk_forward_oos_wr": 53.17,
       "walk_forward_oos_sharpe": 0.7583,
       "total_trades_25yr": 177,
@@ -183,7 +184,7 @@
         "bear": "fear_greed",
         "sideways": "fear_greed"
       },
-      "robustness_score": 0.03,
+      "robustness_score": 0.7335,
       "walk_forward_oos_wr": 57.14,
       "walk_forward_oos_sharpe": 2.8186,
       "total_trades_25yr": 107,
@@ -206,7 +207,7 @@
         "bear": "fear_greed",
         "sideways": "fear_greed"
       },
-      "robustness_score": 0.374,
+      "robustness_score": 0.6599,
       "walk_forward_oos_wr": 56.91,
       "walk_forward_oos_sharpe": 1.3354,
       "total_trades_25yr": 150,
@@ -229,7 +230,7 @@
         "bear": "fear_greed",
         "sideways": "fear_greed"
       },
-      "robustness_score": 0.057,
+      "robustness_score": 0.7135,
       "walk_forward_oos_wr": 57.58,
       "walk_forward_oos_sharpe": 0.9861,
       "total_trades_25yr": 211,
@@ -252,7 +253,7 @@
         "bear": "fear_greed",
         "sideways": "fear_greed"
       },
-      "robustness_score": 0.0,
+      "robustness_score": 0.5758,
       "walk_forward_oos_wr": 59.2,
       "walk_forward_oos_sharpe": 1.3124,
       "total_trades_25yr": 77,
@@ -275,7 +276,7 @@
         "bear": "fear_greed",
         "sideways": "fear_greed"
       },
-      "robustness_score": 0.132,
+      "robustness_score": 0.5855,
       "walk_forward_oos_wr": 59.84,
       "walk_forward_oos_sharpe": 1.6944,
       "total_trades_25yr": 38,
@@ -298,7 +299,7 @@
         "bear": "fear_greed",
         "sideways": "fear_greed"
       },
-      "robustness_score": 0.0,
+      "robustness_score": 0.6444,
       "walk_forward_oos_wr": 51.74,
       "walk_forward_oos_sharpe": 1.1839,
       "total_trades_25yr": 91,
@@ -321,7 +322,7 @@
         "bear": "fear_greed",
         "sideways": "fear_greed"
       },
-      "robustness_score": 0.436,
+      "robustness_score": 0.7185,
       "walk_forward_oos_wr": 54.17,
       "walk_forward_oos_sharpe": 1.0282,
       "total_trades_25yr": 216,
@@ -344,7 +345,7 @@
         "bear": "fear_greed",
         "sideways": "fear_greed"
       },
-      "robustness_score": 0.112,
+      "robustness_score": 0.5128,
       "walk_forward_oos_wr": 57.63,
       "walk_forward_oos_sharpe": 0.7747,
       "total_trades_25yr": 41,
@@ -367,7 +368,7 @@
         "bear": "fear_greed",
         "sideways": "fear_greed"
       },
-      "robustness_score": 0.257,
+      "robustness_score": 0.6314,
       "walk_forward_oos_wr": 57.11,
       "walk_forward_oos_sharpe": 1.0199,
       "total_trades_25yr": 77,
@@ -390,7 +391,7 @@
         "bear": "fear_greed",
         "sideways": "fear_greed"
       },
-      "robustness_score": 0.155,
+      "robustness_score": 0.7288,
       "walk_forward_oos_wr": 66.95,
       "walk_forward_oos_sharpe": 1.9822,
       "total_trades_25yr": 75,
@@ -413,7 +414,7 @@
         "bear": "fear_greed",
         "sideways": "fear_greed"
       },
-      "robustness_score": 0.057,
+      "robustness_score": 0.6629,
       "walk_forward_oos_wr": 71.43,
       "walk_forward_oos_sharpe": 1.0897,
       "total_trades_25yr": 76,
@@ -436,7 +437,7 @@
         "bear": "fear_greed",
         "sideways": "fear_greed"
       },
-      "robustness_score": 0.247,
+      "robustness_score": 0.6532,
       "walk_forward_oos_wr": 60.11,
       "walk_forward_oos_sharpe": 1.3126,
       "total_trades_25yr": 119,
@@ -461,7 +462,7 @@
         "bear": "rsi_oversold",
         "sideways": "regime_confirmation"
       },
-      "robustness_score": 0.032,
+      "robustness_score": 0.5729,
       "walk_forward_oos_wr": 60.11,
       "walk_forward_oos_sharpe": 1.0708,
       "total_trades_25yr": 157,

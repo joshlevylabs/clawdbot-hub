@@ -1,6 +1,6 @@
 "use client";
 
-import { X, TrendingUp, TrendingDown, Filter, Minus, DollarSign, Activity, Search } from 'lucide-react';
+import { X, TrendingUp, TrendingDown, Filter, Minus, DollarSign, Activity, Search, ChevronDown, ChevronRight, Calendar, Target, TrendingDownIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import TickerTechnicalBreakdown from './TickerTechnicalBreakdown';
 
@@ -111,6 +111,46 @@ interface PipelineDetailPanelProps {
   stageDetails: StageDetails | null;
   onClose: () => void;
 }
+
+// Strategy version data interfaces
+interface StrategyVersion {
+  version: string;
+  date: string;
+  changes: string[];
+  accuracy: {
+    overall: number;
+    byAssetClass?: Record<string, number>;
+  };
+  winRate: number;
+  sharpe: number;
+  profitFactor: number;
+}
+
+interface StrategyVersionData {
+  name: string;
+  currentVersion: string;
+  description: string;
+  parameters: any;
+  versions: StrategyVersion[];
+  regressions: any[];
+}
+
+interface StrategyVersionsResponse {
+  lastUpdated: string;
+  strategies: Record<string, StrategyVersionData>;
+}
+
+// Strategy name to key mapping for version data
+const STRATEGY_KEY_MAPPING: Record<string, string> = {
+  'Fear & Greed Strategy': 'fear_greed',
+  'Regime Confirm Strategy': 'regime_confirm', 
+  'RSI Oversold Strategy': 'rsi_oversold',
+  'RSI Oversold Strategy (MRE Regime Hybrid)': 'rsi_oversold',
+  'Mean Reversion Strategy': 'mean_reversion',
+  'Mean Reversion Strategy (Cross-Asset Pairs)': 'mean_reversion',
+  'Momentum Strategy': 'momentum',
+  'Momentum Strategy (Cross-Asset Predictor)': 'momentum',
+};
 
 // Strategy descriptions mapping
 const STRATEGY_DESCRIPTIONS: Record<string, string> = {
@@ -267,6 +307,8 @@ export default function PipelineDetailPanel({
 }: PipelineDetailPanelProps) {
   const [activeTab, setActiveTab] = useState<'output' | 'filtered'>('output');
   const [searchQuery, setSearchQuery] = useState('');
+  const [strategyVersions, setStrategyVersions] = useState<StrategyVersionsResponse | null>(null);
+  const [isVersionHistoryExpanded, setIsVersionHistoryExpanded] = useState(false);
 
   // Close on escape key
   useEffect(() => {
@@ -278,7 +320,42 @@ export default function PipelineDetailPanel({
     return () => document.removeEventListener('keydown', handleEscape);
   }, [onClose]);
 
+  // Fetch strategy versions data
+  useEffect(() => {
+    const fetchStrategyVersions = async () => {
+      try {
+        const response = await fetch('/data/trading/strategy-versions.json');
+        if (response.ok) {
+          const data = await response.json();
+          setStrategyVersions(data);
+        }
+      } catch (error) {
+        console.warn('Failed to load strategy versions:', error);
+      }
+    };
+    
+    fetchStrategyVersions();
+  }, []);
+
   if (!stageDetails) return null;
+
+  // Get strategy version data for current strategy
+  const getStrategyData = (): StrategyVersionData | null => {
+    if (!strategyVersions || !isIndividualStrategy(stageDetails.name)) return null;
+    const strategyKey = STRATEGY_KEY_MAPPING[stageDetails.name];
+    return strategyKey ? strategyVersions.strategies[strategyKey] : null;
+  };
+
+  // Calculate accuracy delta from previous version
+  const getAccuracyDelta = (currentVersion: StrategyVersion, previousVersion?: StrategyVersion): number | null => {
+    if (!previousVersion) return null;
+    return currentVersion.accuracy.overall - previousVersion.accuracy.overall;
+  };
+
+  const strategyData = getStrategyData();
+  const currentVersionData = strategyData?.versions[0]; // First version is current
+  const previousVersionData = strategyData?.versions[1]; // Second version is previous
+  const accuracyDelta = currentVersionData && previousVersionData ? getAccuracyDelta(currentVersionData, previousVersionData) : null;
 
   const getStageIcon = () => {
     switch (stageDetails.stageType) {
@@ -325,9 +402,32 @@ export default function PipelineDetailPanel({
           <div className="flex items-center justify-between p-4 sm:p-6 border-b border-slate-700/50 shrink-0">
             <div className="flex items-center gap-3 min-w-0">
               {getStageIcon()}
-              <div className="min-w-0">
-                <h2 className="text-lg sm:text-xl font-bold text-slate-100 truncate">{stageDetails.name}</h2>
-                <p className="text-sm text-slate-400 mt-1 line-clamp-2">{stageDetails.description}</p>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-3 mb-1">
+                  <h2 className="text-lg sm:text-xl font-bold text-slate-100 truncate">{stageDetails.name}</h2>
+                  {strategyData && (
+                    <div className="flex items-center gap-2">
+                      <div className="bg-slate-800 text-slate-200 px-2 py-1 rounded-md text-xs font-medium">
+                        v{strategyData.currentVersion}
+                      </div>
+                      {accuracyDelta !== null && (
+                        <div className={`flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium ${
+                          accuracyDelta >= 0 
+                            ? 'bg-emerald-900/50 text-emerald-400'
+                            : 'bg-red-900/50 text-red-400'
+                        }`}>
+                          {accuracyDelta >= 0 ? (
+                            <TrendingUp className="w-3 h-3" />
+                          ) : (
+                            <TrendingDownIcon className="w-3 h-3" />
+                          )}
+                          {accuracyDelta > 0 ? '+' : ''}{accuracyDelta.toFixed(1)}%
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+                <p className="text-sm text-slate-400 line-clamp-2">{stageDetails.description}</p>
               </div>
             </div>
             <button
@@ -345,6 +445,129 @@ export default function PipelineDetailPanel({
             <h3 className="text-base sm:text-lg font-semibold text-slate-200 mb-2">How This Strategy Works</h3>
             <p className="text-slate-300 text-sm leading-relaxed">{strategyDescription}</p>
           </div>
+
+          {/* Version History - Show only for individual strategy modals */}
+          {strategyData && isIndividualStrategy(stageDetails.name) && (
+            <div className="p-4 sm:p-6 border-b border-slate-700/50 bg-slate-800/20">
+              <button
+                onClick={() => setIsVersionHistoryExpanded(!isVersionHistoryExpanded)}
+                className="flex items-center justify-between w-full text-left group"
+              >
+                <h3 className="text-base sm:text-lg font-semibold text-slate-200 group-hover:text-slate-100 transition-colors">
+                  Version History
+                </h3>
+                <div className="flex items-center gap-2">
+                  {currentVersionData && (
+                    <span className="text-xs text-slate-400">
+                      {currentVersionData.accuracy.overall.toFixed(1)}% accuracy
+                    </span>
+                  )}
+                  {isVersionHistoryExpanded ? (
+                    <ChevronDown className="w-4 h-4 text-slate-400 group-hover:text-slate-300 transition-colors" />
+                  ) : (
+                    <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-slate-300 transition-colors" />
+                  )}
+                </div>
+              </button>
+
+              {/* Current Version Summary - Always visible */}
+              {currentVersionData && (
+                <div className="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  <div className="bg-slate-900/50 rounded-lg p-3">
+                    <div className="text-xs text-slate-500">Version</div>
+                    <div className="text-sm font-semibold text-slate-200">v{currentVersionData.version}</div>
+                  </div>
+                  <div className="bg-slate-900/50 rounded-lg p-3">
+                    <div className="text-xs text-slate-500">Last Updated</div>
+                    <div className="text-sm font-semibold text-slate-200">
+                      {new Date(currentVersionData.date).toLocaleDateString()}
+                    </div>
+                  </div>
+                  <div className="bg-slate-900/50 rounded-lg p-3">
+                    <div className="text-xs text-slate-500">Accuracy</div>
+                    <div className="text-sm font-semibold text-emerald-400">
+                      {currentVersionData.accuracy.overall.toFixed(1)}%
+                    </div>
+                  </div>
+                  <div className="bg-slate-900/50 rounded-lg p-3">
+                    <div className="text-xs text-slate-500">Win Rate</div>
+                    <div className="text-sm font-semibold text-slate-200">
+                      {(currentVersionData.winRate * 100).toFixed(1)}%
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Expanded History */}
+              {isVersionHistoryExpanded && strategyData.versions.length > 1 && (
+                <div className="mt-4 space-y-4">
+                  <h4 className="text-sm font-medium text-slate-300">Recent Versions</h4>
+                  {strategyData.versions.slice(1, 6).map((version, index) => {
+                    const prevVersion = strategyData.versions[index + 1];
+                    const versionDelta = prevVersion ? getAccuracyDelta(version, prevVersion) : null;
+                    
+                    return (
+                      <div key={version.version} className="bg-slate-900/30 rounded-lg p-4">
+                        <div className="flex items-start justify-between mb-2">
+                          <div className="flex items-center gap-3">
+                            <span className="text-sm font-semibold text-slate-200">v{version.version}</span>
+                            <span className="text-xs text-slate-400 flex items-center gap-1">
+                              <Calendar className="w-3 h-3" />
+                              {new Date(version.date).toLocaleDateString()}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2 text-xs">
+                            <span className="text-slate-300">{version.accuracy.overall.toFixed(1)}%</span>
+                            {versionDelta !== null && (
+                              <span className={`flex items-center gap-1 ${
+                                versionDelta >= 0 ? 'text-emerald-400' : 'text-red-400'
+                              }`}>
+                                {versionDelta >= 0 ? (
+                                  <TrendingUp className="w-3 h-3" />
+                                ) : (
+                                  <TrendingDownIcon className="w-3 h-3" />
+                                )}
+                                {versionDelta > 0 ? '+' : ''}{versionDelta.toFixed(1)}%
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        <ul className="text-xs text-slate-300 space-y-1">
+                          {version.changes.slice(0, 3).map((change, changeIndex) => (
+                            <li key={changeIndex} className="flex items-start gap-2">
+                              <span className="text-slate-500 mt-1">•</span>
+                              <span>{change}</span>
+                            </li>
+                          ))}
+                          {version.changes.length > 3 && (
+                            <li className="text-slate-400 italic">
+                              ... and {version.changes.length - 3} more changes
+                            </li>
+                          )}
+                        </ul>
+                      </div>
+                    );
+                  })}
+
+                  {/* Show regressions if any */}
+                  {strategyData.regressions && strategyData.regressions.length > 0 && (
+                    <div className="mt-4">
+                      <h4 className="text-sm font-medium text-red-400 mb-2">Known Regressions</h4>
+                      {strategyData.regressions.map((regression, index) => (
+                        <div key={index} className="bg-red-900/20 border border-red-800/30 rounded-lg p-3">
+                          <div className="text-sm font-medium text-red-300 mb-1">v{regression.version}</div>
+                          <div className="text-xs text-slate-300 mb-2">{regression.issue}</div>
+                          <div className="text-xs text-emerald-300">
+                            <span className="font-medium">Resolution:</span> {regression.resolution}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Strategy Parameters - Show for individual strategy gates */}
           {isIndividualStrategy(stageDetails.name) && (

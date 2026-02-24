@@ -1,0 +1,87 @@
+{
+  "history": [
+    {
+      "date": "2026-02-23",
+      "global_fg": 38.3,
+      "sectors": {
+        "broad_market": 65.8,
+        "technology": 52.6,
+        "healthcare": 67.9,
+        "financials": 54.7,
+        "real_estate": 72.0,
+        "energy": 76.5,
+        "bonds": 70.9,
+        "international": 66.0,
+        "commodities": 52.0
+      },
+      "divergences": {
+        "broad_market": 27.5,
+        "technology": 14.3,
+        "healthcare": 29.6,
+        "financials": 16.4,
+        "real_estate": 33.7,
+        "energy": 38.2,
+        "bonds": 32.6,
+        "international": 27.7,
+        "commodities": 13.7
+      }
+    }
+  ],
+  "stats": {
+    "broad_market": {
+      "mean_div": 27.5,
+      "std_div": 0.0,
+      "data_points": 1,
+      "confidence": "insufficient"
+    },
+    "technology": {
+      "mean_div": 14.3,
+      "std_div": 0.0,
+      "data_points": 1,
+      "confidence": "insufficient"
+    },
+    "healthcare": {
+      "mean_div": 29.6,
+      "std_div": 0.0,
+      "data_points": 1,
+      "confidence": "insufficient"
+    },
+    "financials": {
+      "mean_div": 16.4,
+      "std_div": 0.0,
+      "data_points": 1,
+      "confidence": "insufficient"
+    },
+    "real_estate": {
+      "mean_div": 33.7,
+      "std_div": 0.0,
+      "data_points": 1,
+      "confidence": "insufficient"
+    },
+    "energy": {
+      "mean_div": 38.2,
+      "std_div": 0.0,
+      "data_points": 1,
+      "confidence": "insufficient"
+    },
+    "bonds": {
+      "mean_div": 32.6,
+      "std_div": 0.0,
+      "data_points": 1,
+      "confidence": "insufficient"
+    },
+    "international": {
+      "mean_div": 27.7,
+      "std_div": 0.0,
+      "data_points": 1,
+      "confidence": "insufficient"
+    },
+    "commodities": {
+      "mean_div": 13.7,
+      "std_div": 0.0,
+      "data_points": 1,
+      "confidence": "insufficient"
+    }
+  },
+  "last_updated": "2026-02-23T22:19:59.376202"
+}

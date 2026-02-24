@@ -89,6 +89,11 @@ interface MRESignal {
   effective_fg?: number;
   fg_divergence?: number;
   fg_divergence_bonus?: number;
+  fg_divergence_z_score?: number;
+  fg_divergence_label?: 'normal' | 'elevated' | 'unusual' | 'extreme';
+  fg_divergence_confidence?: 'insufficient' | 'low' | 'moderate' | 'high';
+  fg_divergence_data_points?: number;
+  fg_divergence_historical_mean?: number;
   fg_blend_weights?: {
     global_weight: number;
     sector_weight: number;
@@ -610,29 +615,69 @@ function BlendedFGTickerRow({ ticker }: { ticker: TickerDetail }) {
     return 'text-emerald-400';
   };
 
-  // Divergence indicator
-  const getDivergenceDisplay = (div: number) => {
-    const absDivergence = Math.abs(div);
-    if (absDivergence < 10) {
+  // Relative divergence indicator (new system)
+  const getRelativeDivergenceDisplay = () => {
+    const confidence = raw.fg_divergence_confidence ?? 'insufficient';
+    const label = raw.fg_divergence_label ?? 'normal';
+    const zScore = raw.fg_divergence_z_score ?? 0;
+    const dataPoints = raw.fg_divergence_data_points ?? 0;
+    const historicalMean = raw.fg_divergence_historical_mean ?? 0;
+    const rawDivergence = Math.abs(divergence);
+    
+    // Insufficient confidence - show data accumulation state
+    if (confidence === 'insufficient') {
+      return {
+        color: 'text-blue-400',
+        bg: 'bg-blue-900/20',
+        label: `📊 Accumulating data (${dataPoints}/5 days)`,
+        barColor: 'bg-blue-500',
+        width: (dataPoints / 5) * 100, // Progress indicator
+        showRaw: true, // Still show raw divergence but without warning styling
+      };
+    }
+    
+    // Sufficient confidence - show z-score based assessment
+    const absZ = Math.abs(zScore);
+    if (absZ < 1.0) {
       return {
         color: 'text-emerald-400',
         bg: 'bg-emerald-900/30',
-        label: '✓ Low divergence — sector aligned with global',
+        label: `✓ Normal for ${raw.asset_class?.replace('_', ' ')}`,
         barColor: 'bg-emerald-500',
-        width: Math.min(absDivergence * 3, 30) // Scale for visual
+        width: Math.min(absZ * 50, 50),
+        showRaw: false,
       };
-    } else {
+    } else if (absZ < 1.5) {
+      return {
+        color: 'text-yellow-400',
+        bg: 'bg-yellow-900/30',
+        label: '↗ Slightly elevated',
+        barColor: 'bg-yellow-500',
+        width: Math.min(absZ * 40, 60),
+        showRaw: false,
+      };
+    } else if (absZ < 2.0) {
       return {
         color: 'text-amber-400',
         bg: 'bg-amber-900/30',
-        label: '⚠️ High divergence — sector sentiment strongly differs from global',
+        label: '⚠ Unusual divergence',
         barColor: 'bg-amber-500',
-        width: Math.min((absDivergence - 10) * 2 + 30, 100) // Scale for visual
+        width: Math.min(absZ * 35, 75),
+        showRaw: false,
+      };
+    } else {
+      return {
+        color: 'text-red-400',
+        bg: 'bg-red-900/30',
+        label: '🔴 Extreme divergence — significantly outside historical norm',
+        barColor: 'bg-red-500',
+        width: Math.min(absZ * 25, 100),
+        showRaw: false,
       };
     }
   };
 
-  const divergenceInfo = getDivergenceDisplay(divergence);
+  const divergenceInfo = getRelativeDivergenceDisplay();
 
   return (
     <div className="bg-slate-800/50 rounded-lg p-3 border border-slate-700/50">
@@ -693,13 +738,24 @@ function BlendedFGTickerRow({ ticker }: { ticker: TickerDetail }) {
         </div>
       </div>
 
-      {/* Divergence visualization */}
-      {Math.abs(divergence) > 5 && (
+      {/* Relative Divergence visualization */}
+      {(divergenceInfo.showRaw || Math.abs(divergence) > 5) && (
         <div className={`rounded p-2 border ${divergenceInfo.bg} border-opacity-40`}>
           <div className="flex items-center justify-between mb-1">
-            <span className={`text-xs ${divergenceInfo.color}`}>
-              Divergence: {divergence > 0 ? '+' : ''}{divergence.toFixed(0)}
-            </span>
+            <div className="flex items-center gap-2">
+              <span className={`text-xs ${divergenceInfo.color}`}>
+                {divergenceInfo.showRaw ? (
+                  `Raw: ${divergence > 0 ? '+' : ''}${divergence.toFixed(0)} pts`
+                ) : (
+                  `Z-Score: ${(raw.fg_divergence_z_score ?? 0) > 0 ? '+' : ''}${(raw.fg_divergence_z_score ?? 0).toFixed(1)}`
+                )}
+              </span>
+              {!divergenceInfo.showRaw && (
+                <span className={`text-[10px] ${divergenceInfo.color} opacity-60`}>
+                  Based on {raw.fg_divergence_data_points ?? 0} data points | {raw.fg_divergence_confidence} confidence
+                </span>
+              )}
+            </div>
             <div className="flex-1 mx-3 bg-slate-700/50 rounded-full h-1.5">
               <div 
                 className={`h-1.5 rounded-full ${divergenceInfo.barColor}`}
@@ -710,6 +766,11 @@ function BlendedFGTickerRow({ ticker }: { ticker: TickerDetail }) {
           <div className={`text-[10px] ${divergenceInfo.color} opacity-80`}>
             {divergenceInfo.label}
           </div>
+          {!divergenceInfo.showRaw && raw.fg_divergence_historical_mean !== undefined && (
+            <div className="text-[9px] text-slate-500 mt-1">
+              Typical divergence for {raw.asset_class?.replace('_', ' ')}: ±{raw.fg_divergence_historical_mean.toFixed(0)} points
+            </div>
+          )}
         </div>
       )}
     </div>

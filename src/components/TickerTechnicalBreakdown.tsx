@@ -178,6 +178,123 @@ export default function TickerTechnicalBreakdown({
     );
   }
 
+  // Simplified view for individual strategy gate modals
+  const isStrategyGateModal = 
+    stageName.includes('Fear & Greed Strategy') ||
+    stageName.includes('Regime Confirm Strategy') ||
+    stageName.includes('RSI Oversold Strategy') ||
+    stageName.includes('Mean Reversion Strategy') ||
+    stageName.includes('Momentum Strategy');
+
+  if (isStrategyGateModal && rawData) {
+    // Render strategy-specific compact row
+    const renderStrategyData = () => {
+      if (stageName.includes('Fear & Greed')) {
+        const fg = rawData.current_fg;
+        const threshold = rawData.fear_threshold;
+        const triggered = fg !== undefined && threshold !== undefined && fg <= threshold;
+        return (
+          <div className="flex items-center gap-3 text-xs">
+            <span className="text-slate-400">F&G: <span className={`font-medium ${fg !== undefined && fg <= 25 ? 'text-red-400' : fg !== undefined && fg <= 45 ? 'text-amber-400' : 'text-emerald-400'}`}>{fg?.toFixed(0) ?? '—'}</span></span>
+            <span className="text-slate-500">|</span>
+            <span className="text-slate-400">Threshold: <span className="text-slate-200 font-medium">{threshold ?? '—'}</span></span>
+            <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${triggered ? 'bg-emerald-900/50 text-emerald-400' : 'bg-slate-700/50 text-slate-400'}`}>
+              {triggered ? '✓ Triggered' : '✗ Not triggered'}
+            </span>
+          </div>
+        );
+      }
+
+      if (stageName.includes('Regime Confirm')) {
+        const price = rawData.price;
+        const regime = rawData.regime;
+        const rd = rawData.regime_details;
+        const ema200 = rd?.ema_200;
+        const pctAbove = price && ema200 ? ((price - ema200) / ema200 * 100) : undefined;
+        return (
+          <div className="flex items-center gap-3 text-xs">
+            <span className="text-slate-400">Price: <span className="text-slate-200 font-medium">${price?.toFixed(2) ?? '—'}</span></span>
+            <span className="text-slate-500">|</span>
+            <span className="text-slate-400">EMA 200: <span className="text-slate-200 font-medium">{ema200 ? `$${ema200.toFixed(2)}` : '—'}</span></span>
+            {pctAbove !== undefined && (
+              <>
+                <span className="text-slate-500">|</span>
+                <span className={`font-medium ${pctAbove >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                  {pctAbove >= 0 ? '+' : ''}{pctAbove.toFixed(1)}%
+                </span>
+              </>
+            )}
+            <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium capitalize ${regime === 'bull' ? 'bg-emerald-900/50 text-emerald-400' : regime === 'bear' ? 'bg-red-900/50 text-red-400' : 'bg-amber-900/50 text-amber-400'}`}>
+              {regime ?? '—'}
+            </span>
+          </div>
+        );
+      }
+
+      if (stageName.includes('RSI Oversold')) {
+        const rsi = rawData.rsi_14;
+        const rsiColor = rsi !== undefined 
+          ? rsi < 30 ? 'text-emerald-400' : rsi > 70 ? 'text-red-400' : 'text-amber-400'
+          : 'text-slate-400';
+        return (
+          <div className="flex items-center gap-3 text-xs">
+            <span className="text-slate-400">RSI (14): <span className={`font-medium ${rsiColor}`}>{rsi?.toFixed(1) ?? '—'}</span></span>
+            <span className="text-slate-500">|</span>
+            <span className="text-slate-400">Threshold: <span className="text-slate-200 font-medium">30</span></span>
+            <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${rsi !== undefined && rsi < 30 ? 'bg-emerald-900/50 text-emerald-400' : 'bg-slate-700/50 text-slate-400'}`}>
+              {rsi !== undefined && rsi < 30 ? '✓ Oversold' : '✗ Not oversold'}
+            </span>
+          </div>
+        );
+      }
+
+      if (stageName.includes('Mean Reversion')) {
+        const ret5d = rawData.return_5d;
+        const dip = rawData.dip_5d_pct;
+        const triggered = ret5d !== undefined && ret5d <= -5.0;
+        return (
+          <div className="flex items-center gap-3 text-xs">
+            <span className="text-slate-400">5d Return: <span className={`font-medium ${ret5d !== undefined ? (ret5d <= -5 ? 'text-emerald-400' : ret5d < 0 ? 'text-amber-400' : 'text-slate-300') : 'text-slate-400'}`}>{ret5d !== undefined ? `${ret5d >= 0 ? '+' : ''}${ret5d.toFixed(1)}%` : '—'}</span></span>
+            <span className="text-slate-500">|</span>
+            <span className="text-slate-400">Threshold: <span className="text-slate-200 font-medium">-5.0%</span></span>
+            <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${triggered ? 'bg-emerald-900/50 text-emerald-400' : 'bg-slate-700/50 text-slate-400'}`}>
+              {triggered ? '✓ Dip detected' : '✗ No dip'}
+            </span>
+          </div>
+        );
+      }
+
+      if (stageName.includes('Momentum')) {
+        const mom = rawData.momentum_20d;
+        const triggered = mom !== undefined && mom >= 10.0;
+        return (
+          <div className="flex items-center gap-3 text-xs">
+            <span className="text-slate-400">20d Momentum: <span className={`font-medium ${mom !== undefined ? (mom >= 10 ? 'text-emerald-400' : mom >= 0 ? 'text-amber-400' : 'text-red-400') : 'text-slate-400'}`}>{mom !== undefined ? `${mom >= 0 ? '+' : ''}${mom.toFixed(1)}%` : '—'}</span></span>
+            <span className="text-slate-500">|</span>
+            <span className="text-slate-400">Threshold: <span className="text-slate-200 font-medium">+10.0%</span></span>
+            <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${triggered ? 'bg-emerald-900/50 text-emerald-400' : 'bg-slate-700/50 text-slate-400'}`}>
+              {triggered ? '✓ Strong' : '✗ Weak'}
+            </span>
+          </div>
+        );
+      }
+
+      return null;
+    };
+
+    return (
+      <div className="bg-slate-800/50 rounded-lg p-3 border border-slate-700/50">
+        <div className="flex items-center justify-between mb-1">
+          <span className="font-mono font-semibold text-slate-200">{symbol}</span>
+          {rawData.price && (
+            <span className="text-xs text-slate-400">${rawData.price.toFixed(2)}</span>
+          )}
+        </div>
+        {renderStrategyData()}
+      </div>
+    );
+  }
+
   if (!rawData) {
     // Fallback for when no raw data is available
     return (

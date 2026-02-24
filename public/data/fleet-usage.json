@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-02-24T05:31:48.333690",
-  "active_sessions": 3,
+  "generated_at": "2026-02-24T06:04:34.341856",
+  "active_sessions": 4,
   "billing_model": "subscription",
   "subscriptions": {
     "Claude Max": {
@@ -15,24 +15,24 @@
     "today": 6.67,
     "week": 46.67,
     "month": 200.0,
-    "api_equivalent_today": 11.2853,
-    "api_equivalent_week": 270.2569,
-    "api_equivalent_month": 294.6773,
-    "savings_today": 4.62,
-    "savings_month": 94.68,
+    "api_equivalent_today": 12.1794,
+    "api_equivalent_week": 270.4132,
+    "api_equivalent_month": 294.8336,
+    "savings_today": 5.51,
+    "savings_month": 94.83,
     "subscription_daily": 6.67,
     "subscription_monthly": 200.0,
-    "tokens_today": 16939215
+    "tokens_today": 18932304
   },
   "by_model": {
     "Claude Sonnet 4": {
-      "cost_today": 5.86,
-      "cost_week": 68.9655,
-      "cost_month": 69.2656,
-      "tokens_today": 9602831,
-      "tokens_week": 128649459,
-      "tokens_month": 129029377,
-      "calls_today": 177
+      "cost_today": 6.7541,
+      "cost_week": 69.1218,
+      "cost_month": 69.4219,
+      "tokens_today": 11595920,
+      "tokens_week": 129145121,
+      "tokens_month": 129525039,
+      "calls_today": 212
     },
     "Claude Opus 4": {
       "cost_today": 5.4253,
@@ -46,18 +46,18 @@
   },
   "by_agent": {
     "theo": {
-      "cost_today": 7.0171,
-      "cost_week": 195.2218,
-      "cost_month": 195.2218,
-      "tokens_today": 9132771,
-      "primary_model": "Claude Opus 4",
+      "cost_today": 7.134,
+      "cost_week": 195.3386,
+      "cost_month": 195.3386,
+      "tokens_today": 9473877,
+      "primary_model": "Claude Sonnet 4",
       "department": "executive"
     },
     "cron": {
-      "cost_today": 3.3374,
-      "cost_week": 12.5984,
-      "cost_month": 37.0188,
-      "tokens_today": 6330388,
+      "cost_today": 4.1146,
+      "cost_week": 12.6378,
+      "cost_month": 37.0583,
+      "tokens_today": 7982371,
       "primary_model": "Claude Opus 4",
       "department": "other"
     },
@@ -87,7 +87,7 @@
     "2026-02-19": 31.14954680000002,
     "2026-02-20": 31.46951505000002,
     "2026-02-22": 0.3985869,
-    "2026-02-23": 189.71801385000012,
-    "2026-02-24": 11.285305599999997
+    "2026-02-23": 188.98020960000017,
+    "2026-02-24": 12.179379999999998
   }
 }

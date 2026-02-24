@@ -24,7 +24,7 @@ interface RealTimePrice {
   source: 'alpha_vantage' | 'polygon' | 'yahoo';
 }
 
-interface PortfolioAnalytics {
+export interface PortfolioAnalytics {
   totalValue: number;
   totalPnL: number;
   totalPnLPercent: number;
@@ -101,7 +101,7 @@ export class RealTimeTradingEngine {
       .select('symbol')
       .neq('symbol', '');
 
-    const symbols = [...new Set(positions?.map(p => p.symbol) || [])];
+    const symbols = Array.from(new Set(positions?.map(p => p.symbol) || []));
     
     for (const symbol of symbols) {
       await this.subscribeToPriceFeed(symbol);
@@ -520,7 +520,7 @@ export class RealTimeTradingEngine {
   }
 
   private closePriceSubscriptions(): void {
-    for (const ws of this.priceSubscriptions.values()) {
+    for (const ws of Array.from(this.priceSubscriptions.values())) {
       ws.close();
     }
     this.priceSubscriptions.clear();
@@ -531,7 +531,7 @@ export class RealTimeTradingEngine {
       const analytics = await this.calculatePortfolioAnalytics();
       
       // Notify all listeners
-      for (const listener of this.portfolioListeners) {
+      for (const listener of Array.from(this.portfolioListeners)) {
         listener(analytics);
       }
     } catch (error) {

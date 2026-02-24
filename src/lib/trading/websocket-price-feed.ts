@@ -134,7 +134,7 @@ export class WebSocketPriceFeed extends EventEmitter {
     this.isRunning = false;
     
     // Close all connections
-    for (const [source, ws] of this.connections) {
+    for (const [source, ws] of Array.from(this.connections)) {
       ws.close();
       this.clearHeartbeat(source);
     }
@@ -155,7 +155,7 @@ export class WebSocketPriceFeed extends EventEmitter {
     this.config.symbols.push(...newSymbols);
     
     // Subscribe to new symbols on all active connections
-    for (const [source, ws] of this.connections) {
+    for (const [source, ws] of Array.from(this.connections)) {
       if (ws.readyState === WebSocket.OPEN) {
         await this.subscribeSymbolsToSource(source, newSymbols);
       }
@@ -168,7 +168,7 @@ export class WebSocketPriceFeed extends EventEmitter {
     this.config.symbols = this.config.symbols.filter(s => !symbols.includes(s));
     
     // Unsubscribe from all active connections
-    for (const [source, ws] of this.connections) {
+    for (const [source, ws] of Array.from(this.connections)) {
       if (ws.readyState === WebSocket.OPEN) {
         await this.unsubscribeSymbolsFromSource(source, symbols);
       }
@@ -482,7 +482,7 @@ export class WebSocketPriceFeed extends EventEmitter {
             ws.send(JSON.stringify({ action: 'ping' }));
             break;
           case 'finnhub':
-            ws.ping();
+            ws.send(JSON.stringify({ type: 'ping' }));
             break;
           case 'alpha_vantage':
             ws.send(JSON.stringify({ function: 'HEARTBEAT' }));

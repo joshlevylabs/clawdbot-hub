@@ -729,13 +729,13 @@ export default function TradingPage() {
             <div className="space-y-6">
               {/* Real-Time P&L Dashboard */}
               <RealTimePnLDashboard 
-                userId={null} // Admin view - no user filter
+                userId={undefined} // Admin view - no user filter
                 compact={false}
               />
               
               {/* Real-Time Positions Table */}
               <RealTimePositionsTable
-                userId={null} // Admin view - no user filter
+                userId={undefined} // Admin view - no user filter
                 maxHeight="500px"
                 showRiskMetrics={true}
                 allowPositionActions={false}

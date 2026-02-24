@@ -23,6 +23,7 @@ import {
   ResponsiveContainer,
   ComposedChart,
   Bar,
+  BarChart,
   Area,
   AreaChart
 } from 'recharts';
@@ -320,12 +321,13 @@ export default function RealTimePnLDashboard({ userId, compact = false }: RealTi
               />
               <YAxis stroke="#666" />
               <Tooltip 
-                formatter={(value: number, name: string) => [
-                  formatCurrency(value),
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                formatter={((value: any, name: any) => [
+                  formatCurrency(Number(value) || 0),
                   name === 'totalPnL' ? 'Total P&L' : 
                   name === 'dayPnL' ? 'Day P&L' : 
                   'Portfolio Value'
-                ]}
+                ]) as any}
                 labelFormatter={(value) => new Date(value).toLocaleString()}
               />
               
@@ -399,7 +401,7 @@ export default function RealTimePnLDashboard({ userId, compact = false }: RealTi
                   <XAxis dataKey="name" />
                   <YAxis hide />
                   <Tooltip 
-                    formatter={(value: number) => value.toFixed(2)}
+                    formatter={((value: any) => Number(value || 0).toFixed(2)) as any}
                   />
                   <Bar dataKey="value" fill="#3b82f6" />
                   <Line dataKey="target" stroke="#ef4444" strokeDasharray="2 2" />

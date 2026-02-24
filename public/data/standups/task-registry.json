@@ -1573,13 +1573,13 @@
       "tag": "AGENT",
       "priority": "high",
       "assignee": "James Truchard",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "STD-32",
       "sourceStandupType": "evening-session",
       "sourceDate": "2026-02-23",
       "createdAt": "2026-02-23T12:05:16.596332-08:00",
       "updatedAt": "2026-02-23T20:00:31.973106-08:00",
-      "completedAt": null
+      "completedAt": "2026-02-24T12:20:12-08:00"
     },
     {
       "key": "A-184",

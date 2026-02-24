@@ -3,62 +3,70 @@
   "generated": "2026-02-24T06:00:56.921613",
   "sections": {
     "prayer": {
-      "title": "🕐️ Morning Prayer",
+      "title": "\ud83d\udd50\ufe0f Morning Prayer",
       "date": "Tuesday, February 24, 2026",
       "hebrew_date": "26 Cheshvan",
       "parsha": "Miketz",
       "parsha_theme": "sudden elevation, preparation meeting opportunity",
-      "modeh_ani": "מודה אני לפניך — I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
-      "blessing": "Blessed are You who raises the lowly — lift me to accomplish Your purposes.",
+      "modeh_ani": "\u05de\u05d5\u05d3\u05d4 \u05d0\u05e0\u05d9 \u05dc\u05e4\u05e0\u05d9\u05da \u2014 I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
+      "blessing": "Blessed are You who raises the lowly \u2014 lift me to accomplish Your purposes.",
       "psalm": "**Psalm 121:8**: \"The Lord will watch over your coming and going both now and forevermore.\"",
       "proverb": "**Proverbs 16:9**: \"The heart of man plans his way, but the Lord establishes his steps.\"",
       "intention": "Help me lead with integrity. Let my yes be yes and my no be no.",
-      "closing": "Baruch atah Adonai — Blessed are You, Lord, who renews creation daily with goodness."
+      "closing": "Baruch atah Adonai \u2014 Blessed are You, Lord, who renews creation daily with goodness.",
+      "audio": "/audio/brief-2026-02-24-prayer.ogg"
     },
     "weather": {
-      "title": "🌤️ Weather",
+      "title": "\ud83c\udf24\ufe0f Weather",
       "location": "Temecula, CA",
-      "current_temp": "49°F",
+      "current_temp": "49\u00b0F",
       "conditions": "Mostly Cloudy",
       "wind": "3.8 km/h NW",
-      "summary": "Cool morning at 49°F with mostly cloudy skies. Light winds from the northwest."
+      "summary": "Cool morning at 49\u00b0F with mostly cloudy skies. Light winds from the northwest.",
+      "audio": "/audio/brief-2026-02-24-weather.ogg"
     },
     "calendar": {
-      "title": "📅 Calendar",
+      "title": "\ud83d\udcc5 Calendar",
       "today": [],
       "week": [],
       "month": [],
-      "summary": "No calendar data available - email not configured. Check Google Calendar manually."
+      "summary": "No calendar data available - email not configured. Check Google Calendar manually.",
+      "audio": "/audio/brief-2026-02-24-calendar.ogg"
     },
     "email": {
-      "title": "📧 Email Highlights",
+      "title": "\ud83d\udce7 Email Highlights",
       "summary": "Email client not configured. Check josh@joshlevylabs.com and joshua.seth.levy@gmail.com manually.",
       "unread_count": null,
-      "important_messages": []
+      "important_messages": [],
+      "audio": "/audio/brief-2026-02-24-email.ogg"
     },
     "mre": {
-      "title": "📊 MRE Trading",
+      "title": "\ud83d\udcca MRE Trading",
       "fear_greed": 37.6,
       "fear_greed_rating": "fear",
       "regime": "sideways",
       "todays_plays": [],
       "pending_triggers": [],
-      "thesis": "Fear elevated (38), global regime sideways. All assets on HOLD - no buy signals."
+      "thesis": "Fear elevated (38), global regime sideways. All assets on HOLD - no buy signals.",
+      "audio": "/audio/brief-2026-02-24-mre.ogg"
     },
     "family": {
-      "title": "👨‍👩‍👧‍👦 Family Focus", 
+      "title": "\ud83d\udc68\u200d\ud83d\udc69\u200d\ud83d\udc67\u200d\ud83d\udc66 Family Focus",
       "relationship_temperature": "critical",
       "trend": "urgent",
-      "jillian_love_languages": ["quality time", "acts of service"],
+      "jillian_love_languages": [
+        "quality time",
+        "acts of service"
+      ],
       "priority_actions": [
         "PRIORITY: Focus on repair. Acknowledge recent conflicts without defending.",
-        "Increase acts of service dramatically this week.", 
+        "Increase acts of service dramatically this week.",
         "Create space for her to express frustrations without fixing."
       ],
       "family_notes": "Jones (2.5y) loves Super Wings and Blaze shows. Jett is 7 months old. Wedding anniversary March 26th."
     },
     "news": {
-      "title": "🌍 News Highlights",
+      "title": "\ud83c\udf0d News Highlights",
       "world": [
         "US meeting Russia, China in Geneva to discuss nuclear issue after New START treaty expired Feb 5",
         "Hamas Gaza disarmament plan expected in March - terrorist org would dismantle weapons",
@@ -66,10 +74,11 @@
       ],
       "ai_tech": [
         "Anthropic raised $30B Series G at $380B valuation on Feb 12",
-        "OpenAI close to finalizing $100B+ funding round - record breaking", 
+        "OpenAI close to finalizing $100B+ funding round - record breaking",
         "Fei-Fei Li's World Labs raised $1B for novel AI approach",
         "17 US AI companies raised $100M+ so far in 2026"
-      ]
+      ],
+      "audio": "/audio/brief-2026-02-24-news.ogg"
     }
   },
   "summary": "Critical relationship status requires immediate attention. Markets sideways with fear at 38 - no trading signals. Major AI funding rounds ($30B Anthropic, $100B+ OpenAI) signal continued acceleration. Focus: family repair, prayer guidance on integrity, watch for market opportunities."

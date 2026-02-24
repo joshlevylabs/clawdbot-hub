@@ -35,6 +35,7 @@ import MREDashboard from "./MREDashboard";
 import UniverseTable from "./UniverseTable";
 import MarketsOverview from "./MarketsOverview";
 import OptimizerResults from "./OptimizerResults";
+import VersionsTab from "./VersionsTab";
 import PositionCharts from "@/components/PositionCharts";
 import SignalAnalysisModal from "@/components/SignalAnalysisModal";
 import MarketCycles from "./MarketCycles";
@@ -358,7 +359,7 @@ function SignalAccuracyPanel({ stats }: { stats: SignalStats }) {
 
 // ===== Unified Trading Page with Single Tab Bar =====
 
-type ActiveTab = "overview" | "plays" | "positions" | "trades" | "signals" | "signal-flow" | "mre" | "universe" | "optimizer" | "markets" | "cycles" | "validation";
+type ActiveTab = "overview" | "plays" | "positions" | "trades" | "signals" | "signal-flow" | "mre" | "universe" | "optimizer" | "versions" | "markets" | "cycles" | "validation";
 
 export default function TradingPage() {
   // Support ?tab= query param for deep linking
@@ -366,7 +367,7 @@ export default function TradingPage() {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
       const tab = params.get('tab') as ActiveTab | null;
-      if (tab && ["overview","plays","positions","trades","signals","signal-flow","mre","universe","optimizer","markets","cycles","validation"].includes(tab)) {
+      if (tab && ["overview","plays","positions","trades","signals","signal-flow","mre","universe","optimizer","versions","markets","cycles","validation"].includes(tab)) {
         return tab;
       }
     }
@@ -535,6 +536,7 @@ export default function TradingPage() {
     { key: "mre", label: "MRE" },
     { key: "universe", label: "Universe" },
     { key: "optimizer", label: "Optimizer" },
+    { key: "versions", label: "Versions" },
     { key: "markets", label: "Markets" },
     { key: "cycles", label: "Cycles" },
     { key: "validation", label: "Validation" },
@@ -1252,6 +1254,9 @@ export default function TradingPage() {
 
           {/* ===== OPTIMIZER TAB ===== */}
           {activeTab === "optimizer" && <OptimizerResults />}
+
+          {/* ===== VERSIONS TAB ===== */}
+          {activeTab === "versions" && <VersionsTab />}
 
           {/* ===== MARKETS TAB ===== */}
           {activeTab === "markets" && (

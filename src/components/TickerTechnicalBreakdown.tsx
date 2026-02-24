@@ -61,9 +61,13 @@ interface MRESignal {
   regime_details?: {
     ema_20: number;
     ema_50: number;
+    ema_100: number;
+    ema_150: number;
     ema_200: number;
     above_ema_20: boolean;
     above_ema_50: boolean;
+    above_ema_100: boolean;
+    above_ema_150: boolean;
     above_ema_200: boolean;
     regime_days: number;
     regime_stage: string;
@@ -209,10 +213,11 @@ export default function TickerTechnicalBreakdown({
         const price = rawData.price;
         const regime = rawData.regime;
         const rd = rawData.regime_details;
-        // Fallback chain: 200 → slow → 50 → 20 (150/100 not yet in pipeline)
+        // Fallback chain: 200 → 150 → 100 → 50 → 20
         const emaChain: { value: number | undefined; label: string }[] = [
           { value: rd?.ema_200, label: 'EMA 200' },
-          { value: rd?.ema_slow, label: 'EMA Slow' },
+          { value: rd?.ema_150, label: 'EMA 150' },
+          { value: rd?.ema_100, label: 'EMA 100' },
           { value: rd?.ema_50, label: 'EMA 50' },
           { value: rd?.ema_20, label: 'EMA 20' },
         ];

@@ -1,5 +1,5 @@
 {
-  "nextAgentId": 187,
+  "nextAgentId": 192,
   "nextJoshuaId": 38,
   "tasks": [
     {
@@ -1622,6 +1622,84 @@
       "createdAt": "2026-02-23T12:05:16.596332-08:00",
       "updatedAt": "2026-02-23T12:05:16.596332-08:00",
       "completedAt": "2026-02-23T12:07:11.398908"
+    },
+    {
+      "key": "A-187",
+      "text": "Strategy Versioning Data Model \u2014 Create strategy-versions.json schema with semver per strategy, release dates, changelog entries, and accuracy metrics. Include migration from current hardcoded strategy configs.",
+      "tag": "AGENT",
+      "priority": "high",
+      "assignee": "Theo",
+      "status": "in_progress",
+      "sourceStandup": "manual",
+      "sourceStandupType": "manual",
+      "sourceDate": "2026-02-23",
+      "createdAt": "2026-02-23T19:24:49.534779",
+      "updatedAt": "2026-02-23T19:24:49.534779",
+      "completedAt": null,
+      "sprintReady": true
+    },
+    {
+      "key": "A-188",
+      "text": "Strategy Release History UI \u2014 Add version badge + expandable changelog to each strategy modal header. Show current version, last updated date, and accuracy delta from previous version.",
+      "tag": "AGENT",
+      "priority": "high",
+      "assignee": "Theo",
+      "status": "in_progress",
+      "sourceStandup": "manual",
+      "sourceStandupType": "manual",
+      "sourceDate": "2026-02-23",
+      "createdAt": "2026-02-23T19:24:49.534779",
+      "updatedAt": "2026-02-23T19:24:49.534779",
+      "completedAt": null,
+      "sprintReady": true,
+      "dependsOn": "A-187"
+    },
+    {
+      "key": "A-189",
+      "text": "Per-Strategy Accuracy Tracking Pipeline \u2014 Compute and store accuracy % per strategy version from backtest results. Track win rate, Sharpe, and profit factor per version. Detect regressions automatically.",
+      "tag": "AGENT",
+      "priority": "high",
+      "assignee": "Theo",
+      "status": "in_progress",
+      "sourceStandup": "manual",
+      "sourceStandupType": "manual",
+      "sourceDate": "2026-02-23",
+      "createdAt": "2026-02-23T19:24:49.534779",
+      "updatedAt": "2026-02-23T19:24:49.534779",
+      "completedAt": null,
+      "sprintReady": true,
+      "dependsOn": "A-187"
+    },
+    {
+      "key": "A-190",
+      "text": "Backtest Integration for Strategy Modals \u2014 Surface per-strategy backtest results in the UI. Show historical performance charts, threshold optimization results, and per-asset-class breakdown.",
+      "tag": "AGENT",
+      "priority": "medium",
+      "assignee": "Theo",
+      "status": "in_progress",
+      "sourceStandup": "manual",
+      "sourceStandupType": "manual",
+      "sourceDate": "2026-02-23",
+      "createdAt": "2026-02-23T19:24:49.534779",
+      "updatedAt": "2026-02-23T19:24:49.534779",
+      "completedAt": null,
+      "sprintReady": true,
+      "dependsOn": "A-189"
+    },
+    {
+      "key": "A-191",
+      "text": "Add EMA 100 and EMA 150 to MRE pipeline regime_details output \u2014 Currently only EMA 20/50/200 are computed. Add 100 and 150 for complete fallback chain in Regime Confirm strategy display.",
+      "tag": "AGENT",
+      "priority": "medium",
+      "assignee": "Theo",
+      "status": "in_progress",
+      "sourceStandup": "manual",
+      "sourceStandupType": "manual",
+      "sourceDate": "2026-02-23",
+      "createdAt": "2026-02-23T19:24:49.534779",
+      "updatedAt": "2026-02-23T19:24:49.534779",
+      "completedAt": null,
+      "sprintReady": true
     }
   ]
 }

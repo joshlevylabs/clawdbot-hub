@@ -1676,7 +1676,7 @@
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "Theo",
-      "status": "in_progress",
+      "status": "done",
       "sourceStandup": "manual",
       "sourceStandupType": "manual",
       "sourceDate": "2026-02-23",

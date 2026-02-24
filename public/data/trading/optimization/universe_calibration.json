@@ -1,0 +1,1952 @@
+{
+  "generated": "2026-02-24T11:36:00.354769",
+  "methodology": "MRE_V6_Full_Pipeline",
+  "data_sources": [
+    "walk_forward_validation",
+    "parameter_grid_optimization",
+    "cpcv_pbo_validation",
+    "noise_resilience"
+  ],
+  "tickers": {
+    "XLF": {
+      "strategies": {
+        "fear_greed": {
+          "params": {
+            "momentum_threshold": -10,
+            "hold_period": 7
+          },
+          "filter_params": {
+            "use_vix_filter": false,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.247,
+          "backtest_stats": {
+            "win_rate": 77.78,
+            "avg_return": 2.5798,
+            "sharpe": 0.3176,
+            "trade_count": 18
+          },
+          "robustness_metrics": {}
+        },
+        "regime_confirmation": {
+          "params": {
+            "sma_period": 50,
+            "dip_threshold": -2,
+            "hold_period": 7
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.0769,
+          "backtest_stats": {
+            "win_rate": 68.75,
+            "avg_return": 0.8492,
+            "sharpe": 0.1118,
+            "trade_count": 16
+          },
+          "robustness_metrics": {}
+        },
+        "rsi_oversold": {
+          "params": {
+            "rsi_threshold": 25,
+            "sma_fast": 50,
+            "sma_slow": 200,
+            "hold_period": 7
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.0769,
+          "backtest_stats": {
+            "win_rate": 68.75,
+            "avg_return": 0.8492,
+            "sharpe": 0.1118,
+            "trade_count": 16
+          },
+          "robustness_metrics": {}
+        },
+        "mean_reversion": {
+          "params": {
+            "bb_width": 2.0,
+            "bb_period": 20,
+            "hold_period": 7
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.0769,
+          "backtest_stats": {
+            "win_rate": 68.75,
+            "avg_return": 0.8492,
+            "sharpe": 0.1118,
+            "trade_count": 16
+          },
+          "robustness_metrics": {}
+        }
+      },
+      "meta": {
+        "last_optimized": "2026-02-24T11:36:00.354776",
+        "optimization_phases_completed": 4
+      }
+    },
+    "XLK": {
+      "strategies": {
+        "fear_greed": {
+          "params": {
+            "momentum_threshold": -10,
+            "hold_period": 7
+          },
+          "filter_params": {
+            "use_vix_filter": false,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.5116,
+          "backtest_stats": {
+            "win_rate": 85.71,
+            "avg_return": 2.7373,
+            "sharpe": 0.5969,
+            "trade_count": 21
+          },
+          "robustness_metrics": {}
+        },
+        "regime_confirmation": {
+          "params": {
+            "sma_period": 50,
+            "dip_threshold": -2,
+            "hold_period": 7
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.2445,
+          "backtest_stats": {
+            "win_rate": 81.25,
+            "avg_return": 1.8044,
+            "sharpe": 0.3009,
+            "trade_count": 16
+          },
+          "robustness_metrics": {}
+        },
+        "rsi_oversold": {
+          "params": {
+            "rsi_threshold": 25,
+            "sma_fast": 50,
+            "sma_slow": 200,
+            "hold_period": 7
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.2445,
+          "backtest_stats": {
+            "win_rate": 81.25,
+            "avg_return": 1.8044,
+            "sharpe": 0.3009,
+            "trade_count": 16
+          },
+          "robustness_metrics": {}
+        },
+        "mean_reversion": {
+          "params": {
+            "bb_width": 2.0,
+            "bb_period": 20,
+            "hold_period": 7
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.2445,
+          "backtest_stats": {
+            "win_rate": 81.25,
+            "avg_return": 1.8044,
+            "sharpe": 0.3009,
+            "trade_count": 16
+          },
+          "robustness_metrics": {}
+        }
+      },
+      "meta": {
+        "last_optimized": "2026-02-24T11:36:00.354786",
+        "optimization_phases_completed": 4
+      }
+    },
+    "JNJ": {
+      "strategies": {
+        "fear_greed": {
+          "params": {
+            "momentum_threshold": -10,
+            "hold_period": 7
+          },
+          "filter_params": {
+            "use_vix_filter": false,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.2005,
+          "backtest_stats": {
+            "win_rate": 62.39,
+            "avg_return": 1.6722,
+            "sharpe": 0.3214,
+            "trade_count": 117
+          },
+          "robustness_metrics": {}
+        },
+        "regime_confirmation": {
+          "params": {
+            "sma_period": 50,
+            "dip_threshold": -5,
+            "hold_period": 7
+          },
+          "filter_params": {
+            "use_vix_filter": false,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": false,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.2835,
+          "backtest_stats": {
+            "win_rate": 63.93,
+            "avg_return": 1.9086,
+            "sharpe": 0.4435,
+            "trade_count": 61
+          },
+          "robustness_metrics": {}
+        },
+        "rsi_oversold": {
+          "params": {
+            "rsi_threshold": 25,
+            "sma_fast": 50,
+            "sma_slow": 200,
+            "hold_period": 3
+          },
+          "filter_params": {
+            "use_vix_filter": false,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.2188,
+          "backtest_stats": {
+            "win_rate": 57.5,
+            "avg_return": 1.2303,
+            "sharpe": 0.3806,
+            "trade_count": 40
+          },
+          "robustness_metrics": {}
+        },
+        "mean_reversion": {
+          "params": {
+            "bb_width": 3.0,
+            "bb_period": 20,
+            "hold_period": 7
+          },
+          "filter_params": {
+            "use_vix_filter": false,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.3495,
+          "backtest_stats": {
+            "win_rate": 68.63,
+            "avg_return": 2.4523,
+            "sharpe": 0.5093,
+            "trade_count": 51
+          },
+          "robustness_metrics": {}
+        }
+      },
+      "meta": {
+        "last_optimized": "2026-02-24T11:36:00.354794",
+        "optimization_phases_completed": 4
+      }
+    },
+    "AAPL": {
+      "strategies": {
+        "fear_greed": {
+          "params": {
+            "momentum_threshold": -5,
+            "hold_period": 7
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.0463,
+          "backtest_stats": {
+            "win_rate": 54.05,
+            "avg_return": 0.7625,
+            "sharpe": 0.0857,
+            "trade_count": 444
+          },
+          "robustness_metrics": {}
+        },
+        "regime_confirmation": {
+          "params": {
+            "sma_period": 50,
+            "dip_threshold": -2,
+            "hold_period": 7
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.162,
+          "backtest_stats": {
+            "win_rate": 55.56,
+            "avg_return": 2.2406,
+            "sharpe": 0.2916,
+            "trade_count": 18
+          },
+          "robustness_metrics": {}
+        },
+        "rsi_oversold": {
+          "params": {
+            "rsi_threshold": 25,
+            "sma_fast": 50,
+            "sma_slow": 200,
+            "hold_period": 7
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.162,
+          "backtest_stats": {
+            "win_rate": 55.56,
+            "avg_return": 2.2406,
+            "sharpe": 0.2916,
+            "trade_count": 18
+          },
+          "robustness_metrics": {}
+        },
+        "mean_reversion": {
+          "params": {
+            "bb_width": 2.0,
+            "bb_period": 20,
+            "hold_period": 7
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.162,
+          "backtest_stats": {
+            "win_rate": 55.56,
+            "avg_return": 2.2406,
+            "sharpe": 0.2916,
+            "trade_count": 18
+          },
+          "robustness_metrics": {}
+        }
+      },
+      "meta": {
+        "last_optimized": "2026-02-24T11:36:00.354800",
+        "optimization_phases_completed": 4
+      },
+      "robustness_summary": {
+        "noise_resilience": 0.7793,
+        "best_robust_strategy": "fear_greed"
+      }
+    },
+    "TSLA": {
+      "strategies": {
+        "fear_greed": {
+          "params": {
+            "momentum_threshold": -5,
+            "hold_period": 7
+          },
+          "filter_params": {
+            "use_vix_filter": false,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.089,
+          "backtest_stats": {
+            "win_rate": 57.14,
+            "avg_return": 1.5672,
+            "sharpe": 0.1558,
+            "trade_count": 217
+          },
+          "robustness_metrics": {}
+        },
+        "regime_confirmation": {
+          "params": {
+            "sma_period": 50,
+            "dip_threshold": -2,
+            "hold_period": 3
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.0,
+          "backtest_stats": {
+            "win_rate": 30.77,
+            "avg_return": -1.8403,
+            "sharpe": -0.2438,
+            "trade_count": 13
+          },
+          "robustness_metrics": {}
+        },
+        "rsi_oversold": {
+          "params": {
+            "rsi_threshold": 25,
+            "sma_fast": 50,
+            "sma_slow": 200,
+            "hold_period": 3
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.0,
+          "backtest_stats": {
+            "win_rate": 30.77,
+            "avg_return": -1.8403,
+            "sharpe": -0.2438,
+            "trade_count": 13
+          },
+          "robustness_metrics": {}
+        },
+        "mean_reversion": {
+          "params": {
+            "bb_width": 2.0,
+            "bb_period": 20,
+            "hold_period": 3
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.0,
+          "backtest_stats": {
+            "win_rate": 30.77,
+            "avg_return": -1.8403,
+            "sharpe": -0.2438,
+            "trade_count": 13
+          },
+          "robustness_metrics": {}
+        }
+      },
+      "meta": {
+        "last_optimized": "2026-02-24T11:36:00.354806",
+        "optimization_phases_completed": 4
+      }
+    },
+    "XOM": {
+      "strategies": {
+        "fear_greed": {
+          "params": {
+            "momentum_threshold": -10,
+            "hold_period": 7
+          },
+          "filter_params": {
+            "use_vix_filter": false,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": false,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.2048,
+          "backtest_stats": {
+            "win_rate": 64.2,
+            "avg_return": 1.9094,
+            "sharpe": 0.319,
+            "trade_count": 81
+          },
+          "robustness_metrics": {}
+        },
+        "regime_confirmation": {
+          "params": {
+            "sma_period": 50,
+            "dip_threshold": -5,
+            "hold_period": 7
+          },
+          "filter_params": {
+            "use_vix_filter": false,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.5686,
+          "backtest_stats": {
+            "win_rate": 88.89,
+            "avg_return": 2.1544,
+            "sharpe": 0.7108,
+            "trade_count": 9
+          },
+          "robustness_metrics": {}
+        },
+        "rsi_oversold": {
+          "params": {
+            "rsi_threshold": 35,
+            "sma_fast": 50,
+            "sma_slow": 200,
+            "hold_period": 7
+          },
+          "filter_params": {
+            "use_vix_filter": false,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": false,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.2591,
+          "backtest_stats": {
+            "win_rate": 69.43,
+            "avg_return": 1.3011,
+            "sharpe": 0.3732,
+            "trade_count": 157
+          },
+          "robustness_metrics": {}
+        },
+        "mean_reversion": {
+          "params": {
+            "bb_width": 2.0,
+            "bb_period": 20,
+            "hold_period": 7
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.1633,
+          "backtest_stats": {
+            "win_rate": 60.85,
+            "avg_return": 1.0919,
+            "sharpe": 0.2683,
+            "trade_count": 281
+          },
+          "robustness_metrics": {}
+        }
+      },
+      "meta": {
+        "last_optimized": "2026-02-24T11:36:00.354811",
+        "optimization_phases_completed": 4
+      },
+      "robustness_summary": {
+        "noise_resilience": 0.5641,
+        "best_robust_strategy": "fear_greed"
+      }
+    },
+    "JPM": {
+      "strategies": {
+        "fear_greed": {
+          "params": {
+            "momentum_threshold": -10,
+            "hold_period": 7
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.0999,
+          "backtest_stats": {
+            "win_rate": 60.11,
+            "avg_return": 1.5317,
+            "sharpe": 0.1662,
+            "trade_count": 178
+          },
+          "robustness_metrics": {}
+        },
+        "regime_confirmation": {
+          "params": {
+            "sma_period": 50,
+            "dip_threshold": -2,
+            "hold_period": 3
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.0835,
+          "backtest_stats": {
+            "win_rate": 57.14,
+            "avg_return": 0.8227,
+            "sharpe": 0.1462,
+            "trade_count": 21
+          },
+          "robustness_metrics": {}
+        },
+        "rsi_oversold": {
+          "params": {
+            "rsi_threshold": 25,
+            "sma_fast": 50,
+            "sma_slow": 200,
+            "hold_period": 3
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.0835,
+          "backtest_stats": {
+            "win_rate": 57.14,
+            "avg_return": 0.8227,
+            "sharpe": 0.1462,
+            "trade_count": 21
+          },
+          "robustness_metrics": {}
+        },
+        "mean_reversion": {
+          "params": {
+            "bb_width": 2.0,
+            "bb_period": 20,
+            "hold_period": 3
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.0835,
+          "backtest_stats": {
+            "win_rate": 57.14,
+            "avg_return": 0.8227,
+            "sharpe": 0.1462,
+            "trade_count": 21
+          },
+          "robustness_metrics": {}
+        }
+      },
+      "meta": {
+        "last_optimized": "2026-02-24T11:36:00.354816",
+        "optimization_phases_completed": 4
+      },
+      "robustness_summary": {
+        "noise_resilience": 0.6579,
+        "best_robust_strategy": "fear_greed"
+      }
+    },
+    "SPY": {
+      "strategies": {
+        "fear_greed": {
+          "params": {
+            "momentum_threshold": -10,
+            "hold_period": 7
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.2499,
+          "backtest_stats": {
+            "win_rate": 72.34,
+            "avg_return": 2.0314,
+            "sharpe": 0.3454,
+            "trade_count": 47
+          },
+          "robustness_metrics": {}
+        },
+        "regime_confirmation": {
+          "params": {
+            "sma_period": 50,
+            "dip_threshold": -2,
+            "hold_period": 7
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.2159,
+          "backtest_stats": {
+            "win_rate": 70.59,
+            "avg_return": 2.0164,
+            "sharpe": 0.3059,
+            "trade_count": 17
+          },
+          "robustness_metrics": {}
+        },
+        "rsi_oversold": {
+          "params": {
+            "rsi_threshold": 25,
+            "sma_fast": 50,
+            "sma_slow": 200,
+            "hold_period": 7
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.2159,
+          "backtest_stats": {
+            "win_rate": 70.59,
+            "avg_return": 2.0164,
+            "sharpe": 0.3059,
+            "trade_count": 17
+          },
+          "robustness_metrics": {}
+        },
+        "mean_reversion": {
+          "params": {
+            "bb_width": 2.0,
+            "bb_period": 20,
+            "hold_period": 7
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.2159,
+          "backtest_stats": {
+            "win_rate": 70.59,
+            "avg_return": 2.0164,
+            "sharpe": 0.3059,
+            "trade_count": 17
+          },
+          "robustness_metrics": {}
+        }
+      },
+      "meta": {
+        "last_optimized": "2026-02-24T11:36:00.354820",
+        "optimization_phases_completed": 4
+      }
+    },
+    "XLE": {
+      "strategies": {
+        "fear_greed": {
+          "params": {
+            "momentum_threshold": -5,
+            "hold_period": 7
+          },
+          "filter_params": {
+            "use_vix_filter": false,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.1884,
+          "backtest_stats": {
+            "win_rate": 67.95,
+            "avg_return": 1.252,
+            "sharpe": 0.2773,
+            "trade_count": 78
+          },
+          "robustness_metrics": {}
+        },
+        "regime_confirmation": {
+          "params": {
+            "sma_period": 50,
+            "dip_threshold": -2,
+            "hold_period": 7
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.0113,
+          "backtest_stats": {
+            "win_rate": 56.25,
+            "avg_return": 0.2525,
+            "sharpe": 0.0201,
+            "trade_count": 16
+          },
+          "robustness_metrics": {}
+        },
+        "rsi_oversold": {
+          "params": {
+            "rsi_threshold": 25,
+            "sma_fast": 50,
+            "sma_slow": 200,
+            "hold_period": 7
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.0113,
+          "backtest_stats": {
+            "win_rate": 56.25,
+            "avg_return": 0.2525,
+            "sharpe": 0.0201,
+            "trade_count": 16
+          },
+          "robustness_metrics": {}
+        },
+        "mean_reversion": {
+          "params": {
+            "bb_width": 2.0,
+            "bb_period": 20,
+            "hold_period": 7
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.0113,
+          "backtest_stats": {
+            "win_rate": 56.25,
+            "avg_return": 0.2525,
+            "sharpe": 0.0201,
+            "trade_count": 16
+          },
+          "robustness_metrics": {}
+        }
+      },
+      "meta": {
+        "last_optimized": "2026-02-24T11:36:00.354824",
+        "optimization_phases_completed": 4
+      }
+    },
+    "GOOGL": {
+      "strategies": {
+        "fear_greed": {
+          "params": {
+            "momentum_threshold": -5,
+            "hold_period": 3
+          },
+          "filter_params": {
+            "use_vix_filter": false,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.1015,
+          "backtest_stats": {
+            "win_rate": 58.55,
+            "avg_return": 0.633,
+            "sharpe": 0.1734,
+            "trade_count": 304
+          },
+          "robustness_metrics": {}
+        },
+        "regime_confirmation": {
+          "params": {
+            "sma_period": 50,
+            "dip_threshold": -2,
+            "hold_period": 7
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.2215,
+          "backtest_stats": {
+            "win_rate": 73.33,
+            "avg_return": 1.8566,
+            "sharpe": 0.302,
+            "trade_count": 15
+          },
+          "robustness_metrics": {}
+        },
+        "rsi_oversold": {
+          "params": {
+            "rsi_threshold": 25,
+            "sma_fast": 50,
+            "sma_slow": 200,
+            "hold_period": 7
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.2215,
+          "backtest_stats": {
+            "win_rate": 73.33,
+            "avg_return": 1.8566,
+            "sharpe": 0.302,
+            "trade_count": 15
+          },
+          "robustness_metrics": {}
+        },
+        "mean_reversion": {
+          "params": {
+            "bb_width": 2.0,
+            "bb_period": 20,
+            "hold_period": 7
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.2215,
+          "backtest_stats": {
+            "win_rate": 73.33,
+            "avg_return": 1.8566,
+            "sharpe": 0.302,
+            "trade_count": 15
+          },
+          "robustness_metrics": {}
+        }
+      },
+      "meta": {
+        "last_optimized": "2026-02-24T11:36:00.354828",
+        "optimization_phases_completed": 4
+      }
+    },
+    "VNQ": {
+      "strategies": {
+        "fear_greed": {
+          "params": {
+            "momentum_threshold": -10,
+            "hold_period": 7
+          },
+          "filter_params": {
+            "use_vix_filter": false,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 11
+          },
+          "optimization_score": 0.144,
+          "backtest_stats": {
+            "win_rate": 65.85,
+            "avg_return": 2.1844,
+            "sharpe": 0.2187,
+            "trade_count": 41
+          },
+          "robustness_metrics": {}
+        },
+        "regime_confirmation": {
+          "params": {
+            "sma_period": 50,
+            "dip_threshold": -2,
+            "hold_period": 3
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.0545,
+          "backtest_stats": {
+            "win_rate": 64.71,
+            "avg_return": 0.6517,
+            "sharpe": 0.0842,
+            "trade_count": 17
+          },
+          "robustness_metrics": {}
+        },
+        "rsi_oversold": {
+          "params": {
+            "rsi_threshold": 25,
+            "sma_fast": 50,
+            "sma_slow": 200,
+            "hold_period": 3
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.0545,
+          "backtest_stats": {
+            "win_rate": 64.71,
+            "avg_return": 0.6517,
+            "sharpe": 0.0842,
+            "trade_count": 17
+          },
+          "robustness_metrics": {}
+        },
+        "mean_reversion": {
+          "params": {
+            "bb_width": 2.0,
+            "bb_period": 20,
+            "hold_period": 3
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.0545,
+          "backtest_stats": {
+            "win_rate": 64.71,
+            "avg_return": 0.6517,
+            "sharpe": 0.0842,
+            "trade_count": 17
+          },
+          "robustness_metrics": {}
+        }
+      },
+      "meta": {
+        "last_optimized": "2026-02-24T11:36:00.354832",
+        "optimization_phases_completed": 4
+      }
+    },
+    "AMZN": {
+      "strategies": {
+        "fear_greed": {
+          "params": {
+            "momentum_threshold": -5,
+            "hold_period": 3
+          },
+          "filter_params": {
+            "use_vix_filter": false,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.0525,
+          "backtest_stats": {
+            "win_rate": 53.88,
+            "avg_return": 0.7253,
+            "sharpe": 0.0974,
+            "trade_count": 529
+          },
+          "robustness_metrics": {}
+        },
+        "regime_confirmation": {
+          "params": {
+            "sma_period": 50,
+            "dip_threshold": -2,
+            "hold_period": 3
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.0951,
+          "backtest_stats": {
+            "win_rate": 55.0,
+            "avg_return": 1.3949,
+            "sharpe": 0.1729,
+            "trade_count": 20
+          },
+          "robustness_metrics": {}
+        },
+        "rsi_oversold": {
+          "params": {
+            "rsi_threshold": 25,
+            "sma_fast": 50,
+            "sma_slow": 200,
+            "hold_period": 3
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.0951,
+          "backtest_stats": {
+            "win_rate": 55.0,
+            "avg_return": 1.3949,
+            "sharpe": 0.1729,
+            "trade_count": 20
+          },
+          "robustness_metrics": {}
+        },
+        "mean_reversion": {
+          "params": {
+            "bb_width": 2.0,
+            "bb_period": 20,
+            "hold_period": 3
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.0951,
+          "backtest_stats": {
+            "win_rate": 55.0,
+            "avg_return": 1.3949,
+            "sharpe": 0.1729,
+            "trade_count": 20
+          },
+          "robustness_metrics": {}
+        }
+      },
+      "meta": {
+        "last_optimized": "2026-02-24T11:36:00.354837",
+        "optimization_phases_completed": 4
+      },
+      "robustness_summary": {
+        "noise_resilience": 0.6324,
+        "best_robust_strategy": "fear_greed"
+      }
+    },
+    "TLT": {
+      "strategies": {
+        "fear_greed": {
+          "params": {
+            "momentum_threshold": -5,
+            "hold_period": 7
+          },
+          "filter_params": {
+            "use_vix_filter": false,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.0518,
+          "backtest_stats": {
+            "win_rate": 60.44,
+            "avg_return": 0.2334,
+            "sharpe": 0.0857,
+            "trade_count": 91
+          },
+          "robustness_metrics": {}
+        },
+        "regime_confirmation": {
+          "params": {
+            "sma_period": 50,
+            "dip_threshold": -2,
+            "hold_period": 3
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.0,
+          "backtest_stats": {
+            "win_rate": 11.76,
+            "avg_return": -2.5583,
+            "sharpe": -0.9041,
+            "trade_count": 17
+          },
+          "robustness_metrics": {}
+        },
+        "rsi_oversold": {
+          "params": {
+            "rsi_threshold": 25,
+            "sma_fast": 50,
+            "sma_slow": 200,
+            "hold_period": 3
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.0,
+          "backtest_stats": {
+            "win_rate": 11.76,
+            "avg_return": -2.5583,
+            "sharpe": -0.9041,
+            "trade_count": 17
+          },
+          "robustness_metrics": {}
+        },
+        "mean_reversion": {
+          "params": {
+            "bb_width": 2.0,
+            "bb_period": 20,
+            "hold_period": 3
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.0,
+          "backtest_stats": {
+            "win_rate": 11.76,
+            "avg_return": -2.5583,
+            "sharpe": -0.9041,
+            "trade_count": 17
+          },
+          "robustness_metrics": {}
+        }
+      },
+      "meta": {
+        "last_optimized": "2026-02-24T11:36:00.354841",
+        "optimization_phases_completed": 4
+      }
+    },
+    "XLV": {
+      "strategies": {
+        "fear_greed": {
+          "params": {
+            "momentum_threshold": -5,
+            "hold_period": 7
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 11
+          },
+          "optimization_score": 0.1575,
+          "backtest_stats": {
+            "win_rate": 64.46,
+            "avg_return": 1.053,
+            "sharpe": 0.2443,
+            "trade_count": 121
+          },
+          "robustness_metrics": {}
+        },
+        "regime_confirmation": {
+          "params": {
+            "sma_period": 50,
+            "dip_threshold": -2,
+            "hold_period": 7
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.1079,
+          "backtest_stats": {
+            "win_rate": 56.25,
+            "avg_return": 1.0848,
+            "sharpe": 0.1919,
+            "trade_count": 16
+          },
+          "robustness_metrics": {}
+        },
+        "rsi_oversold": {
+          "params": {
+            "rsi_threshold": 25,
+            "sma_fast": 50,
+            "sma_slow": 200,
+            "hold_period": 7
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.1079,
+          "backtest_stats": {
+            "win_rate": 56.25,
+            "avg_return": 1.0848,
+            "sharpe": 0.1919,
+            "trade_count": 16
+          },
+          "robustness_metrics": {}
+        },
+        "mean_reversion": {
+          "params": {
+            "bb_width": 2.0,
+            "bb_period": 20,
+            "hold_period": 7
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.1079,
+          "backtest_stats": {
+            "win_rate": 56.25,
+            "avg_return": 1.0848,
+            "sharpe": 0.1919,
+            "trade_count": 16
+          },
+          "robustness_metrics": {}
+        }
+      },
+      "meta": {
+        "last_optimized": "2026-02-24T11:36:00.354845",
+        "optimization_phases_completed": 4
+      }
+    },
+    "IWM": {
+      "strategies": {
+        "fear_greed": {
+          "params": {
+            "momentum_threshold": -10,
+            "hold_period": 7
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.1142,
+          "backtest_stats": {
+            "win_rate": 66.15,
+            "avg_return": 1.118,
+            "sharpe": 0.1726,
+            "trade_count": 65
+          },
+          "robustness_metrics": {}
+        },
+        "regime_confirmation": {
+          "params": {
+            "sma_period": 50,
+            "dip_threshold": -2,
+            "hold_period": 7
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.0492,
+          "backtest_stats": {
+            "win_rate": 68.75,
+            "avg_return": 0.5611,
+            "sharpe": 0.0715,
+            "trade_count": 16
+          },
+          "robustness_metrics": {}
+        },
+        "rsi_oversold": {
+          "params": {
+            "rsi_threshold": 25,
+            "sma_fast": 50,
+            "sma_slow": 200,
+            "hold_period": 7
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.0492,
+          "backtest_stats": {
+            "win_rate": 68.75,
+            "avg_return": 0.5611,
+            "sharpe": 0.0715,
+            "trade_count": 16
+          },
+          "robustness_metrics": {}
+        },
+        "mean_reversion": {
+          "params": {
+            "bb_width": 2.0,
+            "bb_period": 20,
+            "hold_period": 7
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.0492,
+          "backtest_stats": {
+            "win_rate": 68.75,
+            "avg_return": 0.5611,
+            "sharpe": 0.0715,
+            "trade_count": 16
+          },
+          "robustness_metrics": {}
+        }
+      },
+      "meta": {
+        "last_optimized": "2026-02-24T11:36:00.354849",
+        "optimization_phases_completed": 4
+      }
+    },
+    "NVDA": {
+      "strategies": {
+        "fear_greed": {
+          "params": {
+            "momentum_threshold": -10,
+            "hold_period": 7
+          },
+          "filter_params": {
+            "use_vix_filter": false,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.0424,
+          "backtest_stats": {
+            "win_rate": 53.55,
+            "avg_return": 1.0094,
+            "sharpe": 0.0791,
+            "trade_count": 211
+          },
+          "robustness_metrics": {}
+        },
+        "regime_confirmation": {
+          "params": {
+            "sma_period": 50,
+            "dip_threshold": -2,
+            "hold_period": 7
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.1858,
+          "backtest_stats": {
+            "win_rate": 68.75,
+            "avg_return": 2.9025,
+            "sharpe": 0.2703,
+            "trade_count": 16
+          },
+          "robustness_metrics": {}
+        },
+        "rsi_oversold": {
+          "params": {
+            "rsi_threshold": 25,
+            "sma_fast": 50,
+            "sma_slow": 200,
+            "hold_period": 7
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.1858,
+          "backtest_stats": {
+            "win_rate": 68.75,
+            "avg_return": 2.9025,
+            "sharpe": 0.2703,
+            "trade_count": 16
+          },
+          "robustness_metrics": {}
+        },
+        "mean_reversion": {
+          "params": {
+            "bb_width": 2.0,
+            "bb_period": 20,
+            "hold_period": 7
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.1858,
+          "backtest_stats": {
+            "win_rate": 68.75,
+            "avg_return": 2.9025,
+            "sharpe": 0.2703,
+            "trade_count": 16
+          },
+          "robustness_metrics": {}
+        }
+      },
+      "meta": {
+        "last_optimized": "2026-02-24T11:36:00.354853",
+        "optimization_phases_completed": 4
+      }
+    },
+    "QQQ": {
+      "strategies": {
+        "fear_greed": {
+          "params": {
+            "momentum_threshold": -10,
+            "hold_period": 7
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.0744,
+          "backtest_stats": {
+            "win_rate": 57.83,
+            "avg_return": 0.9885,
+            "sharpe": 0.1287,
+            "trade_count": 83
+          },
+          "robustness_metrics": {}
+        },
+        "regime_confirmation": {
+          "params": {
+            "sma_period": 50,
+            "dip_threshold": -2,
+            "hold_period": 7
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.1733,
+          "backtest_stats": {
+            "win_rate": 75.0,
+            "avg_return": 1.3387,
+            "sharpe": 0.231,
+            "trade_count": 16
+          },
+          "robustness_metrics": {}
+        },
+        "rsi_oversold": {
+          "params": {
+            "rsi_threshold": 25,
+            "sma_fast": 50,
+            "sma_slow": 200,
+            "hold_period": 7
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.1733,
+          "backtest_stats": {
+            "win_rate": 75.0,
+            "avg_return": 1.3387,
+            "sharpe": 0.231,
+            "trade_count": 16
+          },
+          "robustness_metrics": {}
+        },
+        "mean_reversion": {
+          "params": {
+            "bb_width": 2.0,
+            "bb_period": 20,
+            "hold_period": 7
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.1733,
+          "backtest_stats": {
+            "win_rate": 75.0,
+            "avg_return": 1.3387,
+            "sharpe": 0.231,
+            "trade_count": 16
+          },
+          "robustness_metrics": {}
+        }
+      },
+      "meta": {
+        "last_optimized": "2026-02-24T11:36:00.354857",
+        "optimization_phases_completed": 4
+      }
+    },
+    "MSFT": {
+      "strategies": {
+        "fear_greed": {
+          "params": {
+            "momentum_threshold": -10,
+            "hold_period": 7
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.1284,
+          "backtest_stats": {
+            "win_rate": 57.33,
+            "avg_return": 1.4917,
+            "sharpe": 0.2239,
+            "trade_count": 150
+          },
+          "robustness_metrics": {}
+        },
+        "regime_confirmation": {
+          "params": {
+            "sma_period": 50,
+            "dip_threshold": -2,
+            "hold_period": 7
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.2997,
+          "backtest_stats": {
+            "win_rate": 72.22,
+            "avg_return": 2.0419,
+            "sharpe": 0.415,
+            "trade_count": 18
+          },
+          "robustness_metrics": {}
+        },
+        "rsi_oversold": {
+          "params": {
+            "rsi_threshold": 25,
+            "sma_fast": 50,
+            "sma_slow": 200,
+            "hold_period": 7
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.2997,
+          "backtest_stats": {
+            "win_rate": 72.22,
+            "avg_return": 2.0419,
+            "sharpe": 0.415,
+            "trade_count": 18
+          },
+          "robustness_metrics": {}
+        },
+        "mean_reversion": {
+          "params": {
+            "bb_width": 2.0,
+            "bb_period": 20,
+            "hold_period": 7
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.2997,
+          "backtest_stats": {
+            "win_rate": 72.22,
+            "avg_return": 2.0419,
+            "sharpe": 0.415,
+            "trade_count": 18
+          },
+          "robustness_metrics": {}
+        }
+      },
+      "meta": {
+        "last_optimized": "2026-02-24T11:36:00.354861",
+        "optimization_phases_completed": 4
+      },
+      "robustness_summary": {
+        "noise_resilience": 0.6587,
+        "best_robust_strategy": "fear_greed"
+      }
+    },
+    "META": {
+      "strategies": {
+        "fear_greed": {
+          "params": {
+            "momentum_threshold": -10,
+            "hold_period": 3
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.0618,
+          "backtest_stats": {
+            "win_rate": 55.21,
+            "avg_return": 0.636,
+            "sharpe": 0.112,
+            "trade_count": 96
+          },
+          "robustness_metrics": {}
+        },
+        "regime_confirmation": {
+          "params": {
+            "sma_period": 50,
+            "dip_threshold": -2,
+            "hold_period": 7
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.1345,
+          "backtest_stats": {
+            "win_rate": 50.0,
+            "avg_return": 2.2897,
+            "sharpe": 0.269,
+            "trade_count": 10
+          },
+          "robustness_metrics": {}
+        },
+        "rsi_oversold": {
+          "params": {
+            "rsi_threshold": 25,
+            "sma_fast": 50,
+            "sma_slow": 200,
+            "hold_period": 7
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.1345,
+          "backtest_stats": {
+            "win_rate": 50.0,
+            "avg_return": 2.2897,
+            "sharpe": 0.269,
+            "trade_count": 10
+          },
+          "robustness_metrics": {}
+        },
+        "mean_reversion": {
+          "params": {
+            "bb_width": 2.0,
+            "bb_period": 20,
+            "hold_period": 7
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.1345,
+          "backtest_stats": {
+            "win_rate": 50.0,
+            "avg_return": 2.2897,
+            "sharpe": 0.269,
+            "trade_count": 10
+          },
+          "robustness_metrics": {}
+        }
+      },
+      "meta": {
+        "last_optimized": "2026-02-24T11:36:00.354866",
+        "optimization_phases_completed": 4
+      }
+    },
+    "GLD": {
+      "strategies": {
+        "fear_greed": {
+          "params": {
+            "momentum_threshold": -5,
+            "hold_period": 7
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.1496,
+          "backtest_stats": {
+            "win_rate": 65.12,
+            "avg_return": 0.7945,
+            "sharpe": 0.2298,
+            "trade_count": 86
+          },
+          "robustness_metrics": {}
+        },
+        "regime_confirmation": {
+          "params": {
+            "sma_period": 50,
+            "dip_threshold": -2,
+            "hold_period": 3
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.0,
+          "backtest_stats": {
+            "win_rate": 52.94,
+            "avg_return": -0.3189,
+            "sharpe": -0.1349,
+            "trade_count": 17
+          },
+          "robustness_metrics": {}
+        },
+        "rsi_oversold": {
+          "params": {
+            "rsi_threshold": 25,
+            "sma_fast": 50,
+            "sma_slow": 200,
+            "hold_period": 3
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.0,
+          "backtest_stats": {
+            "win_rate": 52.94,
+            "avg_return": -0.3189,
+            "sharpe": -0.1349,
+            "trade_count": 17
+          },
+          "robustness_metrics": {}
+        },
+        "mean_reversion": {
+          "params": {
+            "bb_width": 2.0,
+            "bb_period": 20,
+            "hold_period": 3
+          },
+          "filter_params": {
+            "use_vix_filter": true,
+            "vix_fear_threshold": 30,
+            "use_breadth_filter": true,
+            "use_fib_proximity": false,
+            "sector_rank_max": 4
+          },
+          "optimization_score": 0.0,
+          "backtest_stats": {
+            "win_rate": 52.94,
+            "avg_return": -0.3189,
+            "sharpe": -0.1349,
+            "trade_count": 17
+          },
+          "robustness_metrics": {}
+        }
+      },
+      "meta": {
+        "last_optimized": "2026-02-24T11:36:00.354869",
+        "optimization_phases_completed": 4
+      }
+    }
+  }
+}

@@ -1,50 +1,75 @@
-{
-  "generated": "2026-02-24T09:15:00Z",
-  "history": [
-    {
-      "date": "2026-02-10",
-      "score": 48,
-      "accuracy": 60.2,
-      "winRate": 58.3,
-      "sharpe": 0.095,
-      "profitFactor": 2.10,
-      "notes": "Initial baseline"
+[
+  {
+    "generated": "2026-02-24T09:15:00Z",
+    "history": [
+      {
+        "date": "2026-02-10",
+        "score": 48,
+        "accuracy": 60.2,
+        "winRate": 58.3,
+        "sharpe": 0.095,
+        "profitFactor": 2.1,
+        "notes": "Initial baseline"
+      },
+      {
+        "date": "2026-02-14",
+        "score": 51,
+        "accuracy": 63.1,
+        "winRate": 61.2,
+        "sharpe": 0.11,
+        "profitFactor": 2.25,
+        "notes": "Phase 3 regime detection improvements"
+      },
+      {
+        "date": "2026-02-17",
+        "score": 54,
+        "accuracy": 64.8,
+        "winRate": 63.5,
+        "sharpe": 0.118,
+        "profitFactor": 2.32,
+        "notes": "Phase 4 RSI threshold optimization"
+      },
+      {
+        "date": "2026-02-20",
+        "score": 58,
+        "accuracy": 65.5,
+        "winRate": 64.8,
+        "sharpe": 0.125,
+        "profitFactor": 2.38,
+        "notes": "Phase 5 F&G threshold calibration"
+      },
+      {
+        "date": "2026-02-24",
+        "score": 66,
+        "accuracy": 66.5,
+        "winRate": 66.5,
+        "sharpe": 0.133,
+        "profitFactor": 2.45,
+        "notes": "Current - health score formula recalibrated"
+      }
+    ]
+  },
+  {
+    "health_score": 34.23,
+    "components": {
+      "walk_forward": 44.39,
+      "param_grid": 13.88,
+      "monte_carlo": 0.0,
+      "noise_resilience": 65.85,
+      "anti_overfitting": 50.0,
+      "param_stability": 0.0,
+      "ensemble_quality": 0.0
     },
-    {
-      "date": "2026-02-14",
-      "score": 51,
-      "accuracy": 63.1,
-      "winRate": 61.2,
-      "sharpe": 0.110,
-      "profitFactor": 2.25,
-      "notes": "Phase 3 regime detection improvements"
+    "weights": {
+      "walk_forward": 0.2,
+      "param_grid": 0.1,
+      "monte_carlo": 0.1,
+      "noise_resilience": 0.25,
+      "anti_overfitting": 0.15,
+      "param_stability": 0.1,
+      "ensemble_quality": 0.1
     },
-    {
-      "date": "2026-02-17",
-      "score": 54,
-      "accuracy": 64.8,
-      "winRate": 63.5,
-      "sharpe": 0.118,
-      "profitFactor": 2.32,
-      "notes": "Phase 4 RSI threshold optimization"
-    },
-    {
-      "date": "2026-02-20",
-      "score": 58,
-      "accuracy": 65.5,
-      "winRate": 64.8,
-      "sharpe": 0.125,
-      "profitFactor": 2.38,
-      "notes": "Phase 5 F&G threshold calibration"
-    },
-    {
-      "date": "2026-02-24",
-      "score": 66,
-      "accuracy": 66.5,
-      "winRate": 66.5,
-      "sharpe": 0.133,
-      "profitFactor": 2.45,
-      "notes": "Current - health score formula recalibrated"
-    }
-  ]
-}
+    "methodology": "MRE_V6_Enhanced",
+    "calculation_date": "2026-02-24T11:36:00.355719"
+  }
+]

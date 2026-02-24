@@ -1,13 +1,13 @@
 {
-  "generated": "2026-02-24T19:13:01.839954Z",
+  "generated": "2026-02-24T19:36:00.353811Z",
   "noise_levels_tested": [
     0.0,
     0.01,
     0.02,
     0.05
   ],
-  "trials_per_level": 50,
-  "tickers_tested": 20,
+  "trials_per_level": 10,
+  "tickers_tested": 5,
   "strategies_tested": [
     "fear_greed",
     "regime_confirmation",
@@ -16,20 +16,20 @@
     "momentum"
   ],
   "summary": {
-    "avg_resilience_2pct": 0.6705,
+    "avg_resilience_2pct": 0.6585,
     "most_robust_strategy": "fear_greed",
-    "most_robust_score": 0.9282,
+    "most_robust_score": 1.0,
     "most_fragile_strategy": "rsi_oversold",
-    "most_fragile_score": 0.2775,
-    "tickers_above_50pct": 20,
-    "tickers_tested": 20,
-    "total_runtime_seconds": 17.5,
+    "most_fragile_score": 0.08,
+    "tickers_above_50pct": 5,
+    "tickers_tested": 5,
+    "total_runtime_seconds": 1.2,
     "strategy_avg_resilience": {
-      "fear_greed": 0.9282,
-      "regime_confirmation": 0.7511,
-      "rsi_oversold": 0.2775,
-      "mean_reversion": 0.85,
-      "momentum": 0.5458
+      "fear_greed": 1.0,
+      "regime_confirmation": 0.6513,
+      "rsi_oversold": 0.08,
+      "mean_reversion": 0.88,
+      "momentum": 0.681
     }
   },
   "results": {
@@ -49,21 +49,21 @@
             },
             {
               "noise": 0.01,
-              "sharpe": 0.3274,
-              "win_rate": 62.4,
-              "avg_return": 1.8956
+              "sharpe": 0.315,
+              "win_rate": 61.15,
+              "avg_return": 1.7993
             },
             {
               "noise": 0.02,
-              "sharpe": 0.4164,
-              "win_rate": 67.6,
-              "avg_return": 2.3813
+              "sharpe": 0.4153,
+              "win_rate": 66.99,
+              "avg_return": 2.3425
             },
             {
               "noise": 0.05,
-              "sharpe": 0.6495,
-              "win_rate": 74.39,
-              "avg_return": 5.2993
+              "sharpe": 0.6562,
+              "win_rate": 74.35,
+              "avg_return": 5.4946
             }
           ],
           "break_point": null
@@ -72,7 +72,7 @@
           "base_sharpe": 0.232,
           "base_win_rate": 63.64,
           "base_trades": 11,
-          "resilience_score": 0.9929,
+          "resilience_score": 0.9823,
           "degradation_curve": [
             {
               "noise": 0.0,
@@ -82,21 +82,21 @@
             },
             {
               "noise": 0.01,
-              "sharpe": 0.2572,
-              "win_rate": 59.71,
-              "avg_return": 0.8974
+              "sharpe": 0.3263,
+              "win_rate": 62.4,
+              "avg_return": 1.138
             },
             {
               "noise": 0.02,
-              "sharpe": 0.3281,
-              "win_rate": 62.51,
-              "avg_return": 1.4072
+              "sharpe": 0.3947,
+              "win_rate": 60.82,
+              "avg_return": 1.7426
             },
             {
               "noise": 0.05,
-              "sharpe": 0.206,
-              "win_rate": 57.14,
-              "avg_return": 1.4564
+              "sharpe": 0.156,
+              "win_rate": 54.32,
+              "avg_return": 1.0671
             }
           ],
           "break_point": null
@@ -105,7 +105,7 @@
           "base_sharpe": 0.5037,
           "base_win_rate": 60.0,
           "base_trades": 5,
-          "resilience_score": 0.6664,
+          "resilience_score": 0.0,
           "degradation_curve": [
             {
               "noise": 0.0,
@@ -115,15 +115,15 @@
             },
             {
               "noise": 0.01,
-              "sharpe": 45.0489,
-              "win_rate": 97.96,
-              "avg_return": 4.7078
+              "sharpe": 3.1897,
+              "win_rate": 100.0,
+              "avg_return": 4.2827
             },
             {
               "noise": 0.02,
-              "sharpe": 0.2237,
-              "win_rate": 100.0,
-              "avg_return": 12.4188
+              "sharpe": 0.0,
+              "win_rate": 0.0,
+              "avg_return": 0.0
             },
             {
               "noise": 0.05,
@@ -148,21 +148,21 @@
             },
             {
               "noise": 0.01,
-              "sharpe": 0.4183,
-              "win_rate": 62.45,
-              "avg_return": 2.2377
+              "sharpe": 0.4758,
+              "win_rate": 64.62,
+              "avg_return": 2.4869
             },
             {
               "noise": 0.02,
-              "sharpe": 0.7687,
-              "win_rate": 73.61,
-              "avg_return": 3.82
+              "sharpe": 0.6544,
+              "win_rate": 72.11,
+              "avg_return": 3.3418
             },
             {
               "noise": 0.05,
-              "sharpe": 1.4527,
-              "win_rate": 92.05,
-              "avg_return": 10.7621
+              "sharpe": 1.4251,
+              "win_rate": 92.82,
+              "avg_return": 11.6532
             }
           ],
           "break_point": null
@@ -171,7 +171,7 @@
           "base_sharpe": -0.069,
           "base_win_rate": 47.37,
           "base_trades": 38,
-          "resilience_score": 0.9567,
+          "resilience_score": 0.9141,
           "degradation_curve": [
             {
               "noise": 0.0,
@@ -181,60 +181,60 @@
             },
             {
               "noise": 0.01,
-              "sharpe": -0.0902,
-              "win_rate": 48.38,
-              "avg_return": -0.3523
+              "sharpe": -0.1227,
+              "win_rate": 48.14,
+              "avg_return": -0.4544
             },
             {
               "noise": 0.02,
-              "sharpe": -0.1765,
-              "win_rate": 42.25,
-              "avg_return": -0.7673
+              "sharpe": -0.2151,
+              "win_rate": 37.2,
+              "avg_return": -0.9919
             },
             {
               "noise": 0.05,
-              "sharpe": -0.3371,
-              "win_rate": 36.26,
-              "avg_return": -2.4321
+              "sharpe": -0.3226,
+              "win_rate": 36.31,
+              "avg_return": -2.5272
             }
           ],
           "break_point": 0.01
         }
       },
       "best_robust_strategy": "fear_greed",
-      "overall_resilience": 0.9232
+      "overall_resilience": 0.7793
     },
     "MSFT": {
       "strategies": {
         "fear_greed": {
-          "base_sharpe": 0.1167,
+          "base_sharpe": 0.1141,
           "base_win_rate": 54.55,
           "base_trades": 22,
           "resilience_score": 1.0,
           "degradation_curve": [
             {
               "noise": 0.0,
-              "sharpe": 0.1167,
+              "sharpe": 0.1141,
               "win_rate": 54.55,
-              "avg_return": 0.4194
+              "avg_return": 0.4109
             },
             {
               "noise": 0.01,
-              "sharpe": 0.1988,
-              "win_rate": 58.37,
-              "avg_return": 0.7587
+              "sharpe": 0.2546,
+              "win_rate": 61.23,
+              "avg_return": 0.9629
             },
             {
               "noise": 0.02,
-              "sharpe": 0.2962,
-              "win_rate": 62.07,
-              "avg_return": 1.3095
+              "sharpe": 0.2827,
+              "win_rate": 63.74,
+              "avg_return": 1.2413
             },
             {
               "noise": 0.05,
-              "sharpe": 0.5105,
-              "win_rate": 68.55,
-              "avg_return": 3.9251
+              "sharpe": 0.4945,
+              "win_rate": 69.3,
+              "avg_return": 3.7087
             }
           ],
           "break_point": null
@@ -253,21 +253,21 @@
             },
             {
               "noise": 0.01,
-              "sharpe": -0.136,
-              "win_rate": 42.36,
-              "avg_return": -0.2879
+              "sharpe": -0.1656,
+              "win_rate": 41.11,
+              "avg_return": -0.3147
             },
             {
               "noise": 0.02,
-              "sharpe": 0.2144,
-              "win_rate": 55.6,
-              "avg_return": 0.792
+              "sharpe": 0.2452,
+              "win_rate": 56.29,
+              "avg_return": 0.8691
             },
             {
               "noise": 0.05,
-              "sharpe": 0.1146,
-              "win_rate": 54.7,
-              "avg_return": 0.7951
+              "sharpe": 0.058,
+              "win_rate": 52.56,
+              "avg_return": 0.454
             }
           ],
           "break_point": 0.01
@@ -288,7 +288,7 @@
               "noise": 0.01,
               "sharpe": 0.0,
               "win_rate": 100.0,
-              "avg_return": 5.5143
+              "avg_return": 2.8217
             },
             {
               "noise": 0.02,
@@ -319,21 +319,21 @@
             },
             {
               "noise": 0.01,
-              "sharpe": 0.224,
-              "win_rate": 65.09,
-              "avg_return": 0.9544
+              "sharpe": 0.2157,
+              "win_rate": 62.99,
+              "avg_return": 0.8964
             },
             {
               "noise": 0.02,
-              "sharpe": 0.6539,
-              "win_rate": 76.04,
-              "avg_return": 3.0254
+              "sharpe": 0.6446,
+              "win_rate": 78.1,
+              "avg_return": 2.9872
             },
             {
               "noise": 0.05,
-              "sharpe": 1.598,
-              "win_rate": 92.77,
-              "avg_return": 10.8714
+              "sharpe": 1.4688,
+              "win_rate": 92.06,
+              "avg_return": 10.5373
             }
           ],
           "break_point": null
@@ -342,7 +342,7 @@
           "base_sharpe": -0.058,
           "base_win_rate": 51.52,
           "base_trades": 33,
-          "resilience_score": 0.8993,
+          "resilience_score": 0.8934,
           "degradation_curve": [
             {
               "noise": 0.0,
@@ -352,28 +352,28 @@
             },
             {
               "noise": 0.01,
-              "sharpe": -0.1851,
-              "win_rate": 44.99,
-              "avg_return": -0.6597
+              "sharpe": -0.199,
+              "win_rate": 43.72,
+              "avg_return": -0.6856
             },
             {
               "noise": 0.02,
-              "sharpe": -0.3277,
-              "win_rate": 38.55,
-              "avg_return": -1.3723
+              "sharpe": -0.3323,
+              "win_rate": 37.8,
+              "avg_return": -1.3478
             },
             {
               "noise": 0.05,
-              "sharpe": -0.4401,
-              "win_rate": 32.64,
-              "avg_return": -3.0656
+              "sharpe": -0.4726,
+              "win_rate": 30.27,
+              "avg_return": -3.2834
             }
           ],
           "break_point": 0.01
         }
       },
       "best_robust_strategy": "fear_greed",
-      "overall_resilience": 0.6599
+      "overall_resilience": 0.6587
     },
     "AMZN": {
       "strategies": {
@@ -391,21 +391,21 @@
             },
             {
               "noise": 0.01,
-              "sharpe": 0.1053,
-              "win_rate": 59.73,
-              "avg_return": 0.5517
+              "sharpe": 0.1079,
+              "win_rate": 59.24,
+              "avg_return": 0.5507
             },
             {
               "noise": 0.02,
-              "sharpe": 0.2101,
-              "win_rate": 64.05,
-              "avg_return": 1.215
+              "sharpe": 0.2536,
+              "win_rate": 63.83,
+              "avg_return": 1.4043
             },
             {
               "noise": 0.05,
-              "sharpe": 0.5838,
-              "win_rate": 70.94,
-              "avg_return": 4.8504
+              "sharpe": 0.5781,
+              "win_rate": 72.2,
+              "avg_return": 4.693
             }
           ],
           "break_point": null
@@ -424,48 +424,48 @@
             },
             {
               "noise": 0.01,
-              "sharpe": -0.0597,
-              "win_rate": 50.51,
-              "avg_return": -0.2716
+              "sharpe": -0.0415,
+              "win_rate": 49.71,
+              "avg_return": -0.1814
             },
             {
               "noise": 0.02,
-              "sharpe": 0.0845,
-              "win_rate": 54.99,
-              "avg_return": 0.3772
+              "sharpe": 0.0255,
+              "win_rate": 51.16,
+              "avg_return": 0.151
             },
             {
               "noise": 0.05,
-              "sharpe": 0.1122,
-              "win_rate": 55.54,
-              "avg_return": 0.7829
+              "sharpe": 0.0759,
+              "win_rate": 51.62,
+              "avg_return": 0.5166
             }
           ],
           "break_point": 0.01
         },
         "rsi_oversold": {
-          "base_sharpe": 0.0919,
+          "base_sharpe": 0.0815,
           "base_win_rate": 40.0,
           "base_trades": 5,
-          "resilience_score": 1.0,
+          "resilience_score": 0.4,
           "degradation_curve": [
             {
               "noise": 0.0,
-              "sharpe": 0.0919,
+              "sharpe": 0.0815,
               "win_rate": 40.0,
-              "avg_return": 0.4641
+              "avg_return": 0.4085
             },
             {
               "noise": 0.01,
-              "sharpe": 2.3368,
-              "win_rate": 71.17,
-              "avg_return": 2.8648
+              "sharpe": 0.5349,
+              "win_rate": 83.33,
+              "avg_return": 3.4858
             },
             {
               "noise": 0.02,
-              "sharpe": 0.8384,
-              "win_rate": 90.48,
-              "avg_return": 5.0306
+              "sharpe": 0.0,
+              "win_rate": 75.0,
+              "avg_return": 3.6328
             },
             {
               "noise": 0.05,
@@ -490,30 +490,30 @@
             },
             {
               "noise": 0.01,
-              "sharpe": 0.0493,
-              "win_rate": 57.86,
-              "avg_return": 0.2532
+              "sharpe": -0.1153,
+              "win_rate": 54.86,
+              "avg_return": -0.5621
             },
             {
               "noise": 0.02,
-              "sharpe": 0.2938,
-              "win_rate": 63.78,
-              "avg_return": 1.574
+              "sharpe": 0.3132,
+              "win_rate": 67.91,
+              "avg_return": 1.7466
             },
             {
               "noise": 0.05,
-              "sharpe": 1.2861,
-              "win_rate": 85.53,
-              "avg_return": 10.0557
+              "sharpe": 1.0952,
+              "win_rate": 83.45,
+              "avg_return": 9.2713
             }
           ],
-          "break_point": null
+          "break_point": 0.01
         },
         "momentum": {
           "base_sharpe": -0.0941,
           "base_win_rate": 50.0,
           "base_trades": 44,
-          "resilience_score": 0.9404,
+          "resilience_score": 0.9618,
           "degradation_curve": [
             {
               "noise": 0.0,
@@ -523,28 +523,28 @@
             },
             {
               "noise": 0.01,
-              "sharpe": -0.1175,
-              "win_rate": 45.75,
-              "avg_return": -0.4769
+              "sharpe": -0.1008,
+              "win_rate": 46.92,
+              "avg_return": -0.4124
             },
             {
               "noise": 0.02,
-              "sharpe": -0.2051,
-              "win_rate": 42.54,
-              "avg_return": -0.954
+              "sharpe": -0.1968,
+              "win_rate": 45.23,
+              "avg_return": -0.8964
             },
             {
               "noise": 0.05,
-              "sharpe": -0.3774,
-              "win_rate": 36.06,
-              "avg_return": -2.7514
+              "sharpe": -0.4027,
+              "win_rate": 34.89,
+              "avg_return": -3.0109
             }
           ],
           "break_point": 0.01
         }
       },
       "best_robust_strategy": "fear_greed",
-      "overall_resilience": 0.7481
+      "overall_resilience": 0.6324
     },
     "JPM": {
       "strategies": {
@@ -552,7 +552,7 @@
           "base_sharpe": 0.2597,
           "base_win_rate": 76.92,
           "base_trades": 13,
-          "resilience_score": 0.996,
+          "resilience_score": 1.0,
           "degradation_curve": [
             {
               "noise": 0.0,
@@ -562,21 +562,21 @@
             },
             {
               "noise": 0.01,
-              "sharpe": 0.3975,
-              "win_rate": 75.85,
-              "avg_return": 2.1551
+              "sharpe": 0.4307,
+              "win_rate": 74.18,
+              "avg_return": 2.2477
             },
             {
               "noise": 0.02,
-              "sharpe": 0.5576,
-              "win_rate": 76.15,
-              "avg_return": 2.8593
+              "sharpe": 0.5468,
+              "win_rate": 77.1,
+              "avg_return": 2.5869
             },
             {
               "noise": 0.05,
-              "sharpe": 0.7414,
-              "win_rate": 77.22,
-              "avg_return": 5.8526
+              "sharpe": 0.7033,
+              "win_rate": 77.36,
+              "avg_return": 5.6611
             }
           ],
           "break_point": null
@@ -595,21 +595,21 @@
             },
             {
               "noise": 0.01,
-              "sharpe": 0.1789,
-              "win_rate": 58.6,
-              "avg_return": 0.6294
+              "sharpe": 0.1693,
+              "win_rate": 56.19,
+              "avg_return": 0.6335
             },
             {
               "noise": 0.02,
-              "sharpe": 0.3735,
-              "win_rate": 64.42,
-              "avg_return": 1.4297
+              "sharpe": 0.3442,
+              "win_rate": 64.92,
+              "avg_return": 1.3547
             },
             {
               "noise": 0.05,
-              "sharpe": 0.1695,
-              "win_rate": 56.76,
-              "avg_return": 1.0384
+              "sharpe": 0.1062,
+              "win_rate": 54.67,
+              "avg_return": 0.653
             }
           ],
           "break_point": null
@@ -618,7 +618,7 @@
           "base_sharpe": 1.1271,
           "base_win_rate": 100.0,
           "base_trades": 2,
-          "resilience_score": 0.5417,
+          "resilience_score": 0.0,
           "degradation_curve": [
             {
               "noise": 0.0,
@@ -628,15 +628,15 @@
             },
             {
               "noise": 0.01,
-              "sharpe": 0.9211,
-              "win_rate": 89.8,
-              "avg_return": 5.9501
+              "sharpe": 0.5588,
+              "win_rate": 80.0,
+              "avg_return": 4.3155
             },
             {
               "noise": 0.02,
-              "sharpe": 0.2661,
-              "win_rate": 100.0,
-              "avg_return": 8.0523
+              "sharpe": 0.0,
+              "win_rate": 0.0,
+              "avg_return": 0.0
             },
             {
               "noise": 0.05,
@@ -661,21 +661,21 @@
             },
             {
               "noise": 0.01,
-              "sharpe": 0.5563,
-              "win_rate": 74.24,
-              "avg_return": 2.551
+              "sharpe": 0.623,
+              "win_rate": 73.89,
+              "avg_return": 2.7131
             },
             {
               "noise": 0.02,
-              "sharpe": 0.9592,
-              "win_rate": 82.49,
-              "avg_return": 4.2427
+              "sharpe": 0.8863,
+              "win_rate": 79.2,
+              "avg_return": 4.0389
             },
             {
               "noise": 0.05,
-              "sharpe": 1.9123,
-              "win_rate": 91.46,
-              "avg_return": 11.7257
+              "sharpe": 1.3777,
+              "win_rate": 87.46,
+              "avg_return": 10.5174
             }
           ],
           "break_point": null
@@ -684,7 +684,7 @@
           "base_sharpe": 0.1291,
           "base_win_rate": 59.09,
           "base_trades": 44,
-          "resilience_score": 0.309,
+          "resilience_score": 0.2893,
           "degradation_curve": [
             {
               "noise": 0.0,
@@ -694,28 +694,28 @@
             },
             {
               "noise": 0.01,
-              "sharpe": -0.005,
-              "win_rate": 52.2,
-              "avg_return": -0.0252
+              "sharpe": 0.0413,
+              "win_rate": 52.76,
+              "avg_return": 0.112
             },
             {
               "noise": 0.02,
-              "sharpe": -0.1528,
-              "win_rate": 45.65,
-              "avg_return": -0.6189
+              "sharpe": -0.1525,
+              "win_rate": 42.73,
+              "avg_return": -0.6116
             },
             {
               "noise": 0.05,
-              "sharpe": -0.3267,
-              "win_rate": 36.04,
-              "avg_return": -2.2055
+              "sharpe": -0.3052,
+              "win_rate": 35.49,
+              "avg_return": -2.0691
             }
           ],
-          "break_point": 0.01
+          "break_point": 0.02
         }
       },
-      "best_robust_strategy": "regime_confirmation",
-      "overall_resilience": 0.7693
+      "best_robust_strategy": "fear_greed",
+      "overall_resilience": 0.6579
     },
     "XOM": {
       "strategies": {
@@ -733,54 +733,54 @@
             },
             {
               "noise": 0.01,
-              "sharpe": 0.4563,
-              "win_rate": 64.15,
-              "avg_return": 1.269
+              "sharpe": 0.4513,
+              "win_rate": 61.4,
+              "avg_return": 1.2358
             },
             {
               "noise": 0.02,
-              "sharpe": 0.6736,
-              "win_rate": 74.4,
-              "avg_return": 2.646
+              "sharpe": 0.6873,
+              "win_rate": 74.77,
+              "avg_return": 2.6803
             },
             {
               "noise": 0.05,
-              "sharpe": 0.7527,
-              "win_rate": 76.34,
-              "avg_return": 5.5389
+              "sharpe": 0.6514,
+              "win_rate": 74.04,
+              "avg_return": 4.8624
             }
           ],
           "break_point": null
         },
         "regime_confirmation": {
-          "base_sharpe": 0.3441,
+          "base_sharpe": 0.345,
           "base_win_rate": 77.78,
           "base_trades": 18,
-          "resilience_score": 0.5294,
+          "resilience_score": 0.4744,
           "degradation_curve": [
             {
               "noise": 0.0,
-              "sharpe": 0.3441,
+              "sharpe": 0.345,
               "win_rate": 77.78,
-              "avg_return": 1.3802
+              "avg_return": 1.3838
             },
             {
               "noise": 0.01,
-              "sharpe": 0.1826,
-              "win_rate": 65.24,
-              "avg_return": 0.5386
+              "sharpe": 0.2508,
+              "win_rate": 67.22,
+              "avg_return": 0.7355
             },
             {
               "noise": 0.02,
-              "sharpe": 0.1346,
-              "win_rate": 57.31,
-              "avg_return": 0.509
+              "sharpe": 0.1145,
+              "win_rate": 53.53,
+              "avg_return": 0.447
             },
             {
               "noise": 0.05,
-              "sharpe": 0.003,
-              "win_rate": 49.98,
-              "avg_return": 0.0151
+              "sharpe": 0.0058,
+              "win_rate": 51.23,
+              "avg_return": -0.0109
             }
           ],
           "break_point": null
@@ -799,9 +799,9 @@
             },
             {
               "noise": 0.01,
-              "sharpe": 0.0155,
-              "win_rate": 64.06,
-              "avg_return": 0.8993
+              "sharpe": 0.0,
+              "win_rate": 50.0,
+              "avg_return": 0.6726
             },
             {
               "noise": 0.02,
@@ -832,21 +832,21 @@
             },
             {
               "noise": 0.01,
-              "sharpe": 0.549,
-              "win_rate": 63.94,
-              "avg_return": 1.5315
+              "sharpe": 0.4317,
+              "win_rate": 55.59,
+              "avg_return": 1.1072
             },
             {
               "noise": 0.02,
-              "sharpe": 0.8864,
-              "win_rate": 77.52,
-              "avg_return": 3.4378
+              "sharpe": 0.9438,
+              "win_rate": 77.42,
+              "avg_return": 4.2409
             },
             {
               "noise": 0.05,
-              "sharpe": 1.8478,
-              "win_rate": 93.65,
-              "avg_return": 11.3758
+              "sharpe": 2.3728,
+              "win_rate": 99.0,
+              "avg_return": 12.3775
             }
           ],
           "break_point": null
@@ -855,7 +855,7 @@
           "base_sharpe": 0.0898,
           "base_win_rate": 47.37,
           "base_trades": 38,
-          "resilience_score": 0.335,
+          "resilience_score": 0.3463,
           "degradation_curve": [
             {
               "noise": 0.0,
@@ -865,2593 +865,28 @@
             },
             {
               "noise": 0.01,
-              "sharpe": -0.0372,
-              "win_rate": 46.26,
-              "avg_return": -0.1266
+              "sharpe": -0.0682,
+              "win_rate": 44.58,
+              "avg_return": -0.2314
             },
             {
               "noise": 0.02,
-              "sharpe": -0.2157,
-              "win_rate": 39.67,
-              "avg_return": -0.8735
+              "sharpe": -0.1846,
+              "win_rate": 41.01,
+              "avg_return": -0.7656
             },
             {
               "noise": 0.05,
-              "sharpe": -0.3929,
-              "win_rate": 33.33,
-              "avg_return": -2.6969
+              "sharpe": -0.4092,
+              "win_rate": 31.98,
+              "avg_return": -2.8803
             }
           ],
           "break_point": 0.01
         }
       },
       "best_robust_strategy": "fear_greed",
-      "overall_resilience": 0.5729
-    },
-    "JNJ": {
-      "strategies": {
-        "fear_greed": {
-          "base_sharpe": 0.1143,
-          "base_win_rate": 70.0,
-          "base_trades": 10,
-          "resilience_score": 0.999,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": 0.1143,
-              "win_rate": 70.0,
-              "avg_return": 0.2662
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 0.3017,
-              "win_rate": 59.91,
-              "avg_return": 0.7476
-            },
-            {
-              "noise": 0.02,
-              "sharpe": 0.565,
-              "win_rate": 69.83,
-              "avg_return": 2.0157
-            },
-            {
-              "noise": 0.05,
-              "sharpe": 0.7251,
-              "win_rate": 76.25,
-              "avg_return": 5.2515
-            }
-          ],
-          "break_point": null
-        },
-        "regime_confirmation": {
-          "base_sharpe": 0.0904,
-          "base_win_rate": 55.56,
-          "base_trades": 9,
-          "resilience_score": 1.0,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": 0.0904,
-              "win_rate": 55.56,
-              "avg_return": 0.277
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 0.6277,
-              "win_rate": 72.13,
-              "avg_return": 1.5366
-            },
-            {
-              "noise": 0.02,
-              "sharpe": 0.6039,
-              "win_rate": 72.33,
-              "avg_return": 2.1957
-            },
-            {
-              "noise": 0.05,
-              "sharpe": 0.2801,
-              "win_rate": 60.45,
-              "avg_return": 1.8733
-            }
-          ],
-          "break_point": null
-        },
-        "rsi_oversold": {
-          "base_sharpe": -0.1146,
-          "base_win_rate": 50.0,
-          "base_trades": 2,
-          "resilience_score": 0.0,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": -0.1146,
-              "win_rate": 50.0,
-              "avg_return": -0.1325
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 0.0,
-              "win_rate": 75.0,
-              "avg_return": 1.9487
-            },
-            {
-              "noise": 0.02,
-              "sharpe": 0.0,
-              "win_rate": 0.0,
-              "avg_return": 0.0
-            },
-            {
-              "noise": 0.05,
-              "sharpe": 0.0,
-              "win_rate": 0.0,
-              "avg_return": 0.0
-            }
-          ],
-          "break_point": null
-        },
-        "mean_reversion": {
-          "base_sharpe": 0.0641,
-          "base_win_rate": 60.0,
-          "base_trades": 10,
-          "resilience_score": 1.0,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": 0.0641,
-              "win_rate": 60.0,
-              "avg_return": 0.1229
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 0.4591,
-              "win_rate": 64.06,
-              "avg_return": 1.2409
-            },
-            {
-              "noise": 0.02,
-              "sharpe": 1.038,
-              "win_rate": 81.26,
-              "avg_return": 3.461
-            },
-            {
-              "noise": 0.05,
-              "sharpe": 1.8662,
-              "win_rate": 92.68,
-              "avg_return": 11.4649
-            }
-          ],
-          "break_point": null
-        },
-        "momentum": {
-          "base_sharpe": 0.2967,
-          "base_win_rate": 66.67,
-          "base_trades": 33,
-          "resilience_score": 0.2687,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": 0.2967,
-              "win_rate": 66.67,
-              "avg_return": 0.649
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 0.1191,
-              "win_rate": 55.93,
-              "avg_return": 0.3226
-            },
-            {
-              "noise": 0.02,
-              "sharpe": -0.1428,
-              "win_rate": 44.79,
-              "avg_return": -0.5262
-            },
-            {
-              "noise": 0.05,
-              "sharpe": -0.3886,
-              "win_rate": 35.02,
-              "avg_return": -2.5374
-            }
-          ],
-          "break_point": 0.02
-        }
-      },
-      "best_robust_strategy": "regime_confirmation",
-      "overall_resilience": 0.6535
-    },
-    "NVDA": {
-      "strategies": {
-        "fear_greed": {
-          "base_sharpe": 0.1534,
-          "base_win_rate": 44.0,
-          "base_trades": 25,
-          "resilience_score": 1.0,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": 0.1534,
-              "win_rate": 44.0,
-              "avg_return": 1.1466
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 0.208,
-              "win_rate": 50.47,
-              "avg_return": 1.5581
-            },
-            {
-              "noise": 0.02,
-              "sharpe": 0.2978,
-              "win_rate": 58.13,
-              "avg_return": 2.3144
-            },
-            {
-              "noise": 0.05,
-              "sharpe": 0.524,
-              "win_rate": 67.61,
-              "avg_return": 5.0574
-            }
-          ],
-          "break_point": null
-        },
-        "regime_confirmation": {
-          "base_sharpe": 0.0998,
-          "base_win_rate": 47.37,
-          "base_trades": 19,
-          "resilience_score": 1.0,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": 0.0998,
-              "win_rate": 47.37,
-              "avg_return": 0.6097
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 0.2356,
-              "win_rate": 56.77,
-              "avg_return": 1.4699
-            },
-            {
-              "noise": 0.02,
-              "sharpe": 0.293,
-              "win_rate": 61.39,
-              "avg_return": 1.9409
-            },
-            {
-              "noise": 0.05,
-              "sharpe": 0.3104,
-              "win_rate": 60.42,
-              "avg_return": 2.9031
-            }
-          ],
-          "break_point": null
-        },
-        "rsi_oversold": {
-          "base_sharpe": 0.0,
-          "base_win_rate": 0.0,
-          "base_trades": 0,
-          "resilience_score": 0.0,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": 0.0,
-              "win_rate": 0.0,
-              "avg_return": 0.0
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 0.0,
-              "win_rate": 0.0,
-              "avg_return": 0.0
-            },
-            {
-              "noise": 0.02,
-              "sharpe": 0.0,
-              "win_rate": 100.0,
-              "avg_return": 18.3594
-            },
-            {
-              "noise": 0.05,
-              "sharpe": 0.0,
-              "win_rate": 0.0,
-              "avg_return": 0.0
-            }
-          ],
-          "break_point": null
-        },
-        "mean_reversion": {
-          "base_sharpe": 0.6347,
-          "base_win_rate": 66.67,
-          "base_trades": 9,
-          "resilience_score": 1.0,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": 0.6347,
-              "win_rate": 66.67,
-              "avg_return": 4.1641
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 0.8024,
-              "win_rate": 71.85,
-              "avg_return": 4.5913
-            },
-            {
-              "noise": 0.02,
-              "sharpe": 0.9267,
-              "win_rate": 76.62,
-              "avg_return": 5.9484
-            },
-            {
-              "noise": 0.05,
-              "sharpe": 1.4402,
-              "win_rate": 87.91,
-              "avg_return": 12.1549
-            }
-          ],
-          "break_point": null
-        },
-        "momentum": {
-          "base_sharpe": 0.2048,
-          "base_win_rate": 56.86,
-          "base_trades": 51,
-          "resilience_score": 0.5675,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": 0.2048,
-              "win_rate": 56.86,
-              "avg_return": 1.2259
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 0.147,
-              "win_rate": 56.37,
-              "avg_return": 0.8752
-            },
-            {
-              "noise": 0.02,
-              "sharpe": 0.0689,
-              "win_rate": 51.96,
-              "avg_return": 0.4238
-            },
-            {
-              "noise": 0.05,
-              "sharpe": -0.1616,
-              "win_rate": 42.22,
-              "avg_return": -1.415
-            }
-          ],
-          "break_point": 0.05
-        }
-      },
-      "best_robust_strategy": "fear_greed",
-      "overall_resilience": 0.7135
-    },
-    "GOOGL": {
-      "strategies": {
-        "fear_greed": {
-          "base_sharpe": -0.499,
-          "base_win_rate": 18.75,
-          "base_trades": 16,
-          "resilience_score": 0.4,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": -0.499,
-              "win_rate": 18.75,
-              "avg_return": -1.9394
-            },
-            {
-              "noise": 0.01,
-              "sharpe": -0.1187,
-              "win_rate": 42.08,
-              "avg_return": -0.4888
-            },
-            {
-              "noise": 0.02,
-              "sharpe": 0.2447,
-              "win_rate": 57.86,
-              "avg_return": 1.3473
-            },
-            {
-              "noise": 0.05,
-              "sharpe": 0.6244,
-              "win_rate": 72.78,
-              "avg_return": 5.3153
-            }
-          ],
-          "break_point": 0.01
-        },
-        "regime_confirmation": {
-          "base_sharpe": 0.2998,
-          "base_win_rate": 65.0,
-          "base_trades": 20,
-          "resilience_score": 1.0,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": 0.2998,
-              "win_rate": 65.0,
-              "avg_return": 1.3009
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 0.4084,
-              "win_rate": 67.28,
-              "avg_return": 1.8181
-            },
-            {
-              "noise": 0.02,
-              "sharpe": 0.5306,
-              "win_rate": 70.37,
-              "avg_return": 2.6079
-            },
-            {
-              "noise": 0.05,
-              "sharpe": 0.4537,
-              "win_rate": 65.13,
-              "avg_return": 3.3181
-            }
-          ],
-          "break_point": null
-        },
-        "rsi_oversold": {
-          "base_sharpe": 1.8101,
-          "base_win_rate": 100.0,
-          "base_trades": 2,
-          "resilience_score": 0.4,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": 1.8101,
-              "win_rate": 100.0,
-              "avg_return": 5.1053
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 0.4279,
-              "win_rate": 96.67,
-              "avg_return": 5.3043
-            },
-            {
-              "noise": 0.02,
-              "sharpe": 0.0,
-              "win_rate": 100.0,
-              "avg_return": 9.1439
-            },
-            {
-              "noise": 0.05,
-              "sharpe": 0.0,
-              "win_rate": 0.0,
-              "avg_return": 0.0
-            }
-          ],
-          "break_point": null
-        },
-        "mean_reversion": {
-          "base_sharpe": 0.0205,
-          "base_win_rate": 37.5,
-          "base_trades": 8,
-          "resilience_score": 1.0,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": 0.0205,
-              "win_rate": 37.5,
-              "avg_return": 0.1048
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 0.2475,
-              "win_rate": 54.65,
-              "avg_return": 1.2416
-            },
-            {
-              "noise": 0.02,
-              "sharpe": 0.5933,
-              "win_rate": 67.21,
-              "avg_return": 2.5539
-            },
-            {
-              "noise": 0.05,
-              "sharpe": 1.5924,
-              "win_rate": 91.04,
-              "avg_return": 10.6774
-            }
-          ],
-          "break_point": null
-        },
-        "momentum": {
-          "base_sharpe": 0.2429,
-          "base_win_rate": 62.0,
-          "base_trades": 50,
-          "resilience_score": 0.367,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": 0.2429,
-              "win_rate": 62.0,
-              "avg_return": 0.8908
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 0.1197,
-              "win_rate": 54.27,
-              "avg_return": 0.4913
-            },
-            {
-              "noise": 0.02,
-              "sharpe": 0.0188,
-              "win_rate": 49.68,
-              "avg_return": 0.0934
-            },
-            {
-              "noise": 0.05,
-              "sharpe": -0.2259,
-              "win_rate": 40.74,
-              "avg_return": -1.6795
-            }
-          ],
-          "break_point": 0.05
-        }
-      },
-      "best_robust_strategy": "regime_confirmation",
-      "overall_resilience": 0.6334
-    },
-    "META": {
-      "strategies": {
-        "fear_greed": {
-          "base_sharpe": 0.173,
-          "base_win_rate": 58.33,
-          "base_trades": 24,
-          "resilience_score": 1.0,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": 0.173,
-              "win_rate": 58.33,
-              "avg_return": 0.9642
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 0.2506,
-              "win_rate": 65.04,
-              "avg_return": 1.446
-            },
-            {
-              "noise": 0.02,
-              "sharpe": 0.3391,
-              "win_rate": 65.1,
-              "avg_return": 2.0497
-            },
-            {
-              "noise": 0.05,
-              "sharpe": 0.5497,
-              "win_rate": 70.61,
-              "avg_return": 4.6514
-            }
-          ],
-          "break_point": null
-        },
-        "regime_confirmation": {
-          "base_sharpe": 0.0658,
-          "base_win_rate": 60.0,
-          "base_trades": 20,
-          "resilience_score": 0.9822,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": 0.0658,
-              "win_rate": 60.0,
-              "avg_return": 0.2636
-            },
-            {
-              "noise": 0.01,
-              "sharpe": -0.0126,
-              "win_rate": 50.53,
-              "avg_return": 0.0034
-            },
-            {
-              "noise": 0.02,
-              "sharpe": 0.1813,
-              "win_rate": 57.32,
-              "avg_return": 0.7857
-            },
-            {
-              "noise": 0.05,
-              "sharpe": 0.1785,
-              "win_rate": 56.31,
-              "avg_return": 1.2946
-            }
-          ],
-          "break_point": 0.01
-        },
-        "rsi_oversold": {
-          "base_sharpe": 0.0649,
-          "base_win_rate": 50.0,
-          "base_trades": 4,
-          "resilience_score": 0.9428,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": 0.0649,
-              "win_rate": 50.0,
-              "avg_return": 0.3243
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 15.9892,
-              "win_rate": 74.0,
-              "avg_return": 4.114
-            },
-            {
-              "noise": 0.02,
-              "sharpe": 0.0587,
-              "win_rate": 84.38,
-              "avg_return": 6.6418
-            },
-            {
-              "noise": 0.05,
-              "sharpe": 0.0,
-              "win_rate": 0.0,
-              "avg_return": 0.0
-            }
-          ],
-          "break_point": null
-        },
-        "mean_reversion": {
-          "base_sharpe": -0.0921,
-          "base_win_rate": 60.0,
-          "base_trades": 10,
-          "resilience_score": 0.4,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": -0.0921,
-              "win_rate": 60.0,
-              "avg_return": -0.2899
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 0.1719,
-              "win_rate": 54.96,
-              "avg_return": 0.8659
-            },
-            {
-              "noise": 0.02,
-              "sharpe": 0.3791,
-              "win_rate": 64.54,
-              "avg_return": 2.1834
-            },
-            {
-              "noise": 0.05,
-              "sharpe": 1.2501,
-              "win_rate": 86.68,
-              "avg_return": 9.4296
-            }
-          ],
-          "break_point": null
-        },
-        "momentum": {
-          "base_sharpe": 0.0848,
-          "base_win_rate": 56.41,
-          "base_trades": 39,
-          "resilience_score": 0.3426,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": 0.0848,
-              "win_rate": 56.41,
-              "avg_return": 0.3609
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 0.0325,
-              "win_rate": 52.34,
-              "avg_return": 0.1404
-            },
-            {
-              "noise": 0.02,
-              "sharpe": -0.0495,
-              "win_rate": 48.31,
-              "avg_return": -0.2533
-            },
-            {
-              "noise": 0.05,
-              "sharpe": -0.2905,
-              "win_rate": 38.69,
-              "avg_return": -2.2606
-            }
-          ],
-          "break_point": 0.02
-        }
-      },
-      "best_robust_strategy": "fear_greed",
-      "overall_resilience": 0.7335
-    },
-    "TSLA": {
-      "strategies": {
-        "fear_greed": {
-          "base_sharpe": 0.0637,
-          "base_win_rate": 48.48,
-          "base_trades": 33,
-          "resilience_score": 1.0,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": 0.0637,
-              "win_rate": 48.48,
-              "avg_return": 0.5583
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 0.0791,
-              "win_rate": 48.19,
-              "avg_return": 0.7207
-            },
-            {
-              "noise": 0.02,
-              "sharpe": 0.1753,
-              "win_rate": 55.84,
-              "avg_return": 1.7123
-            },
-            {
-              "noise": 0.05,
-              "sharpe": 0.3972,
-              "win_rate": 63.85,
-              "avg_return": 4.7438
-            }
-          ],
-          "break_point": null
-        },
-        "regime_confirmation": {
-          "base_sharpe": 0.0611,
-          "base_win_rate": 40.0,
-          "base_trades": 25,
-          "resilience_score": 1.0,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": 0.0611,
-              "win_rate": 40.0,
-              "avg_return": 0.4753
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 0.168,
-              "win_rate": 49.02,
-              "avg_return": 1.2816
-            },
-            {
-              "noise": 0.02,
-              "sharpe": 0.2135,
-              "win_rate": 54.23,
-              "avg_return": 1.7204
-            },
-            {
-              "noise": 0.05,
-              "sharpe": 0.2869,
-              "win_rate": 57.54,
-              "avg_return": 3.0274
-            }
-          ],
-          "break_point": null
-        },
-        "rsi_oversold": {
-          "base_sharpe": 0.1214,
-          "base_win_rate": 33.33,
-          "base_trades": 3,
-          "resilience_score": 0.4,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": 0.1214,
-              "win_rate": 33.33,
-              "avg_return": 2.2056
-            },
-            {
-              "noise": 0.01,
-              "sharpe": -62.0268,
-              "win_rate": 17.17,
-              "avg_return": -2.5896
-            },
-            {
-              "noise": 0.02,
-              "sharpe": -3.5147,
-              "win_rate": 37.07,
-              "avg_return": 0.3011
-            },
-            {
-              "noise": 0.05,
-              "sharpe": 0.0,
-              "win_rate": 100.0,
-              "avg_return": 8.6632
-            }
-          ],
-          "break_point": 0.01
-        },
-        "mean_reversion": {
-          "base_sharpe": -0.159,
-          "base_win_rate": 33.33,
-          "base_trades": 9,
-          "resilience_score": 0.4,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": -0.159,
-              "win_rate": 33.33,
-              "avg_return": -1.1398
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 0.0566,
-              "win_rate": 48.69,
-              "avg_return": 0.4444
-            },
-            {
-              "noise": 0.02,
-              "sharpe": 0.2864,
-              "win_rate": 60.81,
-              "avg_return": 2.2713
-            },
-            {
-              "noise": 0.05,
-              "sharpe": 0.923,
-              "win_rate": 78.69,
-              "avg_return": 9.5035
-            }
-          ],
-          "break_point": null
-        },
-        "momentum": {
-          "base_sharpe": 0.1288,
-          "base_win_rate": 41.67,
-          "base_trades": 48,
-          "resilience_score": 0.7927,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": 0.1288,
-              "win_rate": 41.67,
-              "avg_return": 1.1284
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 0.0973,
-              "win_rate": 43.86,
-              "avg_return": 0.8828
-            },
-            {
-              "noise": 0.02,
-              "sharpe": 0.0843,
-              "win_rate": 44.9,
-              "avg_return": 0.7727
-            },
-            {
-              "noise": 0.05,
-              "sharpe": -0.0709,
-              "win_rate": 41.25,
-              "avg_return": -0.7749
-            }
-          ],
-          "break_point": 0.05
-        }
-      },
-      "best_robust_strategy": "fear_greed",
-      "overall_resilience": 0.7185
-    },
-    "SPY": {
-      "strategies": {
-        "fear_greed": {
-          "base_sharpe": 0.1243,
-          "base_win_rate": 71.43,
-          "base_trades": 7,
-          "resilience_score": 1.0,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": 0.1243,
-              "win_rate": 71.43,
-              "avg_return": 0.6186
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 0.3719,
-              "win_rate": 69.48,
-              "avg_return": 1.3199
-            },
-            {
-              "noise": 0.02,
-              "sharpe": 0.7049,
-              "win_rate": 77.06,
-              "avg_return": 2.5795
-            },
-            {
-              "noise": 0.05,
-              "sharpe": 0.8293,
-              "win_rate": 79.23,
-              "avg_return": 5.8494
-            }
-          ],
-          "break_point": null
-        },
-        "regime_confirmation": {
-          "base_sharpe": 5.832,
-          "base_win_rate": 100.0,
-          "base_trades": 5,
-          "resilience_score": 0.3372,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": 5.832,
-              "win_rate": 100.0,
-              "avg_return": 2.0025
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 0.6907,
-              "win_rate": 77.83,
-              "avg_return": 1.3963
-            },
-            {
-              "noise": 0.02,
-              "sharpe": 0.5439,
-              "win_rate": 70.31,
-              "avg_return": 1.5048
-            },
-            {
-              "noise": 0.05,
-              "sharpe": 0.0657,
-              "win_rate": 52.74,
-              "avg_return": 0.3622
-            }
-          ],
-          "break_point": null
-        },
-        "rsi_oversold": {
-          "base_sharpe": 1.3859,
-          "base_win_rate": 100.0,
-          "base_trades": 2,
-          "resilience_score": 0.4,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": 1.3859,
-              "win_rate": 100.0,
-              "avg_return": 3.2947
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 0.6571,
-              "win_rate": 100.0,
-              "avg_return": 6.3369
-            },
-            {
-              "noise": 0.02,
-              "sharpe": 0.0,
-              "win_rate": 100.0,
-              "avg_return": 10.5973
-            },
-            {
-              "noise": 0.05,
-              "sharpe": 0.0,
-              "win_rate": 0.0,
-              "avg_return": 0.0
-            }
-          ],
-          "break_point": null
-        },
-        "mean_reversion": {
-          "base_sharpe": 0.1991,
-          "base_win_rate": 66.67,
-          "base_trades": 12,
-          "resilience_score": 1.0,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": 0.1991,
-              "win_rate": 66.67,
-              "avg_return": 0.4897
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 0.5852,
-              "win_rate": 71.98,
-              "avg_return": 1.6442
-            },
-            {
-              "noise": 0.02,
-              "sharpe": 1.4849,
-              "win_rate": 90.55,
-              "avg_return": 4.0488
-            },
-            {
-              "noise": 0.05,
-              "sharpe": 2.1324,
-              "win_rate": 97.26,
-              "avg_return": 12.0464
-            }
-          ],
-          "break_point": null
-        },
-        "momentum": {
-          "base_sharpe": 0.2869,
-          "base_win_rate": 73.91,
-          "base_trades": 23,
-          "resilience_score": 0.1902,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": 0.2869,
-              "win_rate": 73.91,
-              "avg_return": 0.5204
-            },
-            {
-              "noise": 0.01,
-              "sharpe": -0.1741,
-              "win_rate": 40.72,
-              "avg_return": -0.3599
-            },
-            {
-              "noise": 0.02,
-              "sharpe": -0.3632,
-              "win_rate": 35.14,
-              "avg_return": -1.0884
-            },
-            {
-              "noise": 0.05,
-              "sharpe": -0.4596,
-              "win_rate": 31.62,
-              "avg_return": -2.8919
-            }
-          ],
-          "break_point": 0.01
-        }
-      },
-      "best_robust_strategy": "fear_greed",
-      "overall_resilience": 0.5855
-    },
-    "QQQ": {
-      "strategies": {
-        "fear_greed": {
-          "base_sharpe": -0.0404,
-          "base_win_rate": 44.44,
-          "base_trades": 9,
-          "resilience_score": 0.4,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": -0.0404,
-              "win_rate": 44.44,
-              "avg_return": -0.1827
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 0.3696,
-              "win_rate": 67.81,
-              "avg_return": 1.6531
-            },
-            {
-              "noise": 0.02,
-              "sharpe": 0.5854,
-              "win_rate": 73.67,
-              "avg_return": 2.3846
-            },
-            {
-              "noise": 0.05,
-              "sharpe": 0.771,
-              "win_rate": 77.85,
-              "avg_return": 5.6774
-            }
-          ],
-          "break_point": null
-        },
-        "regime_confirmation": {
-          "base_sharpe": 0.6758,
-          "base_win_rate": 90.0,
-          "base_trades": 10,
-          "resilience_score": 0.7645,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": 0.6758,
-              "win_rate": 90.0,
-              "avg_return": 1.3332
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 0.5938,
-              "win_rate": 75.06,
-              "avg_return": 1.5494
-            },
-            {
-              "noise": 0.02,
-              "sharpe": 0.5147,
-              "win_rate": 69.19,
-              "avg_return": 1.7447
-            },
-            {
-              "noise": 0.05,
-              "sharpe": 0.1377,
-              "win_rate": 55.09,
-              "avg_return": 0.8256
-            }
-          ],
-          "break_point": null
-        },
-        "rsi_oversold": {
-          "base_sharpe": 1.7891,
-          "base_win_rate": 100.0,
-          "base_trades": 2,
-          "resilience_score": 0.4,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": 1.7891,
-              "win_rate": 100.0,
-              "avg_return": 4.8154
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 0.3606,
-              "win_rate": 100.0,
-              "avg_return": 7.6153
-            },
-            {
-              "noise": 0.02,
-              "sharpe": 0.0,
-              "win_rate": 100.0,
-              "avg_return": 10.9549
-            },
-            {
-              "noise": 0.05,
-              "sharpe": 0.0,
-              "win_rate": 0.0,
-              "avg_return": 0.0
-            }
-          ],
-          "break_point": null
-        },
-        "mean_reversion": {
-          "base_sharpe": 0.3998,
-          "base_win_rate": 66.67,
-          "base_trades": 9,
-          "resilience_score": 1.0,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": 0.3998,
-              "win_rate": 66.67,
-              "avg_return": 0.9259
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 0.6314,
-              "win_rate": 71.3,
-              "avg_return": 1.9198
-            },
-            {
-              "noise": 0.02,
-              "sharpe": 1.1427,
-              "win_rate": 81.46,
-              "avg_return": 3.7341
-            },
-            {
-              "noise": 0.05,
-              "sharpe": 1.9708,
-              "win_rate": 96.19,
-              "avg_return": 11.7152
-            }
-          ],
-          "break_point": null
-        },
-        "momentum": {
-          "base_sharpe": 0.0118,
-          "base_win_rate": 50.0,
-          "base_trades": 32,
-          "resilience_score": 0.3144,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": 0.0118,
-              "win_rate": 50.0,
-              "avg_return": 0.0291
-            },
-            {
-              "noise": 0.01,
-              "sharpe": -0.0953,
-              "win_rate": 45.02,
-              "avg_return": -0.2619
-            },
-            {
-              "noise": 0.02,
-              "sharpe": -0.253,
-              "win_rate": 39.29,
-              "avg_return": -0.8658
-            },
-            {
-              "noise": 0.05,
-              "sharpe": -0.4219,
-              "win_rate": 32.68,
-              "avg_return": -2.7577
-            }
-          ],
-          "break_point": 0.01
-        }
-      },
-      "best_robust_strategy": "mean_reversion",
-      "overall_resilience": 0.5758
-    },
-    "GLD": {
-      "strategies": {
-        "fear_greed": {
-          "base_sharpe": 1.5054,
-          "base_win_rate": 100.0,
-          "base_trades": 4,
-          "resilience_score": 0.8474,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": 1.5054,
-              "win_rate": 100.0,
-              "avg_return": 2.695
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 2.3934,
-              "win_rate": 91.59,
-              "avg_return": 2.7295
-            },
-            {
-              "noise": 0.02,
-              "sharpe": 1.2531,
-              "win_rate": 86.98,
-              "avg_return": 3.7016
-            },
-            {
-              "noise": 0.05,
-              "sharpe": 1.006,
-              "win_rate": 83.43,
-              "avg_return": 7.2111
-            }
-          ],
-          "break_point": null
-        },
-        "regime_confirmation": {
-          "base_sharpe": 0.3827,
-          "base_win_rate": 57.14,
-          "base_trades": 14,
-          "resilience_score": 1.0,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": 0.3827,
-              "win_rate": 57.14,
-              "avg_return": 1.1792
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 0.6314,
-              "win_rate": 72.91,
-              "avg_return": 1.9058
-            },
-            {
-              "noise": 0.02,
-              "sharpe": 0.6564,
-              "win_rate": 72.71,
-              "avg_return": 2.3773
-            },
-            {
-              "noise": 0.05,
-              "sharpe": 0.3279,
-              "win_rate": 62.17,
-              "avg_return": 2.0853
-            }
-          ],
-          "break_point": null
-        },
-        "rsi_oversold": {
-          "base_sharpe": 0.0,
-          "base_win_rate": 0.0,
-          "base_trades": 0,
-          "resilience_score": 0.0,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": 0.0,
-              "win_rate": 0.0,
-              "avg_return": 0.0
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 0.0,
-              "win_rate": 0.0,
-              "avg_return": 0.0
-            },
-            {
-              "noise": 0.02,
-              "sharpe": 0.0,
-              "win_rate": 0.0,
-              "avg_return": 0.0
-            },
-            {
-              "noise": 0.05,
-              "sharpe": 0.0,
-              "win_rate": 0.0,
-              "avg_return": 0.0
-            }
-          ],
-          "break_point": null
-        },
-        "mean_reversion": {
-          "base_sharpe": 1.4442,
-          "base_win_rate": 83.33,
-          "base_trades": 6,
-          "resilience_score": 1.0,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": 1.4442,
-              "win_rate": 83.33,
-              "avg_return": 2.1068
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 2.7598,
-              "win_rate": 86.8,
-              "avg_return": 2.6953
-            },
-            {
-              "noise": 0.02,
-              "sharpe": 3.5771,
-              "win_rate": 97.65,
-              "avg_return": 5.3579
-            },
-            {
-              "noise": 0.05,
-              "sharpe": 8.9909,
-              "win_rate": 97.09,
-              "avg_return": 13.4666
-            }
-          ],
-          "break_point": null
-        },
-        "momentum": {
-          "base_sharpe": 0.2013,
-          "base_win_rate": 60.0,
-          "base_trades": 45,
-          "resilience_score": 0.2953,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": 0.2013,
-              "win_rate": 60.0,
-              "avg_return": 0.5543
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 0.1427,
-              "win_rate": 55.45,
-              "avg_return": 0.4435
-            },
-            {
-              "noise": 0.02,
-              "sharpe": -0.08,
-              "win_rate": 44.3,
-              "avg_return": -0.2941
-            },
-            {
-              "noise": 0.05,
-              "sharpe": -0.2824,
-              "win_rate": 37.05,
-              "avg_return": -1.8983
-            }
-          ],
-          "break_point": 0.02
-        }
-      },
-      "best_robust_strategy": "regime_confirmation",
-      "overall_resilience": 0.6285
-    },
-    "TLT": {
-      "strategies": {
-        "fear_greed": {
-          "base_sharpe": 0.0022,
-          "base_win_rate": 44.44,
-          "base_trades": 9,
-          "resilience_score": 1.0,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": 0.0022,
-              "win_rate": 44.44,
-              "avg_return": 0.0021
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 0.3023,
-              "win_rate": 58.24,
-              "avg_return": 0.6486
-            },
-            {
-              "noise": 0.02,
-              "sharpe": 0.7468,
-              "win_rate": 76.93,
-              "avg_return": 2.3741
-            },
-            {
-              "noise": 0.05,
-              "sharpe": 0.7095,
-              "win_rate": 74.8,
-              "avg_return": 4.9989
-            }
-          ],
-          "break_point": null
-        },
-        "regime_confirmation": {
-          "base_sharpe": 0.8354,
-          "base_win_rate": 80.0,
-          "base_trades": 5,
-          "resilience_score": 0.3726,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": 0.8354,
-              "win_rate": 80.0,
-              "avg_return": 1.0014
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 0.4268,
-              "win_rate": 64.59,
-              "avg_return": 0.7753
-            },
-            {
-              "noise": 0.02,
-              "sharpe": 0.1339,
-              "win_rate": 55.29,
-              "avg_return": 0.3647
-            },
-            {
-              "noise": 0.05,
-              "sharpe": -0.2005,
-              "win_rate": 43.22,
-              "avg_return": -1.1097
-            }
-          ],
-          "break_point": 0.05
-        },
-        "rsi_oversold": {
-          "base_sharpe": 0.0,
-          "base_win_rate": 0.0,
-          "base_trades": 0,
-          "resilience_score": 0.0,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": 0.0,
-              "win_rate": 0.0,
-              "avg_return": 0.0
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 0.0,
-              "win_rate": 0.0,
-              "avg_return": 0.0
-            },
-            {
-              "noise": 0.02,
-              "sharpe": 0.0,
-              "win_rate": 0.0,
-              "avg_return": 0.0
-            },
-            {
-              "noise": 0.05,
-              "sharpe": 0.0,
-              "win_rate": 0.0,
-              "avg_return": 0.0
-            }
-          ],
-          "break_point": null
-        },
-        "mean_reversion": {
-          "base_sharpe": 0.3753,
-          "base_win_rate": 62.5,
-          "base_trades": 8,
-          "resilience_score": 1.0,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": 0.3753,
-              "win_rate": 62.5,
-              "avg_return": 0.6018
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 0.9367,
-              "win_rate": 80.19,
-              "avg_return": 1.8848
-            },
-            {
-              "noise": 0.02,
-              "sharpe": 1.6624,
-              "win_rate": 91.43,
-              "avg_return": 4.0697
-            },
-            {
-              "noise": 0.05,
-              "sharpe": 2.06,
-              "win_rate": 94.01,
-              "avg_return": 11.674
-            }
-          ],
-          "break_point": null
-        },
-        "momentum": {
-          "base_sharpe": -0.4263,
-          "base_win_rate": 45.0,
-          "base_trades": 20,
-          "resilience_score": 0.8492,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": -0.4263,
-              "win_rate": 45.0,
-              "avg_return": -0.7763
-            },
-            {
-              "noise": 0.01,
-              "sharpe": -0.5553,
-              "win_rate": 31.95,
-              "avg_return": -1.1805
-            },
-            {
-              "noise": 0.02,
-              "sharpe": -0.5833,
-              "win_rate": 28.03,
-              "avg_return": -1.7417
-            },
-            {
-              "noise": 0.05,
-              "sharpe": -0.5294,
-              "win_rate": 30.27,
-              "avg_return": -3.3049
-            }
-          ],
-          "break_point": 0.01
-        }
-      },
-      "best_robust_strategy": "fear_greed",
-      "overall_resilience": 0.6444
-    },
-    "XLK": {
-      "strategies": {
-        "fear_greed": {
-          "base_sharpe": 0.1975,
-          "base_win_rate": 64.29,
-          "base_trades": 14,
-          "resilience_score": 1.0,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": 0.1975,
-              "win_rate": 64.29,
-              "avg_return": 1.0006
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 0.3275,
-              "win_rate": 64.58,
-              "avg_return": 1.5032
-            },
-            {
-              "noise": 0.02,
-              "sharpe": 0.4511,
-              "win_rate": 68.43,
-              "avg_return": 2.0966
-            },
-            {
-              "noise": 0.05,
-              "sharpe": 0.6807,
-              "win_rate": 74.56,
-              "avg_return": 5.279
-            }
-          ],
-          "break_point": null
-        },
-        "regime_confirmation": {
-          "base_sharpe": 0.3309,
-          "base_win_rate": 70.0,
-          "base_trades": 10,
-          "resilience_score": 0.9838,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": 0.3309,
-              "win_rate": 70.0,
-              "avg_return": 0.9251
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 0.4513,
-              "win_rate": 69.36,
-              "avg_return": 1.2394
-            },
-            {
-              "noise": 0.02,
-              "sharpe": 0.4259,
-              "win_rate": 67.17,
-              "avg_return": 1.5925
-            },
-            {
-              "noise": 0.05,
-              "sharpe": 0.1489,
-              "win_rate": 54.99,
-              "avg_return": 1.0039
-            }
-          ],
-          "break_point": null
-        },
-        "rsi_oversold": {
-          "base_sharpe": 0.0,
-          "base_win_rate": 0.0,
-          "base_trades": 0,
-          "resilience_score": 0.0,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": 0.0,
-              "win_rate": 0.0,
-              "avg_return": 0.0
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 0.0,
-              "win_rate": 100.0,
-              "avg_return": 3.7428
-            },
-            {
-              "noise": 0.02,
-              "sharpe": 0.0,
-              "win_rate": 100.0,
-              "avg_return": 9.398
-            },
-            {
-              "noise": 0.05,
-              "sharpe": 0.0,
-              "win_rate": 0.0,
-              "avg_return": 0.0
-            }
-          ],
-          "break_point": null
-        },
-        "mean_reversion": {
-          "base_sharpe": 0.6048,
-          "base_win_rate": 75.0,
-          "base_trades": 12,
-          "resilience_score": 1.0,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": 0.6048,
-              "win_rate": 75.0,
-              "avg_return": 1.8043
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 0.5647,
-              "win_rate": 69.98,
-              "avg_return": 2.0685
-            },
-            {
-              "noise": 0.02,
-              "sharpe": 0.7837,
-              "win_rate": 76.78,
-              "avg_return": 3.3798
-            },
-            {
-              "noise": 0.05,
-              "sharpe": 1.8337,
-              "win_rate": 95.39,
-              "avg_return": 11.4202
-            }
-          ],
-          "break_point": null
-        },
-        "momentum": {
-          "base_sharpe": 0.1495,
-          "base_win_rate": 51.28,
-          "base_trades": 39,
-          "resilience_score": 0.3308,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": 0.1495,
-              "win_rate": 51.28,
-              "avg_return": 0.4597
-            },
-            {
-              "noise": 0.01,
-              "sharpe": -0.052,
-              "win_rate": 46.65,
-              "avg_return": -0.1786
-            },
-            {
-              "noise": 0.02,
-              "sharpe": -0.1642,
-              "win_rate": 42.41,
-              "avg_return": -0.6311
-            },
-            {
-              "noise": 0.05,
-              "sharpe": -0.3977,
-              "win_rate": 33.76,
-              "avg_return": -2.7285
-            }
-          ],
-          "break_point": 0.01
-        }
-      },
-      "best_robust_strategy": "fear_greed",
-      "overall_resilience": 0.6629
-    },
-    "IWM": {
-      "strategies": {
-        "fear_greed": {
-          "base_sharpe": 0.1642,
-          "base_win_rate": 66.67,
-          "base_trades": 15,
-          "resilience_score": 1.0,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": 0.1642,
-              "win_rate": 66.67,
-              "avg_return": 0.5771
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 0.2572,
-              "win_rate": 67.54,
-              "avg_return": 0.9106
-            },
-            {
-              "noise": 0.02,
-              "sharpe": 0.4581,
-              "win_rate": 68.11,
-              "avg_return": 1.9226
-            },
-            {
-              "noise": 0.05,
-              "sharpe": 0.6943,
-              "win_rate": 74.79,
-              "avg_return": 5.2076
-            }
-          ],
-          "break_point": null
-        },
-        "regime_confirmation": {
-          "base_sharpe": 0.3451,
-          "base_win_rate": 68.75,
-          "base_trades": 16,
-          "resilience_score": 0.9706,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": 0.3451,
-              "win_rate": 68.75,
-              "avg_return": 0.853
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 0.3526,
-              "win_rate": 64.87,
-              "avg_return": 0.9201
-            },
-            {
-              "noise": 0.02,
-              "sharpe": 0.3713,
-              "win_rate": 63.7,
-              "avg_return": 1.2526
-            },
-            {
-              "noise": 0.05,
-              "sharpe": 0.0683,
-              "win_rate": 53.1,
-              "avg_return": 0.3837
-            }
-          ],
-          "break_point": null
-        },
-        "rsi_oversold": {
-          "base_sharpe": -2.5961,
-          "base_win_rate": 0.0,
-          "base_trades": 2,
-          "resilience_score": 0.0,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": -2.5961,
-              "win_rate": 0.0,
-              "avg_return": -2.4167
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 0.0108,
-              "win_rate": 89.29,
-              "avg_return": 2.4971
-            },
-            {
-              "noise": 0.02,
-              "sharpe": 0.0,
-              "win_rate": 100.0,
-              "avg_return": 6.6728
-            },
-            {
-              "noise": 0.05,
-              "sharpe": 0.0,
-              "win_rate": 0.0,
-              "avg_return": 0.0
-            }
-          ],
-          "break_point": null
-        },
-        "mean_reversion": {
-          "base_sharpe": -0.2886,
-          "base_win_rate": 44.44,
-          "base_trades": 9,
-          "resilience_score": 0.4,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": -0.2886,
-              "win_rate": 44.44,
-              "avg_return": -0.7805
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 0.1066,
-              "win_rate": 55.99,
-              "avg_return": 0.4412
-            },
-            {
-              "noise": 0.02,
-              "sharpe": 0.6801,
-              "win_rate": 73.16,
-              "avg_return": 2.755
-            },
-            {
-              "noise": 0.05,
-              "sharpe": 1.834,
-              "win_rate": 93.37,
-              "avg_return": 11.4927
-            }
-          ],
-          "break_point": null
-        },
-        "momentum": {
-          "base_sharpe": -0.0807,
-          "base_win_rate": 45.45,
-          "base_trades": 33,
-          "resilience_score": 0.937,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": -0.0807,
-              "win_rate": 45.45,
-              "avg_return": -0.1844
-            },
-            {
-              "noise": 0.01,
-              "sharpe": -0.0648,
-              "win_rate": 47.12,
-              "avg_return": -0.1797
-            },
-            {
-              "noise": 0.02,
-              "sharpe": -0.2619,
-              "win_rate": 38.29,
-              "avg_return": -0.9296
-            },
-            {
-              "noise": 0.05,
-              "sharpe": -0.4374,
-              "win_rate": 32.25,
-              "avg_return": -2.8654
-            }
-          ],
-          "break_point": 0.01
-        }
-      },
-      "best_robust_strategy": "fear_greed",
-      "overall_resilience": 0.6615
-    },
-    "XLE": {
-      "strategies": {
-        "fear_greed": {
-          "base_sharpe": 0.3859,
-          "base_win_rate": 83.33,
-          "base_trades": 12,
-          "resilience_score": 0.9726,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": 0.3859,
-              "win_rate": 83.33,
-              "avg_return": 1.1769
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 0.587,
-              "win_rate": 75.67,
-              "avg_return": 1.7456
-            },
-            {
-              "noise": 0.02,
-              "sharpe": 0.7474,
-              "win_rate": 77.63,
-              "avg_return": 2.772
-            },
-            {
-              "noise": 0.05,
-              "sharpe": 0.7411,
-              "win_rate": 75.97,
-              "avg_return": 5.3955
-            }
-          ],
-          "break_point": null
-        },
-        "regime_confirmation": {
-          "base_sharpe": -0.3417,
-          "base_win_rate": 45.45,
-          "base_trades": 11,
-          "resilience_score": 0.4888,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": -0.3417,
-              "win_rate": 45.45,
-              "avg_return": -0.7199
-            },
-            {
-              "noise": 0.01,
-              "sharpe": -0.241,
-              "win_rate": 43.22,
-              "avg_return": -0.5991
-            },
-            {
-              "noise": 0.02,
-              "sharpe": -0.0506,
-              "win_rate": 47.3,
-              "avg_return": -0.2825
-            },
-            {
-              "noise": 0.05,
-              "sharpe": -0.1045,
-              "win_rate": 46.04,
-              "avg_return": -0.7021
-            }
-          ],
-          "break_point": 0.01
-        },
-        "rsi_oversold": {
-          "base_sharpe": -0.896,
-          "base_win_rate": 50.0,
-          "base_trades": 2,
-          "resilience_score": 0.4,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": -0.896,
-              "win_rate": 50.0,
-              "avg_return": -1.4221
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 2.4937,
-              "win_rate": 79.17,
-              "avg_return": 1.721
-            },
-            {
-              "noise": 0.02,
-              "sharpe": 0.0,
-              "win_rate": 100.0,
-              "avg_return": 6.0951
-            },
-            {
-              "noise": 0.05,
-              "sharpe": 0.0,
-              "win_rate": 0.0,
-              "avg_return": 0.0
-            }
-          ],
-          "break_point": null
-        },
-        "mean_reversion": {
-          "base_sharpe": 0.1537,
-          "base_win_rate": 63.64,
-          "base_trades": 11,
-          "resilience_score": 1.0,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": 0.1537,
-              "win_rate": 63.64,
-              "avg_return": 0.3234
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 0.5396,
-              "win_rate": 71.31,
-              "avg_return": 1.2424
-            },
-            {
-              "noise": 0.02,
-              "sharpe": 0.9177,
-              "win_rate": 81.17,
-              "avg_return": 3.4324
-            },
-            {
-              "noise": 0.05,
-              "sharpe": 1.6373,
-              "win_rate": 90.71,
-              "avg_return": 10.8758
-            }
-          ],
-          "break_point": null
-        },
-        "momentum": {
-          "base_sharpe": 0.0967,
-          "base_win_rate": 57.14,
-          "base_trades": 35,
-          "resilience_score": 0.2954,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": 0.0967,
-              "win_rate": 57.14,
-              "avg_return": 0.218
-            },
-            {
-              "noise": 0.01,
-              "sharpe": -0.0302,
-              "win_rate": 49.46,
-              "avg_return": -0.1029
-            },
-            {
-              "noise": 0.02,
-              "sharpe": -0.2166,
-              "win_rate": 42.2,
-              "avg_return": -0.8441
-            },
-            {
-              "noise": 0.05,
-              "sharpe": -0.3919,
-              "win_rate": 33.72,
-              "avg_return": -2.6748
-            }
-          ],
-          "break_point": 0.01
-        }
-      },
-      "best_robust_strategy": "mean_reversion",
-      "overall_resilience": 0.6314
-    },
-    "XLF": {
-      "strategies": {
-        "fear_greed": {
-          "base_sharpe": 0.0025,
-          "base_win_rate": 57.14,
-          "base_trades": 7,
-          "resilience_score": 1.0,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": 0.0025,
-              "win_rate": 57.14,
-              "avg_return": 0.0125
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 0.551,
-              "win_rate": 74.07,
-              "avg_return": 1.7581
-            },
-            {
-              "noise": 0.02,
-              "sharpe": 0.7074,
-              "win_rate": 76.44,
-              "avg_return": 2.5758
-            },
-            {
-              "noise": 0.05,
-              "sharpe": 0.7984,
-              "win_rate": 78.26,
-              "avg_return": 5.6713
-            }
-          ],
-          "break_point": null
-        },
-        "regime_confirmation": {
-          "base_sharpe": 0.1909,
-          "base_win_rate": 54.55,
-          "base_trades": 11,
-          "resilience_score": 1.0,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": 0.1909,
-              "win_rate": 54.55,
-              "avg_return": 0.2621
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 0.4517,
-              "win_rate": 66.43,
-              "avg_return": 1.0604
-            },
-            {
-              "noise": 0.02,
-              "sharpe": 0.4295,
-              "win_rate": 66.1,
-              "avg_return": 1.2846
-            },
-            {
-              "noise": 0.05,
-              "sharpe": -0.0301,
-              "win_rate": 49.04,
-              "avg_return": -0.1471
-            }
-          ],
-          "break_point": 0.05
-        },
-        "rsi_oversold": {
-          "base_sharpe": 3.2893,
-          "base_win_rate": 100.0,
-          "base_trades": 2,
-          "resilience_score": 0.4,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": 3.2893,
-              "win_rate": 100.0,
-              "avg_return": 4.2854
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 0.101,
-              "win_rate": 100.0,
-              "avg_return": 6.4354
-            },
-            {
-              "noise": 0.02,
-              "sharpe": 0.0,
-              "win_rate": 100.0,
-              "avg_return": 13.1256
-            },
-            {
-              "noise": 0.05,
-              "sharpe": 0.0,
-              "win_rate": 0.0,
-              "avg_return": 0.0
-            }
-          ],
-          "break_point": null
-        },
-        "mean_reversion": {
-          "base_sharpe": 0.6444,
-          "base_win_rate": 85.71,
-          "base_trades": 14,
-          "resilience_score": 1.0,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": 0.6444,
-              "win_rate": 85.71,
-              "avg_return": 1.6576
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 0.7934,
-              "win_rate": 81.48,
-              "avg_return": 2.1991
-            },
-            {
-              "noise": 0.02,
-              "sharpe": 1.4357,
-              "win_rate": 90.46,
-              "avg_return": 4.2194
-            },
-            {
-              "noise": 0.05,
-              "sharpe": 2.0897,
-              "win_rate": 97.65,
-              "avg_return": 12.4685
-            }
-          ],
-          "break_point": null
-        },
-        "momentum": {
-          "base_sharpe": 0.2049,
-          "base_win_rate": 57.14,
-          "base_trades": 28,
-          "resilience_score": 0.2442,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": 0.2049,
-              "win_rate": 57.14,
-              "avg_return": 0.3627
-            },
-            {
-              "noise": 0.01,
-              "sharpe": -0.1422,
-              "win_rate": 45.45,
-              "avg_return": -0.3501
-            },
-            {
-              "noise": 0.02,
-              "sharpe": -0.3742,
-              "win_rate": 34.88,
-              "avg_return": -1.278
-            },
-            {
-              "noise": 0.05,
-              "sharpe": -0.4611,
-              "win_rate": 31.75,
-              "avg_return": -2.9757
-            }
-          ],
-          "break_point": 0.01
-        }
-      },
-      "best_robust_strategy": "fear_greed",
-      "overall_resilience": 0.7288
-    },
-    "XLV": {
-      "strategies": {
-        "fear_greed": {
-          "base_sharpe": 0.4768,
-          "base_win_rate": 72.73,
-          "base_trades": 11,
-          "resilience_score": 0.9953,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": 0.4768,
-              "win_rate": 72.73,
-              "avg_return": 0.9119
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 0.4206,
-              "win_rate": 67.18,
-              "avg_return": 0.9281
-            },
-            {
-              "noise": 0.02,
-              "sharpe": 0.5902,
-              "win_rate": 71.87,
-              "avg_return": 1.9128
-            },
-            {
-              "noise": 0.05,
-              "sharpe": 0.7373,
-              "win_rate": 74.96,
-              "avg_return": 5.1
-            }
-          ],
-          "break_point": null
-        },
-        "regime_confirmation": {
-          "base_sharpe": -0.038,
-          "base_win_rate": 50.0,
-          "base_trades": 2,
-          "resilience_score": 0.4,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": -0.038,
-              "win_rate": 50.0,
-              "avg_return": -0.0693
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 0.6027,
-              "win_rate": 73.43,
-              "avg_return": 1.1254
-            },
-            {
-              "noise": 0.02,
-              "sharpe": 0.3846,
-              "win_rate": 64.71,
-              "avg_return": 1.1059
-            },
-            {
-              "noise": 0.05,
-              "sharpe": -0.036,
-              "win_rate": 49.52,
-              "avg_return": -0.1939
-            }
-          ],
-          "break_point": 0.05
-        },
-        "rsi_oversold": {
-          "base_sharpe": 0.0,
-          "base_win_rate": 100.0,
-          "base_trades": 1,
-          "resilience_score": 0.0,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": 0.0,
-              "win_rate": 100.0,
-              "avg_return": 0.0489
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 0.0,
-              "win_rate": 100.0,
-              "avg_return": 2.8862
-            },
-            {
-              "noise": 0.02,
-              "sharpe": 0.0,
-              "win_rate": 0.0,
-              "avg_return": 0.0
-            },
-            {
-              "noise": 0.05,
-              "sharpe": 0.0,
-              "win_rate": 0.0,
-              "avg_return": 0.0
-            }
-          ],
-          "break_point": null
-        },
-        "mean_reversion": {
-          "base_sharpe": 0.4762,
-          "base_win_rate": 69.23,
-          "base_trades": 13,
-          "resilience_score": 1.0,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": 0.4762,
-              "win_rate": 69.23,
-              "avg_return": 1.0352
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 0.7603,
-              "win_rate": 75.61,
-              "avg_return": 1.743
-            },
-            {
-              "noise": 0.02,
-              "sharpe": 1.2625,
-              "win_rate": 85.72,
-              "avg_return": 3.7759
-            },
-            {
-              "noise": 0.05,
-              "sharpe": 2.0472,
-              "win_rate": 94.26,
-              "avg_return": 12.0637
-            }
-          ],
-          "break_point": null
-        },
-        "momentum": {
-          "base_sharpe": -0.0274,
-          "base_win_rate": 47.37,
-          "base_trades": 19,
-          "resilience_score": 0.8709,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": -0.0274,
-              "win_rate": 47.37,
-              "avg_return": -0.0443
-            },
-            {
-              "noise": 0.01,
-              "sharpe": -0.3049,
-              "win_rate": 38.0,
-              "avg_return": -0.6574
-            },
-            {
-              "noise": 0.02,
-              "sharpe": -0.4929,
-              "win_rate": 32.08,
-              "avg_return": -1.516
-            },
-            {
-              "noise": 0.05,
-              "sharpe": -0.5222,
-              "win_rate": 30.08,
-              "avg_return": -3.2858
-            }
-          ],
-          "break_point": 0.01
-        }
-      },
-      "best_robust_strategy": "mean_reversion",
-      "overall_resilience": 0.6532
-    },
-    "VNQ": {
-      "strategies": {
-        "fear_greed": {
-          "base_sharpe": 0.7571,
-          "base_win_rate": 71.43,
-          "base_trades": 7,
-          "resilience_score": 0.954,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": 0.7571,
-              "win_rate": 71.43,
-              "avg_return": 0.6659
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 0.5839,
-              "win_rate": 73.02,
-              "avg_return": 1.291
-            },
-            {
-              "noise": 0.02,
-              "sharpe": 0.699,
-              "win_rate": 77.64,
-              "avg_return": 2.5019
-            },
-            {
-              "noise": 0.05,
-              "sharpe": 0.7736,
-              "win_rate": 77.38,
-              "avg_return": 5.4024
-            }
-          ],
-          "break_point": null
-        },
-        "regime_confirmation": {
-          "base_sharpe": -0.246,
-          "base_win_rate": 50.0,
-          "base_trades": 4,
-          "resilience_score": 0.4,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": -0.246,
-              "win_rate": 50.0,
-              "avg_return": -0.2647
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 0.2777,
-              "win_rate": 59.94,
-              "avg_return": 0.5662
-            },
-            {
-              "noise": 0.02,
-              "sharpe": 0.3242,
-              "win_rate": 62.24,
-              "avg_return": 0.998
-            },
-            {
-              "noise": 0.05,
-              "sharpe": -0.0757,
-              "win_rate": 47.55,
-              "avg_return": -0.4221
-            }
-          ],
-          "break_point": 0.05
-        },
-        "rsi_oversold": {
-          "base_sharpe": 0.8229,
-          "base_win_rate": 66.67,
-          "base_trades": 3,
-          "resilience_score": 0.0,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": 0.8229,
-              "win_rate": 66.67,
-              "avg_return": 1.8528
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 0.1151,
-              "win_rate": 100.0,
-              "avg_return": 4.4007
-            },
-            {
-              "noise": 0.02,
-              "sharpe": 0.0,
-              "win_rate": 0.0,
-              "avg_return": 0.0
-            },
-            {
-              "noise": 0.05,
-              "sharpe": 0.0,
-              "win_rate": 0.0,
-              "avg_return": 0.0
-            }
-          ],
-          "break_point": null
-        },
-        "mean_reversion": {
-          "base_sharpe": -0.0899,
-          "base_win_rate": 57.14,
-          "base_trades": 7,
-          "resilience_score": 0.4,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": -0.0899,
-              "win_rate": 57.14,
-              "avg_return": -0.3068
-            },
-            {
-              "noise": 0.01,
-              "sharpe": 0.5805,
-              "win_rate": 73.27,
-              "avg_return": 1.4949
-            },
-            {
-              "noise": 0.02,
-              "sharpe": 1.0799,
-              "win_rate": 82.96,
-              "avg_return": 3.427
-            },
-            {
-              "noise": 0.05,
-              "sharpe": 2.0708,
-              "win_rate": 95.14,
-              "avg_return": 12.1104
-            }
-          ],
-          "break_point": null
-        },
-        "momentum": {
-          "base_sharpe": -0.0446,
-          "base_win_rate": 61.9,
-          "base_trades": 21,
-          "resilience_score": 0.8101,
-          "degradation_curve": [
-            {
-              "noise": 0.0,
-              "sharpe": -0.0446,
-              "win_rate": 61.9,
-              "avg_return": -0.0795
-            },
-            {
-              "noise": 0.01,
-              "sharpe": -0.2631,
-              "win_rate": 39.74,
-              "avg_return": -0.6414
-            },
-            {
-              "noise": 0.02,
-              "sharpe": -0.44,
-              "win_rate": 32.51,
-              "avg_return": -1.4076
-            },
-            {
-              "noise": 0.05,
-              "sharpe": -0.5115,
-              "win_rate": 30.32,
-              "avg_return": -3.2157
-            }
-          ],
-          "break_point": 0.01
-        }
-      },
-      "best_robust_strategy": "fear_greed",
-      "overall_resilience": 0.5128
+      "overall_resilience": 0.5641
     }
   }
 }

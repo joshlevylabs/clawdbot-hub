@@ -569,6 +569,100 @@ export default function PipelineDetailPanel({
             </div>
           )}
 
+          {/* Performance Section - Show only for individual strategy modals */}
+          {strategyData && isIndividualStrategy(stageDetails.name) && currentVersionData && (
+            <div className="p-4 sm:p-6 border-b border-slate-700/50 bg-slate-800/20">
+              <h3 className="text-base sm:text-lg font-semibold text-slate-200 mb-4">Performance</h3>
+              
+              {/* Accuracy Gauge */}
+              <div className="mb-6">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm text-slate-300">Current Strategy Accuracy</span>
+                  <span className="text-lg font-bold text-slate-100">
+                    {currentVersionData.accuracy.overall.toFixed(1)}%
+                  </span>
+                </div>
+                <div className="w-full bg-slate-700/50 rounded-full h-3">
+                  <div 
+                    className={`h-3 rounded-full transition-all duration-500 ${
+                      currentVersionData.accuracy.overall >= 60 
+                        ? 'bg-emerald-500' 
+                        : currentVersionData.accuracy.overall >= 50 
+                        ? 'bg-amber-500' 
+                        : 'bg-red-500'
+                    }`}
+                    style={{ 
+                      width: `${Math.min(currentVersionData.accuracy.overall, 100)}%` 
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* Key Metrics Row */}
+              <div className="grid grid-cols-3 gap-4 mb-6">
+                <div className="bg-slate-900/50 rounded-lg p-3 text-center">
+                  <div className="text-xs text-slate-500 mb-1">Win Rate</div>
+                  <div className="text-lg font-bold text-slate-200">
+                    {(currentVersionData.winRate * 100).toFixed(1)}%
+                  </div>
+                </div>
+                <div className="bg-slate-900/50 rounded-lg p-3 text-center">
+                  <div className="text-xs text-slate-500 mb-1">Sharpe Ratio</div>
+                  <div className="text-lg font-bold text-slate-200">
+                    {currentVersionData.sharpe.toFixed(2)}
+                  </div>
+                </div>
+                <div className="bg-slate-900/50 rounded-lg p-3 text-center">
+                  <div className="text-xs text-slate-500 mb-1">Profit Factor</div>
+                  <div className="text-lg font-bold text-slate-200">
+                    {currentVersionData.profitFactor.toFixed(2)}
+                  </div>
+                </div>
+              </div>
+
+              {/* Asset Class Breakdown */}
+              {currentVersionData.accuracy.byAssetClass && Object.keys(currentVersionData.accuracy.byAssetClass).length > 0 && (
+                <div>
+                  <h4 className="text-sm font-medium text-slate-300 mb-3">Asset Class Breakdown</h4>
+                  <div className="space-y-2">
+                    {Object.entries(currentVersionData.accuracy.byAssetClass)
+                      .sort(([,a], [,b]) => b - a) // Sort by accuracy descending
+                      .map(([assetClass, accuracy]) => (
+                        <div key={assetClass} className="flex items-center justify-between p-2 bg-slate-900/30 rounded-lg">
+                          <div className="flex items-center gap-3">
+                            <span className="text-sm text-slate-300 capitalize">
+                              {assetClass.replace(/_/g, ' ')}
+                            </span>
+                            <div className="w-16 bg-slate-700/50 rounded-full h-1.5">
+                              <div 
+                                className={`h-1.5 rounded-full ${
+                                  accuracy >= 60 
+                                    ? 'bg-emerald-500' 
+                                    : accuracy >= 50 
+                                    ? 'bg-amber-500' 
+                                    : 'bg-red-500'
+                                }`}
+                                style={{ width: `${Math.min(accuracy, 100)}%` }}
+                              />
+                            </div>
+                          </div>
+                          <span className={`text-sm font-medium ${
+                            accuracy >= 60 
+                              ? 'text-emerald-400' 
+                              : accuracy >= 50 
+                              ? 'text-amber-400' 
+                              : 'text-red-400'
+                          }`}>
+                            {accuracy.toFixed(1)}%
+                          </span>
+                        </div>
+                      ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Strategy Parameters - Show for individual strategy gates */}
           {isIndividualStrategy(stageDetails.name) && (
             <div className="p-4 sm:p-6 border-b border-slate-700/50 bg-slate-800/20">

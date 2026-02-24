@@ -416,7 +416,7 @@ function BlendedFGSectorOverview({ tickers }: { tickers: TickerDetail[] }) {
 
       {/* Sector gauges 3x3 grid */}
       {sectorData ? (
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-3 gap-2 mb-6">
           {Object.entries(SECTOR_LABELS).map(([key, label]) => {
             const sector = sectorData[key];
             if (!sector) return null;
@@ -444,30 +444,163 @@ function BlendedFGSectorOverview({ tickers }: { tickers: TickerDetail[] }) {
           })}
         </div>
       ) : (
-        <div className="text-sm text-slate-500 text-center py-4">Sector data pending...</div>
+        <div className="text-sm text-slate-500 text-center py-4 mb-6">Sector data pending...</div>
       )}
+
+      {/* Asset Class Thresholds Section */}
+      <div className="border-t border-slate-600/30 pt-4">
+        <h4 className="text-sm font-semibold text-slate-300 mb-3 flex items-center gap-2">
+          <Target className="w-4 h-4" />
+          Asset Class Thresholds
+        </h4>
+        <div className="space-y-3">
+          {Object.entries(thresholds).map(([assetClass, threshold]) => {
+            // Find sector score for this asset class
+            const sectorScore = sectorData && sectorData[assetClass] ? sectorData[assetClass].score : null;
+            
+            return (
+              <div key={assetClass} className="bg-slate-900/40 rounded-lg p-3">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium text-slate-200 capitalize">
+                    {assetClass.replace('_', ' ')}
+                  </span>
+                  {sectorScore && (
+                    <span className={`text-sm font-bold ${getFGColor(sectorScore)}`}>
+                      Current: {sectorScore.toFixed(0)}
+                    </span>
+                  )}
+                </div>
+                
+                {/* Threshold visualization slider */}
+                <div className="relative">
+                  <div className="flex justify-between text-xs text-slate-500 mb-1">
+                    <span>Conservative</span>
+                    <span>Opportunistic</span>
+                  </div>
+                  
+                  {/* Track */}
+                  <div className="relative h-3 bg-slate-700/50 rounded-full">
+                    {/* Conservative threshold marker */}
+                    <div 
+                      className="absolute top-0 bottom-0 w-0.5 bg-emerald-500 rounded-full"
+                      style={{ left: `${threshold.conservative}%` }}
+                    />
+                    {/* Opportunistic threshold marker */}
+                    <div 
+                      className="absolute top-0 bottom-0 w-0.5 bg-blue-500 rounded-full"
+                      style={{ left: `${threshold.opportunistic}%` }}
+                    />
+                    
+                    {/* Current sector score position */}
+                    {sectorScore && (
+                      <div 
+                        className={`absolute top-0 bottom-0 w-1 rounded-full ${getFGColor(sectorScore).replace('text-', 'bg-')}`}
+                        style={{ 
+                          left: `${Math.min(Math.max(sectorScore, 0), 100)}%`,
+                          transform: 'translateX(-50%)'
+                        }}
+                      />
+                    )}
+                    
+                    {/* Opportunistic zone fill */}
+                    <div 
+                      className="absolute top-1 bottom-1 bg-blue-500/20 rounded-full"
+                      style={{ 
+                        left: '0%',
+                        width: `${threshold.opportunistic}%`
+                      }}
+                    />
+                    
+                    {/* Conservative zone fill */}
+                    <div 
+                      className="absolute top-1 bottom-1 bg-emerald-500/20 rounded-full"
+                      style={{ 
+                        left: '0%',
+                        width: `${threshold.conservative}%`
+                      }}
+                    />
+                  </div>
+                  
+                  {/* Threshold value labels */}
+                  <div className="flex justify-between text-xs text-slate-400 mt-1">
+                    <span 
+                      className="text-emerald-400 font-medium"
+                      style={{ marginLeft: `${threshold.conservative - 3}%` }}
+                    >
+                      {threshold.conservative}
+                    </span>
+                    <span 
+                      className="text-blue-400 font-medium"
+                      style={{ marginRight: `${100 - threshold.opportunistic - 3}%` }}
+                    >
+                      {threshold.opportunistic}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        <div className="text-xs text-slate-500 mt-2">
+          ⚠️ Threshold configuration is read-only for now. Interactive adjustment coming soon.
+        </div>
+      </div>
+
+      {/* Calibration Note */}
+      <div className="border-t border-slate-600/30 pt-3 mt-4">
+        <details className="group">
+          <summary className="flex items-center gap-2 text-xs text-amber-400 cursor-pointer hover:text-amber-300 transition-colors">
+            <span className="transform transition-transform group-open:rotate-90">▶</span>
+            ⚠️ Methodology Calibration Note
+          </summary>
+          <div className="mt-2 p-3 bg-amber-900/10 border border-amber-800/30 rounded-lg text-xs text-slate-300 leading-relaxed">
+            <p className="mb-2">
+              <strong className="text-amber-400">Sector scores use a simplified CNN-style methodology and may diverge from the official CNN index.</strong>
+            </p>
+            <p className="mb-1"><strong>Key differences:</strong></p>
+            <ul className="space-y-1 text-slate-400 ml-3">
+              <li>• <strong>Volatility inversion formula:</strong> CNN shows 7.7 (extreme fear) while our sectors score 68-93</li>
+              <li>• <strong>Safe haven baseline:</strong> CNN shows 15.5 while our scores range 33-83 (different baseline)</li>
+              <li>• <strong>Strength calculation:</strong> CNN shows 50 vs our 52-week high/low ratios on small samples</li>
+            </ul>
+            <p className="mt-2 text-slate-300">
+              <strong>Best use:</strong> Sector scores are most useful for relative comparison between sectors, not absolute comparison to CNN global.
+            </p>
+          </div>
+        </details>
+      </div>
     </div>
   );
 }
 
 // ============================================================
-// Blended F&G Ticker Row — simplified per-ticker view
+// Blended F&G Ticker Row — clear two-row display per ticker
 // ============================================================
 function BlendedFGTickerRow({ ticker }: { ticker: TickerDetail }) {
   const raw = ticker.rawData;
   if (!raw) return null;
 
-  const sectorFG = raw.sector_fg ?? raw.current_fg;
-  const globalFG = raw.global_fg ?? raw.current_fg;
-  const effectiveFG = raw.effective_fg ?? raw.current_fg;
+  const sectorFG = raw.sector_fg ?? raw.current_fg ?? 0;
+  const globalFG = raw.global_fg ?? raw.current_fg ?? 0;
+  const effectiveFG = raw.effective_fg ?? raw.current_fg ?? 0;
   const thresholdConservative = raw.fear_threshold_conservative ?? 15;
   const thresholdOpportunistic = raw.fear_threshold_opportunistic ?? 40;
+  const divergence = raw.fg_divergence ?? (sectorFG - globalFG);
 
-  // Determine which threshold triggered and against which index
-  const triggeredConservative = effectiveFG <= thresholdConservative;
-  const triggeredOpportunistic = effectiveFG <= thresholdOpportunistic;
-  const triggered = triggeredConservative || triggeredOpportunistic;
-  const triggerLevel = triggeredConservative ? 'conservative' : triggeredOpportunistic ? 'opportunistic' : 'none';
+  // Determine which threshold triggered and which index (global or sector) triggered it
+  const globalTriggeredConservative = globalFG <= thresholdConservative;
+  const globalTriggeredOpportunistic = globalFG <= thresholdOpportunistic;
+  const sectorTriggeredConservative = sectorFG <= thresholdConservative;
+  const sectorTriggeredOpportunistic = sectorFG <= thresholdOpportunistic;
+  
+  const globalTriggered = globalTriggeredConservative || globalTriggeredOpportunistic;
+  const sectorTriggered = sectorTriggeredConservative || sectorTriggeredOpportunistic;
+  
+  // Determine what caused the signal (which was used as effective FG)
+  const effectiveTriggeredConservative = effectiveFG <= thresholdConservative;
+  const effectiveTriggeredOpportunistic = effectiveFG <= thresholdOpportunistic;
+  const effectiveTriggered = effectiveTriggeredConservative || effectiveTriggeredOpportunistic;
+  const triggerLevel = effectiveTriggeredConservative ? 'conservative' : effectiveTriggeredOpportunistic ? 'opportunistic' : 'none';
 
   const getFGColor = (score: number) => {
     if (score < 25) return 'text-red-400';
@@ -476,46 +609,108 @@ function BlendedFGTickerRow({ ticker }: { ticker: TickerDetail }) {
     return 'text-emerald-400';
   };
 
+  // Divergence indicator
+  const getDivergenceDisplay = (div: number) => {
+    const absDivergence = Math.abs(div);
+    if (absDivergence < 10) {
+      return {
+        color: 'text-emerald-400',
+        bg: 'bg-emerald-900/30',
+        label: '✓ Low divergence — sector aligned with global',
+        barColor: 'bg-emerald-500',
+        width: Math.min(absDivergence * 3, 30) // Scale for visual
+      };
+    } else {
+      return {
+        color: 'text-amber-400',
+        bg: 'bg-amber-900/30',
+        label: '⚠️ High divergence — sector sentiment strongly differs from global',
+        barColor: 'bg-amber-500',
+        width: Math.min((absDivergence - 10) * 2 + 30, 100) // Scale for visual
+      };
+    }
+  };
+
+  const divergenceInfo = getDivergenceDisplay(divergence);
+
   return (
     <div className="bg-slate-800/50 rounded-lg p-3 border border-slate-700/50">
-      <div className="flex items-center justify-between">
+      {/* Header with symbol and trigger status */}
+      <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <span className="font-mono font-semibold text-slate-200 text-sm">{raw.symbol}</span>
           <span className="text-[10px] text-slate-500 capitalize">{raw.asset_class?.replace('_', ' ')}</span>
         </div>
         <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${
-          triggered 
+          effectiveTriggered 
             ? triggerLevel === 'conservative' 
               ? 'bg-emerald-900/50 text-emerald-400' 
               : 'bg-blue-900/50 text-blue-400'
             : 'bg-slate-700/50 text-slate-400'
         }`}>
-          {triggered 
+          {effectiveTriggered 
             ? triggerLevel === 'conservative' ? '✓ Conservative' : '✓ Opportunistic'
             : '✗ Not triggered'
           }
         </span>
       </div>
 
-      <div className="flex items-center gap-3 mt-1.5 text-xs">
-        <span className="text-slate-400">
-          Sector: <span className={`font-medium ${getFGColor(sectorFG)}`}>{sectorFG?.toFixed(0)}</span>
-        </span>
-        <span className="text-slate-600">|</span>
-        <span className="text-slate-400">
-          Thresh: <span className="text-slate-300 font-medium">{thresholdConservative}</span>
-          <span className="text-slate-500"> / </span>
-          <span className="text-slate-300 font-medium">{thresholdOpportunistic}</span>
-        </span>
-        {raw.fg_divergence !== undefined && Math.abs(raw.fg_divergence) > 10 && (
-          <>
-            <span className="text-slate-600">|</span>
-            <span className="text-amber-400 text-[10px]">
-              Δ{raw.fg_divergence.toFixed(0)} from global
+      {/* Two clear rows: Global and Sector */}
+      <div className="space-y-2 mb-3">
+        {/* Global Row */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-medium text-slate-300">Global:</span>
+            <span className={`font-semibold ${getFGColor(globalFG)}`}>{globalFG.toFixed(0)}</span>
+            <span className="text-slate-500 text-xs">|</span>
+            <span className="text-xs text-slate-400">
+              Threshold: <span className="text-slate-300">{thresholdOpportunistic}</span>
             </span>
-          </>
-        )}
+          </div>
+          {globalTriggered && (
+            <span className="text-[10px] text-emerald-400 bg-emerald-900/30 px-1.5 py-0.5 rounded">
+              ✓ Triggered
+            </span>
+          )}
+        </div>
+
+        {/* Sector Row */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-medium text-slate-300">Sector:</span>
+            <span className={`font-semibold ${getFGColor(sectorFG)}`}>{sectorFG.toFixed(0)}</span>
+            <span className="text-slate-500 text-xs">|</span>
+            <span className="text-xs text-slate-400">
+              Threshold: <span className="text-slate-300">{thresholdOpportunistic}</span>
+            </span>
+          </div>
+          {sectorTriggered && (
+            <span className="text-[10px] text-emerald-400 bg-emerald-900/30 px-1.5 py-0.5 rounded">
+              ✓ Triggered
+            </span>
+          )}
+        </div>
       </div>
+
+      {/* Divergence visualization */}
+      {Math.abs(divergence) > 5 && (
+        <div className={`rounded p-2 border ${divergenceInfo.bg} border-opacity-40`}>
+          <div className="flex items-center justify-between mb-1">
+            <span className={`text-xs ${divergenceInfo.color}`}>
+              Divergence: {divergence > 0 ? '+' : ''}{divergence.toFixed(0)}
+            </span>
+            <div className="flex-1 mx-3 bg-slate-700/50 rounded-full h-1.5">
+              <div 
+                className={`h-1.5 rounded-full ${divergenceInfo.barColor}`}
+                style={{ width: `${divergenceInfo.width}%` }}
+              />
+            </div>
+          </div>
+          <div className={`text-[10px] ${divergenceInfo.color} opacity-80`}>
+            {divergenceInfo.label}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -665,6 +860,223 @@ export default function PipelineDetailPanel({
             <>
               {/* Sector Overview with global index + 9 sector gauges + thresholds */}
               <BlendedFGSectorOverview tickers={[...stageDetails.passedTickers, ...stageDetails.filteredTickers]} />
+
+              {/* Version History - Show for Blended F&G strategy */}
+              {strategyData && (
+                <div className="p-4 sm:p-6 border-b border-slate-700/50 bg-slate-800/20">
+                  <button
+                    onClick={() => setIsVersionHistoryExpanded(!isVersionHistoryExpanded)}
+                    className="flex items-center justify-between w-full text-left group"
+                  >
+                    <h3 className="text-base sm:text-lg font-semibold text-slate-200 group-hover:text-slate-100 transition-colors">
+                      Version History
+                    </h3>
+                    <div className="flex items-center gap-2">
+                      {currentVersionData && (
+                        <span className="text-xs text-slate-400">
+                          {currentVersionData.accuracy.overall.toFixed(1)}% accuracy
+                        </span>
+                      )}
+                      {isVersionHistoryExpanded ? (
+                        <ChevronDown className="w-4 h-4 text-slate-400 group-hover:text-slate-300 transition-colors" />
+                      ) : (
+                        <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-slate-300 transition-colors" />
+                      )}
+                    </div>
+                  </button>
+
+                  {/* Current Version Summary - Always visible */}
+                  {currentVersionData && (
+                    <div className="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-3">
+                      <div className="bg-slate-900/50 rounded-lg p-3">
+                        <div className="text-xs text-slate-500">Version</div>
+                        <div className="text-sm font-semibold text-slate-200">v{currentVersionData.version}</div>
+                      </div>
+                      <div className="bg-slate-900/50 rounded-lg p-3">
+                        <div className="text-xs text-slate-500">Last Updated</div>
+                        <div className="text-sm font-semibold text-slate-200">
+                          {new Date(currentVersionData.date).toLocaleDateString()}
+                        </div>
+                      </div>
+                      <div className="bg-slate-900/50 rounded-lg p-3">
+                        <div className="text-xs text-slate-500">Accuracy</div>
+                        <div className="text-sm font-semibold text-emerald-400">
+                          {currentVersionData.accuracy.overall.toFixed(1)}%
+                        </div>
+                      </div>
+                      <div className="bg-slate-900/50 rounded-lg p-3">
+                        <div className="text-xs text-slate-500">Win Rate</div>
+                        <div className="text-sm font-semibold text-slate-200">
+                          {(currentVersionData.winRate * 100).toFixed(1)}%
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Expanded History */}
+                  {isVersionHistoryExpanded && strategyData.versions.length > 1 && (
+                    <div className="mt-4 space-y-4">
+                      <h4 className="text-sm font-medium text-slate-300">Recent Versions</h4>
+                      {strategyData.versions.slice(1, 6).map((version, index) => {
+                        const prevVersion = strategyData.versions[index + 1];
+                        const versionDelta = prevVersion ? getAccuracyDelta(version, prevVersion) : null;
+                        
+                        return (
+                          <div key={version.version} className="bg-slate-900/30 rounded-lg p-4">
+                            <div className="flex items-start justify-between mb-2">
+                              <div className="flex items-center gap-3">
+                                <span className="text-sm font-semibold text-slate-200">v{version.version}</span>
+                                <span className="text-xs text-slate-400 flex items-center gap-1">
+                                  <Calendar className="w-3 h-3" />
+                                  {new Date(version.date).toLocaleDateString()}
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-2 text-xs">
+                                <span className="text-slate-300">{version.accuracy.overall.toFixed(1)}%</span>
+                                {versionDelta !== null && (
+                                  <span className={`flex items-center gap-1 ${
+                                    versionDelta >= 0 ? 'text-emerald-400' : 'text-red-400'
+                                  }`}>
+                                    {versionDelta >= 0 ? (
+                                      <TrendingUp className="w-3 h-3" />
+                                    ) : (
+                                      <TrendingDownIcon className="w-3 h-3" />
+                                    )}
+                                    {versionDelta > 0 ? '+' : ''}{versionDelta.toFixed(1)}%
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                            <ul className="text-xs text-slate-300 space-y-1">
+                              {version.changes.slice(0, 3).map((change, changeIndex) => (
+                                <li key={changeIndex} className="flex items-start gap-2">
+                                  <span className="text-slate-500 mt-1">•</span>
+                                  <span>{change}</span>
+                                </li>
+                              ))}
+                              {version.changes.length > 3 && (
+                                <li className="text-slate-400 italic">
+                                  ... and {version.changes.length - 3} more changes
+                                </li>
+                              )}
+                            </ul>
+                          </div>
+                        );
+                      })}
+
+                      {/* Show regressions if any */}
+                      {strategyData.regressions && strategyData.regressions.length > 0 && (
+                        <div className="mt-4">
+                          <h4 className="text-sm font-medium text-red-400 mb-2">Known Regressions</h4>
+                          {strategyData.regressions.map((regression, index) => (
+                            <div key={index} className="bg-red-900/20 border border-red-800/30 rounded-lg p-3">
+                              <div className="text-sm font-medium text-red-300 mb-1">v{regression.version}</div>
+                              <div className="text-xs text-slate-300 mb-2">{regression.issue}</div>
+                              <div className="text-xs text-emerald-300">
+                                <span className="font-medium">Resolution:</span> {regression.resolution}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Performance Section - Show for Blended F&G strategy */}
+              {strategyData && currentVersionData && (
+                <div className="p-4 sm:p-6 border-b border-slate-700/50 bg-slate-800/20">
+                  <h3 className="text-base sm:text-lg font-semibold text-slate-200 mb-4">Performance</h3>
+                  
+                  {/* Accuracy Gauge */}
+                  <div className="mb-6">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm text-slate-300">Current Strategy Accuracy</span>
+                      <span className="text-lg font-bold text-slate-100">
+                        {currentVersionData.accuracy.overall.toFixed(1)}%
+                      </span>
+                    </div>
+                    <div className="w-full bg-slate-700/50 rounded-full h-3">
+                      <div 
+                        className={`h-3 rounded-full transition-all duration-500 ${
+                          currentVersionData.accuracy.overall >= 60 
+                            ? 'bg-emerald-500' 
+                            : currentVersionData.accuracy.overall >= 50 
+                            ? 'bg-amber-500' 
+                            : 'bg-red-500'
+                        }`}
+                        style={{ 
+                          width: `${Math.min(currentVersionData.accuracy.overall, 100)}%` 
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Key Metrics Row */}
+                  <div className="grid grid-cols-3 gap-4 mb-6">
+                    <div className="bg-slate-900/50 rounded-lg p-3 text-center">
+                      <div className="text-xs text-slate-500 mb-1">Win Rate</div>
+                      <div className="text-lg font-bold text-slate-200">
+                        {(currentVersionData.winRate * 100).toFixed(1)}%
+                      </div>
+                    </div>
+                    <div className="bg-slate-900/50 rounded-lg p-3 text-center">
+                      <div className="text-xs text-slate-500 mb-1">Sharpe Ratio</div>
+                      <div className="text-lg font-bold text-slate-200">
+                        {currentVersionData.sharpe.toFixed(2)}
+                      </div>
+                    </div>
+                    <div className="bg-slate-900/50 rounded-lg p-3 text-center">
+                      <div className="text-xs text-slate-500 mb-1">Profit Factor</div>
+                      <div className="text-lg font-bold text-slate-200">
+                        {currentVersionData.profitFactor.toFixed(2)}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Asset Class Breakdown */}
+                  {currentVersionData.accuracy.byAssetClass && Object.keys(currentVersionData.accuracy.byAssetClass).length > 0 && (
+                    <div>
+                      <h4 className="text-sm font-medium text-slate-300 mb-3">Asset Class Breakdown</h4>
+                      <div className="space-y-2">
+                        {Object.entries(currentVersionData.accuracy.byAssetClass)
+                          .sort(([,a], [,b]) => b - a) // Sort by accuracy descending
+                          .map(([assetClass, accuracy]) => (
+                            <div key={assetClass} className="flex items-center justify-between p-2 bg-slate-900/30 rounded-lg">
+                              <div className="flex items-center gap-3">
+                                <span className="text-sm text-slate-300 capitalize">
+                                  {assetClass.replace(/_/g, ' ')}
+                                </span>
+                                <div className="w-16 bg-slate-700/50 rounded-full h-1.5">
+                                  <div 
+                                    className={`h-1.5 rounded-full ${
+                                      accuracy >= 60 
+                                        ? 'bg-emerald-500' 
+                                        : accuracy >= 50 
+                                        ? 'bg-amber-500' 
+                                        : 'bg-red-500'
+                                    }`}
+                                    style={{ width: `${Math.min(accuracy, 100)}%` }}
+                                  />
+                                </div>
+                              </div>
+                              <span className={`text-sm font-medium ${
+                                accuracy >= 60 
+                                  ? 'text-emerald-400' 
+                                  : accuracy >= 50 
+                                  ? 'text-amber-400' 
+                                  : 'text-red-400'
+                              }`}>
+                                {accuracy.toFixed(1)}%
+                              </span>
+                            </div>
+                          ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Summary Stats */}
               <div className="p-4 sm:p-6 border-b border-slate-700/50">

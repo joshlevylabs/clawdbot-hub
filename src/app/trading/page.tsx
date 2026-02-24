@@ -41,6 +41,8 @@ import PositionCharts from "@/components/PositionCharts";
 import SignalAnalysisModal from "@/components/SignalAnalysisModal";
 import MarketCycles from "./MarketCycles";
 import SignalFlowTab from "./SignalFlowTab";
+import RealTimePnLDashboard from "@/components/trading/RealTimePnLDashboard";
+import RealTimePositionsTable from "@/components/trading/RealTimePositionsTable";
 
 // ===== Types =====
 
@@ -360,7 +362,7 @@ function SignalAccuracyPanel({ stats }: { stats: SignalStats }) {
 
 // ===== Unified Trading Page with Single Tab Bar =====
 
-type ActiveTab = "overview" | "plays" | "positions" | "trades" | "signals" | "signal-flow" | "mre" | "universe" | "optimizer" | "backtests" | "versions" | "markets" | "cycles" | "validation";
+type ActiveTab = "overview" | "real-time" | "plays" | "positions" | "trades" | "signals" | "signal-flow" | "mre" | "universe" | "optimizer" | "backtests" | "versions" | "markets" | "cycles" | "validation";
 
 export default function TradingPage() {
   // Support ?tab= query param for deep linking
@@ -525,10 +527,11 @@ export default function TradingPage() {
   const avgLoss = losingTrades.length > 0 ? Math.abs(losingTrades.reduce((s, t) => s + t.pnl, 0) / losingTrades.length) : 0;
   const profitFactor = avgLoss > 0 ? avgWin / avgLoss : avgWin > 0 ? Infinity : 0;
 
-  const isPortfolioTab = activeTab === "overview" || activeTab === "plays" || activeTab === "positions" || activeTab === "trades" || activeTab === "signals";
+  const isPortfolioTab = activeTab === "overview" || activeTab === "real-time" || activeTab === "plays" || activeTab === "positions" || activeTab === "trades" || activeTab === "signals";
 
   const tabConfig: { key: ActiveTab; label: string }[] = [
     { key: "overview", label: "Overview" },
+    { key: "real-time", label: "Real-Time P&L" },
     { key: "plays", label: "Today's Plays" },
     { key: "positions", label: "Positions" },
     { key: "trades", label: "Trades" },
@@ -719,6 +722,25 @@ export default function TradingPage() {
               {/* Signal Accuracy */}
               {signalStats && <SignalAccuracyPanel stats={signalStats} />}
             </>
+          )}
+
+          {/* ===== REAL-TIME P&L TAB ===== */}
+          {activeTab === "real-time" && !loading && !error && (
+            <div className="space-y-6">
+              {/* Real-Time P&L Dashboard */}
+              <RealTimePnLDashboard 
+                userId={null} // Admin view - no user filter
+                compact={false}
+              />
+              
+              {/* Real-Time Positions Table */}
+              <RealTimePositionsTable
+                userId={null} // Admin view - no user filter
+                maxHeight="500px"
+                showRiskMetrics={true}
+                allowPositionActions={false}
+              />
+            </div>
           )}
 
           {/* ===== TODAY'S PLAYS TAB ===== */}

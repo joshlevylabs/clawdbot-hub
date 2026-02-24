@@ -1,6 +1,6 @@
 {
   "date": "2026-02-24",
-  "generatedAt": "2026-02-24T04:54:31.006191-08:00",
+  "generatedAt": "2026-02-24T12:10:25.419881-08:00",
   "priorities": [
     {
       "text": "Decide newsletter send timing relative to Apple approval",
@@ -141,6 +141,36 @@
       "assignee": "Jordan Peterson",
       "status": "pending",
       "taskKey": "A-204"
+    },
+    {
+      "text": "Build core trading engine with position tracking and simple P&L calculations",
+      "assignee": "James Truchard",
+      "status": "pending",
+      "taskKey": "A-205"
+    },
+    {
+      "text": "Create flexible database schemas for delayed data with future real-time capability",
+      "assignee": "Elon",
+      "status": "pending",
+      "taskKey": "A-206"
+    },
+    {
+      "text": "Design premium feature gates around performance attribution using delayed data",
+      "assignee": "Steve Jobs",
+      "status": "pending",
+      "taskKey": "A-207"
+    },
+    {
+      "text": "Pause market data provider analysis pending trading system validation",
+      "assignee": "Chris Vermeullen",
+      "status": "pending",
+      "taskKey": "A-208"
+    },
+    {
+      "text": "Continue educational scaffolding integration into trading flows",
+      "assignee": "Jordan Peterson",
+      "status": "pending",
+      "taskKey": "A-209"
     }
   ]
 }

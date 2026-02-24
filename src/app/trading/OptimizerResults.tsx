@@ -17,6 +17,8 @@ import {
   Award,
 } from "lucide-react";
 
+import BacktestOverview from "@/components/BacktestOverview";
+
 // ============ TYPES ============
 
 interface WalkForwardResult {
@@ -833,6 +835,9 @@ export default function OptimizerResults() {
 
       {/* Version Badges */}
       {versions && <VersionBadges versions={versions} />}
+
+      {/* Backtest Overview */}
+      <BacktestOverview />
 
       {/* Strategy Version History */}
       {strategyVersions && <StrategyVersionHistory strategies={strategyVersions} />}

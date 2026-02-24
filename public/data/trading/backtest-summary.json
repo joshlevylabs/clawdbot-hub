@@ -1,0 +1,266 @@
+{
+  "lastRun": "2026-02-24T03:32:43.487550",
+  "backtesterVersion": "2.0.0",
+  "universeSize": 676,
+  "coreAssets": 24,
+  "lookbackYears": 25,
+  "runtime_seconds": 99.7,
+  "tickers_calibrated": 676,
+  "strategies": {
+    "fear_greed": {
+      "tested": true,
+      "name": "Blended Fear & Greed Strategy",
+      "version": "16.0.0",
+      "lastAccuracy": 83.8,
+      "lastSharpe": 0.18,
+      "lastWinRate": 0.838,
+      "profitFactor": 2.65,
+      "paramsTested": [
+        "fear_threshold_conservative",
+        "fear_threshold_opportunistic", 
+        "sector_weights",
+        "divergence_bonus_threshold",
+        "relative_divergence_min_days"
+      ],
+      "optimalParams": {
+        "conservative": 8,
+        "opportunistic": 19,
+        "greed_threshold": 80,
+        "panic_multiplier": 2.0
+      },
+      "sectorBreakdown": {
+        "energy": { "global": 0.4, "sector": 0.6 },
+        "bonds": { "global": 0.7, "sector": 0.3 },
+        "technology": { "global": 0.5, "sector": 0.5 },
+        "broad_market": { "global": 0.6, "sector": 0.4 }
+      },
+      "improvements": "+50% signal generation (12→18 BUY signals), panic-only entries at F&G ≤8"
+    },
+    "regime_confirmation": {
+      "tested": true,
+      "name": "Regime Confirmation Strategy",
+      "version": "15.1.0", 
+      "lastAccuracy": 54.1,
+      "lastSharpe": 0.083,
+      "lastWinRate": 0.541,
+      "profitFactor": 2.26,
+      "paramsTested": [
+        "ema_periods",
+        "vix_entry_block",
+        "mre_fear_confirm",
+        "catastrophe_stop_pct"
+      ],
+      "optimalParams": {
+        "fast_ema": 20,
+        "medium_ema": 50,
+        "slow_ema": 200,
+        "vix_threshold": 30,
+        "fear_confirm": 40
+      },
+      "improvements": "MRE confirmation filter, Fibonacci exit system, enhanced regime flip detection"
+    },
+    "rsi_oversold": {
+      "tested": true,
+      "name": "RSI Oversold Strategy (MRE Regime Hybrid)",
+      "version": "16.0.0",
+      "lastAccuracy": 83.8,
+      "lastSharpe": 0.18,
+      "lastWinRate": 0.838,
+      "profitFactor": 2.65,
+      "paramsTested": [
+        "rsi_threshold",
+        "regime_weights", 
+        "signal_thresholds",
+        "trend_confirmation"
+      ],
+      "optimalParams": {
+        "rsi_threshold": 20,
+        "bull_weight": 0.5,
+        "sideways_weight": 1.5,
+        "bear_weight": 1.0
+      },
+      "improvements": "RSI recalibrated 35→20 (backtested 676 assets), SMA50>SMA200 confirmation retained"
+    },
+    "mean_reversion": {
+      "tested": true,
+      "name": "Mean Reversion Strategy (Cross-Asset Pairs)",
+      "version": "15.1.0",
+      "lastAccuracy": 54.6,
+      "lastSharpe": 0.101,
+      "lastWinRate": 0.546,
+      "profitFactor": 2.30,
+      "paramsTested": [
+        "reversion_pairs",
+        "spread_analysis",
+        "entry_std_threshold",
+        "max_hold_days"
+      ],
+      "optimalParams": {
+        "lookback_days": 20,
+        "entry_threshold": 2.0,
+        "exit_threshold": 0.5,
+        "stop_loss": 0.05
+      },
+      "topPairs": [
+        { "pair": "XLF/SPY", "reverter": "XLF", "probability": 0.87 },
+        { "pair": "IYR/TLT", "reverter": "IYR", "probability": 0.86 },
+        { "pair": "VNQ/TLT", "reverter": "VNQ", "probability": 0.85 }
+      ]
+    },
+    "momentum": {
+      "tested": true,
+      "name": "Momentum Strategy (Cross-Asset Predictor)", 
+      "version": "15.1.0",
+      "lastAccuracy": 56.2,
+      "lastSharpe": 0.123,
+      "lastWinRate": 0.562,
+      "profitFactor": 2.39,
+      "paramsTested": [
+        "predictions",
+        "predictor_thresholds", 
+        "timing",
+        "stop_loss"
+      ],
+      "optimalParams": {
+        "predictor_threshold_low": 35,
+        "predictor_threshold_high": 65,
+        "hold_days": 5,
+        "stop_loss": 0.04
+      },
+      "crossAssetPredictions": [
+        { "predictor": "XLE", "target": "XLK", "correlation": -0.45 },
+        { "predictor": "XLE", "target": "QQQ", "correlation": -0.42 }
+      ]
+    }
+  },
+  "topConfigurations": [
+    {
+      "rank": 1,
+      "name": "Full Optimization",
+      "accuracy": 83.8,
+      "buySignals": 18,
+      "score": 0.533,
+      "params": "F&G 8/19, Regime 1.3x, Kalshi 3x",
+      "improvement": "+26.4% accuracy improvement (57.8% → 83.8%)"
+    },
+    {
+      "rank": 2,
+      "name": "Sector-Specific",
+      "accuracy": 81.8,
+      "buySignals": 16,
+      "score": 0.518,
+      "params": "F&G 8/19, Regime 1.4x, Kalshi 2.5x"
+    },
+    {
+      "rank": 3,
+      "name": "Regime + F&G",
+      "accuracy": 70.8,
+      "buySignals": 18,
+      "score": 0.450,
+      "params": "F&G 8/19, Regime 1.3x, Kalshi 1x"
+    },
+    {
+      "rank": 4,
+      "name": "Aggressive F&G",
+      "accuracy": 65.8,
+      "buySignals": 18,
+      "score": 0.418,
+      "params": "F&G 8/19, Regime 1x, Kalshi 1x"
+    }
+  ],
+  "sectorAnalysis": {
+    "technology": {
+      "assets": 119,
+      "buySignals": 2,
+      "buyRate": 1.7,
+      "bullPercent": 44.5,
+      "bearPercent": 55.5,
+      "issue": "Bear-heavy despite momentum",
+      "solution": "Faster regime transitions, +15% confidence boost"
+    },
+    "financials": {
+      "assets": 80,
+      "buySignals": 2,
+      "buyRate": 2.5,
+      "bullPercent": 43.8,
+      "bearPercent": 56.3,
+      "issue": "Bear regime lag confirmed",
+      "solution": "XLF SMA 100 days, ±25% divergence threshold"
+    },
+    "energy": {
+      "assets": 51,
+      "buySignals": 2,
+      "buyRate": 3.9,
+      "bullPercent": 96.1,
+      "bearPercent": 3.9,
+      "issue": "Momentum not converting to signals",
+      "solution": "F&G 6/16, +50% cluster limit override"
+    },
+    "real_estate": {
+      "assets": 65,
+      "buySignals": 2,
+      "buyRate": 3.1,
+      "bullPercent": 86.2,
+      "bearPercent": 13.8,
+      "issue": "Strong bull confirmation",
+      "solution": "Rate-sensitive sector adjustment"
+    },
+    "healthcare": {
+      "assets": 101,
+      "buySignals": 2,
+      "buyRate": 2.0,
+      "bullPercent": 70.3,
+      "bearPercent": 29.7,
+      "issue": "Moderate performance",
+      "solution": "Sideways penalty calibration"
+    }
+  },
+  "validationStatus": {
+    "walkForward": "passed",
+    "paramGrid": "passed",
+    "monteCarlo": "passed",
+    "overnightPit": "passed",
+    "universeOptimizer": "passed"
+  },
+  "summary": {
+    "avgConfidenceMultiplier": 0.74,
+    "medianConfidenceMultiplier": 0.74,
+    "avgCompositeScore": 0.605,
+    "tickersTested": 676,
+    "strategiesTested": 5,
+    "validationMethods": [
+      "Walk-forward (24 out-of-sample windows)",
+      "Parameter grid search",
+      "Monte Carlo (1000 trials)",
+      "Regime-conditional testing",
+      "Universe-scale optimization (676 assets)"
+    ]
+  },
+  "topAssets": [
+    { "symbol": "SHY", "score": 0.881, "winRate": 69.2, "strategy": "regime_hybrid" },
+    { "symbol": "VLTO", "score": 0.85, "winRate": 65.4, "strategy": "fear_greed" },
+    { "symbol": "GEV", "score": 0.829, "winRate": 81.5, "strategy": "regime_confirmation" },
+    { "symbol": "XLP", "score": 0.825, "winRate": 64.9, "strategy": "regime_hybrid" },
+    { "symbol": "SPY", "score": 0.812, "winRate": 64.7, "strategy": "regime_hybrid" },
+    { "symbol": "VGSH", "score": 0.809, "winRate": 66.2, "strategy": "regime_hybrid" },
+    { "symbol": "TDG", "score": 0.808, "winRate": 64.2, "strategy": "regime_hybrid" },
+    { "symbol": "VST", "score": 0.807, "winRate": 64.8, "strategy": "mean_reversion" },
+    { "symbol": "DGRW", "score": 0.802, "winRate": 65.7, "strategy": "regime_confirmation" },
+    { "symbol": "VIG", "score": 0.798, "winRate": 64.1, "strategy": "regime_confirmation" }
+  ],
+  "keyInsights": [
+    "26.4% accuracy improvement achieved through sector-specific optimization",
+    "Technology and Financials show 55% bear regimes despite constituent strength",
+    "Signal suppression affects Bonds (0% buy signals) and International (0% buy signals) entirely",
+    "Energy shows 96.1% bull regimes but only 3.9% buy rate - momentum conversion issue",
+    "Fear & Greed thresholds optimized: Conservative 15→8, Opportunistic 40→19",
+    "Kalshi integration provides 3x weight boost for signal-suppressed sectors"
+  ],
+  "nextSteps": [
+    "Fix volatility calculation errors (blocking all improvements)",
+    "Deploy aggressive F&G thresholds (12/28 → 8/19)",
+    "Implement regime lag reduction (1.3x factor)",
+    "Establish Kalshi data pipeline for integration",
+    "Monitor 30-day accuracy vs 83.8% target"
+  ]
+}

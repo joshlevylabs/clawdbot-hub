@@ -1,0 +1,97 @@
+{
+  "generated": "2026-02-24T11:13:46.113923",
+  "performance_threshold": 0.8,
+  "runtime_seconds": 0.0,
+  "tickers_scored": 5,
+  "tickers_skipped": 0,
+  "summary": {
+    "avg_plateau": 0.619,
+    "median_plateau": 0.6667,
+    "robust_fraction": 0.4,
+    "fragile_fraction": 0.2
+  },
+  "results": {
+    "SPY": {
+      "strategy": "fear_greed",
+      "plateau_score": 0.5714,
+      "fragile_params": [],
+      "optimal_performance": 0.2321,
+      "total_variations": 7,
+      "param_sensitivity": {
+        "momentum_threshold": {
+          "plateau_score": 0.5714,
+          "variations_tested": 7,
+          "on_plateau_count": 4
+        }
+      },
+      "sector": "Broad Market",
+      "asset_class": "broad_market"
+    },
+    "QQQ": {
+      "strategy": "regime_confirmation",
+      "plateau_score": 0.0,
+      "fragile_params": [
+        "sma_period",
+        "dip_threshold"
+      ],
+      "optimal_performance": 0.0,
+      "total_variations": 0,
+      "param_sensitivity": {},
+      "sector": "Broad Market",
+      "asset_class": "broad_market"
+    },
+    "AAPL": {
+      "strategy": "regime_confirmation",
+      "plateau_score": 0.6667,
+      "fragile_params": [],
+      "optimal_performance": 0.1021,
+      "total_variations": 21,
+      "param_sensitivity": {
+        "sma_period": {
+          "plateau_score": 1.0,
+          "variations_tested": 7,
+          "on_plateau_count": 7
+        },
+        "dip_threshold": {
+          "plateau_score": 0.6667,
+          "variations_tested": 3,
+          "on_plateau_count": 2
+        }
+      },
+      "sector": "Unknown",
+      "asset_class": "broad_market"
+    },
+    "GLD": {
+      "strategy": "fear_greed",
+      "plateau_score": 1.0,
+      "fragile_params": [],
+      "optimal_performance": 0.1305,
+      "total_variations": 3,
+      "param_sensitivity": {
+        "momentum_threshold": {
+          "plateau_score": 1.0,
+          "variations_tested": 3,
+          "on_plateau_count": 3
+        }
+      },
+      "sector": "Commodities",
+      "asset_class": "commodities"
+    },
+    "XLK": {
+      "strategy": "fear_greed",
+      "plateau_score": 0.8571,
+      "fragile_params": [],
+      "optimal_performance": 0.0482,
+      "total_variations": 7,
+      "param_sensitivity": {
+        "momentum_threshold": {
+          "plateau_score": 0.8571,
+          "variations_tested": 7,
+          "on_plateau_count": 6
+        }
+      },
+      "sector": "Information Technology",
+      "asset_class": "technology"
+    }
+  }
+}

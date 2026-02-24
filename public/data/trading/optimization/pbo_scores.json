@@ -1,0 +1,43 @@
+{
+  "generated": "2026-02-24T11:13:46.063212",
+  "n_groups": 10,
+  "n_paths": 6,
+  "embargo_days": 5,
+  "summary": {
+    "avg_pbo": 0.4133,
+    "median_pbo": 0.4,
+    "overfit_fraction": 0.4
+  },
+  "scores": {
+    "SPY": {
+      "pbo_score": 0.0,
+      "is_overfit": false,
+      "strategy": "fear_greed",
+      "path_consistency": 0.8333
+    },
+    "QQQ": {
+      "pbo_score": 0.0,
+      "is_overfit": false,
+      "strategy": "regime_confirmation",
+      "path_consistency": 0.1667
+    },
+    "AAPL": {
+      "pbo_score": 1.0,
+      "is_overfit": true,
+      "strategy": "regime_confirmation",
+      "path_consistency": 1.0
+    },
+    "GLD": {
+      "pbo_score": 0.4,
+      "is_overfit": false,
+      "strategy": "fear_greed",
+      "path_consistency": 0.8333
+    },
+    "XLK": {
+      "pbo_score": 0.6667,
+      "is_overfit": true,
+      "strategy": "fear_greed",
+      "path_consistency": 0.6667
+    }
+  }
+}

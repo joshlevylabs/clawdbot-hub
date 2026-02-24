@@ -1,0 +1,176 @@
+{
+  "generated": "2026-02-24T11:13:46.063210",
+  "n_groups": 10,
+  "n_paths": 6,
+  "embargo_days": 5,
+  "runtime_seconds": 0.0,
+  "tickers_validated": 5,
+  "tickers_skipped": 0,
+  "results": {
+    "SPY": {
+      "strategy": "fear_greed",
+      "pbo_score": 0.0,
+      "oos_sharpes": [
+        0.0,
+        0.0982,
+        0.0982,
+        0.0982,
+        0.2589,
+        0.0982
+      ],
+      "oos_win_rates": [
+        0.0,
+        75.0,
+        75.0,
+        75.0,
+        58.33,
+        75.0
+      ],
+      "oos_returns": [
+        0.0,
+        3.6328,
+        3.6328,
+        3.6328,
+        14.9867,
+        3.6328
+      ],
+      "path_consistency": 0.8333,
+      "is_overfit": false,
+      "n_splits_tested": 6,
+      "sector": "Broad Market",
+      "asset_class": "broad_market"
+    },
+    "QQQ": {
+      "strategy": "regime_confirmation",
+      "pbo_score": 0.0,
+      "oos_sharpes": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.099
+      ],
+      "oos_win_rates": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        50.0
+      ],
+      "oos_returns": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        13.2079
+      ],
+      "path_consistency": 0.1667,
+      "is_overfit": false,
+      "n_splits_tested": 6,
+      "sector": "Broad Market",
+      "asset_class": "broad_market"
+    },
+    "AAPL": {
+      "strategy": "regime_confirmation",
+      "pbo_score": 1.0,
+      "oos_sharpes": [
+        0.2233,
+        0.1231,
+        0.2307,
+        0.1519,
+        0.1898,
+        0.1929
+      ],
+      "oos_win_rates": [
+        59.76,
+        55.07,
+        62.03,
+        56.72,
+        55.56,
+        61.54
+      ],
+      "oos_returns": [
+        154.6792,
+        58.2825,
+        136.2896,
+        60.892,
+        103.0922,
+        87.9531
+      ],
+      "path_consistency": 1.0,
+      "is_overfit": true,
+      "n_splits_tested": 6,
+      "sector": "Unknown",
+      "asset_class": "broad_market"
+    },
+    "GLD": {
+      "strategy": "fear_greed",
+      "pbo_score": 0.4,
+      "oos_sharpes": [
+        0.0,
+        0.4251,
+        0.4251,
+        0.4251,
+        0.2702,
+        0.3405
+      ],
+      "oos_win_rates": [
+        0.0,
+        72.73,
+        72.73,
+        72.73,
+        50.0,
+        61.9
+      ],
+      "oos_returns": [
+        0.0,
+        12.3581,
+        12.3581,
+        12.3581,
+        8.897,
+        21.2551
+      ],
+      "path_consistency": 0.8333,
+      "is_overfit": false,
+      "n_splits_tested": 6,
+      "sector": "Commodities",
+      "asset_class": "commodities"
+    },
+    "XLK": {
+      "strategy": "fear_greed",
+      "pbo_score": 0.6667,
+      "oos_sharpes": [
+        0.0,
+        0.4284,
+        0.4284,
+        0.4284,
+        -0.0434,
+        0.4284
+      ],
+      "oos_win_rates": [
+        0.0,
+        83.33,
+        83.33,
+        83.33,
+        45.0,
+        83.33
+      ],
+      "oos_returns": [
+        0.0,
+        18.6199,
+        18.6199,
+        18.6199,
+        -14.6428,
+        18.6199
+      ],
+      "path_consistency": 0.6667,
+      "is_overfit": true,
+      "n_splits_tested": 6,
+      "sector": "Information Technology",
+      "asset_class": "technology"
+    }
+  }
+}

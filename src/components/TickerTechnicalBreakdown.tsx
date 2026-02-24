@@ -98,6 +98,16 @@ interface MRESignal {
     pullback_low?: number;
     pullback_date?: string;
   };
+  // New sector F&G fields from A-198 pipeline update
+  global_fg?: number;
+  sector_fg?: number;
+  effective_fg?: number;
+  fg_divergence?: number;
+  fg_divergence_bonus?: number;
+  fg_blend_weights?: {
+    global_weight: number;
+    sector_weight: number;
+  };
 }
 
 interface TickerTechnicalBreakdownProps {
@@ -194,13 +204,23 @@ export default function TickerTechnicalBreakdown({
   if (isStrategyGateModal && rawData) {
     // Render strategy-specific compact row
     const renderStrategyData = () => {
-      if (stageName.includes('Fear & Greed')) {
-        const fg = rawData.current_fg;
+      if (stageName.includes('Fear & Greed') || stageName.includes('Blended F&G')) {
+        const fg = rawData.effective_fg ?? rawData.current_fg;  // Use blended score if available
         const threshold = rawData.fear_threshold;
         const triggered = fg !== undefined && threshold !== undefined && fg <= threshold;
+        const hasBlendedData = rawData.global_fg !== undefined && rawData.sector_fg !== undefined;
+        
         return (
           <div className="flex items-center gap-3 text-xs">
-            <span className="text-slate-400">F&G: <span className={`font-medium ${fg !== undefined && fg <= 25 ? 'text-red-400' : fg !== undefined && fg <= 45 ? 'text-amber-400' : 'text-emerald-400'}`}>{fg?.toFixed(0) ?? '—'}</span></span>
+            <span className="text-slate-400">{hasBlendedData ? 'Effective' : 'F&G'}: <span className={`font-medium ${fg !== undefined && fg <= 25 ? 'text-red-400' : fg !== undefined && fg <= 45 ? 'text-amber-400' : 'text-emerald-400'}`}>{fg?.toFixed(0) ?? '—'}</span></span>
+            {hasBlendedData && (
+              <>
+                <span className="text-slate-500">|</span>
+                <span className="text-slate-400">Global: <span className="text-slate-200 font-medium">{rawData.global_fg?.toFixed(0) ?? '—'}</span></span>
+                <span className="text-slate-500">|</span>
+                <span className="text-slate-400">Sector: <span className="text-slate-200 font-medium">{rawData.sector_fg?.toFixed(0) ?? '—'}</span></span>
+              </>
+            )}
             <span className="text-slate-500">|</span>
             <span className="text-slate-400">Threshold: <span className="text-slate-200 font-medium">{threshold ?? '—'}</span></span>
             <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${triggered ? 'bg-emerald-900/50 text-emerald-400' : 'bg-slate-700/50 text-slate-400'}`}>
@@ -567,7 +587,7 @@ function OverviewTab({
   
   // Determine which strategy to focus on based on stageName
   const getRelevantStrategy = (stageName: string) => {
-    if (stageName.includes('Fear & Greed')) return 'fear_greed';
+    if (stageName.includes('Fear & Greed') || stageName.includes('Blended F&G')) return 'fear_greed';
     if (stageName.includes('Regime Confirm')) return 'regime_confirmation';
     if (stageName.includes('RSI Oversold')) return 'rsi_oversold';
     if (stageName.includes('Mean Reversion')) return 'mean_reversion';
@@ -667,6 +687,9 @@ function renderStrategyAnalysis(strategy: string, rawData: MRESignal) {
   
   switch (strategy) {
     case 'fear_greed':
+      const hasBlendedData = rawData.global_fg !== undefined && rawData.sector_fg !== undefined;
+      const effectiveFg = rawData.effective_fg ?? rawData.current_fg;
+      
       return (
         <div className="space-y-2">
           <div className="flex items-center gap-2">
@@ -679,13 +702,48 @@ function renderStrategyAnalysis(strategy: string, rawData: MRESignal) {
               {voted ? 'BUY Vote' : 'No BUY Vote'}
             </span>
           </div>
-          <div className="text-sm text-slate-300">
-            Fear & Greed Index: <span className="font-medium">{rawData.current_fg.toFixed(0)}</span> vs threshold{' '}
-            <span className="font-medium">{rawData.fear_threshold}</span>
-          </div>
+          
+          {hasBlendedData ? (
+            <>
+              <div className="text-sm text-slate-300">
+                Effective F&G: <span className="font-medium">{effectiveFg?.toFixed(0) ?? '—'}</span> vs threshold{' '}
+                <span className="font-medium">{rawData.fear_threshold}</span>
+              </div>
+              <div className="grid grid-cols-2 gap-3 text-xs">
+                <div className="bg-slate-800/50 rounded p-2">
+                  <div className="text-slate-400">Global F&G</div>
+                  <div className="font-medium text-slate-200">{rawData.global_fg?.toFixed(0) ?? '—'}</div>
+                </div>
+                <div className="bg-slate-800/50 rounded p-2">
+                  <div className="text-slate-400">Sector F&G</div>
+                  <div className="font-medium text-slate-200">{rawData.sector_fg?.toFixed(0) ?? '—'}</div>
+                </div>
+              </div>
+              {rawData.fg_divergence !== undefined && (
+                <div className="text-xs text-slate-400">
+                  Divergence: <span className={`font-medium ${Math.abs(rawData.fg_divergence) > 10 ? 'text-amber-400' : 'text-slate-300'}`}>
+                    {rawData.fg_divergence > 0 ? '+' : ''}{rawData.fg_divergence.toFixed(1)}
+                  </span> points from global
+                </div>
+              )}
+              {rawData.fg_blend_weights && (
+                <div className="text-xs text-slate-400">
+                  Blend: {(rawData.fg_blend_weights.global_weight * 100).toFixed(0)}% global, {(rawData.fg_blend_weights.sector_weight * 100).toFixed(0)}% sector
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="text-sm text-slate-300">
+              Fear & Greed Index: <span className="font-medium">{rawData.current_fg?.toFixed(0) ?? '—'}</span> vs threshold{' '}
+              <span className="font-medium">{rawData.fear_threshold}</span>
+            </div>
+          )}
+          
           <div className="text-xs text-slate-400">
             {voted 
-              ? 'Market fear below threshold - contrarian buying opportunity detected'
+              ? hasBlendedData 
+                ? 'Sector-blended fear below threshold - contrarian opportunity detected'
+                : 'Market fear below threshold - contrarian buying opportunity detected'
               : 'Market not fearful enough for contrarian entry'
             }
           </div>

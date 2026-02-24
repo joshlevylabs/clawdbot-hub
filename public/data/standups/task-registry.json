@@ -1,5 +1,5 @@
 {
-  "nextAgentId": 196,
+  "nextAgentId": 201,
   "nextJoshuaId": 38,
   "tasks": [
     {
@@ -1757,6 +1757,85 @@
       "createdAt": "2026-02-23T20:10:42.770154-08:00",
       "updatedAt": "2026-02-23T20:10:42.770154-08:00",
       "completedAt": null
+    },
+    {
+      "key": "A-196",
+      "text": "Sector Fear & Greed Index Computation \u2014 Build sector_fear_greed.py that computes per-asset-class F&G scores using CNN methodology (momentum vs 125d MA, 52-week highs/lows breadth, advancing/declining volume, sector ETF put/call, sector realized vol, junk bond spread, safe haven demand) scoped to each sector's tickers via yfinance.",
+      "tag": "AGENT",
+      "priority": "high",
+      "assignee": "Theo",
+      "status": "done",
+      "sourceStandup": "manual",
+      "sourceStandupType": "manual",
+      "sourceDate": "2026-02-23",
+      "createdAt": "2026-02-23T20:56:46.663438",
+      "updatedAt": "2025-01-04T11:30:00-08:00",
+      "completedAt": "2025-01-04T11:30:00-08:00",
+      "sprintReady": true
+    },
+    {
+      "key": "A-197",
+      "text": "Blended F&G Score with Divergence Bonus \u2014 Build blended_fear_greed.py implementing Option C weighting: base 60/40 global/sector split with divergence bonus that amplifies sector weight when sector F&G diverges significantly from global. Configurable base weights per asset class.",
+      "tag": "AGENT",
+      "priority": "high",
+      "assignee": "Theo",
+      "status": "done",
+      "sourceStandup": "manual",
+      "sourceStandupType": "manual",
+      "sourceDate": "2026-02-23",
+      "createdAt": "2026-02-23T20:56:46.663438",
+      "updatedAt": "2026-02-23T20:56:46.663438",
+      "completedAt": "2026-02-23T20:56:46.663438",
+      "sprintReady": true,
+      "dependsOn": "A-196"
+    },
+    {
+      "key": "A-198",
+      "text": "MRE Pipeline Integration \u2014 Replace single current_fg with effective_fg (blended) per ticker in mre_strategies.py and mre_signal_exporter.py. Each ticker gets its sector's blended F&G score. Export both global_fg, sector_fg, and effective_fg in signal output.",
+      "tag": "AGENT",
+      "priority": "high",
+      "assignee": "Theo",
+      "status": "in_progress",
+      "sourceStandup": "manual",
+      "sourceStandupType": "manual",
+      "sourceDate": "2026-02-23",
+      "createdAt": "2026-02-23T20:56:46.663438",
+      "updatedAt": "2026-02-23T20:56:46.663438",
+      "completedAt": null,
+      "sprintReady": true,
+      "dependsOn": "A-197"
+    },
+    {
+      "key": "A-199",
+      "text": "Sector F&G Backtest Harness \u2014 Backtest global-only vs sector-only vs blended (Option C) F&G strategies across all asset classes. Sweep weight ratios to find optimal blend. Compare accuracy, Sharpe, win rate, and excess returns.",
+      "tag": "AGENT",
+      "priority": "high",
+      "assignee": "Theo",
+      "status": "in_progress",
+      "sourceStandup": "manual",
+      "sourceStandupType": "manual",
+      "sourceDate": "2026-02-23",
+      "createdAt": "2026-02-23T20:56:46.663438",
+      "updatedAt": "2026-02-23T20:56:46.663438",
+      "completedAt": null,
+      "sprintReady": true,
+      "dependsOn": "A-197"
+    },
+    {
+      "key": "A-200",
+      "text": "Hub UI for Sector F&G \u2014 Update F&G strategy modal to show global F&G, sector F&G, blended (effective) F&G, weight applied, and divergence indicator per ticker. Add sector F&G overview section to the modal header.",
+      "tag": "AGENT",
+      "priority": "medium",
+      "assignee": "Theo",
+      "status": "in_progress",
+      "sourceStandup": "manual",
+      "sourceStandupType": "manual",
+      "sourceDate": "2026-02-23",
+      "createdAt": "2026-02-23T20:56:46.663438",
+      "updatedAt": "2026-02-23T20:56:46.663438",
+      "completedAt": null,
+      "sprintReady": true,
+      "dependsOn": "A-198"
     }
   ]
 }

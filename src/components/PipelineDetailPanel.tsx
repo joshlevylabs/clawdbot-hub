@@ -83,6 +83,16 @@ interface MRESignal {
     pullback_low?: number;
     pullback_date?: string;
   };
+  // New sector F&G fields from A-198 pipeline update
+  global_fg?: number;
+  sector_fg?: number;
+  effective_fg?: number;
+  fg_divergence?: number;
+  fg_divergence_bonus?: number;
+  fg_blend_weights?: {
+    global_weight: number;
+    sector_weight: number;
+  };
 }
 
 interface TickerDetail {
@@ -143,7 +153,8 @@ interface StrategyVersionsResponse {
 
 // Strategy name to key mapping for version data
 const STRATEGY_KEY_MAPPING: Record<string, string> = {
-  'Fear & Greed Strategy': 'fear_greed',
+  'Blended F&G Strategy': 'fear_greed',
+  'Fear & Greed Strategy': 'fear_greed', // Legacy support
   'Regime Confirm Strategy': 'regime_confirm', 
   'RSI Oversold Strategy': 'rsi_oversold',
   'RSI Oversold Strategy (MRE Regime Hybrid)': 'rsi_oversold',
@@ -155,7 +166,8 @@ const STRATEGY_KEY_MAPPING: Record<string, string> = {
 
 // Strategy descriptions mapping
 const STRATEGY_DESCRIPTIONS: Record<string, string> = {
-  'Fear & Greed Strategy': "Triggers BUY when the CNN Fear & Greed Index drops below the ticker's fear threshold. Thresholds vary by asset class: Energy (6) requires extreme panic, Technology/Broad Market/Financials (8) use aggressive entries, and Healthcare/Real Estate (15) are more conservative. Thresholds were optimized in V15.1 Phase 5 via universe-scale backtests.",
+  'Blended F&G Strategy': "Triggers BUY when the sector-blended Fear & Greed score drops below the ticker's fear threshold. Uses a weighted blend of global CNN F&G and sector-specific F&G scores for more precise entry timing. Per-sector weights are optimized based on correlation strength and historical performance. Accounts for sector divergence from global sentiment to capture rotation opportunities.",
+  'Fear & Greed Strategy': "Triggers BUY when the CNN Fear & Greed Index drops below the ticker's fear threshold. Thresholds vary by asset class: Energy (6) requires extreme panic, Technology/Broad Market/Financials (8) use aggressive entries, and Healthcare/Real Estate (15) are more conservative. Thresholds were optimized in V15.1 Phase 5 via universe-scale backtests.", // Legacy support
   'Regime Confirm Strategy': "Confirms BUY signals only when the ticker is in a bull regime (price above SMA), ensuring trades align with the broader trend direction.",
   'RSI Oversold Strategy': "Triggers BUY when the 14-period RSI drops below 30, indicating the asset is oversold and likely to bounce.",
   'Mean Reversion Strategy': "Triggers BUY when the 5-day price drop exceeds a threshold, betting on a reversion to the mean price.",

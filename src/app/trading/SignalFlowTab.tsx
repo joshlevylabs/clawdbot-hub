@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import PipelineStage from "@/components/PipelineStage";
 import PipelineDetailPanel from "@/components/PipelineDetailPanel";
+import SectorFearGreedPanel from "./SectorFearGreedPanel";
 
 // Interface for MRE signal data
 interface MRESignal {
@@ -98,6 +99,16 @@ interface MRESignal {
     pullback_low?: number;
     pullback_date?: string;
   };
+  // New sector F&G fields from A-198 pipeline update
+  global_fg?: number;
+  sector_fg?: number;
+  effective_fg?: number;
+  fg_divergence?: number;
+  fg_divergence_bonus?: number;
+  fg_blend_weights?: {
+    global_weight: number;
+    sector_weight: number;
+  };
 }
 
 interface MREData {
@@ -109,6 +120,18 @@ interface MREData {
   };
   regime: {
     global: string;
+  };
+  // New sector F&G data from A-198 pipeline update
+  sector_fear_greed?: {
+    broad_market: number;
+    technology: number;
+    healthcare: number;
+    financials: number;
+    real_estate: number;
+    energy: number;
+    bonds: number;
+    international: number;
+    commodities: number;
   };
   signals: {
     summary: {
@@ -178,7 +201,7 @@ function calculatePipelineStages(signals: MRESignal[], dataType: 'core' | 'unive
   
   // Step 2: Individual Strategy Votes (5 strategies, each evaluates all tickers)
   const strategyNames = [
-    { key: 'fear_greed', name: 'Fear & Greed' },
+    { key: 'fear_greed', name: 'Blended F&G' },
     { key: 'regime_confirmation', name: 'Regime Confirm' },
     { key: 'rsi_oversold', name: 'RSI Oversold' },
     { key: 'mean_reversion', name: 'Mean Reversion' },
@@ -725,6 +748,12 @@ export default function SignalFlowTab() {
         </div>
       </div>
 
+      {/* Sector Fear & Greed Panel */}
+      <SectorFearGreedPanel 
+        sectorFearGreed={currentData.sector_fear_greed}
+        globalFearGreed={fgValue}
+      />
+
       {/* Pipeline Visualization */}
       <div className="bg-slate-800/30 rounded-xl border border-slate-700/50 p-6 overflow-x-auto">
         <div className="flex items-stretch min-w-[1200px]">
@@ -756,7 +785,12 @@ export default function SignalFlowTab() {
                 onClick={() => handleStageClick(`strategy_${sv.key}`)}
                 className="flex items-center justify-between gap-3 px-3 py-1.5 bg-slate-800/80 rounded-lg border border-slate-700/50 hover:border-primary-500/50 cursor-pointer transition-all min-w-[200px]"
               >
-                <span className="text-xs font-medium text-slate-300 truncate">{sv.name}</span>
+                <div className="flex flex-col min-w-0">
+                  <span className="text-xs font-medium text-slate-300 truncate">{sv.name}</span>
+                  {sv.key === 'fear_greed' && (
+                    <span className="text-[10px] text-slate-500 truncate">Per-sector blended score</span>
+                  )}
+                </div>
                 <div className="flex items-center gap-2">
                   <span className={`text-xs font-bold ${sv.outputCount > 0 ? 'text-emerald-400' : 'text-slate-500'}`}>
                     {sv.outputCount}

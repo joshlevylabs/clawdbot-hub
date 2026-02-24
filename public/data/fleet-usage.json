@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-02-23T23:02:00.247559",
-  "active_sessions": 2,
+  "generated_at": "2026-02-23T23:30:06.747074",
+  "active_sessions": 1,
   "billing_model": "subscription",
   "subscriptions": {
     "Claude Max": {
@@ -15,14 +15,14 @@
     "today": 6.67,
     "week": 46.67,
     "month": 200.0,
-    "api_equivalent_today": 195.4598,
-    "api_equivalent_week": 265.0135,
-    "api_equivalent_month": 289.1338,
-    "savings_today": 188.79,
-    "savings_month": 89.13,
+    "api_equivalent_today": 193.3753,
+    "api_equivalent_week": 262.929,
+    "api_equivalent_month": 287.0493,
+    "savings_today": 186.71,
+    "savings_month": 87.05,
     "subscription_daily": 6.67,
     "subscription_monthly": 200.0,
-    "tokens_today": 287039351
+    "tokens_today": 282709811
   },
   "by_model": {
     "Claude Opus 4": {
@@ -35,13 +35,13 @@
       "calls_today": 1733
     },
     "Claude Sonnet 4": {
-      "cost_today": 53.1437,
-      "cost_week": 69.1474,
-      "cost_month": 69.1474,
-      "tokens_today": 96932843,
-      "tokens_week": 130892441,
-      "tokens_month": 130892441,
-      "calls_today": 1069
+      "cost_today": 51.0591,
+      "cost_week": 67.0629,
+      "cost_month": 67.0629,
+      "tokens_today": 92603303,
+      "tokens_week": 126562901,
+      "tokens_month": 126562901,
+      "calls_today": 985
     }
   },
   "by_agent": {
@@ -54,18 +54,18 @@
       "department": "executive"
     },
     "cron": {
-      "cost_today": 5.1703,
-      "cost_week": 13.2181,
-      "cost_month": 37.3384,
-      "tokens_today": 9833208,
+      "cost_today": 5.1706,
+      "cost_week": 13.2184,
+      "cost_month": 37.3387,
+      "tokens_today": 9833229,
       "primary_model": "Claude Opus 4",
       "department": "other"
     },
     "unknown": {
-      "cost_today": 2.0849,
-      "cost_week": 63.5908,
-      "cost_month": 63.5908,
-      "tokens_today": 4329561,
+      "cost_today": 0,
+      "cost_week": 61.5059,
+      "cost_month": 61.5059,
+      "tokens_today": 0,
       "primary_model": "Claude Opus 4",
       "department": "other"
     }
@@ -87,6 +87,6 @@
     "2026-02-19": 31.14954680000002,
     "2026-02-20": 31.46951505000002,
     "2026-02-22": 0.3985869,
-    "2026-02-23": 195.45982050000015
+    "2026-02-23": 193.3752778500002
   }
 }

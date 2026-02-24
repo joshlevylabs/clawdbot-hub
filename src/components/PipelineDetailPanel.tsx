@@ -416,6 +416,26 @@ export default function PipelineDetailPanel({
             </button>
           </div>
           
+          {/* Strategy Legend — for Vote Consensus sub-modals */}
+          {stageDetails.name.includes('-of-5') && (
+            <div className="px-4 sm:px-6 pt-4 pb-2">
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-slate-400">
+                {[
+                  { label: 'Fear & Greed', color: 'bg-blue-400' },
+                  { label: 'Regime', color: 'bg-purple-400' },
+                  { label: 'RSI', color: 'bg-cyan-400' },
+                  { label: 'Mean Reversion', color: 'bg-amber-400' },
+                  { label: 'Momentum', color: 'bg-emerald-400' },
+                ].map(s => (
+                  <div key={s.label} className="flex items-center gap-1.5">
+                    <div className={`w-2.5 h-2.5 rounded-full ${s.color}`} />
+                    <span>{s.label}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Content */}
             <div className="p-4 sm:p-6">
               {activeTab === 'output' && (

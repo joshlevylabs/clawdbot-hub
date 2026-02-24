@@ -140,6 +140,44 @@ export default function TickerTechnicalBreakdown({
   const [isExpanded, setIsExpanded] = useState(false);
   const [activeTab, setActiveTab] = useState<'overview' | 'technical' | 'regime' | 'fibonacci'>('overview');
 
+  // Strategy color mapping — consistent across legend and dots
+  const STRATEGY_COLORS: Record<string, { active: string; inactive: string }> = {
+    fear_greed:          { active: 'bg-blue-400',    inactive: 'bg-blue-400/20' },
+    regime_confirmation: { active: 'bg-purple-400',  inactive: 'bg-purple-400/20' },
+    rsi_oversold:        { active: 'bg-cyan-400',    inactive: 'bg-cyan-400/20' },
+    mean_reversion:      { active: 'bg-amber-400',   inactive: 'bg-amber-400/20' },
+    momentum:            { active: 'bg-emerald-400', inactive: 'bg-emerald-400/20' },
+  };
+
+  const isVoteConsensusSubModal = stageName.includes('-of-5');
+
+  // Simplified view for Vote Consensus sub-modals
+  if (isVoteConsensusSubModal && rawData?.strategy_votes) {
+    return (
+      <div className="bg-slate-800/50 rounded-lg p-3 border border-slate-700/50 flex items-center justify-between">
+        <span className="font-mono font-semibold text-slate-200">{symbol}</span>
+        <div className="flex items-center gap-1.5">
+          {[
+            { key: 'fear_greed' },
+            { key: 'regime_confirmation' },
+            { key: 'rsi_oversold' },
+            { key: 'mean_reversion' },
+            { key: 'momentum' },
+          ].map(strategy => {
+            const voted = rawData.strategy_votes?.[strategy.key as keyof typeof rawData.strategy_votes];
+            const colors = STRATEGY_COLORS[strategy.key];
+            return (
+              <div
+                key={strategy.key}
+                className={`w-3 h-3 rounded-full ${voted ? colors.active : colors.inactive}`}
+              />
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
+
   if (!rawData) {
     // Fallback for when no raw data is available
     return (

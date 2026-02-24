@@ -218,9 +218,9 @@ export default function NoiseResilienceChart() {
             />
             <Legend 
               wrapperStyle={{ color: '#9CA3AF' }}
-              formatter={(value) => 
+              formatter={(value: string) => 
                 <span style={{ color: STRATEGY_COLORS[value as keyof typeof STRATEGY_COLORS] || '#9CA3AF' }}>
-                  {value.replace(/_/g, " ").replace(/\b\w/g, l => l.toUpperCase())}
+                  {value.replace(/_/g, " ").replace(/\b\w/g, (l: string) => l.toUpperCase())}
                 </span>
               }
             />

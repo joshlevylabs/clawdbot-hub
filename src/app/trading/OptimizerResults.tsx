@@ -87,19 +87,23 @@ function healthScore(strategies: Record<string, StrategyMetrics>): {
   const strats = Object.values(strategies);
   if (strats.length === 0) return { score: 0, label: "No Data", color: "text-slate-500" };
 
-  // Weighted score: accuracy (40%), sharpe (20%), win rate (20%), profit factor (20%)
+  // Weighted score: accuracy (35%), win rate (30%), profit factor (20%), sharpe (15%)
   const avgAccuracy = strats.reduce((s, st) => s + st.lastAccuracy, 0) / strats.length;
   const avgSharpe = strats.reduce((s, st) => s + st.lastSharpe, 0) / strats.length;
   const avgWinRate = strats.reduce((s, st) => s + st.lastWinRate, 0) / strats.length;
   const avgPF = strats.reduce((s, st) => s + Math.min(st.profitFactor, 5), 0) / strats.length;
 
   // Normalize each to 0-100
+  // Accuracy: already 0-100 scale
   const accScore = Math.min(100, avgAccuracy);
-  const sharpeScore = Math.min(100, avgSharpe * 50); // 2.0 sharpe = 100
+  // Sharpe: per-trade Sharpe from backtests typically 0.05-0.30; 0.15+ is good, 0.25+ is excellent
+  const sharpeScore = Math.min(100, avgSharpe * 333); // 0.30 sharpe = 100
+  // Win rate: 0-1 scale, 0.55+ is good
   const wrScore = avgWinRate * 100;
-  const pfScore = Math.min(100, avgPF * 20); // 5.0 PF = 100
+  // Profit factor: 2.0+ is good, 3.0+ is excellent
+  const pfScore = Math.min(100, avgPF * 33); // 3.0 PF = 100
 
-  const score = Math.round(accScore * 0.4 + sharpeScore * 0.2 + wrScore * 0.2 + pfScore * 0.2);
+  const score = Math.round(accScore * 0.35 + wrScore * 0.30 + pfScore * 0.20 + sharpeScore * 0.15);
 
   if (score >= 75) return { score, label: "Excellent", color: "text-emerald-400" };
   if (score >= 55) return { score, label: "Good", color: "text-amber-400" };

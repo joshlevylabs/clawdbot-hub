@@ -210,9 +210,9 @@ export default function NoiseResilienceChart() {
                 borderRadius: '8px',
                 color: '#F3F4F6'
               }}
-              formatter={(value: any, name: string) => [
+              formatter={(value: any, name?: string) => [
                 `${Number(value).toFixed(1)}%`,
-                name.replace(/_/g, " ").replace(/\b\w/g, l => l.toUpperCase())
+                (name || '').replace(/_/g, " ").replace(/\b\w/g, l => l.toUpperCase())
               ]}
               labelFormatter={(label) => `Noise Level: ${label}`}
             />

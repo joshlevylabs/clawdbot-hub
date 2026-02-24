@@ -14,6 +14,11 @@ import {
 } from "lucide-react";
 
 import BacktestOverview from "@/components/BacktestOverview";
+import EnsembleAgreementChart from "@/components/trading/EnsembleAgreementChart";
+import NoiseResilienceChart from "@/components/trading/NoiseResilienceChart";
+import RegimeStrategyMatrix from "@/components/trading/RegimeStrategyMatrix";
+import RobustnessWaterfallChart from "@/components/trading/RobustnessWaterfallChart";
+import PBOPlateauSummary from "@/components/trading/PBOPlateauSummary";
 
 // ============ TYPES ============
 
@@ -567,6 +572,34 @@ export default function BacktestsTab() {
 
       {/* Monte Carlo (collapsible) */}
       {monteCarlo && <MonteCarloSection data={monteCarlo} />}
+
+      {/* Robustness Analysis Dashboard */}
+      <div className="bg-gradient-to-r from-emerald-900/30 to-teal-900/30 rounded-xl p-4 border border-emerald-700/30">
+        <h2 className="text-lg font-bold text-slate-100 flex items-center gap-2 mb-4">
+          <Shield className="w-5 h-5 text-emerald-400" />
+          MRE Robustness Analysis
+        </h2>
+        <p className="text-sm text-slate-400 mb-6">
+          Advanced validation techniques for overfitting detection and signal robustness verification
+        </p>
+        
+        <div className="space-y-6">
+          {/* Row 1: Ensemble and Noise Charts */}
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+            <EnsembleAgreementChart />
+            <NoiseResilienceChart />
+          </div>
+          
+          {/* Row 2: Regime Matrix and Waterfall */}
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+            <RegimeStrategyMatrix />
+            <RobustnessWaterfallChart />
+          </div>
+          
+          {/* Row 3: PBO Summary (full width) */}
+          <PBOPlateauSummary />
+        </div>
+      </div>
 
       {/* Pipeline metadata */}
       <div className="bg-slate-800/30 rounded-lg p-3 text-xs text-slate-500 text-center">

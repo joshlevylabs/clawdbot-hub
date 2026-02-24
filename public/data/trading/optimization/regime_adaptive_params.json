@@ -1,0 +1,637 @@
+{
+  "generated": "2026-02-24T11:37:27.560008",
+  "pipeline": "regime_params.py",
+  "phase": "Phase 4: Regime-Adaptive Parameters",
+  "runtime_seconds": 5.8,
+  "regime_definitions": {
+    "bull": "Price > SMA50 * 1.02 AND F&G_proxy > 40",
+    "bear": "Price < SMA50 * 0.98 AND F&G_proxy < 40",
+    "sideways": "Neither bull nor bear",
+    "panic": "F&G < 20 OR VIX > 35"
+  },
+  "summary": {
+    "total_tickers": 5,
+    "skipped": 0,
+    "regime_distribution": {
+      "bull": {
+        "avg_pct": 9.9,
+        "tickers_with_sufficient_data": 1
+      },
+      "bear": {
+        "avg_pct": 2.3,
+        "tickers_with_sufficient_data": 1
+      },
+      "sideways": {
+        "avg_pct": 84.8,
+        "tickers_with_sufficient_data": 5
+      },
+      "panic": {
+        "avg_pct": 3.1,
+        "tickers_with_sufficient_data": 1
+      }
+    },
+    "best_strategy_per_regime": {
+      "sideways": {
+        "fear_greed": 4,
+        "rsi_oversold": 1
+      },
+      "bull": {
+        "mean_reversion": 1
+      },
+      "bear": {
+        "rsi_oversold": 1
+      },
+      "panic": {
+        "regime_confirmation": 1
+      }
+    }
+  },
+  "tickers": {
+    "SPY": {
+      "asset_class": "broad_market",
+      "sector": "Broad Market",
+      "regime_stats": {
+        "bull": {
+          "count": 0,
+          "pct": 0.0
+        },
+        "bear": {
+          "count": 0,
+          "pct": 0.0
+        },
+        "sideways": {
+          "count": 11391,
+          "pct": 100.0
+        },
+        "panic": {
+          "count": 0,
+          "pct": 0.0
+        }
+      },
+      "regime_bands": {
+        "bull": {
+          "strategy": "fear_greed",
+          "params": {
+            "momentum_threshold": -5,
+            "hold_period": 5
+          },
+          "confidence": 0.0,
+          "insufficient_data": true
+        },
+        "bear": {
+          "strategy": "fear_greed",
+          "params": {
+            "momentum_threshold": -5,
+            "hold_period": 5
+          },
+          "confidence": 0.0,
+          "insufficient_data": true
+        },
+        "sideways": {
+          "strategy": "fear_greed",
+          "params": {
+            "momentum_threshold": -10,
+            "hold_period": 7
+          },
+          "win_rate": 71.05,
+          "sharpe": 0.3267,
+          "avg_return": 1.8648,
+          "trade_count": 38,
+          "confidence": 0.4642
+        },
+        "panic": {
+          "strategy": "fear_greed",
+          "params": {
+            "momentum_threshold": -5,
+            "hold_period": 5
+          },
+          "confidence": 0.0,
+          "insufficient_data": true
+        }
+      },
+      "full_optimization": {
+        "sideways": {
+          "fear_greed": {
+            "best_params": {
+              "momentum_threshold": -10,
+              "hold_period": 7
+            },
+            "win_rate": 71.05,
+            "avg_return": 1.8648,
+            "sharpe": 0.3267,
+            "max_drawdown": -15.0138,
+            "trade_count": 38,
+            "composite_score": 0.2321
+          }
+        }
+      }
+    },
+    "QQQ": {
+      "asset_class": "broad_market",
+      "sector": "Broad Market",
+      "regime_stats": {
+        "bull": {
+          "count": 0,
+          "pct": 0.0
+        },
+        "bear": {
+          "count": 0,
+          "pct": 0.0
+        },
+        "sideways": {
+          "count": 11391,
+          "pct": 100.0
+        },
+        "panic": {
+          "count": 0,
+          "pct": 0.0
+        }
+      },
+      "regime_bands": {
+        "bull": {
+          "strategy": "fear_greed",
+          "params": {
+            "momentum_threshold": -5,
+            "hold_period": 5
+          },
+          "confidence": 0.0,
+          "insufficient_data": true
+        },
+        "bear": {
+          "strategy": "fear_greed",
+          "params": {
+            "momentum_threshold": -5,
+            "hold_period": 5
+          },
+          "confidence": 0.0,
+          "insufficient_data": true
+        },
+        "sideways": {
+          "strategy": "fear_greed",
+          "params": {
+            "momentum_threshold": -5,
+            "hold_period": 15
+          },
+          "win_rate": 60.17,
+          "sharpe": 0.1518,
+          "avg_return": 1.2205,
+          "trade_count": 118,
+          "confidence": 0.1826
+        },
+        "panic": {
+          "strategy": "fear_greed",
+          "params": {
+            "momentum_threshold": -5,
+            "hold_period": 5
+          },
+          "confidence": 0.0,
+          "insufficient_data": true
+        }
+      },
+      "full_optimization": {
+        "sideways": {
+          "fear_greed": {
+            "best_params": {
+              "momentum_threshold": -5,
+              "hold_period": 15
+            },
+            "win_rate": 60.17,
+            "avg_return": 1.2205,
+            "sharpe": 0.1518,
+            "max_drawdown": -21.3729,
+            "trade_count": 118,
+            "composite_score": 0.0913
+          }
+        }
+      }
+    },
+    "AAPL": {
+      "asset_class": "broad_market",
+      "sector": "Unknown",
+      "regime_stats": {
+        "bull": {
+          "count": 5615,
+          "pct": 49.3
+        },
+        "bear": {
+          "count": 1303,
+          "pct": 11.4
+        },
+        "sideways": {
+          "count": 2733,
+          "pct": 24.0
+        },
+        "panic": {
+          "count": 1740,
+          "pct": 15.3
+        }
+      },
+      "regime_bands": {
+        "bull": {
+          "strategy": "mean_reversion",
+          "params": {
+            "bb_width": 2.0,
+            "bb_period": 20,
+            "hold_period": 7
+          },
+          "win_rate": 60.0,
+          "sharpe": 0.7374,
+          "avg_return": 3.5196,
+          "trade_count": 10,
+          "confidence": 0.8848
+        },
+        "bear": {
+          "strategy": "rsi_oversold",
+          "params": {
+            "rsi_threshold": 25,
+            "sma_fast": 50,
+            "sma_slow": 200,
+            "hold_period": 7
+          },
+          "win_rate": 100.0,
+          "sharpe": 2.4754,
+          "avg_return": 3.0656,
+          "trade_count": 3,
+          "confidence": 1.0
+        },
+        "sideways": {
+          "strategy": "rsi_oversold",
+          "params": {
+            "rsi_threshold": 35,
+            "sma_fast": 50,
+            "sma_slow": 200,
+            "hold_period": 3
+          },
+          "win_rate": 63.64,
+          "sharpe": 0.4098,
+          "avg_return": 2.7811,
+          "trade_count": 11,
+          "confidence": 0.5216
+        },
+        "panic": {
+          "strategy": "regime_confirmation",
+          "params": {
+            "sma_period": 50,
+            "dip_threshold": -2,
+            "hold_period": 15
+          },
+          "win_rate": 70.59,
+          "sharpe": 0.6921,
+          "avg_return": 4.9411,
+          "trade_count": 17,
+          "confidence": 0.9772
+        }
+      },
+      "full_optimization": {
+        "bull": {
+          "regime_confirmation": {
+            "best_params": {
+              "sma_period": 50,
+              "dip_threshold": -5,
+              "hold_period": 3
+            },
+            "win_rate": 55.04,
+            "avg_return": 0.8698,
+            "sharpe": 0.1957,
+            "max_drawdown": -8.95,
+            "trade_count": 129,
+            "composite_score": 0.1077
+          },
+          "mean_reversion": {
+            "best_params": {
+              "bb_width": 2.0,
+              "bb_period": 20,
+              "hold_period": 7
+            },
+            "win_rate": 60.0,
+            "avg_return": 3.5196,
+            "sharpe": 0.7374,
+            "max_drawdown": -4.2135,
+            "trade_count": 10,
+            "composite_score": 0.4424
+          }
+        },
+        "bear": {
+          "fear_greed": {
+            "best_params": {
+              "momentum_threshold": -5,
+              "hold_period": 3
+            },
+            "win_rate": 52.0,
+            "avg_return": 0.3871,
+            "sharpe": 0.0831,
+            "max_drawdown": -16.0623,
+            "trade_count": 450,
+            "composite_score": 0.0432
+          },
+          "regime_confirmation": {
+            "best_params": {
+              "sma_period": 200,
+              "dip_threshold": -5,
+              "hold_period": 3
+            },
+            "win_rate": 63.95,
+            "avg_return": 1.5616,
+            "sharpe": 0.3272,
+            "max_drawdown": -16.0623,
+            "trade_count": 86,
+            "composite_score": 0.2092
+          },
+          "rsi_oversold": {
+            "best_params": {
+              "rsi_threshold": 25,
+              "sma_fast": 50,
+              "sma_slow": 200,
+              "hold_period": 7
+            },
+            "win_rate": 100.0,
+            "avg_return": 3.0656,
+            "sharpe": 2.4754,
+            "max_drawdown": 1.6929,
+            "trade_count": 3,
+            "composite_score": 0.7426
+          },
+          "mean_reversion": {
+            "best_params": {
+              "bb_width": 2.5,
+              "bb_period": 20,
+              "hold_period": 3
+            },
+            "win_rate": 60.0,
+            "avg_return": 1.47,
+            "sharpe": 0.2454,
+            "max_drawdown": -16.0623,
+            "trade_count": 45,
+            "composite_score": 0.1472
+          }
+        },
+        "sideways": {
+          "fear_greed": {
+            "best_params": {
+              "momentum_threshold": -5,
+              "hold_period": 3
+            },
+            "win_rate": 50.82,
+            "avg_return": 0.2033,
+            "sharpe": 0.0469,
+            "max_drawdown": -12.3744,
+            "trade_count": 183,
+            "composite_score": 0.0238
+          },
+          "regime_confirmation": {
+            "best_params": {
+              "sma_period": 50,
+              "dip_threshold": -5,
+              "hold_period": 15
+            },
+            "win_rate": 62.32,
+            "avg_return": 2.8559,
+            "sharpe": 0.2981,
+            "max_drawdown": -21.2062,
+            "trade_count": 69,
+            "composite_score": 0.1858
+          },
+          "rsi_oversold": {
+            "best_params": {
+              "rsi_threshold": 35,
+              "sma_fast": 50,
+              "sma_slow": 200,
+              "hold_period": 3
+            },
+            "win_rate": 63.64,
+            "avg_return": 2.7811,
+            "sharpe": 0.4098,
+            "max_drawdown": -3.3282,
+            "trade_count": 11,
+            "composite_score": 0.2608
+          },
+          "mean_reversion": {
+            "best_params": {
+              "bb_width": 2.5,
+              "bb_period": 20,
+              "hold_period": 3
+            },
+            "win_rate": 55.56,
+            "avg_return": 1.0304,
+            "sharpe": 0.2579,
+            "max_drawdown": -4.5246,
+            "trade_count": 18,
+            "composite_score": 0.1433
+          }
+        },
+        "panic": {
+          "fear_greed": {
+            "best_params": {
+              "momentum_threshold": -5,
+              "hold_period": 15
+            },
+            "win_rate": 47.52,
+            "avg_return": 0.8931,
+            "sharpe": 0.0674,
+            "max_drawdown": -60.8749,
+            "trade_count": 202,
+            "composite_score": 0.032
+          },
+          "regime_confirmation": {
+            "best_params": {
+              "sma_period": 50,
+              "dip_threshold": -2,
+              "hold_period": 15
+            },
+            "win_rate": 70.59,
+            "avg_return": 4.9411,
+            "sharpe": 0.6921,
+            "max_drawdown": -6.2414,
+            "trade_count": 17,
+            "composite_score": 0.4886
+          },
+          "rsi_oversold": {
+            "best_params": {
+              "rsi_threshold": 25,
+              "sma_fast": 50,
+              "sma_slow": 200,
+              "hold_period": 3
+            },
+            "win_rate": 62.5,
+            "avg_return": 2.0571,
+            "sharpe": 0.2201,
+            "max_drawdown": -9.1369,
+            "trade_count": 24,
+            "composite_score": 0.1376
+          },
+          "mean_reversion": {
+            "best_params": {
+              "bb_width": 2.5,
+              "bb_period": 20,
+              "hold_period": 3
+            },
+            "win_rate": 59.26,
+            "avg_return": 0.3404,
+            "sharpe": 0.0753,
+            "max_drawdown": -11.1464,
+            "trade_count": 54,
+            "composite_score": 0.0446
+          }
+        }
+      }
+    },
+    "GLD": {
+      "asset_class": "commodities",
+      "sector": "Commodities",
+      "regime_stats": {
+        "bull": {
+          "count": 0,
+          "pct": 0.0
+        },
+        "bear": {
+          "count": 0,
+          "pct": 0.0
+        },
+        "sideways": {
+          "count": 11391,
+          "pct": 100.0
+        },
+        "panic": {
+          "count": 0,
+          "pct": 0.0
+        }
+      },
+      "regime_bands": {
+        "bull": {
+          "strategy": "fear_greed",
+          "params": {
+            "momentum_threshold": -5,
+            "hold_period": 5
+          },
+          "confidence": 0.0,
+          "insufficient_data": true
+        },
+        "bear": {
+          "strategy": "fear_greed",
+          "params": {
+            "momentum_threshold": -5,
+            "hold_period": 5
+          },
+          "confidence": 0.0,
+          "insufficient_data": true
+        },
+        "sideways": {
+          "strategy": "fear_greed",
+          "params": {
+            "momentum_threshold": -10,
+            "hold_period": 15
+          },
+          "win_rate": 66.67,
+          "sharpe": 0.3605,
+          "avg_return": 1.9811,
+          "trade_count": 12,
+          "confidence": 0.4806
+        },
+        "panic": {
+          "strategy": "fear_greed",
+          "params": {
+            "momentum_threshold": -5,
+            "hold_period": 5
+          },
+          "confidence": 0.0,
+          "insufficient_data": true
+        }
+      },
+      "full_optimization": {
+        "sideways": {
+          "fear_greed": {
+            "best_params": {
+              "momentum_threshold": -10,
+              "hold_period": 15
+            },
+            "win_rate": 66.67,
+            "avg_return": 1.9811,
+            "sharpe": 0.3605,
+            "max_drawdown": -7.6108,
+            "trade_count": 12,
+            "composite_score": 0.2403
+          }
+        }
+      }
+    },
+    "XLK": {
+      "asset_class": "technology",
+      "sector": "Information Technology",
+      "regime_stats": {
+        "bull": {
+          "count": 0,
+          "pct": 0.0
+        },
+        "bear": {
+          "count": 0,
+          "pct": 0.0
+        },
+        "sideways": {
+          "count": 11391,
+          "pct": 100.0
+        },
+        "panic": {
+          "count": 0,
+          "pct": 0.0
+        }
+      },
+      "regime_bands": {
+        "bull": {
+          "strategy": "fear_greed",
+          "params": {
+            "momentum_threshold": -5,
+            "hold_period": 5
+          },
+          "confidence": 0.0,
+          "insufficient_data": true
+        },
+        "bear": {
+          "strategy": "fear_greed",
+          "params": {
+            "momentum_threshold": -5,
+            "hold_period": 5
+          },
+          "confidence": 0.0,
+          "insufficient_data": true
+        },
+        "sideways": {
+          "strategy": "fear_greed",
+          "params": {
+            "momentum_threshold": -10,
+            "hold_period": 7
+          },
+          "win_rate": 55.26,
+          "sharpe": 0.0872,
+          "avg_return": 0.6544,
+          "trade_count": 76,
+          "confidence": 0.0964
+        },
+        "panic": {
+          "strategy": "fear_greed",
+          "params": {
+            "momentum_threshold": -5,
+            "hold_period": 5
+          },
+          "confidence": 0.0,
+          "insufficient_data": true
+        }
+      },
+      "full_optimization": {
+        "sideways": {
+          "fear_greed": {
+            "best_params": {
+              "momentum_threshold": -10,
+              "hold_period": 7
+            },
+            "win_rate": 55.26,
+            "avg_return": 0.6544,
+            "sharpe": 0.0872,
+            "max_drawdown": -16.2571,
+            "trade_count": 76,
+            "composite_score": 0.0482
+          }
+        }
+      }
+    }
+  }
+}

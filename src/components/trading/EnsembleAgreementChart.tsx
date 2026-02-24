@@ -166,7 +166,7 @@ export default function EnsembleAgreementChart() {
                 borderRadius: '8px',
                 color: '#F3F4F6'
               }}
-              formatter={(value: any, name: string) => [
+              formatter={(value: any, name?: string) => [
                 name === 'count' ? `${value} tickers` : `${value.toFixed(1)}%`,
                 name === 'count' ? 'Count' : 'Percentage'
               ]}

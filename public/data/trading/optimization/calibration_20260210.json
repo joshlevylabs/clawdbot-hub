@@ -30,7 +30,55 @@
       "monte_carlo_5th_pct": -1.1977,
       "sector": "Information Technology",
       "asset_class": "technology",
-      "grid_composite_score": 0.026
+      "grid_composite_score": 0.026,
+      "regime_params": {
+        "bull": {
+          "strategy": "mean_reversion",
+          "params": {
+            "bb_width": 2.0,
+            "bb_period": 20,
+            "hold_period": 7
+          },
+          "confidence": 0.885,
+          "win_rate": 60.0,
+          "sharpe": 0.7374
+        },
+        "bear": {
+          "strategy": "rsi_oversold",
+          "params": {
+            "rsi_threshold": 25,
+            "sma_fast": 50,
+            "sma_slow": 200,
+            "hold_period": 7
+          },
+          "confidence": 1.0,
+          "win_rate": 100.0,
+          "sharpe": 2.4754
+        },
+        "sideways": {
+          "strategy": "rsi_oversold",
+          "params": {
+            "rsi_threshold": 35,
+            "sma_fast": 50,
+            "sma_slow": 200,
+            "hold_period": 3
+          },
+          "confidence": 0.522,
+          "win_rate": 63.64,
+          "sharpe": 0.4098
+        },
+        "panic": {
+          "strategy": "regime_confirmation",
+          "params": {
+            "sma_period": 50,
+            "dip_threshold": -2,
+            "hold_period": 15
+          },
+          "confidence": 0.977,
+          "win_rate": 70.59,
+          "sharpe": 0.6921
+        }
+      }
     },
     "AMZN": {
       "confidence_multiplier": 0.86,
@@ -76,7 +124,43 @@
       "monte_carlo_5th_pct": -0.7064,
       "sector": "Commodities",
       "asset_class": "commodities",
-      "grid_composite_score": 0.1305
+      "grid_composite_score": 0.1305,
+      "regime_params": {
+        "bull": {
+          "strategy": "fear_greed",
+          "params": {
+            "momentum_threshold": -5,
+            "hold_period": 5
+          },
+          "confidence": 0.0
+        },
+        "bear": {
+          "strategy": "fear_greed",
+          "params": {
+            "momentum_threshold": -5,
+            "hold_period": 5
+          },
+          "confidence": 0.0
+        },
+        "sideways": {
+          "strategy": "fear_greed",
+          "params": {
+            "momentum_threshold": -10,
+            "hold_period": 15
+          },
+          "confidence": 0.481,
+          "win_rate": 66.67,
+          "sharpe": 0.3605
+        },
+        "panic": {
+          "strategy": "fear_greed",
+          "params": {
+            "momentum_threshold": -5,
+            "hold_period": 5
+          },
+          "confidence": 0.0
+        }
+      }
     },
     "GOOGL": {
       "confidence_multiplier": 0.85,
@@ -261,7 +345,43 @@
       "monte_carlo_5th_pct": -1.9916,
       "sector": "Broad Market",
       "asset_class": "broad_market",
-      "grid_composite_score": 0.0737
+      "grid_composite_score": 0.0737,
+      "regime_params": {
+        "bull": {
+          "strategy": "fear_greed",
+          "params": {
+            "momentum_threshold": -5,
+            "hold_period": 5
+          },
+          "confidence": 0.0
+        },
+        "bear": {
+          "strategy": "fear_greed",
+          "params": {
+            "momentum_threshold": -5,
+            "hold_period": 5
+          },
+          "confidence": 0.0
+        },
+        "sideways": {
+          "strategy": "fear_greed",
+          "params": {
+            "momentum_threshold": -5,
+            "hold_period": 15
+          },
+          "confidence": 0.183,
+          "win_rate": 60.17,
+          "sharpe": 0.1518
+        },
+        "panic": {
+          "strategy": "fear_greed",
+          "params": {
+            "momentum_threshold": -5,
+            "hold_period": 5
+          },
+          "confidence": 0.0
+        }
+      }
     },
     "SPY": {
       "confidence_multiplier": 0.84,
@@ -284,7 +404,43 @@
       "monte_carlo_5th_pct": -1.4406,
       "sector": "Broad Market",
       "asset_class": "broad_market",
-      "grid_composite_score": 0.2321
+      "grid_composite_score": 0.2321,
+      "regime_params": {
+        "bull": {
+          "strategy": "fear_greed",
+          "params": {
+            "momentum_threshold": -5,
+            "hold_period": 5
+          },
+          "confidence": 0.0
+        },
+        "bear": {
+          "strategy": "fear_greed",
+          "params": {
+            "momentum_threshold": -5,
+            "hold_period": 5
+          },
+          "confidence": 0.0
+        },
+        "sideways": {
+          "strategy": "fear_greed",
+          "params": {
+            "momentum_threshold": -10,
+            "hold_period": 7
+          },
+          "confidence": 0.464,
+          "win_rate": 71.05,
+          "sharpe": 0.3267
+        },
+        "panic": {
+          "strategy": "fear_greed",
+          "params": {
+            "momentum_threshold": -5,
+            "hold_period": 5
+          },
+          "confidence": 0.0
+        }
+      }
     },
     "TLT": {
       "confidence_multiplier": 0.81,
@@ -422,7 +578,43 @@
       "monte_carlo_5th_pct": -1.4306,
       "sector": "Information Technology",
       "asset_class": "technology",
-      "grid_composite_score": 0.0482
+      "grid_composite_score": 0.0482,
+      "regime_params": {
+        "bull": {
+          "strategy": "fear_greed",
+          "params": {
+            "momentum_threshold": -5,
+            "hold_period": 5
+          },
+          "confidence": 0.0
+        },
+        "bear": {
+          "strategy": "fear_greed",
+          "params": {
+            "momentum_threshold": -5,
+            "hold_period": 5
+          },
+          "confidence": 0.0
+        },
+        "sideways": {
+          "strategy": "fear_greed",
+          "params": {
+            "momentum_threshold": -10,
+            "hold_period": 7
+          },
+          "confidence": 0.096,
+          "win_rate": 55.26,
+          "sharpe": 0.0872
+        },
+        "panic": {
+          "strategy": "fear_greed",
+          "params": {
+            "momentum_threshold": -5,
+            "hold_period": 5
+          },
+          "confidence": 0.0
+        }
+      }
     },
     "XLV": {
       "confidence_multiplier": 0.88,
@@ -472,5 +664,6 @@
       "asset_class": "energy",
       "grid_composite_score": 0.2591
     }
-  }
+  },
+  "regime_params_updated": "2026-02-24T11:37:33.414915"
 }

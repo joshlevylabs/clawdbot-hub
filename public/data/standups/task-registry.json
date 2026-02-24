@@ -1644,13 +1644,13 @@
       "tag": "AGENT",
       "priority": "high",
       "assignee": "Theo",
-      "status": "in_progress",
+      "status": "done",
       "sourceStandup": "manual",
       "sourceStandupType": "manual",
       "sourceDate": "2026-02-23",
       "createdAt": "2026-02-23T19:24:49.534779",
-      "updatedAt": "2026-02-23T19:24:49.534779",
-      "completedAt": null,
+      "updatedAt": "2025-01-27T11:45:30-08:00",
+      "completedAt": "2025-01-27T11:45:30-08:00",
       "sprintReady": true,
       "dependsOn": "A-187"
     },
@@ -1700,7 +1700,7 @@
       "updatedAt": "2026-02-23T21:30:00.000000",
       "completedAt": "2026-02-23T21:30:00.000000",
       "sprintReady": true,
-      "resolution": "Successfully added EMA 100 and EMA 150 calculations to MRE signal pipeline. Updated both detect_regime() and detect_regime_with_prediction() functions in mre_signal_exporter.py to include ema_100, ema_150, above_ema_100, and above_ema_150 fields. Updated UI components in clawdbot-hub to display new EMAs in regime details fallback chain (200→150→100→50→20). Hub changes deployed via Tower."
+      "resolution": "Successfully added EMA 100 and EMA 150 calculations to MRE signal pipeline. Updated both detect_regime() and detect_regime_with_prediction() functions in mre_signal_exporter.py to include ema_100, ema_150, above_ema_100, and above_ema_150 fields. Updated UI components in clawdbot-hub to display new EMAs in regime details fallback chain (200\u2192150\u2192100\u219250\u219220). Hub changes deployed via Tower."
     }
   ]
 }

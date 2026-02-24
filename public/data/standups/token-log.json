@@ -1,26 +1,6 @@
 {
   "log": [
     {
-      "date": "2026-02-16",
-      "type": "midnight-prep",
-      "inputTokens": 1185,
-      "outputTokens": 933,
-      "totalTokens": 2118,
-      "estimatedCost": 0.0877,
-      "model": "claude-opus-4-6",
-      "duration": "21.9s"
-    },
-    {
-      "date": "2026-02-17",
-      "type": "afternoon-checkpoint",
-      "inputTokens": 1234,
-      "outputTokens": 1042,
-      "totalTokens": 2276,
-      "estimatedCost": 0.0967,
-      "model": "claude-opus-4-6",
-      "duration": "24.5s"
-    },
-    {
       "date": "2026-02-17",
       "type": "lever-faith-family",
       "inputTokens": 1232,
@@ -999,12 +979,32 @@
       "estimatedCost": 0.06609999999999999,
       "model": "claude-sonnet-4-20250514",
       "duration": "73.9s"
+    },
+    {
+      "date": "2026-02-24",
+      "type": "midday-checkpoint",
+      "inputTokens": 6764,
+      "outputTokens": 2364,
+      "totalTokens": 9128,
+      "estimatedCost": 0.0558,
+      "model": "claude-sonnet-4-20250514",
+      "duration": "68.4s"
+    },
+    {
+      "date": "2026-02-24",
+      "type": "midday-checkpoint",
+      "inputTokens": 8469,
+      "outputTokens": 2984,
+      "totalTokens": 11453,
+      "estimatedCost": 0.0702,
+      "model": "claude-sonnet-4-20250514",
+      "duration": "79.9s"
     }
   ],
   "totals": {
-    "today": 0.0661,
-    "week": 20.7382,
-    "month": 20.8259,
+    "today": 0.1921,
+    "week": 20.7675,
+    "month": 20.7675,
     "standupCount": 100
   }
 }

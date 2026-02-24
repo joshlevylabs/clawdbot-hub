@@ -14,6 +14,19 @@
       "instanceKey": "STD-35"
     },
     {
+      "date": "2026-02-24",
+      "time": "12:00",
+      "type": "midday-checkpoint",
+      "typeName": "Midday Checkpoint",
+      "typeEmoji": "\u2600\ufe0f",
+      "topic": "Midday Checkpoint \u2014 Tuesday Feb 24",
+      "file": "2026-02-24-midday-checkpoint.json",
+      "tokenCost": 0.0702,
+      "verticals": [],
+      "initiatives": [],
+      "instanceKey": "STD-37"
+    },
+    {
       "date": "2026-02-23",
       "time": "22:30",
       "type": "night-wrap",

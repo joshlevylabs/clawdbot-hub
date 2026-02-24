@@ -1,5 +1,5 @@
 {
-  "nextAgentId": 205,
+  "nextAgentId": 210,
   "nextJoshuaId": 38,
   "tasks": [
     {
@@ -1891,6 +1891,76 @@
       "sourceDate": "2026-02-24",
       "createdAt": "2026-02-24T04:54:31.006191-08:00",
       "updatedAt": "2026-02-24T04:54:31.006191-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "A-205",
+      "text": "Build core trading engine with position tracking and simple P&L calculations",
+      "tag": "JAMES",
+      "priority": "high",
+      "assignee": "James Truchard",
+      "status": "pending",
+      "sourceStandup": "STD-37",
+      "sourceStandupType": "midday-checkpoint",
+      "sourceDate": "2026-02-24",
+      "createdAt": "2026-02-24T12:10:25.419881-08:00",
+      "updatedAt": "2026-02-24T12:10:25.419881-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "A-206",
+      "text": "Create flexible database schemas for delayed data with future real-time capability",
+      "tag": "ELON",
+      "priority": "high",
+      "assignee": "Elon",
+      "status": "pending",
+      "sourceStandup": "STD-37",
+      "sourceStandupType": "midday-checkpoint",
+      "sourceDate": "2026-02-24",
+      "createdAt": "2026-02-24T12:10:25.419881-08:00",
+      "updatedAt": "2026-02-24T12:10:25.419881-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "A-207",
+      "text": "Design premium feature gates around performance attribution using delayed data",
+      "tag": "STEVE",
+      "priority": "high",
+      "assignee": "Steve Jobs",
+      "status": "pending",
+      "sourceStandup": "STD-37",
+      "sourceStandupType": "midday-checkpoint",
+      "sourceDate": "2026-02-24",
+      "createdAt": "2026-02-24T12:10:25.419881-08:00",
+      "updatedAt": "2026-02-24T12:10:25.419881-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "A-208",
+      "text": "Pause market data provider analysis pending trading system validation",
+      "tag": "CHRIS",
+      "priority": "medium",
+      "assignee": "Chris Vermeullen",
+      "status": "pending",
+      "sourceStandup": "STD-37",
+      "sourceStandupType": "midday-checkpoint",
+      "sourceDate": "2026-02-24",
+      "createdAt": "2026-02-24T12:10:25.419881-08:00",
+      "updatedAt": "2026-02-24T12:10:25.419881-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "A-209",
+      "text": "Continue educational scaffolding integration into trading flows",
+      "tag": "JORDAN",
+      "priority": "medium",
+      "assignee": "Jordan Peterson",
+      "status": "pending",
+      "sourceStandup": "STD-37",
+      "sourceStandupType": "midday-checkpoint",
+      "sourceDate": "2026-02-24",
+      "createdAt": "2026-02-24T12:10:25.419881-08:00",
+      "updatedAt": "2026-02-24T12:10:25.419881-08:00",
       "completedAt": null
     }
   ]

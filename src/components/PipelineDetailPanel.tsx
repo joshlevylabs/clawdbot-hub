@@ -191,6 +191,7 @@ const STRATEGY_DESCRIPTIONS: Record<string, string> = {
 // Helper function to check if this is an individual strategy stage
 const isIndividualStrategy = (stageName: string): boolean => {
   return stageName.includes('Fear & Greed Strategy') ||
+         stageName.includes('Blended F&G Strategy') ||
          stageName.includes('Regime Confirm Strategy') ||
          stageName.includes('RSI Oversold Strategy') ||
          stageName.includes('Mean Reversion Strategy') ||

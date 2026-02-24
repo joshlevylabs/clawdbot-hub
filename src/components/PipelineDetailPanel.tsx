@@ -260,7 +260,7 @@ function StrategyParameters({
   }
 
   if (strategyName.includes('RSI Oversold')) {
-    const rsiOversold = (data.rsi_14 || 100) < 35;
+    const rsiOversold = (data.rsi_14 || 100) < 20;
     const strategyVoted = data.strategy_votes?.rsi_oversold === true;
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
@@ -270,7 +270,7 @@ function StrategyParameters({
         </div>
         <div className="bg-slate-900/50 rounded-lg p-3">
           <div className="text-xs text-slate-500">RSI Threshold</div>
-          <div className="text-lg font-bold text-slate-200">&lt; 35</div>
+          <div className="text-lg font-bold text-slate-200">&lt; 20</div>
         </div>
         <div className="bg-slate-900/50 rounded-lg p-3">
           <div className="text-xs text-slate-500">Trend (SMA50 &gt; SMA200)</div>
@@ -363,8 +363,8 @@ function BlendedFGSectorOverview({ tickers }: { tickers: TickerDetail[] }) {
       const ac = t.rawData?.asset_class;
       if (ac && !map[ac]) {
         map[ac] = {
-          conservative: t.rawData?.fear_threshold_conservative ?? 15,
-          opportunistic: t.rawData?.fear_threshold_opportunistic ?? 40,
+          conservative: t.rawData?.fear_threshold_conservative ?? 8,
+          opportunistic: t.rawData?.fear_threshold_opportunistic ?? 19,
         };
       }
     }

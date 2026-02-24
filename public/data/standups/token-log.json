@@ -3,16 +3,6 @@
     {
       "date": "2026-02-16",
       "type": "morning-priorities",
-      "inputTokens": 1159,
-      "outputTokens": 1201,
-      "totalTokens": 2360,
-      "estimatedCost": 0.1075,
-      "model": "claude-opus-4-6",
-      "duration": "26.0s"
-    },
-    {
-      "date": "2026-02-16",
-      "type": "morning-priorities",
       "inputTokens": 1254,
       "outputTokens": 1190,
       "totalTokens": 2444,
@@ -999,12 +989,22 @@
       "estimatedCost": 0.07980000000000001,
       "model": "claude-sonnet-4-20250514",
       "duration": "104.5s"
+    },
+    {
+      "date": "2026-02-23",
+      "type": "night-wrap",
+      "inputTokens": 6428,
+      "outputTokens": 2181,
+      "totalTokens": 8609,
+      "estimatedCost": 0.052,
+      "model": "claude-sonnet-4-20250514",
+      "duration": "61.5s"
     }
   ],
   "totals": {
-    "today": 0.5864,
-    "week": 20.9234,
-    "month": 20.9234,
+    "today": 0.6384,
+    "week": 20.8679,
+    "month": 20.8679,
     "standupCount": 100
   }
 }

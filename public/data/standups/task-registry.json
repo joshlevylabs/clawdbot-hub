@@ -1737,11 +1737,11 @@
       "priority": "medium",
       "assignee": "Alex",
       "status": "pending",
-      "sourceStandup": "STD-33",
-      "sourceStandupType": "evening-session",
+      "sourceStandup": "STD-34",
+      "sourceStandupType": "night-wrap",
       "sourceDate": "2026-02-23",
       "createdAt": "2026-02-23T20:10:42.770154-08:00",
-      "updatedAt": "2026-02-23T20:10:42.770154-08:00",
+      "updatedAt": "2026-02-23T22:44:35.077052-08:00",
       "completedAt": null
     },
     {
@@ -1751,11 +1751,11 @@
       "priority": "medium",
       "assignee": "Dave",
       "status": "pending",
-      "sourceStandup": "STD-33",
-      "sourceStandupType": "evening-session",
+      "sourceStandup": "STD-34",
+      "sourceStandupType": "night-wrap",
       "sourceDate": "2026-02-23",
       "createdAt": "2026-02-23T20:10:42.770154-08:00",
-      "updatedAt": "2026-02-23T20:10:42.770154-08:00",
+      "updatedAt": "2026-02-23T22:44:35.077052-08:00",
       "completedAt": null
     },
     {

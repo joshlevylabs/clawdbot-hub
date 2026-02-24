@@ -1,6 +1,6 @@
 {
   "date": "2026-02-23",
-  "generatedAt": "2026-02-23T20:10:42.770154-08:00",
+  "generatedAt": "2026-02-23T22:44:35.077052-08:00",
   "priorities": [
     {
       "text": "Decide newsletter send timing relative to Apple approval",
@@ -105,6 +105,18 @@
       "assignee": "Dave",
       "status": "pending",
       "taskKey": "A-195"
+    },
+    {
+      "text": "Sector F&G Backtest Harness \u2014 Backtest global-only vs sector-only vs blended (Option C) F&G strategies across all asset classes. Sweep weight ratios to find optimal blend. Compare accuracy, Sharpe, win rate, and excess returns.",
+      "assignee": "Theo",
+      "status": "in_progress",
+      "taskKey": "A-199"
+    },
+    {
+      "text": "Hub UI for Sector F&G \u2014 Update F&G strategy modal to show global F&G, sector F&G, blended (effective) F&G, weight applied, and divergence indicator per ticker. Add sector F&G overview section to the modal header.",
+      "assignee": "Theo",
+      "status": "in_progress",
+      "taskKey": "A-200"
     }
   ]
 }

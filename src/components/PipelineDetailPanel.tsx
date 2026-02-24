@@ -126,6 +126,137 @@ const STRATEGY_DESCRIPTIONS: Record<string, string> = {
   'Final Filters': "Applies cluster limits (max 2 per sector), asset confidence thresholds, crash mode protection, and multiplier caps.",
 };
 
+// Helper function to check if this is an individual strategy stage
+const isIndividualStrategy = (stageName: string): boolean => {
+  return stageName.includes('Fear & Greed Strategy') ||
+         stageName.includes('Regime Confirm Strategy') ||
+         stageName.includes('RSI Oversold Strategy') ||
+         stageName.includes('Mean Reversion Strategy') ||
+         stageName.includes('Momentum Strategy');
+};
+
+// Component to show strategy-specific parameters
+function StrategyParameters({ 
+  strategyName, 
+  sampleTicker 
+}: { 
+  strategyName: string; 
+  sampleTicker?: TickerDetail; 
+}) {
+  if (!sampleTicker?.rawData) {
+    return <div className="text-sm text-slate-400">No data available</div>;
+  }
+
+  const data = sampleTicker.rawData;
+
+  if (strategyName.includes('Fear & Greed')) {
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="bg-slate-900/50 rounded-lg p-3">
+          <div className="text-xs text-slate-500">Current F&G Index</div>
+          <div className="text-lg font-bold text-slate-200">{data.current_fg?.toFixed(0) || 'N/A'}</div>
+        </div>
+        <div className="bg-slate-900/50 rounded-lg p-3">
+          <div className="text-xs text-slate-500">Fear Threshold</div>
+          <div className="text-lg font-bold text-slate-200">{data.fear_threshold || 'N/A'}</div>
+        </div>
+        <div className="bg-slate-900/50 rounded-lg p-3">
+          <div className="text-xs text-slate-500">Signal Trigger</div>
+          <div className={`text-sm font-medium ${(data.current_fg || 0) <= (data.fear_threshold || 0) ? 'text-emerald-400' : 'text-red-400'}`}>
+            {(data.current_fg || 0) <= (data.fear_threshold || 0) ? 'BUY Triggered' : 'No Signal'}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (strategyName.includes('Regime Confirm')) {
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="bg-slate-900/50 rounded-lg p-3">
+          <div className="text-xs text-slate-500">Current Regime</div>
+          <div className="text-lg font-bold text-slate-200 capitalize">{data.regime}</div>
+        </div>
+        <div className="bg-slate-900/50 rounded-lg p-3">
+          <div className="text-xs text-slate-500">Required for BUY</div>
+          <div className="text-lg font-bold text-slate-200">Bull</div>
+        </div>
+        <div className="bg-slate-900/50 rounded-lg p-3">
+          <div className="text-xs text-slate-500">Status</div>
+          <div className={`text-sm font-medium ${data.regime === 'bull' ? 'text-emerald-400' : 'text-red-400'}`}>
+            {data.regime === 'bull' ? 'Confirmed' : 'Not Confirmed'}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (strategyName.includes('RSI Oversold')) {
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="bg-slate-900/50 rounded-lg p-3">
+          <div className="text-xs text-slate-500">Current RSI (14)</div>
+          <div className="text-lg font-bold text-slate-200">{data.rsi_14?.toFixed(1) || 'N/A'}</div>
+        </div>
+        <div className="bg-slate-900/50 rounded-lg p-3">
+          <div className="text-xs text-slate-500">Oversold Threshold</div>
+          <div className="text-lg font-bold text-slate-200">30</div>
+        </div>
+        <div className="bg-slate-900/50 rounded-lg p-3">
+          <div className="text-xs text-slate-500">Status</div>
+          <div className={`text-sm font-medium ${(data.rsi_14 || 100) < 30 ? 'text-emerald-400' : 'text-red-400'}`}>
+            {(data.rsi_14 || 100) < 30 ? 'Oversold' : 'Not Oversold'}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (strategyName.includes('Mean Reversion')) {
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="bg-slate-900/50 rounded-lg p-3">
+          <div className="text-xs text-slate-500">5-Day Return</div>
+          <div className="text-lg font-bold text-slate-200">{data.return_5d?.toFixed(1) || 'N/A'}%</div>
+        </div>
+        <div className="bg-slate-900/50 rounded-lg p-3">
+          <div className="text-xs text-slate-500">Dip Threshold</div>
+          <div className="text-lg font-bold text-slate-200">-5.0%</div>
+        </div>
+        <div className="bg-slate-900/50 rounded-lg p-3">
+          <div className="text-xs text-slate-500">Status</div>
+          <div className={`text-sm font-medium ${(data.return_5d || 0) <= -5.0 ? 'text-emerald-400' : 'text-red-400'}`}>
+            {(data.return_5d || 0) <= -5.0 ? 'Dip Detected' : 'No Dip'}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (strategyName.includes('Momentum')) {
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="bg-slate-900/50 rounded-lg p-3">
+          <div className="text-xs text-slate-500">20-Day Momentum</div>
+          <div className="text-lg font-bold text-slate-200">{data.momentum_20d?.toFixed(1) || 'N/A'}%</div>
+        </div>
+        <div className="bg-slate-900/50 rounded-lg p-3">
+          <div className="text-xs text-slate-500">Minimum Threshold</div>
+          <div className="text-lg font-bold text-slate-200">+10.0%</div>
+        </div>
+        <div className="bg-slate-900/50 rounded-lg p-3">
+          <div className="text-xs text-slate-500">Status</div>
+          <div className={`text-sm font-medium ${(data.momentum_20d || 0) >= 10.0 ? 'text-emerald-400' : 'text-red-400'}`}>
+            {(data.momentum_20d || 0) >= 10.0 ? 'Strong Momentum' : 'Weak Momentum'}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return <div className="text-sm text-slate-400">Strategy parameters not available</div>;
+};
+
 export default function PipelineDetailPanel({
   stageDetails,
   onClose
@@ -185,7 +316,7 @@ export default function PipelineDetailPanel({
       
       {/* Centered Modal */}
       <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
-        <div className="bg-slate-900 rounded-xl shadow-2xl max-w-5xl w-full max-h-[85vh] overflow-hidden border border-slate-700/50 flex flex-col">
+        <div className="bg-slate-900 rounded-xl shadow-2xl max-w-full sm:max-w-5xl w-full max-h-[85vh] overflow-hidden border border-slate-700/50 flex flex-col">
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b border-slate-700/50">
             <div className="flex items-center gap-3">
@@ -208,6 +339,18 @@ export default function PipelineDetailPanel({
             <h3 className="text-lg font-semibold text-slate-200 mb-2">How This Strategy Works</h3>
             <p className="text-slate-300 text-sm leading-relaxed">{strategyDescription}</p>
           </div>
+
+          {/* Strategy Parameters - Show for individual strategy gates */}
+          {isIndividualStrategy(stageDetails.name) && (
+            <div className="p-6 border-b border-slate-700/50 bg-slate-800/20">
+              <h3 className="text-lg font-semibold text-slate-200 mb-2">Strategy Parameters (read-only)</h3>
+              <p className="text-xs text-slate-500 mb-4">Configuration coming soon</p>
+              <StrategyParameters 
+                strategyName={stageDetails.name} 
+                sampleTicker={stageDetails.passedTickers[0] || stageDetails.filteredTickers[0]} 
+              />
+            </div>
+          )}
           
           {/* Summary Stats */}
           <div className="p-6 border-b border-slate-700/50">
@@ -294,7 +437,12 @@ export default function PipelineDetailPanel({
                       ))
                   ) : (
                     <div className="text-center text-slate-400 py-8">
-                      {searchQuery ? `No tickers found matching "${searchQuery}"` : "No output tickers"}
+                      {searchQuery 
+                        ? `No tickers found matching "${searchQuery}"` 
+                        : stageDetails.name.includes('Vote Consensus') && stageDetails.name.includes('-of-5')
+                          ? "No tickers currently reach this consensus level"
+                          : "No output tickers"
+                      }
                     </div>
                   )}
                 </div>

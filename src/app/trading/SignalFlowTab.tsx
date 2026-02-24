@@ -402,7 +402,9 @@ export default function SignalFlowTab() {
       
       setSelectedStage({
         name: `${path.name.replace('votes', 'Vote Consensus')}`,
-        description: `Tickers where exactly ${voteCount} of 5 strategies voted BUY`,
+        description: path.count > 0 
+          ? `Tickers where exactly ${voteCount} of 5 strategies voted BUY`
+          : `No tickers currently have exactly ${voteCount} of 5 strategies voting BUY`,
         stageType: 'filter',
         inputCount: pipelineData.voteConsensusGate.inputCount,
         outputCount: path.count,
@@ -762,13 +764,27 @@ export default function SignalFlowTab() {
               <div
                 key={path.voteCount}
                 onClick={() => handleStageClick(`vote_consensus_${path.voteCount}`)}
-                className="flex items-center justify-between gap-3 px-3 py-1.5 bg-slate-800/80 rounded-lg border border-slate-700/50 hover:border-primary-500/50 cursor-pointer transition-all min-w-[200px]"
+                className={`flex items-center justify-between gap-3 px-3 py-1.5 rounded-lg border transition-all min-w-[200px] ${
+                  path.count > 0 
+                    ? 'bg-slate-800/80 border-slate-700/50 hover:border-primary-500/50 cursor-pointer'
+                    : 'bg-slate-900/50 border-slate-800/50 cursor-pointer'
+                }`}
               >
-                <span className="text-xs font-medium text-slate-300 truncate">{path.name}</span>
+                <span className={`text-xs font-medium truncate ${
+                  path.count > 0 ? 'text-slate-300' : 'text-slate-500'
+                }`}>
+                  {path.name}
+                </span>
                 <div className="flex items-center gap-2">
-                  <span className={`text-xs font-bold ${path.count > 0 ? 'text-emerald-400' : 'text-slate-500'}`}>
-                    {path.count}
-                  </span>
+                  {path.count > 0 ? (
+                    <span className="text-xs font-bold text-emerald-400">
+                      {path.count}
+                    </span>
+                  ) : (
+                    <span className="text-xs text-slate-500" title="No tickers currently reach this consensus level">
+                      None
+                    </span>
+                  )}
                 </div>
               </div>
             ))}

@@ -200,7 +200,7 @@ export default function VoteConsensusModal({ symbol, onClose }: VoteConsensusMod
 
       {/* Modal */}
       <div
-        className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl animate-in zoom-in-95 duration-200"
+        className="relative w-full max-w-full sm:max-w-4xl max-h-[90vh] overflow-y-auto bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl animate-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Loading */}
@@ -234,22 +234,13 @@ export default function VoteConsensusModal({ symbol, onClose }: VoteConsensusMod
                   {symbol} Vote Consensus
                 </h2>
                 <span className={`text-xs px-2.5 py-0.5 rounded-lg border font-bold ${
-                  signal.signal === "BUY"
-                    ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/50"
-                    : signal.signal === "HOLD"
-                    ? "bg-slate-500/20 text-slate-400 border-slate-500/50"
-                    : "bg-cyan-500/20 text-cyan-400 border-cyan-500/50"
-                }`}>
-                  {signal.signal}
-                </span>
-                <span className={`text-xs px-2.5 py-0.5 rounded-lg border font-bold ${
                   signal.strategies_agreeing >= 3
                     ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/50"
                     : signal.strategies_agreeing >= 1
                     ? "bg-amber-500/20 text-amber-400 border-amber-500/50"
                     : "bg-red-500/20 text-red-400 border-red-500/50"
                 }`}>
-                  {signal.strategies_agreeing}/5
+                  {signal.strategies_agreeing}/5 Votes
                 </span>
               </div>
               <button
@@ -264,7 +255,7 @@ export default function VoteConsensusModal({ symbol, onClose }: VoteConsensusMod
             <div className="px-6 pb-6 space-y-6 pt-4">
               
               {/* Quick Info Row */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
                 <div className="bg-slate-800/50 rounded-lg p-3">
                   <p className="text-xs text-slate-500">Price</p>
                   <p className="text-lg font-bold text-slate-200">${formatCurrency(signal.price)}</p>
@@ -368,7 +359,7 @@ export default function VoteConsensusModal({ symbol, onClose }: VoteConsensusMod
                 <div className="bg-slate-800/50 rounded-xl border border-slate-700/50 p-6">
                   <h3 className="text-lg font-semibold text-slate-100 mb-4">Similar Consensus Tickers</h3>
                   
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
                     {similarTickers.map(ticker => (
                       <div key={ticker.symbol} className="bg-slate-900/50 rounded-lg p-3">
                         <div className="flex items-center gap-2 mb-2">

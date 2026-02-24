@@ -236,6 +236,33 @@ export default function TickerTechnicalBreakdown({
           </div>
           
           <div className="flex items-center gap-4">
+            {/* Strategy Vote Indicators for vote consensus contexts */}
+            {(stageName.includes('Vote Consensus') || stageName.includes('consensus')) && rawData.strategy_votes && (
+              <div className="flex items-center gap-1">
+                {[
+                  { key: 'fear_greed', label: 'F&G' },
+                  { key: 'regime_confirmation', label: 'Regime' },
+                  { key: 'rsi_oversold', label: 'RSI' },
+                  { key: 'mean_reversion', label: 'Mean' },
+                  { key: 'momentum', label: 'Mom' }
+                ].map(strategy => {
+                  const voted = rawData.strategy_votes?.[strategy.key as keyof typeof rawData.strategy_votes];
+                  return (
+                    <div
+                      key={strategy.key}
+                      className={`w-2 h-2 rounded-full ${
+                        voted ? 'bg-emerald-400' : 'bg-slate-600'
+                      }`}
+                      title={`${strategy.label}: ${voted ? '✓' : '✗'}`}
+                    />
+                  );
+                })}
+                <span className="text-xs text-slate-400 ml-1">
+                  {rawData.strategies_agreeing}/5
+                </span>
+              </div>
+            )}
+            
             {/* Quick indicators */}
             <div className="flex items-center gap-2 text-xs">
               {rawData.rsi_14 && (
@@ -430,7 +457,7 @@ function OverviewTab({
           <AlertTriangle className="w-4 h-4" />
           Applied Modifiers
         </h4>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
           <div className="bg-slate-900/50 rounded p-2">
             <div className="text-xs text-slate-500">Bear Suppressed</div>
             <div className={`text-sm font-medium ${rawData.bear_suppressed ? 'text-red-400' : 'text-slate-400'}`}>
@@ -607,7 +634,7 @@ function TechnicalTab({ rawData }: { rawData: MRESignal }) {
 
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-4">
         {/* RSI */}
         {rawData.rsi_14 && (
           <div className="bg-slate-900/50 rounded-lg p-4">
@@ -724,7 +751,7 @@ function RegimeTab({ rawData }: { rawData: MRESignal }) {
 
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-4">
         {/* Current Regime */}
         <div className="bg-slate-900/50 rounded-lg p-4">
           <h5 className="text-sm font-medium text-slate-300 mb-2">Current Regime</h5>
@@ -815,7 +842,7 @@ function FibonacciTab({ rawData }: { rawData: MRESignal }) {
 
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-4">
         {/* Current Position */}
         <div className="bg-slate-900/50 rounded-lg p-4">
           <h5 className="text-sm font-medium text-slate-300 mb-2">Current Position</h5>

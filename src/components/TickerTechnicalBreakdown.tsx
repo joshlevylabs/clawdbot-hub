@@ -144,7 +144,7 @@ export default function TickerTechnicalBreakdown({
   const STRATEGY_COLORS: Record<string, { active: string; inactive: string }> = {
     fear_greed:          { active: 'bg-blue-400',    inactive: 'bg-blue-400/20' },
     regime_confirmation: { active: 'bg-purple-400',  inactive: 'bg-purple-400/20' },
-    rsi_oversold:        { active: 'bg-cyan-400',    inactive: 'bg-cyan-400/20' },
+    rsi_oversold:        { active: 'bg-orange-400',   inactive: 'bg-orange-400/20' },
     mean_reversion:      { active: 'bg-amber-400',   inactive: 'bg-amber-400/20' },
     momentum:            { active: 'bg-emerald-400', inactive: 'bg-emerald-400/20' },
   };

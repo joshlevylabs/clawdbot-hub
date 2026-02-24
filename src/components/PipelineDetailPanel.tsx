@@ -423,7 +423,7 @@ export default function PipelineDetailPanel({
                 {[
                   { label: 'Fear & Greed', color: 'bg-blue-400' },
                   { label: 'Regime', color: 'bg-purple-400' },
-                  { label: 'RSI', color: 'bg-cyan-400' },
+                  { label: 'RSI', color: 'bg-orange-400' },
                   { label: 'Mean Reversion', color: 'bg-amber-400' },
                   { label: 'Momentum', color: 'bg-emerald-400' },
                 ].map(s => (

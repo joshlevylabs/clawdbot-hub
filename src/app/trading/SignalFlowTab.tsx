@@ -400,6 +400,11 @@ export default function SignalFlowTab() {
       const path = pipelineData.voteConsensusGate.paths.find(p => p.voteCount === voteCount);
       if (!path) return;
       
+      // Filtered = all tickers from the gate that DON'T have this vote count
+      const filteredFromThisLevel = pipelineData.voteConsensusGate.passed.filter(
+        t => !path.tickers.includes(t)
+      );
+      
       setSelectedStage({
         name: `${path.name.replace('votes', 'Vote Consensus')}`,
         description: path.count > 0 
@@ -408,7 +413,12 @@ export default function SignalFlowTab() {
         stageType: 'filter',
         inputCount: pipelineData.voteConsensusGate.inputCount,
         outputCount: path.count,
-        filteredTickers: [],
+        filteredTickers: filteredFromThisLevel.map(t => ({
+          symbol: t.symbol,
+          signal: t.signal,
+          currentPrice: t.price,
+          rawData: t
+        })),
         passedTickers: path.tickers.map(t => ({
           symbol: t.symbol,
           signal: t.signal,

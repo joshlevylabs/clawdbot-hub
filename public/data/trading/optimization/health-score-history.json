@@ -1,0 +1,50 @@
+{
+  "generated": "2026-02-24T09:15:00Z",
+  "history": [
+    {
+      "date": "2026-02-10",
+      "score": 48,
+      "accuracy": 60.2,
+      "winRate": 58.3,
+      "sharpe": 0.095,
+      "profitFactor": 2.10,
+      "notes": "Initial baseline"
+    },
+    {
+      "date": "2026-02-14",
+      "score": 51,
+      "accuracy": 63.1,
+      "winRate": 61.2,
+      "sharpe": 0.110,
+      "profitFactor": 2.25,
+      "notes": "Phase 3 regime detection improvements"
+    },
+    {
+      "date": "2026-02-17",
+      "score": 54,
+      "accuracy": 64.8,
+      "winRate": 63.5,
+      "sharpe": 0.118,
+      "profitFactor": 2.32,
+      "notes": "Phase 4 RSI threshold optimization"
+    },
+    {
+      "date": "2026-02-20",
+      "score": 58,
+      "accuracy": 65.5,
+      "winRate": 64.8,
+      "sharpe": 0.125,
+      "profitFactor": 2.38,
+      "notes": "Phase 5 F&G threshold calibration"
+    },
+    {
+      "date": "2026-02-24",
+      "score": 66,
+      "accuracy": 66.5,
+      "winRate": 66.5,
+      "sharpe": 0.133,
+      "profitFactor": 2.45,
+      "notes": "Current - health score formula recalibrated"
+    }
+  ]
+}

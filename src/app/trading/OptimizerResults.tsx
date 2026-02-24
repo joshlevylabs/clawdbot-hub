@@ -13,7 +13,21 @@ import {
   Activity,
   ChevronDown,
   ChevronUp,
+  BarChart3,
+  Info,
 } from "lucide-react";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip as ChartTooltip,
+  ReferenceLine,
+  ResponsiveContainer,
+  Area,
+  AreaChart,
+} from "recharts";
 
 // ============ TYPES ============
 
@@ -58,6 +72,38 @@ interface OptimizerRun {
 interface OptimizerRunsData {
   generated: string;
   runs: OptimizerRun[];
+}
+
+interface HealthHistoryPoint {
+  date: string;
+  score: number;
+  accuracy: number;
+  winRate: number;
+  sharpe: number;
+  profitFactor: number;
+  notes: string;
+}
+
+interface HealthHistoryData {
+  generated: string;
+  history: HealthHistoryPoint[];
+}
+
+interface ComponentBreakdown {
+  name: string;
+  weight: number;
+  rawValue: string;
+  normalizedScore: number;
+  contribution: number;
+}
+
+interface StrategyScore {
+  name: string;
+  accuracy: number;
+  winRate: number;
+  sharpe: number;
+  profitFactor: number;
+  score: number;
 }
 
 // ============ HELPERS ============
@@ -110,11 +156,117 @@ function healthScore(strategies: Record<string, StrategyMetrics>): {
   return { score, label: "Needs Work", color: "text-red-400" };
 }
 
+function healthScoreBreakdown(strategies: Record<string, StrategyMetrics>): {
+  components: ComponentBreakdown[];
+  perStrategy: StrategyScore[];
+} {
+  const strats = Object.values(strategies);
+  if (strats.length === 0) return { components: [], perStrategy: [] };
+
+  const avgAccuracy = strats.reduce((s, st) => s + st.lastAccuracy, 0) / strats.length;
+  const avgSharpe = strats.reduce((s, st) => s + st.lastSharpe, 0) / strats.length;
+  const avgWinRate = strats.reduce((s, st) => s + st.lastWinRate, 0) / strats.length;
+  const avgPF = strats.reduce((s, st) => s + Math.min(st.profitFactor, 5), 0) / strats.length;
+
+  const accScore = Math.min(100, avgAccuracy);
+  const sharpeScore = Math.min(100, avgSharpe * 333);
+  const wrScore = avgWinRate * 100;
+  const pfScore = Math.min(100, avgPF * 33);
+
+  const components: ComponentBreakdown[] = [
+    {
+      name: "Accuracy",
+      weight: 0.35,
+      rawValue: `${avgAccuracy.toFixed(1)}%`,
+      normalizedScore: Math.round(accScore),
+      contribution: Math.round(accScore * 0.35),
+    },
+    {
+      name: "Win Rate",
+      weight: 0.30,
+      rawValue: `${(avgWinRate * 100).toFixed(1)}%`,
+      normalizedScore: Math.round(wrScore),
+      contribution: Math.round(wrScore * 0.30),
+    },
+    {
+      name: "Profit Factor",
+      weight: 0.20,
+      rawValue: avgPF.toFixed(2),
+      normalizedScore: Math.round(pfScore),
+      contribution: Math.round(pfScore * 0.20),
+    },
+    {
+      name: "Sharpe Ratio",
+      weight: 0.15,
+      rawValue: avgSharpe.toFixed(3),
+      normalizedScore: Math.round(sharpeScore),
+      contribution: Math.round(sharpeScore * 0.15),
+    },
+  ];
+
+  // Per-strategy scores
+  const perStrategy: StrategyScore[] = Object.entries(strategies).map(([, strat]) => {
+    const acc = Math.min(100, strat.lastAccuracy);
+    const wr = strat.lastWinRate * 100;
+    const pf = Math.min(100, Math.min(strat.profitFactor, 5) * 33);
+    const sh = Math.min(100, strat.lastSharpe * 333);
+    const score = Math.round(acc * 0.35 + wr * 0.30 + pf * 0.20 + sh * 0.15);
+    return {
+      name: strat.name,
+      accuracy: strat.lastAccuracy,
+      winRate: strat.lastWinRate * 100,
+      sharpe: strat.lastSharpe,
+      profitFactor: strat.profitFactor,
+      score,
+    };
+  });
+
+  return { components, perStrategy };
+}
+
+function barColor(normalizedScore: number): string {
+  if (normalizedScore > 70) return "bg-emerald-500";
+  if (normalizedScore >= 40) return "bg-amber-500";
+  return "bg-red-500";
+}
+
+function barTextColor(normalizedScore: number): string {
+  if (normalizedScore > 70) return "text-emerald-400";
+  if (normalizedScore >= 40) return "text-amber-400";
+  return "text-red-400";
+}
+
+function scoreColor(score: number): string {
+  if (score >= 75) return "text-emerald-400";
+  if (score >= 55) return "text-amber-400";
+  return "text-red-400";
+}
+
+function scoreBgColor(score: number): string {
+  if (score >= 75) return "bg-emerald-900/50 text-emerald-400";
+  if (score >= 55) return "bg-amber-900/50 text-amber-400";
+  return "bg-red-900/50 text-red-400";
+}
+
+// Custom tooltip for health progress chart
+function HealthChartTooltip({ active, payload, label }: { active?: boolean; payload?: Array<{ value: number; payload: HealthHistoryPoint }>; label?: string }) {
+  if (!active || !payload || !payload.length) return null;
+  const data = payload[0].payload;
+  return (
+    <div className="bg-slate-800 border border-slate-600 rounded-lg p-3 shadow-xl">
+      <div className="text-xs text-slate-400 mb-1">{new Date(data.date).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}</div>
+      <div className="text-lg font-bold text-emerald-400">{data.score}</div>
+      <div className="text-xs text-slate-500 mt-1">{data.notes}</div>
+    </div>
+  );
+}
+
 // ============ MAIN COMPONENT ============
 
 export default function OptimizerResults() {
   const [summary, setSummary] = useState<BacktestSummary | null>(null);
   const [optimizerRuns, setOptimizerRuns] = useState<OptimizerRunsData | null>(null);
+  const [healthHistory, setHealthHistory] = useState<HealthHistoryData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [hasRunHistory, setHasRunHistory] = useState(false);
@@ -144,6 +296,17 @@ export default function OptimizerResults() {
         }
       } catch {
         setHasRunHistory(false);
+      }
+
+      // Try to fetch health score history
+      try {
+        const historyRes = await fetch(`/data/trading/optimization/health-score-history.json?${ts}`);
+        if (historyRes.ok) {
+          const historyData: HealthHistoryData = await historyRes.json();
+          setHealthHistory(historyData);
+        }
+      } catch {
+        // Health history is optional
       }
     } catch (e) {
       setError("Failed to load optimizer data");
@@ -181,6 +344,7 @@ export default function OptimizerResults() {
 
   const strategies = summary.strategies;
   const health = healthScore(strategies);
+  const breakdown = healthScoreBreakdown(strategies);
   const lastRunDate = new Date(summary.lastRun);
   const degradedStrategies = Object.entries(strategies).filter(
     ([, s]) => s.lastSharpe < 0.05 || s.lastWinRate < 0.45
@@ -284,6 +448,160 @@ export default function OptimizerResults() {
           </div>
         </div>
       </div>
+
+      {/* Health Score Breakdown */}
+      <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50">
+        <h3 className="text-sm font-semibold text-slate-300 flex items-center gap-2 mb-4">
+          <BarChart3 className="w-4 h-4 text-violet-400" />
+          Score Breakdown
+        </h3>
+
+        {/* Formula */}
+        <div className="bg-slate-900/50 rounded-lg p-3 mb-4 border border-slate-700/30">
+          <div className="flex items-center gap-2 mb-1">
+            <Info className="w-3.5 h-3.5 text-slate-500" />
+            <span className="text-xs text-slate-500 uppercase tracking-wide">Formula</span>
+          </div>
+          <code className="text-xs text-slate-300 font-mono">
+            Score = Accuracy×0.35 + WinRate×0.30 + ProfitFactor×0.20 + Sharpe×0.15
+          </code>
+        </div>
+
+        {/* Component Bars */}
+        <div className="space-y-3">
+          {breakdown.components.map((comp) => (
+            <div key={comp.name}>
+              <div className="flex items-center justify-between mb-1">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-slate-300 font-medium">{comp.name}</span>
+                  <span className="text-xs text-slate-500">({(comp.weight * 100).toFixed(0)}% weight)</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-xs text-slate-400">Raw: {comp.rawValue}</span>
+                  <span className={`text-xs font-mono font-bold ${barTextColor(comp.normalizedScore)}`}>
+                    {comp.normalizedScore}/100
+                  </span>
+                  <span className="text-xs text-slate-500">→ +{comp.contribution}</span>
+                </div>
+              </div>
+              <div className="w-full bg-slate-700/50 rounded-full h-2.5">
+                <div
+                  className={`h-2.5 rounded-full transition-all ${barColor(comp.normalizedScore)}`}
+                  style={{ width: `${comp.normalizedScore}%` }}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Total */}
+        <div className="mt-4 pt-3 border-t border-slate-700/30 flex items-center justify-between">
+          <span className="text-sm text-slate-400">Total Score</span>
+          <span className={`text-lg font-bold ${health.color}`}>
+            {breakdown.components.reduce((s, c) => s + c.contribution, 0)} → {health.score} ({health.label})
+          </span>
+        </div>
+
+        {/* Per-Strategy Breakdown */}
+        <div className="mt-5 pt-4 border-t border-slate-700/30">
+          <h4 className="text-xs text-slate-500 uppercase tracking-wide mb-3">Per-Strategy Scores</h4>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-xs text-slate-500 uppercase border-b border-slate-700">
+                  <th className="text-left py-2 px-2">Strategy</th>
+                  <th className="text-right py-2 px-2">Accuracy</th>
+                  <th className="text-right py-2 px-2">Win Rate</th>
+                  <th className="text-right py-2 px-2">Sharpe</th>
+                  <th className="text-right py-2 px-2">PF</th>
+                  <th className="text-right py-2 px-2">Score</th>
+                </tr>
+              </thead>
+              <tbody>
+                {breakdown.perStrategy
+                  .sort((a, b) => b.score - a.score)
+                  .map((strat) => (
+                    <tr key={strat.name} className={`border-b border-slate-800/50 ${strat.score < 55 ? "bg-red-900/10" : strat.score < 65 ? "bg-amber-900/10" : ""}`}>
+                      <td className="py-2 px-2 text-slate-300 font-medium">{strat.name}</td>
+                      <td className="py-2 px-2 text-right font-mono text-slate-400">{strat.accuracy.toFixed(1)}%</td>
+                      <td className="py-2 px-2 text-right font-mono text-slate-400">{strat.winRate.toFixed(1)}%</td>
+                      <td className="py-2 px-2 text-right font-mono text-slate-400">{strat.sharpe.toFixed(3)}</td>
+                      <td className="py-2 px-2 text-right font-mono text-slate-400">{strat.profitFactor.toFixed(2)}</td>
+                      <td className="py-2 px-2 text-right">
+                        <span className={`font-mono font-bold px-2 py-0.5 rounded-full text-xs ${scoreBgColor(strat.score)}`}>
+                          {strat.score}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      {/* Health Score Progress Chart */}
+      {healthHistory && healthHistory.history.length > 1 && (
+        <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50">
+          <h3 className="text-sm font-semibold text-slate-300 flex items-center gap-2 mb-4">
+            <TrendingUp className="w-4 h-4 text-emerald-400" />
+            System Health Progress
+          </h3>
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={healthHistory.history} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="healthGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#10b981" stopOpacity={0.0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                <XAxis
+                  dataKey="date"
+                  stroke="#64748b"
+                  tick={{ fill: "#94a3b8", fontSize: 11 }}
+                  tickFormatter={(d: string) => new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                />
+                <YAxis
+                  stroke="#64748b"
+                  tick={{ fill: "#94a3b8", fontSize: 11 }}
+                  domain={[0, 100]}
+                  ticks={[0, 25, 50, 55, 75, 100]}
+                />
+                <ChartTooltip content={<HealthChartTooltip />} />
+                <ReferenceLine
+                  y={55}
+                  stroke="#f59e0b"
+                  strokeDasharray="5 5"
+                  label={{ value: "Good", fill: "#f59e0b", fontSize: 10, position: "right" }}
+                />
+                <ReferenceLine
+                  y={75}
+                  stroke="#10b981"
+                  strokeDasharray="5 5"
+                  label={{ value: "Excellent", fill: "#10b981", fontSize: 10, position: "right" }}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="score"
+                  stroke="#10b981"
+                  strokeWidth={3}
+                  fill="url(#healthGradient)"
+                  dot={{ r: 5, fill: "#10b981", stroke: "#0f172a", strokeWidth: 2 }}
+                  activeDot={{ r: 7, fill: "#34d399", stroke: "#0f172a", strokeWidth: 2 }}
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="flex items-center justify-between mt-3 text-xs text-slate-500">
+            <span>Started: {healthHistory.history[0].score} ({healthHistory.history[0].notes})</span>
+            <span className="text-emerald-400 font-medium">
+              +{healthHistory.history[healthHistory.history.length - 1].score - healthHistory.history[0].score} pts improvement
+            </span>
+          </div>
+        </div>
+      )}
 
       {/* Degradation Alerts */}
       {degradedStrategies.length > 0 && (

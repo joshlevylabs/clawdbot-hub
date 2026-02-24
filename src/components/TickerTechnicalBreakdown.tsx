@@ -226,8 +226,13 @@ export default function TickerTechnicalBreakdown({
             )}
             <span className="font-mono font-semibold text-slate-200">{symbol}</span>
             {signal && (
-              <span className={`px-2 py-1 rounded text-xs font-medium border ${getSignalBg(signal)}`}>
-                {signal}
+              <span className={`px-2 py-1 rounded text-xs font-medium border ${
+                // In Vote Consensus contexts, these tickers passed the strategy vote — show BUY
+                (stageName.includes('Vote Consensus') || stageName.includes('-of-5'))
+                  ? getSignalBg('BUY')
+                  : getSignalBg(signal)
+              }`}>
+                {(stageName.includes('Vote Consensus') || stageName.includes('-of-5')) ? 'BUY' : signal}
               </span>
             )}
             {rawData.asset_class && (
@@ -236,8 +241,8 @@ export default function TickerTechnicalBreakdown({
           </div>
           
           <div className="flex items-center gap-4">
-            {/* Strategy Vote Indicators for vote consensus contexts */}
-            {(stageName.includes('Vote Consensus') || stageName.includes('consensus')) && rawData.strategy_votes && (
+            {/* Strategy Vote Indicators — only show on the main Vote Consensus Gate, not on specific N-of-5 sub-modals where it's redundant */}
+            {(stageName.includes('Vote Consensus') || stageName.includes('consensus')) && !stageName.includes('-of-5') && rawData.strategy_votes && (
               <div className="flex items-center gap-1">
                 {[
                   { key: 'fear_greed', label: 'F&G' },

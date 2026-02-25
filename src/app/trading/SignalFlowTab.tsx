@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import WorkflowNode from "@/components/WorkflowNode";
 import PipelineDetailPanel from "@/components/PipelineDetailPanel";
+import PersistenceFlipFlop from "@/components/PersistenceFlipFlop";
 import SectorFearGreedPanel from "./SectorFearGreedPanel";
 
 // Interface for MRE signal data
@@ -788,7 +789,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
           </div>
           
           {/* Column 4: Persistence Gate */}
-          <div className="flex flex-col items-center gap-6">
+          <div className="flex flex-col items-center gap-4">
             <WorkflowNode
               ref={(el) => { nodeRefs.current['persistence'] = el; }}
               name="Persistence Gate"
@@ -803,6 +804,18 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
               version="4.0.0"
               confidence={PIPELINE_NODE_CONFIDENCE.persistence}
             />
+            {/* Flip-flop schematic showing signal flow paths */}
+            <div 
+              className="w-[260px] cursor-pointer opacity-80 hover:opacity-100 transition-opacity"
+              onClick={() => onStageClick('persistenceGate')}
+            >
+              <PersistenceFlipFlop
+                inputCount={pipelineData.persistenceGate.inputCount}
+                confirmedCount={pipelineData.persistenceGate.outputCount}
+                pendingCount={pipelineData.persistenceGate.pendingCount}
+                filteredCount={Math.max(0, pipelineData.persistenceGate.inputCount - pipelineData.persistenceGate.outputCount - pipelineData.persistenceGate.pendingCount)}
+              />
+            </div>
           </div>
           
           {/* Column 5: Signal Gating */}

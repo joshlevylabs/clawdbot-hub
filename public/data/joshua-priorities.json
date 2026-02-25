@@ -1,6 +1,6 @@
 {
   "date": "2026-02-24",
-  "generatedAt": "2026-02-24T12:10:25.419881-08:00",
+  "generatedAt": "2026-02-24T20:00:18.716913-08:00",
   "priorities": [
     {
       "text": "Decide newsletter send timing relative to Apple approval",
@@ -16,12 +16,6 @@
     }
   ],
   "agentHandled": [
-    {
-      "text": "Research market data provider options and create cost-benefit analysis",
-      "assignee": "pit",
-      "status": "pending",
-      "taskKey": "A-165"
-    },
     {
       "text": "Design database schema for paper trading with future brokerage sync capability",
       "assignee": "Atlas",
@@ -69,12 +63,6 @@
       "assignee": "Chris Vermeullen",
       "status": "approved",
       "taskKey": "A-181"
-    },
-    {
-      "text": "Continue real-time trading engine build with P&L tracking and portfolio analytics",
-      "assignee": "James Truchard",
-      "status": "pending",
-      "taskKey": "A-183"
     },
     {
       "text": "Per-Strategy Accuracy Tracking Pipeline \u2014 Compute and store accuracy % per strategy version from backtest results. Track win rate, Sharpe, and profit factor per version. Detect regressions automatically.",

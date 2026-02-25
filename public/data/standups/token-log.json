@@ -2,16 +2,6 @@
   "log": [
     {
       "date": "2026-02-17",
-      "type": "lever-faith-family",
-      "inputTokens": 1232,
-      "outputTokens": 1363,
-      "totalTokens": 2595,
-      "estimatedCost": 0.1207,
-      "model": "claude-opus-4-6",
-      "duration": "34.5s"
-    },
-    {
-      "date": "2026-02-17",
       "type": "adhoc-test-run",
       "inputTokens": 848,
       "outputTokens": 873,
@@ -999,12 +989,22 @@
       "estimatedCost": 0.0702,
       "model": "claude-sonnet-4-20250514",
       "duration": "79.9s"
+    },
+    {
+      "date": "2026-02-24",
+      "type": "evening-session",
+      "inputTokens": 6854,
+      "outputTokens": 2162,
+      "totalTokens": 9016,
+      "estimatedCost": 0.053,
+      "model": "claude-sonnet-4-20250514",
+      "duration": "55.4s"
     }
   ],
   "totals": {
-    "today": 0.1921,
-    "week": 20.7675,
-    "month": 20.7675,
+    "today": 0.2451,
+    "week": 20.6998,
+    "month": 20.6998,
     "standupCount": 100
   }
 }

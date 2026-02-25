@@ -421,22 +421,49 @@ function WorkflowVisualization({ pipelineData, mreVersions, onStageClick }: Work
       });
     }
     
-    // 2. Parallel: Each strategy → corresponding consensus node (matched by index position)
-    //    strategy[0] → consensus[0], strategy[1] → consensus[1], etc.
-    //    This creates clean parallel horizontal lines with no crossing
-    for (let i = 0; i < Math.min(strategyKeys.length, consensusKeys.length); i++) {
-      const stratNode = nodeRefs.current[`strategy_${strategyKeys[i]}`];
-      const consNode = nodeRefs.current[`consensus_${consensusKeys[i]}`];
-      if (stratNode && consNode) {
-        const sv = pipelineData.strategyVotes.find((s: any) => s.key === strategyKeys[i]);
-        newConnections.push({
-          from: `strategy_${strategyKeys[i]}`, to: `consensus_${consensusKeys[i]}`,
-          fromPos: getRight(stratNode), toPos: getLeft(consNode),
-          isActive: sv && sv.outputCount > 0,
-          isPending: sv && (sv.pendingCount || 0) > 0
+    // 2. Dynamic: Each strategy → consensus tiers where that strategy's tickers land
+    //    Only draw lines from strategies with votes to consensus tiers with tickers
+    //    A strategy connects to a tier if any ticker in that tier was voted by that strategy
+    const strategyNameMap: Record<string, string> = {
+      'fear_greed': 'fear_greed', 'regime_confirmation': 'regime_confirmation',
+      'rsi_oversold': 'rsi_oversold', 'mean_reversion': 'mean_reversion',
+      'momentum': 'momentum', 'time_series_momentum': 'time_series_momentum',
+      'qvm_factor': 'qvm_factor', 'vix_mean_reversion': 'vix_mean_reversion'
+    };
+    
+    strategyKeys.forEach(stratKey => {
+      const sv = pipelineData.strategyVotes.find((s: any) => s.key === stratKey);
+      if (!sv || sv.outputCount === 0) return; // Skip strategies with no votes
+      
+      const stratNode = nodeRefs.current[`strategy_${stratKey}`];
+      if (!stratNode) return;
+      
+      // Find which consensus tiers contain tickers that this strategy voted for
+      pipelineData.voteConsensusGate.paths.forEach((path: any) => {
+        if (path.count === 0) return; // Skip empty tiers
+        
+        // Check if any ticker in this tier has a vote from this strategy
+        const hasContribution = path.tickers.some((ticker: any) => {
+          // Check confirmed votes
+          if (ticker.strategy_votes?.[stratKey as keyof typeof ticker.strategy_votes] === true) return true;
+          // Check persistence-pending votes
+          if (ticker.persistence_by_strategy && (ticker.persistence_by_strategy[stratKey] || 0) > 0) return true;
+          return false;
         });
-      }
-    }
+        
+        if (!hasContribution) return;
+        
+        const consNode = nodeRefs.current[`consensus_${path.voteCount}`];
+        if (!consNode) return;
+        
+        newConnections.push({
+          from: `strategy_${stratKey}`, to: `consensus_${path.voteCount}`,
+          fromPos: getRight(stratNode), toPos: getLeft(consNode),
+          isActive: sv.outputCount > 0,
+          isPending: (sv.pendingCount || 0) > 0
+        });
+      });
+    });
     
     // 3. Fan-in: Consensus column → Persistence (from midpoint of consensus column)
     const consNodes = consensusKeys.map(k => nodeRefs.current[`consensus_${k}`]).filter(Boolean) as HTMLDivElement[];

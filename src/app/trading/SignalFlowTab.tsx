@@ -261,24 +261,64 @@ function calculatePipelineStages(signals: MRESignal[], dataType: 'core' | 'unive
   });
   const anyVoteFiltered = signals.filter(s => !anyVotePassed.includes(s));
   
-  // Signal Persistence Gate: how many raw votes get blocked by persistence
-  const persistenceConfirmed = anyVotePassed.filter(s => {
-    return strategyNames.some(({ key }) => isStrategyConfirmed(s, key));
-  });
-  const persistencePending = anyVotePassed.filter(s => {
-    return !strategyNames.some(({ key }) => isStrategyConfirmed(s, key));
-  });
+  // Per-Consensus Persistence Gates: separate persistence tracking for each vote level
+  const perConsensusPersistence: Record<number, {
+    inputCount: number;
+    outputCount: number;
+    pendingCount: number;
+    passed: MRESignal[];
+    pending: MRESignal[];
+    filtered: MRESignal[];
+  }> = {};
+  
+  // Build persistence gates for each vote consensus level (1-8)
+  for (let voteCount = 1; voteCount <= 8; voteCount++) {
+    const tickersWithThisVoteCount = anyVotePassed.filter(s => {
+      const actualVoteCount = strategyNames.filter(({ key }) => didStrategyFire(s, key)).length;
+      return actualVoteCount === voteCount;
+    });
+    
+    if (tickersWithThisVoteCount.length === 0) {
+      // Skip creating persistence gate for empty vote levels
+      continue;
+    }
+    
+    // For persistence at this consensus level, a ticker must:
+    // 1. Currently have exactly this vote count
+    // 2. Have confirmed persistence (>= 2 days) for at least one strategy
+    const confirmed = tickersWithThisVoteCount.filter(s => {
+      return strategyNames.some(({ key }) => isStrategyConfirmed(s, key));
+    });
+    
+    const pending = tickersWithThisVoteCount.filter(s => {
+      return !strategyNames.some(({ key }) => isStrategyConfirmed(s, key));
+    });
+    
+    perConsensusPersistence[voteCount] = {
+      inputCount: tickersWithThisVoteCount.length,
+      outputCount: confirmed.length,
+      pendingCount: pending.length,
+      passed: confirmed,
+      pending: pending,
+      filtered: pending, // pending = filtered for now
+    };
+  }
+  
+  // Legacy single persistence gate for backward compatibility
+  const allConfirmed = Object.values(perConsensusPersistence).flatMap(p => p.passed);
+  const allPending = Object.values(perConsensusPersistence).flatMap(p => p.pending);
   
   const persistenceGate = {
     inputCount: anyVotePassed.length,
-    outputCount: persistenceConfirmed.length,
-    pendingCount: persistencePending.length,
-    passed: persistenceConfirmed,
-    pending: persistencePending,
-    filtered: persistencePending, // pending = filtered for now
+    outputCount: allConfirmed.length,
+    pendingCount: allPending.length,
+    passed: allConfirmed,
+    pending: allPending,
+    filtered: allPending, // pending = filtered for now
   };
   
   // Vote Consensus Gate: Group tickers by how many strategies voted BUY (raw, including pending)
+  // Only create paths for vote levels that have tickers (dynamic)
   const voteConsensusPaths: VoteConsensusPath[] = [];
   
   for (let voteCount = 1; voteCount <= 8; voteCount++) {
@@ -287,12 +327,15 @@ function calculatePipelineStages(signals: MRESignal[], dataType: 'core' | 'unive
       return actualVoteCount === voteCount;
     });
     
-    voteConsensusPaths.push({
-      voteCount,
-      name: `${voteCount}-of-8 votes`,
-      tickers: tickersWithThisVoteCount,
-      count: tickersWithThisVoteCount.length
-    });
+    // Only add this vote level if it has tickers
+    if (tickersWithThisVoteCount.length > 0) {
+      voteConsensusPaths.push({
+        voteCount,
+        name: `${voteCount}-of-8 votes`,
+        tickers: tickersWithThisVoteCount,
+        count: tickersWithThisVoteCount.length
+      });
+    }
   }
   
   const voteConsensusGate = {
@@ -303,9 +346,23 @@ function calculatePipelineStages(signals: MRESignal[], dataType: 'core' | 'unive
     paths: voteConsensusPaths
   };
   
+  // Post-Persistence Consensus: Separate nodes for each consensus level after persistence
+  const postPersistenceConsensusPaths: VoteConsensusPath[] = [];
+  
+  for (const [voteCount, persistenceData] of Object.entries(perConsensusPersistence)) {
+    if (persistenceData.outputCount > 0) { // Only show consensus levels with confirmed tickers
+      postPersistenceConsensusPaths.push({
+        voteCount: parseInt(voteCount),
+        name: `${voteCount}-of-8 confirmed`,
+        tickers: persistenceData.passed,
+        count: persistenceData.outputCount
+      });
+    }
+  }
+  
   // Step 3: Signal Gating (sell suppress + bear suppress) — operates on persistence-confirmed signals
-  const persistenceBypass = persistenceConfirmed.length === 0 && anyVotePassed.length > 0;
-  const gatingInput = persistenceConfirmed.length > 0 ? persistenceConfirmed : anyVotePassed;
+  const persistenceBypass = allConfirmed.length === 0 && anyVotePassed.length > 0;
+  const gatingInput = allConfirmed.length > 0 ? allConfirmed : anyVotePassed;
   const signalGatePassed = gatingInput.filter(s => 
     !s.bear_suppressed && !s.sell_suppressed
   );
@@ -376,6 +433,8 @@ function calculatePipelineStages(signals: MRESignal[], dataType: 'core' | 'unive
     input: inputStage,
     strategyVotes,
     voteConsensusGate,
+    perConsensusPersistence,
+    postPersistenceConsensusPaths,
     persistenceGate,
     signalGating: signalGateStage,
     confidenceTuning: confidenceStage,
@@ -541,32 +600,62 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
       });
     });
     
-    // 3. Fan-in: Each non-empty consensus tier → Persistence Gate (individual lines)
-    const persistNode = nodeRefs.current['persistence'];
-    if (persistNode) {
-      const toPos = getLeft(persistNode);
-      pipelineData.voteConsensusGate.paths.forEach((path: any) => {
-        if (path.count === 0) return; // Skip empty tiers
-        const consNode = nodeRefs.current[`consensus_${path.voteCount}`];
-        if (!consNode) return;
+    // 3. Fan-out: Each non-empty consensus tier → corresponding per-consensus persistence gate
+    pipelineData.voteConsensusGate.paths.forEach((path: any) => {
+      const consNode = nodeRefs.current[`consensus_${path.voteCount}`];
+      const persistNode = nodeRefs.current[`persistence_${path.voteCount}`];
+      if (!consNode || !persistNode) return;
+      
+      const persistenceData = pipelineData.perConsensusPersistence[path.voteCount];
+      if (!persistenceData) return;
+      
+      newConnections.push({
+        from: `consensus_${path.voteCount}`, to: `persistence_${path.voteCount}`,
+        fromPos: getRight(consNode), toPos: getLeft(persistNode),
+        isActive: path.count > 0,
+        isPending: persistenceData.pendingCount > 0
+      });
+    });
+    
+    // 4. Fan-out: Each per-consensus persistence gate → post-persistence consensus nodes
+    pipelineData.postPersistenceConsensusPaths?.forEach((path: any) => {
+      const persistNode = nodeRefs.current[`persistence_${path.voteCount}`];
+      const postConsNode = nodeRefs.current[`post_consensus_${path.voteCount}`];
+      if (!persistNode || !postConsNode) return;
+      
+      newConnections.push({
+        from: `persistence_${path.voteCount}`, to: `post_consensus_${path.voteCount}`,
+        fromPos: getRight(persistNode), toPos: getLeft(postConsNode),
+        isActive: path.count > 0,
+        isPending: false
+      });
+    });
+    
+    // 5. Fan-in: Post-persistence consensus nodes → Signal Gating
+    const signalGatingNode = nodeRefs.current['signalGating'];
+    if (signalGatingNode) {
+      const toPos = getLeft(signalGatingNode);
+      pipelineData.postPersistenceConsensusPaths?.forEach((path: any) => {
+        const postConsNode = nodeRefs.current[`post_consensus_${path.voteCount}`];
+        if (!postConsNode) return;
+        
         newConnections.push({
-          from: `consensus_${path.voteCount}`, to: 'persistence',
-          fromPos: getRight(consNode), toPos,
+          from: `post_consensus_${path.voteCount}`, to: 'signalGating',
+          fromPos: getRight(postConsNode), toPos,
           isActive: path.count > 0,
-          isPending: pipelineData.persistenceGate?.pendingCount > 0
+          isPending: false
         });
       });
     }
     
-    // 4. Sequential: Persistence → Gating → Tuning → Filters → Output
-    const seqKeys = ['persistence', 'signalGating', 'confidenceTuning', 'finalFilters', 'output', 'fibonacciLevels', 'agentAnalysis'];
+    // 6. Sequential: Gating → Tuning → Filters → Output → Fibonacci → Agents
+    const seqKeys = ['signalGating', 'confidenceTuning', 'finalFilters', 'output', 'fibonacciLevels', 'agentAnalysis'];
     for (let i = 0; i < seqKeys.length - 1; i++) {
       const fromNode = nodeRefs.current[seqKeys[i]];
       const toNode = nodeRefs.current[seqKeys[i + 1]];
       if (fromNode && toNode) {
         let isActive = false;
-        if (seqKeys[i] === 'persistence') isActive = pipelineData.persistenceGate.outputCount > 0;
-        else if (seqKeys[i] === 'signalGating') isActive = pipelineData.signalGating.outputCount > 0;
+        if (seqKeys[i] === 'signalGating') isActive = pipelineData.signalGating.outputCount > 0;
         else if (seqKeys[i] === 'confidenceTuning') isActive = pipelineData.confidenceTuning.outputCount > 0;
         else if (seqKeys[i] === 'finalFilters') isActive = pipelineData.finalFilters.outputCount > 0;
         else if (seqKeys[i] === 'output') isActive = pipelineData.output.outputCount > 0;
@@ -779,7 +868,8 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
                     onClick={() => onStageClick(`strategy_${sv.key}`)}
                     nodeType="strategy"
                     isPending={pending > 0}
-                    className="max-w-[180px]"
+                    className="max-w-[160px] min-h-[80px]"
+                    style={{ padding: '8px', minHeight: '80px' }}
                     confidence={getStrategyConfidence(sv.key)}
                   />
                 );
@@ -787,7 +877,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
             </div>
           </div>
           
-          {/* Column 3: Vote Consensus Gate (Responsive Grid) */}
+          {/* Column 3: Vote Consensus Gate (Dynamic - only show nodes with tickers) */}
           <div className="flex flex-col items-center gap-6">
             <div className="text-xs font-semibold text-slate-400 text-center mb-2">Vote Consensus</div>
             <div className="flex flex-col gap-2">
@@ -800,10 +890,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
                     key={path.voteCount}
                     ref={(el) => { nodeRefs.current[`consensus_${path.voteCount}`] = el; }}
                     name={`${path.voteCount} of 8`}
-                    description={path.count > 0 
-                      ? `${path.count} tickers${boost > 0 ? ` · +${boost}% boost` : ''}`
-                      : `0 tickers${boost > 0 ? ` · +${boost}% boost` : ''}`
-                    }
+                    description={`${path.count} tickers${boost > 0 ? ` · +${boost}% boost` : ''}`}
                     inputCount={0}
                     outputCount={path.count}
                     onClick={() => onStageClick(`vote_consensus_${path.voteCount}`)}
@@ -813,23 +900,74 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
                   />
                 );
               })}
+              {pipelineData.voteConsensusGate.paths.length === 0 && (
+                <div className="text-xs text-slate-500 italic p-4">No tickers with votes</div>
+              )}
             </div>
           </div>
           
-          {/* Column 4: Persistence Gate — Flip-Flop Style */}
-          <div className="flex flex-col items-center gap-6" ref={(el) => { nodeRefs.current['persistence'] = el; }}>
-            <PersistenceFlipFlop
-              inputCount={pipelineData.persistenceGate.inputCount}
-              confirmedCount={pipelineData.persistenceGate.outputCount}
-              pendingCount={pipelineData.persistenceGate.pendingCount}
-              filteredCount={Math.max(0, pipelineData.persistenceGate.inputCount - pipelineData.persistenceGate.outputCount - pipelineData.persistenceGate.pendingCount)}
-              onClick={() => onStageClick('persistenceGate')}
-              version="4.0.0"
-              confidence={PIPELINE_NODE_CONFIDENCE.persistence}
-            />
+          {/* Column 4: Per-Consensus Persistence Gates — Separate persistence tracking for each vote level */}
+          <div className="flex flex-col items-center gap-6">
+            <div className="text-xs font-semibold text-slate-400 text-center mb-2">Persistence Gates</div>
+            <div className="flex flex-col gap-2">
+              {Object.entries(pipelineData.perConsensusPersistence).slice().reverse().map(([voteCount, persistenceData]) => {
+                const voteNum = parseInt(voteCount);
+                const data = persistenceData as {
+                  inputCount: number;
+                  outputCount: number;
+                  pendingCount: number;
+                  passed: MRESignal[];
+                  pending: MRESignal[];
+                  filtered: MRESignal[];
+                };
+                return (
+                  <div key={voteCount} ref={(el) => { nodeRefs.current[`persistence_${voteCount}`] = el; }}>
+                    <PersistenceFlipFlop
+                      inputCount={data.inputCount}
+                      confirmedCount={data.outputCount}
+                      pendingCount={data.pendingCount}
+                      filteredCount={Math.max(0, data.inputCount - data.outputCount - data.pendingCount)}
+                      onClick={() => onStageClick(`persistenceGate_${voteCount}`)}
+                      version="4.0.0"
+                      confidence={PIPELINE_NODE_CONFIDENCE.persistence}
+                    />
+                  </div>
+                );
+              })}
+              {Object.keys(pipelineData.perConsensusPersistence).length === 0 && (
+                <div className="text-xs text-slate-500 italic p-4">No signals to persist</div>
+              )}
+            </div>
           </div>
           
-          {/* Column 5: Signal Gating */}
+          {/* Column 5: Post-Persistence Consensus — Confirmed signals by vote level */}
+          <div className="flex flex-col items-center gap-6">
+            <div className="text-xs font-semibold text-slate-400 text-center mb-2">Confirmed Signals</div>
+            <div className="flex flex-col gap-2">
+              {pipelineData.postPersistenceConsensusPaths?.slice().reverse().map((path: any) => {
+                const conf = CONSENSUS_CONFIDENCE[path.voteCount] || 35;
+                return (
+                  <WorkflowNode
+                    key={path.voteCount}
+                    ref={(el) => { nodeRefs.current[`post_consensus_${path.voteCount}`] = el; }}
+                    name={`${path.voteCount} of 8`}
+                    description={`${path.count} confirmed`}
+                    inputCount={0}
+                    outputCount={path.count}
+                    onClick={() => onStageClick(`post_consensus_${path.voteCount}`)}
+                    nodeType="consensus"
+                    className="max-w-[140px] border-emerald-500/40"
+                    confidence={conf}
+                  />
+                );
+              })}
+              {!pipelineData.postPersistenceConsensusPaths || pipelineData.postPersistenceConsensusPaths.length === 0 && (
+                <div className="text-xs text-slate-500 italic p-4">No confirmed signals yet</div>
+              )}
+            </div>
+          </div>
+
+          {/* Column 6: Signal Gating */}
           <div className="flex flex-col items-center gap-6">
             <WorkflowNode
               ref={(el) => { nodeRefs.current['signalGating'] = el; }}
@@ -849,7 +987,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
             />
           </div>
           
-          {/* Column 6: Confidence Tuning */}
+          {/* Column 7: Confidence Tuning */}
           <div className="flex flex-col items-center gap-6">
             <WorkflowNode
               ref={(el) => { nodeRefs.current['confidenceTuning'] = el; }}
@@ -864,7 +1002,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
             />
           </div>
           
-          {/* Column 7: Final Filters */}
+          {/* Column 8: Final Filters */}
           <div className="flex flex-col items-center gap-6">
             <WorkflowNode
               ref={(el) => { nodeRefs.current['finalFilters'] = el; }}
@@ -879,7 +1017,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
             />
           </div>
           
-          {/* Column 8: BUY Signals Output */}
+          {/* Column 9: BUY Signals Output */}
           <div className="flex flex-col items-center gap-6">
             <WorkflowNode
               ref={(el) => { nodeRefs.current['output'] = el; }}
@@ -894,7 +1032,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
             />
           </div>
           
-          {/* Column 9: Fibonacci Level Selection */}
+          {/* Column 10: Fibonacci Level Selection */}
           <div className="flex flex-col items-center gap-6">
             <div
               ref={(el) => { nodeRefs.current['fibonacciLevels'] = el; }}
@@ -993,7 +1131,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
             </div>
           </div>
 
-          {/* Column 10: Agent Analysis */}
+          {/* Column 11: Agent Analysis */}
           <div className="flex flex-col items-center gap-6">
             <div
               ref={(el) => { nodeRefs.current['agentAnalysis'] = el; }}
@@ -1278,28 +1416,27 @@ export default function SignalFlowTab() {
       return;
     }
     
-    // Handle persistence gate click
-    if (stageKey === 'persistenceGate') {
-      const pg = pipelineData.persistenceGate;
-      // Compute truly filtered tickers (had votes but lost them — input minus confirmed minus pending)
-      const confirmedSymbols = new Set(pg.passed.map((t: any) => t.symbol));
-      const pendingSymbols = new Set(pg.pending.map((t: any) => t.symbol));
+    // Handle per-consensus persistence gate clicks
+    if (stageKey.startsWith('persistenceGate_')) {
+      const voteCount = stageKey.replace('persistenceGate_', '');
+      const persistenceData = pipelineData.perConsensusPersistence[parseInt(voteCount)];
+      if (!persistenceData) return;
       
       setSelectedStage({
-        name: 'Signal Persistence Gate',
-        description: `Multi-day confirmation: signals must fire 2+ consecutive days before becoming BUY. Currently ${pg.pendingCount} signals pending (day 1), ${pg.outputCount} confirmed.`,
+        name: `${voteCount}-of-8 Persistence Gate`,
+        description: `Multi-day confirmation for tickers with exactly ${voteCount} of 8 strategy votes. Signals must fire 2+ consecutive days before confirmation.`,
         stageType: 'filter',
-        inputCount: pg.inputCount,
-        outputCount: pg.outputCount,
+        inputCount: persistenceData.inputCount,
+        outputCount: persistenceData.outputCount,
         // Confirmed tickers (passed 2-day check)
-        passedTickers: pg.passed.map((t: any) => ({
+        passedTickers: persistenceData.passed.map((t: any) => ({
           symbol: t.symbol,
           signal: t.signal,
           currentPrice: t.price,
           rawData: t
         })),
         // Pending tickers (day 1, waiting for day 2 confirmation)
-        pendingTickers: pg.pending.map((t: any) => {
+        pendingTickers: persistenceData.pending.map((t: any) => {
           const pendingStrats = Object.entries(t.persistence_by_strategy || {})
             .filter(([, days]) => (days as number) > 0 && (days as number) < 2)
             .map(([strat, days]) => `${strat} (day ${days})`);
@@ -1317,8 +1454,63 @@ export default function SignalFlowTab() {
       return;
     }
     
+    // Handle post-persistence consensus clicks
+    if (stageKey.startsWith('post_consensus_')) {
+      const voteCount = parseInt(stageKey.replace('post_consensus_', ''));
+      const path = pipelineData.postPersistenceConsensusPaths?.find(p => p.voteCount === voteCount);
+      if (!path) return;
+      
+      setSelectedStage({
+        name: `${path.name} (Confirmed)`,
+        description: `Tickers with exactly ${voteCount} of 8 strategy votes that have passed persistence confirmation`,
+        stageType: 'output',
+        inputCount: 0,
+        outputCount: path.count,
+        filteredTickers: [],
+        passedTickers: path.tickers.map(t => ({
+          symbol: t.symbol,
+          signal: t.signal,
+          currentPrice: t.price,
+          rawData: t
+        }))
+      });
+      return;
+    }
+    
+    // Handle legacy persistence gate click (for backward compatibility)
+    if (stageKey === 'persistenceGate') {
+      const pg = pipelineData.persistenceGate;
+      setSelectedStage({
+        name: 'Signal Persistence Gate (Legacy)',
+        description: `Combined view of all persistence gates. Total: ${pg.pendingCount} signals pending (day 1), ${pg.outputCount} confirmed.`,
+        stageType: 'filter',
+        inputCount: pg.inputCount,
+        outputCount: pg.outputCount,
+        passedTickers: pg.passed.map((t: any) => ({
+          symbol: t.symbol,
+          signal: t.signal,
+          currentPrice: t.price,
+          rawData: t
+        })),
+        pendingTickers: pg.pending.map((t: any) => {
+          const pendingStrats = Object.entries(t.persistence_by_strategy || {})
+            .filter(([, days]) => (days as number) > 0 && (days as number) < 2)
+            .map(([strat, days]) => `${strat} (day ${days})`);
+          return {
+            symbol: t.symbol,
+            reason: `Pending: ${pendingStrats.join(', ') || 'awaiting confirmation'}`,
+            signal: t.signal,
+            currentPrice: t.price,
+            rawData: t
+          };
+        }),
+        filteredTickers: [],
+      });
+      return;
+    }
+    
     const stageData = pipelineData[stageKey as keyof typeof pipelineData];
-    if (!stageData || Array.isArray(stageData)) return;
+    if (!stageData || Array.isArray(stageData) || typeof stageData === 'object' && !('inputCount' in stageData)) return;
     
     // Create stage details for the panel
     let stageDetails: StageDetails;

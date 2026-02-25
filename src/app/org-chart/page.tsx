@@ -1271,14 +1271,76 @@ function ConnectorOverlay({ lines }: { lines: LineSegment[] }) {
    Desktop Tree Layout — STATE DRIVEN
    ═══════════════════════════════════════════════════════════════ */
 
+function OrgChartCard({ agent, selected, onClick, size = "normal" }: { agent: AgentState; selected: boolean; onClick: () => void; size?: "large" | "normal" }) {
+  const colors = getAgentColors(agent);
+  const icon = getAgentIcon(agent, size === "large");
+  const isLarge = size === "large";
+
+  return (
+    <button
+      onClick={onClick}
+      className={`relative rounded-xl border-2 ${selected ? `${colors.selectedBorder} shadow-[0_0_20px_-3px_${colors.accentHex}40]` : colors.border} ${colors.bg} ${colors.glow} transition-all duration-300 hover:scale-[1.03] cursor-pointer text-center ${isLarge ? "px-5 py-4 min-w-[180px]" : "px-4 py-3 min-w-[150px]"}`}
+    >
+      <div className={`absolute top-0 left-4 right-4 h-px bg-gradient-to-r from-transparent ${colors.accent.replace("text-", "via-")} to-transparent opacity-40`} />
+      <div className="flex flex-col items-center gap-1.5">
+        <div className={`p-2 rounded-lg border ${colors.iconBg}`}>
+          {icon}
+        </div>
+        <div className="flex items-center gap-1.5">
+          {agent.emoji && <span className={isLarge ? "text-lg" : "text-sm"}>{agent.emoji}</span>}
+          <span className={`font-bold text-slate-100 tracking-tight ${isLarge ? "text-base" : "text-sm"}`}>{agent.name}</span>
+          <StatusDot status={agent.status} size="md" />
+        </div>
+        <span className={`font-semibold ${colors.accent} ${isLarge ? "text-sm" : "text-xs"}`}>{agent.title}</span>
+        <ModelBadge model={agent.model} />
+      </div>
+    </button>
+  );
+}
+
 function DesktopTree({ agents, selectedId, onSelect }: { agents: Record<string, AgentState>; selectedId: string | null; onSelect: (id: string) => void }) {
-  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
-
   const tree = useMemo(() => buildTree(agents), [agents]);
+  const cooCardRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const cooBottomRef = useRef<HTMLDivElement | null>(null);
+  const childRowRef = useRef<HTMLDivElement | null>(null);
+  const [lines, setLines] = useState<Array<{ x1: number; y1: number; x2: number; y2: number; color: string }>>([]);
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
-  const toggle = useCallback((id: string) => {
-    setExpanded(prev => ({ ...prev, [id]: !prev[id] }));
-  }, []);
+  // Recalculate lines on mount and resize
+  useEffect(() => {
+    function calcLines() {
+      if (!cooBottomRef.current || !containerRef.current) return;
+      const containerRect = containerRef.current.getBoundingClientRect();
+      const cooRect = cooBottomRef.current.getBoundingClientRect();
+      const cooMidX = cooRect.left + cooRect.width / 2 - containerRect.left;
+      const cooBottomY = cooRect.bottom - containerRect.top;
+
+      const newLines: Array<{ x1: number; y1: number; x2: number; y2: number; color: string }> = [];
+
+      for (const [id, el] of Object.entries(cooCardRefs.current)) {
+        if (!el) continue;
+        const childRect = el.getBoundingClientRect();
+        const childMidX = childRect.left + childRect.width / 2 - containerRect.left;
+        const childTopY = childRect.top - containerRect.top;
+        const agent = agents[id];
+        const agentColors = agent ? getAgentColors(agent) : DEPT_COLORS.Engineering;
+        newLines.push({
+          x1: cooMidX,
+          y1: cooBottomY,
+          x2: childMidX,
+          y2: childTopY,
+          color: agentColors.accentHex,
+        });
+      }
+      setLines(newLines);
+    }
+
+    calcLines();
+    window.addEventListener("resize", calcLines);
+    // Recalc after a short delay for layout settling
+    const t = setTimeout(calcLines, 100);
+    return () => { window.removeEventListener("resize", calcLines); clearTimeout(t); };
+  }, [agents]);
 
   if (!tree) return null;
 
@@ -1289,7 +1351,7 @@ function DesktopTree({ agents, selectedId, onSelect }: { agents: Record<string, 
       <div className="hidden lg:block">
         <div className="flex justify-center mb-8">
           <div className="w-full max-w-sm">
-            <ExecutiveCard agent={ceoAgent} selected={selectedId === ceoAgent.id} onClick={() => onSelect(ceoAgent.id)} />
+            <OrgChartCard agent={ceoAgent} selected={selectedId === ceoAgent.id} onClick={() => onSelect(ceoAgent.id)} size="large" />
           </div>
         </div>
       </div>
@@ -1297,75 +1359,74 @@ function DesktopTree({ agents, selectedId, onSelect }: { agents: Record<string, 
   }
 
   const cooAgent = cooNode.agent;
-  const cLevelNodes = cooNode.children.filter(c => isCLevel(c.agent.id));
-  const staffNodes = cooNode.children.filter(c => !isCLevel(c.agent.id));
+  const childNodes = cooNode.children;
+
+  // Split children into rows of 4 for balanced layout
+  const rows: TreeNode[][] = [];
+  for (let i = 0; i < childNodes.length; i += 4) {
+    rows.push(childNodes.slice(i, i + 4));
+  }
 
   return (
-    <div className="hidden lg:block space-y-4">
-      {/* CEO + COO row */}
-      <div className="flex items-center justify-center gap-6">
-        <div className="w-full max-w-xs">
-          <ExecutiveCard agent={ceoAgent} selected={selectedId === ceoAgent.id} onClick={() => onSelect(ceoAgent.id)} />
-        </div>
-        <div className="text-slate-600">→</div>
-        <div className="w-full max-w-xs">
-          <ExecutiveCard agent={cooAgent} selected={selectedId === cooAgent.id} onClick={() => onSelect(cooAgent.id)} />
-        </div>
-        {/* Staff reports (Auditor) inline */}
-        {staffNodes.map(node => (
-          <div key={node.agent.id} className="w-full max-w-[160px]">
-            <TeamLeadCard agent={node.agent} selected={selectedId === node.agent.id} onClick={() => onSelect(node.agent.id)} />
-          </div>
-        ))}
-      </div>
-
-      {/* Divider */}
-      <div className="border-t border-slate-800/50 mx-4" />
-
-      {/* C-Suite as collapsible department rows */}
-      <div className="grid grid-cols-2 xl:grid-cols-3 gap-3">
-        {cLevelNodes.map(node => {
-          const colors = getAgentColors(node.agent);
-          const isOpen = expanded[node.agent.id] !== false; // default open
+    <div ref={containerRef} className="hidden lg:block relative">
+      {/* SVG connector lines */}
+      <svg className="absolute inset-0 w-full h-full pointer-events-none z-0" style={{ overflow: "visible" }}>
+        {/* CEO → COO line */}
+        {lines.length === 0 ? null : null}
+        {/* COO → children lines */}
+        {lines.map((line, i) => {
+          const midY = line.y1 + (line.y2 - line.y1) * 0.5;
           return (
-            <div key={node.agent.id} className={`rounded-xl border ${colors.border} bg-slate-950/40 overflow-hidden`}>
-              {/* C-level header — click name to open details, chevron to expand/collapse */}
-              <div className="flex items-center gap-2 px-3 py-2">
-                <button
-                  className="text-xs text-slate-500 hover:text-slate-300 transition-colors px-0.5"
-                  onClick={(e) => { e.stopPropagation(); toggle(node.agent.id); }}
-                  title={isOpen ? "Collapse team" : "Expand team"}
-                >
-                  {isOpen ? "▾" : "▸"}
-                </button>
-                <button
-                  className="flex items-center gap-2 flex-1 min-w-0 cursor-pointer hover:opacity-80 transition-opacity text-left"
-                  onClick={() => onSelect(node.agent.id)}
-                >
-                  <span className="text-sm">{node.agent.emoji}</span>
-                  <span className="font-bold text-sm text-slate-100">{node.agent.name}</span>
-                  <span className={`text-xs font-semibold ${colors.accent}`}>{node.agent.title}</span>
-                  <StatusDot status={node.agent.status} />
-                </button>
-                <span className="text-[10px] text-slate-600 shrink-0">{node.children.length} report{node.children.length !== 1 ? "s" : ""}</span>
-              </div>
-
-              {/* Expanded team list */}
-              {isOpen && node.children.length > 0 && (
-                <div className="px-2 pb-2 space-y-1.5 border-t border-slate-800/30">
-                  {node.children.map(leaf => (
-                    <div key={leaf.agent.id} className="mt-1.5">
-                      <TeamLeadCard agent={leaf.agent} selected={selectedId === leaf.agent.id} onClick={() => onSelect(leaf.agent.id)} />
-                    </div>
-                  ))}
-                </div>
-              )}
-              {isOpen && node.children.length === 0 && (
-                <div className="px-3 pb-2 text-[10px] text-slate-600 italic border-t border-slate-800/30 pt-2">No direct reports</div>
-              )}
-            </div>
+            <g key={i}>
+              <path
+                d={`M ${line.x1} ${line.y1} L ${line.x1} ${midY} L ${line.x2} ${midY} L ${line.x2} ${line.y2}`}
+                fill="none"
+                stroke={line.color}
+                strokeWidth="2"
+                strokeOpacity="0.35"
+                strokeDasharray="6 4"
+              />
+              {/* Glow dot at child connection */}
+              <circle cx={line.x2} cy={line.y2} r="3" fill={line.color} fillOpacity="0.5" />
+            </g>
           );
         })}
+      </svg>
+
+      {/* CEO card — top center */}
+      <div className="flex justify-center mb-6 relative z-10">
+        <OrgChartCard agent={ceoAgent} selected={selectedId === ceoAgent.id} onClick={() => onSelect(ceoAgent.id)} size="large" />
+      </div>
+
+      {/* Vertical connector CEO → COO */}
+      <div className="flex justify-center mb-6">
+        <div className="w-px h-8 bg-gradient-to-b from-amber-500/50 to-violet-500/50" />
+      </div>
+
+      {/* COO card — center */}
+      <div className="flex justify-center mb-8 relative z-10">
+        <div ref={cooBottomRef}>
+          <OrgChartCard agent={cooAgent} selected={selectedId === cooAgent.id} onClick={() => onSelect(cooAgent.id)} size="large" />
+        </div>
+      </div>
+
+      {/* Spacing for connector lines */}
+      <div className="h-10" />
+
+      {/* Children rows */}
+      <div ref={childRowRef} className="space-y-4 relative z-10">
+        {rows.map((row, rowIdx) => (
+          <div key={rowIdx} className="flex justify-center gap-4 flex-wrap">
+            {row.map(node => (
+              <div
+                key={node.agent.id}
+                ref={el => { cooCardRefs.current[node.agent.id] = el; }}
+              >
+                <OrgChartCard agent={node.agent} selected={selectedId === node.agent.id} onClick={() => onSelect(node.agent.id)} />
+              </div>
+            ))}
+          </div>
+        ))}
       </div>
     </div>
   );

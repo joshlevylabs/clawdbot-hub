@@ -98,6 +98,9 @@ interface MRESignal {
     global_weight: number;
     sector_weight: number;
   };
+  // Sector-equivalent thresholds (scaled by sector/global ratio)
+  sector_fear_threshold_conservative?: number;
+  sector_fear_threshold_opportunistic?: number;
 }
 
 interface TickerDetail {
@@ -602,13 +605,17 @@ function BlendedFGTickerRow({ ticker }: { ticker: TickerDetail }) {
   const effectiveFG = raw.effective_fg ?? raw.current_fg ?? 0;
   const thresholdConservative = raw.fear_threshold_conservative ?? 15;
   const thresholdOpportunistic = raw.fear_threshold_opportunistic ?? 40;
+  // Sector-specific thresholds: scaled by sector/global ratio so sector row
+  // shows a proportionally meaningful threshold (sector F&G runs hotter)
+  const sectorThresholdConservative = raw.sector_fear_threshold_conservative ?? thresholdConservative;
+  const sectorThresholdOpportunistic = raw.sector_fear_threshold_opportunistic ?? thresholdOpportunistic;
   const divergence = raw.fg_divergence ?? (sectorFG - globalFG);
 
   // Determine which threshold triggered and which index (global or sector) triggered it
   const globalTriggeredConservative = globalFG <= thresholdConservative;
   const globalTriggeredOpportunistic = globalFG <= thresholdOpportunistic;
-  const sectorTriggeredConservative = sectorFG <= thresholdConservative;
-  const sectorTriggeredOpportunistic = sectorFG <= thresholdOpportunistic;
+  const sectorTriggeredConservative = sectorFG <= sectorThresholdConservative;
+  const sectorTriggeredOpportunistic = sectorFG <= sectorThresholdOpportunistic;
   
   const globalTriggered = globalTriggeredConservative || globalTriggeredOpportunistic;
   const sectorTriggered = sectorTriggeredConservative || sectorTriggeredOpportunistic;
@@ -738,7 +745,7 @@ function BlendedFGTickerRow({ ticker }: { ticker: TickerDetail }) {
             <span className={`font-semibold ${getFGColor(sectorFG)}`}>{sectorFG.toFixed(0)}</span>
             <span className="text-slate-500 text-xs">|</span>
             <span className="text-xs text-slate-400">
-              Threshold: <span className="text-slate-300">{thresholdOpportunistic}</span>
+              Threshold: <span className="text-slate-300">{sectorThresholdOpportunistic}</span>
             </span>
           </div>
           {sectorTriggered && (

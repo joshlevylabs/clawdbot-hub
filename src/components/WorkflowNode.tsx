@@ -122,7 +122,7 @@ const WorkflowNode = forwardRef<HTMLDivElement, WorkflowNodeProps>(({
       ref={ref}
       className={`
         ${config.bg} ${config.border} ${config.hoverBorder}
-        relative rounded-xl border-2 p-3 md:p-4 cursor-pointer 
+        relative rounded-xl border-2 p-4 cursor-pointer 
         transition-all duration-200 hover:shadow-lg hover:shadow-black/20
         min-w-[140px] md:min-w-[160px] max-w-[180px] md:max-w-[200px]
         ${isActive ? 'ring-2 ring-primary-500/50' : ''}

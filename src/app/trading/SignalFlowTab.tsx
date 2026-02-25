@@ -373,6 +373,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, onStageClick }: Work
   
   // Store node positions for connection lines
   const [connections, setConnections] = useState<{ from: string; to: string; fromPos: { x: number; y: number }; toPos: { x: number; y: number } }[]>([]);
+  const [scale, setScale] = useState(1);
 
   const updateConnections = useCallback(() => {
     if (!containerRef.current) return;
@@ -563,12 +564,59 @@ function WorkflowVisualization({ pipelineData, mreVersions, onStageClick }: Work
   const pipelineVersion = pipelineData?.input?.passed?.[0]?.meta?.version || '3.1.0';
 
   return (
-    <div className="bg-slate-900/80 rounded-xl border border-slate-700/50 p-4 md:p-8 md:overflow-x-auto relative">
+    <div 
+      className="bg-slate-900/80 rounded-xl border border-slate-700/50 p-4 md:p-8 relative overflow-hidden"
+      style={{ touchAction: 'none' }}
+      onTouchStart={(e) => {
+        const touch = e.touches[0];
+        const container = containerRef.current;
+        if (!container) return;
+        (container as any)._touchStartX = touch.clientX;
+        (container as any)._touchStartY = touch.clientY;
+        (container as any)._scrollStartX = container.parentElement?.scrollLeft || 0;
+        if (e.touches.length === 2) {
+          const dx = e.touches[0].clientX - e.touches[1].clientX;
+          const dy = e.touches[0].clientY - e.touches[1].clientY;
+          (container as any)._pinchStartDist = Math.sqrt(dx * dx + dy * dy);
+          (container as any)._pinchStartScale = scale;
+        }
+      }}
+      onTouchMove={(e) => {
+        const container = containerRef.current;
+        if (!container) return;
+        if (e.touches.length === 2) {
+          // Pinch to zoom
+          const dx = e.touches[0].clientX - e.touches[1].clientX;
+          const dy = e.touches[0].clientY - e.touches[1].clientY;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          const startDist = (container as any)._pinchStartDist || dist;
+          const startScale = (container as any)._pinchStartScale || 1;
+          const newScale = Math.min(2, Math.max(0.4, startScale * (dist / startDist)));
+          setScale(newScale);
+          e.preventDefault();
+        } else if (e.touches.length === 1) {
+          // Swipe to pan
+          const wrapper = container.parentElement;
+          if (!wrapper) return;
+          const touch = e.touches[0];
+          const startX = (container as any)._touchStartX || touch.clientX;
+          const scrollStartX = (container as any)._scrollStartX || 0;
+          wrapper.scrollLeft = scrollStartX - (touch.clientX - startX);
+        }
+      }}
+    >
+      <div 
+        className="overflow-x-auto overflow-y-hidden"
+        style={{ WebkitOverflowScrolling: 'touch' }}
+      >
       <div 
         ref={containerRef} 
-        className="relative md:min-w-[1400px] min-h-[500px] md:min-h-[500px]"
+        className="relative min-w-[1400px] min-h-[500px]"
         style={{ 
           background: 'radial-gradient(circle at 20% 80%, rgba(15, 118, 110, 0.05) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.05) 0%, transparent 50%)',
+          transform: `scale(${scale})`,
+          transformOrigin: 'top left',
+          width: scale < 1 ? `${100 / scale}%` : undefined,
         }}
       >
         {/* SVG Layer for Connections */}
@@ -650,7 +698,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, onStageClick }: Work
         </svg>
         
         {/* Workflow Nodes */}
-        <div className="relative z-10 flex flex-col md:flex-row md:items-start gap-8 md:gap-16 p-4">
+        <div className="relative z-10 flex flex-row items-start gap-16 p-4">
           
           {/* Column 1: Universe Input */}
           <div className="flex flex-col items-center gap-6">
@@ -669,7 +717,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, onStageClick }: Work
           {/* Column 2: Strategy Votes (Responsive Grid) */}
           <div className="flex flex-col items-center gap-6">
             <div className="text-xs font-semibold text-slate-400 text-center mb-2">Strategy Votes</div>
-            <div className="grid grid-cols-2 md:grid-cols-1 gap-2 md:gap-3 max-w-sm md:max-w-none">
+            <div className="flex flex-col gap-3">
               {pipelineData.strategyVotes.map((sv: any, index: number) => {
                 const confirmed = sv.confirmedCount || 0;
                 const pending = sv.pendingCount || 0;
@@ -688,7 +736,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, onStageClick }: Work
                     onClick={() => onStageClick(`strategy_${sv.key}`)}
                     nodeType="strategy"
                     isPending={pending > 0}
-                    className="md:max-w-[180px]"
+                    className="max-w-[180px]"
                   />
                 );
               })}
@@ -698,7 +746,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, onStageClick }: Work
           {/* Column 3: Vote Consensus Gate (Responsive Grid) */}
           <div className="flex flex-col items-center gap-6">
             <div className="text-xs font-semibold text-slate-400 text-center mb-2">Vote Consensus</div>
-            <div className="grid grid-cols-2 md:grid-cols-1 gap-2 max-w-sm md:max-w-none">
+            <div className="flex flex-col gap-2">
               {pipelineData.voteConsensusGate.paths.slice().reverse().map((path: any) => (
                 <WorkflowNode
                   key={path.voteCount}
@@ -709,7 +757,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, onStageClick }: Work
                   outputCount={path.count}
                   onClick={() => onStageClick(`vote_consensus_${path.voteCount}`)}
                   nodeType="consensus"
-                  className="md:max-w-[140px]"
+                  className="max-w-[140px]"
                 />
               ))}
             </div>
@@ -788,6 +836,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, onStageClick }: Work
             />
           </div>
         </div>
+      </div>
       </div>
       
       {/* Current State Summary */}

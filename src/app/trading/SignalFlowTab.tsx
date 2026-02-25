@@ -377,6 +377,26 @@ function calculatePipelineStages(signals: MRESignal[], dataType: 'core' | 'unive
     filtered: signalGateFiltered,
     persistenceBypass,
   };
+
+  // Post-Gating Consensus: Group the signals that passed gating by their vote consensus tier
+  const postGatingConsensusPaths: VoteConsensusPath[] = [];
+  
+  for (let voteCount = 1; voteCount <= 8; voteCount++) {
+    const tickersWithThisVoteCount = signalGatePassed.filter(s => {
+      const actualVoteCount = strategyNames.filter(({ key }) => didStrategyFire(s, key)).length;
+      return actualVoteCount === voteCount;
+    });
+    
+    // Only add this vote level if it has tickers
+    if (tickersWithThisVoteCount.length > 0) {
+      postGatingConsensusPaths.push({
+        voteCount,
+        name: `${voteCount}-of-8 signals`,
+        tickers: tickersWithThisVoteCount,
+        count: tickersWithThisVoteCount.length
+      });
+    }
+  }
   
   // Step 4: Confidence Tuning (all modifiers: regime, role, rotation, sideways, kalshi)
   const confidencePassed = signalGatePassed.filter(s => s.signal !== 'HOLD');
@@ -437,6 +457,7 @@ function calculatePipelineStages(signals: MRESignal[], dataType: 'core' | 'unive
     postPersistenceConsensusPaths,
     persistenceGate,
     signalGating: signalGateStage,
+    postGatingConsensusPaths,
     confidenceTuning: confidenceStage,
     finalFilters: finalStage,
     output: outputStage,
@@ -648,14 +669,15 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
       });
     }
     
-    // 6. Sequential: Gating → Tuning → Filters → Output → Fibonacci → Agents
-    const seqKeys = ['signalGating', 'confidenceTuning', 'finalFilters', 'output', 'fibonacciLevels', 'agentAnalysis'];
+    // 6. Sequential: Gating → Actionable Signals → Tuning → Filters → Output → Fibonacci → Agents
+    const seqKeys = ['signalGating', 'actionableSignals', 'confidenceTuning', 'finalFilters', 'output', 'fibonacciLevels', 'agentAnalysis'];
     for (let i = 0; i < seqKeys.length - 1; i++) {
       const fromNode = nodeRefs.current[seqKeys[i]];
       const toNode = nodeRefs.current[seqKeys[i + 1]];
       if (fromNode && toNode) {
         let isActive = false;
         if (seqKeys[i] === 'signalGating') isActive = pipelineData.signalGating.outputCount > 0;
+        else if (seqKeys[i] === 'actionableSignals') isActive = pipelineData.signalGating.outputCount > 0;
         else if (seqKeys[i] === 'confidenceTuning') isActive = pipelineData.confidenceTuning.outputCount > 0;
         else if (seqKeys[i] === 'finalFilters') isActive = pipelineData.finalFilters.outputCount > 0;
         else if (seqKeys[i] === 'output') isActive = pipelineData.output.outputCount > 0;
@@ -985,6 +1007,89 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
                 : undefined}
               confidence={PIPELINE_NODE_CONFIDENCE.signalGating}
             />
+          </div>
+
+          {/* Column 6.5: Actionable Signals */}
+          <div className="flex flex-col items-center gap-6">
+            <div
+              ref={(el) => { nodeRefs.current['actionableSignals'] = el; }}
+              className={`
+                relative bg-slate-800/90 rounded-xl border-2 p-4 cursor-pointer
+                transition-all duration-200 hover:shadow-lg hover:shadow-black/20
+                min-w-[140px] md:min-w-[160px] max-w-[180px] md:max-w-[200px]
+                ${pipelineData.signalGating.outputCount > 0 
+                  ? 'border-emerald-500/40 hover:border-emerald-400/60' 
+                  : 'border-slate-600/40 hover:border-slate-500/60'}
+              `}
+              onClick={() => onStageClick('actionableSignals')}
+              style={{ minHeight: `${Math.max(120, 60 + (pipelineData.postGatingConsensusPaths?.length || 0) * 32)}px` }}
+            >
+              {/* Input connector dot */}
+              <div className="absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 bg-slate-600 border-2 border-slate-700 rounded-full" />
+              {/* Output connector dot */}
+              <div className="absolute right-0 top-1/2 translate-x-1/2 -translate-y-1/2 w-3 h-3 bg-slate-600 border-2 border-slate-700 rounded-full" />
+              
+              {/* Icon */}
+              <div className="bg-emerald-500/20 rounded-lg p-2 w-fit mb-3">
+                <Activity className="w-3.5 h-3.5 text-emerald-400" />
+              </div>
+              
+              <h3 className="text-sm font-bold text-slate-200 mb-1 leading-tight">📊 Actionable Signals</h3>
+              <p className="text-xs text-slate-400 mb-3 leading-tight">Breakdown by consensus tier</p>
+              
+              {/* Dynamic consensus tier rows */}
+              <div className="space-y-1 mb-3">
+                {pipelineData.postGatingConsensusPaths?.length > 0 ? (
+                  pipelineData.postGatingConsensusPaths
+                    .slice()
+                    .sort((a: VoteConsensusPath, b: VoteConsensusPath) => b.voteCount - a.voteCount)
+                    .map((path: VoteConsensusPath) => {
+                      const getIconAndStyle = (voteCount: number) => {
+                        if (voteCount >= 4) return { icon: '🔥', color: 'text-emerald-400', weight: 'font-bold' };
+                        if (voteCount >= 3) return { icon: '🔥', color: 'text-emerald-400', weight: 'font-bold' };
+                        if (voteCount >= 2) return { icon: '⚡', color: 'text-blue-400', weight: 'font-medium' };
+                        return { icon: '', color: 'text-slate-400', weight: 'font-normal' };
+                      };
+                      
+                      const { icon, color, weight } = getIconAndStyle(path.voteCount);
+                      
+                      return (
+                        <div key={path.voteCount} className="flex justify-between text-xs">
+                          <span className={`${color} ${weight}`}>
+                            {path.voteCount}/8 → {path.count} signals {icon}
+                          </span>
+                        </div>
+                      );
+                    })
+                ) : (
+                  <div className="text-xs text-slate-500 italic">No signals passed gating</div>
+                )}
+              </div>
+
+              {/* Total at bottom */}
+              <div className="border-t border-slate-700/50 pt-2 mb-3">
+                <div className="flex justify-between text-xs">
+                  <span className="text-slate-500">Total:</span>
+                  <span className={`font-bold ${pipelineData.signalGating.outputCount > 0 ? 'text-emerald-400' : 'text-slate-600'}`}>
+                    {pipelineData.signalGating.outputCount} passed
+                  </span>
+                </div>
+              </div>
+
+              {/* Confidence badge using highest tier's consensus confidence */}
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span className="inline-block bg-slate-700/50 text-slate-500 px-2 py-0.5 rounded text-[9px] font-medium">v3.1.0</span>
+                <span className="inline-block bg-emerald-900/40 text-emerald-400 px-2 py-0.5 rounded text-[9px] font-medium">
+                  {pipelineData.postGatingConsensusPaths?.length > 0 
+                    ? `${CONSENSUS_CONFIDENCE[Math.max(...pipelineData.postGatingConsensusPaths.map((p: VoteConsensusPath) => p.voteCount))] || 35}% conf`
+                    : '35% conf'
+                  }
+                </span>
+              </div>
+
+              {/* Hover glow */}
+              <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-white/[0.05] to-transparent opacity-0 hover:opacity-100 transition-opacity pointer-events-none" />
+            </div>
           </div>
           
           {/* Column 7: Confidence Tuning */}
@@ -1505,6 +1610,25 @@ export default function SignalFlowTab() {
           };
         }),
         filteredTickers: [],
+      });
+      return;
+    }
+
+    // Handle actionable signals click
+    if (stageKey === 'actionableSignals') {
+      setSelectedStage({
+        name: 'Actionable Signals by Consensus Tier',
+        description: 'Signals that passed gating, broken down by how many of 8 strategies agreed. Higher consensus = higher conviction.',
+        stageType: 'filter',
+        inputCount: pipelineData.signalGating.outputCount,
+        outputCount: pipelineData.signalGating.outputCount,
+        filteredTickers: [],
+        passedTickers: pipelineData.signalGating.passed.map(t => ({
+          symbol: t.symbol,
+          signal: t.signal,
+          currentPrice: t.price,
+          rawData: t
+        }))
       });
       return;
     }

@@ -179,12 +179,22 @@ const isBlendedFGStrategy = (stageName: string): boolean => {
 
 // Strategy descriptions mapping
 const STRATEGY_DESCRIPTIONS: Record<string, string> = {
-  'Blended F&G Strategy': "Triggers BUY when the sector-blended Fear & Greed score drops below the ticker's fear threshold. Uses a weighted blend of global CNN F&G and sector-specific F&G scores for more precise entry timing. Per-sector weights are optimized based on correlation strength and historical performance. Accounts for sector divergence from global sentiment to capture rotation opportunities.",
-  'Fear & Greed Strategy': "Triggers BUY when the CNN Fear & Greed Index drops below the ticker's fear threshold. Thresholds vary by asset class: Energy (6) requires extreme panic, Technology/Broad Market/Financials (8) use aggressive entries, and Healthcare/Real Estate (15) are more conservative. Thresholds were optimized in V15.1 Phase 5 via universe-scale backtests.", // Legacy support
+  // === Individual Strategy Stages (8 strategies) ===
+  'Blended F&G Strategy': "Triggers BUY when the sector-blended Fear & Greed score drops below the ticker's fear threshold.\n\n**Filters:**\n• CNN Fear & Greed Index (global sentiment, 0–100)\n• Sector-specific F&G scores (per-sector sentiment)\n• Weighted blend: global vs sector weights vary by asset class (e.g., Energy 40/60, Broad Market 70/30)\n• Divergence bonus: when sector diverges >10 pts from global, weight shifts toward sector (max +25%)\n• Per-asset-class thresholds: Conservative (8) for panic entries, Opportunistic (19) for selective entries\n• Energy uses tighter thresholds (6/16) due to 96% bull regime and momentum conversion\n• Sector thresholds scale proportionally to the sector/global F&G ratio",
+  'Fear & Greed Strategy': "Triggers BUY when the CNN Fear & Greed Index drops below the ticker's fear threshold.\n\n**Filters:**\n• CNN Fear & Greed Index score (0–100)\n• Conservative threshold: 8 (extreme panic entries)\n• Opportunistic threshold: 19 (selective fear entries)\n• Energy sector: 6/16 thresholds (momentum conversion)\n• Thresholds optimized in V15.1 Phase 5 via universe-scale backtests",
+  'Multi-TF Trend Strategy': "Combines short, medium, and long-term trend confirmation with a dip entry filter. All 5 conditions must be true.\n\n**Filters (ALL required):**\n• Price > SMA(50) — short-term uptrend\n• SMA(50) > SMA(100) — medium-term uptrend\n• SMA(100) > SMA(200) — long-term uptrend\n• SMA(50) 20-day slope > 0 — trend acceleration confirmed\n• Price < SMA(20) — buying the dip within the uptrend\n\n**Strength factors:** Dip depth below SMA(20) + slope magnitude. Deeper dips in strong uptrends score higher.",
+  'ConnorsRSI Strategy': "Uses ConnorsRSI (a composite of RSI, streak length, and percentile rank) to identify short-term oversold conditions in confirmed uptrends.\n\n**Filters (ALL required):**\n• ConnorsRSI < 15 — composite oversold signal\n• Price > SMA(200) — long-term uptrend filter\n\n**ConnorsRSI components:** RSI(3) short-term momentum + RSI(2) of streak length + percentile rank of current return vs. historical returns. More responsive than standard RSI(14).\n\n**Fallback:** If ConnorsRSI unavailable, uses RSI(14) < 20 with SMA(50) > SMA(200) trend filter.",
+  'Dual Band MR Strategy': "Dual-band mean reversion combining Bollinger Bands and Keltner Channels with volume confirmation. Requires 3 of 4 conditions.\n\n**Filters (3 of 4 required):**\n• Price < Bollinger lower band (20-period, 2σ)\n• Price < Keltner lower channel (20-period, 1.5× ATR)\n• Volume > 1.5× 20-day average — capitulation confirmation\n• Price < 1% below the lowest band — persistence proxy\n\n**Strength factors:** Overshoot depth below both bands + volume surge magnitude. Dual-band confirmation reduces false signals vs. single-band approaches.\n\n**Fallback:** If Keltner data unavailable, uses Bollinger-only logic.",
+  'Dual Momentum Strategy': "Implements Antonacci's dual momentum framework with multi-window acceleration. All 3 momentum types must confirm.\n\n**Filters (ALL required):**\n• Absolute momentum: 12-month return > 4.5% (risk-free rate) — beats cash\n• Relative momentum: top 30% of universe by 12-month return — outperforming peers\n• Acceleration: 1-month > 3-month > 6-month return — momentum is accelerating, not decelerating\n\n**Strength factors:** 12-month return magnitude + acceleration quality (1m − 6m spread). Filters out decelerating trends that may be topping.",
+  'TS Momentum Strategy': "AQR-style time-series (trend-following) momentum with volatility targeting. Captures persistent trends while scaling for risk.\n\n**Filters:**\n• 12-month excess return > 0 (return minus ~4.5% risk-free rate)\n• Realized volatility available (20-day) for position sizing\n\n**Signal strength:** Excess return × (1 / volatility) — higher returns with lower volatility produce stronger signals. This is the core managed-futures insight: trend following works better when risk-adjusted.\n\n**Fallback:** If 12-month return unavailable, extrapolates from 20-day momentum × 8.",
+  'QVM Factor Strategy': "Quality-Value-Momentum three-factor screen. Combines fundamental quality, relative value, and price momentum. All 3 factors required.\n\n**Filters (ALL required):**\n• Quality: ROE > 15% AND debt-to-equity < 1.0 — profitable with manageable leverage\n• Value: P/E ratio in bottom 30th percentile of sector — cheap relative to peers\n• Momentum: 12-1 month momentum positive — price trend confirms fundamentals\n\n**Data source:** Fundamental data from cached financial statements. ETFs and tickers without fundamental data are automatically skipped.\n\n**Strength factors:** ROE above 15% threshold + debt headroom below 1.0 + momentum magnitude.",
+  'VIX Reversion Strategy': "Contrarian VIX spike strategy. Buys equities when fear spikes sharply, betting on mean reversion in volatility.\n\n**Filters (ALL required):**\n• VIX > 25 — elevated fear level\n• VIX 5-day change > +30% — sharp spike (not just elevated)\n• Equity asset classes only (broad market, technology, financials, energy)\n• Does NOT fire for bonds, commodities, or international\n\n**Exit rules:** Target VIX < 20 or max hold 10 days.\n\n**Strength:** Proportional to how far VIX exceeds 25. A VIX of 35 produces a stronger signal than 26.",
+  // Legacy name mappings
   'Regime Confirm Strategy': "Confirms BUY signals only when the ticker is in a bull regime (price above SMA), ensuring trades align with the broader trend direction.",
-  'RSI Oversold Strategy': "Triggers BUY when the 14-period RSI drops below 30, indicating the asset is oversold and likely to bounce.",
-  'Mean Reversion Strategy': "Triggers BUY when the 5-day price drop exceeds a threshold, betting on a reversion to the mean price.",
-  'Momentum Strategy': "Triggers BUY when 20-day momentum is strongly positive, riding the trend with confirmed directional strength.",
+  'RSI Oversold Strategy': "Uses ConnorsRSI < 15 with price > SMA(200) uptrend filter to identify oversold bounces.",
+  'Mean Reversion Strategy': "Dual-band mean reversion: Price below both Bollinger and Keltner lower bands with volume confirmation.",
+  'Momentum Strategy': "Dual momentum: absolute (beats risk-free), relative (top 30%), and acceleration (1m > 3m > 6m).",
+  // === Pipeline Stages ===
   'Vote Consensus Gate': "Classifies tickers by how many of the 8 strategies voted BUY, showing consensus strength from 1-of-8 (weak consensus) to 8-of-8 (unanimous agreement).",
   '1-of-8 Vote Consensus': "Tickers where exactly 1 of the 8 strategies voted BUY. Low consensus signals with higher risk but potentially overlooked opportunities.",
   '2-of-8 Vote Consensus': "Tickers where exactly 2 of the 8 strategies voted BUY. Moderate consensus signals with balanced risk-reward profile.",
@@ -194,9 +204,9 @@ const STRATEGY_DESCRIPTIONS: Record<string, string> = {
   '6-of-8 Vote Consensus': "Tickers where 6 of the 8 strategies voted BUY. Near-unanimous consensus.",
   '7-of-8 Vote Consensus': "Tickers where 7 of the 8 strategies voted BUY. Near-unanimous consensus.",
   '8-of-8 Vote Consensus': "Tickers where all 8 strategies unanimously voted BUY. Maximum consensus signals with highest confidence and lowest risk.",
-  'Signal Gating': "Suppresses BUY signals in bear regimes (bear suppress) and converts SELL signals to HOLD (sell suppress) to reduce risk.",
-  'Confidence Tuning': "Adjusts signal confidence using regime weight, asset role evaluation, sector rotation, sideways penalty, and Kalshi prediction market data.",
-  'Final Filters': "Applies cluster limits (max 2 per sector), asset confidence thresholds, crash mode protection, and multiplier caps.",
+  'Signal Gating': "Suppresses BUY signals in bear regimes (bear suppress) and converts SELL signals to HOLD (sell suppress) to reduce risk.\n\n**Filters:**\n• Bear regime suppression: blocks BUY signals when ticker is in bear regime (price below key SMAs)\n• Sell suppression: converts SELL signals to HOLD during uncertain regimes to prevent panic selling\n• Sideways penalty: reduces confidence for tickers in sideways/choppy regimes",
+  'Confidence Tuning': "Adjusts raw signal confidence using multiple contextual factors to produce a final confidence score.\n\n**Adjustment factors:**\n• Regime weight: bull regime boosts confidence, bear reduces it\n• Asset role evaluation: core vs. satellite positioning\n• Sector rotation modifier: favors sectors in the current cycle phase\n• Sideways penalty: reduces confidence in range-bound markets\n• Kalshi prediction market data: incorporates market-implied probabilities when available",
+  'Final Filters': "Last-pass filters that enforce portfolio construction rules and risk management.\n\n**Filters:**\n• Cluster limit: max 2 BUY signals per sector (prevents over-concentration)\n• Asset confidence threshold: minimum confidence required to pass\n• Crash mode protection: suppresses all BUY signals during market crashes (VIX spike + broad decline)\n• Multiplier caps: limits maximum position sizing multipliers",
 };
 
 // Helper function to check if this is an individual strategy stage
@@ -338,6 +348,571 @@ function StrategyParameters({
 
   return <div className="text-sm text-slate-400">Strategy parameters not available</div>;
 };
+
+// ============================================================
+// Strategy Technical Overview — visual breakdown for individual strategies
+// ============================================================
+function StrategyTechnicalOverview({ strategyName, tickers }: { strategyName: string; tickers: TickerDetail[] }) {
+  const [vixData, setVixData] = useState<{ current: number; vix: number } | null>(null);
+
+  // Fetch VIX data for VIX Reversion Strategy
+  useEffect(() => {
+    if (strategyName.includes('VIX')) {
+      const fetchVixData = async () => {
+        try {
+          const res = await fetch('/data/trading/mre-signals-universe.json');
+          if (res.ok) {
+            const data = await res.json();
+            setVixData({
+              current: data.fear_greed?.current ?? 0,
+              vix: data.regime?.vix ?? 0
+            });
+          }
+        } catch { /* ignore */ }
+      };
+      fetchVixData();
+    }
+  }, [strategyName]);
+
+  const getFGColor = (score: number) => {
+    if (score < 25) return 'text-red-400';
+    if (score < 40) return 'text-orange-400';
+    if (score < 60) return 'text-amber-400';
+    if (score < 75) return 'text-emerald-400';
+    return 'text-green-400';
+  };
+
+  const getBBPositionColor = (position: string) => {
+    switch(position) {
+      case 'below_lower': return 'text-red-400';
+      case 'above_upper': return 'text-emerald-400';
+      case 'within_bands': return 'text-amber-400';
+      default: return 'text-slate-400';
+    }
+  };
+
+  const getBBPositionLabel = (position: string) => {
+    switch(position) {
+      case 'below_lower': return 'Below Lower';
+      case 'above_upper': return 'Above Upper'; 
+      case 'within_bands': return 'Within Bands';
+      default: return 'Unknown';
+    }
+  };
+
+  // Multi-TF Trend Strategy
+  if (strategyName.includes('Multi-TF Trend') || strategyName.includes('Regime Confirm')) {
+    const regimeCounts = tickers.reduce((acc, t) => {
+      const regime = t.rawData?.regime || 'unknown';
+      acc[regime] = (acc[regime] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    const total = tickers.length;
+    const bullPct = ((regimeCounts.bull || 0) / total) * 100;
+    const sidewaysPct = ((regimeCounts.sideways || 0) / total) * 100;
+    const bearPct = ((regimeCounts.bear || 0) / total) * 100;
+
+    // Estimate trend conditions (simplified since full SMA data not available)
+    const positiveMomentum = tickers.filter(t => (t.rawData?.momentum_20d || 0) > 0).length;
+    const momentumPct = (positiveMomentum / total) * 100;
+
+    return (
+      <div className="p-4 sm:p-6 border-b border-slate-700/50 bg-slate-800/30">
+        <div className="flex items-center gap-3 mb-4">
+          <Activity className="w-5 h-5 text-primary-400" />
+          <h3 className="text-base font-semibold text-slate-200">Multi-Timeframe Trend Analysis</h3>
+        </div>
+
+        {/* Regime Distribution */}
+        <div className="grid grid-cols-3 gap-4 mb-6">
+          <div className="bg-slate-900/50 rounded-lg p-4 text-center border border-emerald-700/40">
+            <div className="text-xs text-slate-500 mb-1">Bull Regime</div>
+            <div className="text-2xl font-bold text-emerald-400">{bullPct.toFixed(0)}%</div>
+            <div className="text-xs text-slate-400">{regimeCounts.bull || 0} tickers</div>
+          </div>
+          <div className="bg-slate-900/50 rounded-lg p-4 text-center border border-amber-700/40">
+            <div className="text-xs text-slate-500 mb-1">Sideways</div>
+            <div className="text-2xl font-bold text-amber-400">{sidewaysPct.toFixed(0)}%</div>
+            <div className="text-xs text-slate-400">{regimeCounts.sideways || 0} tickers</div>
+          </div>
+          <div className="bg-slate-900/50 rounded-lg p-4 text-center border border-red-700/40">
+            <div className="text-xs text-slate-500 mb-1">Bear Regime</div>
+            <div className="text-2xl font-bold text-red-400">{bearPct.toFixed(0)}%</div>
+            <div className="text-xs text-slate-400">{regimeCounts.bear || 0} tickers</div>
+          </div>
+        </div>
+
+        {/* Trend Conditions Summary */}
+        <div className="bg-slate-900/40 rounded-lg p-4">
+          <h4 className="text-sm font-medium text-slate-300 mb-3">Trend Condition Health</h4>
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-slate-400">✓ Positive 20d Momentum</span>
+              <span className={`text-sm font-medium ${momentumPct >= 50 ? 'text-emerald-400' : 'text-red-400'}`}>
+                {momentumPct.toFixed(0)}% ({positiveMomentum} tickers)
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-slate-400">✓ Bull Regime (Price &gt; SMA structure)</span>
+              <span className={`text-sm font-medium ${bullPct >= 50 ? 'text-emerald-400' : 'text-red-400'}`}>
+                {bullPct.toFixed(0)}% ({regimeCounts.bull || 0} tickers)
+              </span>
+            </div>
+          </div>
+          <div className="mt-3 text-xs text-slate-500">
+            Strategy requires ALL 5 conditions: Price &gt; SMA(50) &gt; SMA(100) &gt; SMA(200), SMA(50) slope &gt; 0, Price &lt; SMA(20)
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ConnorsRSI Strategy
+  if (strategyName.includes('RSI') || strategyName.includes('Oversold')) {
+    const rsiData = tickers
+      .filter(t => t.rawData?.rsi_14 !== undefined)
+      .map(t => t.rawData!.rsi_14!);
+
+    const oversoldCount = rsiData.filter(rsi => rsi < 20).length;
+    const deepOversoldCount = rsiData.filter(rsi => rsi < 15).length;
+    const neutralCount = rsiData.filter(rsi => rsi >= 20 && rsi < 50).length;
+    const avgRSI = rsiData.length > 0 ? rsiData.reduce((a, b) => a + b, 0) / rsiData.length : 0;
+
+    const bullRegimeCount = tickers.filter(t => t.rawData?.regime === 'bull').length;
+    const bullPct = (bullRegimeCount / tickers.length) * 100;
+
+    return (
+      <div className="p-4 sm:p-6 border-b border-slate-700/50 bg-slate-800/30">
+        <div className="flex items-center gap-3 mb-4">
+          <TrendingDown className="w-5 h-5 text-primary-400" />
+          <h3 className="text-base font-semibold text-slate-200">ConnorsRSI Oversold Analysis</h3>
+        </div>
+
+        {/* RSI Distribution */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+          <div className="bg-red-900/30 border border-red-700/40 rounded-lg p-3 text-center">
+            <div className="text-xs text-slate-500 mb-1">RSI &lt; 15</div>
+            <div className="text-lg font-bold text-red-400">{deepOversoldCount}</div>
+            <div className="text-xs text-slate-400">Deep oversold</div>
+          </div>
+          <div className="bg-orange-900/30 border border-orange-700/40 rounded-lg p-3 text-center">
+            <div className="text-xs text-slate-500 mb-1">RSI 15-20</div>
+            <div className="text-lg font-bold text-orange-400">{oversoldCount - deepOversoldCount}</div>
+            <div className="text-xs text-slate-400">Oversold</div>
+          </div>
+          <div className="bg-amber-900/30 border border-amber-700/40 rounded-lg p-3 text-center">
+            <div className="text-xs text-slate-500 mb-1">RSI 20-50</div>
+            <div className="text-lg font-bold text-amber-400">{neutralCount}</div>
+            <div className="text-xs text-slate-400">Neutral</div>
+          </div>
+          <div className="bg-slate-900/50 rounded-lg p-3 text-center">
+            <div className="text-xs text-slate-500 mb-1">Avg RSI</div>
+            <div className="text-lg font-bold text-slate-200">{avgRSI.toFixed(1)}</div>
+            <div className="text-xs text-slate-400">Universe</div>
+          </div>
+        </div>
+
+        {/* Trend Filter */}
+        <div className="bg-slate-900/40 rounded-lg p-4">
+          <h4 className="text-sm font-medium text-slate-300 mb-3">Trend Filter Status</h4>
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-slate-400">Bull Regime (Price &gt; SMA 200)</span>
+            <span className={`text-sm font-medium ${bullPct >= 50 ? 'text-emerald-400' : 'text-red-400'}`}>
+              {bullPct.toFixed(0)}% ({bullRegimeCount} of {tickers.length})
+            </span>
+          </div>
+          <div className="mt-3 text-xs text-slate-500">
+            Strategy triggers when ConnorsRSI &lt; 15 AND price is above long-term uptrend
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Dual Band Mean Reversion Strategy
+  if (strategyName.includes('Mean Reversion') || strategyName.includes('Dual Band')) {
+    const bbPositions = tickers.reduce((acc, t) => {
+      const pos = t.rawData?.bb_position || 'unknown';
+      acc[pos] = (acc[pos] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    const total = tickers.length;
+    const belowLowerPct = ((bbPositions.below_lower || 0) / total) * 100;
+    const withinBandsPct = ((bbPositions.within_bands || 0) / total) * 100;
+    const aboveUpperPct = ((bbPositions.above_upper || 0) / total) * 100;
+
+    // Calculate average 5-day return as proxy for dip activity
+    const returnData = tickers
+      .filter(t => t.rawData?.return_5d !== undefined)
+      .map(t => t.rawData!.return_5d!);
+    const avgReturn5d = returnData.length > 0 ? returnData.reduce((a, b) => a + b, 0) / returnData.length : 0;
+    const bigDipsCount = returnData.filter(r => r <= -5.0).length;
+
+    return (
+      <div className="p-4 sm:p-6 border-b border-slate-700/50 bg-slate-800/30">
+        <div className="flex items-center gap-3 mb-4">
+          <Minus className="w-5 h-5 text-primary-400" />
+          <h3 className="text-base font-semibold text-slate-200">Dual Band Mean Reversion</h3>
+        </div>
+
+        {/* Bollinger Position Distribution */}
+        <div className="grid grid-cols-3 gap-4 mb-6">
+          <div className={`rounded-lg p-4 text-center border ${bbPositions.below_lower ? 'bg-red-900/30 border-red-700/40' : 'bg-slate-900/50 border-slate-700/50'}`}>
+            <div className="text-xs text-slate-500 mb-1">Below Lower Band</div>
+            <div className={`text-2xl font-bold ${getBBPositionColor('below_lower')}`}>{belowLowerPct.toFixed(0)}%</div>
+            <div className="text-xs text-slate-400">{bbPositions.below_lower || 0} tickers</div>
+          </div>
+          <div className={`rounded-lg p-4 text-center border ${bbPositions.within_bands ? 'bg-amber-900/30 border-amber-700/40' : 'bg-slate-900/50 border-slate-700/50'}`}>
+            <div className="text-xs text-slate-500 mb-1">Within Bands</div>
+            <div className={`text-2xl font-bold ${getBBPositionColor('within_bands')}`}>{withinBandsPct.toFixed(0)}%</div>
+            <div className="text-xs text-slate-400">{bbPositions.within_bands || 0} tickers</div>
+          </div>
+          <div className={`rounded-lg p-4 text-center border ${bbPositions.above_upper ? 'bg-emerald-900/30 border-emerald-700/40' : 'bg-slate-900/50 border-slate-700/50'}`}>
+            <div className="text-xs text-slate-500 mb-1">Above Upper Band</div>
+            <div className={`text-2xl font-bold ${getBBPositionColor('above_upper')}`}>{aboveUpperPct.toFixed(0)}%</div>
+            <div className="text-xs text-slate-400">{bbPositions.above_upper || 0} tickers</div>
+          </div>
+        </div>
+
+        {/* Mean Reversion Activity */}
+        <div className="bg-slate-900/40 rounded-lg p-4">
+          <h4 className="text-sm font-medium text-slate-300 mb-3">Dip Activity</h4>
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-slate-400">Average 5-day return</span>
+              <span className={`text-sm font-medium ${avgReturn5d < 0 ? 'text-red-400' : 'text-emerald-400'}`}>
+                {avgReturn5d > 0 ? '+' : ''}{avgReturn5d.toFixed(1)}%
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-slate-400">Big dips (-5% or worse)</span>
+              <span className={`text-sm font-medium ${bigDipsCount > 0 ? 'text-orange-400' : 'text-slate-400'}`}>
+                {bigDipsCount} tickers ({((bigDipsCount / total) * 100).toFixed(0)}%)
+              </span>
+            </div>
+          </div>
+          <div className="mt-3 text-xs text-slate-500">
+            Strategy requires 3 of 4: Price &lt; BB lower, Price &lt; Keltner lower, Volume &gt; 1.5x avg, persistence proxy
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Dual Momentum Strategy
+  if (strategyName.includes('Momentum Strategy') && !strategyName.includes('TS')) {
+    const momentumData = tickers
+      .filter(t => t.rawData?.momentum_20d !== undefined)
+      .map(t => t.rawData!.momentum_20d!);
+
+    const positiveMomentumCount = momentumData.filter(m => m > 0).length;
+    const strongMomentumCount = momentumData.filter(m => m >= 10).length;
+    const avgMomentum = momentumData.length > 0 ? momentumData.reduce((a, b) => a + b, 0) / momentumData.length : 0;
+
+    const positivePct = (positiveMomentumCount / tickers.length) * 100;
+    const strongPct = (strongMomentumCount / tickers.length) * 100;
+
+    return (
+      <div className="p-4 sm:p-6 border-b border-slate-700/50 bg-slate-800/30">
+        <div className="flex items-center gap-3 mb-4">
+          <TrendingUp className="w-5 h-5 text-primary-400" />
+          <h3 className="text-base font-semibold text-slate-200">Dual Momentum Analysis</h3>
+        </div>
+
+        {/* Momentum Distribution */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+          <div className="bg-slate-900/50 rounded-lg p-3 text-center">
+            <div className="text-xs text-slate-500 mb-1">Average</div>
+            <div className={`text-lg font-bold ${avgMomentum >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+              {avgMomentum > 0 ? '+' : ''}{avgMomentum.toFixed(1)}%
+            </div>
+            <div className="text-xs text-slate-400">20d momentum</div>
+          </div>
+          <div className="bg-slate-900/50 rounded-lg p-3 text-center">
+            <div className="text-xs text-slate-500 mb-1">Positive</div>
+            <div className={`text-lg font-bold ${positivePct >= 50 ? 'text-emerald-400' : 'text-red-400'}`}>
+              {positivePct.toFixed(0)}%
+            </div>
+            <div className="text-xs text-slate-400">{positiveMomentumCount} tickers</div>
+          </div>
+          <div className="bg-emerald-900/30 border border-emerald-700/40 rounded-lg p-3 text-center">
+            <div className="text-xs text-slate-500 mb-1">Strong (+10%)</div>
+            <div className="text-lg font-bold text-emerald-400">{strongPct.toFixed(0)}%</div>
+            <div className="text-xs text-slate-400">{strongMomentumCount} tickers</div>
+          </div>
+          <div className="bg-slate-900/50 rounded-lg p-3 text-center">
+            <div className="text-xs text-slate-500 mb-1">Sample Size</div>
+            <div className="text-lg font-bold text-slate-200">{momentumData.length}</div>
+            <div className="text-xs text-slate-400">with data</div>
+          </div>
+        </div>
+
+        {/* Strategy Components */}
+        <div className="bg-slate-900/40 rounded-lg p-4">
+          <h4 className="text-sm font-medium text-slate-300 mb-3">Momentum Components</h4>
+          <div className="space-y-2 text-xs text-slate-400">
+            <div>• <strong className="text-slate-300">Absolute momentum:</strong> 12-month return &gt; 4.5% risk-free rate</div>
+            <div>• <strong className="text-slate-300">Relative momentum:</strong> Top 30% by 12-month return vs peers</div>
+            <div>• <strong className="text-slate-300">Acceleration:</strong> 1-month &gt; 3-month &gt; 6-month progression</div>
+          </div>
+          <div className="mt-3 text-xs text-slate-500">
+            All 3 momentum types must confirm for signal generation
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // TS Momentum Strategy
+  if (strategyName.includes('TS Momentum')) {
+    const volData = tickers
+      .filter(t => t.rawData?.volatility_20d !== undefined)
+      .map(t => t.rawData!.volatility_20d!);
+
+    const lowVolCount = volData.filter(v => v < 20).length;
+    const mediumVolCount = volData.filter(v => v >= 20 && v < 40).length;
+    const highVolCount = volData.filter(v => v >= 40).length;
+    const avgVol = volData.length > 0 ? volData.reduce((a, b) => a + b, 0) / volData.length : 0;
+
+    const momentumData = tickers
+      .filter(t => t.rawData?.momentum_20d !== undefined)
+      .map(t => t.rawData!.momentum_20d!);
+    const positiveMomentumCount = momentumData.filter(m => m > 0).length;
+    const momentumPct = (positiveMomentumCount / tickers.length) * 100;
+
+    return (
+      <div className="p-4 sm:p-6 border-b border-slate-700/50 bg-slate-800/30">
+        <div className="flex items-center gap-3 mb-4">
+          <Activity className="w-5 h-5 text-primary-400" />
+          <h3 className="text-base font-semibold text-slate-200">Time Series Momentum</h3>
+        </div>
+
+        {/* Volatility Distribution */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+          <div className="bg-emerald-900/30 border border-emerald-700/40 rounded-lg p-3 text-center">
+            <div className="text-xs text-slate-500 mb-1">Low Vol (&lt;20%)</div>
+            <div className="text-lg font-bold text-emerald-400">{lowVolCount}</div>
+            <div className="text-xs text-slate-400">Stable trends</div>
+          </div>
+          <div className="bg-amber-900/30 border border-amber-700/40 rounded-lg p-3 text-center">
+            <div className="text-xs text-slate-500 mb-1">Med Vol (20-40%)</div>
+            <div className="text-lg font-bold text-amber-400">{mediumVolCount}</div>
+            <div className="text-xs text-slate-400">Moderate risk</div>
+          </div>
+          <div className="bg-red-900/30 border border-red-700/40 rounded-lg p-3 text-center">
+            <div className="text-xs text-slate-500 mb-1">High Vol (40%+)</div>
+            <div className="text-lg font-bold text-red-400">{highVolCount}</div>
+            <div className="text-xs text-slate-400">High risk</div>
+          </div>
+          <div className="bg-slate-900/50 rounded-lg p-3 text-center">
+            <div className="text-xs text-slate-500 mb-1">Average</div>
+            <div className="text-lg font-bold text-slate-200">{avgVol.toFixed(1)}%</div>
+            <div className="text-xs text-slate-400">Universe vol</div>
+          </div>
+        </div>
+
+        {/* Risk-Adjusted Trends */}
+        <div className="bg-slate-900/40 rounded-lg p-4">
+          <h4 className="text-sm font-medium text-slate-300 mb-3">Risk-Adjusted Trend Following</h4>
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-slate-400">Positive 12m excess return</span>
+              <span className={`text-sm font-medium ${momentumPct >= 50 ? 'text-emerald-400' : 'text-red-400'}`}>
+                {momentumPct.toFixed(0)}% ({positiveMomentumCount} tickers)
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-slate-400">Volatility-adjusted sizing available</span>
+              <span className="text-sm font-medium text-slate-200">
+                {volData.length} of {tickers.length} tickers
+              </span>
+            </div>
+          </div>
+          <div className="mt-3 text-xs text-slate-500">
+            Signal strength = Excess Return × (1 / Volatility) — AQR-style managed futures approach
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // QVM Factor Strategy
+  if (strategyName.includes('QVM') || strategyName.includes('Factor')) {
+    // QVM data is mostly in fundamentals cache, so show what's available from ticker data
+    const totalTickers = tickers.length;
+    const equityTickers = tickers.filter(t => 
+      t.rawData?.asset_class && ['broad_market', 'technology', 'healthcare', 'financials', 'energy', 'real_estate'].includes(t.rawData.asset_class)
+    ).length;
+    const etfCount = tickers.filter(t => t.symbol.includes('ETF') || t.symbol.length <= 4).length;
+    const stockCount = totalTickers - etfCount;
+
+    return (
+      <div className="p-4 sm:p-6 border-b border-slate-700/50 bg-slate-800/30">
+        <div className="flex items-center gap-3 mb-4">
+          <DollarSign className="w-5 h-5 text-primary-400" />
+          <h3 className="text-base font-semibold text-slate-200">Quality-Value-Momentum Factor</h3>
+        </div>
+
+        {/* Data Availability */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+          <div className="bg-slate-900/50 rounded-lg p-3 text-center">
+            <div className="text-xs text-slate-500 mb-1">Total Universe</div>
+            <div className="text-lg font-bold text-slate-200">{totalTickers}</div>
+            <div className="text-xs text-slate-400">tickers</div>
+          </div>
+          <div className="bg-slate-900/50 rounded-lg p-3 text-center">
+            <div className="text-xs text-slate-500 mb-1">Equity Classes</div>
+            <div className="text-lg font-bold text-slate-200">{equityTickers}</div>
+            <div className="text-xs text-slate-400">eligible</div>
+          </div>
+          <div className="bg-slate-900/50 rounded-lg p-3 text-center">
+            <div className="text-xs text-slate-500 mb-1">Est. Stocks</div>
+            <div className="text-lg font-bold text-slate-200">{stockCount}</div>
+            <div className="text-xs text-slate-400">with fundamentals</div>
+          </div>
+          <div className="bg-slate-900/50 rounded-lg p-3 text-center">
+            <div className="text-xs text-slate-500 mb-1">ETFs</div>
+            <div className="text-lg font-bold text-slate-400">{etfCount}</div>
+            <div className="text-xs text-slate-400">auto-skipped</div>
+          </div>
+        </div>
+
+        {/* Factor Requirements */}
+        <div className="bg-slate-900/40 rounded-lg p-4">
+          <h4 className="text-sm font-medium text-slate-300 mb-3">Three-Factor Screen</h4>
+          <div className="space-y-2 text-xs text-slate-400">
+            <div>• <strong className="text-slate-300">Quality:</strong> ROE &gt; 15% AND debt-to-equity &lt; 1.0</div>
+            <div>• <strong className="text-slate-300">Value:</strong> P/E ratio in bottom 30th percentile vs sector</div>
+            <div>• <strong className="text-slate-300">Momentum:</strong> 12-1 month price momentum positive</div>
+          </div>
+          <div className="mt-3 text-xs text-slate-500">
+            ⚠️ Fundamental data sourced from cached financial statements, not visible in real-time ticker output
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // VIX Reversion Strategy
+  if (strategyName.includes('VIX')) {
+    const currentVIX = vixData?.vix || 0;
+    const fearGreed = vixData?.current || 0;
+    
+    // Estimate 5-day change (simplified since we don't have historical VIX)
+    const vixThreshold = 25;
+    const vixAboveThreshold = currentVIX > vixThreshold;
+    
+    const equityAssets = tickers.filter(t => 
+      t.rawData?.asset_class && ['broad_market', 'technology', 'healthcare', 'financials', 'energy', 'real_estate'].includes(t.rawData.asset_class)
+    ).length;
+
+    return (
+      <div className="p-4 sm:p-6 border-b border-slate-700/50 bg-slate-800/30">
+        <div className="flex items-center gap-3 mb-4">
+          <Thermometer className="w-5 h-5 text-primary-400" />
+          <h3 className="text-base font-semibold text-slate-200">VIX Mean Reversion</h3>
+        </div>
+
+        {/* VIX Level */}
+        <div className="mb-6">
+          <div className="bg-slate-900/50 rounded-lg p-4 border border-slate-700/50">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-slate-300">Current VIX Level</span>
+              <span className="text-xs text-slate-400">Threshold: 25</span>
+            </div>
+            
+            {/* VIX gauge */}
+            <div className="relative">
+              <div className="h-8 bg-slate-700/50 rounded-lg">
+                {/* Threshold line at 25 */}
+                <div className="absolute top-0 bottom-0 w-0.5 bg-orange-400 rounded-full" style={{ left: '50%' }} />
+                
+                {/* Current VIX position */}
+                <div 
+                  className={`absolute top-1 bottom-1 w-2 rounded-full ${
+                    currentVIX > 30 ? 'bg-red-500' : currentVIX > 25 ? 'bg-orange-500' : 'bg-emerald-500'
+                  }`}
+                  style={{ 
+                    left: `${Math.min(Math.max((currentVIX / 50) * 100, 0), 100)}%`,
+                    transform: 'translateX(-50%)'
+                  }}
+                />
+              </div>
+              
+              {/* Labels */}
+              <div className="flex justify-between text-xs text-slate-400 mt-1">
+                <span>0</span>
+                <span className="text-orange-400 font-medium">25</span>
+                <span>50+</span>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between mt-3">
+              <div>
+                <div className={`text-2xl font-bold ${
+                  currentVIX > 30 ? 'text-red-400' : currentVIX > 25 ? 'text-orange-400' : 'text-emerald-400'
+                }`}>
+                  {currentVIX.toFixed(1)}
+                </div>
+                <div className="text-xs text-slate-400">
+                  {currentVIX > 30 ? 'High fear' : currentVIX > 25 ? 'Elevated fear' : 'Normal/low fear'}
+                </div>
+              </div>
+              <div className={`px-2 py-1 rounded text-xs ${
+                vixAboveThreshold ? 'bg-orange-900/50 text-orange-400' : 'bg-slate-700/50 text-slate-400'
+              }`}>
+                {vixAboveThreshold ? '✓ Above 25' : '✗ Below 25'}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Strategy Status */}
+        <div className="bg-slate-900/40 rounded-lg p-4">
+          <h4 className="text-sm font-medium text-slate-300 mb-3">Strategy Filters</h4>
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-slate-400">VIX &gt; 25 (fear spike)</span>
+              <span className={`text-sm font-medium ${vixAboveThreshold ? 'text-emerald-400' : 'text-red-400'}`}>
+                {vixAboveThreshold ? '✓ Met' : '✗ Not met'}
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-slate-400">Equity assets only</span>
+              <span className="text-sm font-medium text-slate-200">
+                {equityAssets} of {tickers.length} eligible
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-slate-400">VIX 5d change &gt; +30%</span>
+              <span className="text-sm font-medium text-slate-400">
+                Cannot verify (needs historical data)
+              </span>
+            </div>
+          </div>
+          <div className="mt-3 text-xs text-slate-500">
+            Strategy bets on VIX mean reversion: buys equity dips when fear spikes sharply
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Default for unknown strategies
+  return (
+    <div className="p-4 sm:p-6 border-b border-slate-700/50 bg-slate-800/30">
+      <div className="flex items-center gap-3 mb-4">
+        <Filter className="w-5 h-5 text-primary-400" />
+        <h3 className="text-base font-semibold text-slate-200">Strategy Technical Overview</h3>
+      </div>
+      <div className="text-sm text-slate-400 text-center py-8">
+        Technical breakdown not yet implemented for {strategyName}
+      </div>
+    </div>
+  );
+}
 
 // ============================================================
 // Blended F&G Sector Overview — shown at top of Blended F&G modal
@@ -1251,10 +1826,33 @@ export default function PipelineDetailPanel({
           <>
           {/* ======= DEFAULT MODAL (all other strategies) ======= */}
 
-          {/* Strategy Description Card */}
+          {/* Strategy Technical Overview - for individual strategies */}
+          <StrategyTechnicalOverview 
+            strategyName={stageDetails.name}
+            tickers={[...stageDetails.passedTickers, ...stageDetails.filteredTickers]}
+          />
+
+          {/* Strategy Description Card - keep existing text description below */}
           <div className="p-4 sm:p-6 border-b border-slate-700/50 bg-slate-800/30">
             <h3 className="text-base sm:text-lg font-semibold text-slate-200 mb-2">How This Strategy Works</h3>
-            <p className="text-slate-300 text-sm leading-relaxed">{strategyDescription}</p>
+            <div className="text-slate-300 text-sm leading-relaxed space-y-2">
+              {strategyDescription.split('\n').map((line: string, i: number) => {
+                // Handle **bold** markers
+                const parts = line.split(/\*\*(.*?)\*\*/g);
+                const rendered = parts.map((part: string, j: number) =>
+                  j % 2 === 1
+                    ? <span key={j} className="font-semibold text-slate-200">{part}</span>
+                    : <span key={j}>{part}</span>
+                );
+                // Bullet lines get special styling
+                if (line.trim().startsWith('•')) {
+                  return <div key={i} className="pl-3 text-slate-400">{rendered}</div>;
+                }
+                // Empty lines become spacing
+                if (line.trim() === '') return <div key={i} className="h-1" />;
+                return <div key={i}>{rendered}</div>;
+              })}
+            </div>
           </div>
 
           {/* Version History - Show only for individual strategy modals */}

@@ -28,6 +28,7 @@ interface WorkflowNodeProps {
   isActive?: boolean;
   isPending?: boolean;
   bypassLabel?: string;
+  confidence?: number; // 0-100 accuracy/confidence score
 }
 
 const WorkflowNode = forwardRef<HTMLDivElement, WorkflowNodeProps>(({
@@ -45,6 +46,7 @@ const WorkflowNode = forwardRef<HTMLDivElement, WorkflowNodeProps>(({
   isActive = false,
   isPending = false,
   bypassLabel,
+  confidence,
 }, ref) => {
   
   // Color schemes and icons based on node type
@@ -217,12 +219,24 @@ const WorkflowNode = forwardRef<HTMLDivElement, WorkflowNodeProps>(({
         )}
       </div>
 
-      {/* Version badge */}
-      {version && (
-        <div className="mt-3">
-          <span className="inline-block bg-slate-700/50 text-slate-500 px-2 py-0.5 rounded text-[9px] font-medium">
-            v{version}
-          </span>
+      {/* Version + Confidence badges */}
+      {(version || confidence !== undefined) && (
+        <div className="mt-3 flex items-center gap-1.5 flex-wrap">
+          {version && (
+            <span className="inline-block bg-slate-700/50 text-slate-500 px-2 py-0.5 rounded text-[9px] font-medium">
+              v{version}
+            </span>
+          )}
+          {confidence !== undefined && (
+            <span className={`inline-block px-2 py-0.5 rounded text-[9px] font-medium ${
+              confidence >= 85 ? 'bg-emerald-900/40 text-emerald-400' :
+              confidence >= 70 ? 'bg-amber-900/40 text-amber-400' :
+              confidence >= 50 ? 'bg-orange-900/40 text-orange-400' :
+              'bg-red-900/40 text-red-400'
+            }`}>
+              {confidence}% conf
+            </span>
+          )}
         </div>
       )}
 

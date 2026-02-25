@@ -365,13 +365,46 @@ function calculatePipelineStages(signals: MRESignal[], dataType: 'core' | 'unive
 interface WorkflowVisualizationProps {
   pipelineData: any;
   mreVersions: any;
+  strategyVersions: any;
   onStageClick: (stageKey: string) => void;
 }
 
-function WorkflowVisualization({ pipelineData, mreVersions, onStageClick }: WorkflowVisualizationProps) {
+// Map strategy keys to strategy-versions.json keys
+const STRATEGY_VERSION_KEY_MAP: Record<string, string> = {
+  fear_greed: 'fear_greed',
+  regime_confirmation: 'regime_confirm',
+  rsi_oversold: 'rsi_oversold',
+  mean_reversion: 'mean_reversion',
+  momentum: 'momentum',
+  time_series_momentum: 'time_series_momentum',
+  qvm_factor: 'qvm_factor',
+  vix_mean_reversion: 'vix_mean_reversion',
+};
+
+// Non-strategy node confidence levels (based on design maturity and validation)
+const PIPELINE_NODE_CONFIDENCE: Record<string, number> = {
+  input: 95,           // Data ingestion — well-tested, mature
+  persistence: 70,     // New system, still accumulating data
+  signalGating: 88,    // Bear/sell suppression — straightforward logic
+  confidenceTuning: 75, // Multiple adjustment factors — moderate complexity
+  finalFilters: 82,    // Cluster limits + crash mode — well-defined rules
+  output: 95,          // Pass-through — minimal logic
+};
+
+function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, onStageClick }: WorkflowVisualizationProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const nodeRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  
+  // Build strategy confidence lookup from strategy-versions.json
+  const getStrategyConfidence = (stratKey: string): number | undefined => {
+    if (!strategyVersions?.strategies) return undefined;
+    const versionKey = STRATEGY_VERSION_KEY_MAP[stratKey];
+    if (!versionKey) return undefined;
+    const strat = strategyVersions.strategies[versionKey];
+    if (!strat?.versions?.[0]?.accuracy?.overall) return undefined;
+    return Math.round(strat.versions[0].accuracy.overall);
+  };
   
   // Store node positions for connection lines
   const [connections, setConnections] = useState<{ from: string; to: string; fromPos: { x: number; y: number }; toPos: { x: number; y: number } }[]>([]);
@@ -677,6 +710,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, onStageClick }: Work
               onClick={() => onStageClick('input')}
               nodeType="input"
               version={mreVersions?.signals || '2.0.0'}
+              confidence={PIPELINE_NODE_CONFIDENCE.input}
             />
           </div>
           
@@ -703,6 +737,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, onStageClick }: Work
                     nodeType="strategy"
                     isPending={pending > 0}
                     className="max-w-[180px]"
+                    confidence={getStrategyConfidence(sv.key)}
                   />
                 );
               })}
@@ -743,6 +778,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, onStageClick }: Work
               nodeType="persistence"
               isPending={pipelineData.persistenceGate.pendingCount > 0}
               version="4.0.0"
+              confidence={PIPELINE_NODE_CONFIDENCE.persistence}
             />
           </div>
           
@@ -762,6 +798,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, onStageClick }: Work
               bypassLabel={pipelineData.signalGating.persistenceBypass 
                 ? "No confirmed signals — using raw votes" 
                 : undefined}
+              confidence={PIPELINE_NODE_CONFIDENCE.signalGating}
             />
           </div>
           
@@ -776,6 +813,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, onStageClick }: Work
               onClick={() => onStageClick('confidenceTuning')}
               nodeType="modifier"
               version={mreVersions?.pit || '1.1.0'}
+              confidence={PIPELINE_NODE_CONFIDENCE.confidenceTuning}
             />
           </div>
           
@@ -790,6 +828,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, onStageClick }: Work
               onClick={() => onStageClick('finalFilters')}
               nodeType="filter"
               version={mreVersions?.config || '2.0.0'}
+              confidence={PIPELINE_NODE_CONFIDENCE.finalFilters}
             />
           </div>
           
@@ -804,6 +843,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, onStageClick }: Work
               onClick={() => onStageClick('output')}
               nodeType="output"
               version={pipelineVersion}
+              confidence={PIPELINE_NODE_CONFIDENCE.output}
             />
           </div>
         </div>
@@ -857,6 +897,7 @@ export default function SignalFlowTab() {
   const [coreData, setCoreData] = useState<MREData | null>(null);
   const [universeData, setUniverseData] = useState<MREData | null>(null);
   const [mreVersions, setMreVersions] = useState<any>(null);
+  const [strategyVersions, setStrategyVersions] = useState<any>(null);
   const [selectedStage, setSelectedStage] = useState<StageDetails | null>(null);
   const [dataMode, setDataMode] = useState<'core' | 'universe'>('universe');
   const [loading, setLoading] = useState(false);
@@ -871,10 +912,11 @@ export default function SignalFlowTab() {
         setLoading(true);
         
         // Fetch directly from public JSON files (the raw MRE signal data + versions)
-        const [coreResponse, universeResponse, versionsResponse] = await Promise.allSettled([
+        const [coreResponse, universeResponse, versionsResponse, stratVersionsResponse] = await Promise.allSettled([
           fetch('/data/trading/mre-signals.json'),
           fetch('/data/trading/mre-signals-universe.json'),
-          fetch('/data/trading/mre-versions.json')
+          fetch('/data/trading/mre-versions.json'),
+          fetch('/data/trading/strategy-versions.json'),
         ]);
         
         if (coreResponse.status === 'fulfilled' && coreResponse.value.ok) {
@@ -896,6 +938,11 @@ export default function SignalFlowTab() {
           setMreVersions(versionsJson);
         } else {
           console.log('Could not load MRE versions data');
+        }
+        
+        if (stratVersionsResponse.status === 'fulfilled' && stratVersionsResponse.value.ok) {
+          const stratJson = await stratVersionsResponse.value.json();
+          setStrategyVersions(stratJson);
         }
       } catch (error) {
         console.error('Error loading signal data:', error);
@@ -1333,6 +1380,7 @@ export default function SignalFlowTab() {
       <WorkflowVisualization 
         pipelineData={pipelineData}
         mreVersions={mreVersions}
+        strategyVersions={strategyVersions}
         onStageClick={handleStageClick}
       />
 

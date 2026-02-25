@@ -40,16 +40,18 @@ import {
   Calendar,
 } from "lucide-react";
 import { useEffect, useRef, useState, useCallback, useMemo, type ReactNode } from "react";
+import { FleetTab } from "./fleet-tab";
 
 /* ═══════════════════════════════════════════════════════════════
    Page-level Tab Types
    ═══════════════════════════════════════════════════════════════ */
 
-type PageTab = "org-chart" | "protocols" | "cron-jobs" | "how-it-works";
+type PageTab = "org-chart" | "protocols" | "cron-jobs" | "how-it-works" | "fleet";
 
 const PAGE_TABS: { id: PageTab; label: string; emoji: string }[] = [
-  { id: "org-chart", label: "Org Chart", emoji: "🏢" },
-  { id: "protocols", label: "Protocols", emoji: "⚡" },
+  { id: "org-chart", label: "Agents", emoji: "🏢" },
+  { id: "fleet", label: "Fleet", emoji: "⚡" },
+  { id: "protocols", label: "Protocols", emoji: "📋" },
   { id: "cron-jobs", label: "Cron Jobs", emoji: "⏰" },
   { id: "how-it-works", label: "How It Works", emoji: "📘" },
 ];
@@ -5035,10 +5037,10 @@ export default function OrgChartPage() {
         </div>
         <div>
           <h1 className="text-2xl font-bold text-slate-100 tracking-tight">
-            Org Chart
+            Command Center
           </h1>
           <p className="text-sm text-slate-500">
-            Agent hierarchy &amp; workspaces — click any agent to manage
+            Agent hierarchy, fleet status &amp; operations
           </p>
         </div>
       </div>
@@ -5097,6 +5099,12 @@ export default function OrgChartPage() {
             />
           )}
         </>
+      )}
+
+      {activePageTab === "fleet" && (
+        <div className="max-w-6xl mx-auto">
+          <FleetTab />
+        </div>
       )}
 
       {activePageTab === "protocols" && (

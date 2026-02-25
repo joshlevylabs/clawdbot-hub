@@ -16,7 +16,6 @@ import {
   TrendingUp,
   Lock,
   Network,
-  Cpu,
   Layers,
   ClipboardList,
   Activity,
@@ -26,8 +25,7 @@ import { useRouter } from "next/navigation";
 const navItems = [
   { href: "/dashboard", icon: Sunrise, label: "Dashboard" },
   { href: "/bulletin", icon: ClipboardList, label: "Bulletin" },
-  { href: "/org-chart", icon: Network, label: "Org Chart" },
-  { href: "/fleet", icon: Cpu, label: "Fleet" },
+  { href: "/org-chart", icon: Network, label: "Command Center" },
   { href: "/standups", icon: MessageSquare, label: "Standups" },
   { href: "/trading", icon: TrendingUp, label: "Finance" },
   { href: "/morning-brief", icon: Clock, label: "Morning Brief" },

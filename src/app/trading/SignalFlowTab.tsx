@@ -643,6 +643,29 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
       return { x: r.left - containerRect.left, y: r.top + r.height / 2 - containerRect.top };
     };
     
+    // Helper functions to get specific dot positions on multi-dot nodes
+    const getLeftDot = (node: HTMLDivElement, dotIndex: number, totalDots: number) => {
+      const r = node.getBoundingClientRect();
+      const dotSpacing = totalDots > 1 ? 60 : 0;
+      const startY = totalDots > 1 ? 30 : 50;
+      const yPosition = startY + (dotIndex * (dotSpacing / Math.max(1, totalDots - 1)));
+      return { 
+        x: r.left - containerRect.left, 
+        y: r.top + yPosition - containerRect.top 
+      };
+    };
+
+    const getRightDot = (node: HTMLDivElement, dotIndex: number, totalDots: number) => {
+      const r = node.getBoundingClientRect();
+      const dotSpacing = totalDots > 1 ? 60 : 0;
+      const startY = totalDots > 1 ? 30 : 50;
+      const yPosition = startY + (dotIndex * (dotSpacing / Math.max(1, totalDots - 1)));
+      return { 
+        x: r.right - containerRect.left, 
+        y: r.top + yPosition - containerRect.top 
+      };
+    };
+    
     const strategyKeys = [
       'fear_greed', 'regime_confirmation', 'rsi_oversold', 'mean_reversion',
       'momentum', 'time_series_momentum', 'qvm_factor', 'vix_mean_reversion'
@@ -744,17 +767,20 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
       });
     });
     
-    // 5. Fan-in: Post-persistence consensus nodes → Signal Gating
+    // 5. Fan-in: Post-persistence consensus nodes → Signal Gating (dot-to-dot connections)
     const signalGatingNode = nodeRefs.current['signalGating'];
     if (signalGatingNode) {
-      const toPos = getLeft(signalGatingNode);
-      pipelineData.postPersistenceConsensusPaths?.forEach((path: any) => {
+      pipelineData.postPersistenceConsensusPaths?.forEach((path: any, dotIndex: number) => {
         const postConsNode = nodeRefs.current[`post_consensus_${path.voteCount}`];
         if (!postConsNode) return;
         
+        const totalDots = pipelineData.postPersistenceConsensusPaths.length;
+        const fromPos = getRight(postConsNode); // Single dot output from consensus node
+        const toPos = getLeftDot(signalGatingNode, dotIndex, totalDots); // Specific input dot on Signal Gating
+        
         newConnections.push({
           from: `post_consensus_${path.voteCount}`, to: 'signalGating',
-          fromPos: getRight(postConsNode), toPos,
+          fromPos, toPos,
           isActive: path.count > 0,
           isPending: false
         });
@@ -776,24 +802,12 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
           if (path.count === 0) return; // Skip empty tiers
           
           const totalDots = pipelineData.postGatingConsensusPaths.length;
-          const dotSpacing = totalDots > 1 ? 60 : 0;
-          const startY = totalDots > 1 ? 30 : 50;
-          const yPosition = startY + (tierIndex * (dotSpacing / Math.max(1, totalDots - 1)));
           
-          // Calculate positions for output dot of from node and input dot of to node
-          const fromRect = fromNode.getBoundingClientRect();
-          const toRect = toNode.getBoundingClientRect();
-          const containerRect = containerRef.current?.getBoundingClientRect();
-          if (!containerRect) return; // Skip if container ref not available
-          
-          const fromPos = { 
-            x: fromRect.right - containerRect.left, 
-            y: fromRect.top - containerRect.top + yPosition 
-          };
-          const toPos = { 
-            x: toRect.left - containerRect.left, 
-            y: toRect.top - containerRect.top + yPosition 
-          };
+          // Use proper dot positioning functions
+          const fromPos = getRightDot(fromNode, tierIndex, totalDots);
+          const toPos = toNodeKey === 'agentAnalysis' 
+            ? getLeftDot(toNode, tierIndex, totalDots)  // Agent Analysis has input dots
+            : getLeftDot(toNode, tierIndex, totalDots);  // All other nodes have input dots
           
           // Determine if this tier connection is active
           let isActive = false;

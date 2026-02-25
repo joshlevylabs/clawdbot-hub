@@ -8,10 +8,11 @@
     "midday-checkpoint": 10,
     "evening-session": 13,
     "adhoc-podcast-planning-episode-4-how-i-use-ai-agents-to-run-my-entire-podcast-and-newsletter-pipeline": 1,
-    "night-wrap": 3,
+    "night-wrap": 4,
     "adhoc-welcome-modal-design": 2,
     "adhoc-paper-trading-portfolio-management-in-lever": 2,
-    "adhoc-mre-signal-flow-visualization-hub-signals-page-overhaul": 5
+    "adhoc-mre-signal-flow-visualization-hub-signals-page-overhaul": 5,
+    "adhoc-model-test": 1
   },
   "abbreviations": {
     "adhoc-evening-wrap": "STD",
@@ -26,5 +27,5 @@
     "adhoc-welcome-modal-design": "STD",
     "adhoc-paper-trading-portfolio-management-in-lever": "STD"
   },
-  "global_counter": 39
+  "global_counter": 41
 }

@@ -3,16 +3,6 @@
     {
       "date": "2026-02-17",
       "type": "adhoc-lever-faith-and-family",
-      "inputTokens": 1200,
-      "outputTokens": 1252,
-      "totalTokens": 2452,
-      "estimatedCost": 0.1119,
-      "model": "claude-opus-4-6",
-      "duration": "31.5s"
-    },
-    {
-      "date": "2026-02-17",
-      "type": "adhoc-lever-faith-and-family",
       "inputTokens": 1251,
       "outputTokens": 1309,
       "totalTokens": 2560,
@@ -999,12 +989,22 @@
       "estimatedCost": 0.0684,
       "model": "claude-sonnet-4-20250514",
       "duration": "68.0s"
+    },
+    {
+      "date": "2026-02-24",
+      "type": "night-wrap",
+      "inputTokens": 7074,
+      "outputTokens": 2399,
+      "totalTokens": 9473,
+      "estimatedCost": 0.0572,
+      "model": "claude-sonnet-4-20250514",
+      "duration": "64.7s"
     }
   ],
   "totals": {
-    "today": 0.3135,
-    "week": 20.69,
-    "month": 20.69,
+    "today": 0.3707,
+    "week": 20.6353,
+    "month": 20.6353,
     "standupCount": 100
   }
 }

@@ -1,6 +1,19 @@
 {
   "standups": [
     {
+      "date": "2026-02-25",
+      "time": "05:10",
+      "type": "adhoc-model-test",
+      "typeName": "model-test",
+      "typeEmoji": "\ud83e\uddea",
+      "topic": "model-test \u2014 Wednesday Feb 25",
+      "file": "2026-02-25-adhoc-model-test.json",
+      "tokenCost": 0,
+      "verticals": [],
+      "initiatives": [],
+      "instanceKey": "STD-41"
+    },
+    {
       "date": "2026-02-24",
       "time": "22:30",
       "type": "night-wrap",
@@ -8,10 +21,10 @@
       "typeEmoji": "\ud83c\udf19",
       "topic": "Night Wrap \u2014 Tuesday Feb 24",
       "file": "2026-02-24-night-wrap.json",
-      "tokenCost": 0.06609999999999999,
+      "tokenCost": 0.0572,
       "verticals": [],
       "initiatives": [],
-      "instanceKey": "STD-35"
+      "instanceKey": "STD-40"
     },
     {
       "date": "2026-02-24",

@@ -1,5 +1,5 @@
 {
-  "nextAgentId": 216,
+  "nextAgentId": 217,
   "nextJoshuaId": 38,
   "tasks": [
     {
@@ -2048,6 +2048,20 @@
       "updatedAt": "2026-02-24T20:54:55.325094-08:00",
       "completedAt": "2026-02-24T20:58:34.292700-08:00",
       "resolution": "Designed premium feature gates specification at ~/clawd/clawdbot-hub/public/data/specs/premium-feature-gates-paper-trading.md. Premium differentiated by analytics depth (attribution, risk scoring, psychology insights) rather than data speed. Priced at .99/month with 7-day trial."
+    },
+    {
+      "key": "A-216",
+      "text": "Commit 4 uncommitted monorepo change(s)",
+      "tag": "AGENT",
+      "priority": "low",
+      "assignee": "Elon",
+      "status": "pending",
+      "sourceStandup": "STD-40",
+      "sourceStandupType": "night-wrap",
+      "sourceDate": "2026-02-24",
+      "createdAt": "2026-02-24T22:30:21.160172-08:00",
+      "updatedAt": "2026-02-24T22:30:21.160172-08:00",
+      "completedAt": null
     }
   ]
 }

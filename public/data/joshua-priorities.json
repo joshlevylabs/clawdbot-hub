@@ -1,6 +1,6 @@
 {
-  "date": "2026-02-24",
-  "generatedAt": "2026-02-24T20:54:55.325094-08:00",
+  "date": "2026-02-25",
+  "generatedAt": "2026-02-25T05:10:07.077779-08:00",
   "priorities": [
     {
       "text": "Decide newsletter send timing relative to Apple approval",
@@ -173,28 +173,16 @@
       "taskKey": "A-211"
     },
     {
-      "text": "Finalize paper trading user flows for A-168, eliminate scope creep concerns",
-      "assignee": "Steve Jobs",
-      "status": "pending",
-      "taskKey": "A-212"
-    },
-    {
-      "text": "Document delayed-data strategy decision and cost structure for reference",
-      "assignee": "Chris Vermeullen",
-      "status": "pending",
-      "taskKey": "A-213"
-    },
-    {
       "text": "Continue building core trading engine per A-202",
       "assignee": "James Truchard",
       "status": "pending",
       "taskKey": "A-214"
     },
     {
-      "text": "Design premium feature gates per A-203",
-      "assignee": "Steve Jobs",
+      "text": "Commit 4 uncommitted monorepo change(s)",
+      "assignee": "Elon",
       "status": "pending",
-      "taskKey": "A-215"
+      "taskKey": "A-216"
     }
   ]
 }

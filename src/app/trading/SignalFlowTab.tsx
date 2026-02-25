@@ -402,42 +402,133 @@ function calculatePipelineStages(signals: MRESignal[], dataType: 'core' | 'unive
   const confidencePassed = signalGatePassed.filter(s => s.signal !== 'HOLD');
   const confidenceFiltered = signalGatePassed.filter(s => s.signal === 'HOLD');
   
+  // Add per-tier data for confidence tuning
+  const confidencePerTierData: Record<number, { input: number, output: number, tickers: MRESignal[] }> = {};
+  for (let voteCount = 1; voteCount <= 8; voteCount++) {
+    const tierInputTickers = signalGatePassed.filter(s => {
+      const actualVoteCount = strategyNames.filter(({ key }) => didStrategyFire(s, key)).length;
+      return actualVoteCount === voteCount;
+    });
+    const tierOutputTickers = tierInputTickers.filter(s => s.signal !== 'HOLD');
+    
+    if (tierInputTickers.length > 0) {
+      confidencePerTierData[voteCount] = {
+        input: tierInputTickers.length,
+        output: tierOutputTickers.length,
+        tickers: tierOutputTickers
+      };
+    }
+  }
+  
   const confidenceStage = {
     inputCount: signalGatePassed.length,
     outputCount: confidencePassed.length,
     passed: confidencePassed,
-    filtered: confidenceFiltered
+    filtered: confidenceFiltered,
+    perTierData: confidencePerTierData
   };
   
   // Step 5: Final Filters (cluster limit, asset confidence, crash mode, multiplier cap)
   const finalPassed = confidencePassed.filter(s => s.signal === 'BUY');
   const finalFiltered = confidencePassed.filter(s => s.signal !== 'BUY');
   
+  // Add per-tier data for final filters
+  const finalPerTierData: Record<number, { input: number, output: number, tickers: MRESignal[] }> = {};
+  for (let voteCount = 1; voteCount <= 8; voteCount++) {
+    const tierInputTickers = confidencePassed.filter(s => {
+      const actualVoteCount = strategyNames.filter(({ key }) => didStrategyFire(s, key)).length;
+      return actualVoteCount === voteCount;
+    });
+    const tierOutputTickers = tierInputTickers.filter(s => s.signal === 'BUY');
+    
+    if (tierInputTickers.length > 0) {
+      finalPerTierData[voteCount] = {
+        input: tierInputTickers.length,
+        output: tierOutputTickers.length,
+        tickers: tierOutputTickers
+      };
+    }
+  }
+  
   const finalStage = {
     inputCount: confidencePassed.length,
     outputCount: finalPassed.length,
     passed: finalPassed,
-    filtered: finalFiltered
+    filtered: finalFiltered,
+    perTierData: finalPerTierData
   };
   
   // Step 6: Output (only BUY signals)
+  // Add per-tier data for output
+  const outputPerTierData: Record<number, { input: number, output: number, tickers: MRESignal[] }> = {};
+  for (let voteCount = 1; voteCount <= 8; voteCount++) {
+    const tierTickers = finalPassed.filter(s => {
+      const actualVoteCount = strategyNames.filter(({ key }) => didStrategyFire(s, key)).length;
+      return actualVoteCount === voteCount;
+    });
+    
+    if (tierTickers.length > 0) {
+      outputPerTierData[voteCount] = {
+        input: tierTickers.length,
+        output: tierTickers.length, // Pass-through
+        tickers: tierTickers
+      };
+    }
+  }
+  
   const outputStage = {
     inputCount: finalPassed.length,
     outputCount: finalPassed.length,
     passed: [...finalPassed].sort((a, b) => b.signal_strength - a.signal_strength),
-    filtered: [] as MRESignal[]
+    filtered: [] as MRESignal[],
+    perTierData: outputPerTierData
   };
   
   // Step 7: Fibonacci Level Selection (post-output — determines entry, SL, TP)
+  // Add per-tier data for fibonacci levels (same as output since it's pass-through)
+  const fibonacciPerTierData: Record<number, { input: number, output: number, tickers: MRESignal[] }> = {};
+  for (let voteCount = 1; voteCount <= 8; voteCount++) {
+    const tierTickers = finalPassed.filter(s => {
+      const actualVoteCount = strategyNames.filter(({ key }) => didStrategyFire(s, key)).length;
+      return actualVoteCount === voteCount;
+    });
+    
+    if (tierTickers.length > 0) {
+      fibonacciPerTierData[voteCount] = {
+        input: tierTickers.length,
+        output: tierTickers.length, // Pass-through
+        tickers: tierTickers
+      };
+    }
+  }
+  
   const fibonacciLevels = {
     inputCount: finalPassed.length,
     outputCount: finalPassed.length, // All signals get fib levels calculated
     passed: finalPassed,
     filtered: [] as MRESignal[],
     status: finalPassed.length > 0 ? 'active' : 'waiting',
+    perTierData: fibonacciPerTierData
   };
 
   // Step 8: Agent Analysis (final review by trading agents)
+  // Add per-tier data for agent analysis (same as fibonacci since it's pass-through)
+  const agentPerTierData: Record<number, { input: number, output: number, tickers: MRESignal[] }> = {};
+  for (let voteCount = 1; voteCount <= 8; voteCount++) {
+    const tierTickers = finalPassed.filter(s => {
+      const actualVoteCount = strategyNames.filter(({ key }) => didStrategyFire(s, key)).length;
+      return actualVoteCount === voteCount;
+    });
+    
+    if (tierTickers.length > 0) {
+      agentPerTierData[voteCount] = {
+        input: tierTickers.length,
+        output: tierTickers.length, // Pass-through
+        tickers: tierTickers
+      };
+    }
+  }
+  
   const agentAnalysis = {
     inputCount: finalPassed.length,
     outputCount: finalPassed.length,
@@ -447,6 +538,7 @@ function calculatePipelineStages(signals: MRESignal[], dataType: 'core' | 'unive
       { name: 'Chris Vermeullen', role: 'Technical Analysis', status: finalPassed.length > 0 ? 'reviewing' : 'idle' },
       { name: 'Warren Buffett', role: 'Fundamental Analysis', status: 'pending' }, // Not yet active
     ],
+    perTierData: agentPerTierData
   };
 
   return {
@@ -669,24 +761,60 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
       });
     }
     
-    // 6. Sequential: Gating → Actionable Signals → Tuning → Filters → Output → Fibonacci → Agents
-    const seqKeys = ['signalGating', 'actionableSignals', 'confidenceTuning', 'finalFilters', 'output', 'fibonacciLevels', 'agentAnalysis'];
+    // 6. Sequential multi-dot cascade: Gating → Tuning → Filters → Output → Fibonacci → Agents
+    const seqKeys = ['signalGating', 'confidenceTuning', 'finalFilters', 'output', 'fibonacciLevels', 'agentAnalysis'];
+    // Multi-dot cascade: Each consensus tier flows through all remaining nodes
     for (let i = 0; i < seqKeys.length - 1; i++) {
-      const fromNode = nodeRefs.current[seqKeys[i]];
-      const toNode = nodeRefs.current[seqKeys[i + 1]];
-      if (fromNode && toNode) {
-        let isActive = false;
-        if (seqKeys[i] === 'signalGating') isActive = pipelineData.signalGating.outputCount > 0;
-        else if (seqKeys[i] === 'actionableSignals') isActive = pipelineData.signalGating.outputCount > 0;
-        else if (seqKeys[i] === 'confidenceTuning') isActive = pipelineData.confidenceTuning.outputCount > 0;
-        else if (seqKeys[i] === 'finalFilters') isActive = pipelineData.finalFilters.outputCount > 0;
-        else if (seqKeys[i] === 'output') isActive = pipelineData.output.outputCount > 0;
-        else if (seqKeys[i] === 'fibonacciLevels') isActive = pipelineData.fibonacciLevels.outputCount > 0;
-        
-        newConnections.push({
-          from: seqKeys[i], to: seqKeys[i + 1],
-          fromPos: getRight(fromNode), toPos: getLeft(toNode),
-          isActive
+      const fromNodeKey = seqKeys[i];
+      const toNodeKey = seqKeys[i + 1];
+      const fromNode = nodeRefs.current[fromNodeKey];
+      const toNode = nodeRefs.current[toNodeKey];
+      
+      if (fromNode && toNode && pipelineData.postGatingConsensusPaths?.length > 0) {
+        // Draw one connection per consensus tier that has signals
+        pipelineData.postGatingConsensusPaths.forEach((path: VoteConsensusPath, tierIndex: number) => {
+          if (path.count === 0) return; // Skip empty tiers
+          
+          const totalDots = pipelineData.postGatingConsensusPaths.length;
+          const dotSpacing = totalDots > 1 ? 60 : 0;
+          const startY = totalDots > 1 ? 30 : 50;
+          const yPosition = startY + (tierIndex * (dotSpacing / Math.max(1, totalDots - 1)));
+          
+          // Calculate positions for output dot of from node and input dot of to node
+          const fromRect = fromNode.getBoundingClientRect();
+          const toRect = toNode.getBoundingClientRect();
+          const containerRect = containerRef.current?.getBoundingClientRect();
+          if (!containerRect) return; // Skip if container ref not available
+          
+          const fromPos = { 
+            x: fromRect.right - containerRect.left, 
+            y: fromRect.top - containerRect.top + yPosition 
+          };
+          const toPos = { 
+            x: toRect.left - containerRect.left, 
+            y: toRect.top - containerRect.top + yPosition 
+          };
+          
+          // Determine if this tier connection is active
+          let isActive = false;
+          if (fromNodeKey === 'signalGating') isActive = pipelineData.signalGating.outputCount > 0;
+          else if (fromNodeKey === 'confidenceTuning') isActive = pipelineData.confidenceTuning.outputCount > 0;
+          else if (fromNodeKey === 'finalFilters') isActive = pipelineData.finalFilters.outputCount > 0;
+          else if (fromNodeKey === 'output') isActive = pipelineData.output.outputCount > 0;
+          else if (fromNodeKey === 'fibonacciLevels') isActive = pipelineData.fibonacciLevels.outputCount > 0;
+          
+          // Add tier-specific styling
+          const tierConnection = {
+            from: `${fromNodeKey}_tier_${path.voteCount}`, 
+            to: `${toNodeKey}_tier_${path.voteCount}`,
+            fromPos, 
+            toPos,
+            isActive,
+            tierVoteCount: path.voteCount, // Add tier info for styling
+            isPending: false
+          } as typeof newConnections[0] & { tierVoteCount?: number };
+          
+          newConnections.push(tierConnection);
         });
       }
     }
@@ -794,6 +922,22 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
               <stop offset="50%" stopColor="rgb(245, 158, 11)" stopOpacity="0.6" />
               <stop offset="100%" stopColor="rgb(251, 191, 36)" stopOpacity="0.8" />
             </linearGradient>
+            {/* Tier-specific gradients */}
+            <linearGradient id="tier3PlusGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="rgb(52, 211, 153)" stopOpacity="0.8" />
+              <stop offset="50%" stopColor="rgb(34, 197, 94)" stopOpacity="0.7" />
+              <stop offset="100%" stopColor="rgb(52, 211, 153)" stopOpacity="0.8" />
+            </linearGradient>
+            <linearGradient id="tier2Gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="rgb(59, 130, 246)" stopOpacity="0.8" />
+              <stop offset="50%" stopColor="rgb(96, 165, 250)" stopOpacity="0.6" />
+              <stop offset="100%" stopColor="rgb(59, 130, 246)" stopOpacity="0.8" />
+            </linearGradient>
+            <linearGradient id="tier1Gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="rgb(148, 163, 184)" stopOpacity="0.7" />
+              <stop offset="50%" stopColor="rgb(100, 116, 139)" stopOpacity="0.5" />
+              <stop offset="100%" stopColor="rgb(148, 163, 184)" stopOpacity="0.7" />
+            </linearGradient>
             <filter id="glow">
               <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
               <feMerge> 
@@ -819,19 +963,43 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
           {connections.map((connection, index) => {
             const isActive = (connection as any).isActive;
             const isPending = (connection as any).isPending;
+            const tierVoteCount = (connection as any).tierVoteCount;
             
             let strokeColor = "url(#connectionGradient)";
             let className = "";
             let opacity = "0.4";
+            let strokeWidth = "1.5";
             
-            if (isActive) {
-              strokeColor = "url(#activeGradient)";
-              className = "flow-active";
-              opacity = "0.8";
-            } else if (isPending) {
-              strokeColor = "url(#pendingGradient)";
-              className = "flow-pending";
-              opacity = "0.7";
+            // Apply tier-specific styling for multi-dot connections
+            if (tierVoteCount !== undefined) {
+              if (tierVoteCount >= 3) {
+                strokeColor = "url(#tier3PlusGradient)";
+                opacity = "0.8";
+                strokeWidth = "2.5";
+                className = "flow-active";
+              } else if (tierVoteCount >= 2) {
+                strokeColor = "url(#tier2Gradient)";
+                opacity = "0.7";
+                strokeWidth = "2";
+                className = "flow-active";
+              } else {
+                strokeColor = "url(#tier1Gradient)";
+                opacity = "0.5";
+                strokeWidth = "1.5";
+              }
+            } else {
+              // Legacy single-dot connections
+              if (isActive) {
+                strokeColor = "url(#activeGradient)";
+                className = "flow-active";
+                opacity = "0.8";
+                strokeWidth = "2.5";
+              } else if (isPending) {
+                strokeColor = "url(#pendingGradient)";
+                className = "flow-pending";
+                opacity = "0.7";
+                strokeWidth = "2";
+              }
             }
             
             return (
@@ -839,11 +1007,11 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
                 key={`${connection.from}-${connection.to}-${index}`}
                 d={createBezierPath(connection.fromPos, connection.toPos)}
                 stroke={strokeColor}
-                strokeWidth={isActive || isPending ? "2.5" : "1.5"}
+                strokeWidth={strokeWidth}
                 fill="none"
-                filter={isActive || isPending ? "url(#glow)" : undefined}
+                filter={(isActive || isPending || tierVoteCount !== undefined) ? "url(#glow)" : undefined}
                 opacity={opacity}
-                strokeDasharray={isActive || isPending ? "8 6" : "4 4"}
+                strokeDasharray={(isActive || isPending || tierVoteCount !== undefined) ? "8 6" : "4 4"}
                 className={className}
               />
             );
@@ -989,63 +1157,85 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
             </div>
           </div>
 
-          {/* Column 6: Signal Gating */}
-          <div className="flex flex-col items-center gap-6">
-            <WorkflowNode
-              ref={(el) => { nodeRefs.current['signalGating'] = el; }}
-              name="Signal Gating"
-              description={pipelineData.signalGating.persistenceBypass 
-                ? "Persistence bypass — all raw votes" 
-                : "Bear & sell suppression"}
-              inputCount={pipelineData.signalGating.inputCount}
-              outputCount={pipelineData.signalGating.outputCount}
-              onClick={() => onStageClick('signalGating')}
-              nodeType="filter"
-              version={mreVersions?.signals || '2.0.0'}
-              bypassLabel={pipelineData.signalGating.persistenceBypass 
-                ? "No confirmed signals — using raw votes" 
-                : undefined}
-              confidence={PIPELINE_NODE_CONFIDENCE.signalGating}
-            />
-          </div>
-
-          {/* Column 6.5: Actionable Signals */}
+          {/* Column 6: Combined Signal Gating with Multi-Dot Connections */}
           <div className="flex flex-col items-center gap-6">
             <div
-              ref={(el) => { nodeRefs.current['actionableSignals'] = el; }}
+              ref={(el) => { nodeRefs.current['signalGating'] = el; }}
               className={`
                 relative bg-slate-800/90 rounded-xl border-2 p-4 cursor-pointer
                 transition-all duration-200 hover:shadow-lg hover:shadow-black/20
-                min-w-[140px] md:min-w-[160px] max-w-[180px] md:max-w-[200px]
+                min-w-[180px] md:min-w-[200px] max-w-[220px] md:max-w-[240px]
                 ${pipelineData.signalGating.outputCount > 0 
                   ? 'border-emerald-500/40 hover:border-emerald-400/60' 
                   : 'border-slate-600/40 hover:border-slate-500/60'}
               `}
-              onClick={() => onStageClick('actionableSignals')}
-              style={{ minHeight: `${Math.max(120, 60 + (pipelineData.postGatingConsensusPaths?.length || 0) * 32)}px` }}
+              onClick={() => onStageClick('signalGating')}
+              style={{ minHeight: `${Math.max(180, 80 + (pipelineData.postGatingConsensusPaths?.length || 0) * 24)}px` }}
             >
-              {/* Input connector dot */}
-              <div className="absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 bg-slate-600 border-2 border-slate-700 rounded-full" />
-              {/* Output connector dot */}
-              <div className="absolute right-0 top-1/2 translate-x-1/2 -translate-y-1/2 w-3 h-3 bg-slate-600 border-2 border-slate-700 rounded-full" />
+              {/* Multi-dot input connectors (left side) */}
+              {pipelineData.postPersistenceConsensusPaths?.map((path: VoteConsensusPath, index: number) => {
+                const totalDots = pipelineData.postPersistenceConsensusPaths.length;
+                const dotSpacing = totalDots > 1 ? 60 : 0; // Height available for dots
+                const startY = totalDots > 1 ? 30 : 50; // Offset from top
+                const yPosition = startY + (index * (dotSpacing / Math.max(1, totalDots - 1)));
+                
+                const getColorForTier = (voteCount: number) => {
+                  if (voteCount >= 3) return 'border-emerald-400 bg-emerald-400/20';
+                  if (voteCount >= 2) return 'border-blue-400 bg-blue-400/20';
+                  return 'border-slate-500 bg-slate-500/20';
+                };
+                
+                return (
+                  <div
+                    key={`input-${path.voteCount}`}
+                    className={`absolute left-0 w-3.5 h-3.5 rounded-full border-2 ${getColorForTier(path.voteCount)} -translate-x-1/2`}
+                    style={{ top: `${yPosition}px` }}
+                  />
+                );
+              })}
+              
+              {/* Multi-dot output connectors (right side) */}
+              {pipelineData.postGatingConsensusPaths?.map((path: VoteConsensusPath, index: number) => {
+                const totalDots = pipelineData.postGatingConsensusPaths.length;
+                const dotSpacing = totalDots > 1 ? 60 : 0;
+                const startY = totalDots > 1 ? 30 : 50;
+                const yPosition = startY + (index * (dotSpacing / Math.max(1, totalDots - 1)));
+                
+                const getColorForTier = (voteCount: number) => {
+                  if (voteCount >= 3) return 'border-emerald-400 bg-emerald-400/20';
+                  if (voteCount >= 2) return 'border-blue-400 bg-blue-400/20';
+                  return 'border-slate-500 bg-slate-500/20';
+                };
+                
+                return (
+                  <div
+                    key={`output-${path.voteCount}`}
+                    className={`absolute right-0 w-3.5 h-3.5 rounded-full border-2 ${getColorForTier(path.voteCount)} translate-x-1/2`}
+                    style={{ top: `${yPosition}px` }}
+                  />
+                );
+              })}
               
               {/* Icon */}
               <div className="bg-emerald-500/20 rounded-lg p-2 w-fit mb-3">
-                <Activity className="w-3.5 h-3.5 text-emerald-400" />
+                <Activity className="w-4 h-4 text-emerald-400" />
               </div>
               
-              <h3 className="text-sm font-bold text-slate-200 mb-1 leading-tight">📊 Actionable Signals</h3>
-              <p className="text-xs text-slate-400 mb-3 leading-tight">Breakdown by consensus tier</p>
+              <h3 className="text-sm font-bold text-slate-200 mb-1 leading-tight">🛡️ Signal Gating</h3>
+              <p className="text-xs text-slate-400 mb-3 leading-tight">Bear & sell suppression</p>
               
-              {/* Dynamic consensus tier rows */}
+              {/* Per-tier gating results */}
               <div className="space-y-1 mb-3">
                 {pipelineData.postGatingConsensusPaths?.length > 0 ? (
                   pipelineData.postGatingConsensusPaths
                     .slice()
                     .sort((a: VoteConsensusPath, b: VoteConsensusPath) => b.voteCount - a.voteCount)
                     .map((path: VoteConsensusPath) => {
+                      // Find corresponding input count from postPersistenceConsensusPaths
+                      const inputPath = pipelineData.postPersistenceConsensusPaths?.find((p: VoteConsensusPath) => p.voteCount === path.voteCount);
+                      const inputCount = inputPath?.count || 0;
+                      
                       const getIconAndStyle = (voteCount: number) => {
-                        if (voteCount >= 4) return { icon: '🔥', color: 'text-emerald-400', weight: 'font-bold' };
                         if (voteCount >= 3) return { icon: '🔥', color: 'text-emerald-400', weight: 'font-bold' };
                         if (voteCount >= 2) return { icon: '⚡', color: 'text-blue-400', weight: 'font-medium' };
                         return { icon: '', color: 'text-slate-400', weight: 'font-normal' };
@@ -1056,34 +1246,142 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
                       return (
                         <div key={path.voteCount} className="flex justify-between text-xs">
                           <span className={`${color} ${weight}`}>
-                            {path.voteCount}/8 → {path.count} signals {icon}
+                            {path.voteCount}/8: {inputCount} → {path.count} {icon}
                           </span>
                         </div>
                       );
                     })
                 ) : (
-                  <div className="text-xs text-slate-500 italic">No signals passed gating</div>
+                  <div className="text-xs text-slate-500 italic">No signals to gate</div>
                 )}
               </div>
 
-              {/* Total at bottom */}
+              {/* Summary divider and totals */}
               <div className="border-t border-slate-700/50 pt-2 mb-3">
+                <div className="flex justify-between text-xs mb-1">
+                  <span className="text-slate-500">Filtered:</span>
+                  <span className="text-red-400 font-medium">
+                    {pipelineData.signalGating.inputCount - pipelineData.signalGating.outputCount}
+                  </span>
+                </div>
                 <div className="flex justify-between text-xs">
                   <span className="text-slate-500">Total:</span>
                   <span className={`font-bold ${pipelineData.signalGating.outputCount > 0 ? 'text-emerald-400' : 'text-slate-600'}`}>
-                    {pipelineData.signalGating.outputCount} passed
+                    {pipelineData.signalGating.inputCount} → {pipelineData.signalGating.outputCount}
                   </span>
                 </div>
               </div>
 
-              {/* Confidence badge using highest tier's consensus confidence */}
+              {/* Version + Confidence */}
               <div className="flex items-center gap-1.5 flex-wrap">
-                <span className="inline-block bg-slate-700/50 text-slate-500 px-2 py-0.5 rounded text-[9px] font-medium">v3.1.0</span>
+                <span className="inline-block bg-slate-700/50 text-slate-500 px-2 py-0.5 rounded text-[9px] font-medium">
+                  {mreVersions?.signals || '2.0.0'}
+                </span>
                 <span className="inline-block bg-emerald-900/40 text-emerald-400 px-2 py-0.5 rounded text-[9px] font-medium">
-                  {pipelineData.postGatingConsensusPaths?.length > 0 
-                    ? `${CONSENSUS_CONFIDENCE[Math.max(...pipelineData.postGatingConsensusPaths.map((p: VoteConsensusPath) => p.voteCount))] || 35}% conf`
-                    : '35% conf'
-                  }
+                  {PIPELINE_NODE_CONFIDENCE.signalGating}% conf
+                </span>
+              </div>
+
+              {/* Bypass label if applicable */}
+              {pipelineData.signalGating.persistenceBypass && (
+                <div className="mt-2 px-2 py-1 bg-amber-900/30 border border-amber-700/30 rounded text-[9px] text-amber-400">
+                  Persistence bypass — using raw votes
+                </div>
+              )}
+
+              {/* Hover glow */}
+              <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-white/[0.05] to-transparent opacity-0 hover:opacity-100 transition-opacity pointer-events-none" />
+            </div>
+          </div>
+          
+          {/* Column 7: Confidence Tuning with Multi-Dot Connections */}
+          <div className="flex flex-col items-center gap-6">
+            <div
+              ref={(el) => { nodeRefs.current['confidenceTuning'] = el; }}
+              className={`
+                relative bg-slate-800/90 rounded-xl border-2 p-4 cursor-pointer
+                transition-all duration-200 hover:shadow-lg hover:shadow-black/20
+                min-w-[160px] md:min-w-[180px] max-w-[200px] md:max-w-[220px]
+                ${pipelineData.confidenceTuning.outputCount > 0 
+                  ? 'border-blue-500/40 hover:border-blue-400/60' 
+                  : 'border-slate-600/40 hover:border-slate-500/60'}
+              `}
+              onClick={() => onStageClick('confidenceTuning')}
+              style={{ minHeight: '140px' }}
+            >
+              {/* Multi-dot input connectors (left side) */}
+              {pipelineData.postGatingConsensusPaths?.map((path: VoteConsensusPath, index: number) => {
+                const totalDots = pipelineData.postGatingConsensusPaths.length;
+                const dotSpacing = totalDots > 1 ? 60 : 0;
+                const startY = totalDots > 1 ? 30 : 50;
+                const yPosition = startY + (index * (dotSpacing / Math.max(1, totalDots - 1)));
+                
+                const getColorForTier = (voteCount: number) => {
+                  if (voteCount >= 3) return 'border-emerald-400 bg-emerald-400/20';
+                  if (voteCount >= 2) return 'border-blue-400 bg-blue-400/20';
+                  return 'border-slate-500 bg-slate-500/20';
+                };
+                
+                return (
+                  <div
+                    key={`input-${path.voteCount}`}
+                    className={`absolute left-0 w-3.5 h-3.5 rounded-full border-2 ${getColorForTier(path.voteCount)} -translate-x-1/2`}
+                    style={{ top: `${yPosition}px` }}
+                  />
+                );
+              })}
+              
+              {/* Multi-dot output connectors (right side) */}
+              {pipelineData.postGatingConsensusPaths?.map((path: VoteConsensusPath, index: number) => {
+                const totalDots = pipelineData.postGatingConsensusPaths.length;
+                const dotSpacing = totalDots > 1 ? 60 : 0;
+                const startY = totalDots > 1 ? 30 : 50;
+                const yPosition = startY + (index * (dotSpacing / Math.max(1, totalDots - 1)));
+                
+                const getColorForTier = (voteCount: number) => {
+                  if (voteCount >= 3) return 'border-emerald-400 bg-emerald-400/20';
+                  if (voteCount >= 2) return 'border-blue-400 bg-blue-400/20';
+                  return 'border-slate-500 bg-slate-500/20';
+                };
+                
+                return (
+                  <div
+                    key={`output-${path.voteCount}`}
+                    className={`absolute right-0 w-3.5 h-3.5 rounded-full border-2 ${getColorForTier(path.voteCount)} translate-x-1/2`}
+                    style={{ top: `${yPosition}px` }}
+                  />
+                );
+              })}
+              
+              {/* Icon */}
+              <div className="bg-blue-500/20 rounded-lg p-2 w-fit mb-3">
+                <Target className="w-4 h-4 text-blue-400" />
+              </div>
+              
+              <h3 className="text-sm font-bold text-slate-200 mb-1 leading-tight">Confidence Tuning</h3>
+              <p className="text-xs text-slate-400 mb-3 leading-tight">Regime, role, rotation adjustments</p>
+              
+              {/* Input/Output counts */}
+              <div className="space-y-1 mb-3">
+                <div className="flex justify-between text-xs">
+                  <span className="text-slate-500">Input:</span>
+                  <span className="text-slate-300 font-medium">{pipelineData.confidenceTuning.inputCount}</span>
+                </div>
+                <div className="flex justify-between text-xs">
+                  <span className="text-slate-500">Output:</span>
+                  <span className={`font-bold ${pipelineData.confidenceTuning.outputCount > 0 ? 'text-blue-400' : 'text-slate-600'}`}>
+                    {pipelineData.confidenceTuning.outputCount}
+                  </span>
+                </div>
+              </div>
+
+              {/* Version + Confidence */}
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span className="inline-block bg-slate-700/50 text-slate-500 px-2 py-0.5 rounded text-[9px] font-medium">
+                  {mreVersions?.pit || '1.1.0'}
+                </span>
+                <span className="inline-block bg-blue-900/40 text-blue-400 px-2 py-0.5 rounded text-[9px] font-medium">
+                  {PIPELINE_NODE_CONFIDENCE.confidenceTuning}% conf
                 </span>
               </div>
 
@@ -1092,49 +1390,196 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
             </div>
           </div>
           
-          {/* Column 7: Confidence Tuning */}
+          {/* Column 8: Final Filters with Multi-Dot Connections */}
           <div className="flex flex-col items-center gap-6">
-            <WorkflowNode
-              ref={(el) => { nodeRefs.current['confidenceTuning'] = el; }}
-              name="Confidence Tuning"
-              description="Regime, role, rotation adjustments"
-              inputCount={pipelineData.confidenceTuning.inputCount}
-              outputCount={pipelineData.confidenceTuning.outputCount}
-              onClick={() => onStageClick('confidenceTuning')}
-              nodeType="modifier"
-              version={mreVersions?.pit || '1.1.0'}
-              confidence={PIPELINE_NODE_CONFIDENCE.confidenceTuning}
-            />
-          </div>
-          
-          {/* Column 8: Final Filters */}
-          <div className="flex flex-col items-center gap-6">
-            <WorkflowNode
+            <div
               ref={(el) => { nodeRefs.current['finalFilters'] = el; }}
-              name="Final Filters"
-              description="Cluster, confidence, caps"
-              inputCount={pipelineData.finalFilters.inputCount}
-              outputCount={pipelineData.finalFilters.outputCount}
+              className={`
+                relative bg-slate-800/90 rounded-xl border-2 p-4 cursor-pointer
+                transition-all duration-200 hover:shadow-lg hover:shadow-black/20
+                min-w-[160px] md:min-w-[180px] max-w-[200px] md:max-w-[220px]
+                ${pipelineData.finalFilters.outputCount > 0 
+                  ? 'border-purple-500/40 hover:border-purple-400/60' 
+                  : 'border-slate-600/40 hover:border-slate-500/60'}
+              `}
               onClick={() => onStageClick('finalFilters')}
-              nodeType="filter"
-              version={mreVersions?.config || '2.0.0'}
-              confidence={PIPELINE_NODE_CONFIDENCE.finalFilters}
-            />
+              style={{ minHeight: '140px' }}
+            >
+              {/* Multi-dot input connectors (left side) */}
+              {pipelineData.postGatingConsensusPaths?.map((path: VoteConsensusPath, index: number) => {
+                const totalDots = pipelineData.postGatingConsensusPaths.length;
+                const dotSpacing = totalDots > 1 ? 60 : 0;
+                const startY = totalDots > 1 ? 30 : 50;
+                const yPosition = startY + (index * (dotSpacing / Math.max(1, totalDots - 1)));
+                
+                const getColorForTier = (voteCount: number) => {
+                  if (voteCount >= 3) return 'border-emerald-400 bg-emerald-400/20';
+                  if (voteCount >= 2) return 'border-blue-400 bg-blue-400/20';
+                  return 'border-slate-500 bg-slate-500/20';
+                };
+                
+                return (
+                  <div
+                    key={`input-${path.voteCount}`}
+                    className={`absolute left-0 w-3.5 h-3.5 rounded-full border-2 ${getColorForTier(path.voteCount)} -translate-x-1/2`}
+                    style={{ top: `${yPosition}px` }}
+                  />
+                );
+              })}
+              
+              {/* Multi-dot output connectors (right side) */}
+              {pipelineData.postGatingConsensusPaths?.map((path: VoteConsensusPath, index: number) => {
+                const totalDots = pipelineData.postGatingConsensusPaths.length;
+                const dotSpacing = totalDots > 1 ? 60 : 0;
+                const startY = totalDots > 1 ? 30 : 50;
+                const yPosition = startY + (index * (dotSpacing / Math.max(1, totalDots - 1)));
+                
+                const getColorForTier = (voteCount: number) => {
+                  if (voteCount >= 3) return 'border-emerald-400 bg-emerald-400/20';
+                  if (voteCount >= 2) return 'border-blue-400 bg-blue-400/20';
+                  return 'border-slate-500 bg-slate-500/20';
+                };
+                
+                return (
+                  <div
+                    key={`output-${path.voteCount}`}
+                    className={`absolute right-0 w-3.5 h-3.5 rounded-full border-2 ${getColorForTier(path.voteCount)} translate-x-1/2`}
+                    style={{ top: `${yPosition}px` }}
+                  />
+                );
+              })}
+              
+              {/* Icon */}
+              <div className="bg-purple-500/20 rounded-lg p-2 w-fit mb-3">
+                <Filter className="w-4 h-4 text-purple-400" />
+              </div>
+              
+              <h3 className="text-sm font-bold text-slate-200 mb-1 leading-tight">Final Filters</h3>
+              <p className="text-xs text-slate-400 mb-3 leading-tight">Cluster, confidence, caps</p>
+              
+              {/* Input/Output counts */}
+              <div className="space-y-1 mb-3">
+                <div className="flex justify-between text-xs">
+                  <span className="text-slate-500">Input:</span>
+                  <span className="text-slate-300 font-medium">{pipelineData.finalFilters.inputCount}</span>
+                </div>
+                <div className="flex justify-between text-xs">
+                  <span className="text-slate-500">Output:</span>
+                  <span className={`font-bold ${pipelineData.finalFilters.outputCount > 0 ? 'text-purple-400' : 'text-slate-600'}`}>
+                    {pipelineData.finalFilters.outputCount}
+                  </span>
+                </div>
+              </div>
+
+              {/* Version + Confidence */}
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span className="inline-block bg-slate-700/50 text-slate-500 px-2 py-0.5 rounded text-[9px] font-medium">
+                  {mreVersions?.config || '2.0.0'}
+                </span>
+                <span className="inline-block bg-purple-900/40 text-purple-400 px-2 py-0.5 rounded text-[9px] font-medium">
+                  {PIPELINE_NODE_CONFIDENCE.finalFilters}% conf
+                </span>
+              </div>
+
+              {/* Hover glow */}
+              <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-white/[0.05] to-transparent opacity-0 hover:opacity-100 transition-opacity pointer-events-none" />
+            </div>
           </div>
           
-          {/* Column 9: BUY Signals Output */}
+          {/* Column 9: BUY Signals Output with Multi-Dot Connections */}
           <div className="flex flex-col items-center gap-6">
-            <WorkflowNode
+            <div
               ref={(el) => { nodeRefs.current['output'] = el; }}
-              name="BUY Signals"
-              description="Final confirmed signals"
-              inputCount={pipelineData.output.inputCount}
-              outputCount={pipelineData.output.outputCount}
+              className={`
+                relative bg-slate-800/90 rounded-xl border-2 p-4 cursor-pointer
+                transition-all duration-200 hover:shadow-lg hover:shadow-black/20
+                min-w-[160px] md:min-w-[180px] max-w-[200px] md:max-w-[220px]
+                ${pipelineData.output.outputCount > 0 
+                  ? 'border-emerald-500/40 hover:border-emerald-400/60' 
+                  : 'border-slate-600/40 hover:border-slate-500/60'}
+              `}
               onClick={() => onStageClick('output')}
-              nodeType="filter"
-              version={pipelineVersion}
-              confidence={PIPELINE_NODE_CONFIDENCE.output}
-            />
+              style={{ minHeight: '140px' }}
+            >
+              {/* Multi-dot input connectors (left side) */}
+              {pipelineData.postGatingConsensusPaths?.map((path: VoteConsensusPath, index: number) => {
+                const totalDots = pipelineData.postGatingConsensusPaths.length;
+                const dotSpacing = totalDots > 1 ? 60 : 0;
+                const startY = totalDots > 1 ? 30 : 50;
+                const yPosition = startY + (index * (dotSpacing / Math.max(1, totalDots - 1)));
+                
+                const getColorForTier = (voteCount: number) => {
+                  if (voteCount >= 3) return 'border-emerald-400 bg-emerald-400/20';
+                  if (voteCount >= 2) return 'border-blue-400 bg-blue-400/20';
+                  return 'border-slate-500 bg-slate-500/20';
+                };
+                
+                return (
+                  <div
+                    key={`input-${path.voteCount}`}
+                    className={`absolute left-0 w-3.5 h-3.5 rounded-full border-2 ${getColorForTier(path.voteCount)} -translate-x-1/2`}
+                    style={{ top: `${yPosition}px` }}
+                  />
+                );
+              })}
+              
+              {/* Multi-dot output connectors (right side) */}
+              {pipelineData.postGatingConsensusPaths?.map((path: VoteConsensusPath, index: number) => {
+                const totalDots = pipelineData.postGatingConsensusPaths.length;
+                const dotSpacing = totalDots > 1 ? 60 : 0;
+                const startY = totalDots > 1 ? 30 : 50;
+                const yPosition = startY + (index * (dotSpacing / Math.max(1, totalDots - 1)));
+                
+                const getColorForTier = (voteCount: number) => {
+                  if (voteCount >= 3) return 'border-emerald-400 bg-emerald-400/20';
+                  if (voteCount >= 2) return 'border-blue-400 bg-blue-400/20';
+                  return 'border-slate-500 bg-slate-500/20';
+                };
+                
+                return (
+                  <div
+                    key={`output-${path.voteCount}`}
+                    className={`absolute right-0 w-3.5 h-3.5 rounded-full border-2 ${getColorForTier(path.voteCount)} translate-x-1/2`}
+                    style={{ top: `${yPosition}px` }}
+                  />
+                );
+              })}
+              
+              {/* Icon */}
+              <div className="bg-emerald-500/20 rounded-lg p-2 w-fit mb-3">
+                <TrendingUp className="w-4 h-4 text-emerald-400" />
+              </div>
+              
+              <h3 className="text-sm font-bold text-slate-200 mb-1 leading-tight">BUY Signals</h3>
+              <p className="text-xs text-slate-400 mb-3 leading-tight">Final confirmed signals</p>
+              
+              {/* Input/Output counts */}
+              <div className="space-y-1 mb-3">
+                <div className="flex justify-between text-xs">
+                  <span className="text-slate-500">Input:</span>
+                  <span className="text-slate-300 font-medium">{pipelineData.output.inputCount}</span>
+                </div>
+                <div className="flex justify-between text-xs">
+                  <span className="text-slate-500">Output:</span>
+                  <span className={`font-bold ${pipelineData.output.outputCount > 0 ? 'text-emerald-400' : 'text-slate-600'}`}>
+                    {pipelineData.output.outputCount}
+                  </span>
+                </div>
+              </div>
+
+              {/* Version + Confidence */}
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span className="inline-block bg-slate-700/50 text-slate-500 px-2 py-0.5 rounded text-[9px] font-medium">
+                  {pipelineVersion}
+                </span>
+                <span className="inline-block bg-emerald-900/40 text-emerald-400 px-2 py-0.5 rounded text-[9px] font-medium">
+                  {PIPELINE_NODE_CONFIDENCE.output}% conf
+                </span>
+              </div>
+
+              {/* Hover glow */}
+              <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-white/[0.05] to-transparent opacity-0 hover:opacity-100 transition-opacity pointer-events-none" />
+            </div>
           </div>
           
           {/* Column 10: Fibonacci Level Selection */}
@@ -1151,10 +1596,49 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
               `}
               onClick={() => onStageClick('fibonacciLevels')}
             >
-              {/* Input connector dot */}
-              <div className="absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 bg-slate-600 border-2 border-slate-700 rounded-full" />
-              {/* Output connector dot */}
-              <div className="absolute right-0 top-1/2 translate-x-1/2 -translate-y-1/2 w-3 h-3 bg-slate-600 border-2 border-slate-700 rounded-full" />
+              {/* Multi-dot input connectors (left side) */}
+              {pipelineData.postGatingConsensusPaths?.map((path: VoteConsensusPath, index: number) => {
+                const totalDots = pipelineData.postGatingConsensusPaths.length;
+                const dotSpacing = totalDots > 1 ? 60 : 0;
+                const startY = totalDots > 1 ? 30 : 50;
+                const yPosition = startY + (index * (dotSpacing / Math.max(1, totalDots - 1)));
+                
+                const getColorForTier = (voteCount: number) => {
+                  if (voteCount >= 3) return 'border-emerald-400 bg-emerald-400/20';
+                  if (voteCount >= 2) return 'border-blue-400 bg-blue-400/20';
+                  return 'border-slate-500 bg-slate-500/20';
+                };
+                
+                return (
+                  <div
+                    key={`input-${path.voteCount}`}
+                    className={`absolute left-0 w-3.5 h-3.5 rounded-full border-2 ${getColorForTier(path.voteCount)} -translate-x-1/2`}
+                    style={{ top: `${yPosition}px` }}
+                  />
+                );
+              })}
+              
+              {/* Multi-dot output connectors (right side) */}
+              {pipelineData.postGatingConsensusPaths?.map((path: VoteConsensusPath, index: number) => {
+                const totalDots = pipelineData.postGatingConsensusPaths.length;
+                const dotSpacing = totalDots > 1 ? 60 : 0;
+                const startY = totalDots > 1 ? 30 : 50;
+                const yPosition = startY + (index * (dotSpacing / Math.max(1, totalDots - 1)));
+                
+                const getColorForTier = (voteCount: number) => {
+                  if (voteCount >= 3) return 'border-emerald-400 bg-emerald-400/20';
+                  if (voteCount >= 2) return 'border-blue-400 bg-blue-400/20';
+                  return 'border-slate-500 bg-slate-500/20';
+                };
+                
+                return (
+                  <div
+                    key={`output-${path.voteCount}`}
+                    className={`absolute right-0 w-3.5 h-3.5 rounded-full border-2 ${getColorForTier(path.voteCount)} translate-x-1/2`}
+                    style={{ top: `${yPosition}px` }}
+                  />
+                );
+              })}
               
               {/* Icon */}
               <div className="bg-violet-500/20 rounded-lg p-2 w-fit mb-3">
@@ -1250,8 +1734,27 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
               `}
               onClick={() => onStageClick('agentAnalysis')}
             >
-              {/* Input connector dot */}
-              <div className="absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 bg-slate-600 border-2 border-slate-700 rounded-full" />
+              {/* Multi-dot input connectors (left side) */}
+              {pipelineData.postGatingConsensusPaths?.map((path: VoteConsensusPath, index: number) => {
+                const totalDots = pipelineData.postGatingConsensusPaths.length;
+                const dotSpacing = totalDots > 1 ? 60 : 0;
+                const startY = totalDots > 1 ? 30 : 50;
+                const yPosition = startY + (index * (dotSpacing / Math.max(1, totalDots - 1)));
+                
+                const getColorForTier = (voteCount: number) => {
+                  if (voteCount >= 3) return 'border-emerald-400 bg-emerald-400/20';
+                  if (voteCount >= 2) return 'border-blue-400 bg-blue-400/20';
+                  return 'border-slate-500 bg-slate-500/20';
+                };
+                
+                return (
+                  <div
+                    key={`input-${path.voteCount}`}
+                    className={`absolute left-0 w-3.5 h-3.5 rounded-full border-2 ${getColorForTier(path.voteCount)} -translate-x-1/2`}
+                    style={{ top: `${yPosition}px` }}
+                  />
+                );
+              })}
               
               {/* Icon */}
               <div className="bg-cyan-500/20 rounded-lg p-2 w-fit mb-3">
@@ -1614,24 +2117,7 @@ export default function SignalFlowTab() {
       return;
     }
 
-    // Handle actionable signals click
-    if (stageKey === 'actionableSignals') {
-      setSelectedStage({
-        name: 'Actionable Signals by Consensus Tier',
-        description: 'Signals that passed gating, broken down by how many of 8 strategies agreed. Higher consensus = higher conviction.',
-        stageType: 'filter',
-        inputCount: pipelineData.signalGating.outputCount,
-        outputCount: pipelineData.signalGating.outputCount,
-        filteredTickers: [],
-        passedTickers: pipelineData.signalGating.passed.map(t => ({
-          symbol: t.symbol,
-          signal: t.signal,
-          currentPrice: t.price,
-          rawData: t
-        }))
-      });
-      return;
-    }
+    // Removed: actionable signals handler - now handled by combined signalGating handler
     
     const stageData = pipelineData[stageKey as keyof typeof pipelineData];
     if (!stageData || Array.isArray(stageData) || typeof stageData === 'object' && !('inputCount' in stageData)) return;
@@ -1682,26 +2168,43 @@ export default function SignalFlowTab() {
         
       case 'signalGating':
         stageDetails = {
-          name: 'Signal Gating',
-          description: 'Sell signal suppression + bear regime buy suppress',
+          name: 'Signal Gating (Combined)',
+          description: 'Bear & sell suppression with per-tier breakdown. Shows how many signals from each consensus tier survived gating.',
           stageType: 'filter',
           inputCount: stageData.inputCount,
           outputCount: stageData.outputCount,
-          filteredTickers: stageData.filtered.map(t => ({
-            symbol: t.symbol,
-            reason: t.bear_suppressed 
-              ? `BUY suppressed (${t.regime} regime)` 
-              : 'Sell signal suppressed to HOLD',
-            signal: t.signal,
-            currentPrice: t.price,
-            rawData: t
-          })),
-          passedTickers: stageData.passed.map(t => ({
-            symbol: t.symbol,
-            signal: t.signal,
-            currentPrice: t.price,
-            rawData: t
-          }))
+          filteredTickers: stageData.filtered.map(t => {
+            const voteCount = pipelineData.strategyVotes.filter((sv: any) => {
+              if (t.strategy_votes?.[sv.key as keyof typeof t.strategy_votes] === true) return true;
+              if (t.persistence_by_strategy && (t.persistence_by_strategy[sv.key] || 0) > 0) return true;
+              return false;
+            }).length;
+            
+            return {
+              symbol: t.symbol,
+              reason: t.bear_suppressed 
+                ? `BUY suppressed (${t.regime} regime, ${voteCount}/8 consensus)` 
+                : `Sell signal suppressed to HOLD (${voteCount}/8 consensus)`,
+              signal: t.signal,
+              currentPrice: t.price,
+              rawData: t
+            };
+          }),
+          passedTickers: stageData.passed.map(t => {
+            const voteCount = pipelineData.strategyVotes.filter((sv: any) => {
+              if (t.strategy_votes?.[sv.key as keyof typeof t.strategy_votes] === true) return true;
+              if (t.persistence_by_strategy && (t.persistence_by_strategy[sv.key] || 0) > 0) return true;
+              return false;
+            }).length;
+            
+            return {
+              symbol: t.symbol,
+              reason: `${voteCount}/8 consensus - passed gating`,
+              signal: t.signal,
+              currentPrice: t.price,
+              rawData: t
+            };
+          })
         };
         break;
         

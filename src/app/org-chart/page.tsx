@@ -714,7 +714,7 @@ function getDefaultAgents(): Record<string, AgentState> {
     },
     cfto: {
       id: "cfto", name: "Chris", title: "CFTO", emoji: "📈",
-      model: "Sonnet 4", status: "active", department: "Revenue",
+      model: "Claude Sonnet 4", status: "active", department: "Revenue",
       description: "Chris Vermeulen — 25+ year veteran trader. CFTO owning all financial tools and products. ETF specialist focused on capital preservation and riding only rising assets.",
       reportsTo: "coo", directReports: [],
     },
@@ -732,7 +732,7 @@ function getDefaultAgents(): Record<string, AgentState> {
     },
     faithfam: {
       id: "faithfam", name: "Jordan Peterson", title: "CFFO", emoji: "🕊️",
-      model: "Sonnet 4", status: "active", department: "Executive",
+      model: "Claude Sonnet 4", status: "active", department: "Executive",
       description: "Chief Family & Faith Officer. Moral Order + Psychological Responsibility. Ethical product review, family impact, civilizational thinking.",
       reportsTo: "coo", directReports: [],
     },
@@ -1300,46 +1300,50 @@ function OrgChartCard({ agent, selected, onClick, size = "normal" }: { agent: Ag
 
 function DesktopTree({ agents, selectedId, onSelect }: { agents: Record<string, AgentState>; selectedId: string | null; onSelect: (id: string) => void }) {
   const tree = useMemo(() => buildTree(agents), [agents]);
-  const cooCardRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const childCardRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const cooBottomRef = useRef<HTMLDivElement | null>(null);
-  const childRowRef = useRef<HTMLDivElement | null>(null);
-  const [lines, setLines] = useState<Array<{ x1: number; y1: number; x2: number; y2: number; color: string }>>([]);
+  const railRef = useRef<HTMLDivElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
-  // Recalculate lines on mount and resize
+  interface ConnectorLine {
+    cooMidX: number;
+    cooBottomY: number;
+    railY: number;
+    children: Array<{ x: number; topY: number; color: string }>;
+  }
+  const [connectors, setConnectors] = useState<ConnectorLine | null>(null);
+
   useEffect(() => {
-    function calcLines() {
-      if (!cooBottomRef.current || !containerRef.current) return;
+    function calcConnectors() {
+      if (!cooBottomRef.current || !railRef.current || !containerRef.current) return;
       const containerRect = containerRef.current.getBoundingClientRect();
       const cooRect = cooBottomRef.current.getBoundingClientRect();
+      const railRect = railRef.current.getBoundingClientRect();
+
       const cooMidX = cooRect.left + cooRect.width / 2 - containerRect.left;
       const cooBottomY = cooRect.bottom - containerRect.top;
+      const railY = railRect.top + railRect.height / 2 - containerRect.top;
 
-      const newLines: Array<{ x1: number; y1: number; x2: number; y2: number; color: string }> = [];
+      const children: Array<{ x: number; topY: number; color: string }> = [];
 
-      for (const [id, el] of Object.entries(cooCardRefs.current)) {
+      for (const [id, el] of Object.entries(childCardRefs.current)) {
         if (!el) continue;
         const childRect = el.getBoundingClientRect();
         const childMidX = childRect.left + childRect.width / 2 - containerRect.left;
         const childTopY = childRect.top - containerRect.top;
         const agent = agents[id];
         const agentColors = agent ? getAgentColors(agent) : DEPT_COLORS.Engineering;
-        newLines.push({
-          x1: cooMidX,
-          y1: cooBottomY,
-          x2: childMidX,
-          y2: childTopY,
-          color: agentColors.accentHex,
-        });
+        children.push({ x: childMidX, topY: childTopY, color: agentColors.accentHex });
       }
-      setLines(newLines);
+
+      setConnectors({ cooMidX, cooBottomY, railY, children });
     }
 
-    calcLines();
-    window.addEventListener("resize", calcLines);
-    // Recalc after a short delay for layout settling
-    const t = setTimeout(calcLines, 100);
-    return () => { window.removeEventListener("resize", calcLines); clearTimeout(t); };
+    calcConnectors();
+    window.addEventListener("resize", calcConnectors);
+    const t1 = setTimeout(calcConnectors, 50);
+    const t2 = setTimeout(calcConnectors, 200);
+    return () => { window.removeEventListener("resize", calcConnectors); clearTimeout(t1); clearTimeout(t2); };
   }, [agents]);
 
   if (!tree) return null;
@@ -1361,70 +1365,79 @@ function DesktopTree({ agents, selectedId, onSelect }: { agents: Record<string, 
   const cooAgent = cooNode.agent;
   const childNodes = cooNode.children;
 
-  // Split children into rows of 4 for balanced layout
-  const rows: TreeNode[][] = [];
-  for (let i = 0; i < childNodes.length; i += 4) {
-    rows.push(childNodes.slice(i, i + 4));
-  }
-
   return (
     <div ref={containerRef} className="hidden lg:block relative">
-      {/* SVG connector lines */}
-      <svg className="absolute inset-0 w-full h-full pointer-events-none z-0" style={{ overflow: "visible" }}>
-        {/* CEO → COO line */}
-        {lines.length === 0 ? null : null}
-        {/* COO → children lines */}
-        {lines.map((line, i) => {
-          const midY = line.y1 + (line.y2 - line.y1) * 0.5;
-          return (
-            <g key={i}>
-              <path
-                d={`M ${line.x1} ${line.y1} L ${line.x1} ${midY} L ${line.x2} ${midY} L ${line.x2} ${line.y2}`}
-                fill="none"
-                stroke={line.color}
-                strokeWidth="2"
-                strokeOpacity="0.35"
-                strokeDasharray="6 4"
-              />
-              {/* Glow dot at child connection */}
-              <circle cx={line.x2} cy={line.y2} r="3" fill={line.color} fillOpacity="0.5" />
-            </g>
-          );
-        })}
+      {/* SVG connector lines — rendered above everything but pointer-events none */}
+      <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ overflow: "visible", zIndex: 5 }}>
+        {connectors && (
+          <g>
+            {/* Vertical line: COO bottom → rail */}
+            <line
+              x1={connectors.cooMidX} y1={connectors.cooBottomY}
+              x2={connectors.cooMidX} y2={connectors.railY}
+              stroke="#a78bfa" strokeWidth="2" strokeOpacity="0.4"
+            />
+            {/* Horizontal rail across all children */}
+            {connectors.children.length > 0 && (() => {
+              const xs = connectors.children.map(c => c.x);
+              const minX = Math.min(...xs);
+              const maxX = Math.max(...xs);
+              return (
+                <line
+                  x1={minX} y1={connectors.railY}
+                  x2={maxX} y2={connectors.railY}
+                  stroke="#a78bfa" strokeWidth="2" strokeOpacity="0.3"
+                />
+              );
+            })()}
+            {/* Vertical drops: rail → each child card top */}
+            {connectors.children.map((child, i) => (
+              <g key={i}>
+                <line
+                  x1={child.x} y1={connectors.railY}
+                  x2={child.x} y2={child.topY}
+                  stroke={child.color} strokeWidth="2" strokeOpacity="0.4"
+                />
+                {/* Dot at rail junction */}
+                <circle cx={child.x} cy={connectors.railY} r="3" fill={child.color} fillOpacity="0.6" />
+                {/* Dot at card top */}
+                <circle cx={child.x} cy={child.topY} r="3" fill={child.color} fillOpacity="0.5" />
+              </g>
+            ))}
+            {/* Dot at COO junction */}
+            <circle cx={connectors.cooMidX} cy={connectors.railY} r="3" fill="#a78bfa" fillOpacity="0.6" />
+          </g>
+        )}
       </svg>
 
       {/* CEO card — top center */}
-      <div className="flex justify-center mb-6 relative z-10">
+      <div className="flex justify-center mb-4 relative" style={{ zIndex: 10 }}>
         <OrgChartCard agent={ceoAgent} selected={selectedId === ceoAgent.id} onClick={() => onSelect(ceoAgent.id)} size="large" />
       </div>
 
       {/* Vertical connector CEO → COO */}
-      <div className="flex justify-center mb-6">
+      <div className="flex justify-center mb-4" style={{ zIndex: 10 }}>
         <div className="w-px h-8 bg-gradient-to-b from-amber-500/50 to-violet-500/50" />
       </div>
 
       {/* COO card — center */}
-      <div className="flex justify-center mb-8 relative z-10">
+      <div className="flex justify-center relative" style={{ zIndex: 10 }}>
         <div ref={cooBottomRef}>
           <OrgChartCard agent={cooAgent} selected={selectedId === cooAgent.id} onClick={() => onSelect(cooAgent.id)} size="large" />
         </div>
       </div>
 
-      {/* Spacing for connector lines */}
-      <div className="h-10" />
+      {/* Rail spacer — this is where the horizontal rail line sits (between COO and children) */}
+      <div ref={railRef} className="h-12" />
 
-      {/* Children rows */}
-      <div ref={childRowRef} className="space-y-4 relative z-10">
-        {rows.map((row, rowIdx) => (
-          <div key={rowIdx} className="flex justify-center gap-4 flex-wrap">
-            {row.map(node => (
-              <div
-                key={node.agent.id}
-                ref={el => { cooCardRefs.current[node.agent.id] = el; }}
-              >
-                <OrgChartCard agent={node.agent} selected={selectedId === node.agent.id} onClick={() => onSelect(node.agent.id)} />
-              </div>
-            ))}
+      {/* All children in a single centered row */}
+      <div className="flex justify-center gap-3 flex-wrap relative" style={{ zIndex: 10 }}>
+        {childNodes.map(node => (
+          <div
+            key={node.agent.id}
+            ref={el => { childCardRefs.current[node.agent.id] = el; }}
+          >
+            <OrgChartCard agent={node.agent} selected={selectedId === node.agent.id} onClick={() => onSelect(node.agent.id)} />
           </div>
         ))}
       </div>

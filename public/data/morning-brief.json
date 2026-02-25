@@ -1,85 +1,121 @@
 {
-  "date": "Tuesday, February 24, 2026",
-  "generated": "2026-02-24T06:00:56.921613",
+  "date": "2026-02-25",
+  "time": "6:00 AM",
   "sections": {
     "prayer": {
-      "title": "\ud83d\udd50\ufe0f Morning Prayer",
-      "date": "Tuesday, February 24, 2026",
-      "hebrew_date": "26 Cheshvan",
+      "title": "🕐️ Morning Prayer",
+      "date": "Wednesday, February 25, 2026",
+      "hebrew_date": "27 Cheshvan",
       "parsha": "Miketz",
       "parsha_theme": "sudden elevation, preparation meeting opportunity",
-      "modeh_ani": "\u05de\u05d5\u05d3\u05d4 \u05d0\u05e0\u05d9 \u05dc\u05e4\u05e0\u05d9\u05da \u2014 I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
-      "blessing": "Blessed are You who raises the lowly \u2014 lift me to accomplish Your purposes.",
-      "psalm": "**Psalm 121:8**: \"The Lord will watch over your coming and going both now and forevermore.\"",
-      "proverb": "**Proverbs 16:9**: \"The heart of man plans his way, but the Lord establishes his steps.\"",
-      "intention": "Help me lead with integrity. Let my yes be yes and my no be no.",
-      "closing": "Baruch atah Adonai \u2014 Blessed are You, Lord, who renews creation daily with goodness.",
-      "audio": "/audio/brief-2026-02-24-prayer.ogg"
+      "modeh_ani": "מודה אני לפניך — I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
+      "blessing": "Blessed are You who gives strength to the weary and renews the spirit of the exhausted.",
+      "psalm": "**Psalm 118:25**: \"Lord, save us! Lord, grant us success!\"",
+      "proverb": "**Proverbs 21:5**: \"The plans of the diligent lead surely to abundance.\"",
+      "intention": "Guide my hands today as I build — let every line of code, every decision, every conversation serve Your purposes.",
+      "closing": "Go in peace. Build with purpose. Return with gratitude."
     },
     "weather": {
-      "title": "\ud83c\udf24\ufe0f Weather",
+      "title": "🌤️ Weather",
       "location": "Temecula, CA",
-      "current_temp": "49\u00b0F",
-      "conditions": "Mostly Cloudy",
-      "wind": "3.8 km/h NW",
-      "summary": "Cool morning at 49\u00b0F with mostly cloudy skies. Light winds from the northwest.",
-      "audio": "/audio/brief-2026-02-24-weather.ogg"
+      "summary": "Lows 44-47°F in sheltered areas, up to 54°F in warmer locations. East winds 10-15 mph with gusts to 25 mph this evening. Cool morning, mild day ahead."
     },
     "calendar": {
-      "title": "\ud83d\udcc5 Calendar",
-      "today": [],
-      "week": [],
-      "month": [],
-      "summary": "No calendar data available - email not configured. Check Google Calendar manually.",
-      "audio": "/audio/brief-2026-02-24-calendar.ogg"
+      "title": "📅 Today's Schedule",
+      "today": [
+        {
+          "time": "8:00 AM - 9:00 AM",
+          "title": "Josh & Josh",
+          "location": "Google Meet",
+          "attendees": ["jperera16@gmail.com"]
+        },
+        {
+          "time": "10:30 AM - 11:00 AM",
+          "title": "Openclaw",
+          "location": "Microsoft Teams",
+          "attendees": ["Austin Rosenthal", "Joe Dewulf"]
+        }
+      ],
+      "this_week": [
+        {
+          "date": "Wednesday, Feb 26",
+          "time": "10:30 AM - 11:00 AM",
+          "title": "Maren",
+          "location": "Microsoft Teams"
+        }
+      ]
     },
-    "email": {
-      "title": "\ud83d\udce7 Email Highlights",
-      "summary": "Email client not configured. Check josh@joshlevylabs.com and joshua.seth.levy@gmail.com manually.",
-      "unread_count": null,
-      "important_messages": [],
-      "audio": "/audio/brief-2026-02-24-email.ogg"
+    "emails": {
+      "title": "📧 Email Highlights",
+      "highlights": [
+        {
+          "from": "OpusClip",
+          "subject": "Video Successfully Published",
+          "date": "Feb 25, 5:58 AM",
+          "priority": "low"
+        },
+        {
+          "from": "Joshuan Perera",
+          "subject": "Accepted: Josh & Josh meeting",
+          "date": "Feb 25, 2:55 AM",
+          "priority": "medium"
+        },
+        {
+          "from": "LinkedIn",
+          "subject": "New message notification",
+          "date": "Feb 24, 7:17 PM",
+          "priority": "medium"
+        }
+      ]
     },
     "mre": {
-      "title": "\ud83d\udcca MRE Trading",
-      "fear_greed": 37.6,
+      "title": "📊 MRE Trading",
+      "fear_greed": 37.5,
       "fear_greed_rating": "fear",
-      "regime": "sideways",
+      "regime": "sideways", 
       "todays_plays": [],
       "pending_triggers": [],
-      "thesis": "Fear elevated (38), global regime sideways. All assets on HOLD - no buy signals.",
-      "audio": "/audio/brief-2026-02-24-mre.ogg"
+      "thesis": "Fear elevated at 37.5, sideways regime intact. No active signals — all assets in HOLD. Market volatility elevated at VIX 21.1, watch for oversold bounces."
     },
-    "family": {
-      "title": "\ud83d\udc68\u200d\ud83d\udc69\u200d\ud83d\udc67\u200d\ud83d\udc66 Family Focus",
-      "relationship_temperature": "critical",
-      "trend": "urgent",
-      "jillian_love_languages": [
-        "quality time",
-        "acts of service"
-      ],
-      "priority_actions": [
+    "relationship": {
+      "title": "💕 Family Focus",
+      "temperature": "critical",
+      "trend": "urgent", 
+      "recommendations": [
         "PRIORITY: Focus on repair. Acknowledge recent conflicts without defending.",
         "Increase acts of service dramatically this week.",
         "Create space for her to express frustrations without fixing."
       ],
-      "family_notes": "Jones (2.5y) loves Super Wings and Blaze shows. Jett is 7 months old. Wedding anniversary March 26th."
+      "love_languages": {
+        "primary": "quality_time",
+        "secondary": "acts_of_service"
+      }
     },
-    "news": {
-      "title": "\ud83c\udf0d News Highlights",
-      "world": [
-        "US meeting Russia, China in Geneva to discuss nuclear issue after New START treaty expired Feb 5",
-        "Hamas Gaza disarmament plan expected in March - terrorist org would dismantle weapons",
-        "US Ambassador claims Israel has rights to much of Middle East - controversial statements"
-      ],
-      "ai_tech": [
-        "Anthropic raised $30B Series G at $380B valuation on Feb 12",
-        "OpenAI close to finalizing $100B+ funding round - record breaking",
-        "Fei-Fei Li's World Labs raised $1B for novel AI approach",
-        "17 US AI companies raised $100M+ so far in 2026"
-      ],
-      "audio": "/audio/brief-2026-02-24-news.ogg"
+    "world_news": {
+      "title": "🌍 World News",
+      "highlights": [
+        {
+          "topic": "Gaza Ceasefire",
+          "summary": "Gaza ceasefire holding but fragile — 14 Palestinian violations Feb 5-20, 113 total since October. Trump's Board of Peace meeting with Israeli FM Gideon Sa'ar praising October deal. Last Israeli hostage retrieved.",
+          "source": "Times of Israel, FDD"
+        }
+      ]
+    },
+    "ai_news": {
+      "title": "🤖 AI News",
+      "highlights": [
+        {
+          "topic": "Anthropic $30B Funding",
+          "summary": "Massive funding round signals enterprise AI acceleration in 2026. 8 of Fortune 10 are Claude customers, 500+ enterprises spending $1M+ annually.",
+          "source": "MLQ.ai"
+        },
+        {
+          "topic": "Claude Cowork Plugins",
+          "summary": "New industry-specific tools for investment banking, HR, design. Now connects to Google Drive, Gmail, DocuSign, FactSet. Causing software stock selloffs as AI threatens existing business models.",
+          "source": "Bloomberg, CNBC"
+        }
+      ]
     }
   },
-  "summary": "Critical relationship status requires immediate attention. Markets sideways with fear at 38 - no trading signals. Major AI funding rounds ($30B Anthropic, $100B+ OpenAI) signal continued acceleration. Focus: family repair, prayer guidance on integrity, watch for market opportunities."
+  "generated_at": "2026-02-25T06:00:00-08:00"
 }

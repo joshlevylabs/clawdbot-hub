@@ -3,37 +3,44 @@
   "time": "6:00 AM",
   "sections": {
     "prayer": {
-      "title": "🕐️ Morning Prayer",
+      "title": "\ud83d\udd50\ufe0f Morning Prayer",
       "date": "Wednesday, February 25, 2026",
       "hebrew_date": "27 Cheshvan",
       "parsha": "Miketz",
       "parsha_theme": "sudden elevation, preparation meeting opportunity",
-      "modeh_ani": "מודה אני לפניך — I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
+      "modeh_ani": "\u05de\u05d5\u05d3\u05d4 \u05d0\u05e0\u05d9 \u05dc\u05e4\u05e0\u05d9\u05da \u2014 I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
       "blessing": "Blessed are You who gives strength to the weary and renews the spirit of the exhausted.",
       "psalm": "**Psalm 118:25**: \"Lord, save us! Lord, grant us success!\"",
       "proverb": "**Proverbs 21:5**: \"The plans of the diligent lead surely to abundance.\"",
-      "intention": "Guide my hands today as I build — let every line of code, every decision, every conversation serve Your purposes.",
-      "closing": "Go in peace. Build with purpose. Return with gratitude."
+      "intention": "Guide my hands today as I build \u2014 let every line of code, every decision, every conversation serve Your purposes.",
+      "closing": "Go in peace. Build with purpose. Return with gratitude.",
+      "audio": "/audio/brief-2026-02-25-prayer.ogg"
     },
     "weather": {
-      "title": "🌤️ Weather",
+      "title": "\ud83c\udf24\ufe0f Weather",
       "location": "Temecula, CA",
-      "summary": "Lows 44-47°F in sheltered areas, up to 54°F in warmer locations. East winds 10-15 mph with gusts to 25 mph this evening. Cool morning, mild day ahead."
+      "summary": "Lows 44-47\u00b0F in sheltered areas, up to 54\u00b0F in warmer locations. East winds 10-15 mph with gusts to 25 mph this evening. Cool morning, mild day ahead.",
+      "audio": "/audio/brief-2026-02-25-weather.ogg"
     },
     "calendar": {
-      "title": "📅 Today's Schedule",
+      "title": "\ud83d\udcc5 Today's Schedule",
       "today": [
         {
           "time": "8:00 AM - 9:00 AM",
           "title": "Josh & Josh",
           "location": "Google Meet",
-          "attendees": ["jperera16@gmail.com"]
+          "attendees": [
+            "jperera16@gmail.com"
+          ]
         },
         {
           "time": "10:30 AM - 11:00 AM",
           "title": "Openclaw",
           "location": "Microsoft Teams",
-          "attendees": ["Austin Rosenthal", "Joe Dewulf"]
+          "attendees": [
+            "Austin Rosenthal",
+            "Joe Dewulf"
+          ]
         }
       ],
       "this_week": [
@@ -43,10 +50,11 @@
           "title": "Maren",
           "location": "Microsoft Teams"
         }
-      ]
+      ],
+      "audio": "/audio/brief-2026-02-25-calendar.ogg"
     },
     "emails": {
-      "title": "📧 Email Highlights",
+      "title": "\ud83d\udce7 Email Highlights",
       "highlights": [
         {
           "from": "OpusClip",
@@ -69,18 +77,19 @@
       ]
     },
     "mre": {
-      "title": "📊 MRE Trading",
+      "title": "\ud83d\udcca MRE Trading",
       "fear_greed": 37.5,
       "fear_greed_rating": "fear",
-      "regime": "sideways", 
+      "regime": "sideways",
       "todays_plays": [],
       "pending_triggers": [],
-      "thesis": "Fear elevated at 37.5, sideways regime intact. No active signals — all assets in HOLD. Market volatility elevated at VIX 21.1, watch for oversold bounces."
+      "thesis": "Fear elevated at 37.5, sideways regime intact. No active signals \u2014 all assets in HOLD. Market volatility elevated at VIX 21.1, watch for oversold bounces.",
+      "audio": "/audio/brief-2026-02-25-mre.ogg"
     },
     "relationship": {
-      "title": "💕 Family Focus",
+      "title": "\ud83d\udc95 Family Focus",
       "temperature": "critical",
-      "trend": "urgent", 
+      "trend": "urgent",
       "recommendations": [
         "PRIORITY: Focus on repair. Acknowledge recent conflicts without defending.",
         "Increase acts of service dramatically this week.",
@@ -92,17 +101,17 @@
       }
     },
     "world_news": {
-      "title": "🌍 World News",
+      "title": "\ud83c\udf0d World News",
       "highlights": [
         {
           "topic": "Gaza Ceasefire",
-          "summary": "Gaza ceasefire holding but fragile — 14 Palestinian violations Feb 5-20, 113 total since October. Trump's Board of Peace meeting with Israeli FM Gideon Sa'ar praising October deal. Last Israeli hostage retrieved.",
+          "summary": "Gaza ceasefire holding but fragile \u2014 14 Palestinian violations Feb 5-20, 113 total since October. Trump's Board of Peace meeting with Israeli FM Gideon Sa'ar praising October deal. Last Israeli hostage retrieved.",
           "source": "Times of Israel, FDD"
         }
       ]
     },
     "ai_news": {
-      "title": "🤖 AI News",
+      "title": "\ud83e\udd16 AI News",
       "highlights": [
         {
           "topic": "Anthropic $30B Funding",

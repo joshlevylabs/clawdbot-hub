@@ -558,6 +558,55 @@ function calculatePipelineStages(signals: MRESignal[], dataType: 'core' | 'unive
   };
 }
 
+// ── Tier color helper (shared by dots and connections) ─────────────
+function getTierColor(voteCount: number): { dot: string; text: string; label: string } {
+  if (voteCount >= 3) return { dot: 'border-emerald-400 bg-emerald-400/20', text: 'text-emerald-400', label: `${voteCount}/8` };
+  if (voteCount >= 2) return { dot: 'border-blue-400 bg-blue-400/20', text: 'text-blue-400', label: `${voteCount}/8` };
+  return { dot: 'border-slate-500 bg-slate-500/20', text: 'text-slate-500', label: `${voteCount}/8` };
+}
+
+// ── Labeled multi-dot connectors (reusable for all pipeline nodes) ──
+function MultiDotConnectors({
+  paths,
+  side,
+}: {
+  paths: VoteConsensusPath[];
+  side: 'left' | 'right';
+}) {
+  const totalDots = paths.length;
+  const dotSpacing = totalDots > 1 ? 60 : 0;
+  const startY = totalDots > 1 ? 30 : 50;
+
+  return (
+    <>
+      {paths.map((path, index) => {
+        const yPosition = startY + (index * (dotSpacing / Math.max(1, totalDots - 1)));
+        const tier = getTierColor(path.voteCount);
+        const isLeft = side === 'left';
+
+        return (
+          <div key={`${side}-${path.voteCount}`} className="absolute" style={{ top: `${yPosition}px`, [isLeft ? 'left' : 'right']: 0 }}>
+            {/* Dot */}
+            <div
+              className={`w-3.5 h-3.5 rounded-full border-2 ${tier.dot} ${isLeft ? '-translate-x-1/2' : 'translate-x-1/2'}`}
+            />
+            {/* Label */}
+            <span
+              className={`absolute text-[8px] font-bold ${tier.text} whitespace-nowrap select-none`}
+              style={{
+                top: '-1px',
+                ...(isLeft ? { right: '14px' } : { left: '14px' }),
+              }}
+            >
+              {tier.label}
+            </span>
+          </div>
+        );
+      })}
+    </>
+  );
+}
+
 // n8n-Style Workflow Visualization Component
 interface WorkflowVisualizationProps {
   pipelineData: any;
@@ -906,7 +955,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
       >
       <div 
         ref={containerRef} 
-        className="relative min-w-[2000px] min-h-[500px]"
+        className="relative min-w-[2000px] w-fit min-h-[500px]"
         style={{ 
           background: 'radial-gradient(circle at 20% 80%, rgba(15, 118, 110, 0.05) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.05) 0%, transparent 50%)',
           transform: `scale(${scale})`,
@@ -1186,49 +1235,11 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
               onClick={() => onStageClick('signalGating')}
               style={{ minHeight: `${Math.max(180, 80 + (pipelineData.postGatingConsensusPaths?.length || 0) * 24)}px` }}
             >
-              {/* Multi-dot input connectors (left side) */}
-              {pipelineData.postPersistenceConsensusPaths?.map((path: VoteConsensusPath, index: number) => {
-                const totalDots = pipelineData.postPersistenceConsensusPaths.length;
-                const dotSpacing = totalDots > 1 ? 60 : 0; // Height available for dots
-                const startY = totalDots > 1 ? 30 : 50; // Offset from top
-                const yPosition = startY + (index * (dotSpacing / Math.max(1, totalDots - 1)));
-                
-                const getColorForTier = (voteCount: number) => {
-                  if (voteCount >= 3) return 'border-emerald-400 bg-emerald-400/20';
-                  if (voteCount >= 2) return 'border-blue-400 bg-blue-400/20';
-                  return 'border-slate-500 bg-slate-500/20';
-                };
-                
-                return (
-                  <div
-                    key={`input-${path.voteCount}`}
-                    className={`absolute left-0 w-3.5 h-3.5 rounded-full border-2 ${getColorForTier(path.voteCount)} -translate-x-1/2`}
-                    style={{ top: `${yPosition}px` }}
-                  />
-                );
-              })}
+              {/* Labeled input dots (left side) */}
+              <MultiDotConnectors paths={pipelineData.postPersistenceConsensusPaths || []} side="left" />
               
-              {/* Multi-dot output connectors (right side) */}
-              {pipelineData.postGatingConsensusPaths?.map((path: VoteConsensusPath, index: number) => {
-                const totalDots = pipelineData.postGatingConsensusPaths.length;
-                const dotSpacing = totalDots > 1 ? 60 : 0;
-                const startY = totalDots > 1 ? 30 : 50;
-                const yPosition = startY + (index * (dotSpacing / Math.max(1, totalDots - 1)));
-                
-                const getColorForTier = (voteCount: number) => {
-                  if (voteCount >= 3) return 'border-emerald-400 bg-emerald-400/20';
-                  if (voteCount >= 2) return 'border-blue-400 bg-blue-400/20';
-                  return 'border-slate-500 bg-slate-500/20';
-                };
-                
-                return (
-                  <div
-                    key={`output-${path.voteCount}`}
-                    className={`absolute right-0 w-3.5 h-3.5 rounded-full border-2 ${getColorForTier(path.voteCount)} translate-x-1/2`}
-                    style={{ top: `${yPosition}px` }}
-                  />
-                );
-              })}
+              {/* Labeled output dots (right side) */}
+              <MultiDotConnectors paths={pipelineData.postGatingConsensusPaths || []} side="right" />
               
               {/* Icon */}
               <div className="bg-emerald-500/20 rounded-lg p-2 w-fit mb-3">
@@ -1321,49 +1332,11 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
               onClick={() => onStageClick('confidenceTuning')}
               style={{ minHeight: '140px' }}
             >
-              {/* Multi-dot input connectors (left side) */}
-              {pipelineData.postGatingConsensusPaths?.map((path: VoteConsensusPath, index: number) => {
-                const totalDots = pipelineData.postGatingConsensusPaths.length;
-                const dotSpacing = totalDots > 1 ? 60 : 0;
-                const startY = totalDots > 1 ? 30 : 50;
-                const yPosition = startY + (index * (dotSpacing / Math.max(1, totalDots - 1)));
-                
-                const getColorForTier = (voteCount: number) => {
-                  if (voteCount >= 3) return 'border-emerald-400 bg-emerald-400/20';
-                  if (voteCount >= 2) return 'border-blue-400 bg-blue-400/20';
-                  return 'border-slate-500 bg-slate-500/20';
-                };
-                
-                return (
-                  <div
-                    key={`input-${path.voteCount}`}
-                    className={`absolute left-0 w-3.5 h-3.5 rounded-full border-2 ${getColorForTier(path.voteCount)} -translate-x-1/2`}
-                    style={{ top: `${yPosition}px` }}
-                  />
-                );
-              })}
+              {/* Labeled input dots (left side) */}
+              <MultiDotConnectors paths={pipelineData.postGatingConsensusPaths || []} side="left" />
               
-              {/* Multi-dot output connectors (right side) */}
-              {pipelineData.postGatingConsensusPaths?.map((path: VoteConsensusPath, index: number) => {
-                const totalDots = pipelineData.postGatingConsensusPaths.length;
-                const dotSpacing = totalDots > 1 ? 60 : 0;
-                const startY = totalDots > 1 ? 30 : 50;
-                const yPosition = startY + (index * (dotSpacing / Math.max(1, totalDots - 1)));
-                
-                const getColorForTier = (voteCount: number) => {
-                  if (voteCount >= 3) return 'border-emerald-400 bg-emerald-400/20';
-                  if (voteCount >= 2) return 'border-blue-400 bg-blue-400/20';
-                  return 'border-slate-500 bg-slate-500/20';
-                };
-                
-                return (
-                  <div
-                    key={`output-${path.voteCount}`}
-                    className={`absolute right-0 w-3.5 h-3.5 rounded-full border-2 ${getColorForTier(path.voteCount)} translate-x-1/2`}
-                    style={{ top: `${yPosition}px` }}
-                  />
-                );
-              })}
+              {/* Labeled output dots (right side) */}
+              <MultiDotConnectors paths={pipelineData.postGatingConsensusPaths || []} side="right" />
               
               {/* Icon */}
               <div className="bg-blue-500/20 rounded-lg p-2 w-fit mb-3">
@@ -1417,49 +1390,11 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
               onClick={() => onStageClick('finalFilters')}
               style={{ minHeight: '140px' }}
             >
-              {/* Multi-dot input connectors (left side) */}
-              {pipelineData.postGatingConsensusPaths?.map((path: VoteConsensusPath, index: number) => {
-                const totalDots = pipelineData.postGatingConsensusPaths.length;
-                const dotSpacing = totalDots > 1 ? 60 : 0;
-                const startY = totalDots > 1 ? 30 : 50;
-                const yPosition = startY + (index * (dotSpacing / Math.max(1, totalDots - 1)));
-                
-                const getColorForTier = (voteCount: number) => {
-                  if (voteCount >= 3) return 'border-emerald-400 bg-emerald-400/20';
-                  if (voteCount >= 2) return 'border-blue-400 bg-blue-400/20';
-                  return 'border-slate-500 bg-slate-500/20';
-                };
-                
-                return (
-                  <div
-                    key={`input-${path.voteCount}`}
-                    className={`absolute left-0 w-3.5 h-3.5 rounded-full border-2 ${getColorForTier(path.voteCount)} -translate-x-1/2`}
-                    style={{ top: `${yPosition}px` }}
-                  />
-                );
-              })}
+              {/* Labeled input dots (left side) */}
+              <MultiDotConnectors paths={pipelineData.postGatingConsensusPaths || []} side="left" />
               
-              {/* Multi-dot output connectors (right side) */}
-              {pipelineData.postGatingConsensusPaths?.map((path: VoteConsensusPath, index: number) => {
-                const totalDots = pipelineData.postGatingConsensusPaths.length;
-                const dotSpacing = totalDots > 1 ? 60 : 0;
-                const startY = totalDots > 1 ? 30 : 50;
-                const yPosition = startY + (index * (dotSpacing / Math.max(1, totalDots - 1)));
-                
-                const getColorForTier = (voteCount: number) => {
-                  if (voteCount >= 3) return 'border-emerald-400 bg-emerald-400/20';
-                  if (voteCount >= 2) return 'border-blue-400 bg-blue-400/20';
-                  return 'border-slate-500 bg-slate-500/20';
-                };
-                
-                return (
-                  <div
-                    key={`output-${path.voteCount}`}
-                    className={`absolute right-0 w-3.5 h-3.5 rounded-full border-2 ${getColorForTier(path.voteCount)} translate-x-1/2`}
-                    style={{ top: `${yPosition}px` }}
-                  />
-                );
-              })}
+              {/* Labeled output dots (right side) */}
+              <MultiDotConnectors paths={pipelineData.postGatingConsensusPaths || []} side="right" />
               
               {/* Icon */}
               <div className="bg-purple-500/20 rounded-lg p-2 w-fit mb-3">
@@ -1513,49 +1448,11 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
               onClick={() => onStageClick('output')}
               style={{ minHeight: '140px' }}
             >
-              {/* Multi-dot input connectors (left side) */}
-              {pipelineData.postGatingConsensusPaths?.map((path: VoteConsensusPath, index: number) => {
-                const totalDots = pipelineData.postGatingConsensusPaths.length;
-                const dotSpacing = totalDots > 1 ? 60 : 0;
-                const startY = totalDots > 1 ? 30 : 50;
-                const yPosition = startY + (index * (dotSpacing / Math.max(1, totalDots - 1)));
-                
-                const getColorForTier = (voteCount: number) => {
-                  if (voteCount >= 3) return 'border-emerald-400 bg-emerald-400/20';
-                  if (voteCount >= 2) return 'border-blue-400 bg-blue-400/20';
-                  return 'border-slate-500 bg-slate-500/20';
-                };
-                
-                return (
-                  <div
-                    key={`input-${path.voteCount}`}
-                    className={`absolute left-0 w-3.5 h-3.5 rounded-full border-2 ${getColorForTier(path.voteCount)} -translate-x-1/2`}
-                    style={{ top: `${yPosition}px` }}
-                  />
-                );
-              })}
+              {/* Labeled input dots (left side) */}
+              <MultiDotConnectors paths={pipelineData.postGatingConsensusPaths || []} side="left" />
               
-              {/* Multi-dot output connectors (right side) */}
-              {pipelineData.postGatingConsensusPaths?.map((path: VoteConsensusPath, index: number) => {
-                const totalDots = pipelineData.postGatingConsensusPaths.length;
-                const dotSpacing = totalDots > 1 ? 60 : 0;
-                const startY = totalDots > 1 ? 30 : 50;
-                const yPosition = startY + (index * (dotSpacing / Math.max(1, totalDots - 1)));
-                
-                const getColorForTier = (voteCount: number) => {
-                  if (voteCount >= 3) return 'border-emerald-400 bg-emerald-400/20';
-                  if (voteCount >= 2) return 'border-blue-400 bg-blue-400/20';
-                  return 'border-slate-500 bg-slate-500/20';
-                };
-                
-                return (
-                  <div
-                    key={`output-${path.voteCount}`}
-                    className={`absolute right-0 w-3.5 h-3.5 rounded-full border-2 ${getColorForTier(path.voteCount)} translate-x-1/2`}
-                    style={{ top: `${yPosition}px` }}
-                  />
-                );
-              })}
+              {/* Labeled output dots (right side) */}
+              <MultiDotConnectors paths={pipelineData.postGatingConsensusPaths || []} side="right" />
               
               {/* Icon */}
               <div className="bg-emerald-500/20 rounded-lg p-2 w-fit mb-3">
@@ -1608,49 +1505,11 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
               `}
               onClick={() => onStageClick('fibonacciLevels')}
             >
-              {/* Multi-dot input connectors (left side) */}
-              {pipelineData.postGatingConsensusPaths?.map((path: VoteConsensusPath, index: number) => {
-                const totalDots = pipelineData.postGatingConsensusPaths.length;
-                const dotSpacing = totalDots > 1 ? 60 : 0;
-                const startY = totalDots > 1 ? 30 : 50;
-                const yPosition = startY + (index * (dotSpacing / Math.max(1, totalDots - 1)));
-                
-                const getColorForTier = (voteCount: number) => {
-                  if (voteCount >= 3) return 'border-emerald-400 bg-emerald-400/20';
-                  if (voteCount >= 2) return 'border-blue-400 bg-blue-400/20';
-                  return 'border-slate-500 bg-slate-500/20';
-                };
-                
-                return (
-                  <div
-                    key={`input-${path.voteCount}`}
-                    className={`absolute left-0 w-3.5 h-3.5 rounded-full border-2 ${getColorForTier(path.voteCount)} -translate-x-1/2`}
-                    style={{ top: `${yPosition}px` }}
-                  />
-                );
-              })}
+              {/* Labeled input dots (left side) */}
+              <MultiDotConnectors paths={pipelineData.postGatingConsensusPaths || []} side="left" />
               
-              {/* Multi-dot output connectors (right side) */}
-              {pipelineData.postGatingConsensusPaths?.map((path: VoteConsensusPath, index: number) => {
-                const totalDots = pipelineData.postGatingConsensusPaths.length;
-                const dotSpacing = totalDots > 1 ? 60 : 0;
-                const startY = totalDots > 1 ? 30 : 50;
-                const yPosition = startY + (index * (dotSpacing / Math.max(1, totalDots - 1)));
-                
-                const getColorForTier = (voteCount: number) => {
-                  if (voteCount >= 3) return 'border-emerald-400 bg-emerald-400/20';
-                  if (voteCount >= 2) return 'border-blue-400 bg-blue-400/20';
-                  return 'border-slate-500 bg-slate-500/20';
-                };
-                
-                return (
-                  <div
-                    key={`output-${path.voteCount}`}
-                    className={`absolute right-0 w-3.5 h-3.5 rounded-full border-2 ${getColorForTier(path.voteCount)} translate-x-1/2`}
-                    style={{ top: `${yPosition}px` }}
-                  />
-                );
-              })}
+              {/* Labeled output dots (right side) */}
+              <MultiDotConnectors paths={pipelineData.postGatingConsensusPaths || []} side="right" />
               
               {/* Icon */}
               <div className="bg-violet-500/20 rounded-lg p-2 w-fit mb-3">
@@ -1746,27 +1605,8 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
               `}
               onClick={() => onStageClick('agentAnalysis')}
             >
-              {/* Multi-dot input connectors (left side) */}
-              {pipelineData.postGatingConsensusPaths?.map((path: VoteConsensusPath, index: number) => {
-                const totalDots = pipelineData.postGatingConsensusPaths.length;
-                const dotSpacing = totalDots > 1 ? 60 : 0;
-                const startY = totalDots > 1 ? 30 : 50;
-                const yPosition = startY + (index * (dotSpacing / Math.max(1, totalDots - 1)));
-                
-                const getColorForTier = (voteCount: number) => {
-                  if (voteCount >= 3) return 'border-emerald-400 bg-emerald-400/20';
-                  if (voteCount >= 2) return 'border-blue-400 bg-blue-400/20';
-                  return 'border-slate-500 bg-slate-500/20';
-                };
-                
-                return (
-                  <div
-                    key={`input-${path.voteCount}`}
-                    className={`absolute left-0 w-3.5 h-3.5 rounded-full border-2 ${getColorForTier(path.voteCount)} -translate-x-1/2`}
-                    style={{ top: `${yPosition}px` }}
-                  />
-                );
-              })}
+              {/* Labeled input dots (left side) */}
+              <MultiDotConnectors paths={pipelineData.postGatingConsensusPaths || []} side="left" />
               
               {/* Icon */}
               <div className="bg-cyan-500/20 rounded-lg p-2 w-fit mb-3">

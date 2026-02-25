@@ -566,6 +566,7 @@ function getTierColor(voteCount: number): { dot: string; text: string; label: st
 }
 
 // ── Labeled multi-dot connectors (reusable for all pipeline nodes) ──
+// Dots start below the icon+title area. Labels only on right (output) side.
 function MultiDotConnectors({
   paths,
   side,
@@ -587,24 +588,22 @@ function MultiDotConnectors({
         return (
           <div
             key={`${side}-${path.voteCount}`}
-            className="absolute flex items-center gap-1"
-            style={{
-              top: `${yPosition}px`,
-              [isLeft ? 'left' : 'right']: 0,
-              transform: 'translateY(-50%)',
-              flexDirection: isLeft ? 'row-reverse' : 'row',
-            }}
+            className="absolute"
+            style={{ top: `${yPosition}px`, [isLeft ? 'left' : 'right']: 0 }}
           >
             {/* Dot */}
             <div
-              className={`w-3.5 h-3.5 rounded-full border-2 shrink-0 ${tier.dot} ${isLeft ? '-translate-x-1/2' : 'translate-x-1/2'}`}
+              className={`w-3.5 h-3.5 rounded-full border-2 ${tier.dot} ${isLeft ? '-translate-x-1/2' : 'translate-x-1/2'}`}
             />
-            {/* Label */}
-            <span
-              className={`text-[10px] font-bold ${tier.text} whitespace-nowrap select-none bg-slate-900/80 px-1 rounded`}
-            >
-              {tier.label}
-            </span>
+            {/* Label — only on output (right) side, positioned outside the node */}
+            {!isLeft && (
+              <span
+                className={`absolute text-[9px] font-semibold ${tier.text} whitespace-nowrap select-none pointer-events-none`}
+                style={{ top: '0px', left: '12px' }}
+              >
+                {tier.label}
+              </span>
+            )}
           </div>
         );
       })}
@@ -960,12 +959,13 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
       >
       <div 
         ref={containerRef} 
-        className="relative min-w-[2000px] w-fit min-h-[500px]"
+        className="relative min-h-[500px]"
         style={{ 
           background: 'radial-gradient(circle at 20% 80%, rgba(15, 118, 110, 0.05) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.05) 0%, transparent 50%)',
           transform: `scale(${scale})`,
           transformOrigin: 'top left',
-          width: scale < 1 ? `${100 / scale}%` : undefined,
+          width: scale < 1 ? `${100 / scale}%` : 'max-content',
+          minWidth: '2000px',
         }}
       >
         {/* SVG Layer for Connections */}

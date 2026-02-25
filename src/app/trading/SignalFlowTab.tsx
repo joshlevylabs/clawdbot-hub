@@ -973,8 +973,8 @@ export default function SignalFlowTab() {
       setSelectedStage({
         name: `${path.name.replace('votes', 'Vote Consensus')}`,
         description: path.count > 0 
-          ? `Tickers where exactly ${voteCount} of 5 strategies voted BUY`
-          : `No tickers currently have exactly ${voteCount} of 5 strategies voting BUY`,
+          ? `Tickers where exactly ${voteCount} of 8 strategies voted BUY`
+          : `No tickers currently have exactly ${voteCount} of 8 strategies voting BUY`,
         stageType: 'filter',
         inputCount: pipelineData.voteConsensusGate.inputCount,
         outputCount: path.count,

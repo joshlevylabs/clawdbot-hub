@@ -182,12 +182,15 @@ const STRATEGY_DESCRIPTIONS: Record<string, string> = {
   'RSI Oversold Strategy': "Triggers BUY when the 14-period RSI drops below 30, indicating the asset is oversold and likely to bounce.",
   'Mean Reversion Strategy': "Triggers BUY when the 5-day price drop exceeds a threshold, betting on a reversion to the mean price.",
   'Momentum Strategy': "Triggers BUY when 20-day momentum is strongly positive, riding the trend with confirmed directional strength.",
-  'Vote Consensus Gate': "Classifies tickers by how many of the 5 strategies voted BUY, showing consensus strength from 1-of-5 (weak consensus) to 5-of-5 (unanimous agreement).",
-  '1-of-5 Vote Consensus': "Tickers where exactly 1 of the 5 strategies voted BUY. Low consensus signals with higher risk but potentially overlooked opportunities.",
-  '2-of-5 Vote Consensus': "Tickers where exactly 2 of the 5 strategies voted BUY. Moderate consensus signals with balanced risk-reward profile.",
-  '3-of-5 Vote Consensus': "Tickers where exactly 3 of the 5 strategies voted BUY. Strong consensus signals with higher confidence and lower risk.",
-  '4-of-5 Vote Consensus': "Tickers where exactly 4 of the 5 strategies voted BUY. Very strong consensus signals with high confidence.",
-  '5-of-5 Vote Consensus': "Tickers where all 5 strategies unanimously voted BUY. Maximum consensus signals with highest confidence and lowest risk.",
+  'Vote Consensus Gate': "Classifies tickers by how many of the 8 strategies voted BUY, showing consensus strength from 1-of-8 (weak consensus) to 8-of-8 (unanimous agreement).",
+  '1-of-8 Vote Consensus': "Tickers where exactly 1 of the 8 strategies voted BUY. Low consensus signals with higher risk but potentially overlooked opportunities.",
+  '2-of-8 Vote Consensus': "Tickers where exactly 2 of the 8 strategies voted BUY. Moderate consensus signals with balanced risk-reward profile.",
+  '3-of-8 Vote Consensus': "Tickers where exactly 3 of the 8 strategies voted BUY. Strong consensus signals with higher confidence and lower risk.",
+  '4-of-8 Vote Consensus': "Tickers where exactly 4 of the 8 strategies voted BUY. Very strong consensus signals with high confidence.",
+  '5-of-8 Vote Consensus': "Tickers where 5 of the 8 strategies voted BUY. Very strong consensus.",
+  '6-of-8 Vote Consensus': "Tickers where 6 of the 8 strategies voted BUY. Near-unanimous consensus.",
+  '7-of-8 Vote Consensus': "Tickers where 7 of the 8 strategies voted BUY. Near-unanimous consensus.",
+  '8-of-8 Vote Consensus': "Tickers where all 8 strategies unanimously voted BUY. Maximum consensus signals with highest confidence and lowest risk.",
   'Signal Gating': "Suppresses BUY signals in bear regimes (bear suppress) and converts SELL signals to HOLD (sell suppress) to reduce risk.",
   'Confidence Tuning': "Adjusts signal confidence using regime weight, asset role evaluation, sector rotation, sideways penalty, and Kalshi prediction market data.",
   'Final Filters': "Applies cluster limits (max 2 per sector), asset confidence thresholds, crash mode protection, and multiplier caps.",
@@ -1539,15 +1542,18 @@ export default function PipelineDetailPanel({
           </div>
           
           {/* Strategy Legend — for Vote Consensus sub-modals */}
-          {stageDetails.name.includes('-of-5') && (
+          {stageDetails.name.includes('Vote Consensus') && (
             <div className="px-4 sm:px-6 pt-4 pb-2">
               <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-slate-400">
                 {[
-                  { label: 'Fear & Greed', color: 'bg-blue-400' },
-                  { label: 'Regime', color: 'bg-purple-400' },
-                  { label: 'RSI', color: 'bg-orange-400' },
-                  { label: 'Mean Reversion', color: 'bg-amber-400' },
-                  { label: 'Momentum', color: 'bg-emerald-400' },
+                  { label: 'Fear & Greed', color: 'bg-emerald-400' },
+                  { label: 'Multi-TF Trend', color: 'bg-blue-400' },
+                  { label: 'ConnorsRSI', color: 'bg-orange-400' },
+                  { label: 'Dual Band MR', color: 'bg-purple-400' },
+                  { label: 'Dual Momentum', color: 'bg-red-400' },
+                  { label: 'TS Momentum', color: 'bg-cyan-400' },
+                  { label: 'QVM Factor', color: 'bg-pink-400' },
+                  { label: 'VIX Reversion', color: 'bg-amber-400' },
                 ].map(s => (
                   <div key={s.label} className="flex items-center gap-1.5">
                     <div className={`w-2.5 h-2.5 rounded-full ${s.color}`} />
@@ -1582,7 +1588,7 @@ export default function PipelineDetailPanel({
                     <div className="text-center text-slate-400 py-8">
                       {searchQuery 
                         ? `No tickers found matching "${searchQuery}"` 
-                        : stageDetails.name.includes('Vote Consensus') && stageDetails.name.includes('-of-5')
+                        : stageDetails.name.includes('Vote Consensus')
                           ? "No tickers currently reach this consensus level"
                           : "No output tickers"
                       }

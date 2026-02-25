@@ -48,7 +48,11 @@ interface MRESignal {
     rsi_oversold: boolean;
     mean_reversion: boolean;
     momentum: boolean;
+    time_series_momentum?: boolean;
+    qvm_factor?: boolean;
+    vix_mean_reversion?: boolean;
   };
+  persistence_by_strategy?: Record<string, number>;
   price?: number;
   asset_class?: string;
   sector?: string;
@@ -155,16 +159,19 @@ export default function TickerTechnicalBreakdown({
   const [isExpanded, setIsExpanded] = useState(false);
   const [activeTab, setActiveTab] = useState<'overview' | 'technical' | 'regime' | 'fibonacci'>('overview');
 
-  // Strategy color mapping — consistent across legend and dots
+  // Strategy color mapping — consistent across legend and dots (all 8 strategies)
   const STRATEGY_COLORS: Record<string, { active: string; inactive: string }> = {
-    fear_greed:          { active: 'bg-blue-400',    inactive: 'bg-blue-400/20' },
-    regime_confirmation: { active: 'bg-purple-400',  inactive: 'bg-purple-400/20' },
-    rsi_oversold:        { active: 'bg-orange-400',   inactive: 'bg-orange-400/20' },
-    mean_reversion:      { active: 'bg-amber-400',   inactive: 'bg-amber-400/20' },
-    momentum:            { active: 'bg-emerald-400', inactive: 'bg-emerald-400/20' },
+    fear_greed:            { active: 'bg-emerald-400', inactive: 'bg-emerald-400/20' },
+    regime_confirmation:   { active: 'bg-blue-400',    inactive: 'bg-blue-400/20' },
+    rsi_oversold:          { active: 'bg-orange-400',  inactive: 'bg-orange-400/20' },
+    mean_reversion:        { active: 'bg-purple-400',  inactive: 'bg-purple-400/20' },
+    momentum:              { active: 'bg-red-400',     inactive: 'bg-red-400/20' },
+    time_series_momentum:  { active: 'bg-cyan-400',    inactive: 'bg-cyan-400/20' },
+    qvm_factor:            { active: 'bg-pink-400',    inactive: 'bg-pink-400/20' },
+    vix_mean_reversion:    { active: 'bg-amber-400',   inactive: 'bg-amber-400/20' },
   };
 
-  const isVoteConsensusSubModal = stageName.includes('-of-5');
+  const isVoteConsensusSubModal = stageName.includes('Vote Consensus');
 
   // Simplified view for Vote Consensus sub-modals
   if (isVoteConsensusSubModal && rawData?.strategy_votes) {
@@ -178,9 +185,14 @@ export default function TickerTechnicalBreakdown({
             { key: 'rsi_oversold' },
             { key: 'mean_reversion' },
             { key: 'momentum' },
+            { key: 'time_series_momentum' },
+            { key: 'qvm_factor' },
+            { key: 'vix_mean_reversion' },
           ].map(strategy => {
-            const voted = rawData.strategy_votes?.[strategy.key as keyof typeof rawData.strategy_votes];
-            const colors = STRATEGY_COLORS[strategy.key];
+            // Check both confirmed votes and persistence-pending votes
+            const voted = rawData.strategy_votes?.[strategy.key as keyof typeof rawData.strategy_votes]
+              || (rawData.persistence_by_strategy && (rawData.persistence_by_strategy as any)[strategy.key] > 0);
+            const colors = STRATEGY_COLORS[strategy.key] || { active: 'bg-slate-400', inactive: 'bg-slate-400/20' };
             return (
               <div
                 key={strategy.key}
@@ -426,7 +438,7 @@ export default function TickerTechnicalBreakdown({
                   ? getSignalBg('BUY')
                   : getSignalBg(signal)
               }`}>
-                {(stageName.includes('Vote Consensus') || stageName.includes('-of-5')) ? 'BUY' : signal}
+                {stageName.includes('Vote Consensus') ? 'BUY' : signal}
               </span>
             )}
             {rawData.asset_class && (
@@ -436,28 +448,33 @@ export default function TickerTechnicalBreakdown({
           
           <div className="flex items-center gap-4">
             {/* Strategy Vote Indicators — only show on the main Vote Consensus Gate, not on specific N-of-5 sub-modals where it's redundant */}
-            {(stageName.includes('Vote Consensus') || stageName.includes('consensus')) && !stageName.includes('-of-5') && rawData.strategy_votes && (
+            {(stageName.includes('Vote Consensus') || stageName.includes('consensus')) && rawData.strategy_votes && (
               <div className="flex items-center gap-1">
                 {[
                   { key: 'fear_greed', label: 'F&G' },
-                  { key: 'regime_confirmation', label: 'Regime' },
+                  { key: 'regime_confirmation', label: 'Trend' },
                   { key: 'rsi_oversold', label: 'RSI' },
-                  { key: 'mean_reversion', label: 'Mean' },
-                  { key: 'momentum', label: 'Mom' }
+                  { key: 'mean_reversion', label: 'MR' },
+                  { key: 'momentum', label: 'Mom' },
+                  { key: 'time_series_momentum', label: 'TS' },
+                  { key: 'qvm_factor', label: 'QVM' },
+                  { key: 'vix_mean_reversion', label: 'VIX' },
                 ].map(strategy => {
-                  const voted = rawData.strategy_votes?.[strategy.key as keyof typeof rawData.strategy_votes];
+                  const voted = rawData.strategy_votes?.[strategy.key as keyof typeof rawData.strategy_votes]
+                    || (rawData.persistence_by_strategy && (rawData.persistence_by_strategy as any)[strategy.key] > 0);
+                  const colors = STRATEGY_COLORS[strategy.key] || { active: 'bg-slate-400', inactive: 'bg-slate-600' };
                   return (
                     <div
                       key={strategy.key}
                       className={`w-2 h-2 rounded-full ${
-                        voted ? 'bg-emerald-400' : 'bg-slate-600'
+                        voted ? colors.active : 'bg-slate-600'
                       }`}
                       title={`${strategy.label}: ${voted ? '✓' : '✗'}`}
                     />
                   );
                 })}
                 <span className="text-xs text-slate-400 ml-1">
-                  {rawData.strategies_agreeing}/5
+                  {rawData.strategies_agreeing}/8
                 </span>
               </div>
             )}

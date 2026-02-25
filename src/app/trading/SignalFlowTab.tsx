@@ -1634,23 +1634,23 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
             let strokeWidth = "1.5";
             
             // Apply tier-specific styling for multi-dot connections
-            // Thick, bright, solid colors for maximum visibility
+            // Solid, bright, thick lines — no glow filter, no animation
             if (tierVoteCount !== undefined) {
               if (tierVoteCount >= 3) {
                 strokeColor = "rgb(52, 211, 153)";  // emerald-400
                 opacity = "1";
                 strokeWidth = "4";
-                className = "flow-active";
+                className = "";  // no animation — solid line
               } else if (tierVoteCount >= 2) {
                 strokeColor = "rgb(96, 165, 250)";  // blue-400
                 opacity = "1";
                 strokeWidth = "3.5";
-                className = "flow-active";
+                className = "";
               } else {
-                strokeColor = "rgb(203, 213, 225)";  // slate-300 (brighter)
-                opacity = "1";
+                strokeColor = "rgb(203, 213, 225)";  // slate-300 (bright)
+                opacity = "0.9";
                 strokeWidth = "3";
-                className = "flow-active";
+                className = "";
               }
             } else {
               // Legacy single-dot connections
@@ -1674,9 +1674,10 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
                 stroke={strokeColor}
                 strokeWidth={strokeWidth}
                 fill="none"
-                filter={(isActive || isPending || tierVoteCount !== undefined) ? "url(#glow)" : undefined}
+                filter={tierVoteCount !== undefined ? undefined : (isActive || isPending) ? "url(#glow)" : undefined}
                 opacity={opacity}
-                strokeDasharray={(isActive || isPending || tierVoteCount !== undefined) ? "8 6" : "4 4"}
+                strokeDasharray={tierVoteCount !== undefined ? undefined : (isActive || isPending) ? "8 6" : "4 4"}
+                strokeLinecap={tierVoteCount !== undefined ? "round" : undefined}
                 className={className}
               />
             );

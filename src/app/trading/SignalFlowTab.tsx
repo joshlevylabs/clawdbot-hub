@@ -1039,21 +1039,23 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
             let strokeWidth = "1.5";
             
             // Apply tier-specific styling for multi-dot connections
+            // Use solid colors (not gradients) for visibility in the gap between nodes
             if (tierVoteCount !== undefined) {
               if (tierVoteCount >= 3) {
-                strokeColor = "url(#tier3PlusGradient)";
-                opacity = "0.8";
-                strokeWidth = "2.5";
+                strokeColor = "rgb(52, 211, 153)";  // emerald-400 solid
+                opacity = "1";
+                strokeWidth = "3";
                 className = "flow-active";
               } else if (tierVoteCount >= 2) {
-                strokeColor = "url(#tier2Gradient)";
+                strokeColor = "rgb(96, 165, 250)";  // blue-400 solid
+                opacity = "0.9";
+                strokeWidth = "2.5";
+                className = "flow-active";
+              } else {
+                strokeColor = "rgb(148, 163, 184)";  // slate-400 solid
                 opacity = "0.7";
                 strokeWidth = "2";
                 className = "flow-active";
-              } else {
-                strokeColor = "url(#tier1Gradient)";
-                opacity = "0.5";
-                strokeWidth = "1.5";
               }
             } else {
               // Legacy single-dot connections

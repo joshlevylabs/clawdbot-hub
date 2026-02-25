@@ -4,7 +4,7 @@
     "adhoc-evening-roster-test": 2,
     "adhoc-phase-3-smoke-test": 2,
     "overnight-sprint": 24,
-    "morning-kickoff": 9,
+    "morning-kickoff": 10,
     "midday-checkpoint": 12,
     "evening-session": 13,
     "adhoc-podcast-planning-episode-4-how-i-use-ai-agents-to-run-my-entire-podcast-and-newsletter-pipeline": 1,
@@ -28,5 +28,5 @@
     "adhoc-welcome-modal-design": "STD",
     "adhoc-paper-trading-portfolio-management-in-lever": "STD"
   },
-  "global_counter": 44
+  "global_counter": 45
 }

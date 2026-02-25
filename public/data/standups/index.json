@@ -40,6 +40,21 @@
       "instanceKey": "STD-41"
     },
     {
+      "date": "2026-02-25",
+      "time": "05:00",
+      "type": "morning-kickoff",
+      "typeName": "Morning Kickoff",
+      "typeEmoji": "\ud83c\udf05",
+      "topic": "Morning Kickoff \u2014 Wednesday Feb 25",
+      "file": "2026-02-25-morning-kickoff.json",
+      "tokenCost": 0,
+      "verticals": [
+        "ecosystem"
+      ],
+      "initiatives": [],
+      "instanceKey": "STD-45"
+    },
+    {
       "date": "2026-02-24",
       "time": "22:30",
       "type": "night-wrap",

@@ -1,6 +1,6 @@
 {
   "date": "2026-02-25",
-  "generatedAt": "2026-02-25T13:54:17.620684-08:00",
+  "generatedAt": "2026-02-25T14:54:22.567435-08:00",
   "priorities": [
     {
       "text": "Decide newsletter send timing relative to Apple approval",
@@ -207,6 +207,12 @@
       "assignee": "Jordan Peterson",
       "status": "pending",
       "taskKey": "A-220"
+    },
+    {
+      "text": "Identify first revenue stream to activate",
+      "assignee": "Dave Ramsey",
+      "status": "pending",
+      "taskKey": "A-221"
     }
   ]
 }

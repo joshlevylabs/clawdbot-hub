@@ -207,11 +207,15 @@ export default function TickerTechnicalBreakdown({
 
   // Simplified view for individual strategy gate modals
   const isStrategyGateModal = 
-    stageName.includes('Fear & Greed Strategy') ||
-    stageName.includes('Regime Confirm Strategy') ||
-    stageName.includes('RSI Oversold Strategy') ||
-    stageName.includes('Mean Reversion Strategy') ||
-    stageName.includes('Momentum Strategy');
+    stageName.includes('Fear & Greed') ||
+    stageName.includes('Blended F&G') ||
+    stageName.includes('Multi-TF Trend') ||
+    stageName.includes('ConnorsRSI') ||
+    stageName.includes('Dual Band MR') ||
+    stageName.includes('Dual Momentum') ||
+    stageName.includes('TS Momentum') ||
+    stageName.includes('QVM Factor') ||
+    stageName.includes('VIX Reversion');
 
   if (isStrategyGateModal && rawData) {
     // Render strategy-specific compact row
@@ -223,7 +227,7 @@ export default function TickerTechnicalBreakdown({
         const hasBlendedData = rawData.global_fg !== undefined && rawData.sector_fg !== undefined;
         
         return (
-          <div className="flex items-center gap-3 text-xs">
+          <div className="flex items-center gap-3 text-xs flex-wrap">
             <span className="text-slate-400">{hasBlendedData ? 'Effective' : 'F&G'}: <span className={`font-medium ${fg !== undefined && fg <= 25 ? 'text-red-400' : fg !== undefined && fg <= 45 ? 'text-amber-400' : 'text-emerald-400'}`}>{fg?.toFixed(0) ?? '—'}</span></span>
             {hasBlendedData && (
               <>
@@ -242,90 +246,228 @@ export default function TickerTechnicalBreakdown({
         );
       }
 
-      if (stageName.includes('Regime Confirm')) {
+      if (stageName.includes('Multi-TF Trend')) {
         const price = rawData.price;
         const regime = rawData.regime;
+        const momentum20d = rawData.momentum_20d;
+        const return5d = rawData.return_5d;
         const rd = rawData.regime_details;
-        // Fallback chain: 200 → 150 → 100 → 50 → 20
-        const emaChain: { value: number | undefined; label: string }[] = [
-          { value: rd?.ema_200, label: 'EMA 200' },
-          { value: rd?.ema_150, label: 'EMA 150' },
-          { value: rd?.ema_100, label: 'EMA 100' },
-          { value: rd?.ema_50, label: 'EMA 50' },
-          { value: rd?.ema_20, label: 'EMA 20' },
-        ];
-        const bestEma = emaChain.find(e => e.value !== undefined && e.value !== null && e.value > 0);
-        const compareEma = bestEma?.value;
-        const compareLabel = bestEma?.label ?? null;
-        const pctAbove = price && compareEma ? ((price - compareEma) / compareEma * 100) : undefined;
+        
+        // SMA(50) approximation using EMA(50) as fallback
+        const sma50 = rd?.ema_50; 
+        const pctAboveSMA = price && sma50 ? ((price - sma50) / sma50 * 100) : undefined;
+        
         return (
           <div className="flex items-center gap-3 text-xs flex-wrap">
-            <span className="text-slate-400">Price: <span className="text-slate-200 font-medium">${price?.toFixed(2) ?? '—'}</span></span>
-            {compareLabel && compareEma ? (
-              <>
-                <span className="text-slate-500">|</span>
-                <span className="text-slate-400">{compareLabel}: <span className="text-slate-200 font-medium">${compareEma.toFixed(2)}</span></span>
-                {pctAbove !== undefined && (
-                  <>
-                    <span className="text-slate-500">|</span>
-                    <span className={`font-medium ${pctAbove >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-                      {pctAbove >= 0 ? '+' : ''}{pctAbove.toFixed(1)}%
-                    </span>
-                  </>
-                )}
-              </>
-            ) : null}
             <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium capitalize ${regime === 'bull' ? 'bg-emerald-900/50 text-emerald-400' : regime === 'bear' ? 'bg-red-900/50 text-red-400' : 'bg-amber-900/50 text-amber-400'}`}>
               {regime ?? '—'}
             </span>
+            {sma50 && pctAboveSMA !== undefined && (
+              <>
+                <span className="text-slate-500">|</span>
+                <span className="text-slate-400">vs SMA(50): <span className={`font-medium ${pctAboveSMA >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                  {pctAboveSMA >= 0 ? '+' : ''}{pctAboveSMA.toFixed(1)}%
+                </span></span>
+              </>
+            )}
+            {momentum20d !== undefined && (
+              <>
+                <span className="text-slate-500">|</span>
+                <span className="text-slate-400">20d Mom: <span className={`font-medium ${momentum20d >= 5 ? 'text-emerald-400' : momentum20d >= 0 ? 'text-amber-400' : 'text-red-400'}`}>
+                  {momentum20d >= 0 ? '+' : ''}{momentum20d.toFixed(1)}%
+                </span></span>
+              </>
+            )}
+            {return5d !== undefined && (
+              <>
+                <span className="text-slate-500">|</span>
+                <span className="text-slate-400">5d Return: <span className={`font-medium ${return5d >= -2 ? 'text-emerald-400' : return5d >= -5 ? 'text-amber-400' : 'text-red-400'}`}>
+                  {return5d >= 0 ? '+' : ''}{return5d.toFixed(1)}%
+                </span></span>
+              </>
+            )}
           </div>
         );
       }
 
-      if (stageName.includes('RSI Oversold')) {
+      if (stageName.includes('ConnorsRSI')) {
         const rsi = rawData.rsi_14;
-        const rsiColor = rsi !== undefined 
-          ? rsi < 30 ? 'text-emerald-400' : rsi > 70 ? 'text-red-400' : 'text-amber-400'
-          : 'text-slate-400';
+        const regime = rawData.regime;
+        const price = rawData.price;
+        const rd = rawData.regime_details;
+        const aboveSMA200 = rd?.above_ema_200 ?? false; // Using EMA200 as SMA200 proxy
+        const triggered = rsi !== undefined && rsi < 15; // ConnorsRSI threshold is 15, not 30
+        
         return (
-          <div className="flex items-center gap-3 text-xs">
-            <span className="text-slate-400">RSI (14): <span className={`font-medium ${rsiColor}`}>{rsi?.toFixed(1) ?? '—'}</span></span>
+          <div className="flex items-center gap-3 text-xs flex-wrap">
+            <span className="text-slate-400">RSI(14): <span className={`font-medium text-lg ${rsi !== undefined && rsi < 15 ? 'text-emerald-400' : rsi !== undefined && rsi < 30 ? 'text-amber-400' : 'text-red-400'}`}>
+              {rsi?.toFixed(1) ?? '—'}
+            </span></span>
             <span className="text-slate-500">|</span>
-            <span className="text-slate-400">Threshold: <span className="text-slate-200 font-medium">30</span></span>
-            <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${rsi !== undefined && rsi < 30 ? 'bg-emerald-900/50 text-emerald-400' : 'bg-slate-700/50 text-slate-400'}`}>
-              {rsi !== undefined && rsi < 30 ? '✓ Oversold' : '✗ Not oversold'}
+            <span className="text-slate-400">vs SMA(200): <span className={`font-medium ${aboveSMA200 ? 'text-emerald-400' : 'text-red-400'}`}>
+              {aboveSMA200 ? 'Above' : 'Below'}
+            </span></span>
+            <span className="text-slate-500">|</span>
+            <span className="text-slate-400">Threshold: <span className="text-slate-200 font-medium">&lt; 15</span></span>
+            <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${triggered ? 'bg-emerald-900/50 text-emerald-400' : 'bg-slate-700/50 text-slate-400'}`}>
+              {triggered ? '✓ Triggered' : '✗ Not triggered'}
             </span>
           </div>
         );
       }
 
-      if (stageName.includes('Mean Reversion')) {
-        const ret5d = rawData.return_5d;
-        const dip = rawData.dip_5d_pct;
-        const triggered = ret5d !== undefined && ret5d <= -5.0;
+      if (stageName.includes('Dual Band MR')) {
+        const bbPosition = rawData.bb_position;
+        const return5d = rawData.return_5d;
+        const dip5d = rawData.dip_5d_pct;
+        const triggered = bbPosition === 'below_lower' && return5d !== undefined && return5d < -3;
+        
         return (
-          <div className="flex items-center gap-3 text-xs">
-            <span className="text-slate-400">5d Return: <span className={`font-medium ${ret5d !== undefined ? (ret5d <= -5 ? 'text-emerald-400' : ret5d < 0 ? 'text-amber-400' : 'text-slate-300') : 'text-slate-400'}`}>{ret5d !== undefined ? `${ret5d >= 0 ? '+' : ''}${ret5d.toFixed(1)}%` : '—'}</span></span>
+          <div className="flex items-center gap-3 text-xs flex-wrap">
+            <span className="text-slate-400">BB Position: <span className={`font-medium text-lg ${bbPosition === 'below_lower' ? 'text-emerald-400' : bbPosition === 'above_upper' ? 'text-red-400' : 'text-amber-400'}`}>
+              {bbPosition?.replace('_', ' ') ?? '—'}
+            </span></span>
+            {return5d !== undefined && (
+              <>
+                <span className="text-slate-500">|</span>
+                <span className="text-slate-400">5d Return: <span className={`font-medium ${return5d <= -5 ? 'text-emerald-400' : return5d < 0 ? 'text-amber-400' : 'text-slate-300'}`}>
+                  {return5d >= 0 ? '+' : ''}{return5d.toFixed(1)}%
+                </span></span>
+              </>
+            )}
             <span className="text-slate-500">|</span>
-            <span className="text-slate-400">Threshold: <span className="text-slate-200 font-medium">-5.0%</span></span>
+            <span className="text-slate-400">Required: <span className="text-slate-200 font-medium">3 of 4 conditions</span></span>
             <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${triggered ? 'bg-emerald-900/50 text-emerald-400' : 'bg-slate-700/50 text-slate-400'}`}>
-              {triggered ? '✓ Dip detected' : '✗ No dip'}
+              {triggered ? '✓ Triggered' : '✗ Not triggered'}
             </span>
           </div>
         );
       }
 
-      if (stageName.includes('Momentum')) {
-        const mom = rawData.momentum_20d;
-        const triggered = mom !== undefined && mom >= 10.0;
+      if (stageName.includes('Dual Momentum')) {
+        const momentum20d = rawData.momentum_20d;
+        const return5d = rawData.return_5d;
+        const regime = rawData.regime;
+        const triggered = momentum20d !== undefined && momentum20d > 4.5;
+        
         return (
-          <div className="flex items-center gap-3 text-xs">
-            <span className="text-slate-400">20d Momentum: <span className={`font-medium ${mom !== undefined ? (mom >= 10 ? 'text-emerald-400' : mom >= 0 ? 'text-amber-400' : 'text-red-400') : 'text-slate-400'}`}>{mom !== undefined ? `${mom >= 0 ? '+' : ''}${mom.toFixed(1)}%` : '—'}</span></span>
+          <div className="flex items-center gap-3 text-xs flex-wrap">
+            <span className="text-slate-400">20d Momentum: <span className={`font-medium text-lg ${momentum20d !== undefined && momentum20d > 4.5 ? 'text-emerald-400' : momentum20d !== undefined && momentum20d >= 0 ? 'text-amber-400' : 'text-red-400'}`}>
+              {momentum20d !== undefined ? `${momentum20d >= 0 ? '+' : ''}${momentum20d.toFixed(1)}%` : '—'}
+            </span></span>
+            {return5d !== undefined && (
+              <>
+                <span className="text-slate-500">|</span>
+                <span className="text-slate-400">5d Return: <span className={`font-medium ${return5d >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                  {return5d >= 0 ? '+' : ''}{return5d.toFixed(1)}%
+                </span></span>
+              </>
+            )}
             <span className="text-slate-500">|</span>
-            <span className="text-slate-400">Threshold: <span className="text-slate-200 font-medium">+10.0%</span></span>
-            <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${triggered ? 'bg-emerald-900/50 text-emerald-400' : 'bg-slate-700/50 text-slate-400'}`}>
-              {triggered ? '✓ Strong' : '✗ Weak'}
+            <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium capitalize ${regime === 'bull' ? 'bg-emerald-900/50 text-emerald-400' : regime === 'bear' ? 'bg-red-900/50 text-red-400' : 'bg-amber-900/50 text-amber-400'}`}>
+              {regime ?? '—'}
             </span>
+            <span className="text-slate-500">|</span>
+            <span className="text-slate-400">Req: <span className="text-slate-200 font-medium">12m &gt; 4.5% + top 30%</span></span>
+          </div>
+        );
+      }
+
+      if (stageName.includes('TS Momentum')) {
+        const volatility20d = rawData.volatility_20d;
+        const momentum20d = rawData.momentum_20d;
+        const regime = rawData.regime;
+        const triggered = momentum20d !== undefined && momentum20d > 0;
+        
+        return (
+          <div className="flex items-center gap-3 text-xs flex-wrap">
+            <span className="text-slate-400">Vol 20d: <span className={`font-medium text-lg ${volatility20d !== undefined && volatility20d < 20 ? 'text-emerald-400' : volatility20d !== undefined && volatility20d < 35 ? 'text-amber-400' : 'text-red-400'}`}>
+              {volatility20d?.toFixed(1) ?? '—'}%
+            </span></span>
+            {momentum20d !== undefined && (
+              <>
+                <span className="text-slate-500">|</span>
+                <span className="text-slate-400">Momentum: <span className={`font-medium ${momentum20d >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                  {momentum20d >= 0 ? '+' : ''}{momentum20d.toFixed(1)}%
+                </span></span>
+              </>
+            )}
+            <span className="text-slate-500">|</span>
+            <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium capitalize ${regime === 'bull' ? 'bg-emerald-900/50 text-emerald-400' : regime === 'bear' ? 'bg-red-900/50 text-red-400' : 'bg-amber-900/50 text-amber-400'}`}>
+              {regime ?? '—'}
+            </span>
+            <span className="text-slate-500">|</span>
+            <span className="text-slate-400">Vol-adj strength, 12m excess &gt; 0</span>
+          </div>
+        );
+      }
+
+      if (stageName.includes('QVM Factor')) {
+        const assetClass = rawData.asset_class;
+        const momentum20d = rawData.momentum_20d;
+        const price = rawData.price;
+        const regime = rawData.regime;
+        const sector = rawData.sector;
+        
+        return (
+          <div className="flex items-center gap-3 text-xs flex-wrap">
+            <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-pink-900/50 text-pink-400 capitalize">
+              {assetClass?.replace('_', ' ') ?? '—'}
+            </span>
+            {momentum20d !== undefined && (
+              <>
+                <span className="text-slate-500">|</span>
+                <span className="text-slate-400">Momentum: <span className={`font-medium ${momentum20d >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                  {momentum20d >= 0 ? '+' : ''}{momentum20d.toFixed(1)}%
+                </span></span>
+              </>
+            )}
+            {price && (
+              <>
+                <span className="text-slate-500">|</span>
+                <span className="text-slate-400">Price: <span className="text-slate-200 font-medium">${price.toFixed(2)}</span></span>
+              </>
+            )}
+            <span className="text-slate-500">|</span>
+            <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium capitalize ${regime === 'bull' ? 'bg-emerald-900/50 text-emerald-400' : regime === 'bear' ? 'bg-red-900/50 text-red-400' : 'bg-amber-900/50 text-amber-400'}`}>
+              {regime ?? '—'}
+            </span>
+            <span className="text-slate-500">|</span>
+            <span className="text-slate-400">Req: ROE &gt; 15%, D/E &lt; 1.0, P/E bottom 30%</span>
+          </div>
+        );
+      }
+
+      if (stageName.includes('VIX Reversion')) {
+        const assetClass = rawData.asset_class;
+        const regime = rawData.regime;
+        const volatility20d = rawData.volatility_20d;
+        const isEquity = assetClass && ['broad_market', 'technology', 'financials', 'energy'].includes(assetClass);
+        const vixLevel = 25; // Hardcoded threshold - could come from rawData if available
+        
+        return (
+          <div className="flex items-center gap-3 text-xs flex-wrap">
+            <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium capitalize ${isEquity ? 'bg-emerald-900/50 text-emerald-400' : 'bg-slate-700/50 text-slate-400'}`}>
+              {assetClass?.replace('_', ' ') ?? '—'}
+            </span>
+            <span className="text-slate-500">|</span>
+            <span className="text-slate-400">Equity Only: <span className={`font-medium ${isEquity ? 'text-emerald-400' : 'text-red-400'}`}>
+              {isEquity ? 'Yes' : 'No'}
+            </span></span>
+            <span className="text-slate-500">|</span>
+            <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium capitalize ${regime === 'bull' ? 'bg-emerald-900/50 text-emerald-400' : regime === 'bear' ? 'bg-red-900/50 text-red-400' : 'bg-amber-900/50 text-amber-400'}`}>
+              {regime ?? '—'}
+            </span>
+            {volatility20d !== undefined && (
+              <>
+                <span className="text-slate-500">|</span>
+                <span className="text-slate-400">Vol: <span className={`font-medium ${volatility20d < 20 ? 'text-emerald-400' : volatility20d < 35 ? 'text-amber-400' : 'text-red-400'}`}>
+                  {volatility20d.toFixed(1)}%
+                </span></span>
+              </>
+            )}
+            <span className="text-slate-500">|</span>
+            <span className="text-slate-400">VIX &gt; {vixLevel}</span>
           </div>
         );
       }
@@ -336,10 +478,18 @@ export default function TickerTechnicalBreakdown({
     return (
       <div className="bg-slate-800/50 rounded-lg p-3 border border-slate-700/50">
         <div className="flex items-center justify-between mb-1">
-          <span className="font-mono font-semibold text-slate-200">{symbol}</span>
-          {rawData.price && (
-            <span className="text-xs text-slate-400">${rawData.price.toFixed(2)}</span>
-          )}
+          <div className="flex items-center gap-2">
+            <span className="font-mono font-semibold text-slate-200">{symbol}</span>
+            <span className="text-[10px] text-slate-500 capitalize">{rawData.asset_class?.replace('_', ' ')}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-slate-400">${rawData.price?.toFixed(2)}</span>
+            <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${
+              rawData.strategy_votes ? 'bg-emerald-900/50 text-emerald-400' : 'bg-slate-700/50 text-slate-400'
+            }`}>
+              {rawData.strategy_votes ? '✓ Triggered' : '✗ Not triggered'}
+            </span>
+          </div>
         </div>
         {renderStrategyData()}
       </div>

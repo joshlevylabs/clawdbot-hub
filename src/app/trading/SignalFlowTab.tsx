@@ -520,7 +520,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, onStageClick }: Work
   // Create bezier curve path
   const createBezierPath = (from: { x: number; y: number }, to: { x: number; y: number }) => {
     const dx = to.x - from.x;
-    const controlPointOffset = Math.min(dx * 0.5, 100);
+    const controlPointOffset = Math.min(dx * 0.4, 150);
     
     return `M ${from.x} ${from.y} C ${from.x + controlPointOffset} ${from.y} ${to.x - controlPointOffset} ${to.y} ${to.x} ${to.y}`;
   };
@@ -575,7 +575,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, onStageClick }: Work
       >
       <div 
         ref={containerRef} 
-        className="relative min-w-[1400px] min-h-[500px]"
+        className="relative min-w-[2000px] min-h-[500px]"
         style={{ 
           background: 'radial-gradient(circle at 20% 80%, rgba(15, 118, 110, 0.05) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.05) 0%, transparent 50%)',
           transform: `scale(${scale})`,
@@ -662,7 +662,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, onStageClick }: Work
         </svg>
         
         {/* Workflow Nodes */}
-        <div className="relative z-10 flex flex-row items-start gap-16 p-4">
+        <div className="relative z-10 flex flex-row items-start gap-24 p-6">
           
           {/* Column 1: Universe Input */}
           <div className="flex flex-col items-center gap-6">

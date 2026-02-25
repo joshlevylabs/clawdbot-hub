@@ -27,6 +27,7 @@ interface WorkflowNodeProps {
   style?: React.CSSProperties;
   isActive?: boolean;
   isPending?: boolean;
+  bypassLabel?: string;
 }
 
 const WorkflowNode = forwardRef<HTMLDivElement, WorkflowNodeProps>(({
@@ -42,7 +43,8 @@ const WorkflowNode = forwardRef<HTMLDivElement, WorkflowNodeProps>(({
   className = '',
   style,
   isActive = false,
-  isPending = false
+  isPending = false,
+  bypassLabel,
 }, ref) => {
   
   // Color schemes and icons based on node type
@@ -155,6 +157,13 @@ const WorkflowNode = forwardRef<HTMLDivElement, WorkflowNodeProps>(({
       <p className="text-xs text-slate-400 mb-3 leading-tight">
         {description}
       </p>
+
+      {/* Bypass indicator */}
+      {bypassLabel && (
+        <div className="mb-2 px-2 py-1 bg-amber-900/30 border border-amber-700/40 rounded-md">
+          <span className="text-[9px] text-amber-400 font-medium">⚠ {bypassLabel}</span>
+        </div>
+      )}
 
       {/* Metrics */}
       <div className="space-y-1.5">

@@ -302,6 +302,7 @@ function calculatePipelineStages(signals: MRESignal[], dataType: 'core' | 'unive
   };
   
   // Step 3: Signal Gating (sell suppress + bear suppress) — operates on persistence-confirmed signals
+  const persistenceBypass = persistenceConfirmed.length === 0 && anyVotePassed.length > 0;
   const gatingInput = persistenceConfirmed.length > 0 ? persistenceConfirmed : anyVotePassed;
   const signalGatePassed = gatingInput.filter(s => 
     !s.bear_suppressed && !s.sell_suppressed
@@ -314,7 +315,8 @@ function calculatePipelineStages(signals: MRESignal[], dataType: 'core' | 'unive
     inputCount: gatingInput.length,
     outputCount: signalGatePassed.length,
     passed: signalGatePassed,
-    filtered: signalGateFiltered
+    filtered: signalGateFiltered,
+    persistenceBypass,
   };
   
   // Step 4: Confidence Tuning (all modifiers: regime, role, rotation, sideways, kalshi)
@@ -749,12 +751,17 @@ function WorkflowVisualization({ pipelineData, mreVersions, onStageClick }: Work
             <WorkflowNode
               ref={(el) => { nodeRefs.current['signalGating'] = el; }}
               name="Signal Gating"
-              description="Bear & sell suppression"
+              description={pipelineData.signalGating.persistenceBypass 
+                ? "Persistence bypass — all raw votes" 
+                : "Bear & sell suppression"}
               inputCount={pipelineData.signalGating.inputCount}
               outputCount={pipelineData.signalGating.outputCount}
               onClick={() => onStageClick('signalGating')}
               nodeType="filter"
               version={mreVersions?.signals || '2.0.0'}
+              bypassLabel={pipelineData.signalGating.persistenceBypass 
+                ? "No confirmed signals — using raw votes" 
+                : undefined}
             />
           </div>
           

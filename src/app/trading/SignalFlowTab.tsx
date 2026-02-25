@@ -375,166 +375,87 @@ function WorkflowVisualization({ pipelineData, mreVersions, onStageClick }: Work
   const [connections, setConnections] = useState<{ from: string; to: string; fromPos: { x: number; y: number }; toPos: { x: number; y: number } }[]>([]);
   const [scale, setScale] = useState(1);
 
+  // Bus-style connection system: clean column-to-column lines with vertical bus bars at fan points
+  // Instead of N individual bezier spaghetti, draw: column_right → bus_bar → horizontal_line → bus_bar → column_left
   const updateConnections = useCallback(() => {
     if (!containerRef.current) return;
     
     const containerRect = containerRef.current.getBoundingClientRect();
     const newConnections: (typeof connections[0] & { isActive?: boolean; isPending?: boolean })[] = [];
     
-    // Strategy names for individual connections
-    const strategyKeys = [
-      'fear_greed', 'regime_confirmation', 'rsi_oversold', 'mean_reversion',
-      'momentum', 'time_series_momentum', 'qvm_factor', 'vix_mean_reversion'
+    // Helper: get node center-right and center-left positions
+    const getRightPos = (node: HTMLDivElement) => {
+      const r = node.getBoundingClientRect();
+      return { x: r.right - containerRect.left, y: r.top + r.height / 2 - containerRect.top };
+    };
+    const getLeftPos = (node: HTMLDivElement) => {
+      const r = node.getBoundingClientRect();
+      return { x: r.left - containerRect.left, y: r.top + r.height / 2 - containerRect.top };
+    };
+    
+    // Build the 7 column-to-column connections
+    const columns = [
+      { key: 'input', type: 'single' },
+      { key: 'strategies', type: 'group', prefix: 'strategy_', keys: ['fear_greed', 'regime_confirmation', 'rsi_oversold', 'mean_reversion', 'momentum', 'time_series_momentum', 'qvm_factor', 'vix_mean_reversion'] },
+      { key: 'consensus', type: 'group', prefix: 'consensus_', keys: ['8','7','6','5','4','3','2','1'] },
+      { key: 'persistence', type: 'single' },
+      { key: 'signalGating', type: 'single' },
+      { key: 'confidenceTuning', type: 'single' },
+      { key: 'finalFilters', type: 'single' },
+      { key: 'output', type: 'single' },
     ];
     
-    // 1. Input → Individual Strategy Nodes (Fan-out: 1 to 8)
-    const inputNode = nodeRefs.current['input'];
-    if (inputNode) {
-      strategyKeys.forEach((stratKey, index) => {
-        const stratNode = nodeRefs.current[`strategy_${stratKey}`];
-        if (stratNode) {
-          const inputRect = inputNode.getBoundingClientRect();
-          const stratRect = stratNode.getBoundingClientRect();
-          
-          const fromPos = {
-            x: inputRect.right - containerRect.left,
-            y: inputRect.top + inputRect.height / 2 - containerRect.top
-          };
-          
-          const toPos = {
-            x: stratRect.left - containerRect.left,
-            y: stratRect.top + stratRect.height / 2 - containerRect.top
-          };
-          
-          const sv = pipelineData.strategyVotes.find((s: any) => s.key === stratKey);
-          const isActive = sv && sv.outputCount > 0;
-          const isPending = sv && sv.pendingCount > 0;
-          
-          newConnections.push({ 
-            from: 'input', 
-            to: `strategy_${stratKey}`, 
-            fromPos, 
-            toPos,
-            isActive,
-            isPending
-          });
-        }
-      });
-    }
-    
-    // 2. Strategy Nodes → Vote Consensus (Fan-in: 8 to 1, connect to center of consensus area)
-    // Find the center of the vote consensus section
-    const consensusNodes = Array.from({length: 8}, (_, i) => nodeRefs.current[`consensus_${i + 1}`]).filter(Boolean);
-    if (consensusNodes.length > 0) {
-      // Calculate center position of consensus group
-      const consensusRects = consensusNodes.map(node => node!.getBoundingClientRect());
-      const consensusCenter = {
-        x: Math.min(...consensusRects.map(r => r.left)) - containerRect.left,
-        y: (Math.min(...consensusRects.map(r => r.top)) + Math.max(...consensusRects.map(r => r.bottom))) / 2 - containerRect.top
-      };
+    for (let i = 0; i < columns.length - 1; i++) {
+      const fromCol = columns[i];
+      const toCol = columns[i + 1];
       
-      strategyKeys.forEach(stratKey => {
-        const stratNode = nodeRefs.current[`strategy_${stratKey}`];
-        if (stratNode) {
-          const stratRect = stratNode.getBoundingClientRect();
-          
-          const fromPos = {
-            x: stratRect.right - containerRect.left,
-            y: stratRect.top + stratRect.height / 2 - containerRect.top
-          };
-          
-          const sv = pipelineData.strategyVotes.find((s: any) => s.key === stratKey);
-          const isActive = sv && sv.outputCount > 0;
-          const isPending = sv && sv.pendingCount > 0;
-          
-          newConnections.push({ 
-            from: `strategy_${stratKey}`, 
-            to: 'voteConsensus', 
-            fromPos, 
-            toPos: consensusCenter,
-            isActive,
-            isPending
-          });
-        }
-      });
-    }
-    
-    // 3. Sequential connections for the rest of the pipeline
-    const sequentialOrder = [
-      'voteConsensus',
-      'persistence',
-      'signalGating',
-      'confidenceTuning', 
-      'finalFilters',
-      'output'
-    ];
-    
-    for (let i = 0; i < sequentialOrder.length - 1; i++) {
-      const fromKey = sequentialOrder[i];
-      const toKey = sequentialOrder[i + 1];
-      
-      let fromNode = null;
-      let toNode = nodeRefs.current[toKey];
-      
-      // Handle special case for vote consensus (use center of consensus nodes)
-      if (fromKey === 'voteConsensus' && consensusNodes.length > 0) {
-        const consensusRects = consensusNodes.map(node => node!.getBoundingClientRect());
-        const fromPos = {
-          x: Math.max(...consensusRects.map(r => r.right)) - containerRect.left,
-          y: (Math.min(...consensusRects.map(r => r.top)) + Math.max(...consensusRects.map(r => r.bottom))) / 2 - containerRect.top
-        };
-        
-        if (toNode) {
-          const toRect = toNode.getBoundingClientRect();
-          const toPos = {
-            x: toRect.left - containerRect.left,
-            y: toRect.top + toRect.height / 2 - containerRect.top
-          };
-          
-          const isActive = pipelineData.voteConsensusGate.outputCount > 0;
-          const isPending = pipelineData.persistenceGate?.pendingCount > 0;
-          
-          newConnections.push({ 
-            from: fromKey, 
-            to: toKey, 
-            fromPos, 
-            toPos,
-            isActive,
-            isPending: toKey === 'persistence' ? isPending : false
-          });
-        }
+      // Get the right-edge center of the "from" column
+      let fromPos: { x: number; y: number } | null = null;
+      if (fromCol.type === 'single') {
+        const node = nodeRefs.current[fromCol.key];
+        if (node) fromPos = getRightPos(node);
       } else {
-        fromNode = nodeRefs.current[fromKey];
-        
-        if (fromNode && toNode) {
-          const fromRect = fromNode.getBoundingClientRect();
-          const toRect = toNode.getBoundingClientRect();
-          
-          const fromPos = {
-            x: fromRect.right - containerRect.left,
-            y: fromRect.top + fromRect.height / 2 - containerRect.top
+        // Group: use the rightmost edge, vertically centered across all nodes
+        const nodes = (fromCol.keys || []).map(k => nodeRefs.current[`${fromCol.prefix}${k}`]).filter(Boolean) as HTMLDivElement[];
+        if (nodes.length > 0) {
+          const rects = nodes.map(n => n.getBoundingClientRect());
+          fromPos = {
+            x: Math.max(...rects.map(r => r.right)) - containerRect.left,
+            y: (Math.min(...rects.map(r => r.top)) + Math.max(...rects.map(r => r.bottom))) / 2 - containerRect.top
           };
-          
-          const toPos = {
-            x: toRect.left - containerRect.left,
-            y: toRect.top + toRect.height / 2 - containerRect.top
-          };
-          
-          // Determine if connection is active based on stage
-          let isActive = false;
-          if (fromKey === 'persistence') isActive = pipelineData.persistenceGate.outputCount > 0;
-          else if (fromKey === 'signalGating') isActive = pipelineData.signalGating.outputCount > 0;
-          else if (fromKey === 'confidenceTuning') isActive = pipelineData.confidenceTuning.outputCount > 0;
-          else if (fromKey === 'finalFilters') isActive = pipelineData.finalFilters.outputCount > 0;
-          
-          newConnections.push({ 
-            from: fromKey, 
-            to: toKey, 
-            fromPos, 
-            toPos,
-            isActive
-          });
         }
+      }
+      
+      // Get the left-edge center of the "to" column
+      let toPos: { x: number; y: number } | null = null;
+      if (toCol.type === 'single') {
+        const node = nodeRefs.current[toCol.key];
+        if (node) toPos = getLeftPos(node);
+      } else {
+        const nodes = (toCol.keys || []).map(k => nodeRefs.current[`${toCol.prefix}${k}`]).filter(Boolean) as HTMLDivElement[];
+        if (nodes.length > 0) {
+          const rects = nodes.map(n => n.getBoundingClientRect());
+          toPos = {
+            x: Math.min(...rects.map(r => r.left)) - containerRect.left,
+            y: (Math.min(...rects.map(r => r.top)) + Math.max(...rects.map(r => r.bottom))) / 2 - containerRect.top
+          };
+        }
+      }
+      
+      if (fromPos && toPos) {
+        // Determine active/pending state
+        let isActive = false;
+        let isPending = false;
+        
+        if (fromCol.key === 'input') isActive = pipelineData.input.outputCount > 0;
+        else if (fromCol.key === 'strategies') isActive = pipelineData.strategyVotes.some((s: any) => s.outputCount > 0);
+        else if (fromCol.key === 'consensus') { isActive = pipelineData.voteConsensusGate.outputCount > 0; isPending = pipelineData.persistenceGate?.pendingCount > 0; }
+        else if (fromCol.key === 'persistence') isActive = pipelineData.persistenceGate.outputCount > 0;
+        else if (fromCol.key === 'signalGating') isActive = pipelineData.signalGating.outputCount > 0;
+        else if (fromCol.key === 'confidenceTuning') isActive = pipelineData.confidenceTuning.outputCount > 0;
+        else if (fromCol.key === 'finalFilters') isActive = pipelineData.finalFilters.outputCount > 0;
+        
+        newConnections.push({ from: fromCol.key, to: toCol.key, fromPos, toPos, isActive, isPending });
       }
     }
     
@@ -686,11 +607,11 @@ function WorkflowVisualization({ pipelineData, mreVersions, onStageClick }: Work
                 key={`${connection.from}-${connection.to}-${index}`}
                 d={createBezierPath(connection.fromPos, connection.toPos)}
                 stroke={strokeColor}
-                strokeWidth="2"
+                strokeWidth={isActive || isPending ? "2.5" : "1.5"}
                 fill="none"
-                filter="url(#glow)"
+                filter={isActive || isPending ? "url(#glow)" : undefined}
                 opacity={opacity}
-                strokeDasharray={isActive || isPending ? "10 10" : "none"}
+                strokeDasharray={isActive || isPending ? "8 6" : "4 4"}
                 className={className}
               />
             );

@@ -2,6 +2,19 @@
   "standups": [
     {
       "date": "2026-02-25",
+      "time": "12:00",
+      "type": "midday-checkpoint",
+      "typeName": "Midday Checkpoint",
+      "typeEmoji": "\u2600\ufe0f",
+      "topic": "Midday Checkpoint \u2014 Wednesday Feb 25",
+      "file": "2026-02-25-midday-checkpoint.json",
+      "tokenCost": 0.0702,
+      "verticals": [],
+      "initiatives": [],
+      "instanceKey": "STD-43"
+    },
+    {
+      "date": "2026-02-25",
       "time": "05:10",
       "type": "adhoc-model-test",
       "typeName": "model-test",

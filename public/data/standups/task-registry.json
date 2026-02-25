@@ -1,5 +1,5 @@
 {
-  "nextAgentId": 217,
+  "nextAgentId": 221,
   "nextJoshuaId": 38,
   "tasks": [
     {
@@ -2061,6 +2061,62 @@
       "sourceDate": "2026-02-24",
       "createdAt": "2026-02-24T22:30:21.160172-08:00",
       "updatedAt": "2026-02-24T22:30:21.160172-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "A-217",
+      "text": "Draft paper trading MVP scope to include manual portfolio entry, free for all users, with premium analytics features (risk scoring, performance attribution, etc.) as the paid tier.",
+      "tag": "AGENT",
+      "priority": "high",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "sourceStandup": "STD-42",
+      "sourceStandupType": "midday-checkpoint",
+      "sourceDate": "2026-02-25",
+      "createdAt": "2026-02-25T12:04:27.214578-08:00",
+      "updatedAt": "2026-02-25T12:04:27.214578-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "A-218",
+      "text": "Implement paper trading with delayed market data for both free and premium tiers, reserving real-time data for a future ultra-premium offering.",
+      "tag": "AGENT",
+      "priority": "high",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "sourceStandup": "STD-42",
+      "sourceStandupType": "midday-checkpoint",
+      "sourceDate": "2026-02-25",
+      "createdAt": "2026-02-25T12:04:27.214578-08:00",
+      "updatedAt": "2026-02-25T12:04:27.214578-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "A-219",
+      "text": "Finalize paper trading user flows, including premium feature gates around advanced analytics.",
+      "tag": "AGENT",
+      "priority": "high",
+      "assignee": "Steve Jobs",
+      "status": "pending",
+      "sourceStandup": "STD-43",
+      "sourceStandupType": "midday-checkpoint",
+      "sourceDate": "2026-02-25",
+      "createdAt": "2026-02-25T12:04:27.214578-08:00",
+      "updatedAt": "2026-02-25T12:08:54.814293-08:00",
+      "completedAt": null
+    },
+    {
+      "key": "A-220",
+      "text": "Integrate educational messaging and psychology prompts into the paper trading experience.",
+      "tag": "AGENT",
+      "priority": "medium",
+      "assignee": "Jordan Peterson",
+      "status": "pending",
+      "sourceStandup": "STD-43",
+      "sourceStandupType": "midday-checkpoint",
+      "sourceDate": "2026-02-25",
+      "createdAt": "2026-02-25T12:04:27.214578-08:00",
+      "updatedAt": "2026-02-25T12:08:54.814293-08:00",
       "completedAt": null
     }
   ]

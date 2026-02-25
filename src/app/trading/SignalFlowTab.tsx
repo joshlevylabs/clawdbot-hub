@@ -1085,7 +1085,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
           <div className="flex flex-col items-center gap-6">
             <div className="text-xs font-semibold text-slate-400 text-center mb-2">Vote Consensus</div>
             <div className="flex flex-col gap-2">
-              {pipelineData.voteConsensusGate.paths.slice().reverse().map((path: any) => {
+              {pipelineData.voteConsensusGate.paths.map((path: any) => {
                 const conf = CONSENSUS_CONFIDENCE[path.voteCount] || 35;
                 const prevConf = path.voteCount > 1 ? (CONSENSUS_CONFIDENCE[path.voteCount - 1] || 35) : 0;
                 const boost = path.voteCount > 1 ? conf - prevConf : 0;
@@ -1114,7 +1114,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
           <div className="flex flex-col items-center gap-6">
             <div className="text-xs font-semibold text-slate-400 text-center mb-2">Persistence Gates</div>
             <div className="flex flex-col gap-2">
-              {Object.entries(pipelineData.perConsensusPersistence).slice().reverse().map(([voteCount, persistenceData]) => {
+              {Object.entries(pipelineData.perConsensusPersistence).map(([voteCount, persistenceData]) => {
                 const voteNum = parseInt(voteCount);
                 const data = persistenceData as {
                   inputCount: number;
@@ -1148,7 +1148,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
           <div className="flex flex-col items-center gap-6">
             <div className="text-xs font-semibold text-slate-400 text-center mb-2">Confirmed Signals</div>
             <div className="flex flex-col gap-2">
-              {pipelineData.postPersistenceConsensusPaths?.slice().reverse().map((path: any) => {
+              {pipelineData.postPersistenceConsensusPaths?.map((path: any) => {
                 const conf = CONSENSUS_CONFIDENCE[path.voteCount] || 35;
                 return (
                   <WorkflowNode
@@ -1242,8 +1242,6 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
               <div className="space-y-1 mb-3">
                 {pipelineData.postGatingConsensusPaths?.length > 0 ? (
                   pipelineData.postGatingConsensusPaths
-                    .slice()
-                    .sort((a: VoteConsensusPath, b: VoteConsensusPath) => b.voteCount - a.voteCount)
                     .map((path: VoteConsensusPath) => {
                       // Find corresponding input count from postPersistenceConsensusPaths
                       const inputPath = pipelineData.postPersistenceConsensusPaths?.find((p: VoteConsensusPath) => p.voteCount === path.voteCount);

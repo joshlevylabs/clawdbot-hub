@@ -28,6 +28,24 @@
     },
     {
       "date": "2026-02-25",
+      "time": "08:30",
+      "type": "ecosystem-sync",
+      "typeName": "Ecosystem Sync Audit",
+      "typeEmoji": "\ud83d\udd04",
+      "topic": "Ecosystem Sync Audit \u2014 Wednesday Feb 25",
+      "file": "2026-02-25-ecosystem-sync.json",
+      "tokenCost": 0.0394,
+      "verticals": [
+        "ecosystem",
+        "joshlevylabs",
+        "hub",
+        "lever"
+      ],
+      "initiatives": [],
+      "instanceKey": "STD-47"
+    },
+    {
+      "date": "2026-02-25",
       "time": "05:10",
       "type": "adhoc-model-test",
       "typeName": "model-test",
@@ -52,7 +70,7 @@
         "ecosystem"
       ],
       "initiatives": [],
-      "instanceKey": "STD-45"
+      "instanceKey": "STD-46"
     },
     {
       "date": "2026-02-24",

@@ -1,7 +1,7 @@
 {
   "date": "2026-02-25",
   "time": "05:00",
-  "generatedAt": "2026-02-25T14:54:22.567435-08:00",
+  "generatedAt": "2026-02-25T15:01:01.591040-08:00",
   "topic": "Morning Kickoff \u2014 Wednesday Feb 25",
   "summary": "",
   "status": "completed",
@@ -65,21 +65,19 @@
       "department": "Engineering",
       "directReports": [],
       "highlights": [
-        "746 commits this week",
-        "Hub latest: ece485f fix: force container to max-content width + clean up dot labels (output-only, smaller)",
+        "0 commits this week",
         "Build status: healthy"
       ],
       "concerns": [
-        "Uncommitted changes: Hub (0), Monorepo (4)",
         "8 TODOs/FIXMEs"
       ],
       "metrics": {
-        "recentCommits": 746,
+        "recentCommits": 0,
         "openIssues": 0,
         "buildHealthy": true,
         "todosFixmes": 8,
         "uncommittedHub": 0,
-        "uncommittedMono": 4
+        "uncommittedMono": 0
       }
     },
     "cro": {
@@ -139,7 +137,7 @@
     {
       "speaker": "Elon Musk",
       "role": "CTO",
-      "message": "We had 746 commits this week. Build is healthy. Uncommitted changes: Hub (0), Monorepo (4)."
+      "message": "We had 0 commits this week. Build is healthy."
     },
     {
       "speaker": "Dave Ramsey",
@@ -179,23 +177,13 @@
   ],
   "actionItems": [
     {
-      "text": "Commit uncommitted changes",
-      "priority": "low",
-      "assignee": "Elon Musk",
-      "completed": false,
-      "tag": "AGENT",
-      "taskKey": "A-146",
-      "key": "A-146",
-      "dropped": true,
-      "dropReason": "duplicates completed ticket A-146"
-    },
-    {
       "text": "Identify first revenue stream to activate",
       "priority": "high",
       "assignee": "Dave Ramsey",
       "completed": false,
       "tag": "AGENT",
-      "taskKey": "A-221"
+      "taskKey": "A-221",
+      "key": "A-221"
     }
   ],
   "topPriorities": [
@@ -251,7 +239,7 @@
   "conversationMode": "template",
   "model": null,
   "tokenUsage": null,
-  "instanceKey": "STD-45",
+  "instanceKey": "STD-46",
   "verticals": [
     "ecosystem"
   ],

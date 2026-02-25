@@ -972,7 +972,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
         <svg 
           ref={svgRef}
           className="absolute inset-0 w-full h-full pointer-events-none"
-          style={{ zIndex: 1, overflow: 'visible' }}
+          style={{ zIndex: 15, overflow: 'visible' }}
         >
           <defs>
             <linearGradient id="connectionGradient" x1="0%" y1="0%" x2="100%" y2="0%">

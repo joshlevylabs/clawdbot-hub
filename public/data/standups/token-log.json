@@ -3,16 +3,6 @@
     {
       "date": "2026-02-17",
       "type": "adhoc-ecosystem-revenue-product-creation",
-      "inputTokens": 997,
-      "outputTokens": 1610,
-      "totalTokens": 2607,
-      "estimatedCost": 0.1357,
-      "model": "claude-opus-4-6",
-      "duration": "34.2s"
-    },
-    {
-      "date": "2026-02-17",
-      "type": "adhoc-ecosystem-revenue-product-creation",
       "inputTokens": 1386,
       "outputTokens": 1522,
       "totalTokens": 2908,
@@ -999,12 +989,22 @@
       "estimatedCost": 0.0536,
       "model": "claude-3-haiku-20240307",
       "duration": "15.2s"
+    },
+    {
+      "date": "2026-02-25",
+      "type": "ecosystem-sync",
+      "inputTokens": 3773,
+      "outputTokens": 1873,
+      "totalTokens": 5646,
+      "estimatedCost": 0.0394,
+      "model": "claude-sonnet-4-20250514",
+      "duration": "48.9s"
     }
   ],
   "totals": {
-    "today": 0.1817,
-    "week": 20.0968,
-    "month": 20.4729,
+    "today": 0.2211,
+    "week": 20.1362,
+    "month": 20.3766,
     "standupCount": 100
   }
 }

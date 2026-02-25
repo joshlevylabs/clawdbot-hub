@@ -1,6 +1,6 @@
 {
   "date": "2026-02-25",
-  "generatedAt": "2026-02-25T14:54:22.567435-08:00",
+  "generatedAt": "2026-02-25T15:08:11.618397-08:00",
   "priorities": [
     {
       "text": "Decide newsletter send timing relative to Apple approval",
@@ -213,6 +213,27 @@
       "assignee": "Dave Ramsey",
       "status": "pending",
       "taskKey": "A-221"
+    },
+    {
+      "text": "Draft feature spec for expanding Family tab (currently 455 lines)",
+      "assignee": "Elon",
+      "status": "unsafe",
+      "completedAt": "2026-02-25T15:09:04.304433-08:00",
+      "output": "Task marked as unsafe in registry"
+    },
+    {
+      "text": "Generate daily devotional content based on 8 faith dimensions",
+      "assignee": "Alex",
+      "status": "unsafe",
+      "completedAt": "2026-02-25T15:09:05.314138-08:00",
+      "output": "Task marked as unsafe in registry"
+    },
+    {
+      "text": "Draft faith lesson content for the Lever app (currently 7 lessons)",
+      "assignee": "Alex",
+      "status": "unsafe",
+      "completedAt": "2026-02-25T15:09:06.314914-08:00",
+      "output": "Task marked as unsafe in registry"
     }
   ]
 }

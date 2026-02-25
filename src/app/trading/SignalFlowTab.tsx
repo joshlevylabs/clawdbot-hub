@@ -465,20 +465,20 @@ function WorkflowVisualization({ pipelineData, mreVersions, onStageClick }: Work
       });
     });
     
-    // 3. Fan-in: Consensus column → Persistence (from midpoint of consensus column)
-    const consNodes = consensusKeys.map(k => nodeRefs.current[`consensus_${k}`]).filter(Boolean) as HTMLDivElement[];
+    // 3. Fan-in: Each non-empty consensus tier → Persistence Gate (individual lines)
     const persistNode = nodeRefs.current['persistence'];
-    if (consNodes.length > 0 && persistNode) {
-      const rects = consNodes.map(n => n.getBoundingClientRect());
-      const fromPos = {
-        x: Math.max(...rects.map(r => r.right)) - containerRect.left,
-        y: (Math.min(...rects.map(r => r.top)) + Math.max(...rects.map(r => r.bottom))) / 2 - containerRect.top
-      };
-      newConnections.push({
-        from: 'consensus', to: 'persistence',
-        fromPos, toPos: getLeft(persistNode),
-        isActive: pipelineData.voteConsensusGate.outputCount > 0,
-        isPending: pipelineData.persistenceGate?.pendingCount > 0
+    if (persistNode) {
+      const toPos = getLeft(persistNode);
+      pipelineData.voteConsensusGate.paths.forEach((path: any) => {
+        if (path.count === 0) return; // Skip empty tiers
+        const consNode = nodeRefs.current[`consensus_${path.voteCount}`];
+        if (!consNode) return;
+        newConnections.push({
+          from: `consensus_${path.voteCount}`, to: 'persistence',
+          fromPos: getRight(consNode), toPos,
+          isActive: path.count > 0,
+          isPending: pipelineData.persistenceGate?.pendingCount > 0
+        });
       });
     }
     

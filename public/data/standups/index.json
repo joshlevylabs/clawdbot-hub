@@ -2,6 +2,19 @@
   "standups": [
     {
       "date": "2026-02-25",
+      "time": "13:54",
+      "type": "adhoc-sub-agent-structure",
+      "typeName": "Sub-Agent Structure",
+      "typeEmoji": "\ud83c\udfd7\ufe0f",
+      "topic": "Sub-Agent Structure \u2014 Wednesday Feb 25",
+      "file": "2026-02-25-adhoc-sub-agent-structure.json",
+      "tokenCost": 0.0536,
+      "verticals": [],
+      "initiatives": [],
+      "instanceKey": "STD-44"
+    },
+    {
+      "date": "2026-02-25",
       "time": "12:00",
       "type": "midday-checkpoint",
       "typeName": "Midday Checkpoint",

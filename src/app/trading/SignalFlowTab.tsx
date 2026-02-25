@@ -182,6 +182,7 @@ interface StageDetails {
   outputCount: number;
   filteredTickers: TickerDetail[];
   passedTickers: TickerDetail[];
+  pendingTickers?: TickerDetail[];
 }
 
 // Calculate pipeline stages from MRE data
@@ -1280,13 +1281,25 @@ export default function SignalFlowTab() {
     // Handle persistence gate click
     if (stageKey === 'persistenceGate') {
       const pg = pipelineData.persistenceGate;
+      // Compute truly filtered tickers (had votes but lost them — input minus confirmed minus pending)
+      const confirmedSymbols = new Set(pg.passed.map((t: any) => t.symbol));
+      const pendingSymbols = new Set(pg.pending.map((t: any) => t.symbol));
+      
       setSelectedStage({
         name: 'Signal Persistence Gate',
         description: `Multi-day confirmation: signals must fire 2+ consecutive days before becoming BUY. Currently ${pg.pendingCount} signals pending (day 1), ${pg.outputCount} confirmed.`,
         stageType: 'filter',
         inputCount: pg.inputCount,
         outputCount: pg.outputCount,
-        filteredTickers: pg.pending.map(t => {
+        // Confirmed tickers (passed 2-day check)
+        passedTickers: pg.passed.map((t: any) => ({
+          symbol: t.symbol,
+          signal: t.signal,
+          currentPrice: t.price,
+          rawData: t
+        })),
+        // Pending tickers (day 1, waiting for day 2 confirmation)
+        pendingTickers: pg.pending.map((t: any) => {
           const pendingStrats = Object.entries(t.persistence_by_strategy || {})
             .filter(([, days]) => (days as number) > 0 && (days as number) < 2)
             .map(([strat, days]) => `${strat} (day ${days})`);
@@ -1298,12 +1311,8 @@ export default function SignalFlowTab() {
             rawData: t
           };
         }),
-        passedTickers: pg.passed.map(t => ({
-          symbol: t.symbol,
-          signal: t.signal,
-          currentPrice: t.price,
-          rawData: t
-        }))
+        // Filtered tickers (had a signal but didn't confirm — currently empty on first run)
+        filteredTickers: [],
       });
       return;
     }

@@ -124,6 +124,7 @@ interface StageDetails {
   outputCount: number;
   filteredTickers: TickerDetail[];
   passedTickers: TickerDetail[];
+  pendingTickers?: TickerDetail[];
 }
 
 interface PipelineDetailPanelProps {
@@ -1374,8 +1375,22 @@ export default function PipelineDetailPanel({
   stageDetails,
   onClose
 }: PipelineDetailPanelProps) {
-  const [activeTab, setActiveTab] = useState<'output' | 'filtered'>('output');
+  const [activeTab, setActiveTab] = useState<'output' | 'pending' | 'filtered'>('output');
   const [searchQuery, setSearchQuery] = useState('');
+  
+  // Auto-select the most relevant tab when panel opens
+  useEffect(() => {
+    if (!stageDetails) return;
+    if (stageDetails.pendingTickers && stageDetails.pendingTickers.length > 0) {
+      setActiveTab('pending');
+    } else if (stageDetails.passedTickers.length > 0) {
+      setActiveTab('output');
+    } else if (stageDetails.filteredTickers.length > 0) {
+      setActiveTab('filtered');
+    } else {
+      setActiveTab('output');
+    }
+  }, [stageDetails]);
   const [strategyVersions, setStrategyVersions] = useState<StrategyVersionsResponse | null>(null);
   const [isVersionHistoryExpanded, setIsVersionHistoryExpanded] = useState(false);
 
@@ -1441,6 +1456,8 @@ export default function PipelineDetailPanel({
 
   const filteredCount = stageDetails.filteredTickers.length;
   const passedCount = stageDetails.passedTickers.length;
+  const pendingCount = stageDetails.pendingTickers?.length || 0;
+  const hasPending = pendingCount > 0;
 
   // Get strategy description
   const strategyDescription = STRATEGY_DESCRIPTIONS[stageDetails.name] || stageDetails.description;
@@ -1455,6 +1472,7 @@ export default function PipelineDetailPanel({
 
   const filteredOutput = filterTickers(stageDetails.passedTickers);
   const filteredFiltered = filterTickers(stageDetails.filteredTickers);
+  const filteredPending = filterTickers(stageDetails.pendingTickers || []);
 
   return (
     <>
@@ -1735,20 +1753,43 @@ export default function PipelineDetailPanel({
 
               {/* Summary Stats */}
               <div className="p-4 sm:p-6 border-b border-slate-700/50">
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="text-center">
-                    <div className="text-xl sm:text-2xl font-bold text-slate-200">{stageDetails.inputCount.toLocaleString()}</div>
-                    <div className="text-xs sm:text-sm text-slate-400">Input</div>
+                {hasPending ? (
+                  /* 4-column layout for persistence gate: Input / Confirmed / Pending / Filtered */
+                  <div className="grid grid-cols-4 gap-3">
+                    <div className="text-center">
+                      <div className="text-lg sm:text-xl font-bold text-slate-200">{stageDetails.inputCount.toLocaleString()}</div>
+                      <div className="text-[10px] sm:text-xs text-slate-400">Input</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-lg sm:text-xl font-bold text-emerald-400">{passedCount.toLocaleString()}</div>
+                      <div className="text-[10px] sm:text-xs text-emerald-500/70">Confirmed</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-lg sm:text-xl font-bold text-amber-400">{pendingCount.toLocaleString()}</div>
+                      <div className="text-[10px] sm:text-xs text-amber-500/70">Pending</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-lg sm:text-xl font-bold text-red-400">{filteredCount.toLocaleString()}</div>
+                      <div className="text-[10px] sm:text-xs text-red-500/70">Filtered</div>
+                    </div>
                   </div>
-                  <div className="text-center">
-                    <div className="text-xl sm:text-2xl font-bold text-emerald-400">{stageDetails.outputCount.toLocaleString()}</div>
-                    <div className="text-xs sm:text-sm text-slate-400">Output</div>
+                ) : (
+                  /* Standard 3-column layout */
+                  <div className="grid grid-cols-3 gap-4">
+                    <div className="text-center">
+                      <div className="text-xl sm:text-2xl font-bold text-slate-200">{stageDetails.inputCount.toLocaleString()}</div>
+                      <div className="text-xs sm:text-sm text-slate-400">Input</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-xl sm:text-2xl font-bold text-emerald-400">{stageDetails.outputCount.toLocaleString()}</div>
+                      <div className="text-xs sm:text-sm text-slate-400">Output</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-xl sm:text-2xl font-bold text-red-400">{filteredCount.toLocaleString()}</div>
+                      <div className="text-xs sm:text-sm text-slate-400">Filtered</div>
+                    </div>
                   </div>
-                  <div className="text-center">
-                    <div className="text-xl sm:text-2xl font-bold text-red-400">{filteredCount.toLocaleString()}</div>
-                    <div className="text-xs sm:text-sm text-slate-400">Filtered</div>
-                  </div>
-                </div>
+                )}
               </div>
 
               {/* Search */}
@@ -1769,16 +1810,27 @@ export default function PipelineDetailPanel({
               <div className="flex border-b border-slate-700/50 bg-slate-800/20 sticky top-0 z-10">
                 <button
                   onClick={() => setActiveTab('output')}
-                  className={`px-4 sm:px-6 py-3 text-sm font-medium transition-all relative ${
+                  className={`px-3 sm:px-5 py-3 text-sm font-medium transition-all relative ${
                     activeTab === 'output' ? 'text-emerald-400 bg-slate-800/50' : 'text-slate-400 hover:text-slate-300 hover:bg-slate-800/30'
                   }`}
                 >
-                  Output ({filteredOutput.length})
+                  Confirmed ({filteredOutput.length})
                   {activeTab === 'output' && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-400" />}
                 </button>
+                {hasPending && (
+                  <button
+                    onClick={() => setActiveTab('pending')}
+                    className={`px-3 sm:px-5 py-3 text-sm font-medium transition-all relative ${
+                      activeTab === 'pending' ? 'text-amber-400 bg-slate-800/50' : 'text-slate-400 hover:text-slate-300 hover:bg-slate-800/30'
+                    }`}
+                  >
+                    Pending ({filteredPending.length})
+                    {activeTab === 'pending' && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-amber-400" />}
+                  </button>
+                )}
                 <button
                   onClick={() => setActiveTab('filtered')}
-                  className={`px-4 sm:px-6 py-3 text-sm font-medium transition-all relative ${
+                  className={`px-3 sm:px-5 py-3 text-sm font-medium transition-all relative ${
                     activeTab === 'filtered' ? 'text-red-400 bg-slate-800/50' : 'text-slate-400 hover:text-slate-300 hover:bg-slate-800/30'
                   }`}
                 >
@@ -1797,7 +1849,20 @@ export default function PipelineDetailPanel({
                       ))
                     ) : (
                       <div className="text-center text-slate-400 py-8">
-                        {searchQuery ? `No tickers matching "${searchQuery}"` : 'No output tickers'}
+                        {searchQuery ? `No tickers matching "${searchQuery}"` : 'No confirmed tickers yet — signals need 2 consecutive days to confirm'}
+                      </div>
+                    )}
+                  </div>
+                )}
+                {activeTab === 'pending' && (
+                  <div className="space-y-2">
+                    {filteredPending.length > 0 ? (
+                      filteredPending.slice(0, 100).map((ticker, idx) => (
+                        <BlendedFGTickerRow key={idx} ticker={ticker} />
+                      ))
+                    ) : (
+                      <div className="text-center text-slate-400 py-8">
+                        {searchQuery ? `No pending tickers matching "${searchQuery}"` : 'No pending tickers'}
                       </div>
                     )}
                   </div>
@@ -1810,7 +1875,7 @@ export default function PipelineDetailPanel({
                       ))
                     ) : (
                       <div className="text-center text-slate-400 py-8">
-                        {searchQuery ? `No filtered tickers matching "${searchQuery}"` : 'No filtered tickers'}
+                        {searchQuery ? `No filtered tickers matching "${searchQuery}"` : 'No filtered tickers — signals that fail day-2 confirmation appear here'}
                       </div>
                     )}
                     {filteredFiltered.length > 100 && !searchQuery && (

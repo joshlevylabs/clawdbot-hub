@@ -350,6 +350,27 @@ function calculatePipelineStages(signals: MRESignal[], dataType: 'core' | 'unive
     filtered: [] as MRESignal[]
   };
   
+  // Step 7: Fibonacci Level Selection (post-output — determines entry, SL, TP)
+  const fibonacciLevels = {
+    inputCount: finalPassed.length,
+    outputCount: finalPassed.length, // All signals get fib levels calculated
+    passed: finalPassed,
+    filtered: [] as MRESignal[],
+    status: finalPassed.length > 0 ? 'active' : 'waiting',
+  };
+
+  // Step 8: Agent Analysis (final review by trading agents)
+  const agentAnalysis = {
+    inputCount: finalPassed.length,
+    outputCount: finalPassed.length,
+    passed: finalPassed,
+    filtered: [] as MRESignal[],
+    agents: [
+      { name: 'Chris Vermeullen', role: 'Technical Analysis', status: finalPassed.length > 0 ? 'reviewing' : 'idle' },
+      { name: 'Warren Buffett', role: 'Fundamental Analysis', status: 'pending' }, // Not yet active
+    ],
+  };
+
   return {
     input: inputStage,
     strategyVotes,
@@ -358,7 +379,9 @@ function calculatePipelineStages(signals: MRESignal[], dataType: 'core' | 'unive
     signalGating: signalGateStage,
     confidenceTuning: confidenceStage,
     finalFilters: finalStage,
-    output: outputStage
+    output: outputStage,
+    fibonacciLevels,
+    agentAnalysis,
   };
 }
 
@@ -404,6 +427,8 @@ const PIPELINE_NODE_CONFIDENCE: Record<string, number> = {
   confidenceTuning: 75, // Multiple adjustment factors — moderate complexity
   finalFilters: 82,    // Cluster limits + crash mode — well-defined rules
   output: 95,          // Pass-through — minimal logic
+  fibonacciLevels: 60, // New — Fibonacci A/B/C retracement + extension system
+  agentAnalysis: 45,   // New — Agent opinions (Chris Vermeullen + Warren Buffett)
 };
 
 function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, onStageClick }: WorkflowVisualizationProps) {
@@ -533,7 +558,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
     }
     
     // 4. Sequential: Persistence → Gating → Tuning → Filters → Output
-    const seqKeys = ['persistence', 'signalGating', 'confidenceTuning', 'finalFilters', 'output'];
+    const seqKeys = ['persistence', 'signalGating', 'confidenceTuning', 'finalFilters', 'output', 'fibonacciLevels', 'agentAnalysis'];
     for (let i = 0; i < seqKeys.length - 1; i++) {
       const fromNode = nodeRefs.current[seqKeys[i]];
       const toNode = nodeRefs.current[seqKeys[i + 1]];
@@ -543,6 +568,8 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
         else if (seqKeys[i] === 'signalGating') isActive = pipelineData.signalGating.outputCount > 0;
         else if (seqKeys[i] === 'confidenceTuning') isActive = pipelineData.confidenceTuning.outputCount > 0;
         else if (seqKeys[i] === 'finalFilters') isActive = pipelineData.finalFilters.outputCount > 0;
+        else if (seqKeys[i] === 'output') isActive = pipelineData.output.outputCount > 0;
+        else if (seqKeys[i] === 'fibonacciLevels') isActive = pipelineData.fibonacciLevels.outputCount > 0;
         
         newConnections.push({
           from: seqKeys[i], to: seqKeys[i + 1],
@@ -860,10 +887,193 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
               inputCount={pipelineData.output.inputCount}
               outputCount={pipelineData.output.outputCount}
               onClick={() => onStageClick('output')}
-              nodeType="output"
+              nodeType="filter"
               version={pipelineVersion}
               confidence={PIPELINE_NODE_CONFIDENCE.output}
             />
+          </div>
+          
+          {/* Column 9: Fibonacci Level Selection */}
+          <div className="flex flex-col items-center gap-6">
+            <div
+              ref={(el) => { nodeRefs.current['fibonacciLevels'] = el; }}
+              className={`
+                relative bg-slate-800/90 rounded-xl border-2 p-4 cursor-pointer
+                transition-all duration-200 hover:shadow-lg hover:shadow-black/20
+                min-w-[140px] md:min-w-[160px] max-w-[180px] md:max-w-[200px]
+                ${pipelineData.fibonacciLevels.inputCount > 0 
+                  ? 'border-violet-500/40 hover:border-violet-400/60' 
+                  : 'border-slate-600/40 hover:border-slate-500/60'}
+              `}
+              onClick={() => onStageClick('fibonacciLevels')}
+            >
+              {/* Input connector dot */}
+              <div className="absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 bg-slate-600 border-2 border-slate-700 rounded-full" />
+              {/* Output connector dot */}
+              <div className="absolute right-0 top-1/2 translate-x-1/2 -translate-y-1/2 w-3 h-3 bg-slate-600 border-2 border-slate-700 rounded-full" />
+              
+              {/* Icon */}
+              <div className="bg-violet-500/20 rounded-lg p-2 w-fit mb-3">
+                <TrendingUp className="w-3.5 h-3.5 text-violet-400" />
+              </div>
+              
+              <h3 className="text-sm font-bold text-slate-200 mb-1 leading-tight">Fib Levels</h3>
+              <p className="text-xs text-slate-400 mb-3 leading-tight">A/B/C retracement & extension</p>
+              
+              {/* Fib level indicators */}
+              <div className="space-y-1 mb-3">
+                <div className="flex justify-between text-xs">
+                  <span className="text-slate-500">Entry:</span>
+                  <span className={`font-medium ${pipelineData.fibonacciLevels.inputCount > 0 ? 'text-violet-400' : 'text-slate-600'}`}>
+                    {pipelineData.fibonacciLevels.inputCount > 0 ? '0.618 ret' : '—'}
+                  </span>
+                </div>
+                <div className="flex justify-between text-xs">
+                  <span className="text-slate-500">Stop Loss:</span>
+                  <span className={`font-medium ${pipelineData.fibonacciLevels.inputCount > 0 ? 'text-red-400' : 'text-slate-600'}`}>
+                    {pipelineData.fibonacciLevels.inputCount > 0 ? '0.786 ret' : '—'}
+                  </span>
+                </div>
+                <div className="flex justify-between text-xs">
+                  <span className="text-slate-500">Target:</span>
+                  <span className={`font-medium ${pipelineData.fibonacciLevels.inputCount > 0 ? 'text-emerald-400' : 'text-slate-600'}`}>
+                    {pipelineData.fibonacciLevels.inputCount > 0 ? '1.618 ext' : '—'}
+                  </span>
+                </div>
+              </div>
+
+              {/* A/B/C points visual */}
+              <div className="bg-slate-900/60 rounded-md p-2 mb-3">
+                <svg viewBox="0 0 120 40" className="w-full h-auto">
+                  {/* A-B-C Fibonacci pattern */}
+                  <polyline
+                    points="5,35 40,5 75,25 110,5"
+                    fill="none"
+                    stroke={pipelineData.fibonacciLevels.inputCount > 0 ? 'rgba(167,139,250,0.6)' : 'rgba(148,163,184,0.2)'}
+                    strokeWidth="1.5"
+                    strokeLinejoin="round"
+                  />
+                  {/* Point labels */}
+                  <circle cx="5" cy="35" r="2" fill={pipelineData.fibonacciLevels.inputCount > 0 ? 'rgba(167,139,250,0.8)' : 'rgba(148,163,184,0.3)'} />
+                  <text x="5" y="32" fontSize="6" fill="rgba(167,139,250,0.6)" textAnchor="middle" fontFamily="monospace">A</text>
+                  <circle cx="40" cy="5" r="2" fill={pipelineData.fibonacciLevels.inputCount > 0 ? 'rgba(167,139,250,0.8)' : 'rgba(148,163,184,0.3)'} />
+                  <text x="40" y="14" fontSize="6" fill="rgba(167,139,250,0.6)" textAnchor="middle" fontFamily="monospace">B</text>
+                  <circle cx="75" cy="25" r="2" fill={pipelineData.fibonacciLevels.inputCount > 0 ? 'rgba(167,139,250,0.8)' : 'rgba(148,163,184,0.3)'} />
+                  <text x="75" y="22" fontSize="6" fill="rgba(167,139,250,0.6)" textAnchor="middle" fontFamily="monospace">C</text>
+                  {/* Extension target */}
+                  <circle cx="110" cy="5" r="2" fill={pipelineData.fibonacciLevels.inputCount > 0 ? 'rgba(52,211,153,0.8)' : 'rgba(148,163,184,0.2)'} />
+                  <text x="110" y="14" fontSize="5" fill="rgba(52,211,153,0.5)" textAnchor="middle" fontFamily="monospace">1.618</text>
+                  {/* Retracement levels (dashed) */}
+                  <line x1="40" y1="17" x2="75" y2="17" stroke="rgba(167,139,250,0.2)" strokeWidth="0.5" strokeDasharray="2 2" />
+                  <text x="77" y="18" fontSize="4" fill="rgba(167,139,250,0.3)" fontFamily="monospace">.618</text>
+                  <line x1="40" y1="21" x2="75" y2="21" stroke="rgba(248,113,113,0.2)" strokeWidth="0.5" strokeDasharray="2 2" />
+                  <text x="77" y="22" fontSize="4" fill="rgba(248,113,113,0.3)" fontFamily="monospace">.786</text>
+                </svg>
+              </div>
+
+              {/* Metrics */}
+              <div className="flex justify-between text-xs mb-3">
+                <span className="text-slate-500">Tickers:</span>
+                <span className={`font-bold ${pipelineData.fibonacciLevels.inputCount > 0 ? 'text-violet-400' : 'text-slate-600'}`}>
+                  {pipelineData.fibonacciLevels.inputCount}
+                </span>
+              </div>
+
+              {/* Version + Confidence */}
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span className="inline-block bg-slate-700/50 text-slate-500 px-2 py-0.5 rounded text-[9px] font-medium">v1.0.0</span>
+                <span className="inline-block bg-orange-900/40 text-orange-400 px-2 py-0.5 rounded text-[9px] font-medium">
+                  {PIPELINE_NODE_CONFIDENCE.fibonacciLevels}% conf
+                </span>
+              </div>
+
+              {/* Hover glow */}
+              <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-white/[0.05] to-transparent opacity-0 hover:opacity-100 transition-opacity pointer-events-none" />
+            </div>
+          </div>
+
+          {/* Column 10: Agent Analysis */}
+          <div className="flex flex-col items-center gap-6">
+            <div
+              ref={(el) => { nodeRefs.current['agentAnalysis'] = el; }}
+              className={`
+                relative bg-slate-800/90 rounded-xl border-2 p-4 cursor-pointer
+                transition-all duration-200 hover:shadow-lg hover:shadow-black/20
+                min-w-[140px] md:min-w-[160px] max-w-[180px] md:max-w-[200px]
+                ${pipelineData.agentAnalysis.inputCount > 0 
+                  ? 'border-cyan-500/40 hover:border-cyan-400/60' 
+                  : 'border-slate-600/40 hover:border-slate-500/60'}
+              `}
+              onClick={() => onStageClick('agentAnalysis')}
+            >
+              {/* Input connector dot */}
+              <div className="absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 bg-slate-600 border-2 border-slate-700 rounded-full" />
+              
+              {/* Icon */}
+              <div className="bg-cyan-500/20 rounded-lg p-2 w-fit mb-3">
+                <Eye className="w-3.5 h-3.5 text-cyan-400" />
+              </div>
+              
+              <h3 className="text-sm font-bold text-slate-200 mb-1 leading-tight">Agent Analysis</h3>
+              <p className="text-xs text-slate-400 mb-3 leading-tight">Expert opinions on final picks</p>
+              
+              {/* Agent roster */}
+              <div className="space-y-2 mb-3">
+                {/* Chris Vermeullen */}
+                <div className={`
+                  flex items-center gap-2 rounded-md px-2 py-1.5
+                  ${pipelineData.agentAnalysis.inputCount > 0 
+                    ? 'bg-emerald-900/20 border border-emerald-700/20' 
+                    : 'bg-slate-800/40 border border-slate-700/20'}
+                `}>
+                  <div className={`w-2 h-2 rounded-full shrink-0 ${
+                    pipelineData.agentAnalysis.inputCount > 0 
+                      ? 'bg-emerald-400 shadow-sm shadow-emerald-400/50' 
+                      : 'bg-slate-700'
+                  }`} />
+                  <div className="flex-1 min-w-0">
+                    <span className={`text-[10px] font-medium block truncate ${
+                      pipelineData.agentAnalysis.inputCount > 0 ? 'text-slate-200' : 'text-slate-500'
+                    }`}>Chris Vermeullen</span>
+                    <span className="text-[8px] text-slate-500">Technical Analysis</span>
+                  </div>
+                </div>
+                
+                {/* Warren Buffett */}
+                <div className="flex items-center gap-2 rounded-md px-2 py-1.5 bg-slate-800/40 border border-amber-700/20">
+                  <div className="w-2 h-2 rounded-full shrink-0 bg-amber-500/50" />
+                  <div className="flex-1 min-w-0">
+                    <span className="text-[10px] font-medium block truncate text-slate-400">Warren Buffett</span>
+                    <span className="text-[8px] text-amber-500/60">Fundamental • pending setup</span>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Metrics */}
+              <div className="space-y-1.5">
+                <div className="flex justify-between text-xs">
+                  <span className="text-slate-500">Tickers:</span>
+                  <span className={`font-bold ${pipelineData.agentAnalysis.inputCount > 0 ? 'text-cyan-400' : 'text-slate-600'}`}>
+                    {pipelineData.agentAnalysis.inputCount}
+                  </span>
+                </div>
+                <div className="flex justify-between text-xs">
+                  <span className="text-slate-500">Agents:</span>
+                  <span className="text-slate-400 font-medium">1/2 active</span>
+                </div>
+              </div>
+
+              {/* Version + Confidence */}
+              <div className="mt-3 flex items-center gap-1.5 flex-wrap">
+                <span className="inline-block bg-slate-700/50 text-slate-500 px-2 py-0.5 rounded text-[9px] font-medium">v0.1.0</span>
+                <span className="inline-block bg-red-900/40 text-red-400 px-2 py-0.5 rounded text-[9px] font-medium">
+                  {PIPELINE_NODE_CONFIDENCE.agentAnalysis}% conf
+                </span>
+              </div>
+
+              {/* Hover glow */}
+              <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-white/[0.05] to-transparent opacity-0 hover:opacity-100 transition-opacity pointer-events-none" />
+            </div>
           </div>
         </div>
       </div>
@@ -1235,6 +1445,40 @@ export default function SignalFlowTab() {
             symbol: t.symbol,
             signal: t.signal,
             signalStrength: t.signal_strength,
+            currentPrice: t.price,
+            rawData: t
+          }))
+        };
+        break;
+
+      case 'fibonacciLevels':
+        stageDetails = {
+          name: 'Fibonacci Level Selection',
+          description: 'Determines optimal entry, stop loss, and profit target levels using A/B/C point Fibonacci retracement and extension. Point A = swing low, Point B = swing high, Point C = retracement. Entry at 0.618 retracement, stop loss at 0.786 retracement, profit target at 1.618 extension.',
+          stageType: 'modifier',
+          inputCount: pipelineData.fibonacciLevels.inputCount,
+          outputCount: pipelineData.fibonacciLevels.outputCount,
+          filteredTickers: [],
+          passedTickers: pipelineData.fibonacciLevels.passed.map((t: any) => ({
+            symbol: t.symbol,
+            signal: t.signal,
+            currentPrice: t.price,
+            rawData: t
+          }))
+        };
+        break;
+
+      case 'agentAnalysis':
+        stageDetails = {
+          name: 'Agent Analysis',
+          description: 'Trading agents review final BUY signals and provide expert opinions. Chris Vermeullen (Technical Analysis) evaluates chart patterns, momentum, and technical setups. Warren Buffett (Fundamental Analysis — pending setup) will evaluate value metrics, moats, and long-term quality.',
+          stageType: 'output',
+          inputCount: pipelineData.agentAnalysis.inputCount,
+          outputCount: pipelineData.agentAnalysis.outputCount,
+          filteredTickers: [],
+          passedTickers: pipelineData.agentAnalysis.passed.map((t: any) => ({
+            symbol: t.symbol,
+            signal: t.signal,
             currentPrice: t.price,
             rawData: t
           }))

@@ -496,6 +496,164 @@ export default function TickerTechnicalBreakdown({
     );
   }
 
+  // Confidence Tuning / Signal Gating / Final Filters — show modifier details
+  const isConfidenceTuning = stageName === 'Confidence Tuning';
+  const isSignalGating = stageName === 'Signal Gating';
+  const isFinalFilters = stageName === 'Final Filters';
+
+  if ((isConfidenceTuning || isSignalGating || isFinalFilters) && rawData) {
+    const getModifierColor = (value: number, baseline: number = 1) => {
+      if (value > baseline) return 'text-emerald-400';
+      if (value < baseline) return 'text-red-400';
+      return 'text-slate-300';
+    };
+
+    return (
+      <div className="bg-slate-800/50 rounded-lg p-3 border border-slate-700/50">
+        {/* Header row: symbol, signal, sector, price */}
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center gap-2">
+            <span className="font-mono font-semibold text-slate-200">{symbol}</span>
+            {rawData.signal && (
+              <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium border ${getSignalBg(rawData.signal)}`}>
+                {rawData.signal}
+              </span>
+            )}
+            {rawData.asset_class && (
+              <span className="text-[10px] text-slate-500 capitalize">{rawData.asset_class.replace('_', ' ')}</span>
+            )}
+          </div>
+          <div className="flex items-center gap-3 text-xs">
+            {rawData.momentum_20d !== undefined && (
+              <span className={rawData.momentum_20d >= 0 ? 'text-emerald-400' : 'text-red-400'}>
+                20d: {rawData.momentum_20d >= 0 ? '+' : ''}{rawData.momentum_20d.toFixed(1)}%
+              </span>
+            )}
+            {currentPrice && (
+              <span className="text-slate-400">
+                $ {currentPrice.toFixed(2)}
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* Confidence Tuning: show all modifier values */}
+        {isConfidenceTuning && (
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
+            <div className="flex items-center gap-1">
+              <span className="text-slate-500">Regime:</span>
+              <span className={`font-medium capitalize ${
+                rawData.regime === 'bull' ? 'text-emerald-400' : rawData.regime === 'bear' ? 'text-red-400' : 'text-amber-400'
+              }`}>{rawData.regime}</span>
+            </div>
+            <span className="text-slate-700">|</span>
+            <div className="flex items-center gap-1">
+              <span className="text-slate-500">Confidence:</span>
+              <span className={`font-medium ${
+                rawData.asset_confidence >= 0.7 ? 'text-emerald-400' : rawData.asset_confidence >= 0.4 ? 'text-amber-400' : 'text-red-400'
+              }`}>{(rawData.asset_confidence * 100).toFixed(0)}%</span>
+            </div>
+            <span className="text-slate-700">|</span>
+            <div className="flex items-center gap-1">
+              <span className="text-slate-500">Rotation:</span>
+              <span className={`font-medium ${getModifierColor(rawData.rotation_modifier)}`}>
+                {rawData.rotation_modifier.toFixed(2)}×
+              </span>
+            </div>
+            <span className="text-slate-700">|</span>
+            <div className="flex items-center gap-1">
+              <span className="text-slate-500">Role:</span>
+              <span className="font-medium text-slate-300 capitalize">{rawData.role?.replace('_', ' ') || '—'}</span>
+            </div>
+            {rawData.sideways_applied && (
+              <>
+                <span className="text-slate-700">|</span>
+                <span className="text-amber-400 font-medium">⚠ Sideways</span>
+              </>
+            )}
+            {rawData.kalshi_applied && (
+              <>
+                <span className="text-slate-700">|</span>
+                <span className="text-blue-400 font-medium">📊 Kalshi</span>
+              </>
+            )}
+          </div>
+        )}
+
+        {/* Signal Gating: show suppression details */}
+        {isSignalGating && (
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
+            <div className="flex items-center gap-1">
+              <span className="text-slate-500">Regime:</span>
+              <span className={`font-medium capitalize ${
+                rawData.regime === 'bull' ? 'text-emerald-400' : rawData.regime === 'bear' ? 'text-red-400' : 'text-amber-400'
+              }`}>{rawData.regime}</span>
+            </div>
+            {rawData.bear_suppressed && (
+              <>
+                <span className="text-slate-700">|</span>
+                <span className="text-red-400 font-medium">🐻 Bear suppressed</span>
+              </>
+            )}
+            {rawData.sell_suppressed && (
+              <>
+                <span className="text-slate-700">|</span>
+                <span className="text-amber-400 font-medium">↩ Sell → HOLD</span>
+              </>
+            )}
+            {!rawData.bear_suppressed && !rawData.sell_suppressed && (
+              <>
+                <span className="text-slate-700">|</span>
+                <span className="text-emerald-400 font-medium">✓ Passed</span>
+              </>
+            )}
+          </div>
+        )}
+
+        {/* Final Filters: show cluster/cap/crash details */}
+        {isFinalFilters && (
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
+            <div className="flex items-center gap-1">
+              <span className="text-slate-500">Sector:</span>
+              <span className="font-medium text-slate-300 capitalize">{(rawData.sector || rawData.asset_class || '—').replace('_', ' ')}</span>
+            </div>
+            {rawData.cluster_limited && (
+              <>
+                <span className="text-slate-700">|</span>
+                <span className="text-amber-400 font-medium">🔒 Cluster limited</span>
+              </>
+            )}
+            {rawData.cap_applied && (
+              <>
+                <span className="text-slate-700">|</span>
+                <span className="text-amber-400 font-medium">📏 Cap applied</span>
+              </>
+            )}
+            <span className="text-slate-700">|</span>
+            <div className="flex items-center gap-1">
+              <span className="text-slate-500">Confidence:</span>
+              <span className={`font-medium ${
+                rawData.asset_confidence >= 0.7 ? 'text-emerald-400' : rawData.asset_confidence >= 0.4 ? 'text-amber-400' : 'text-red-400'
+              }`}>{(rawData.asset_confidence * 100).toFixed(0)}%</span>
+            </div>
+            <span className="text-slate-700">|</span>
+            <div className="flex items-center gap-1">
+              <span className="text-slate-500">Crash:</span>
+              <span className={`font-medium ${rawData.crash_action === 'none' ? 'text-slate-400' : 'text-red-400'}`}>
+                {rawData.crash_action || 'none'}
+              </span>
+            </div>
+          </div>
+        )}
+
+        {/* Reason line */}
+        {reason && (
+          <div className="mt-1.5 text-[11px] text-slate-500">{reason}</div>
+        )}
+      </div>
+    );
+  }
+
   if (!rawData) {
     // Fallback for when no raw data is available
     return (

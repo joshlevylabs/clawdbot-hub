@@ -901,6 +901,287 @@ function StrategyTechnicalOverview({ strategyName, tickers }: { strategyName: st
     );
   }
 
+  // Confidence Tuning Stage
+  if (strategyName.includes('Confidence Tuning')) {
+    // Aggregate modifier stats
+    const regimeCounts = tickers.reduce((acc, t) => {
+      const regime = t.rawData?.regime || 'unknown';
+      acc[regime] = (acc[regime] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    const total = tickers.length;
+    const bullPct = ((regimeCounts.bull || 0) / total) * 100;
+    const sidewaysPct = ((regimeCounts.sideways || 0) / total) * 100;
+    const bearPct = ((regimeCounts.bear || 0) / total) * 100;
+
+    const sidewaysApplied = tickers.filter(t => t.rawData?.sideways_applied).length;
+    const kalshiApplied = tickers.filter(t => t.rawData?.kalshi_applied).length;
+
+    // Asset confidence distribution
+    const confidences = tickers
+      .filter(t => t.rawData?.asset_confidence !== undefined)
+      .map(t => t.rawData!.asset_confidence);
+    const avgConfidence = confidences.length > 0 ? confidences.reduce((a, b) => a + b, 0) / confidences.length : 0;
+    const highConfidence = confidences.filter(c => c >= 0.7).length;
+    const medConfidence = confidences.filter(c => c >= 0.4 && c < 0.7).length;
+    const lowConfidence = confidences.filter(c => c < 0.4).length;
+
+    // Rotation modifier stats
+    const rotations = tickers
+      .filter(t => t.rawData?.rotation_modifier !== undefined)
+      .map(t => t.rawData!.rotation_modifier);
+    const avgRotation = rotations.length > 0 ? rotations.reduce((a, b) => a + b, 0) / rotations.length : 1;
+    const boosted = rotations.filter(r => r > 1.0).length;
+    const penalized = rotations.filter(r => r < 1.0).length;
+
+    // Role distribution
+    const roleCounts = tickers.reduce((acc, t) => {
+      const role = t.rawData?.role || 'unknown';
+      acc[role] = (acc[role] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    return (
+      <div className="p-4 sm:p-6 border-b border-slate-700/50 bg-slate-800/30">
+        <div className="flex items-center gap-3 mb-4">
+          <Activity className="w-5 h-5 text-primary-400" />
+          <h3 className="text-base font-semibold text-slate-200">Confidence Tuning Analysis</h3>
+        </div>
+
+        {/* Regime Distribution */}
+        <div className="grid grid-cols-3 gap-3 mb-6">
+          <div className="bg-slate-900/50 rounded-lg p-3 text-center border border-emerald-700/30">
+            <div className="text-xs text-slate-500 mb-1">Bull Regime</div>
+            <div className="text-xl font-bold text-emerald-400">{bullPct.toFixed(0)}%</div>
+            <div className="text-xs text-slate-400">{regimeCounts.bull || 0} tickers</div>
+          </div>
+          <div className="bg-slate-900/50 rounded-lg p-3 text-center border border-amber-700/30">
+            <div className="text-xs text-slate-500 mb-1">Sideways</div>
+            <div className="text-xl font-bold text-amber-400">{sidewaysPct.toFixed(0)}%</div>
+            <div className="text-xs text-slate-400">{regimeCounts.sideways || 0} tickers</div>
+          </div>
+          <div className="bg-slate-900/50 rounded-lg p-3 text-center border border-red-700/30">
+            <div className="text-xs text-slate-500 mb-1">Bear Regime</div>
+            <div className="text-xl font-bold text-red-400">{bearPct.toFixed(0)}%</div>
+            <div className="text-xs text-slate-400">{regimeCounts.bear || 0} tickers</div>
+          </div>
+        </div>
+
+        {/* Modifier Impact Summary */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+          <div className="bg-slate-900/50 rounded-lg p-3 text-center">
+            <div className="text-xs text-slate-500 mb-1">Avg Confidence</div>
+            <div className="text-lg font-bold text-slate-200">{(avgConfidence * 100).toFixed(0)}%</div>
+          </div>
+          <div className="bg-slate-900/50 rounded-lg p-3 text-center">
+            <div className="text-xs text-slate-500 mb-1">Avg Rotation</div>
+            <div className={`text-lg font-bold ${avgRotation >= 1 ? 'text-emerald-400' : 'text-red-400'}`}>
+              {avgRotation.toFixed(2)}×
+            </div>
+          </div>
+          <div className="bg-slate-900/50 rounded-lg p-3 text-center">
+            <div className="text-xs text-slate-500 mb-1">Sideways Penalty</div>
+            <div className="text-lg font-bold text-amber-400">{sidewaysApplied}</div>
+            <div className="text-xs text-slate-400">tickers</div>
+          </div>
+          <div className="bg-slate-900/50 rounded-lg p-3 text-center">
+            <div className="text-xs text-slate-500 mb-1">Kalshi Adjusted</div>
+            <div className="text-lg font-bold text-blue-400">{kalshiApplied}</div>
+            <div className="text-xs text-slate-400">tickers</div>
+          </div>
+        </div>
+
+        {/* Asset Confidence Distribution */}
+        <div className="bg-slate-900/40 rounded-lg p-4 mb-4">
+          <h4 className="text-sm font-medium text-slate-300 mb-3">Asset Confidence Distribution</h4>
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-slate-400">High (≥70%)</span>
+              <div className="flex items-center gap-2">
+                <div className="w-24 bg-slate-700/50 rounded-full h-2">
+                  <div className="h-2 rounded-full bg-emerald-500" style={{ width: `${(highConfidence / total) * 100}%` }} />
+                </div>
+                <span className="text-sm font-medium text-emerald-400 w-12 text-right">{highConfidence}</span>
+              </div>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-slate-400">Medium (40-70%)</span>
+              <div className="flex items-center gap-2">
+                <div className="w-24 bg-slate-700/50 rounded-full h-2">
+                  <div className="h-2 rounded-full bg-amber-500" style={{ width: `${(medConfidence / total) * 100}%` }} />
+                </div>
+                <span className="text-sm font-medium text-amber-400 w-12 text-right">{medConfidence}</span>
+              </div>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-slate-400">Low (&lt;40%)</span>
+              <div className="flex items-center gap-2">
+                <div className="w-24 bg-slate-700/50 rounded-full h-2">
+                  <div className="h-2 rounded-full bg-red-500" style={{ width: `${(lowConfidence / total) * 100}%` }} />
+                </div>
+                <span className="text-sm font-medium text-red-400 w-12 text-right">{lowConfidence}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Sector Rotation + Role Breakdown */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="bg-slate-900/40 rounded-lg p-4">
+            <h4 className="text-sm font-medium text-slate-300 mb-3">Rotation Modifier</h4>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-slate-400">Boosted (&gt;1.0×)</span>
+                <span className="text-sm font-medium text-emerald-400">{boosted}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-slate-400">Neutral (1.0×)</span>
+                <span className="text-sm font-medium text-slate-300">{rotations.length - boosted - penalized}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-slate-400">Penalized (&lt;1.0×)</span>
+                <span className="text-sm font-medium text-red-400">{penalized}</span>
+              </div>
+            </div>
+          </div>
+          <div className="bg-slate-900/40 rounded-lg p-4">
+            <h4 className="text-sm font-medium text-slate-300 mb-3">Asset Role</h4>
+            <div className="space-y-2">
+              {Object.entries(roleCounts)
+                .sort(([, a], [, b]) => b - a)
+                .slice(0, 5)
+                .map(([role, count]) => (
+                  <div key={role} className="flex items-center justify-between">
+                    <span className="text-sm text-slate-400 capitalize">{role.replace('_', ' ')}</span>
+                    <span className="text-sm font-medium text-slate-300">{count}</span>
+                  </div>
+                ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-4 text-xs text-slate-500">
+          Confidence Tuning adjusts raw signal confidence using regime weight, asset role, sector rotation, sideways penalty, and Kalshi data. Tickers adjusted to HOLD appear in the Filtered tab.
+        </div>
+      </div>
+    );
+  }
+
+  // Signal Gating Stage
+  if (strategyName.includes('Signal Gating')) {
+    const bearSuppressed = tickers.filter(t => t.rawData?.bear_suppressed).length;
+    const sellSuppressed = tickers.filter(t => t.rawData?.sell_suppressed).length;
+    const total = tickers.length;
+
+    const regimeCounts = tickers.reduce((acc, t) => {
+      const regime = t.rawData?.regime || 'unknown';
+      acc[regime] = (acc[regime] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    return (
+      <div className="p-4 sm:p-6 border-b border-slate-700/50 bg-slate-800/30">
+        <div className="flex items-center gap-3 mb-4">
+          <Filter className="w-5 h-5 text-primary-400" />
+          <h3 className="text-base font-semibold text-slate-200">Signal Gating Analysis</h3>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6">
+          <div className="bg-red-900/20 border border-red-700/30 rounded-lg p-3 text-center">
+            <div className="text-xs text-slate-500 mb-1">Bear Suppressed</div>
+            <div className="text-xl font-bold text-red-400">{bearSuppressed}</div>
+            <div className="text-xs text-slate-400">BUY → HOLD</div>
+          </div>
+          <div className="bg-amber-900/20 border border-amber-700/30 rounded-lg p-3 text-center">
+            <div className="text-xs text-slate-500 mb-1">Sell Suppressed</div>
+            <div className="text-xl font-bold text-amber-400">{sellSuppressed}</div>
+            <div className="text-xs text-slate-400">SELL → HOLD</div>
+          </div>
+          <div className="bg-slate-900/50 rounded-lg p-3 text-center">
+            <div className="text-xs text-slate-500 mb-1">Passed Through</div>
+            <div className="text-xl font-bold text-emerald-400">{total - bearSuppressed - sellSuppressed}</div>
+            <div className="text-xs text-slate-400">unchanged</div>
+          </div>
+        </div>
+
+        <div className="bg-slate-900/40 rounded-lg p-4">
+          <h4 className="text-sm font-medium text-slate-300 mb-3">Regime Distribution</h4>
+          <div className="space-y-2">
+            {Object.entries(regimeCounts)
+              .sort(([, a], [, b]) => b - a)
+              .map(([regime, count]) => (
+                <div key={regime} className="flex items-center justify-between">
+                  <span className="text-sm text-slate-400 capitalize">{regime}</span>
+                  <span className={`text-sm font-medium ${
+                    regime === 'bull' ? 'text-emerald-400' : regime === 'bear' ? 'text-red-400' : 'text-amber-400'
+                  }`}>{count} ({((count / total) * 100).toFixed(0)}%)</span>
+                </div>
+              ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Final Filters Stage
+  if (strategyName.includes('Final Filters')) {
+    const clusterLimited = tickers.filter(t => t.rawData?.cluster_limited).length;
+    const capApplied = tickers.filter(t => t.rawData?.cap_applied).length;
+    const total = tickers.length;
+
+    // Sector distribution of filtered
+    const sectorCounts = tickers.reduce((acc, t) => {
+      const sector = t.rawData?.sector || t.rawData?.asset_class || 'unknown';
+      acc[sector] = (acc[sector] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    return (
+      <div className="p-4 sm:p-6 border-b border-slate-700/50 bg-slate-800/30">
+        <div className="flex items-center gap-3 mb-4">
+          <Filter className="w-5 h-5 text-primary-400" />
+          <h3 className="text-base font-semibold text-slate-200">Final Filters Analysis</h3>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6">
+          <div className="bg-amber-900/20 border border-amber-700/30 rounded-lg p-3 text-center">
+            <div className="text-xs text-slate-500 mb-1">Cluster Limited</div>
+            <div className="text-xl font-bold text-amber-400">{clusterLimited}</div>
+            <div className="text-xs text-slate-400">max 2/sector</div>
+          </div>
+          <div className="bg-slate-900/50 rounded-lg p-3 text-center">
+            <div className="text-xs text-slate-500 mb-1">Cap Applied</div>
+            <div className="text-xl font-bold text-slate-300">{capApplied}</div>
+            <div className="text-xs text-slate-400">multiplier capped</div>
+          </div>
+          <div className="bg-slate-900/50 rounded-lg p-3 text-center">
+            <div className="text-xs text-slate-500 mb-1">Total Reviewed</div>
+            <div className="text-xl font-bold text-slate-200">{total}</div>
+            <div className="text-xs text-slate-400">tickers</div>
+          </div>
+        </div>
+
+        {Object.keys(sectorCounts).length > 0 && (
+          <div className="bg-slate-900/40 rounded-lg p-4">
+            <h4 className="text-sm font-medium text-slate-300 mb-3">Sector Distribution</h4>
+            <div className="space-y-2">
+              {Object.entries(sectorCounts)
+                .sort(([, a], [, b]) => b - a)
+                .slice(0, 8)
+                .map(([sector, count]) => (
+                  <div key={sector} className="flex items-center justify-between">
+                    <span className="text-sm text-slate-400 capitalize">{sector.replace('_', ' ')}</span>
+                    <span className="text-sm font-medium text-slate-300">{count}</span>
+                  </div>
+                ))}
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
   // Default for unknown strategies
   return (
     <div className="p-4 sm:p-6 border-b border-slate-700/50 bg-slate-800/30">

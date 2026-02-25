@@ -46,6 +46,24 @@
     },
     {
       "date": "2026-02-25",
+      "time": "07:00",
+      "type": "cto-tech-debt",
+      "typeName": "Tech Debt Sprint",
+      "typeEmoji": "\ud83d\udd27",
+      "topic": "Tech Debt Sprint \u2014 Wednesday Feb 25",
+      "file": "2026-02-25-cto-tech-debt.json",
+      "tokenCost": 0,
+      "verticals": [
+        "ecosystem",
+        "hub",
+        "joshlevylabs",
+        "lever"
+      ],
+      "initiatives": [],
+      "instanceKey": "STD-48"
+    },
+    {
+      "date": "2026-02-25",
       "time": "05:10",
       "type": "adhoc-model-test",
       "typeName": "model-test",

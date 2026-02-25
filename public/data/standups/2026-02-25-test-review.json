@@ -1,0 +1,29 @@
+{
+  "date": "2026-02-25",
+  "type": "test-review",
+  "typeName": "Review Test",
+  "actionItems": [
+    {
+      "text": "Review ticket A - high priority task",
+      "description": "This is a high priority task that needs careful review before approval.",
+      "acceptanceCriteria": [
+        "Criteria 1",
+        "Criteria 2"
+      ],
+      "tag": "JOSHUA",
+      "priority": "high",
+      "assignee": "Joshua"
+    },
+    {
+      "text": "Review ticket B - medium priority agent task",
+      "description": "Medium priority agent task for testing review interface.",
+      "acceptanceCriteria": [
+        "Can be automated",
+        "Has clear success criteria"
+      ],
+      "tag": "AGENT",
+      "priority": "medium",
+      "assignee": "Theo"
+    }
+  ]
+}

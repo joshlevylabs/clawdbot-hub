@@ -14,7 +14,8 @@
     "adhoc-mre-signal-flow-visualization-hub-signals-page-overhaul": 5,
     "adhoc-model-test": 1,
     "adhoc-sub-agent-structure": 1,
-    "ecosystem-sync": 1
+    "ecosystem-sync": 1,
+    "cto-tech-debt": 1
   },
   "abbreviations": {
     "adhoc-evening-wrap": "STD",
@@ -29,5 +30,5 @@
     "adhoc-welcome-modal-design": "STD",
     "adhoc-paper-trading-portfolio-management-in-lever": "STD"
   },
-  "global_counter": 47
+  "global_counter": 48
 }

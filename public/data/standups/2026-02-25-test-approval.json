@@ -1,0 +1,30 @@
+{
+  "date": "2026-02-25",
+  "type": "test-approval",
+  "typeName": "Approval Test",
+  "actionItems": [
+    {
+      "text": "Test ticket 1 for approval system",
+      "description": "This is a test ticket to validate the approval gateway functionality.",
+      "acceptanceCriteria": [
+        "Approval gateway processes ticket",
+        "Telegram message sent",
+        "Commands work"
+      ],
+      "tag": "JOSHUA",
+      "priority": "high",
+      "assignee": "Joshua"
+    },
+    {
+      "text": "Test ticket 2 for agent work",
+      "description": "This is an agent ticket to test the approval system.",
+      "acceptanceCriteria": [
+        "Agent can execute task",
+        "Approval required first"
+      ],
+      "tag": "AGENT",
+      "priority": "medium",
+      "assignee": "Theo"
+    }
+  ]
+}

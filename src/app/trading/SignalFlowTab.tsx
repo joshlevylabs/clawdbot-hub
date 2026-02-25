@@ -1634,23 +1634,23 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
             let strokeWidth = "1.5";
             
             // Apply tier-specific styling for multi-dot connections
-            // Solid, bright, thick lines — no glow filter, no animation
+            // Match the dashed animated style of earlier pipeline stages
             if (tierVoteCount !== undefined) {
               if (tierVoteCount >= 3) {
-                strokeColor = "rgb(52, 211, 153)";  // emerald-400
-                opacity = "1";
-                strokeWidth = "4";
-                className = "";  // no animation — solid line
-              } else if (tierVoteCount >= 2) {
-                strokeColor = "rgb(96, 165, 250)";  // blue-400
-                opacity = "1";
-                strokeWidth = "3.5";
-                className = "";
-              } else {
-                strokeColor = "rgb(203, 213, 225)";  // slate-300 (bright)
+                strokeColor = "url(#tier3PlusGradient)";  // emerald gradient
                 opacity = "0.9";
-                strokeWidth = "3";
-                className = "";
+                strokeWidth = "2.5";
+                className = "flow-active";
+              } else if (tierVoteCount >= 2) {
+                strokeColor = "url(#tier2Gradient)";  // blue gradient
+                opacity = "0.8";
+                strokeWidth = "2.5";
+                className = "flow-active";
+              } else {
+                strokeColor = "url(#tier1Gradient)";  // slate gradient
+                opacity = "0.7";
+                strokeWidth = "2";
+                className = "flow-active";
               }
             } else {
               // Legacy single-dot connections
@@ -1674,10 +1674,9 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
                 stroke={strokeColor}
                 strokeWidth={strokeWidth}
                 fill="none"
-                filter={tierVoteCount !== undefined ? undefined : (isActive || isPending) ? "url(#glow)" : undefined}
+                filter={(isActive || isPending || tierVoteCount !== undefined) ? "url(#glow)" : undefined}
                 opacity={opacity}
-                strokeDasharray={tierVoteCount !== undefined ? undefined : (isActive || isPending) ? "8 6" : "4 4"}
-                strokeLinecap={tierVoteCount !== undefined ? "round" : undefined}
+                strokeDasharray={(isActive || isPending || tierVoteCount !== undefined) ? "8 6" : "4 4"}
                 className={className}
               />
             );

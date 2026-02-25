@@ -788,34 +788,17 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
             </div>
           </div>
           
-          {/* Column 4: Persistence Gate */}
-          <div className="flex flex-col items-center gap-4">
-            <WorkflowNode
-              ref={(el) => { nodeRefs.current['persistence'] = el; }}
-              name="Persistence Gate"
-              description="2-day confirmation required"
+          {/* Column 4: Persistence Gate — Flip-Flop Style */}
+          <div className="flex flex-col items-center gap-6" ref={(el) => { nodeRefs.current['persistence'] = el; }}>
+            <PersistenceFlipFlop
               inputCount={pipelineData.persistenceGate.inputCount}
-              outputCount={pipelineData.persistenceGate.outputCount}
               confirmedCount={pipelineData.persistenceGate.outputCount}
               pendingCount={pipelineData.persistenceGate.pendingCount}
+              filteredCount={Math.max(0, pipelineData.persistenceGate.inputCount - pipelineData.persistenceGate.outputCount - pipelineData.persistenceGate.pendingCount)}
               onClick={() => onStageClick('persistenceGate')}
-              nodeType="persistence"
-              isPending={pipelineData.persistenceGate.pendingCount > 0}
               version="4.0.0"
               confidence={PIPELINE_NODE_CONFIDENCE.persistence}
             />
-            {/* Flip-flop schematic showing signal flow paths */}
-            <div 
-              className="w-[260px] cursor-pointer opacity-80 hover:opacity-100 transition-opacity"
-              onClick={() => onStageClick('persistenceGate')}
-            >
-              <PersistenceFlipFlop
-                inputCount={pipelineData.persistenceGate.inputCount}
-                confirmedCount={pipelineData.persistenceGate.outputCount}
-                pendingCount={pipelineData.persistenceGate.pendingCount}
-                filteredCount={Math.max(0, pipelineData.persistenceGate.inputCount - pipelineData.persistenceGate.outputCount - pipelineData.persistenceGate.pendingCount)}
-              />
-            </div>
           </div>
           
           {/* Column 5: Signal Gating */}

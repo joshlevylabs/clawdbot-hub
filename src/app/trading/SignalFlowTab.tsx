@@ -378,13 +378,89 @@ function WorkflowVisualization({ pipelineData, mreVersions, onStageClick }: Work
     if (!containerRef.current) return;
     
     const containerRect = containerRef.current.getBoundingClientRect();
-    const newConnections: typeof connections = [];
+    const newConnections: (typeof connections[0] & { isActive?: boolean; isPending?: boolean })[] = [];
     
-    // Define the flow order
-    const flowOrder = [
-      'input',
-      'strategyVotes',
-      'voteConsensus', 
+    // Strategy names for individual connections
+    const strategyKeys = [
+      'fear_greed', 'regime_confirmation', 'rsi_oversold', 'mean_reversion',
+      'momentum', 'time_series_momentum', 'qvm_factor', 'vix_mean_reversion'
+    ];
+    
+    // 1. Input → Individual Strategy Nodes (Fan-out: 1 to 8)
+    const inputNode = nodeRefs.current['input'];
+    if (inputNode) {
+      strategyKeys.forEach((stratKey, index) => {
+        const stratNode = nodeRefs.current[`strategy_${stratKey}`];
+        if (stratNode) {
+          const inputRect = inputNode.getBoundingClientRect();
+          const stratRect = stratNode.getBoundingClientRect();
+          
+          const fromPos = {
+            x: inputRect.right - containerRect.left,
+            y: inputRect.top + inputRect.height / 2 - containerRect.top
+          };
+          
+          const toPos = {
+            x: stratRect.left - containerRect.left,
+            y: stratRect.top + stratRect.height / 2 - containerRect.top
+          };
+          
+          const sv = pipelineData.strategyVotes.find((s: any) => s.key === stratKey);
+          const isActive = sv && sv.outputCount > 0;
+          const isPending = sv && sv.pendingCount > 0;
+          
+          newConnections.push({ 
+            from: 'input', 
+            to: `strategy_${stratKey}`, 
+            fromPos, 
+            toPos,
+            isActive,
+            isPending
+          });
+        }
+      });
+    }
+    
+    // 2. Strategy Nodes → Vote Consensus (Fan-in: 8 to 1, connect to center of consensus area)
+    // Find the center of the vote consensus section
+    const consensusNodes = Array.from({length: 8}, (_, i) => nodeRefs.current[`consensus_${i + 1}`]).filter(Boolean);
+    if (consensusNodes.length > 0) {
+      // Calculate center position of consensus group
+      const consensusRects = consensusNodes.map(node => node!.getBoundingClientRect());
+      const consensusCenter = {
+        x: Math.min(...consensusRects.map(r => r.left)) - containerRect.left,
+        y: (Math.min(...consensusRects.map(r => r.top)) + Math.max(...consensusRects.map(r => r.bottom))) / 2 - containerRect.top
+      };
+      
+      strategyKeys.forEach(stratKey => {
+        const stratNode = nodeRefs.current[`strategy_${stratKey}`];
+        if (stratNode) {
+          const stratRect = stratNode.getBoundingClientRect();
+          
+          const fromPos = {
+            x: stratRect.right - containerRect.left,
+            y: stratRect.top + stratRect.height / 2 - containerRect.top
+          };
+          
+          const sv = pipelineData.strategyVotes.find((s: any) => s.key === stratKey);
+          const isActive = sv && sv.outputCount > 0;
+          const isPending = sv && sv.pendingCount > 0;
+          
+          newConnections.push({ 
+            from: `strategy_${stratKey}`, 
+            to: 'voteConsensus', 
+            fromPos, 
+            toPos: consensusCenter,
+            isActive,
+            isPending
+          });
+        }
+      });
+    }
+    
+    // 3. Sequential connections for the rest of the pipeline
+    const sequentialOrder = [
+      'voteConsensus',
       'persistence',
       'signalGating',
       'confidenceTuning', 
@@ -392,33 +468,77 @@ function WorkflowVisualization({ pipelineData, mreVersions, onStageClick }: Work
       'output'
     ];
     
-    for (let i = 0; i < flowOrder.length - 1; i++) {
-      const fromKey = flowOrder[i];
-      const toKey = flowOrder[i + 1];
+    for (let i = 0; i < sequentialOrder.length - 1; i++) {
+      const fromKey = sequentialOrder[i];
+      const toKey = sequentialOrder[i + 1];
       
-      const fromNode = nodeRefs.current[fromKey];
-      const toNode = nodeRefs.current[toKey];
+      let fromNode = null;
+      let toNode = nodeRefs.current[toKey];
       
-      if (fromNode && toNode) {
-        const fromRect = fromNode.getBoundingClientRect();
-        const toRect = toNode.getBoundingClientRect();
-        
+      // Handle special case for vote consensus (use center of consensus nodes)
+      if (fromKey === 'voteConsensus' && consensusNodes.length > 0) {
+        const consensusRects = consensusNodes.map(node => node!.getBoundingClientRect());
         const fromPos = {
-          x: fromRect.right - containerRect.left,
-          y: fromRect.top + fromRect.height / 2 - containerRect.top
+          x: Math.max(...consensusRects.map(r => r.right)) - containerRect.left,
+          y: (Math.min(...consensusRects.map(r => r.top)) + Math.max(...consensusRects.map(r => r.bottom))) / 2 - containerRect.top
         };
         
-        const toPos = {
-          x: toRect.left - containerRect.left,
-          y: toRect.top + toRect.height / 2 - containerRect.top
-        };
+        if (toNode) {
+          const toRect = toNode.getBoundingClientRect();
+          const toPos = {
+            x: toRect.left - containerRect.left,
+            y: toRect.top + toRect.height / 2 - containerRect.top
+          };
+          
+          const isActive = pipelineData.voteConsensusGate.outputCount > 0;
+          const isPending = pipelineData.persistenceGate?.pendingCount > 0;
+          
+          newConnections.push({ 
+            from: fromKey, 
+            to: toKey, 
+            fromPos, 
+            toPos,
+            isActive,
+            isPending: toKey === 'persistence' ? isPending : false
+          });
+        }
+      } else {
+        fromNode = nodeRefs.current[fromKey];
         
-        newConnections.push({ from: fromKey, to: toKey, fromPos, toPos });
+        if (fromNode && toNode) {
+          const fromRect = fromNode.getBoundingClientRect();
+          const toRect = toNode.getBoundingClientRect();
+          
+          const fromPos = {
+            x: fromRect.right - containerRect.left,
+            y: fromRect.top + fromRect.height / 2 - containerRect.top
+          };
+          
+          const toPos = {
+            x: toRect.left - containerRect.left,
+            y: toRect.top + toRect.height / 2 - containerRect.top
+          };
+          
+          // Determine if connection is active based on stage
+          let isActive = false;
+          if (fromKey === 'persistence') isActive = pipelineData.persistenceGate.outputCount > 0;
+          else if (fromKey === 'signalGating') isActive = pipelineData.signalGating.outputCount > 0;
+          else if (fromKey === 'confidenceTuning') isActive = pipelineData.confidenceTuning.outputCount > 0;
+          else if (fromKey === 'finalFilters') isActive = pipelineData.finalFilters.outputCount > 0;
+          
+          newConnections.push({ 
+            from: fromKey, 
+            to: toKey, 
+            fromPos, 
+            toPos,
+            isActive
+          });
+        }
       }
     }
     
     setConnections(newConnections);
-  }, []);
+  }, [pipelineData]);
 
   useEffect(() => {
     updateConnections();
@@ -443,10 +563,10 @@ function WorkflowVisualization({ pipelineData, mreVersions, onStageClick }: Work
   const pipelineVersion = pipelineData?.input?.passed?.[0]?.meta?.version || '3.1.0';
 
   return (
-    <div className="bg-slate-900/80 rounded-xl border border-slate-700/50 p-8 overflow-x-auto relative">
+    <div className="bg-slate-900/80 rounded-xl border border-slate-700/50 p-4 md:p-8 md:overflow-x-auto relative">
       <div 
         ref={containerRef} 
-        className="relative min-w-[1400px] min-h-[500px]"
+        className="relative md:min-w-[1400px] min-h-[500px] md:min-h-[500px]"
         style={{ 
           background: 'radial-gradient(circle at 20% 80%, rgba(15, 118, 110, 0.05) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.05) 0%, transparent 50%)',
         }}
@@ -463,6 +583,16 @@ function WorkflowVisualization({ pipelineData, mreVersions, onStageClick }: Work
               <stop offset="50%" stopColor="rgb(59, 130, 246)" stopOpacity="0.4" />
               <stop offset="100%" stopColor="rgb(148, 163, 184)" stopOpacity="0.6" />
             </linearGradient>
+            <linearGradient id="activeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="rgb(59, 130, 246)" stopOpacity="0.8" />
+              <stop offset="50%" stopColor="rgb(34, 197, 94)" stopOpacity="0.6" />
+              <stop offset="100%" stopColor="rgb(59, 130, 246)" stopOpacity="0.8" />
+            </linearGradient>
+            <linearGradient id="pendingGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="rgb(251, 191, 36)" stopOpacity="0.8" />
+              <stop offset="50%" stopColor="rgb(245, 158, 11)" stopOpacity="0.6" />
+              <stop offset="100%" stopColor="rgb(251, 191, 36)" stopOpacity="0.8" />
+            </linearGradient>
             <filter id="glow">
               <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
               <feMerge> 
@@ -472,21 +602,55 @@ function WorkflowVisualization({ pipelineData, mreVersions, onStageClick }: Work
             </filter>
           </defs>
           
-          {connections.map((connection, index) => (
-            <path
-              key={`${connection.from}-${connection.to}`}
-              d={createBezierPath(connection.fromPos, connection.toPos)}
-              stroke="url(#connectionGradient)"
-              strokeWidth="2"
-              fill="none"
-              filter="url(#glow)"
-              opacity="0.8"
-            />
-          ))}
+          <style>{`
+            @keyframes flowAnimation {
+              0% { stroke-dashoffset: 20; }
+              100% { stroke-dashoffset: 0; }
+            }
+            .flow-active {
+              animation: flowAnimation 1.5s linear infinite;
+            }
+            .flow-pending {
+              animation: flowAnimation 2s linear infinite;
+            }
+          `}</style>
+          
+          {connections.map((connection, index) => {
+            const isActive = (connection as any).isActive;
+            const isPending = (connection as any).isPending;
+            
+            let strokeColor = "url(#connectionGradient)";
+            let className = "";
+            let opacity = "0.4";
+            
+            if (isActive) {
+              strokeColor = "url(#activeGradient)";
+              className = "flow-active";
+              opacity = "0.8";
+            } else if (isPending) {
+              strokeColor = "url(#pendingGradient)";
+              className = "flow-pending";
+              opacity = "0.7";
+            }
+            
+            return (
+              <path
+                key={`${connection.from}-${connection.to}-${index}`}
+                d={createBezierPath(connection.fromPos, connection.toPos)}
+                stroke={strokeColor}
+                strokeWidth="2"
+                fill="none"
+                filter="url(#glow)"
+                opacity={opacity}
+                strokeDasharray={isActive || isPending ? "10 10" : "none"}
+                className={className}
+              />
+            );
+          })}
         </svg>
         
         {/* Workflow Nodes */}
-        <div className="relative z-10 flex items-start gap-16 p-4">
+        <div className="relative z-10 flex flex-col md:flex-row md:items-start gap-8 md:gap-16 p-4">
           
           {/* Column 1: Universe Input */}
           <div className="flex flex-col items-center gap-6">
@@ -502,13 +666,10 @@ function WorkflowVisualization({ pipelineData, mreVersions, onStageClick }: Work
             />
           </div>
           
-          {/* Column 2: Strategy Votes (Stacked) */}
+          {/* Column 2: Strategy Votes (Responsive Grid) */}
           <div className="flex flex-col items-center gap-6">
             <div className="text-xs font-semibold text-slate-400 text-center mb-2">Strategy Votes</div>
-            <div 
-              ref={(el) => { nodeRefs.current['strategyVotes'] = el; }}
-              className="flex flex-col gap-3"
-            >
+            <div className="grid grid-cols-2 md:grid-cols-1 gap-2 md:gap-3 max-w-sm md:max-w-none">
               {pipelineData.strategyVotes.map((sv: any, index: number) => {
                 const confirmed = sv.confirmedCount || 0;
                 const pending = sv.pendingCount || 0;
@@ -517,6 +678,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, onStageClick }: Work
                 return (
                   <WorkflowNode
                     key={sv.key}
+                    ref={(el) => { nodeRefs.current[`strategy_${sv.key}`] = el; }}
                     name={sv.name}
                     description={description}
                     inputCount={sv.inputCount}
@@ -526,30 +688,28 @@ function WorkflowVisualization({ pipelineData, mreVersions, onStageClick }: Work
                     onClick={() => onStageClick(`strategy_${sv.key}`)}
                     nodeType="strategy"
                     isPending={pending > 0}
-                    className="max-w-[180px]"
+                    className="md:max-w-[180px]"
                   />
                 );
               })}
             </div>
           </div>
           
-          {/* Column 3: Vote Consensus Gate (Stacked) */}
+          {/* Column 3: Vote Consensus Gate (Responsive Grid) */}
           <div className="flex flex-col items-center gap-6">
             <div className="text-xs font-semibold text-slate-400 text-center mb-2">Vote Consensus</div>
-            <div 
-              ref={(el) => { nodeRefs.current['voteConsensus'] = el; }}
-              className="flex flex-col gap-2"
-            >
+            <div className="grid grid-cols-2 md:grid-cols-1 gap-2 max-w-sm md:max-w-none">
               {pipelineData.voteConsensusGate.paths.slice().reverse().map((path: any) => (
                 <WorkflowNode
                   key={path.voteCount}
+                  ref={(el) => { nodeRefs.current[`consensus_${path.voteCount}`] = el; }}
                   name={`${path.voteCount} of 8`}
                   description={`${path.count} tickers`}
                   inputCount={0}
                   outputCount={path.count}
                   onClick={() => onStageClick(`vote_consensus_${path.voteCount}`)}
                   nodeType="consensus"
-                  className="max-w-[140px]"
+                  className="md:max-w-[140px]"
                 />
               ))}
             </div>

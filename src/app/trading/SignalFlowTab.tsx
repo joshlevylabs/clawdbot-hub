@@ -968,128 +968,8 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
           minWidth: '2000px',
         }}
       >
-        {/* SVG Layer for Connections */}
-        <svg 
-          ref={svgRef}
-          className="absolute inset-0 w-full h-full pointer-events-none"
-          style={{ zIndex: 15, overflow: 'visible' }}
-        >
-          <defs>
-            <linearGradient id="connectionGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="rgb(148, 163, 184)" stopOpacity="0.6" />
-              <stop offset="50%" stopColor="rgb(59, 130, 246)" stopOpacity="0.4" />
-              <stop offset="100%" stopColor="rgb(148, 163, 184)" stopOpacity="0.6" />
-            </linearGradient>
-            <linearGradient id="activeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="rgb(59, 130, 246)" stopOpacity="0.8" />
-              <stop offset="50%" stopColor="rgb(34, 197, 94)" stopOpacity="0.6" />
-              <stop offset="100%" stopColor="rgb(59, 130, 246)" stopOpacity="0.8" />
-            </linearGradient>
-            <linearGradient id="pendingGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="rgb(251, 191, 36)" stopOpacity="0.8" />
-              <stop offset="50%" stopColor="rgb(245, 158, 11)" stopOpacity="0.6" />
-              <stop offset="100%" stopColor="rgb(251, 191, 36)" stopOpacity="0.8" />
-            </linearGradient>
-            {/* Tier-specific gradients */}
-            <linearGradient id="tier3PlusGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="rgb(52, 211, 153)" stopOpacity="0.8" />
-              <stop offset="50%" stopColor="rgb(34, 197, 94)" stopOpacity="0.7" />
-              <stop offset="100%" stopColor="rgb(52, 211, 153)" stopOpacity="0.8" />
-            </linearGradient>
-            <linearGradient id="tier2Gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="rgb(59, 130, 246)" stopOpacity="0.8" />
-              <stop offset="50%" stopColor="rgb(96, 165, 250)" stopOpacity="0.6" />
-              <stop offset="100%" stopColor="rgb(59, 130, 246)" stopOpacity="0.8" />
-            </linearGradient>
-            <linearGradient id="tier1Gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="rgb(148, 163, 184)" stopOpacity="0.7" />
-              <stop offset="50%" stopColor="rgb(100, 116, 139)" stopOpacity="0.5" />
-              <stop offset="100%" stopColor="rgb(148, 163, 184)" stopOpacity="0.7" />
-            </linearGradient>
-            <filter id="glow">
-              <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
-              <feMerge> 
-                <feMergeNode in="coloredBlur"/>
-                <feMergeNode in="SourceGraphic"/> 
-              </feMerge>
-            </filter>
-          </defs>
-          
-          <style>{`
-            @keyframes flowAnimation {
-              0% { stroke-dashoffset: 20; }
-              100% { stroke-dashoffset: 0; }
-            }
-            .flow-active {
-              animation: flowAnimation 1.5s linear infinite;
-            }
-            .flow-pending {
-              animation: flowAnimation 2s linear infinite;
-            }
-          `}</style>
-          
-          {connections.map((connection, index) => {
-            const isActive = (connection as any).isActive;
-            const isPending = (connection as any).isPending;
-            const tierVoteCount = (connection as any).tierVoteCount;
-            
-            let strokeColor = "url(#connectionGradient)";
-            let className = "";
-            let opacity = "0.4";
-            let strokeWidth = "1.5";
-            
-            // Apply tier-specific styling for multi-dot connections
-            // Use solid colors (not gradients) for visibility in the gap between nodes
-            if (tierVoteCount !== undefined) {
-              if (tierVoteCount >= 3) {
-                strokeColor = "rgb(52, 211, 153)";  // emerald-400 solid
-                opacity = "1";
-                strokeWidth = "3";
-                className = "flow-active";
-              } else if (tierVoteCount >= 2) {
-                strokeColor = "rgb(96, 165, 250)";  // blue-400 solid
-                opacity = "0.9";
-                strokeWidth = "2.5";
-                className = "flow-active";
-              } else {
-                strokeColor = "rgb(148, 163, 184)";  // slate-400 solid
-                opacity = "0.7";
-                strokeWidth = "2";
-                className = "flow-active";
-              }
-            } else {
-              // Legacy single-dot connections
-              if (isActive) {
-                strokeColor = "url(#activeGradient)";
-                className = "flow-active";
-                opacity = "0.8";
-                strokeWidth = "2.5";
-              } else if (isPending) {
-                strokeColor = "url(#pendingGradient)";
-                className = "flow-pending";
-                opacity = "0.7";
-                strokeWidth = "2";
-              }
-            }
-            
-            return (
-              <path
-                key={`${connection.from}-${connection.to}-${index}`}
-                d={createBezierPath(connection.fromPos, connection.toPos)}
-                stroke={strokeColor}
-                strokeWidth={strokeWidth}
-                fill="none"
-                filter={(isActive || isPending || tierVoteCount !== undefined) ? "url(#glow)" : undefined}
-                opacity={opacity}
-                strokeDasharray={(isActive || isPending || tierVoteCount !== undefined) ? "8 6" : "4 4"}
-                className={className}
-              />
-            );
-          })}
-        </svg>
-        
         {/* Workflow Nodes */}
-        <div className="relative z-10 flex flex-row items-start gap-24 p-6">
+        <div className="relative z-[5] flex flex-row items-start gap-24 p-6">
           
           {/* Column 1: Universe Input */}
           <div className="flex flex-col items-center gap-6">
@@ -1682,6 +1562,126 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
             </div>
           </div>
         </div>
+
+        {/* SVG Layer for Connections — rendered AFTER cards in DOM order to paint on top */}
+        <svg 
+          ref={svgRef}
+          className="absolute inset-0 w-full h-full pointer-events-none"
+          style={{ zIndex: 20, overflow: 'visible' }}
+        >
+          <defs>
+            <linearGradient id="connectionGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="rgb(148, 163, 184)" stopOpacity="0.6" />
+              <stop offset="50%" stopColor="rgb(59, 130, 246)" stopOpacity="0.4" />
+              <stop offset="100%" stopColor="rgb(148, 163, 184)" stopOpacity="0.6" />
+            </linearGradient>
+            <linearGradient id="activeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="rgb(59, 130, 246)" stopOpacity="0.8" />
+              <stop offset="50%" stopColor="rgb(34, 197, 94)" stopOpacity="0.6" />
+              <stop offset="100%" stopColor="rgb(59, 130, 246)" stopOpacity="0.8" />
+            </linearGradient>
+            <linearGradient id="pendingGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="rgb(251, 191, 36)" stopOpacity="0.8" />
+              <stop offset="50%" stopColor="rgb(245, 158, 11)" stopOpacity="0.6" />
+              <stop offset="100%" stopColor="rgb(251, 191, 36)" stopOpacity="0.8" />
+            </linearGradient>
+            {/* Tier-specific gradients */}
+            <linearGradient id="tier3PlusGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="rgb(52, 211, 153)" stopOpacity="0.8" />
+              <stop offset="50%" stopColor="rgb(34, 197, 94)" stopOpacity="0.7" />
+              <stop offset="100%" stopColor="rgb(52, 211, 153)" stopOpacity="0.8" />
+            </linearGradient>
+            <linearGradient id="tier2Gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="rgb(59, 130, 246)" stopOpacity="0.8" />
+              <stop offset="50%" stopColor="rgb(96, 165, 250)" stopOpacity="0.6" />
+              <stop offset="100%" stopColor="rgb(59, 130, 246)" stopOpacity="0.8" />
+            </linearGradient>
+            <linearGradient id="tier1Gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="rgb(148, 163, 184)" stopOpacity="0.7" />
+              <stop offset="50%" stopColor="rgb(100, 116, 139)" stopOpacity="0.5" />
+              <stop offset="100%" stopColor="rgb(148, 163, 184)" stopOpacity="0.7" />
+            </linearGradient>
+            <filter id="glow">
+              <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+              <feMerge> 
+                <feMergeNode in="coloredBlur"/>
+                <feMergeNode in="SourceGraphic"/> 
+              </feMerge>
+            </filter>
+          </defs>
+          
+          <style>{`
+            @keyframes flowAnimation {
+              0% { stroke-dashoffset: 20; }
+              100% { stroke-dashoffset: 0; }
+            }
+            .flow-active {
+              animation: flowAnimation 1.5s linear infinite;
+            }
+            .flow-pending {
+              animation: flowAnimation 2s linear infinite;
+            }
+          `}</style>
+          
+          {connections.map((connection, index) => {
+            const isActive = (connection as any).isActive;
+            const isPending = (connection as any).isPending;
+            const tierVoteCount = (connection as any).tierVoteCount;
+            
+            let strokeColor = "url(#connectionGradient)";
+            let className = "";
+            let opacity = "0.4";
+            let strokeWidth = "1.5";
+            
+            // Apply tier-specific styling for multi-dot connections
+            // Thick, bright, solid colors for maximum visibility
+            if (tierVoteCount !== undefined) {
+              if (tierVoteCount >= 3) {
+                strokeColor = "rgb(52, 211, 153)";  // emerald-400
+                opacity = "1";
+                strokeWidth = "4";
+                className = "flow-active";
+              } else if (tierVoteCount >= 2) {
+                strokeColor = "rgb(96, 165, 250)";  // blue-400
+                opacity = "1";
+                strokeWidth = "3.5";
+                className = "flow-active";
+              } else {
+                strokeColor = "rgb(203, 213, 225)";  // slate-300 (brighter)
+                opacity = "1";
+                strokeWidth = "3";
+                className = "flow-active";
+              }
+            } else {
+              // Legacy single-dot connections
+              if (isActive) {
+                strokeColor = "url(#activeGradient)";
+                className = "flow-active";
+                opacity = "0.8";
+                strokeWidth = "2.5";
+              } else if (isPending) {
+                strokeColor = "url(#pendingGradient)";
+                className = "flow-pending";
+                opacity = "0.7";
+                strokeWidth = "2";
+              }
+            }
+            
+            return (
+              <path
+                key={`${connection.from}-${connection.to}-${index}`}
+                d={createBezierPath(connection.fromPos, connection.toPos)}
+                stroke={strokeColor}
+                strokeWidth={strokeWidth}
+                fill="none"
+                filter={(isActive || isPending || tierVoteCount !== undefined) ? "url(#glow)" : undefined}
+                opacity={opacity}
+                strokeDasharray={(isActive || isPending || tierVoteCount !== undefined) ? "8 6" : "4 4"}
+                className={className}
+              />
+            );
+          })}
+        </svg>
       </div>
       </div>
       

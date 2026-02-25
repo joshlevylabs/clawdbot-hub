@@ -585,18 +585,23 @@ function MultiDotConnectors({
         const isLeft = side === 'left';
 
         return (
-          <div key={`${side}-${path.voteCount}`} className="absolute" style={{ top: `${yPosition}px`, [isLeft ? 'left' : 'right']: 0 }}>
+          <div
+            key={`${side}-${path.voteCount}`}
+            className="absolute flex items-center gap-1"
+            style={{
+              top: `${yPosition}px`,
+              [isLeft ? 'left' : 'right']: 0,
+              transform: 'translateY(-50%)',
+              flexDirection: isLeft ? 'row-reverse' : 'row',
+            }}
+          >
             {/* Dot */}
             <div
-              className={`w-3.5 h-3.5 rounded-full border-2 ${tier.dot} ${isLeft ? '-translate-x-1/2' : 'translate-x-1/2'}`}
+              className={`w-3.5 h-3.5 rounded-full border-2 shrink-0 ${tier.dot} ${isLeft ? '-translate-x-1/2' : 'translate-x-1/2'}`}
             />
             {/* Label */}
             <span
-              className={`absolute text-[8px] font-bold ${tier.text} whitespace-nowrap select-none`}
-              style={{
-                top: '-1px',
-                ...(isLeft ? { right: '14px' } : { left: '14px' }),
-              }}
+              className={`text-[10px] font-bold ${tier.text} whitespace-nowrap select-none bg-slate-900/80 px-1 rounded`}
             >
               {tier.label}
             </span>
@@ -967,7 +972,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
         <svg 
           ref={svgRef}
           className="absolute inset-0 w-full h-full pointer-events-none"
-          style={{ zIndex: 1 }}
+          style={{ zIndex: 1, overflow: 'visible' }}
         >
           <defs>
             <linearGradient id="connectionGradient" x1="0%" y1="0%" x2="100%" y2="0%">

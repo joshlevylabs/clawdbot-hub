@@ -1634,20 +1634,20 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
             let strokeWidth = "1.5";
             
             // Apply tier-specific styling for multi-dot connections
-            // Match the dashed animated style of earlier pipeline stages
+            // Solid RGB colors + dashed animated style matching earlier stages
             if (tierVoteCount !== undefined) {
               if (tierVoteCount >= 3) {
-                strokeColor = "url(#tier3PlusGradient)";  // emerald gradient
+                strokeColor = "rgb(52, 211, 153)";  // emerald-400
                 opacity = "0.9";
                 strokeWidth = "2.5";
                 className = "flow-active";
               } else if (tierVoteCount >= 2) {
-                strokeColor = "url(#tier2Gradient)";  // blue gradient
-                opacity = "0.8";
+                strokeColor = "rgb(96, 165, 250)";  // blue-400
+                opacity = "0.85";
                 strokeWidth = "2.5";
                 className = "flow-active";
               } else {
-                strokeColor = "url(#tier1Gradient)";  // slate gradient
+                strokeColor = "rgb(203, 213, 225)";  // slate-300
                 opacity = "0.7";
                 strokeWidth = "2";
                 className = "flow-active";

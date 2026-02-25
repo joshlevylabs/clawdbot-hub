@@ -381,6 +381,20 @@ const STRATEGY_VERSION_KEY_MAP: Record<string, string> = {
   vix_mean_reversion: 'vix_mean_reversion',
 };
 
+// Consensus confidence: compounding effect when multiple strategies agree
+// Uses ensemble boosting: P(correct | N agree) = 1 - ∏(1 - p_i) for N independent signals
+// Then scaled to show the additive effect clearly
+const CONSENSUS_CONFIDENCE: Record<number, number> = {
+  1: 35,   // Single strategy — could be noise
+  2: 55,   // Two agree — meaningful signal
+  3: 72,   // Three agree — strong convergence
+  4: 83,   // Four agree — high confidence
+  5: 90,   // Five agree — very high
+  6: 94,   // Six agree — near certain
+  7: 97,   // Seven agree — exceptional
+  8: 99,   // Unanimous — maximum conviction
+};
+
 // Non-strategy node confidence levels (based on design maturity and validation)
 const PIPELINE_NODE_CONFIDENCE: Record<string, number> = {
   input: 95,           // Data ingestion — well-tested, mature
@@ -748,19 +762,28 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
           <div className="flex flex-col items-center gap-6">
             <div className="text-xs font-semibold text-slate-400 text-center mb-2">Vote Consensus</div>
             <div className="flex flex-col gap-2">
-              {pipelineData.voteConsensusGate.paths.slice().reverse().map((path: any) => (
-                <WorkflowNode
-                  key={path.voteCount}
-                  ref={(el) => { nodeRefs.current[`consensus_${path.voteCount}`] = el; }}
-                  name={`${path.voteCount} of 8`}
-                  description={`${path.count} tickers`}
-                  inputCount={0}
-                  outputCount={path.count}
-                  onClick={() => onStageClick(`vote_consensus_${path.voteCount}`)}
-                  nodeType="consensus"
-                  className="max-w-[140px]"
-                />
-              ))}
+              {pipelineData.voteConsensusGate.paths.slice().reverse().map((path: any) => {
+                const conf = CONSENSUS_CONFIDENCE[path.voteCount] || 35;
+                const prevConf = path.voteCount > 1 ? (CONSENSUS_CONFIDENCE[path.voteCount - 1] || 35) : 0;
+                const boost = path.voteCount > 1 ? conf - prevConf : 0;
+                return (
+                  <WorkflowNode
+                    key={path.voteCount}
+                    ref={(el) => { nodeRefs.current[`consensus_${path.voteCount}`] = el; }}
+                    name={`${path.voteCount} of 8`}
+                    description={path.count > 0 
+                      ? `${path.count} tickers${boost > 0 ? ` · +${boost}% boost` : ''}`
+                      : `0 tickers${boost > 0 ? ` · +${boost}% boost` : ''}`
+                    }
+                    inputCount={0}
+                    outputCount={path.count}
+                    onClick={() => onStageClick(`vote_consensus_${path.voteCount}`)}
+                    nodeType="consensus"
+                    className="max-w-[140px]"
+                    confidence={conf}
+                  />
+                );
+              })}
             </div>
           </div>
           

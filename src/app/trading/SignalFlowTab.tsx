@@ -1189,7 +1189,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
                       style={{ padding: '8px', minHeight: '80px' }}
                       confidence={PIPELINE_NODE_CONFIDENCE.signalGating}
                     />
-                    <TierConnectorLine voteCount={path.voteCount} />
+                    
                   </div>
                 );
               })}
@@ -1224,7 +1224,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
                     style={{ padding: '8px', minHeight: '80px' }}
                     confidence={PIPELINE_NODE_CONFIDENCE.confidenceTuning}
                   />
-                      <TierConnectorLine voteCount={path.voteCount} />
+                      
                     </div>
                 );
               })}
@@ -1261,7 +1261,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
                     style={{ padding: '8px', minHeight: '80px' }}
                     confidence={PIPELINE_NODE_CONFIDENCE.finalFilters}
                   />
-                      <TierConnectorLine voteCount={path.voteCount} />
+                      
                     </div>
                 );
               })}
@@ -1298,7 +1298,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
                     style={{ padding: '8px', minHeight: '80px' }}
                     confidence={PIPELINE_NODE_CONFIDENCE.output}
                   />
-                      <TierConnectorLine voteCount={path.voteCount} />
+                      
                     </div>
                 );
               })}
@@ -1335,7 +1335,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
                     style={{ padding: '6px', minHeight: '70px' }}
                     confidence={PIPELINE_NODE_CONFIDENCE.fibonacciLevels}
                   />
-                      <TierConnectorLine voteCount={path.voteCount} />
+                      
                     </div>
                 );
               })}
@@ -1372,7 +1372,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
                     style={{ padding: '6px', minHeight: '70px' }}
                     confidence={PIPELINE_NODE_CONFIDENCE.agentAnalysis}
                   />
-                      <TierConnectorLine voteCount={path.voteCount} isLast={true} />
+                      
                     </div>
                 );
               })}

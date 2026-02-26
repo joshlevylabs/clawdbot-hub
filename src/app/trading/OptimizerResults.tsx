@@ -302,8 +302,12 @@ export default function OptimizerResults() {
       try {
         const historyRes = await fetch(`/data/trading/optimization/health-score-history.json?${ts}`);
         if (historyRes.ok) {
-          const historyData: HealthHistoryData = await historyRes.json();
-          setHealthHistory(historyData);
+          const historyRaw = await historyRes.json();
+          // Handle both array format [{generated, history}] and object format {generated, history}
+          const historyData: HealthHistoryData = Array.isArray(historyRaw) ? historyRaw[0] : historyRaw;
+          if (historyData?.history) {
+            setHealthHistory(historyData);
+          }
         }
       } catch {
         // Health history is optional

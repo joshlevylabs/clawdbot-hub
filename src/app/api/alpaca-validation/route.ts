@@ -131,7 +131,7 @@ export async function GET() {
         ? Promise.all([
             paperSupabase.from('paper_positions').select('*').order('opened_at', { ascending: false }),
             paperSupabase.from('paper_trading_config').select('*').limit(1).single(),
-            paperSupabase.from('paper_portfolio_snapshots').select('date,equity,cash').order('date', { ascending: true }).limit(100),
+            paperSupabase.from('paper_portfolio_snapshots').select('date,equity,cash').order('date', { ascending: true }).limit(10000),
           ])
         : Promise.resolve([{ data: [] }, { data: null }, { data: [] }]),
     ]);

@@ -590,15 +590,15 @@ export default function BulletinPage() {
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-slate-700/50">
-                    <th className="text-left px-4 py-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wider w-[90px]">Key</th>
-                    <th className="text-left px-4 py-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Title</th>
-                    <th className="text-left px-4 py-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wider w-[90px]">Priority</th>
-                    <th className="text-left px-4 py-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wider w-[110px]">Status</th>
-                    <th className="text-left px-4 py-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wider w-[90px]">Type</th>
-                    <th className="text-left px-4 py-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wider w-[100px]">Assignee</th>
-                    <th className="text-left px-4 py-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wider w-[80px]">Source</th>
-                    <th className="text-center px-4 py-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wider w-[80px]">Sprint</th>
-                    <th className="text-left px-4 py-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wider w-[60px]">Action</th>
+                    <th className="text-left px-3 py-2 text-[11px] font-semibold text-slate-400 uppercase tracking-wider w-[50px]">Action</th>
+                    <th className="text-left px-3 py-2 text-[11px] font-semibold text-slate-400 uppercase tracking-wider w-[60px]">Sprint</th>
+                    <th className="text-left px-3 py-2 text-[11px] font-semibold text-slate-400 uppercase tracking-wider w-[80px]">Key</th>
+                    <th className="text-left px-3 py-2 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Title</th>
+                    <th className="text-left px-3 py-2 text-[11px] font-semibold text-slate-400 uppercase tracking-wider w-[90px]">Priority</th>
+                    <th className="text-left px-3 py-2 text-[11px] font-semibold text-slate-400 uppercase tracking-wider w-[100px]">Status</th>
+                    <th className="text-left px-3 py-2 text-[11px] font-semibold text-slate-400 uppercase tracking-wider w-[80px]">Type</th>
+                    <th className="text-left px-3 py-2 text-[11px] font-semibold text-slate-400 uppercase tracking-wider w-[90px]">Assignee</th>
+                    <th className="text-left px-3 py-2 text-[11px] font-semibold text-slate-400 uppercase tracking-wider w-[70px]">Source</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -634,10 +634,32 @@ export default function BulletinPage() {
                           idx % 2 === 0 ? "bg-slate-900/20" : "bg-transparent"
                         }`}
                       >
-                        <td className="px-4 py-3">
+                        <td className="px-3 py-1.5">
+                          <button
+                            onClick={() => handleTaskClick(task)}
+                            className="p-1 text-slate-400 hover:text-primary-400 transition-colors"
+                            title="View Details"
+                          >
+                            <Eye className="w-4 h-4" />
+                          </button>
+                        </td>
+                        <td className="px-3 py-1.5">
+                          <button
+                            onClick={(e) => handleToggleSprintReady(task, e)}
+                            className={`p-1 rounded-md transition-all ${
+                              task.sprintReady
+                                ? "bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30"
+                                : "bg-slate-800/50 text-slate-600 hover:text-slate-400 hover:bg-slate-700/50"
+                            }`}
+                            title={task.sprintReady ? "Remove from sprint" : "Mark sprint-ready"}
+                          >
+                            <Zap className="w-4 h-4" strokeWidth={task.sprintReady ? 2.5 : 1.5} />
+                          </button>
+                        </td>
+                        <td className="px-3 py-1.5">
                           <span className="text-sm font-mono font-bold text-primary-400">{task.key}</span>
                         </td>
-                        <td className="px-4 py-3">
+                        <td className="px-3 py-1.5">
                           <div className="flex items-center gap-2">
                             <p className={`text-sm leading-snug ${task.status === "done" ? "text-slate-500 line-through" : "text-slate-200"}`}>
                               {task.text}
@@ -647,26 +669,26 @@ export default function BulletinPage() {
                             )}
                           </div>
                         </td>
-                        <td className="px-4 py-3">
+                        <td className="px-3 py-1.5">
                           <span className={`text-sm font-medium ${priorityColors[task.priority] || "text-slate-400"}`}>
                             {priorityIcons[task.priority] || "→"} {(task.priority || "medium").charAt(0).toUpperCase() + (task.priority || "medium").slice(1)}
                           </span>
                         </td>
-                        <td className="px-4 py-3">
-                          <span className={`inline-block px-2 py-1 rounded text-[11px] font-semibold border ${statusColors[task.status] || statusColors.pending}`}>
+                        <td className="px-3 py-1.5">
+                          <span className={`inline-block px-2 py-0.5 rounded text-[11px] font-semibold border ${statusColors[task.status] || statusColors.pending}`}>
                             {statusLabels[task.status] || task.status?.toUpperCase()}
                           </span>
                         </td>
-                        <td className="px-4 py-3">
+                        <td className="px-3 py-1.5">
                           {task.tag === "AGENT" ? (
-                            <span className="inline-block px-2 py-1 rounded text-[11px] font-semibold bg-cyan-500/15 text-cyan-400 border border-cyan-500/30">🤖 AGENT</span>
+                            <span className="inline-block px-2 py-0.5 rounded text-[11px] font-semibold bg-cyan-500/15 text-cyan-400 border border-cyan-500/30">🤖 AGENT</span>
                           ) : task.tag === "PLAN" ? (
-                            <span className="inline-block px-2 py-1 rounded text-[11px] font-semibold bg-violet-500/15 text-violet-400 border border-violet-500/30">📋 PLAN</span>
+                            <span className="inline-block px-2 py-0.5 rounded text-[11px] font-semibold bg-violet-500/15 text-violet-400 border border-violet-500/30">📋 PLAN</span>
                           ) : (
-                            <span className="inline-block px-2 py-1 rounded text-[11px] font-semibold bg-purple-500/15 text-purple-400 border border-purple-500/30">👤 CEO</span>
+                            <span className="inline-block px-2 py-0.5 rounded text-[11px] font-semibold bg-purple-500/15 text-purple-400 border border-purple-500/30">👤 CEO</span>
                           )}
                         </td>
-                        <td className="px-4 py-3">
+                        <td className="px-3 py-1.5">
                           <div className="flex items-center gap-1.5">
                             <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${
                               task.assignee === "Agent" ? "bg-cyan-500/20 text-cyan-400" :
@@ -678,30 +700,8 @@ export default function BulletinPage() {
                             <span className="text-xs text-slate-300">{task.assignee || "—"}</span>
                           </div>
                         </td>
-                        <td className="px-4 py-3">
+                        <td className="px-3 py-1.5">
                           <span className="text-xs text-primary-400/80 font-mono">{task.sourceStandup || "—"}</span>
-                        </td>
-                        <td className="px-4 py-3 text-center">
-                          <button
-                            onClick={(e) => handleToggleSprintReady(task, e)}
-                            className={`p-1.5 rounded-lg transition-all ${
-                              task.sprintReady
-                                ? "bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30"
-                                : "bg-slate-800/50 text-slate-600 hover:text-slate-400 hover:bg-slate-700/50"
-                            }`}
-                            title={task.sprintReady ? "Remove from sprint" : "Mark sprint-ready"}
-                          >
-                            <Zap className="w-4 h-4" strokeWidth={task.sprintReady ? 2.5 : 1.5} />
-                          </button>
-                        </td>
-                        <td className="px-4 py-3">
-                          <button
-                            onClick={() => handleTaskClick(task)}
-                            className="p-1 text-slate-400 hover:text-primary-400 transition-colors"
-                            title="View Details"
-                          >
-                            <Eye className="w-4 h-4" />
-                          </button>
                         </td>
                       </tr>
                     );

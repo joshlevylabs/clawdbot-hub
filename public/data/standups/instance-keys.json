@@ -1,7 +1,8 @@
 {
-  "global_counter": 2,
+  "global_counter": 3,
   "counters": {
     "adhoc-hub-standup-system-overhaul": 1,
-    "adhoc-lever-financial-app-separation": 1
+    "adhoc-lever-financial-app-separation": 1,
+    "evening-session": 1
   }
 }

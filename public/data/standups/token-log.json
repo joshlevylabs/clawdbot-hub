@@ -29,12 +29,22 @@
       "estimatedCost": 0.049,
       "model": "claude-sonnet-4-20250514",
       "duration": "66.9s"
+    },
+    {
+      "date": "2026-02-25",
+      "type": "evening-session",
+      "inputTokens": 3390,
+      "outputTokens": 1861,
+      "totalTokens": 5251,
+      "estimatedCost": 0.0381,
+      "model": "claude-sonnet-4-20250514",
+      "duration": "45.3s"
     }
   ],
   "totals": {
-    "today": 0.1272,
-    "week": 0.1272,
-    "month": 0.1272,
-    "standupCount": 3
+    "today": 0.1653,
+    "week": 0.1653,
+    "month": 0.1653,
+    "standupCount": 4
   }
 }

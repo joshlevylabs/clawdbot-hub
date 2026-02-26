@@ -12,21 +12,13 @@ import {
   Type,
   Ruler,
   Component,
-  Box,
   Sparkles,
   Layers,
-  BookOpen,
-  Info,
   Copy,
   Check,
-  ChevronDown,
-  ChevronRight,
   Zap,
   Target,
   Grid,
-  Waves,
-  Building,
-  Command
 } from "lucide-react";
 
 // ── Brand data interfaces ──────────────────────────────────────────
@@ -446,6 +438,27 @@ const ANIMATION_TIMING: Record<string, AnimationTiming> = {
   emphasis: { duration: "600ms", easing: "ease-out", usage: "Page transitions, major state changes" }
 };
 
+// ── Tab definitions ──────────────────────────────────────────────
+
+type TabId = "dna" | "colors" | "typography" | "spacing" | "components" | "products" | "animation";
+
+interface TabDef {
+  id: TabId;
+  label: string;
+  icon: React.ElementType;
+  shortLabel?: string;
+}
+
+const TABS: TabDef[] = [
+  { id: "dna", label: "Brand DNA", icon: Zap, shortLabel: "DNA" },
+  { id: "colors", label: "Colors", icon: Palette },
+  { id: "typography", label: "Typography", icon: Type, shortLabel: "Type" },
+  { id: "spacing", label: "Spacing & Layout", icon: Ruler, shortLabel: "Spacing" },
+  { id: "components", label: "Components", icon: Component, shortLabel: "UI" },
+  { id: "products", label: "Products", icon: Layers },
+  { id: "animation", label: "Animation", icon: Sparkles, shortLabel: "Motion" },
+];
+
 // ── Utility ──────────────────────────────────────────────────────
 
 function CopyButton({ text }: { text: string }) {
@@ -549,26 +562,12 @@ function ColorSwatch({
 // ── Main Page ────────────────────────────────────────────────────
 
 export default function BrandGuidelinesPage() {
-  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
-    dna: true,
-    principles: true,
-    colors: true,
-    typography: true,
-    spacing: true,
-    components: true,
-    animation: true,
-    products: true,
-    rules: true,
-  });
-
-  const toggleSection = (key: string) => {
-    setExpandedSections((prev) => ({ ...prev, [key]: !prev[key] }));
-  };
+  const [activeTab, setActiveTab] = useState<TabId>("dna");
 
   return (
     <div className="max-w-7xl mx-auto" style={{ backgroundColor: "#0B0B11", color: "#F5F5F0" }}>
       {/* Header */}
-      <div className="mb-10">
+      <div className="mb-6">
         <div className="flex items-center gap-4 mb-4">
           <div 
             className="w-12 h-12 rounded-2xl flex items-center justify-center" 
@@ -576,167 +575,154 @@ export default function BrandGuidelinesPage() {
             dangerouslySetInnerHTML={{ __html: LOGOS.main }}
           />
           <div>
-            <h1 className="text-4xl font-bold" style={{ fontFamily: "Space Grotesk, system-ui, sans-serif", letterSpacing: "-0.02em", color: "#F5F5F0" }}>
+            <h1 className="text-3xl sm:text-4xl font-bold" style={{ fontFamily: "Space Grotesk, system-ui, sans-serif", letterSpacing: "-0.02em", color: "#F5F5F0" }}>
               The Forge
             </h1>
-            <p className="text-lg" style={{ color: "#D4A020", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>
+            <p className="text-base sm:text-lg" style={{ color: "#D4A020", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>
               {BRAND_STORY.tagline}
             </p>
           </div>
         </div>
-        <p className="text-base max-w-3xl leading-relaxed" style={{ color: "#B8B8AD", fontFamily: "Inter, system-ui, sans-serif" }}>
+        <p className="text-sm sm:text-base max-w-3xl leading-relaxed" style={{ color: "#B8B8AD", fontFamily: "Inter, system-ui, sans-serif" }}>
           {BRAND_STORY.philosophy}
         </p>
-
-        {/* Brand essence */}
-        <div className="mt-6 p-6 rounded-2xl border" style={{ borderColor: "rgba(212, 160, 32, 0.2)", backgroundColor: "rgba(212, 160, 32, 0.05)" }}>
-          <p className="text-lg italic mb-4" style={{ color: "#F4D03F", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>
-            &ldquo;{BRAND_STORY.essence}&rdquo;
-          </p>
-          <div className="flex flex-wrap gap-3">
-            {BRAND_STORY.personality.map((trait) => (
-              <span
-                key={trait}
-                className="px-3 py-1.5 rounded-full text-sm font-medium border"
-                style={{ 
-                  backgroundColor: "rgba(212, 160, 32, 0.1)", 
-                  color: "#D4A020", 
-                  borderColor: "rgba(212, 160, 32, 0.3)",
-                  fontFamily: "Space Grotesk, system-ui, sans-serif"
-                }}
-              >
-                {trait}
-              </span>
-            ))}
-          </div>
-        </div>
       </div>
 
-      {/* ── BRAND DNA ──────────────────────────────────────────── */}
-      <Section>
-        <button
-          onClick={() => toggleSection("dna")}
-          className="flex items-center gap-2 w-full text-left mb-6"
-        >
-          {expandedSections.dna ? (
-            <ChevronDown className="w-5 h-5" style={{ color: "#8B8B80" }} />
-          ) : (
-            <ChevronRight className="w-5 h-5" style={{ color: "#8B8B80" }} />
-          )}
-          <Zap className="w-6 h-6" style={{ color: "#D4A020" }} />
-          <h2 className="text-2xl font-bold" style={{ color: "#F5F5F0", fontFamily: "Space Grotesk, system-ui, sans-serif", letterSpacing: "-0.02em" }}>Brand DNA</h2>
-          <span className="text-xs ml-2" style={{ color: "#8B8B80" }}>Inspired by legends</span>
-        </button>
+      {/* ── Tab Bar ────────────────────────────────────────────── */}
+      <div className="sticky top-0 z-30 -mx-4 px-4 pb-1 pt-2 mb-6" style={{ backgroundColor: "#0B0B11" }}>
+        <div className="flex gap-1 overflow-x-auto scrollbar-hide pb-2" style={{ WebkitOverflowScrolling: "touch" }}>
+          {TABS.map((tab) => {
+            const Icon = tab.icon;
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all shrink-0"
+                style={{
+                  backgroundColor: isActive ? "rgba(212, 160, 32, 0.15)" : "transparent",
+                  color: isActive ? "#D4A020" : "#8B8B80",
+                  border: isActive ? "1px solid rgba(212, 160, 32, 0.3)" : "1px solid transparent",
+                  fontFamily: "Space Grotesk, system-ui, sans-serif",
+                }}
+              >
+                <Icon className="w-4 h-4" />
+                <span className="hidden sm:inline">{tab.label}</span>
+                <span className="sm:hidden">{tab.shortLabel || tab.label}</span>
+              </button>
+            );
+          })}
+        </div>
+        <div className="h-px" style={{ background: "linear-gradient(to right, transparent, #2A2A38, transparent)" }} />
+      </div>
 
-        {expandedSections.dna && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div className="p-4 rounded-2xl border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
-              <h3 className="text-sm font-bold mb-2" style={{ color: "#D4A020", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>🍎 Apple</h3>
-              <p className="text-xs leading-relaxed" style={{ color: "#B8B8AD" }}>
-                Constraint IS the brand. One font (SF Pro). One radius (continuous corner). Obsessive consistency.
-              </p>
-            </div>
-            <div className="p-4 rounded-2xl border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
-              <h3 className="text-sm font-bold mb-2" style={{ color: "#6366F1", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>⚡ Stripe</h3>
-              <p className="text-xs leading-relaxed" style={{ color: "#B8B8AD" }}>
-                Deep navy + electric violet + calculated gradients. Gradients communicate motion, flow, transformation.
-              </p>
-            </div>
-            <div className="p-4 rounded-2xl border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
-              <h3 className="text-sm font-bold mb-2" style={{ color: "#7C3AED", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>📐 Linear</h3>
-              <p className="text-xs leading-relaxed" style={{ color: "#B8B8AD" }}>
-                Warm darks feel premium. Purple = premium craft tool. Warmth determines premium vs generic.
-              </p>
-            </div>
-            <div className="p-4 rounded-2xl border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
-              <h3 className="text-sm font-bold mb-2" style={{ color: "#F59E0B", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>🏎️ Porsche</h3>
-              <p className="text-xs leading-relaxed" style={{ color: "#B8B8AD" }}>
-                Heritage + precision. Every color has a name and story. GT Silver, Racing Yellow, Guards Red.
-              </p>
-            </div>
-            <div className="p-4 rounded-2xl border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
-              <h3 className="text-sm font-bold mb-2" style={{ color: "#22D3EE", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>⚪ Dieter Rams</h3>
-              <p className="text-xs leading-relaxed" style={{ color: "#B8B8AD" }}>
-                "Less, but better." Every element earns its place. No decoration without function.
-              </p>
-            </div>
-            <div className="p-4 rounded-2xl border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
-              <h3 className="text-sm font-bold mb-2" style={{ color: "#10B981", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>🔷 Paul Rand</h3>
-              <p className="text-xs leading-relaxed" style={{ color: "#B8B8AD" }}>
-                Geometric simplicity = timelessness. Logos work at 16px AND 1600px. Mathematical grid relationships.
-              </p>
+      {/* ── BRAND DNA TAB ──────────────────────────────────────── */}
+      {activeTab === "dna" && (
+        <>
+          {/* Brand essence */}
+          <div className="mb-8 p-5 rounded-2xl border" style={{ borderColor: "rgba(212, 160, 32, 0.2)", backgroundColor: "rgba(212, 160, 32, 0.05)" }}>
+            <p className="text-base sm:text-lg italic mb-4" style={{ color: "#F4D03F", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>
+              &ldquo;{BRAND_STORY.essence}&rdquo;
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {BRAND_STORY.personality.map((trait) => (
+                <span
+                  key={trait}
+                  className="px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium border"
+                  style={{ 
+                    backgroundColor: "rgba(212, 160, 32, 0.1)", 
+                    color: "#D4A020", 
+                    borderColor: "rgba(212, 160, 32, 0.3)",
+                    fontFamily: "Space Grotesk, system-ui, sans-serif"
+                  }}
+                >
+                  {trait}
+                </span>
+              ))}
             </div>
           </div>
-        )}
-      </Section>
 
-      {/* ── DESIGN PRINCIPLES ─────────────────────────────────────── */}
-      <Section>
-        <button
-          onClick={() => toggleSection("principles")}
-          className="flex items-center gap-2 w-full text-left mb-6"
-        >
-          {expandedSections.principles ? (
-            <ChevronDown className="w-5 h-5" style={{ color: "#8B8B80" }} />
-          ) : (
-            <ChevronRight className="w-5 h-5" style={{ color: "#8B8B80" }} />
-          )}
-          <Target className="w-6 h-6" style={{ color: "#D4A020" }} />
-          <h2 className="text-2xl font-bold" style={{ color: "#F5F5F0", fontFamily: "Space Grotesk, system-ui, sans-serif", letterSpacing: "-0.02em" }}>Design Principles</h2>
-          <span className="text-xs ml-2" style={{ color: "#8B8B80" }}>{DESIGN_PRINCIPLES.length} principles</span>
-        </button>
+          {/* Inspirations */}
+          <Section>
+            <SectionHeader icon={Zap} title="Inspirations" subtitle="Standing on the shoulders of design legends" />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="p-4 rounded-2xl border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+                <h3 className="text-sm font-bold mb-2" style={{ color: "#D4A020", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>🍎 Apple</h3>
+                <p className="text-xs leading-relaxed" style={{ color: "#B8B8AD" }}>
+                  Constraint IS the brand. One font (SF Pro). One radius (continuous corner). Obsessive consistency.
+                </p>
+              </div>
+              <div className="p-4 rounded-2xl border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+                <h3 className="text-sm font-bold mb-2" style={{ color: "#6366F1", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>⚡ Stripe</h3>
+                <p className="text-xs leading-relaxed" style={{ color: "#B8B8AD" }}>
+                  Deep navy + electric violet + calculated gradients. Gradients communicate motion, flow, transformation.
+                </p>
+              </div>
+              <div className="p-4 rounded-2xl border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+                <h3 className="text-sm font-bold mb-2" style={{ color: "#7C3AED", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>📐 Linear</h3>
+                <p className="text-xs leading-relaxed" style={{ color: "#B8B8AD" }}>
+                  Warm darks feel premium. Purple = premium craft tool. Warmth determines premium vs generic.
+                </p>
+              </div>
+              <div className="p-4 rounded-2xl border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+                <h3 className="text-sm font-bold mb-2" style={{ color: "#F59E0B", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>🏎️ Porsche</h3>
+                <p className="text-xs leading-relaxed" style={{ color: "#B8B8AD" }}>
+                  Heritage + precision. Every color has a name and story. GT Silver, Racing Yellow, Guards Red.
+                </p>
+              </div>
+              <div className="p-4 rounded-2xl border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+                <h3 className="text-sm font-bold mb-2" style={{ color: "#22D3EE", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>⚪ Dieter Rams</h3>
+                <p className="text-xs leading-relaxed" style={{ color: "#B8B8AD" }}>
+                  &ldquo;Less, but better.&rdquo; Every element earns its place. No decoration without function.
+                </p>
+              </div>
+              <div className="p-4 rounded-2xl border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+                <h3 className="text-sm font-bold mb-2" style={{ color: "#10B981", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>🔷 Paul Rand</h3>
+                <p className="text-xs leading-relaxed" style={{ color: "#B8B8AD" }}>
+                  Geometric simplicity = timelessness. Logos work at 16px AND 1600px. Mathematical grid relationships.
+                </p>
+              </div>
+            </div>
+          </Section>
 
-        {expandedSections.principles && (
-          <div className="space-y-4">
-            {DESIGN_PRINCIPLES.map((principle, i) => (
-              <div key={i} className="p-5 rounded-2xl border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
-                <div className="flex items-start gap-4">
-                  <div className="shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold" style={{ backgroundColor: "#D4A020", color: "#0B0B11" }}>
-                    {i + 1}
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-lg font-bold mb-2" style={{ color: "#F5F5F0", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>
-                      {principle.principle}
-                    </h3>
-                    <p className="text-sm mb-3 leading-relaxed" style={{ color: "#B8B8AD" }}>
-                      {principle.application}
-                    </p>
-                    <div className="flex items-center gap-3 text-xs">
-                      <span className="px-2 py-1 rounded-md" style={{ backgroundColor: "rgba(212, 160, 32, 0.1)", color: "#D4A020" }}>
-                        {principle.inspiration}
-                      </span>
-                      <span style={{ color: "#8B8B80" }}>
-                        {principle.lesson}
-                      </span>
+          {/* Design Principles */}
+          <Section>
+            <SectionHeader icon={Target} title="Design Principles" subtitle={`${DESIGN_PRINCIPLES.length} forged principles`} />
+            <div className="space-y-4">
+              {DESIGN_PRINCIPLES.map((principle, i) => (
+                <div key={i} className="p-5 rounded-2xl border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+                  <div className="flex items-start gap-4">
+                    <div className="shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold" style={{ backgroundColor: "#D4A020", color: "#0B0B11" }}>
+                      {i + 1}
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-lg font-bold mb-2" style={{ color: "#F5F5F0", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>
+                        {principle.principle}
+                      </h3>
+                      <p className="text-sm mb-3 leading-relaxed" style={{ color: "#B8B8AD" }}>
+                        {principle.application}
+                      </p>
+                      <div className="flex items-center gap-3 text-xs">
+                        <span className="px-2 py-1 rounded-md" style={{ backgroundColor: "rgba(212, 160, 32, 0.1)", color: "#D4A020" }}>
+                          {principle.inspiration}
+                        </span>
+                        <span style={{ color: "#8B8B80" }}>
+                          {principle.lesson}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </Section>
+              ))}
+            </div>
+          </Section>
+        </>
+      )}
 
-      {/* ── COLORS ─────────────────────────────────────────────── */}
-      <Section>
-        <button
-          onClick={() => toggleSection("colors")}
-          className="flex items-center gap-2 w-full text-left mb-6"
-        >
-          {expandedSections.colors ? (
-            <ChevronDown className="w-5 h-5" style={{ color: "#8B8B80" }} />
-          ) : (
-            <ChevronRight className="w-5 h-5" style={{ color: "#8B8B80" }} />
-          )}
-          <Palette className="w-6 h-6" style={{ color: "#D4A020" }} />
-          <h2 className="text-2xl font-bold" style={{ color: "#F5F5F0", fontFamily: "Space Grotesk, system-ui, sans-serif", letterSpacing: "-0.02em" }}>Colors</h2>
-          <span className="text-xs ml-2" style={{ color: "#8B8B80" }}>
-            {Object.values(COLOR_GROUPS).reduce((sum, g) => sum + g.colors.length, 0)} named tokens
-          </span>
-        </button>
-
-        {expandedSections.colors && (
-          <>
+      {/* ── COLORS TAB ─────────────────────────────────────────── */}
+      {activeTab === "colors" && (
+        <>
+          <SectionHeader icon={Palette} title="Colors" subtitle={`${Object.values(COLOR_GROUPS).reduce((sum, g) => sum + g.colors.length, 0)} named tokens`} />
             {Object.entries(COLOR_GROUPS).map(([key, group]) => (
               <div key={key} className="mb-8">
                 <h3 className="text-sm font-semibold mb-3 flex items-center gap-2" style={{ color: "#F5F5F0", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>
@@ -768,370 +754,308 @@ export default function BrandGuidelinesPage() {
                 ))}
               </div>
             </div>
-          </>
-        )}
-      </Section>
+        </>
+      )}
 
-      {/* ── TYPOGRAPHY ─────────────────────────────────────────── */}
-      <Section>
-        <button
-          onClick={() => toggleSection("typography")}
-          className="flex items-center gap-2 w-full text-left mb-6"
-        >
-          {expandedSections.typography ? (
-            <ChevronDown className="w-5 h-5" style={{ color: "#8B8B80" }} />
-          ) : (
-            <ChevronRight className="w-5 h-5" style={{ color: "#8B8B80" }} />
-          )}
-          <Type className="w-6 h-6" style={{ color: "#D4A020" }} />
-          <h2 className="text-2xl font-bold" style={{ color: "#F5F5F0", fontFamily: "Space Grotesk, system-ui, sans-serif", letterSpacing: "-0.02em" }}>Typography</h2>
-        </button>
-
-        {expandedSections.typography && (
-          <>
-            {/* Font families */}
-            <div className="mb-8">
-              <h3 className="text-sm font-semibold mb-3" style={{ color: "#F5F5F0", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>Font Families</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {Object.entries(TYPOGRAPHY_FAMILIES).map(([key, family]) => (
-                  <div key={key} className="p-4 rounded-xl border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
-                    <div className="mb-3">
-                      <p className="text-xs mb-1" style={{ color: "#8B8B80" }}>{family.usage}</p>
-                      <p 
-                        className="text-2xl font-semibold" 
-                        style={{ 
-                          color: "#F5F5F0", 
-                          fontFamily: family.name === "Space Grotesk" ? "Space Grotesk, system-ui, sans-serif" : family.name === "Inter" ? "Inter, system-ui, sans-serif" : "JetBrains Mono, monospace",
-                          letterSpacing: family.letterSpacing
-                        }}
-                      >
-                        {family.name}
-                      </p>
-                    </div>
-                    <p className="text-xs leading-relaxed" style={{ color: "#B8B8AD" }}>
-                      {family.description}
-                    </p>
-                    <p className="text-[10px] mt-2" style={{ color: "#8B8B80" }}>
-                      {family.characteristics}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Type scale */}
-            <div className="mb-8">
-              <h3 className="text-sm font-semibold mb-3" style={{ color: "#F5F5F0", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>Type Scale (Musical Intervals)</h3>
-              <div className="space-y-2">
-                {Object.entries(TYPOGRAPHY_SCALE).map(([token, scale]) => (
-                  <div
-                    key={token}
-                    className="flex items-center gap-4 p-3 rounded-lg border transition-colors hover:border-opacity-60"
-                    style={{ borderColor: "rgba(42, 42, 56, 0.5)", backgroundColor: "transparent" }}
+      {/* ── TYPOGRAPHY TAB ─────────────────────────────────────── */}
+      {activeTab === "typography" && (
+        <>
+          {/* Font families */}
+          <SectionHeader icon={Type} title="Font Families" subtitle="Three typefaces, each with purpose" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            {Object.entries(TYPOGRAPHY_FAMILIES).map(([key, family]) => (
+              <div key={key} className="p-4 rounded-xl border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+                <div className="mb-3">
+                  <p className="text-xs mb-1" style={{ color: "#8B8B80" }}>{family.usage}</p>
+                  <p 
+                    className="text-2xl font-semibold" 
+                    style={{ 
+                      color: "#F5F5F0", 
+                      fontFamily: family.name === "Space Grotesk" ? "Space Grotesk, system-ui, sans-serif" : family.name === "Inter" ? "Inter, system-ui, sans-serif" : "JetBrains Mono, monospace",
+                      letterSpacing: family.letterSpacing
+                    }}
                   >
-                    <code className="text-xs font-mono w-10 shrink-0" style={{ color: "#D4A020" }}>
-                      {token}
-                    </code>
-                    <span
-                      className="flex-1 truncate"
-                      style={{ 
-                        fontSize: `${scale.px}px`, 
-                        lineHeight: 1.4, 
-                        color: "#F5F5F0", 
-                        fontFamily: "Space Grotesk, system-ui, sans-serif",
-                        letterSpacing: "-0.01em"
-                      }}
-                    >
-                      The quick brown fox — {scale.px}px ({scale.rem}rem)
-                    </span>
-                    <span className="text-xs shrink-0 hidden sm:block" style={{ color: "#8B8B80" }}>
-                      {scale.usage}
-                    </span>
-                  </div>
-                ))}
+                    {family.name}
+                  </p>
+                </div>
+                <p className="text-xs leading-relaxed" style={{ color: "#B8B8AD" }}>
+                  {family.description}
+                </p>
+                <p className="text-[10px] mt-2" style={{ color: "#8B8B80" }}>
+                  {family.characteristics}
+                </p>
               </div>
-            </div>
+            ))}
+          </div>
 
-            {/* Weights */}
-            <div className="mb-8">
-              <h3 className="text-sm font-semibold mb-3" style={{ color: "#F5F5F0", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>Font Weights</h3>
-              <div className="space-y-2">
-                {TYPOGRAPHY_WEIGHTS.map((w) => (
-                  <div
-                    key={w.value}
-                    className="flex items-center gap-4 p-3 rounded-lg border transition-colors hover:border-opacity-60"
-                    style={{ borderColor: "rgba(42, 42, 56, 0.5)", backgroundColor: "transparent" }}
-                  >
-                    <code className="text-xs font-mono w-10 shrink-0" style={{ color: "#D4A020" }}>
-                      {w.value}
-                    </code>
-                    <span
-                      className="text-lg flex-1"
-                      style={{ 
-                        fontWeight: w.value,
-                        color: "#F5F5F0",
-                        fontFamily: "Space Grotesk, system-ui, sans-serif"
-                      }}
-                    >
-                      {w.name} — Craft intentional tools.
-                    </span>
-                    <span className="text-xs shrink-0 hidden sm:block" style={{ color: "#8B8B80" }}>
-                      {w.usage}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </>
-        )}
-      </Section>
-
-      {/* ── SPACING & LAYOUT ───────────────────────────────────── */}
-      <Section>
-        <button
-          onClick={() => toggleSection("spacing")}
-          className="flex items-center gap-2 w-full text-left mb-6"
-        >
-          {expandedSections.spacing ? (
-            <ChevronDown className="w-5 h-5" style={{ color: "#8B8B80" }} />
-          ) : (
-            <ChevronRight className="w-5 h-5" style={{ color: "#8B8B80" }} />
-          )}
-          <Ruler className="w-6 h-6" style={{ color: "#D4A020" }} />
-          <h2 className="text-2xl font-bold" style={{ color: "#F5F5F0", fontFamily: "Space Grotesk, system-ui, sans-serif", letterSpacing: "-0.02em" }}>Spacing & Layout</h2>
-        </button>
-
-        {expandedSections.spacing && (
-          <>
-            {/* Spacing scale */}
-            <div className="mb-8">
-              <h3 className="text-sm font-semibold mb-3" style={{ color: "#F5F5F0", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>
-                Spacing Scale (8px Mathematical Grid)
-              </h3>
-              <div className="space-y-2">
-                {Object.entries(SPACING_SCALE).map(([token, spacing]) => (
-                  <div
-                    key={token}
-                    className="flex items-center gap-4 p-3 rounded-lg border"
-                    style={{ borderColor: "rgba(42, 42, 56, 0.5)" }}
-                  >
-                    <code className="text-xs font-mono w-10 shrink-0" style={{ color: "#D4A020" }}>
-                      {token}
-                    </code>
-                    <div className="flex items-center gap-3 flex-1">
-                      <div
-                        className="h-4 rounded-sm transition-all"
-                        style={{ 
-                          width: `${Math.min(spacing.value * 2, 280)}px`,
-                          backgroundColor: "rgba(212, 160, 32, 0.4)",
-                          border: "1px solid rgba(212, 160, 32, 0.6)"
-                        }}
-                      />
-                      <span className="text-xs font-semibold" style={{ color: "#F5F5F0" }}>{spacing.value}px</span>
-                      <span className="text-xs" style={{ color: "#D4A020" }}>{spacing.name}</span>
-                    </div>
-                    <span className="text-xs shrink-0 hidden sm:block" style={{ color: "#8B8B80" }}>
-                      {spacing.usage}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Border radius */}
-            <div className="mb-8">
-              <h3 className="text-sm font-semibold mb-3" style={{ color: "#F5F5F0", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>Border Radius (Continuous Corners)</h3>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-7 gap-4">
-                {Object.entries(BORDER_RADIUS_SCALE).map(([token, radius]) => (
-                  <div key={token} className="flex flex-col items-center gap-2">
-                    <div
-                      className="w-16 h-16 border-2"
-                      style={{ 
-                        backgroundColor: "rgba(212, 160, 32, 0.2)",
-                        borderColor: "rgba(212, 160, 32, 0.5)",
-                        borderRadius: `${Math.min(radius.value, 32)}px`
-                      }}
-                    />
-                    <code className="text-xs font-mono" style={{ color: "#D4A020" }}>{token}</code>
-                    <span className="text-[10px]" style={{ color: "#8B8B80" }}>{radius.value}px</span>
-                    <span className="text-[10px] text-center font-medium" style={{ color: "#F5F5F0" }}>{radius.name}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Shadows */}
-            <div className="mb-8">
-              <h3 className="text-sm font-semibold mb-3" style={{ color: "#F5F5F0", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>Elevation & Shadows</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                {Object.entries(SHADOWS).map(([token, shadow]) => (
-                  <div key={token} className="flex flex-col items-center gap-2 p-4">
-                    <div
-                      className="w-24 h-16 rounded-lg border"
-                      style={{ 
-                        backgroundColor: "#13131B",
-                        borderColor: "#2A2A38",
-                        boxShadow: shadow.css
-                      }}
-                    />
-                    <code className="text-xs font-mono" style={{ color: "#D4A020" }}>{token}</code>
-                    <span className="text-[10px] text-center font-medium" style={{ color: "#F5F5F0" }}>{shadow.name}</span>
-                    <span className="text-[10px] text-center" style={{ color: "#8B8B80" }}>{shadow.usage}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </>
-        )}
-      </Section>
-
-      {/* ── COMPONENTS ─────────────────────────────────────────── */}
-      <Section>
-        <button
-          onClick={() => toggleSection("components")}
-          className="flex items-center gap-2 w-full text-left mb-6"
-        >
-          {expandedSections.components ? (
-            <ChevronDown className="w-5 h-5" style={{ color: "#8B8B80" }} />
-          ) : (
-            <ChevronRight className="w-5 h-5" style={{ color: "#8B8B80" }} />
-          )}
-          <Component className="w-6 h-6" style={{ color: "#D4A020" }} />
-          <h2 className="text-2xl font-bold" style={{ color: "#F5F5F0", fontFamily: "Space Grotesk, system-ui, sans-serif", letterSpacing: "-0.02em" }}>Components</h2>
-        </button>
-
-        {expandedSections.components && (
-          <>
-            {/* Buttons */}
-            <div className="mb-8">
-              <h3 className="text-sm font-semibold mb-3" style={{ color: "#F5F5F0", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>Button Variants</h3>
-              <div className="flex flex-wrap gap-4 items-center p-6 rounded-xl border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
-                {Object.entries(BUTTON_VARIANTS).map(([name, btn]) => (
-                  <button
-                    key={name}
-                    className="px-4 py-2 rounded-xl text-sm font-semibold transition-all hover:scale-105"
-                    style={{
-                      background: btn.background,
-                      color: btn.color,
-                      border: btn.border,
-                      boxShadow: btn.shadow,
+          {/* Type scale */}
+          <Section>
+            <h3 className="text-sm font-semibold mb-3" style={{ color: "#F5F5F0", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>Type Scale (Musical Intervals)</h3>
+            <div className="space-y-2">
+              {Object.entries(TYPOGRAPHY_SCALE).map(([token, scale]) => (
+                <div
+                  key={token}
+                  className="flex items-center gap-4 p-3 rounded-lg border transition-colors hover:border-opacity-60"
+                  style={{ borderColor: "rgba(42, 42, 56, 0.5)", backgroundColor: "transparent" }}
+                >
+                  <code className="text-xs font-mono w-10 shrink-0" style={{ color: "#D4A020" }}>
+                    {token}
+                  </code>
+                  <span
+                    className="flex-1 truncate"
+                    style={{ 
+                      fontSize: `${scale.px}px`, 
+                      lineHeight: 1.4, 
+                      color: "#F5F5F0", 
                       fontFamily: "Space Grotesk, system-ui, sans-serif",
                       letterSpacing: "-0.01em"
                     }}
                   >
-                    {name.charAt(0).toUpperCase() + name.slice(1)}
-                  </button>
-                ))}
-              </div>
-              <div className="mt-3 text-xs space-y-1" style={{ color: "#8B8B80" }}>
-                {Object.entries(BUTTON_VARIANTS).map(([name, btn]) => (
-                  <p key={name}>
-                    <strong style={{ color: "#F5F5F0", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>{name}:</strong> {btn.usage}
-                  </p>
-                ))}
-              </div>
-            </div>
-
-            {/* Cards */}
-            <div className="mb-8">
-              <h3 className="text-sm font-semibold mb-3" style={{ color: "#F5F5F0", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>Card System</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="p-4 rounded-2xl border transition-all hover:border-opacity-60" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
-                  <div className="flex items-center justify-between mb-3">
-                    <h4 className="text-sm font-semibold" style={{ color: "#F5F5F0", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>Standard Card</h4>
-                    <Grid className="w-4 h-4" style={{ color: "#8B8B80" }} />
-                  </div>
-                  <p className="text-sm" style={{ color: "#B8B8AD" }}>
-                    Warm carbon background (#13131B) with geometric borders. 16px padding, 16px radius.
-                  </p>
-                  <div className="mt-3 pt-3 flex gap-2 text-[10px]" style={{ borderTop: "1px solid #2A2A38", color: "#8B8B80" }}>
-                    <span>Carbon • Warm borders • Elevated surface</span>
-                  </div>
+                    The quick brown fox — {scale.px}px ({scale.rem}rem)
+                  </span>
+                  <span className="text-xs shrink-0 hidden sm:block" style={{ color: "#8B8B80" }}>
+                    {scale.usage}
+                  </span>
                 </div>
+              ))}
+            </div>
+          </Section>
 
-                <div 
-                  className="p-4 rounded-2xl border transition-all hover:border-opacity-80"
-                  style={{ 
-                    backgroundColor: "#13131B", 
-                    borderColor: "rgba(212, 160, 32, 0.2)",
-                    boxShadow: "0 0 24px rgba(212, 160, 32, 0.1)"
+          {/* Weights */}
+          <Section>
+            <h3 className="text-sm font-semibold mb-3" style={{ color: "#F5F5F0", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>Font Weights</h3>
+            <div className="space-y-2">
+              {TYPOGRAPHY_WEIGHTS.map((w) => (
+                <div
+                  key={w.value}
+                  className="flex items-center gap-4 p-3 rounded-lg border transition-colors hover:border-opacity-60"
+                  style={{ borderColor: "rgba(42, 42, 56, 0.5)", backgroundColor: "transparent" }}
+                >
+                  <code className="text-xs font-mono w-10 shrink-0" style={{ color: "#D4A020" }}>
+                    {w.value}
+                  </code>
+                  <span
+                    className="text-lg flex-1"
+                    style={{ 
+                      fontWeight: w.value,
+                      color: "#F5F5F0",
+                      fontFamily: "Space Grotesk, system-ui, sans-serif"
+                    }}
+                  >
+                    {w.name} — Craft intentional tools.
+                  </span>
+                  <span className="text-xs shrink-0 hidden sm:block" style={{ color: "#8B8B80" }}>
+                    {w.usage}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </Section>
+        </>
+      )}
+
+      {/* ── SPACING TAB ────────────────────────────────────────── */}
+      {activeTab === "spacing" && (
+        <>
+          {/* Spacing scale */}
+          <Section>
+            <SectionHeader icon={Ruler} title="Spacing Scale" subtitle="8px mathematical grid" />
+            <div className="space-y-2">
+              {Object.entries(SPACING_SCALE).map(([token, spacing]) => (
+                <div
+                  key={token}
+                  className="flex items-center gap-4 p-3 rounded-lg border"
+                  style={{ borderColor: "rgba(42, 42, 56, 0.5)" }}
+                >
+                  <code className="text-xs font-mono w-10 shrink-0" style={{ color: "#D4A020" }}>
+                    {token}
+                  </code>
+                  <div className="flex items-center gap-3 flex-1">
+                    <div
+                      className="h-4 rounded-sm transition-all"
+                      style={{ 
+                        width: `${Math.min(spacing.value * 2, 280)}px`,
+                        backgroundColor: "rgba(212, 160, 32, 0.4)",
+                        border: "1px solid rgba(212, 160, 32, 0.6)"
+                      }}
+                    />
+                    <span className="text-xs font-semibold" style={{ color: "#F5F5F0" }}>{spacing.value}px</span>
+                    <span className="text-xs" style={{ color: "#D4A020" }}>{spacing.name}</span>
+                  </div>
+                  <span className="text-xs shrink-0 hidden sm:block" style={{ color: "#8B8B80" }}>
+                    {spacing.usage}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </Section>
+
+          {/* Border radius */}
+          <Section>
+            <h3 className="text-sm font-semibold mb-3" style={{ color: "#F5F5F0", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>Border Radius (Continuous Corners)</h3>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-7 gap-4">
+              {Object.entries(BORDER_RADIUS_SCALE).map(([token, radius]) => (
+                <div key={token} className="flex flex-col items-center gap-2">
+                  <div
+                    className="w-16 h-16 border-2"
+                    style={{ 
+                      backgroundColor: "rgba(212, 160, 32, 0.2)",
+                      borderColor: "rgba(212, 160, 32, 0.5)",
+                      borderRadius: `${Math.min(radius.value, 32)}px`
+                    }}
+                  />
+                  <code className="text-xs font-mono" style={{ color: "#D4A020" }}>{token}</code>
+                  <span className="text-[10px]" style={{ color: "#8B8B80" }}>{radius.value}px</span>
+                  <span className="text-[10px] text-center font-medium" style={{ color: "#F5F5F0" }}>{radius.name}</span>
+                </div>
+              ))}
+            </div>
+          </Section>
+
+          {/* Shadows */}
+          <Section>
+            <h3 className="text-sm font-semibold mb-3" style={{ color: "#F5F5F0", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>Elevation & Shadows</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+              {Object.entries(SHADOWS).map(([token, shadow]) => (
+                <div key={token} className="flex flex-col items-center gap-2 p-4">
+                  <div
+                    className="w-24 h-16 rounded-lg border"
+                    style={{ 
+                      backgroundColor: "#13131B",
+                      borderColor: "#2A2A38",
+                      boxShadow: shadow.css
+                    }}
+                  />
+                  <code className="text-xs font-mono" style={{ color: "#D4A020" }}>{token}</code>
+                  <span className="text-[10px] text-center font-medium" style={{ color: "#F5F5F0" }}>{shadow.name}</span>
+                  <span className="text-[10px] text-center" style={{ color: "#8B8B80" }}>{shadow.usage}</span>
+                </div>
+              ))}
+            </div>
+          </Section>
+        </>
+      )}
+
+      {/* ── COMPONENTS TAB ─────────────────────────────────────── */}
+      {activeTab === "components" && (
+        <>
+          {/* Buttons */}
+          <Section>
+            <SectionHeader icon={Component} title="Button Variants" subtitle="Every action has a visual weight" />
+            <div className="flex flex-wrap gap-4 items-center p-6 rounded-xl border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+              {Object.entries(BUTTON_VARIANTS).map(([name, btn]) => (
+                <button
+                  key={name}
+                  className="px-4 py-2 rounded-xl text-sm font-semibold transition-all hover:scale-105"
+                  style={{
+                    background: btn.background,
+                    color: btn.color,
+                    border: btn.border,
+                    boxShadow: btn.shadow,
+                    fontFamily: "Space Grotesk, system-ui, sans-serif",
+                    letterSpacing: "-0.01em"
                   }}
                 >
-                  <div className="flex items-center justify-between mb-3">
-                    <h4 className="text-sm font-semibold" style={{ color: "#D4A020", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>Premium Card</h4>
-                    <Sparkles className="w-4 h-4" style={{ color: "#D4A020" }} />
-                  </div>
-                  <p className="text-sm" style={{ color: "#B8B8AD" }}>
-                    Forge gold accent border with subtle glow. Reserved for key moments and premium features.
-                  </p>
-                  <div className="mt-3 pt-3 flex gap-2 text-[10px]" style={{ borderTop: "1px solid rgba(212, 160, 32, 0.1)", color: "rgba(212, 160, 32, 0.6)" }}>
-                    <span>Forge accent • Glow shadow • Premium variant</span>
-                  </div>
+                  {name.charAt(0).toUpperCase() + name.slice(1)}
+                </button>
+              ))}
+            </div>
+            <div className="mt-3 text-xs space-y-1" style={{ color: "#8B8B80" }}>
+              {Object.entries(BUTTON_VARIANTS).map(([name, btn]) => (
+                <p key={name}>
+                  <strong style={{ color: "#F5F5F0", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>{name}:</strong> {btn.usage}
+                </p>
+              ))}
+            </div>
+          </Section>
+
+          {/* Cards */}
+          <Section>
+            <h3 className="text-sm font-semibold mb-3" style={{ color: "#F5F5F0", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>Card System</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="p-4 rounded-2xl border transition-all hover:border-opacity-60" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="text-sm font-semibold" style={{ color: "#F5F5F0", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>Standard Card</h4>
+                  <Grid className="w-4 h-4" style={{ color: "#8B8B80" }} />
+                </div>
+                <p className="text-sm" style={{ color: "#B8B8AD" }}>
+                  Warm carbon background (#13131B) with geometric borders. 16px padding, 16px radius.
+                </p>
+                <div className="mt-3 pt-3 flex gap-2 text-[10px]" style={{ borderTop: "1px solid #2A2A38", color: "#8B8B80" }}>
+                  <span>Carbon • Warm borders • Elevated surface</span>
+                </div>
+              </div>
+
+              <div 
+                className="p-4 rounded-2xl border transition-all hover:border-opacity-80"
+                style={{ 
+                  backgroundColor: "#13131B", 
+                  borderColor: "rgba(212, 160, 32, 0.2)",
+                  boxShadow: "0 0 24px rgba(212, 160, 32, 0.1)"
+                }}
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="text-sm font-semibold" style={{ color: "#D4A020", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>Premium Card</h4>
+                  <Sparkles className="w-4 h-4" style={{ color: "#D4A020" }} />
+                </div>
+                <p className="text-sm" style={{ color: "#B8B8AD" }}>
+                  Forge gold accent border with subtle glow. Reserved for key moments and premium features.
+                </p>
+                <div className="mt-3 pt-3 flex gap-2 text-[10px]" style={{ borderTop: "1px solid rgba(212, 160, 32, 0.1)", color: "rgba(212, 160, 32, 0.6)" }}>
+                  <span>Forge accent • Glow shadow • Premium variant</span>
                 </div>
               </div>
             </div>
+          </Section>
 
-            {/* Inputs */}
-            <div className="mb-8">
-              <h3 className="text-sm font-semibold mb-3" style={{ color: "#F5F5F0", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>Input System</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-3">
-                  <input
-                    type="text"
-                    placeholder="Default input state"
-                    className="w-full h-10 px-3 rounded-xl text-sm transition-all focus:outline-none focus:ring-2"
-                    style={{ 
-                      backgroundColor: "#1A1A24",
-                      border: "1px solid #2A2A38",
-                      color: "#F5F5F0",
-                      fontFamily: "Inter, system-ui, sans-serif"
-                    }}
-                  />
-                  <input
-                    type="text"
-                    placeholder="Focused state (click me)"
-                    className="w-full h-10 px-3 rounded-xl text-sm ring-2"
-                    style={{ 
-                      backgroundColor: "#1A1A24",
-                      border: "1px solid #D4A020",
-                      color: "#F5F5F0",
-                      fontFamily: "Inter, system-ui, sans-serif",
-                      boxShadow: "0 0 0 2px rgba(212, 160, 32, 0.2)"
-                    }}
-                    readOnly
-                  />
-                </div>
-                <div className="p-4 rounded-xl border" style={{ backgroundColor: "rgba(19, 19, 27, 0.5)", borderColor: "rgba(42, 42, 56, 0.5)" }}>
-                  <p className="text-xs space-y-1" style={{ color: "#8B8B80" }}>
-                    <span className="block" style={{ color: "#F5F5F0" }}>Surface Warm background (#1A1A24)</span>
-                    <span className="block">Border: Warm border (#2A2A38)</span>
-                    <span className="block">Focus: Forge gold border + ring</span>
-                    <span className="block">Typography: Inter body font</span>
-                    <span className="block">Geometry: 12px radius, 40px height</span>
-                  </p>
-                </div>
+          {/* Inputs */}
+          <Section>
+            <h3 className="text-sm font-semibold mb-3" style={{ color: "#F5F5F0", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>Input System</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-3">
+                <input
+                  type="text"
+                  placeholder="Default input state"
+                  className="w-full h-10 px-3 rounded-xl text-sm transition-all focus:outline-none focus:ring-2"
+                  style={{ 
+                    backgroundColor: "#1A1A24",
+                    border: "1px solid #2A2A38",
+                    color: "#F5F5F0",
+                    fontFamily: "Inter, system-ui, sans-serif"
+                  }}
+                />
+                <input
+                  type="text"
+                  placeholder="Focused state (click me)"
+                  className="w-full h-10 px-3 rounded-xl text-sm ring-2"
+                  style={{ 
+                    backgroundColor: "#1A1A24",
+                    border: "1px solid #D4A020",
+                    color: "#F5F5F0",
+                    fontFamily: "Inter, system-ui, sans-serif",
+                    boxShadow: "0 0 0 2px rgba(212, 160, 32, 0.2)"
+                  }}
+                  readOnly
+                />
+              </div>
+              <div className="p-4 rounded-xl border" style={{ backgroundColor: "rgba(19, 19, 27, 0.5)", borderColor: "rgba(42, 42, 56, 0.5)" }}>
+                <p className="text-xs space-y-1" style={{ color: "#8B8B80" }}>
+                  <span className="block" style={{ color: "#F5F5F0" }}>Surface Warm background (#1A1A24)</span>
+                  <span className="block">Border: Warm border (#2A2A38)</span>
+                  <span className="block">Focus: Forge gold border + ring</span>
+                  <span className="block">Typography: Inter body font</span>
+                  <span className="block">Geometry: 12px radius, 40px height</span>
+                </p>
               </div>
             </div>
-          </>
-        )}
-      </Section>
+          </Section>
+        </>
+      )}
 
-      {/* ── PRODUCTS ────────────────────────────────────────────── */}
-      <Section>
-        <button
-          onClick={() => toggleSection("products")}
-          className="flex items-center gap-2 w-full text-left mb-6"
-        >
-          {expandedSections.products ? (
-            <ChevronDown className="w-5 h-5" style={{ color: "#8B8B80" }} />
-          ) : (
-            <ChevronRight className="w-5 h-5" style={{ color: "#8B8B80" }} />
-          )}
-          <Layers className="w-6 h-6" style={{ color: "#D4A020" }} />
-          <h2 className="text-2xl font-bold" style={{ color: "#F5F5F0", fontFamily: "Space Grotesk, system-ui, sans-serif", letterSpacing: "-0.02em" }}>Product Ecosystem</h2>
-        </button>
-
-        {expandedSections.products && (
+      {/* ── PRODUCTS TAB ────────────────────────────────────────── */}
+      {activeTab === "products" && (
+        <>
+          <SectionHeader icon={Layers} title="Product Ecosystem" subtitle="Unified brand across 4 products" />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {Object.entries(PRODUCTS).map(([key, product]) => (
               <div
@@ -1180,104 +1104,89 @@ export default function BrandGuidelinesPage() {
               </div>
             ))}
           </div>
-        )}
-      </Section>
+        </>
+      )}
 
-      {/* ── ANIMATION ──────────────────────────────────────────── */}
-      <Section>
-        <button
-          onClick={() => toggleSection("animation")}
-          className="flex items-center gap-2 w-full text-left mb-6"
-        >
-          {expandedSections.animation ? (
-            <ChevronDown className="w-5 h-5" style={{ color: "#8B8B80" }} />
-          ) : (
-            <ChevronRight className="w-5 h-5" style={{ color: "#8B8B80" }} />
-          )}
-          <Sparkles className="w-6 h-6" style={{ color: "#D4A020" }} />
-          <h2 className="text-2xl font-bold" style={{ color: "#F5F5F0", fontFamily: "Space Grotesk, system-ui, sans-serif", letterSpacing: "-0.02em" }}>Animation & Motion</h2>
-        </button>
-
-        {expandedSections.animation && (
-          <>
-            <div className="mb-8">
-              <h3 className="text-sm font-semibold mb-3" style={{ color: "#F5F5F0", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>Motion with Purpose</h3>
-              <div className="space-y-2">
-                {Object.entries(ANIMATION_TIMING).map(([name, timing]) => (
-                  <div
-                    key={name}
-                    className="flex items-center gap-4 p-3 rounded-lg border"
-                    style={{ borderColor: "rgba(42, 42, 56, 0.5)" }}
-                  >
-                    <code className="text-xs font-mono w-20 shrink-0" style={{ color: "#D4A020" }}>
-                      {name}
-                    </code>
-                    <div className="flex-1 flex items-center gap-3">
-                      <span className="text-sm font-medium" style={{ color: "#F5F5F0", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>{timing.duration}</span>
-                      <span className="text-xs" style={{ color: "#8B8B80" }}>{timing.easing}</span>
-                    </div>
-                    <span className="text-xs hidden sm:block" style={{ color: "#8B8B80" }}>{timing.usage}</span>
+      {/* ── ANIMATION TAB ──────────────────────────────────────── */}
+      {activeTab === "animation" && (
+        <>
+          <Section>
+            <SectionHeader icon={Sparkles} title="Motion with Purpose" subtitle="Every animation earns its place" />
+            <div className="space-y-2">
+              {Object.entries(ANIMATION_TIMING).map(([name, timing]) => (
+                <div
+                  key={name}
+                  className="flex items-center gap-4 p-3 rounded-lg border"
+                  style={{ borderColor: "rgba(42, 42, 56, 0.5)" }}
+                >
+                  <code className="text-xs font-mono w-20 shrink-0" style={{ color: "#D4A020" }}>
+                    {name}
+                  </code>
+                  <div className="flex-1 flex items-center gap-3">
+                    <span className="text-sm font-medium" style={{ color: "#F5F5F0", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>{timing.duration}</span>
+                    <span className="text-xs" style={{ color: "#8B8B80" }}>{timing.easing}</span>
                   </div>
-                ))}
-              </div>
+                  <span className="text-xs hidden sm:block" style={{ color: "#8B8B80" }}>{timing.usage}</span>
+                </div>
+              ))}
             </div>
+          </Section>
 
-            {/* Live animation demos */}
-            <div className="mb-8">
-              <h3 className="text-sm font-semibold mb-3" style={{ color: "#F5F5F0", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>Live Demonstrations</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div className="flex flex-col items-center gap-3 p-4 rounded-xl border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
-                  <div
-                    className="w-12 h-12 rounded-xl"
-                    style={{
-                      background: "linear-gradient(135deg, #D4A020 0%, #B8860B 100%)",
-                      animation: "pulse 2s ease-in-out infinite alternate",
-                      boxShadow: "0 0 24px rgba(212, 160, 32, 0.4)",
-                    }}
-                  />
-                  <span className="text-xs font-medium" style={{ color: "#F5F5F0", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>Forge Glow</span>
-                </div>
-                <div className="flex flex-col items-center gap-3 p-4 rounded-xl border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
-                  <div
-                    className="w-12 h-12 rounded-xl border-2"
-                    style={{
-                      backgroundColor: "rgba(212, 160, 32, 0.2)",
-                      borderColor: "rgba(212, 160, 32, 0.4)",
-                      animation: "bounce 2s ease-in-out infinite",
-                    }}
-                  />
-                  <span className="text-xs font-medium" style={{ color: "#F5F5F0", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>Geometric Bounce</span>
-                </div>
-                <div className="flex flex-col items-center gap-3 p-4 rounded-xl border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
-                  <svg width="120" height="12" className="overflow-visible">
-                    <line
-                      x1="0" y1="6" x2="120" y2="6"
-                      stroke="#D4A020"
-                      strokeWidth="2"
-                      strokeDasharray="8 6"
-                      strokeLinecap="round"
-                    >
-                      <animate
-                        attributeName="stroke-dashoffset"
-                        from="24"
-                        to="0"
-                        dur="1s"
-                        repeatCount="indefinite"
-                      />
-                    </line>
-                  </svg>
-                  <span className="text-xs font-medium" style={{ color: "#F5F5F0", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>Data Flow</span>
-                </div>
+          {/* Live animation demos */}
+          <Section>
+            <h3 className="text-sm font-semibold mb-3" style={{ color: "#F5F5F0", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>Live Demonstrations</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="flex flex-col items-center gap-3 p-4 rounded-xl border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+                <div
+                  className="w-12 h-12 rounded-xl"
+                  style={{
+                    background: "linear-gradient(135deg, #D4A020 0%, #B8860B 100%)",
+                    animation: "pulse 2s ease-in-out infinite alternate",
+                    boxShadow: "0 0 24px rgba(212, 160, 32, 0.4)",
+                  }}
+                />
+                <span className="text-xs font-medium" style={{ color: "#F5F5F0", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>Forge Glow</span>
+              </div>
+              <div className="flex flex-col items-center gap-3 p-4 rounded-xl border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+                <div
+                  className="w-12 h-12 rounded-xl border-2"
+                  style={{
+                    backgroundColor: "rgba(212, 160, 32, 0.2)",
+                    borderColor: "rgba(212, 160, 32, 0.4)",
+                    animation: "bounce 2s ease-in-out infinite",
+                  }}
+                />
+                <span className="text-xs font-medium" style={{ color: "#F5F5F0", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>Geometric Bounce</span>
+              </div>
+              <div className="flex flex-col items-center gap-3 p-4 rounded-xl border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+                <svg width="120" height="12" className="overflow-visible">
+                  <line
+                    x1="0" y1="6" x2="120" y2="6"
+                    stroke="#D4A020"
+                    strokeWidth="2"
+                    strokeDasharray="8 6"
+                    strokeLinecap="round"
+                  >
+                    <animate
+                      attributeName="stroke-dashoffset"
+                      from="24"
+                      to="0"
+                      dur="1s"
+                      repeatCount="indefinite"
+                    />
+                  </line>
+                </svg>
+                <span className="text-xs font-medium" style={{ color: "#F5F5F0", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>Data Flow</span>
               </div>
             </div>
-          </>
-        )}
-      </Section>
+          </Section>
+        </>
+      )}
 
       {/* Footer */}
-      <div className="text-center py-8 border-t" style={{ borderColor: "#2A2A38" }}>
+      <div className="text-center py-8 border-t mt-8" style={{ borderColor: "#2A2A38" }}>
         <p className="text-xs" style={{ color: "#626259" }}>
-          "The Forge" Brand System v2.0 —{" "}
+          &ldquo;The Forge&rdquo; Brand System v2.0 —{" "}
           <code style={{ color: "rgba(212, 160, 32, 0.6)" }}>mcporter call brand-guidelines.get_full_palette</code>
         </p>
         <p className="text-[10px] mt-1" style={{ color: "#626259" }}>

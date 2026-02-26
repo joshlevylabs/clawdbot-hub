@@ -737,10 +737,12 @@ function StandupDetail({ standup, onToggleActionItem }: { standup: Standup; onTo
         const response = await fetch("/data/standups/task-registry.json");
         if (response.ok) {
           const taskRegistry = await response.json();
-          // Filter tasks where sourceStandup matches this standup's instanceKey
+          // Filter tasks where sourceStandup matches this standup's instanceKey OR date-type combo
           const allTasks = taskRegistry.tasks || [];
+          const dateTypeKey = standup.date && standup.type ? `${standup.date}-${standup.type}` : null;
           const matchingTasks = allTasks.filter((task: any) => 
-            task.sourceStandup === resolvedInstanceKey
+            task.sourceStandup === resolvedInstanceKey ||
+            (dateTypeKey && task.sourceStandup === dateTypeKey)
           );
           setStandupTickets(matchingTasks);
         }

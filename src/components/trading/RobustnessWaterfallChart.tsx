@@ -25,7 +25,7 @@ export default function RobustnessWaterfallChart() {
       cumulative: 13.5,
       isBase: true,
       isFinal: false,
-      color: "#DC2626",
+      color: "#EF4444",
       description: "Original backtest-only validation"
     },
     {
@@ -36,7 +36,7 @@ export default function RobustnessWaterfallChart() {
       isBase: false,
       isFinal: false,
       contribution: 15,
-      color: "#2563EB",
+      color: "#4F46E5",
       description: "Combinatorially Purged Cross-Validation"
     },
     {
@@ -47,7 +47,7 @@ export default function RobustnessWaterfallChart() {
       isBase: false,
       isFinal: false,
       contribution: 20,
-      color: "#7C3AED",
+      color: "#8B5CF6",
       description: "Multi-strategy ensemble voting"
     },
     {
@@ -58,7 +58,7 @@ export default function RobustnessWaterfallChart() {
       isBase: false,
       isFinal: true,
       contribution: 18.5,
-      color: "#059669",
+      color: "#10B981",
       description: "Synthetic noise resilience validation"
     }
   ];
@@ -159,18 +159,18 @@ export default function RobustnessWaterfallChart() {
             data={steps} 
             margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
           >
-            <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+            <CartesianGrid strokeDasharray="3 3" stroke="#1A1A24" />
             <XAxis 
               dataKey="displayName" 
-              stroke="#9CA3AF"
-              tick={{ fill: '#9CA3AF', fontSize: 12 }}
-              tickLine={{ stroke: '#9CA3AF' }}
+              stroke="#8B8B80"
+              tick={{ fill: '#8B8B80', fontSize: 12 }}
+              tickLine={{ stroke: '#8B8B80' }}
             />
             <YAxis 
               domain={[0, 75]}
-              stroke="#9CA3AF"
-              tick={{ fill: '#9CA3AF', fontSize: 12 }}
-              tickLine={{ stroke: '#9CA3AF' }}
+              stroke="#8B8B80"
+              tick={{ fill: '#8B8B80', fontSize: 12 }}
+              tickLine={{ stroke: '#8B8B80' }}
               label={{ value: 'Robustness Score (%)', angle: -90, position: 'insideLeft' }}
             />
             <Tooltip content={<CustomTooltip />} />

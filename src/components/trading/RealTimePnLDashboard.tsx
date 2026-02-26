@@ -313,13 +313,13 @@ export default function RealTimePnLDashboard({ userId, compact = false }: RealTi
           
           <ResponsiveContainer width="100%" height={300}>
             <ComposedChart data={pnlHistory}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+              <CartesianGrid strokeDasharray="3 3" stroke="#1A1A24" />
               <XAxis 
                 dataKey="timestamp" 
                 tickFormatter={(value) => new Date(value).toLocaleTimeString()}
-                stroke="#666"
+                stroke="#8B8B80"
               />
-              <YAxis stroke="#666" />
+              <YAxis stroke="#8B8B80" />
               <Tooltip 
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 formatter={((value: any, name: any) => [
@@ -334,16 +334,16 @@ export default function RealTimePnLDashboard({ userId, compact = false }: RealTi
               <Area
                 type="monotone"
                 dataKey="totalPnL"
-                stroke="#3b82f6"
-                fill="#3b82f6"
-                fillOpacity={0.1}
+                stroke="#D4A020"
+                fill="#D4A020"
+                fillOpacity={0.2}
                 name="Total P&L"
               />
               
               <Line
                 type="monotone"
                 dataKey="dayPnL"
-                stroke="#ef4444"
+                stroke="#4F46E5"
                 strokeWidth={2}
                 dot={false}
                 name="Day P&L"
@@ -403,7 +403,7 @@ export default function RealTimePnLDashboard({ userId, compact = false }: RealTi
                   <Tooltip 
                     formatter={((value: any) => Number(value || 0).toFixed(2)) as any}
                   />
-                  <Bar dataKey="value" fill="#3b82f6" />
+                  <Bar dataKey="value" fill="#D4A020" />
                   <Line dataKey="target" stroke="#ef4444" strokeDasharray="2 2" />
                 </BarChart>
               </ResponsiveContainer>

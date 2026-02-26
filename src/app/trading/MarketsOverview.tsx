@@ -435,7 +435,7 @@ function ChartCanvas({
     const chartWidth = width - padding.left - padding.right;
     const drawHeight = canvasHeight - padding.top - padding.bottom;
 
-    ctx.fillStyle = '#0f172a';
+    ctx.fillStyle = '#0B0B11';
     ctx.fillRect(0, 0, width, canvasHeight);
 
     // Calculate price range from visible candles
@@ -475,12 +475,12 @@ function ChartCanvas({
 
     // Y-axis highlight when hovered (interactive zoom area)
     if (isOverYAxis) {
-      ctx.fillStyle = 'rgba(59, 130, 246, 0.1)'; // Subtle blue highlight
+      ctx.fillStyle = 'rgba(212, 160, 32, 0.1)'; // Subtle forge gold highlight
       ctx.fillRect(width - padding.right, padding.top, padding.right, drawHeight);
     }
     
     // Y-axis grid and labels
-    ctx.strokeStyle = '#1e293b';
+    ctx.strokeStyle = '#1A1A24';
     ctx.lineWidth = 0.5;
     for (let i = 0; i <= 4; i++) {
       const y = padding.top + (drawHeight / 4) * i;
@@ -492,14 +492,14 @@ function ChartCanvas({
       }
       
       const price = maxPrice + pricePadding - ((priceRange + pricePadding * 2) / 4) * i;
-      ctx.fillStyle = isOverYAxis ? '#60a5fa' : '#94a3b8'; // Brighter labels
+      ctx.fillStyle = isOverYAxis ? '#D4A020' : '#8B8B80'; // Brighter labels
       ctx.font = '11px sans-serif';
       ctx.textAlign = 'left';
       ctx.fillText(`${price.toFixed(price > 100 ? 0 : 2)}`, width - padding.right + 3, y + 3);
     }
 
     // X-axis date labels - adaptive count based on chart width
-    ctx.fillStyle = '#94a3b8'; // Brighter labels
+    ctx.fillStyle = '#8B8B80'; // Brighter labels
     ctx.font = '11px sans-serif';
     ctx.textAlign = 'center';
     
@@ -544,7 +544,7 @@ function ChartCanvas({
       ctx.fillText(date, x, canvasHeight - padding.bottom + 15);
       // Draw vertical grid line at this label position
       if (settings.showXGrid) {
-        ctx.strokeStyle = '#1e293b';
+        ctx.strokeStyle = '#1A1A24';
         ctx.lineWidth = 0.5;
         ctx.beginPath();
         ctx.moveTo(x, padding.top);
@@ -559,7 +559,7 @@ function ChartCanvas({
       if (lastX - lastLabelX >= labelWidth) {
         ctx.fillText(formatLabel(visibleCandles[visibleCandles.length - 1].time), lastX, canvasHeight - padding.bottom + 15);
         if (settings.showXGrid) {
-          ctx.strokeStyle = '#1e293b';
+          ctx.strokeStyle = '#1A1A24';
           ctx.lineWidth = 0.5;
           ctx.beginPath();
           ctx.moveTo(lastX, padding.top);
@@ -642,10 +642,10 @@ function ChartCanvas({
 
     // Moving Averages (slice to visible range)
     const maConfigs = [
-      { show: settings.showMA5, data: movingAverages?.ma5Data, color: '#f59e0b' },
-      { show: settings.showMA20, data: movingAverages?.ma20Data, color: '#ec4899' },
-      { show: settings.showMA50, data: movingAverages?.ma50Data, color: '#06b6d4' },
-      { show: settings.showMA100, data: movingAverages?.ma100Data, color: '#8b5cf6' },
+      { show: settings.showMA5, data: movingAverages?.ma5Data, color: '#D4A020' },
+      { show: settings.showMA20, data: movingAverages?.ma20Data, color: '#4F46E5' },
+      { show: settings.showMA50, data: movingAverages?.ma50Data, color: '#22D3EE' },
+      { show: settings.showMA100, data: movingAverages?.ma100Data, color: '#8B5CF6' },
     ];
     
     maConfigs.forEach(({ show, data, color }) => {
@@ -722,7 +722,7 @@ function ChartCanvas({
           className="w-full rounded-lg"
           style={{ 
             height, 
-            background: '#0f172a', 
+            background: '#0B0B11', 
             touchAction: 'none',
             cursor: isOverYAxis ? 'ns-resize' : 'crosshair'
           }}

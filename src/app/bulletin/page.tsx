@@ -587,18 +587,18 @@ export default function BulletinPage() {
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full">
+              <table className="w-full table-fixed">
                 <thead>
                   <tr className="border-b border-slate-700/50">
-                    <th className="text-left px-3 py-2 text-[11px] font-semibold text-slate-400 uppercase tracking-wider w-[50px]">Action</th>
-                    <th className="text-left px-3 py-2 text-[11px] font-semibold text-slate-400 uppercase tracking-wider w-[60px]">Sprint</th>
-                    <th className="text-left px-3 py-2 text-[11px] font-semibold text-slate-400 uppercase tracking-wider w-[80px]">Key</th>
-                    <th className="text-left px-3 py-2 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Title</th>
-                    <th className="text-left px-3 py-2 text-[11px] font-semibold text-slate-400 uppercase tracking-wider w-[90px]">Priority</th>
-                    <th className="text-left px-3 py-2 text-[11px] font-semibold text-slate-400 uppercase tracking-wider w-[100px]">Status</th>
+                    <th className="text-left px-3 py-2 text-[11px] font-semibold text-slate-400 uppercase tracking-wider w-[44px]">Action</th>
+                    <th className="text-left px-3 py-2 text-[11px] font-semibold text-slate-400 uppercase tracking-wider w-[44px]">Sprint</th>
+                    <th className="text-left px-3 py-2 text-[11px] font-semibold text-slate-400 uppercase tracking-wider w-[70px]">Key</th>
+                    <th className="text-left px-3 py-2 text-[11px] font-semibold text-slate-400 uppercase tracking-wider max-w-[400px]">Title</th>
+                    <th className="text-left px-3 py-2 text-[11px] font-semibold text-slate-400 uppercase tracking-wider w-[80px]">Priority</th>
+                    <th className="text-left px-3 py-2 text-[11px] font-semibold text-slate-400 uppercase tracking-wider w-[90px]">Status</th>
                     <th className="text-left px-3 py-2 text-[11px] font-semibold text-slate-400 uppercase tracking-wider w-[80px]">Type</th>
                     <th className="text-left px-3 py-2 text-[11px] font-semibold text-slate-400 uppercase tracking-wider w-[90px]">Assignee</th>
-                    <th className="text-left px-3 py-2 text-[11px] font-semibold text-slate-400 uppercase tracking-wider w-[70px]">Source</th>
+                    <th className="text-left px-3 py-2 text-[11px] font-semibold text-slate-400 uppercase tracking-wider w-[90px]">Source</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -659,9 +659,9 @@ export default function BulletinPage() {
                         <td className="px-3 py-1.5">
                           <span className="text-sm font-mono font-bold text-primary-400">{task.key}</span>
                         </td>
-                        <td className="px-3 py-1.5">
+                        <td className="px-3 py-1.5 max-w-[400px]">
                           <div className="flex items-center gap-2">
-                            <p className={`text-sm leading-snug ${task.status === "done" ? "text-slate-500 line-through" : "text-slate-200"}`}>
+                            <p className={`text-sm leading-snug truncate ${task.status === "done" ? "text-slate-500 line-through" : "text-slate-200"}`}>
                               {task.text}
                             </p>
                             {task.sprintReady && (
@@ -700,8 +700,8 @@ export default function BulletinPage() {
                             <span className="text-xs text-slate-300">{task.assignee || "—"}</span>
                           </div>
                         </td>
-                        <td className="px-3 py-1.5">
-                          <span className="text-xs text-primary-400/80 font-mono">{task.sourceStandup || "—"}</span>
+                        <td className="px-3 py-1.5 max-w-[90px]">
+                          <span className="text-xs text-primary-400/80 font-mono truncate block" title={task.sourceStandup || "—"}>{task.sourceStandup || "—"}</span>
                         </td>
                       </tr>
                     );

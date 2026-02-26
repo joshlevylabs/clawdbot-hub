@@ -567,8 +567,9 @@ function getTierColor(voteCount: number): { dot: string; text: string; label: st
 
 // ── HTML-based tier connector line (extends from card right edge into gap) ──
 function TierConnectorLine({ voteCount, isLast = false }: { voteCount: number; isLast?: boolean }) {
-  const color = voteCount >= 3 ? 'rgb(52, 211, 153)' : voteCount >= 2 ? 'rgb(96, 165, 250)' : 'rgb(203, 213, 225)';
-  const opacity = voteCount >= 3 ? 0.9 : voteCount >= 2 ? 0.8 : 0.6;
+  // Brand palette: emerald for high tiers, deep indigo for mid, smoke for low
+  const color = voteCount >= 3 ? 'rgb(52, 211, 153)' : voteCount >= 2 ? '#4F46E5' : '#8B8B80';
+  const opacity = voteCount >= 3 ? 0.9 : voteCount >= 2 ? 0.8 : 0.5;
   if (isLast) return null; // No connector after the last column
   return (
     <div 
@@ -894,7 +895,16 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
       }
     }
     
-    setConnections(newConnections);
+    // Deduplicate connections — keep the first (most specific) connection for each from→to pair
+    const seen = new Set<string>();
+    const dedupedConnections = newConnections.filter(c => {
+      const key = `${c.from}→${c.to}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+    
+    setConnections(dedupedConnections);
   }, [pipelineData]);
 
   useEffect(() => {
@@ -1380,39 +1390,44 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
           style={{ zIndex: 20, overflow: 'visible' }}
         >
           <defs>
+            {/* Brand: Forge Gold data flow — default connection */}
             <linearGradient id="connectionGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="rgb(148, 163, 184)" stopOpacity="0.6" />
-              <stop offset="50%" stopColor="rgb(59, 130, 246)" stopOpacity="0.4" />
-              <stop offset="100%" stopColor="rgb(148, 163, 184)" stopOpacity="0.6" />
+              <stop offset="0%" stopColor="#D4A020" stopOpacity="0.3" />
+              <stop offset="50%" stopColor="#B8860B" stopOpacity="0.2" />
+              <stop offset="100%" stopColor="#D4A020" stopOpacity="0.3" />
             </linearGradient>
+            {/* Brand: Active flow — Forge Gold full intensity */}
             <linearGradient id="activeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="rgb(59, 130, 246)" stopOpacity="0.8" />
-              <stop offset="50%" stopColor="rgb(34, 197, 94)" stopOpacity="0.6" />
-              <stop offset="100%" stopColor="rgb(59, 130, 246)" stopOpacity="0.8" />
+              <stop offset="0%" stopColor="#D4A020" stopOpacity="0.9" />
+              <stop offset="50%" stopColor="#F4D03F" stopOpacity="0.7" />
+              <stop offset="100%" stopColor="#D4A020" stopOpacity="0.9" />
             </linearGradient>
+            {/* Brand: Pending flow — Forge Gold muted */}
             <linearGradient id="pendingGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="rgb(251, 191, 36)" stopOpacity="0.8" />
-              <stop offset="50%" stopColor="rgb(245, 158, 11)" stopOpacity="0.6" />
-              <stop offset="100%" stopColor="rgb(251, 191, 36)" stopOpacity="0.8" />
+              <stop offset="0%" stopColor="#D4A020" stopOpacity="0.5" />
+              <stop offset="50%" stopColor="#B8860B" stopOpacity="0.4" />
+              <stop offset="100%" stopColor="#D4A020" stopOpacity="0.5" />
             </linearGradient>
-            {/* Tier-specific gradients */}
+            {/* Tier 3+: Emerald for high-confidence tiers */}
             <linearGradient id="tier3PlusGradient" x1="0%" y1="0%" x2="100%" y2="0%">
               <stop offset="0%" stopColor="rgb(52, 211, 153)" stopOpacity="0.8" />
               <stop offset="50%" stopColor="rgb(34, 197, 94)" stopOpacity="0.7" />
               <stop offset="100%" stopColor="rgb(52, 211, 153)" stopOpacity="0.8" />
             </linearGradient>
+            {/* Tier 2: Deep Indigo for mid tiers */}
             <linearGradient id="tier2Gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="rgb(59, 130, 246)" stopOpacity="0.8" />
-              <stop offset="50%" stopColor="rgb(96, 165, 250)" stopOpacity="0.6" />
-              <stop offset="100%" stopColor="rgb(59, 130, 246)" stopOpacity="0.8" />
+              <stop offset="0%" stopColor="#4F46E5" stopOpacity="0.8" />
+              <stop offset="50%" stopColor="#6366F1" stopOpacity="0.6" />
+              <stop offset="100%" stopColor="#4F46E5" stopOpacity="0.8" />
             </linearGradient>
+            {/* Tier 1: Smoke for low tiers */}
             <linearGradient id="tier1Gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="rgb(148, 163, 184)" stopOpacity="0.7" />
-              <stop offset="50%" stopColor="rgb(100, 116, 139)" stopOpacity="0.5" />
-              <stop offset="100%" stopColor="rgb(148, 163, 184)" stopOpacity="0.7" />
+              <stop offset="0%" stopColor="#8B8B80" stopOpacity="0.5" />
+              <stop offset="50%" stopColor="#626259" stopOpacity="0.3" />
+              <stop offset="100%" stopColor="#8B8B80" stopOpacity="0.5" />
             </linearGradient>
             <filter id="glow">
-              <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+              <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
               <feMerge> 
                 <feMergeNode in="coloredBlur"/>
                 <feMergeNode in="SourceGraphic"/> 
@@ -1422,14 +1437,14 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
           
           <style>{`
             @keyframes flowAnimation {
-              0% { stroke-dashoffset: 20; }
+              0% { stroke-dashoffset: 24; }
               100% { stroke-dashoffset: 0; }
             }
             .flow-active {
-              animation: flowAnimation 1.5s linear infinite;
+              animation: flowAnimation 1s linear infinite;
             }
             .flow-pending {
-              animation: flowAnimation 2s linear infinite;
+              animation: flowAnimation 1.5s linear infinite;
             }
           `}</style>
           
@@ -1438,41 +1453,41 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
             const isPending = (connection as any).isPending;
             const tierVoteCount = (connection as any).tierVoteCount;
             
+            // Brand: Forge Gold data flow baseline
             let strokeColor = "url(#connectionGradient)";
             let className = "";
-            let opacity = "0.4";
-            let strokeWidth = "1.5";
+            let opacity = "0.35";
+            let strokeWidth = "2";
             
-            // Apply tier-specific styling for multi-dot connections
-            // Solid RGB colors + dashed animated style matching earlier stages
+            // Tier-specific styling using brand palette
             if (tierVoteCount !== undefined) {
               if (tierVoteCount >= 3) {
-                strokeColor = "rgb(52, 211, 153)";  // emerald-400
+                strokeColor = "url(#tier3PlusGradient)"; // Emerald for high tiers
                 opacity = "0.9";
-                strokeWidth = "2.5";
+                strokeWidth = "2";
                 className = "flow-active";
               } else if (tierVoteCount >= 2) {
-                strokeColor = "rgb(96, 165, 250)";  // blue-400
-                opacity = "0.85";
-                strokeWidth = "2.5";
+                strokeColor = "url(#tier2Gradient)"; // Deep Indigo for mid tiers
+                opacity = "0.8";
+                strokeWidth = "2";
                 className = "flow-active";
               } else {
-                strokeColor = "rgb(203, 213, 225)";  // slate-300
-                opacity = "0.7";
+                strokeColor = "url(#tier1Gradient)"; // Smoke for low tiers
+                opacity = "0.6";
                 strokeWidth = "2";
                 className = "flow-active";
               }
             } else {
-              // Legacy single-dot connections
+              // Standard connections — Forge Gold brand data flow
               if (isActive) {
                 strokeColor = "url(#activeGradient)";
                 className = "flow-active";
                 opacity = "0.8";
-                strokeWidth = "2.5";
+                strokeWidth = "2";
               } else if (isPending) {
                 strokeColor = "url(#pendingGradient)";
                 className = "flow-pending";
-                opacity = "0.7";
+                opacity = "0.6";
                 strokeWidth = "2";
               }
             }
@@ -1483,11 +1498,12 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
                 d={createBezierPath(connection.fromPos, connection.toPos)}
                 stroke={strokeColor}
                 strokeWidth={strokeWidth}
+                strokeLinecap="round"
                 fill="none"
                 filter={(isActive || isPending || tierVoteCount !== undefined) ? "url(#glow)" : undefined}
                 opacity={opacity}
-                strokeDasharray={(isActive || isPending || tierVoteCount !== undefined) ? "8 6" : "4 4"}
-                className={className}
+                strokeDasharray="8 6"
+                className={className || "flow-active"}
               />
             );
           })}

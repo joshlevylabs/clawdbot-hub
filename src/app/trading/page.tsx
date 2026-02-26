@@ -1567,20 +1567,20 @@ function ValidationTab() {
           <div className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={data.equity_history} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                <CartesianGrid stroke="#1A1A24" strokeOpacity={0.8} />
                 <XAxis
                   dataKey="date"
                   tickFormatter={(d: string) => {
                     const dt = new Date(d + "T12:00:00");
                     return dt.toLocaleDateString("en-US", { month: "short", day: "numeric" });
                   }}
-                  tick={{ fontSize: 10, fill: "#64748b" }}
-                  axisLine={{ stroke: "#334155" }}
+                  tick={{ fontSize: 11, fill: "#8B8B80" }}
+                  axisLine={{ stroke: "#2A2A38" }}
                   tickLine={false}
                   minTickGap={40}
                 />
                 <YAxis
-                  tick={{ fontSize: 10, fill: "#64748b" }}
+                  tick={{ fontSize: 11, fill: "#8B8B80" }}
                   axisLine={false}
                   tickLine={false}
                   tickFormatter={(v: number) => `$${(v / 1000).toFixed(0)}k`}
@@ -1588,7 +1588,7 @@ function ValidationTab() {
                   domain={["auto", "auto"]}
                 />
                 <ChartTooltip
-                  contentStyle={{ background: "#1e293b", border: "1px solid #475569", borderRadius: "8px", fontSize: "12px" }}
+                  contentStyle={{ background: "#13131B", border: "1px solid #2A2A38", borderRadius: "8px", fontSize: "12px", color: "#F5F5F0" }}
                   labelFormatter={(d: any) => {
                     const dt = new Date(String(d) + "T12:00:00");
                     return dt.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
@@ -1598,11 +1598,11 @@ function ValidationTab() {
                     name === "alpaca_equity" ? "Alpaca" : "Hub"
                   ]}
                 />
-                <ChartRefLine y={100000} stroke="#64748b" strokeDasharray="6 4" strokeOpacity={0.5} />
+                <ChartRefLine y={100000} stroke="#343444" strokeDasharray="6 4" strokeOpacity={0.5} />
                 <Line
                   type="monotone"
                   dataKey="alpaca_equity"
-                  stroke="#38bdf8"
+                  stroke="#D4A020"
                   strokeWidth={2}
                   dot={false}
                   name="alpaca_equity"
@@ -1611,7 +1611,7 @@ function ValidationTab() {
                 <Line
                   type="monotone"
                   dataKey="hub_equity"
-                  stroke="#a78bfa"
+                  stroke="#4F46E5"
                   strokeWidth={2}
                   dot={false}
                   name="hub_equity"
@@ -1623,16 +1623,16 @@ function ValidationTab() {
           </div>
           <div className="flex items-center justify-center gap-6 mt-2 text-xs">
             <div className="flex items-center gap-1.5">
-              <div className="w-4 h-0.5 bg-sky-400 rounded" />
-              <span className="text-slate-400">Alpaca</span>
+              <div className="w-4 h-0.5 rounded" style={{ backgroundColor: "#D4A020" }} />
+              <span style={{ color: "#B8B8AD" }}>Alpaca</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <div className="w-4 h-0.5 bg-violet-400 rounded" style={{ borderBottom: "2px dashed" }} />
-              <span className="text-slate-400">Hub</span>
+              <div className="w-4 h-0.5 rounded" style={{ backgroundColor: "#4F46E5", borderBottom: "2px dashed" }} />
+              <span style={{ color: "#B8B8AD" }}>Hub</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <div className="w-4 h-0.5 bg-slate-500 rounded" />
-              <span className="text-slate-400">$100K baseline</span>
+              <div className="w-4 h-0.5 rounded" style={{ backgroundColor: "#343444" }} />
+              <span style={{ color: "#B8B8AD" }}>$100K baseline</span>
             </div>
           </div>
         </div>

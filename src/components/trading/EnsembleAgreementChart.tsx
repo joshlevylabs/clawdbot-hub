@@ -154,24 +154,24 @@ export default function EnsembleAgreementChart() {
       <div className="h-64">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={histogramData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+            <CartesianGrid strokeDasharray="3 3" stroke="#1A1A24" />
             <XAxis 
               dataKey="strategies_agreeing" 
-              stroke="#9CA3AF"
-              tick={{ fill: '#9CA3AF', fontSize: 12 }}
-              tickLine={{ stroke: '#9CA3AF' }}
+              stroke="#8B8B80"
+              tick={{ fill: '#8B8B80', fontSize: 12 }}
+              tickLine={{ stroke: '#8B8B80' }}
             />
             <YAxis 
-              stroke="#9CA3AF"
-              tick={{ fill: '#9CA3AF', fontSize: 12 }}
-              tickLine={{ stroke: '#9CA3AF' }}
+              stroke="#8B8B80"
+              tick={{ fill: '#8B8B80', fontSize: 12 }}
+              tickLine={{ stroke: '#8B8B80' }}
             />
             <Tooltip
               contentStyle={{
                 backgroundColor: '#1F2937',
                 border: '1px solid #374151',
                 borderRadius: '8px',
-                color: '#F3F4F6'
+                color: '#F5F5F0'
               }}
               formatter={(value: any, name?: string) => [
                 name === 'count' ? `${value} tickers` : `${value.toFixed(1)}%`,
@@ -179,12 +179,12 @@ export default function EnsembleAgreementChart() {
               ]}
               labelFormatter={(label) => `${label} strategies agreeing`}
             />
-            <Bar dataKey="count" fill="#3B82F6" opacity={0.8} />
+            <Bar dataKey="count" fill="#D4A020" opacity={0.85} />
             {/* Threshold line for minimum BUY agreement */}
             <ReferenceLine 
               x={thresholdLine.toString()} 
-              stroke="#EF4444" 
-              strokeDasharray="5 5"
+              stroke="#D4A020" 
+              strokeDasharray="6 4"
               strokeWidth={2}
             />
           </BarChart>
@@ -194,12 +194,12 @@ export default function EnsembleAgreementChart() {
       {/* Legend */}
       <div className="mt-3 text-xs text-slate-400 text-center">
         <span className="inline-flex items-center gap-1">
-          <div className="w-3 h-3 bg-blue-500 rounded"></div>
+          <div className="w-3 h-3 bg-yellow-600 rounded" style={{ backgroundColor: "#D4A020" }}></div>
           Ticker distribution
         </span>
         <span className="mx-4">•</span>
         <span className="inline-flex items-center gap-1">
-          <div className="w-3 h-1 bg-red-500 rounded"></div>
+          <div className="w-3 h-1 bg-yellow-600 rounded" style={{ backgroundColor: "#D4A020" }}></div>
           BUY threshold ({(threshold * 100).toFixed(0)}% agreement)
         </span>
       </div>

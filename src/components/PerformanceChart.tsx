@@ -96,7 +96,7 @@ function CustomTooltip({ active, payload, label }: any) {
       <div className="space-y-1">
         <div className="flex items-center justify-between gap-4">
           <span className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-indigo-400" />
+            <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: "#D4A020" }} />
             Portfolio
           </span>
           <span className={portfolio >= 0 ? "text-emerald-400 font-mono" : "text-red-400 font-mono"}>
@@ -105,7 +105,7 @@ function CustomTooltip({ active, payload, label }: any) {
         </div>
         <div className="flex items-center justify-between gap-4">
           <span className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-amber-400" />
+            <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: "#4F46E5" }} />
             S&P 500
           </span>
           <span className={spy >= 0 ? "text-emerald-400 font-mono" : "text-red-400 font-mono"}>
@@ -390,30 +390,30 @@ export default function PerformanceChart({
           <AreaChart data={chartData} margin={{ top: 5, right: 5, left: -15, bottom: 0 }}>
             <defs>
               <linearGradient id="portfolioGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#818cf8" stopOpacity={0.3} />
-                <stop offset="95%" stopColor="#818cf8" stopOpacity={0} />
+                <stop offset="5%" stopColor="#D4A020" stopOpacity={0.2} />
+                <stop offset="95%" stopColor="#D4A020" stopOpacity={0} />
               </linearGradient>
               <linearGradient id="spyGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#fbbf24" stopOpacity={0.15} />
-                <stop offset="95%" stopColor="#fbbf24" stopOpacity={0} />
+                <stop offset="5%" stopColor="#4F46E5" stopOpacity={0.2} />
+                <stop offset="95%" stopColor="#4F46E5" stopOpacity={0} />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
+            <CartesianGrid strokeDasharray="3 3" stroke="#1A1A24" />
             <XAxis
               dataKey="dateLabel"
               tick={{ fill: "#64748b", fontSize: compact ? 10 : 12 }}
-              axisLine={{ stroke: "#334155" }}
+              axisLine={{ stroke: "#2A2A38" }}
               tickLine={false}
               interval="preserveStartEnd"
             />
             <YAxis
               tick={{ fill: "#64748b", fontSize: compact ? 10 : 12 }}
-              axisLine={{ stroke: "#334155" }}
+              axisLine={{ stroke: "#2A2A38" }}
               tickLine={false}
               tickFormatter={(v: number) => `${v}%`}
             />
             <Tooltip content={<CustomTooltip />} />
-            <ReferenceLine y={0} stroke="#475569" strokeDasharray="3 3" />
+            <ReferenceLine y={0} stroke="#343444" strokeDasharray="4 4" />
             {!compact && (
               <Legend
                 verticalAlign="top"
@@ -427,8 +427,8 @@ export default function PerformanceChart({
               type="monotone"
               dataKey="spy"
               name="S&P 500"
-              stroke="#fbbf24"
-              strokeWidth={1.5}
+              stroke="#4F46E5"
+              strokeWidth={2}
               fill="url(#spyGradient)"
               dot={false}
             />
@@ -436,8 +436,8 @@ export default function PerformanceChart({
               type="monotone"
               dataKey="portfolio"
               name="Portfolio"
-              stroke="#818cf8"
-              strokeWidth={2.5}
+              stroke="#D4A020"
+              strokeWidth={2}
               fill="url(#portfolioGradient)"
               dot={false}
             />

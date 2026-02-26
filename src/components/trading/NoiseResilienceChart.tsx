@@ -47,14 +47,14 @@ interface ChartDataPoint {
 }
 
 const STRATEGY_COLORS = {
-  fear_greed: "#10B981",      // Green
-  regime_confirmation: "#3B82F6", // Blue  
-  rsi_oversold: "#F59E0B",    // Orange
-  mean_reversion: "#8B5CF6",  // Purple
-  momentum: "#EF4444",        // Red
-  time_series_momentum: "#06B6D4", // Cyan
-  qvm_factor: "#EC4899",      // Pink
-  vix_mean_reversion: "#F97316"    // Orange-500
+  fear_greed: "#D4A020",      // 1. Forge Gold
+  regime_confirmation: "#4F46E5", // 2. Deep Indigo
+  rsi_oversold: "#10B981",    // 3. Emerald
+  mean_reversion: "#22D3EE",  // 4. Signal Cyan
+  momentum: "#F59E0B",        // 5. Amber
+  time_series_momentum: "#8B5CF6", // 6. Violet
+  qvm_factor: "#F43F5E",      // 7. Rose
+  vix_mean_reversion: "#14B8A6"    // 8. Teal
 };
 
 export default function NoiseResilienceChart() {
@@ -200,18 +200,18 @@ export default function NoiseResilienceChart() {
       <div className="h-80">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+            <CartesianGrid strokeDasharray="3 3" stroke="#1A1A24" />
             <XAxis 
               dataKey="noise_pct" 
-              stroke="#9CA3AF"
-              tick={{ fill: '#9CA3AF', fontSize: 12 }}
-              tickLine={{ stroke: '#9CA3AF' }}
+              stroke="#8B8B80"
+              tick={{ fill: '#8B8B80', fontSize: 12 }}
+              tickLine={{ stroke: '#8B8B80' }}
             />
             <YAxis 
               domain={[0, 110]}
-              stroke="#9CA3AF"
-              tick={{ fill: '#9CA3AF', fontSize: 12 }}
-              tickLine={{ stroke: '#9CA3AF' }}
+              stroke="#8B8B80"
+              tick={{ fill: '#8B8B80', fontSize: 12 }}
+              tickLine={{ stroke: '#8B8B80' }}
               label={{ value: 'Sharpe Retention (%)', angle: -90, position: 'insideLeft' }}
             />
             <Tooltip
@@ -219,7 +219,7 @@ export default function NoiseResilienceChart() {
                 backgroundColor: '#1F2937',
                 border: '1px solid #374151',
                 borderRadius: '8px',
-                color: '#F3F4F6'
+                color: '#F5F5F0'
               }}
               formatter={(value: any, name?: string) => [
                 `${Number(value).toFixed(1)}%`,
@@ -228,9 +228,9 @@ export default function NoiseResilienceChart() {
               labelFormatter={(label) => `Noise Level: ${label}`}
             />
             <Legend 
-              wrapperStyle={{ color: '#9CA3AF' }}
+              wrapperStyle={{ color: '#B8B8AD' }}
               formatter={(value: string) => 
-                <span style={{ color: STRATEGY_COLORS[value as keyof typeof STRATEGY_COLORS] || '#9CA3AF' }}>
+                <span style={{ color: STRATEGY_COLORS[value as keyof typeof STRATEGY_COLORS] || '#B8B8AD' }}>
                   {value.replace(/_/g, " ").replace(/\b\w/g, (l: string) => l.toUpperCase())}
                 </span>
               }
@@ -240,7 +240,7 @@ export default function NoiseResilienceChart() {
                 key={strategy}
                 type="monotone"
                 dataKey={strategy}
-                stroke={STRATEGY_COLORS[strategy as keyof typeof STRATEGY_COLORS] || "#9CA3AF"}
+                stroke={STRATEGY_COLORS[strategy as keyof typeof STRATEGY_COLORS] || "#B8B8AD"}
                 strokeWidth={3}
                 dot={{ r: 4 }}
                 connectNulls={false}

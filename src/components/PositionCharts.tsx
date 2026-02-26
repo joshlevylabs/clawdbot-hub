@@ -186,7 +186,7 @@ function PositionChartCard({ chartData }: { chartData: PositionChartData }) {
   );
 
   // Chart colors
-  const lineColor = isProfit ? "#34d399" : "#f87171";
+  const lineColor = isProfit ? "#10B981" : "#EF4444";
   const gradientId = `gradient-${position.id}`;
 
   // Find the entry date in price data (closest date to opened_at)
@@ -306,13 +306,13 @@ function PositionChartCard({ chartData }: { chartData: PositionChartData }) {
               {/* Stop loss line */}
               <ReferenceLine
                 y={stopLoss}
-                stroke="#f87171"
+                stroke="#EF4444"
                 strokeDasharray="4 4"
                 strokeOpacity={0.6}
                 label={{
                   value: "Stop",
                   position: "insideBottomLeft",
-                  fill: "#f87171",
+                  fill: "#EF4444",
                   fontSize: 10,
                   fontWeight: 600,
                 }}
@@ -321,13 +321,13 @@ function PositionChartCard({ chartData }: { chartData: PositionChartData }) {
               {/* Take profit line */}
               <ReferenceLine
                 y={takeProfit}
-                stroke="#34d399"
+                stroke="#10B981"
                 strokeDasharray="4 4"
                 strokeOpacity={0.6}
                 label={{
                   value: "Target",
                   position: "insideTopLeft",
-                  fill: "#34d399",
+                  fill: "#10B981",
                   fontSize: 10,
                   fontWeight: 600,
                 }}
@@ -336,7 +336,7 @@ function PositionChartCard({ chartData }: { chartData: PositionChartData }) {
               {/* Entry price line */}
               <ReferenceLine
                 y={position.entry_price}
-                stroke="#94a3b8"
+                stroke="#8B8B80"
                 strokeDasharray="3 3"
                 strokeOpacity={0.4}
               />
@@ -352,7 +352,7 @@ function PositionChartCard({ chartData }: { chartData: PositionChartData }) {
                 activeDot={{
                   r: 4,
                   fill: lineColor,
-                  stroke: "#1e293b",
+                  stroke: "#0B0B11",
                   strokeWidth: 2,
                 }}
               />
@@ -363,7 +363,7 @@ function PositionChartCard({ chartData }: { chartData: PositionChartData }) {
                   x={entryPoint.date}
                   y={entryPoint.close}
                   r={5}
-                  fill="#1e293b"
+                  fill="#0B0B11"
                   stroke="#ffffff"
                   strokeWidth={2}
                 />

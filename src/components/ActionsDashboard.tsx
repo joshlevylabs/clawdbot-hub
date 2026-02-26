@@ -809,9 +809,10 @@ export default function ActionsDashboard({
           } catch { /* ignore parse errors */ }
         }
         
-        // Merge the data
+        // Merge the data — prefer universe F&G (more recent, larger sample)
         const mergedData = {
           ...coreData,
+          fear_greed: universeData.fear_greed || coreData.fear_greed,
           universeData,
           allAssets: universeData.signals.by_asset_class,
         };

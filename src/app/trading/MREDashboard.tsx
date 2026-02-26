@@ -865,8 +865,10 @@ export default function MREDashboard() {
       const universeJson = await universeRes.json();
       
       // Add universe data to core data
+      // Prefer universe F&G when available (more recent, larger sample)
       const mergedData = {
         ...coreJson,
+        fear_greed: universeJson.fear_greed || coreJson.fear_greed,
         universeData: universeJson
       };
       

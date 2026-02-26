@@ -1,5 +1,5 @@
 {
-  "nextAgentId": 9,
+  "nextAgentId": 12,
   "nextJoshuaId": 4,
   "tasks": [
     {
@@ -137,6 +137,51 @@
       "updatedAt": "2026-02-25T19:06:16.651066-08:00",
       "completedAt": "2026-02-25T19:09:13.005780-08:00",
       "approvedAt": "2026-02-25T19:06:16.651068-08:00",
+      "approvedBy": "joshua"
+    },
+    {
+      "key": "A-009",
+      "text": "Generate daily devotional content based on 8 faith dimensions",
+      "description": "",
+      "acceptanceCriteria": [],
+      "tag": "AGENT",
+      "priority": "medium",
+      "assignee": "Alex",
+      "status": "pending",
+      "sourceStandup": "2026-02-25-evening-session",
+      "sourceDate": "2026-02-25",
+      "createdAt": "2026-02-25T20:23:58.405901-08:00",
+      "approvedAt": "2026-02-25T20:23:58.406173-08:00",
+      "approvedBy": "joshua"
+    },
+    {
+      "key": "A-010",
+      "text": "Draft faith lesson content for the Lever app (currently 7 lessons)",
+      "description": "",
+      "acceptanceCriteria": [],
+      "tag": "AGENT",
+      "priority": "medium",
+      "assignee": "Alex",
+      "status": "pending",
+      "sourceStandup": "2026-02-25-evening-session",
+      "sourceDate": "2026-02-25",
+      "createdAt": "2026-02-25T20:24:09.118179-08:00",
+      "approvedAt": "2026-02-25T20:24:09.118430-08:00",
+      "approvedBy": "joshua"
+    },
+    {
+      "key": "A-011",
+      "text": "Draft feature spec for expanding Family tab (currently 455 lines)",
+      "description": "",
+      "acceptanceCriteria": [],
+      "tag": "AGENT",
+      "priority": "medium",
+      "assignee": "Elon",
+      "status": "pending",
+      "sourceStandup": "2026-02-25-evening-session",
+      "sourceDate": "2026-02-25",
+      "createdAt": "2026-02-25T20:24:20.630219-08:00",
+      "approvedAt": "2026-02-25T20:24:20.630461-08:00",
       "approvedBy": "joshua"
     }
   ]

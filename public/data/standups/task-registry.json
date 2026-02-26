@@ -5,8 +5,12 @@
     {
       "key": "A-001",
       "text": "Commit 4 uncommitted hub files and stress-test approval gateway",
-      "description": "",
-      "acceptanceCriteria": [],
+      "description": "Commit 4 uncommitted Hub files that were left in working tree during the standup system overhaul. Then stress-test the new ticket approval gateway by running a mock standup and verifying the full approval flow works end-to-end.",
+      "acceptanceCriteria": [
+        "All uncommitted Hub files are committed and pushed to main",
+        "Approval gateway successfully processes at least one mock standup",
+        "Approve and reject buttons both function correctly in Board Room"
+      ],
       "tag": "AGENT",
       "priority": "high",
       "assignee": "Elon Musk",
@@ -21,8 +25,12 @@
     {
       "key": "A-002",
       "text": "Document rollback procedure and establish monitoring dashboard",
-      "description": "",
-      "acceptanceCriteria": [],
+      "description": "Create a rollback procedure document for the standup system in case of failures, and set up a monitoring dashboard to track standup health, ticket throughput, and approval rates over time.",
+      "acceptanceCriteria": [
+        "Rollback procedure documented with step-by-step recovery instructions",
+        "Monitoring dashboard tracks standup run success/failure rate",
+        "Dashboard shows ticket approval/rejection metrics"
+      ],
       "tag": "AGENT",
       "priority": "high",
       "assignee": "James Truchard",
@@ -37,8 +45,12 @@
     {
       "key": "J-001",
       "text": "Define and track shipping velocity success metrics",
-      "description": "",
-      "acceptanceCriteria": [],
+      "description": "Define what 'shipping velocity' means for the org \u2014 commits per week, features shipped, tickets closed \u2014 and establish a tracking system to measure it consistently. This metric will drive accountability across all agents.",
+      "acceptanceCriteria": [
+        "Shipping velocity metric clearly defined with specific measurable components",
+        "Baseline measurement established from last 30 days of activity",
+        "Tracking method set up (dashboard, cron report, or weekly summary)"
+      ],
       "tag": "JOSHUA",
       "priority": "high",
       "assignee": "Theo",
@@ -52,8 +64,12 @@
     {
       "key": "J-003",
       "text": "Submit current Lever build to App Store as planned",
-      "description": "",
-      "acceptanceCriteria": [],
+      "description": "Take the current Lever app build through The Catapult deployment pipeline and submit it to the App Store via TestFlight. This is the planned release after recent faith and family feature work.",
+      "acceptanceCriteria": [
+        "Lever build passes all Catapult pre-flight checks",
+        "Build successfully uploaded to TestFlight",
+        "App available for testing in TestFlight within 24 hours"
+      ],
       "tag": "JOSHUA",
       "priority": "high",
       "assignee": "Theo",
@@ -70,8 +86,13 @@
     {
       "key": "A-005",
       "text": "Draft technical specification for shared React Native architecture",
-      "description": "",
-      "acceptanceCriteria": [],
+      "description": "Draft a technical specification for how the Lever app and a potential separated financial app would share React Native architecture \u2014 shared components, navigation patterns, data layer, and deployment pipeline using the Expo/Turborepo monorepo structure.",
+      "acceptanceCriteria": [
+        "Technical spec covers shared component library design",
+        "Spec addresses data layer sharing (Supabase, state management)",
+        "Spec includes build/deploy pipeline for multiple app targets from monorepo",
+        "Document reviewed and approved by CEO"
+      ],
       "tag": "AGENT",
       "priority": "high",
       "assignee": "Elon Musk",
@@ -88,8 +109,12 @@
     {
       "key": "A-006",
       "text": "Design user behavior instrumentation for separation validation",
-      "description": "",
-      "acceptanceCriteria": [],
+      "description": "Design an instrumentation plan to track user behavior across faith/family features vs. financial features in Lever. This data will validate whether app separation makes sense based on actual usage patterns.",
+      "acceptanceCriteria": [
+        "Instrumentation plan identifies key user behavior events to track",
+        "Plan covers both faith/family and financial feature usage",
+        "Analytics approach can determine feature overlap vs. distinct user segments"
+      ],
       "tag": "AGENT",
       "priority": "high",
       "assignee": "James Truchard",
@@ -106,8 +131,12 @@
     {
       "key": "A-007",
       "text": "Document financial feature migration boundaries",
-      "description": "",
-      "acceptanceCriteria": [],
+      "description": "Document clear boundaries for which financial features belong in a separated financial app vs. which stay in Lever. Cover portfolio tracking, position management, trading signals, and financial health tools.",
+      "acceptanceCriteria": [
+        "Every financial feature categorized as 'migrate' or 'keep in Lever'",
+        "Migration boundaries justified with user experience rationale",
+        "Data sharing requirements between apps clearly defined"
+      ],
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "Chris Vermeulen",
@@ -124,8 +153,12 @@
     {
       "key": "A-008",
       "text": "Develop distinct brand positioning for dual apps",
-      "description": "",
-      "acceptanceCriteria": [],
+      "description": "Develop distinct brand positioning for the Lever faith/family app and the potential separated financial app. Each needs its own identity, value proposition, and target audience definition while maintaining brand coherence.",
+      "acceptanceCriteria": [
+        "Brand positioning document for each app with unique value props",
+        "Target audience defined for each app",
+        "Visual identity direction proposed (colors, tone, naming suggestions)"
+      ],
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "Alex Hormozi",
@@ -142,8 +175,13 @@
     {
       "key": "A-009",
       "text": "Generate daily devotional content based on 8 faith dimensions",
-      "description": "",
-      "acceptanceCriteria": [],
+      "description": "Generate daily devotional content that maps to Lever's 8 faith dimensions (Prayer, Scripture, Gratitude, Service, Fellowship, Worship, Rest, Growth). Each devotional should be practical, actionable, and tied to the dimension's scoring criteria.",
+      "acceptanceCriteria": [
+        "At least 7 devotionals created (one per day of the week)",
+        "Each devotional maps to one or more of the 8 faith dimensions",
+        "Content is practical and includes actionable reflection prompts",
+        "Formatted for display in Lever's faith tab UI"
+      ],
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "Alex",
@@ -157,8 +195,13 @@
     {
       "key": "A-010",
       "text": "Draft faith lesson content for the Lever app (currently 7 lessons)",
-      "description": "",
-      "acceptanceCriteria": [],
+      "description": "Draft new faith lesson content to expand beyond the current 7 lessons in Lever. Lessons should cover deeper topics across the 8 faith dimensions with progressive difficulty and practical application.",
+      "acceptanceCriteria": [
+        "At least 5 new lesson outlines drafted",
+        "Lessons cover dimensions not well-represented in current 7",
+        "Each lesson includes learning objectives and practical exercises",
+        "Content formatted for Lever's lesson display component"
+      ],
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "Alex",
@@ -172,8 +215,13 @@
     {
       "key": "A-011",
       "text": "Draft feature spec for expanding Family tab (currently 455 lines)",
-      "description": "",
-      "acceptanceCriteria": [],
+      "description": "Draft a feature specification for expanding the Family tab in Lever (currently 455 lines). Cover family touchpoint tracking, relationship health scoring, event reminders, and family member profiles for all 6 family members.",
+      "acceptanceCriteria": [
+        "Feature spec covers family touchpoint tracker with frequency goals",
+        "Relationship health scoring algorithm proposed",
+        "Family member profile enhancements specified",
+        "Spec includes UI wireframes or component descriptions"
+      ],
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "Elon",

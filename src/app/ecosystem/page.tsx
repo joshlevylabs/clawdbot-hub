@@ -265,7 +265,11 @@ export default function EcosystemPage() {
     return <div className="text-slate-500 text-center py-12">Failed to load ecosystem data</div>;
   }
 
-  const { programs, shared, flows, syncIssues, revenue } = data;
+  const { programs, shared, flows, revenue } = data;
+  const syncIssues = {
+    critical: data.syncIssues?.critical || [],
+    attention: data.syncIssues?.attention || [],
+  };
 
   return (
     <div className="space-y-8 max-w-7xl">

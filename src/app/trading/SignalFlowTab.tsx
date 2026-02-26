@@ -820,25 +820,22 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
       });
     });
     
-    // 5. Fan-in: Post-persistence consensus nodes → Signal Gating (dot-to-dot connections)
-    const signalGatingNode = nodeRefs.current['signalGating'];
-    if (signalGatingNode) {
-      pipelineData.postPersistenceConsensusPaths?.forEach((path: any, dotIndex: number) => {
-        const postConsNode = nodeRefs.current[`post_consensus_${path.voteCount}`];
-        if (!postConsNode) return;
-        
-        const totalDots = pipelineData.postPersistenceConsensusPaths.length;
-        const fromPos = getRight(postConsNode); // Single dot output from consensus node
-        const toPos = getLeftDot(signalGatingNode, dotIndex, totalDots); // Specific input dot on Signal Gating
-        
-        newConnections.push({
-          from: `post_consensus_${path.voteCount}`, to: 'signalGating',
-          fromPos, toPos,
-          isActive: path.count > 0,
-          isPending: false
-        });
+    // 5. Post-persistence consensus nodes → Signal Gating tier cards (1-to-1 per tier)
+    pipelineData.postPersistenceConsensusPaths?.forEach((path: any) => {
+      const postConsNode = nodeRefs.current[`post_consensus_${path.voteCount}`];
+      const sgTierNode = nodeRefs.current[`signalGating_tier_${path.voteCount}`];
+      if (!postConsNode || !sgTierNode) return;
+      
+      const fromPos = getRight(postConsNode);
+      const toPos = getLeft(sgTierNode);
+      
+      newConnections.push({
+        from: `post_consensus_${path.voteCount}`, to: `signalGating_tier_${path.voteCount}`,
+        fromPos, toPos,
+        isActive: path.count > 0,
+        isPending: false
       });
-    }
+    });
     
     // 6. Sequential tier-to-tier connections: Each tier flows through all remaining nodes
     const seqKeys = ['signalGating', 'confidenceTuning', 'finalFilters', 'output', 'fibonacciLevels', 'agentAnalysis'];

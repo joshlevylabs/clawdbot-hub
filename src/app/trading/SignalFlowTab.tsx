@@ -706,15 +706,18 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
     if (!containerRef.current) return;
     
     const containerRect = containerRef.current.getBoundingClientRect();
+    // getBoundingClientRect returns screen-space (post-transform) coords.
+    // SVG lives inside the scaled container, so we must convert back to local space by dividing by scale.
+    const s = scale || 1;
     const newConnections: (typeof connections[0] & { isActive?: boolean; isPending?: boolean })[] = [];
     
     const getRight = (node: HTMLDivElement) => {
       const r = node.getBoundingClientRect();
-      return { x: r.right - containerRect.left, y: r.top + r.height / 2 - containerRect.top };
+      return { x: (r.right - containerRect.left) / s, y: (r.top + r.height / 2 - containerRect.top) / s };
     };
     const getLeft = (node: HTMLDivElement) => {
       const r = node.getBoundingClientRect();
-      return { x: r.left - containerRect.left, y: r.top + r.height / 2 - containerRect.top };
+      return { x: (r.left - containerRect.left) / s, y: (r.top + r.height / 2 - containerRect.top) / s };
     };
     
     // Helper functions to get specific dot positions on multi-dot nodes
@@ -724,8 +727,8 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
       const startY = totalDots > 1 ? 30 : 50;
       const yPosition = startY + (dotIndex * (dotSpacing / Math.max(1, totalDots - 1)));
       return { 
-        x: r.left - containerRect.left, 
-        y: r.top + yPosition - containerRect.top 
+        x: (r.left - containerRect.left) / s, 
+        y: (r.top + yPosition - containerRect.top) / s 
       };
     };
 
@@ -735,8 +738,8 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
       const startY = totalDots > 1 ? 30 : 50;
       const yPosition = startY + (dotIndex * (dotSpacing / Math.max(1, totalDots - 1)));
       return { 
-        x: r.right - containerRect.left, 
-        y: r.top + yPosition - containerRect.top 
+        x: (r.right - containerRect.left) / s, 
+        y: (r.top + yPosition - containerRect.top) / s 
       };
     };
     
@@ -823,8 +826,9 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
         from: `consensus_${path.voteCount}`, to: `persistence_${path.voteCount}`,
         fromPos: getRight(consNode), toPos: getLeft(persistNode),
         isActive: path.count > 0,
-        isPending: persistenceData.pendingCount > 0
-      });
+        isPending: persistenceData.pendingCount > 0,
+        tierVoteCount: path.voteCount
+      } as any);
     });
     
     // 4. Fan-out: Each per-consensus persistence gate → post-persistence consensus nodes
@@ -837,8 +841,9 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
         from: `persistence_${path.voteCount}`, to: `post_consensus_${path.voteCount}`,
         fromPos: getRight(persistNode), toPos: getLeft(postConsNode),
         isActive: path.count > 0,
-        isPending: false
-      });
+        isPending: false,
+        tierVoteCount: path.voteCount
+      } as any);
     });
     
     // 5. Post-persistence consensus nodes → Signal Gating tier cards (1-to-1 per tier)
@@ -854,8 +859,9 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
         from: `post_consensus_${path.voteCount}`, to: `signalGating_tier_${path.voteCount}`,
         fromPos, toPos,
         isActive: path.count > 0,
-        isPending: false
-      });
+        isPending: false,
+        tierVoteCount: path.voteCount
+      } as any);
     });
     
     // 6. Sequential tier-to-tier connections: Each tier flows through all remaining nodes
@@ -905,7 +911,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
     });
     
     setConnections(dedupedConnections);
-  }, [pipelineData]);
+  }, [pipelineData, scale]);
 
   useEffect(() => {
     updateConnections();

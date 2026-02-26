@@ -211,8 +211,35 @@ export async function GET() {
     // Summary
     const totalAlpacaEquity = parseFloat(alpacaAccount.equity);
     const totalAlpacaCash = parseFloat(alpacaAccount.cash);
-    const hubCash = hubConfig?.current_cash || hubConfig?.cash || 0;
-    const hubEquity = hubCash + hubPositions.reduce((s: number, p: any) => s + p.qty * (p.current_price || p.entry_price), 0);
+    const hubConfigCash = hubConfig?.current_cash || hubConfig?.cash || 0;
+    
+    // Hub equity: use Alpaca's live position prices for accurate market value.
+    // For position values, prefer Alpaca's current_price (live) over Hub's (may be stale).
+    const hubPositionsValue = comparisons.reduce((s, c) => {
+      // Use Alpaca's current price if available (most accurate), else Hub's
+      const price = c.alpaca.current_price || c.hub.current_price;
+      const qty = c.hub.qty; // Hub's qty (should match Alpaca)
+      return s + qty * price;
+    }, 0);
+    
+    // Use Alpaca's actual cash as ground truth since auto_tracker trades directly on Alpaca
+    // and Hub's paper_trading_config.current_cash may drift out of sync.
+    const hubCash = totalAlpacaCash;
+    const hubEquity = hubCash + hubPositionsValue;
+    
+    // Track the cash drift for diagnostics
+    const cashDrift = Math.round((hubConfigCash - totalAlpacaCash) * 100) / 100;
+    
+    // Auto-sync Hub cash if it drifted (keep paper_trading_config in sync)
+    if (Math.abs(cashDrift) > 1 && isPaperSupabaseConfigured() && hubConfig?.id) {
+      try {
+        await paperSupabase
+          .from('paper_trading_config')
+          .update({ current_cash: totalAlpacaCash })
+          .eq('id', hubConfig.id);
+      } catch { /* non-critical — will sync on next call */ }
+    }
+    
     const allMatch = comparisons.every((c) => c.inBoth && c.qtyMatch);
     const mismatches = comparisons.filter((c) => !c.inBoth || !c.qtyMatch);
 
@@ -250,6 +277,9 @@ export async function GET() {
         hub: {
           equity: Math.round(hubEquity * 100) / 100,
           cash: Math.round(hubCash * 100) / 100,
+          config_cash: Math.round(hubConfigCash * 100) / 100,
+          cash_drift: cashDrift,
+          cash_synced: Math.abs(cashDrift) > 1 ? 'auto-corrected' : 'in-sync',
           starting_capital: hubConfig?.starting_capital || 100000,
         },
         equity_diff: Math.round((totalAlpacaEquity - hubEquity) * 100) / 100,

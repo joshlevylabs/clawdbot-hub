@@ -1,5 +1,5 @@
 {
-  "nextAgentId": 13,
+  "nextAgentId": 18,
   "nextJoshuaId": 4,
   "tasks": [
     {
@@ -248,6 +248,81 @@
       "sourceDate": "2026-02-25",
       "createdAt": "2026-02-25T22:34:48.083996-08:00",
       "approvedAt": "2026-02-25T22:34:48.084244-08:00",
+      "approvedBy": "joshua"
+    },
+    {
+      "key": "A-013",
+      "text": "Design prototype agent canvas experience - single screen with 2-widget dynamic display",
+      "description": "",
+      "acceptanceCriteria": [],
+      "tag": "AGENT",
+      "priority": "high",
+      "assignee": "Steve Jobs",
+      "status": "pending",
+      "sourceStandup": "2026-02-26-adhoc-personal-agent-canvas-app-the-death-of-hardcoded-frontends",
+      "sourceDate": "2026-02-26",
+      "createdAt": "2026-02-26T08:56:23.766297-08:00",
+      "approvedAt": "2026-02-26T08:56:23.766651-08:00",
+      "approvedBy": "joshua"
+    },
+    {
+      "key": "A-014",
+      "text": "Architect widget system migration for current Lever tabs",
+      "description": "",
+      "acceptanceCriteria": [],
+      "tag": "AGENT",
+      "priority": "high",
+      "assignee": "Elon",
+      "status": "pending",
+      "sourceStandup": "2026-02-26-adhoc-personal-agent-canvas-app-the-death-of-hardcoded-frontends",
+      "sourceDate": "2026-02-26",
+      "createdAt": "2026-02-26T08:56:41.950738-08:00",
+      "approvedAt": "2026-02-26T08:56:41.951030-08:00",
+      "approvedBy": "joshua"
+    },
+    {
+      "key": "A-015",
+      "text": "Develop agent onboarding psychological framework and guardrails",
+      "description": "",
+      "acceptanceCriteria": [],
+      "tag": "AGENT",
+      "priority": "medium",
+      "assignee": "Jordan Peterson",
+      "status": "pending",
+      "sourceStandup": "2026-02-26-adhoc-personal-agent-canvas-app-the-death-of-hardcoded-frontends",
+      "sourceDate": "2026-02-26",
+      "createdAt": "2026-02-26T08:56:57.254554-08:00",
+      "approvedAt": "2026-02-26T08:56:57.254898-08:00",
+      "approvedBy": "joshua"
+    },
+    {
+      "key": "A-016",
+      "text": "Define revenue model for agent-canvas hybrid architecture",
+      "description": "",
+      "acceptanceCriteria": [],
+      "tag": "AGENT",
+      "priority": "medium",
+      "assignee": "Dave Ramsey",
+      "status": "pending",
+      "sourceStandup": "2026-02-26-adhoc-personal-agent-canvas-app-the-death-of-hardcoded-frontends",
+      "sourceDate": "2026-02-26",
+      "createdAt": "2026-02-26T08:57:11.659706-08:00",
+      "approvedAt": "2026-02-26T08:57:11.660093-08:00",
+      "approvedBy": "joshua"
+    },
+    {
+      "key": "A-017",
+      "text": "Create marketing narrative for agent-first personal app category",
+      "description": "",
+      "acceptanceCriteria": [],
+      "tag": "AGENT",
+      "priority": "medium",
+      "assignee": "Alex Hormozi",
+      "status": "pending",
+      "sourceStandup": "2026-02-26-adhoc-personal-agent-canvas-app-the-death-of-hardcoded-frontends",
+      "sourceDate": "2026-02-26",
+      "createdAt": "2026-02-26T08:57:28.415159-08:00",
+      "approvedAt": "2026-02-26T08:57:28.415457-08:00",
       "approvedBy": "joshua"
     }
   ]

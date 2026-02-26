@@ -1194,13 +1194,15 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
             <div className="flex flex-col gap-2">
               {pipelineData.postPersistenceConsensusPaths?.map((path: any) => {
                 const conf = CONSENSUS_CONFIDENCE[path.voteCount] || 35;
+                const persistenceData = pipelineData.perConsensusPersistence?.[path.voteCount];
+                const persistenceInput = persistenceData?.inputCount ?? path.count;
                 return (
                   <WorkflowNode
                     key={path.voteCount}
                     ref={(el) => { nodeRefs.current[`post_consensus_${path.voteCount}`] = el; }}
                     name={`${path.voteCount} of 8`}
                     description={`${path.count} confirmed`}
-                    inputCount={0}
+                    inputCount={persistenceInput}
                     outputCount={path.count}
                     onClick={() => onStageClick(`post_consensus_${path.voteCount}`)}
                     nodeType="consensus"

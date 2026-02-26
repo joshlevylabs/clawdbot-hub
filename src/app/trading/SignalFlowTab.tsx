@@ -828,21 +828,12 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
     });
     
     // 3. Fan-out: Each non-empty consensus tier → corresponding per-consensus persistence gate
-    // Debug: log available persistence node refs
-    const persistenceKeys = Object.keys(pipelineData.perConsensusPersistence);
-    console.log('[Connections] Step 3: consensus paths:', pipelineData.voteConsensusGate.paths.map((p: any) => p.voteCount));
-    console.log('[Connections] Step 3: persistence keys:', persistenceKeys);
-    console.log('[Connections] Step 3: nodeRefs with persistence:', Object.keys(nodeRefs.current).filter(k => k.startsWith('persistence_')));
-    console.log('[Connections] Step 3: nodeRefs with consensus:', Object.keys(nodeRefs.current).filter(k => k.startsWith('consensus_')));
-    
     pipelineData.voteConsensusGate.paths.forEach((path: any) => {
       const consNode = nodeRefs.current[`consensus_${path.voteCount}`];
       const persistNode = nodeRefs.current[`persistence_${path.voteCount}`];
-      console.log(`[Connections] Step 3: consensus_${path.voteCount}=${!!consNode}, persistence_${path.voteCount}=${!!persistNode}`);
       if (!consNode || !persistNode) return;
       
       const persistenceData = pipelineData.perConsensusPersistence[path.voteCount];
-      console.log(`[Connections] Step 3: persistenceData for ${path.voteCount}:`, !!persistenceData);
       if (!persistenceData) return;
       
       newConnections.push({
@@ -855,13 +846,9 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
     });
     
     // 4. Fan-out: Each per-consensus persistence gate → post-persistence consensus nodes
-    console.log('[Connections] Step 4: postPersistence paths:', pipelineData.postPersistenceConsensusPaths?.map((p: any) => p.voteCount));
-    console.log('[Connections] Step 4: post_consensus refs:', Object.keys(nodeRefs.current).filter(k => k.startsWith('post_consensus_')));
-    
     pipelineData.postPersistenceConsensusPaths?.forEach((path: any) => {
       const persistNode = nodeRefs.current[`persistence_${path.voteCount}`];
       const postConsNode = nodeRefs.current[`post_consensus_${path.voteCount}`];
-      console.log(`[Connections] Step 4: persistence_${path.voteCount}=${!!persistNode}, post_consensus_${path.voteCount}=${!!postConsNode}`);
       if (!persistNode || !postConsNode) return;
       
       newConnections.push({
@@ -1505,19 +1492,18 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
             const isPending = (connection as any).isPending;
             const tierVoteCount = (connection as any).tierVoteCount;
             
-            // Brand: ALL connections use Forge Gold palette
-            // Tier differentiation via opacity and stroke width only — never different hues
+            // Brand: ALL connections use Forge Gold palette — uniform appearance
             let strokeColor = "url(#connectionGradient)";
             let className = "";
-            let opacity = "0.35";
+            let opacity = "0.5";
             let strokeWidth = "2";
             
-            // ALL connections: same Forge Gold color, same brightness, same width
+            // ALL connections: same Forge Gold color, same brightness
             if (isActive || isPending || tierVoteCount !== undefined) {
               strokeColor = "url(#activeGradient)";
               className = "flow-active";
-              opacity = "0.8";
-              strokeWidth = "2";
+              opacity = "1";
+              strokeWidth = "2.5";
             }
             
             return (

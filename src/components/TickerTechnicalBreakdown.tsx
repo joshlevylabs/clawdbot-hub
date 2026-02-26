@@ -510,7 +510,7 @@ export default function TickerTechnicalBreakdown({
 
     return (
       <div className="bg-slate-800/50 rounded-lg p-3 border border-slate-700/50">
-        {/* Header row: symbol, signal, sector, price */}
+        {/* Header row: symbol, signal, sector + confidence (for Confidence Tuning) or momentum/price (for others) */}
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
             <span className="font-mono font-semibold text-slate-200">{symbol}</span>
@@ -524,70 +524,65 @@ export default function TickerTechnicalBreakdown({
             )}
           </div>
           <div className="flex items-center gap-3 text-xs">
-            {rawData.momentum_20d !== undefined && (
-              <span className={rawData.momentum_20d >= 0 ? 'text-emerald-400' : 'text-red-400'}>
-                20d: {rawData.momentum_20d >= 0 ? '+' : ''}{rawData.momentum_20d.toFixed(1)}%
-              </span>
-            )}
-            {currentPrice && (
-              <span className="text-slate-400">
-                $ {currentPrice.toFixed(2)}
-              </span>
+            {isConfidenceTuning ? (
+              /* Show confidence score prominently for Confidence Tuning stage */
+              <div className="flex items-center gap-2">
+                <div className="w-16 h-1.5 bg-slate-700 rounded-full overflow-hidden">
+                  <div 
+                    className={`h-full transition-all ${
+                      rawData.asset_confidence >= 0.7 ? 'bg-emerald-400' : 
+                      rawData.asset_confidence >= 0.4 ? 'bg-amber-400' : 'bg-red-400'
+                    }`}
+                    style={{ width: `${Math.min(rawData.asset_confidence * 100, 100)}%` }}
+                  />
+                </div>
+                <span className={`font-semibold ${
+                  rawData.asset_confidence >= 0.7 ? 'text-emerald-400' : 
+                  rawData.asset_confidence >= 0.4 ? 'text-amber-400' : 'text-red-400'
+                }`}>{(rawData.asset_confidence * 100).toFixed(0)}%</span>
+              </div>
+            ) : (
+              /* Default: show momentum + price for Signal Gating / Final Filters */
+              <>
+                {rawData.momentum_20d !== undefined && (
+                  <span className={rawData.momentum_20d >= 0 ? 'text-emerald-400' : 'text-red-400'}>
+                    20d: {rawData.momentum_20d >= 0 ? '+' : ''}{rawData.momentum_20d.toFixed(1)}%
+                  </span>
+                )}
+                {currentPrice && (
+                  <span className="text-slate-400">
+                    $ {currentPrice.toFixed(2)}
+                  </span>
+                )}
+              </>
             )}
           </div>
         </div>
 
-        {/* Confidence Tuning: structured grid layout for clearer data display */}
+        {/* Confidence Tuning: structured grid layout for modifier details */}
         {isConfidenceTuning && (
           <div className="mt-2 space-y-2">
-            {/* Top row: Regime badge and Confidence with progress bar */}
-            <div className="flex items-center justify-between">
+            {/* Row: Regime, Role, Rotation + adjustment tags */}
+            <div className="flex items-center justify-between flex-wrap gap-y-1">
               <div className="flex items-center gap-3">
-                {/* Regime badge */}
                 <div className="flex items-center gap-1.5">
-                  <span className="text-xs text-slate-500 font-medium">Regime:</span>
-                  <span className={`px-2 py-0.5 rounded text-xs font-medium capitalize ${
+                  <span className="text-xs text-slate-500">Regime:</span>
+                  <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium capitalize ${
                     rawData.regime === 'bull' ? 'bg-emerald-900/50 text-emerald-300 border border-emerald-800' :
                     rawData.regime === 'bear' ? 'bg-red-900/50 text-red-300 border border-red-800' :
                     'bg-amber-900/50 text-amber-300 border border-amber-800'
                   }`}>{rawData.regime}</span>
                 </div>
-                
-                {/* Asset Role */}
                 <div className="flex items-center gap-1.5">
-                  <span className="text-xs text-slate-500 font-medium">Role:</span>
-                  <span className="text-xs font-medium text-slate-300 capitalize">{rawData.role?.replace('_', ' ') || '—'}</span>
+                  <span className="text-xs text-slate-500">Role:</span>
+                  <span className="text-xs text-slate-300 capitalize">{rawData.role?.replace('_', ' ') || '—'}</span>
                 </div>
-              </div>
-
-              {/* Confidence score with progress bar */}
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-slate-500 font-medium">Confidence:</span>
-                <div className="flex items-center gap-2">
-                  <div className="w-16 h-1.5 bg-slate-700 rounded-full overflow-hidden">
-                    <div 
-                      className={`h-full transition-all ${
-                        rawData.asset_confidence >= 0.7 ? 'bg-emerald-400' : 
-                        rawData.asset_confidence >= 0.4 ? 'bg-amber-400' : 'bg-red-400'
-                      }`}
-                      style={{ width: `${Math.min(rawData.asset_confidence * 100, 100)}%` }}
-                    />
-                  </div>
-                  <span className={`text-xs font-medium ${
-                    rawData.asset_confidence >= 0.7 ? 'text-emerald-400' : 
-                    rawData.asset_confidence >= 0.4 ? 'text-amber-400' : 'text-red-400'
-                  }`}>{(rawData.asset_confidence * 100).toFixed(0)}%</span>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-xs text-slate-500">Rotation:</span>
+                  <span className={`text-xs font-medium ${getModifierColor(rawData.rotation_modifier)}`}>
+                    {rawData.rotation_modifier.toFixed(2)}×
+                  </span>
                 </div>
-              </div>
-            </div>
-
-            {/* Bottom row: Rotation modifier and adjustments */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1.5">
-                <span className="text-xs text-slate-500 font-medium">Rotation:</span>
-                <span className={`text-xs font-medium ${getModifierColor(rawData.rotation_modifier)}`}>
-                  {rawData.rotation_modifier.toFixed(2)}×
-                </span>
               </div>
 
               {/* Applied adjustments as tags */}

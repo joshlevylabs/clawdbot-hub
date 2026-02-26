@@ -1,7 +1,6 @@
 {
+  "global_counter": 1,
   "counters": {
-    "evening-session": 1
-  },
-  "abbreviations": {},
-  "global_counter": 1
+    "adhoc-hub-standup-system-overhaul": 1
+  }
 }

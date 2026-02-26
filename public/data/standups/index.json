@@ -2,13 +2,13 @@
   "standups": [
     {
       "date": "2026-02-25",
-      "time": "20:00",
-      "type": "evening-session",
-      "typeName": "Evening Session",
+      "time": "17:44",
+      "type": "adhoc-hub-standup-system-overhaul",
+      "typeName": "Hub Standup System Overhaul",
       "typeEmoji": "\ud83c\udf06",
-      "topic": "Evening Session \u2014 Wednesday Feb 25",
-      "file": "2026-02-25-evening-session.json",
-      "tokenCost": 0.0388,
+      "topic": "Hub Standup System Overhaul \u2014 Wednesday Feb 25",
+      "file": "2026-02-25-adhoc-hub-standup-system-overhaul.json",
+      "tokenCost": 0.0394,
       "verticals": [],
       "initiatives": [],
       "instanceKey": "STD-1"

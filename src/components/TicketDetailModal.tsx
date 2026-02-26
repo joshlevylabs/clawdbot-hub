@@ -419,6 +419,132 @@ function AcceptanceCriteriaSection({ task, onUpdate }: { task: Task; onUpdate: (
   );
 }
 
+// Resolution Section Component (shown for done tickets)
+function ResolutionSection({ task, onUpdate }: { task: Task; onUpdate: (updates: Partial<Task>) => void }) {
+  const [resolution, setResolution] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
+  const [lastSaved, setLastSaved] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch("/api/task-notes")
+      .then(res => res.json())
+      .then(notes => {
+        if (notes[task.key]?.resolution) {
+          setResolution(notes[task.key].resolution);
+        }
+      })
+      .catch(console.error);
+  }, [task.key]);
+
+  const handleSave = async (value: string) => {
+    setIsSaving(true);
+    try {
+      await fetch("/api/task-notes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ taskKey: task.key, resolution: value })
+      });
+      setLastSaved("Saved ✓");
+      setTimeout(() => setLastSaved(null), 2000);
+    } catch (error) {
+      console.error("Failed to save resolution:", error);
+      setLastSaved("Error saving");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleBlur = () => {
+    if (resolution.trim() !== "") {
+      handleSave(resolution);
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      <h2 className="text-sm font-semibold text-emerald-400 uppercase tracking-wider flex items-center gap-2">
+        <CheckCircle className="w-4 h-4" />
+        Resolution
+      </h2>
+      <div className="space-y-2">
+        <textarea
+          value={resolution}
+          onChange={(e) => setResolution(e.target.value)}
+          onBlur={handleBlur}
+          placeholder="What was done to complete this ticket. Describe the work, commits, files changed, decisions made."
+          className="w-full h-28 bg-emerald-900/10 border border-emerald-800/30 rounded-lg p-3 text-slate-200 placeholder-slate-500 resize-none"
+        />
+        {(isSaving || lastSaved) && (
+          <p className="text-xs text-slate-500">{isSaving ? "Saving..." : lastSaved}</p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// Verify Section Component (shown for done tickets)
+function VerifySection({ task, onUpdate }: { task: Task; onUpdate: (updates: Partial<Task>) => void }) {
+  const [verify, setVerify] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
+  const [lastSaved, setLastSaved] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch("/api/task-notes")
+      .then(res => res.json())
+      .then(notes => {
+        if (notes[task.key]?.verify) {
+          setVerify(notes[task.key].verify);
+        }
+      })
+      .catch(console.error);
+  }, [task.key]);
+
+  const handleSave = async (value: string) => {
+    setIsSaving(true);
+    try {
+      await fetch("/api/task-notes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ taskKey: task.key, verify: value })
+      });
+      setLastSaved("Saved ✓");
+      setTimeout(() => setLastSaved(null), 2000);
+    } catch (error) {
+      console.error("Failed to save verification steps:", error);
+      setLastSaved("Error saving");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleBlur = () => {
+    if (verify.trim() !== "") {
+      handleSave(verify);
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      <h2 className="text-sm font-semibold text-cyan-400 uppercase tracking-wider flex items-center gap-2">
+        <AlertTriangle className="w-4 h-4" />
+        How to Verify
+      </h2>
+      <div className="space-y-2">
+        <textarea
+          value={verify}
+          onChange={(e) => setVerify(e.target.value)}
+          onBlur={handleBlur}
+          placeholder="Steps to test and verify this work. How can Joshua confirm it's actually done?"
+          className="w-full h-28 bg-cyan-900/10 border border-cyan-800/30 rounded-lg p-3 text-slate-200 placeholder-slate-500 resize-none"
+        />
+        {(isSaving || lastSaved) && (
+          <p className="text-xs text-slate-500">{isSaving ? "Saving..." : lastSaved}</p>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // Source Standup Link Section Component
 function SourceStandupLinkSection({ task }: { task: Task }) {
   const handleViewSourceStandup = () => {
@@ -755,6 +881,12 @@ export default function TicketDetailModal({ task, onClose, onUpdate }: TicketDet
             <DescriptionSection task={localTask} onUpdate={onUpdate} />
             {localTask.tag === "PLAN" && <SpecDocumentSection task={localTask} />}
             <AcceptanceCriteriaSection task={localTask} onUpdate={onUpdate} />
+            {(localTask.status === "done" || localTask.status === "done_but_unverified") && (
+              <>
+                <ResolutionSection task={localTask} onUpdate={onUpdate} />
+                <VerifySection task={localTask} onUpdate={onUpdate} />
+              </>
+            )}
             <SourceStandupLinkSection task={localTask} />
             <NotesForTheoSection task={localTask} onUpdate={onUpdate} />
 

@@ -17,6 +17,8 @@ interface TaskNote {
   description?: string;
   acceptanceCriteria?: { text: string; completed: boolean }[];
   sprintNotes?: string;
+  resolution?: string;
+  verify?: string;
 }
 
 interface TaskNotes {
@@ -71,6 +73,10 @@ async function loadTaskNotes(): Promise<TaskNotes> {
             notes[taskKey].description = value;
           } else if (field === "sprintNotes") {
             notes[taskKey].sprintNotes = value;
+          } else if (field === "resolution") {
+            notes[taskKey].resolution = value;
+          } else if (field === "verify") {
+            notes[taskKey].verify = value;
           } else if (field === "acceptanceCriteria") {
             try {
               notes[taskKey].acceptanceCriteria = JSON.parse(value);
@@ -140,6 +146,12 @@ async function saveTaskNote(taskKey: string, note: TaskNote): Promise<boolean> {
   if (note.sprintNotes !== undefined) {
     results.push(await saveNoteField(taskKey, "sprintNotes", note.sprintNotes));
   }
+  if (note.resolution !== undefined) {
+    results.push(await saveNoteField(taskKey, "resolution", note.resolution));
+  }
+  if (note.verify !== undefined) {
+    results.push(await saveNoteField(taskKey, "verify", note.verify));
+  }
   if (note.acceptanceCriteria !== undefined) {
     results.push(await saveNoteField(taskKey, "acceptanceCriteria", JSON.stringify(note.acceptanceCriteria)));
   }
@@ -162,7 +174,7 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { taskKey, description, acceptanceCriteria, sprintNotes } = body;
+    const { taskKey, description, acceptanceCriteria, sprintNotes, resolution, verify } = body;
 
     if (!taskKey) {
       return NextResponse.json({ error: "Task key is required" }, { status: 400 });
@@ -172,6 +184,8 @@ export async function POST(request: NextRequest) {
     if (description !== undefined) noteUpdate.description = description;
     if (acceptanceCriteria !== undefined) noteUpdate.acceptanceCriteria = acceptanceCriteria;
     if (sprintNotes !== undefined) noteUpdate.sprintNotes = sprintNotes;
+    if (resolution !== undefined) noteUpdate.resolution = resolution;
+    if (verify !== undefined) noteUpdate.verify = verify;
 
     const success = await saveTaskNote(taskKey, noteUpdate);
 

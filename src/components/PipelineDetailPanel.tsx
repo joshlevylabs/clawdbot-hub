@@ -206,7 +206,7 @@ const STRATEGY_DESCRIPTIONS: Record<string, string> = {
   '7-of-8 Vote Consensus': "Tickers where 7 of the 8 strategies voted BUY. Near-unanimous consensus.",
   '8-of-8 Vote Consensus': "Tickers where all 8 strategies unanimously voted BUY. Maximum consensus signals with highest confidence and lowest risk.",
   'Signal Gating': "A pass-through filter that operates on persistence-confirmed signals only. Applies defensive logic to reduce risk without modifying signal scores.\n\n**Bear Regime Suppression:**\n• Converts BUY signals to HOLD when a ticker's regime is bearish (price below key moving averages)\n• Prevents buying into downtrends regardless of strategy consensus strength\n\n**Sell Suppression:**\n• Converts SELL signals to HOLD to prevent panic selling during uncertain market conditions\n• Maintains defensive positioning rather than actively shorting\n\n**Pass-Through Design:**\n• No score modification — only signal suppression (BUY→HOLD, SELL→HOLD)\n• Operates exclusively on signals that have already passed 2-day persistence confirmation\n• Consensus tier structure is preserved through gating",
-  'Confidence Tuning': "Adjusts raw signal confidence using multiple contextual factors to produce a final confidence score.\n\n**Adjustment factors:**\n• Regime weight: bull regime boosts confidence, bear reduces it\n• Asset role evaluation: core vs. satellite positioning\n• Sector rotation modifier: favors sectors in the current cycle phase\n• Sideways penalty: reduces confidence in range-bound markets\n• Kalshi prediction market data: incorporates market-implied probabilities when available",
+  'Confidence Tuning': "Assigns each ticker a confidence score (0-100%) based on multiple contextual factors, then filters signals based on confidence thresholds.\n\n**How confidence is calculated:**\n• Each ticker starts with a base confidence score from the raw signal strength\n• **Regime weight modifier:** Bull regime multiplies confidence by 1.2×, sideways by 1.0×, bear by 0.6×\n• **Sector rotation modifier:** Sectors in favorable rotation phase get boosted (>1.0×), unfavorable get penalized (<1.0×)\n• **Asset role consideration:** Core positions (All-Weather) vs Satellite positions are treated differently in the calculation\n• **Sideways penalty:** Range-bound markets get confidence reduced to account for lower trend reliability\n• **Kalshi adjustment:** When prediction market data is available, incorporates market-implied probabilities\n\n**Final filtering by confidence:**\n• **High confidence (≥70%):** Signal passes through unchanged\n• **Medium confidence (40-70%):** Signal may be moderated but generally passes\n• **Low confidence (<40%):** Signal gets filtered to HOLD to prevent weak entries\n\nThis ensures only signals with sufficient contextual support reach the portfolio, filtering out trades that may look good in isolation but lack broader market confirmation.",
   'Final Filters': "Last-pass filters that enforce portfolio construction rules and risk management.\n\n**Filters:**\n• Cluster limit: max 2 BUY signals per sector (prevents over-concentration)\n• Asset confidence threshold: minimum confidence required to pass\n• Crash mode protection: suppresses all BUY signals during market crashes (VIX spike + broad decline)\n• Multiplier caps: limits maximum position sizing multipliers",
 };
 
@@ -1865,7 +1865,10 @@ export default function PipelineDetailPanel({
   const hasPending = pendingCount > 0;
 
   // Get strategy description
-  const strategyDescription = STRATEGY_DESCRIPTIONS[stageDetails.name] || stageDetails.description;
+  // Strip tier suffix like "(3/8)" to match STRATEGY_DESCRIPTIONS keys
+  const baseStageNameMatch = stageDetails.name.match(/^(.+?)\s*\(/);
+  const baseStageName = baseStageNameMatch ? baseStageNameMatch[1].trim() : stageDetails.name;
+  const strategyDescription = STRATEGY_DESCRIPTIONS[stageDetails.name] || STRATEGY_DESCRIPTIONS[baseStageName] || stageDetails.description;
 
   // Filter tickers based on search query
   const filterTickers = (tickers: TickerDetail[]) => {
@@ -2308,13 +2311,7 @@ export default function PipelineDetailPanel({
           <>
           {/* ======= DEFAULT MODAL (all other strategies) ======= */}
 
-          {/* Strategy Technical Overview - for individual strategies */}
-          <StrategyTechnicalOverview 
-            strategyName={stageDetails.name}
-            tickers={[...stageDetails.passedTickers, ...stageDetails.filteredTickers]}
-          />
-
-          {/* Strategy Description Card - keep existing text description below */}
+          {/* Strategy Description Card - explanation first to set context */}
           <div className="p-4 sm:p-6 border-b border-slate-700/50 bg-slate-800/30">
             <h3 className="text-base sm:text-lg font-semibold text-slate-200 mb-2">How This Strategy Works</h3>
             <div className="text-slate-300 text-sm leading-relaxed space-y-2">
@@ -2336,6 +2333,12 @@ export default function PipelineDetailPanel({
               })}
             </div>
           </div>
+
+          {/* Strategy Technical Overview - visual analysis after explanation */}
+          <StrategyTechnicalOverview 
+            strategyName={stageDetails.name}
+            tickers={[...stageDetails.passedTickers, ...stageDetails.filteredTickers]}
+          />
 
           {/* Version History - Show only for individual strategy modals */}
           {strategyData && isIndividualStrategy(stageDetails.name) && (

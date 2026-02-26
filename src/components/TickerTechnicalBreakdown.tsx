@@ -537,46 +537,78 @@ export default function TickerTechnicalBreakdown({
           </div>
         </div>
 
-        {/* Confidence Tuning: show all modifier values */}
+        {/* Confidence Tuning: structured grid layout for clearer data display */}
         {isConfidenceTuning && (
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
-            <div className="flex items-center gap-1">
-              <span className="text-slate-500">Regime:</span>
-              <span className={`font-medium capitalize ${
-                rawData.regime === 'bull' ? 'text-emerald-400' : rawData.regime === 'bear' ? 'text-red-400' : 'text-amber-400'
-              }`}>{rawData.regime}</span>
+          <div className="mt-2 space-y-2">
+            {/* Top row: Regime badge and Confidence with progress bar */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                {/* Regime badge */}
+                <div className="flex items-center gap-1.5">
+                  <span className="text-xs text-slate-500 font-medium">Regime:</span>
+                  <span className={`px-2 py-0.5 rounded text-xs font-medium capitalize ${
+                    rawData.regime === 'bull' ? 'bg-emerald-900/50 text-emerald-300 border border-emerald-800' :
+                    rawData.regime === 'bear' ? 'bg-red-900/50 text-red-300 border border-red-800' :
+                    'bg-amber-900/50 text-amber-300 border border-amber-800'
+                  }`}>{rawData.regime}</span>
+                </div>
+                
+                {/* Asset Role */}
+                <div className="flex items-center gap-1.5">
+                  <span className="text-xs text-slate-500 font-medium">Role:</span>
+                  <span className="text-xs font-medium text-slate-300 capitalize">{rawData.role?.replace('_', ' ') || '—'}</span>
+                </div>
+              </div>
+
+              {/* Confidence score with progress bar */}
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-slate-500 font-medium">Confidence:</span>
+                <div className="flex items-center gap-2">
+                  <div className="w-16 h-1.5 bg-slate-700 rounded-full overflow-hidden">
+                    <div 
+                      className={`h-full transition-all ${
+                        rawData.asset_confidence >= 0.7 ? 'bg-emerald-400' : 
+                        rawData.asset_confidence >= 0.4 ? 'bg-amber-400' : 'bg-red-400'
+                      }`}
+                      style={{ width: `${Math.min(rawData.asset_confidence * 100, 100)}%` }}
+                    />
+                  </div>
+                  <span className={`text-xs font-medium ${
+                    rawData.asset_confidence >= 0.7 ? 'text-emerald-400' : 
+                    rawData.asset_confidence >= 0.4 ? 'text-amber-400' : 'text-red-400'
+                  }`}>{(rawData.asset_confidence * 100).toFixed(0)}%</span>
+                </div>
+              </div>
             </div>
-            <span className="text-slate-700">|</span>
-            <div className="flex items-center gap-1">
-              <span className="text-slate-500">Confidence:</span>
-              <span className={`font-medium ${
-                rawData.asset_confidence >= 0.7 ? 'text-emerald-400' : rawData.asset_confidence >= 0.4 ? 'text-amber-400' : 'text-red-400'
-              }`}>{(rawData.asset_confidence * 100).toFixed(0)}%</span>
+
+            {/* Bottom row: Rotation modifier and adjustments */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs text-slate-500 font-medium">Rotation:</span>
+                <span className={`text-xs font-medium ${getModifierColor(rawData.rotation_modifier)}`}>
+                  {rawData.rotation_modifier.toFixed(2)}×
+                </span>
+              </div>
+
+              {/* Applied adjustments as tags */}
+              <div className="flex items-center gap-2">
+                {rawData.sideways_applied && (
+                  <span className="px-1.5 py-0.5 bg-amber-900/50 text-amber-300 border border-amber-800 rounded text-[10px] font-medium">
+                    ⚠ Sideways
+                  </span>
+                )}
+                {rawData.kalshi_applied && (
+                  <span className="px-1.5 py-0.5 bg-blue-900/50 text-blue-300 border border-blue-800 rounded text-[10px] font-medium">
+                    📊 Kalshi
+                  </span>
+                )}
+                {reason && (
+                  <span className="px-1.5 py-0.5 bg-slate-700/50 text-slate-400 border border-slate-600 rounded text-[10px] font-medium">
+                    {reason}
+                  </span>
+                )}
+              </div>
             </div>
-            <span className="text-slate-700">|</span>
-            <div className="flex items-center gap-1">
-              <span className="text-slate-500">Rotation:</span>
-              <span className={`font-medium ${getModifierColor(rawData.rotation_modifier)}`}>
-                {rawData.rotation_modifier.toFixed(2)}×
-              </span>
-            </div>
-            <span className="text-slate-700">|</span>
-            <div className="flex items-center gap-1">
-              <span className="text-slate-500">Role:</span>
-              <span className="font-medium text-slate-300 capitalize">{rawData.role?.replace('_', ' ') || '—'}</span>
-            </div>
-            {rawData.sideways_applied && (
-              <>
-                <span className="text-slate-700">|</span>
-                <span className="text-amber-400 font-medium">⚠ Sideways</span>
-              </>
-            )}
-            {rawData.kalshi_applied && (
-              <>
-                <span className="text-slate-700">|</span>
-                <span className="text-blue-400 font-medium">📊 Kalshi</span>
-              </>
-            )}
           </div>
         )}
 

@@ -1040,7 +1040,7 @@ export default function MorningBriefPage() {
 
   // Desktop View
   return (
-    <div className="space-y-8 max-w-6xl">
+    <div className="space-y-8">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>

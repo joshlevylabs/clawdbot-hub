@@ -565,7 +565,7 @@ export default function BrandGuidelinesPage() {
   const [activeTab, setActiveTab] = useState<TabId>("dna");
 
   return (
-    <div className="max-w-7xl mx-auto" style={{ backgroundColor: "#0B0B11", color: "#F5F5F0" }}>
+    <div style={{ backgroundColor: "#0B0B11", color: "#F5F5F0" }}>
       {/* Header */}
       <div className="mb-6">
         <div className="flex items-center gap-4 mb-4">

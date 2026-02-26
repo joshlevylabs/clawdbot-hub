@@ -4391,7 +4391,7 @@ function CronJobsTab() {
 
   if (loading) {
     return (
-      <div className="max-w-5xl mx-auto space-y-4">
+      <div className="space-y-4">
         <div className="animate-pulse space-y-4">
           {[...Array(4)].map((_, i) => (
             <div key={i} className="h-24 bg-slate-800/30 rounded-xl" />
@@ -4402,7 +4402,7 @@ function CronJobsTab() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto space-y-6">
+    <div className="space-y-6">
       {/* Stats bar + group toggle */}
       <div className="flex flex-wrap items-center gap-x-6 gap-y-2 px-5 py-3 bg-slate-950/60 rounded-xl border border-slate-800/60 backdrop-blur-sm">
         <div className="flex items-center gap-1.5">
@@ -5038,7 +5038,7 @@ export default function OrgChartPage() {
       ` }} />
 
       {/* Header */}
-      <div className="flex items-center gap-4 max-w-6xl mx-auto">
+      <div className="flex items-center gap-4">
         <div className="w-11 h-11 bg-primary-600/20 rounded-xl flex items-center justify-center border border-primary-500/10">
           <Network className="w-5 h-5 text-primary-400" strokeWidth={1.5} />
         </div>
@@ -5053,7 +5053,7 @@ export default function OrgChartPage() {
       </div>
 
       {/* Page Tab Bar */}
-      <div className="max-w-6xl mx-auto">
+      <div className="">
         <PageTabBar activeTab={activePageTab} onTabChange={setActivePageTab} />
       </div>
 
@@ -5061,12 +5061,12 @@ export default function OrgChartPage() {
       {activePageTab === "org-chart" && (
         <>
           {/* Stats */}
-          <div className="max-w-6xl mx-auto">
+          <div className="">
             <StatsAndLegendBar agents={agents} />
           </div>
 
           {/* Org Chart */}
-          <div className="max-w-6xl mx-auto">
+          <div className="">
             <DesktopTree agents={agents} selectedId={selectedId} onSelect={handleSelect} />
             <MobileTree agents={agents} selectedId={selectedId} onSelect={handleSelect} />
 
@@ -5109,13 +5109,13 @@ export default function OrgChartPage() {
       )}
 
       {activePageTab === "fleet" && (
-        <div className="max-w-6xl mx-auto">
+        <div className="">
           <FleetTab />
         </div>
       )}
 
       {activePageTab === "protocols" && (
-        <div className="max-w-6xl mx-auto">
+        <div className="">
           <ProtocolsSection />
         </div>
       )}

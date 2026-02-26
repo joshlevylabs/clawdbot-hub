@@ -1300,7 +1300,7 @@ export default function FleetPage() {
   /* Loading state */
   if (loading) {
     return (
-      <div className="space-y-6 max-w-6xl">
+      <div className="space-y-6">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-violet-600/20 rounded-lg flex items-center justify-center">
             <Cpu className="w-5 h-5 text-violet-400 animate-pulse" strokeWidth={1.5} />
@@ -1326,7 +1326,7 @@ export default function FleetPage() {
   /* Error state */
   if (error || !data) {
     return (
-      <div className="space-y-6 max-w-6xl">
+      <div className="space-y-6">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-red-600/20 rounded-lg flex items-center justify-center">
             <Cpu className="w-5 h-5 text-red-400" strokeWidth={1.5} />
@@ -1354,7 +1354,7 @@ export default function FleetPage() {
   const s = data.summary;
 
   return (
-    <div className="space-y-6 max-w-6xl">
+    <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">

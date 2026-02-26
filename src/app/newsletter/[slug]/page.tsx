@@ -118,7 +118,7 @@ export default function NewsletterDetailPage() {
   if (!newsletter) return null;
 
   return (
-    <div className="max-w-5xl">
+    <div className="">
       {/* Back Link */}
       <Link
         href="/newsletter"

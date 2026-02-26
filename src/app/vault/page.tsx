@@ -1020,7 +1020,7 @@ export default function VaultPage() {
 
   /* ─── UNLOCKED STATE ─── */
   return (
-    <div className="space-y-6 max-w-6xl">
+    <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div className="flex items-center gap-3">

@@ -914,7 +914,7 @@ export default function MREDashboard() {
 
   return (
     <div className="min-h-screen bg-gray-900 text-white p-6">
-      <div className="max-w-7xl mx-auto">
+      <div>
         {/* Header with Live Timer */}
         <div className="flex justify-between items-start mb-8">
           <div>

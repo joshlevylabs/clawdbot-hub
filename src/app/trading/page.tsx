@@ -550,7 +550,7 @@ export default function TradingPage() {
     <div className="min-h-screen bg-slate-900">
       {/* Sticky Header with Unified Tab Bar */}
       <div className="sticky top-0 z-10 bg-slate-900/95 backdrop-blur-sm border-b border-slate-800 px-4 lg:px-6 py-3">
-        <div className="max-w-7xl mx-auto">
+        <div>
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-3">
               <h1 className="text-xl font-bold text-slate-100 flex items-center gap-2">
@@ -618,7 +618,7 @@ export default function TradingPage() {
 
       {/* Tab Content */}
       <div className="p-4 lg:p-6">
-        <div className="max-w-7xl mx-auto space-y-6">
+        <div className="space-y-6">
 
           {/* Loading state for portfolio tabs */}
           {isPortfolioTab && loading && (

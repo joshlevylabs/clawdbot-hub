@@ -416,7 +416,7 @@ export default function BulletinPage() {
 
   if (loading) {
     return (
-      <div className="space-y-4 max-w-7xl">
+      <div className="space-y-4">
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
           {[1, 2, 3, 4, 5].map((i) => (
             <div key={i} className="bg-slate-900/50 rounded-xl border border-slate-800 p-3 h-16 animate-pulse" />
@@ -432,7 +432,7 @@ export default function BulletinPage() {
   }
 
   return (
-    <div className="space-y-6 max-w-7xl">
+    <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>

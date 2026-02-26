@@ -922,7 +922,9 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
   // Create bezier curve path
   const createBezierPath = (from: { x: number; y: number }, to: { x: number; y: number }) => {
     const dx = to.x - from.x;
-    const controlPointOffset = Math.min(dx * 0.4, 150);
+    const dy = Math.abs(to.y - from.y);
+    // Use tighter control points when nodes are at similar Y to prevent visual crossing
+    const controlPointOffset = dy < 50 ? Math.min(dx * 0.3, 80) : Math.min(dx * 0.4, 150);
     
     return `M ${from.x} ${from.y} C ${from.x + controlPointOffset} ${from.y} ${to.x - controlPointOffset} ${to.y} ${to.x} ${to.y}`;
   };
@@ -1183,7 +1185,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
                       description={`${inputCount} → ${path.count}`}
                       inputCount={inputCount}
                       outputCount={path.count}
-                      onClick={() => onStageClick('signalGating')}
+                      onClick={() => onStageClick('signalGating_tier_' + path.voteCount)}
                       nodeType="filter"
                       className={`max-w-[140px] border-2 ${path.voteCount >= 3 ? 'border-emerald-500/40' : path.voteCount >= 2 ? 'border-blue-400/40' : 'border-slate-500/40'}`}
                       style={{ padding: '8px', minHeight: '80px' }}
@@ -1218,7 +1220,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
                     description={`${inputCount} → ${outputCount}`}
                     inputCount={inputCount}
                     outputCount={outputCount}
-                    onClick={() => onStageClick('confidenceTuning')}
+                    onClick={() => onStageClick('confidenceTuning_tier_' + path.voteCount)}
                     nodeType="modifier"
                     className={`max-w-[140px] border-2 ${path.voteCount >= 3 ? 'border-emerald-500/40' : path.voteCount >= 2 ? 'border-blue-400/40' : 'border-slate-500/40'}`}
                     style={{ padding: '8px', minHeight: '80px' }}
@@ -1255,7 +1257,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
                     description={`${inputCount} → ${outputCount}`}
                     inputCount={inputCount}
                     outputCount={outputCount}
-                    onClick={() => onStageClick('finalFilters')}
+                    onClick={() => onStageClick('finalFilters_tier_' + path.voteCount)}
                     nodeType="filter"
                     className={`max-w-[140px] border-2 ${path.voteCount >= 3 ? 'border-emerald-500/40' : path.voteCount >= 2 ? 'border-blue-400/40' : 'border-slate-500/40'}`}
                     style={{ padding: '8px', minHeight: '80px' }}
@@ -1292,7 +1294,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
                     description={`${inputCount} → ${outputCount}`}
                     inputCount={inputCount}
                     outputCount={outputCount}
-                    onClick={() => onStageClick('output')}
+                    onClick={() => onStageClick('output_tier_' + path.voteCount)}
                     nodeType="output"
                     className={`max-w-[140px] border-2 ${path.voteCount >= 3 ? 'border-emerald-500/40' : path.voteCount >= 2 ? 'border-blue-400/40' : 'border-slate-500/40'}`}
                     style={{ padding: '8px', minHeight: '80px' }}
@@ -1329,7 +1331,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
                     description={`${inputCount} signals`}
                     inputCount={inputCount}
                     outputCount={outputCount}
-                    onClick={() => onStageClick('fibonacciLevels')}
+                    onClick={() => onStageClick('fibonacciLevels_tier_' + path.voteCount)}
                     nodeType="modifier"
                     className={`max-w-[120px] border-2 ${path.voteCount >= 3 ? 'border-emerald-500/40' : path.voteCount >= 2 ? 'border-blue-400/40' : 'border-slate-500/40'}`}
                     style={{ padding: '6px', minHeight: '70px' }}
@@ -1366,7 +1368,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
                     description={`${inputCount} signals`}
                     inputCount={inputCount}
                     outputCount={outputCount}
-                    onClick={() => onStageClick('agentAnalysis')}
+                    onClick={() => onStageClick('agentAnalysis_tier_' + path.voteCount)}
                     nodeType="output"
                     className={`max-w-[120px] border-2 ${path.voteCount >= 3 ? 'border-emerald-500/40' : path.voteCount >= 2 ? 'border-blue-400/40' : 'border-slate-500/40'}`}
                     style={{ padding: '6px', minHeight: '70px' }}
@@ -1803,7 +1805,71 @@ export default function SignalFlowTab() {
       return;
     }
 
-    // Removed: actionable signals handler - now handled by combined signalGating handler
+    // Handle per-tier clicks for sequential stages (signalGating, confidenceTuning, finalFilters, output, fibonacciLevels, agentAnalysis)
+    const tierStageMatch = stageKey.match(/^(signalGating|confidenceTuning|finalFilters|output|fibonacciLevels|agentAnalysis)_tier_(\d+)$/);
+    if (tierStageMatch) {
+      const [, stageName, voteCountStr] = tierStageMatch;
+      const voteCount = parseInt(voteCountStr);
+      const stage = pipelineData[stageName as keyof typeof pipelineData] as any;
+      if (!stage) return;
+      
+      // Get tier-specific data
+      const tierData = stage.perTierData?.[voteCount];
+      const tierLabel = voteCount >= 3 ? `≥3/8` : `${voteCount}/8`;
+      
+      // Filter passed/filtered tickers to only this tier
+      const tierFilter = (t: any) => {
+        const tVotes = pipelineData.strategyVotes.filter((sv: any) => {
+          if (t.strategy_votes?.[sv.key as keyof typeof t.strategy_votes] === true) return true;
+          if (t.persistence_by_strategy && (t.persistence_by_strategy[sv.key] || 0) > 0) return true;
+          return false;
+        }).length;
+        return voteCount >= 3 ? tVotes >= 3 : tVotes === voteCount;
+      };
+      
+      const tierPassed = (stage.passed || []).filter(tierFilter);
+      const tierFiltered = (stage.filtered || []).filter(tierFilter);
+      
+      const stageNames: Record<string, string> = {
+        signalGating: 'Signal Gating',
+        confidenceTuning: 'Confidence Tuning',
+        finalFilters: 'Final Filters',
+        output: 'BUY Signals',
+        fibonacciLevels: 'Fibonacci Levels',
+        agentAnalysis: 'Agent Analysis',
+      };
+      const stageDescriptions: Record<string, string> = {
+        signalGating: 'Bear & sell suppression for this consensus tier',
+        confidenceTuning: 'Regime weight, role evaluation, rotation penalty for this tier',
+        finalFilters: 'Cluster limit, asset confidence, crash mode for this tier',
+        output: 'Final BUY signals from this consensus tier',
+        fibonacciLevels: 'Fibonacci entry, stop loss, and profit target levels for this tier',
+        agentAnalysis: 'Agent opinions on signals from this tier',
+      };
+
+      setSelectedStage({
+        name: `${stageNames[stageName]} (${tierLabel})`,
+        description: stageDescriptions[stageName],
+        stageType: stageName === 'output' || stageName === 'agentAnalysis' ? 'output' : stageName === 'confidenceTuning' ? 'modifier' : 'filter',
+        inputCount: tierData?.input ?? tierPassed.length + tierFiltered.length,
+        outputCount: tierData?.output ?? tierPassed.length,
+        filteredTickers: tierFiltered.map((t: any) => ({
+          symbol: t.symbol,
+          reason: t.bear_suppressed ? `BUY suppressed (${t.regime} regime)` : t.cluster_limited ? 'Cluster limit' : 'Filtered',
+          signal: t.signal,
+          currentPrice: t.price,
+          rawData: t
+        })),
+        passedTickers: tierPassed.map((t: any) => ({
+          symbol: t.symbol,
+          signal: t.signal,
+          signalStrength: t.signal_strength,
+          currentPrice: t.price,
+          rawData: t
+        }))
+      });
+      return;
+    }
     
     const stageData = pipelineData[stageKey as keyof typeof pipelineData];
     if (!stageData || Array.isArray(stageData) || typeof stageData === 'object' && !('inputCount' in stageData)) return;

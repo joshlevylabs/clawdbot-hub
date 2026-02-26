@@ -24,7 +24,19 @@ import {
 
 // ── Brand data (mirrored from MCP brand-data.js) ─────────────────
 
-const PRODUCTS = {
+interface ProductInfo {
+  name: string;
+  stack: string;
+  font: string;
+  fontMigrationTarget?: string;
+  accentFamily: string;
+  accentMigrationTarget?: string;
+  layout: string;
+  status: string;
+  notes: string;
+}
+
+const PRODUCTS: Record<string, ProductInfo> = {
   hub: {
     name: "Clawdbot Hub",
     stack: "Next.js + Tailwind CSS",

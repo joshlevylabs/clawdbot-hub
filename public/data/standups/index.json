@@ -2,6 +2,19 @@
   "standups": [
     {
       "date": "2026-02-25",
+      "time": "18:26",
+      "type": "adhoc-lever-financial-app-separation",
+      "typeName": "Lever Financial App Separation",
+      "typeEmoji": "\ud83d\udcb0",
+      "topic": "Lever Financial App Separation \u2014 Wednesday Feb 25",
+      "file": "2026-02-25-adhoc-lever-financial-app-separation.json",
+      "tokenCost": 0.049,
+      "verticals": [],
+      "initiatives": [],
+      "instanceKey": "STD-2"
+    },
+    {
+      "date": "2026-02-25",
       "time": "17:44",
       "type": "adhoc-hub-standup-system-overhaul",
       "typeName": "Hub Standup System Overhaul",

@@ -19,12 +19,22 @@
       "estimatedCost": 0.0394,
       "model": "claude-sonnet-4-20250514",
       "duration": "53.7s"
+    },
+    {
+      "date": "2026-02-25",
+      "type": "adhoc-lever-financial-app-separation",
+      "inputTokens": 3299,
+      "outputTokens": 2604,
+      "totalTokens": 5903,
+      "estimatedCost": 0.049,
+      "model": "claude-sonnet-4-20250514",
+      "duration": "66.9s"
     }
   ],
   "totals": {
-    "today": 0.0782,
-    "week": 0.0782,
-    "month": 0.0782,
-    "standupCount": 2
+    "today": 0.1272,
+    "week": 0.1272,
+    "month": 0.1272,
+    "standupCount": 3
   }
 }

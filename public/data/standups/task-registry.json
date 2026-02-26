@@ -1,6 +1,6 @@
 {
-  "nextAgentId": 3,
-  "nextJoshuaId": 2,
+  "nextAgentId": 5,
+  "nextJoshuaId": 3,
   "tasks": [
     {
       "key": "A-001",
@@ -10,12 +10,13 @@
       "tag": "AGENT",
       "priority": "high",
       "assignee": "Elon Musk",
-      "status": "pending",
+      "status": "complete",
       "sourceStandup": "2026-02-25-adhoc-hub-standup-system-overhaul",
       "sourceDate": "2026-02-25",
       "createdAt": "2026-02-25T17:47:35.312656-08:00",
       "approvedAt": "2026-02-25T17:47:35.312927-08:00",
-      "approvedBy": "joshua"
+      "approvedBy": "joshua",
+      "completedAt": "2026-02-25T18:17:40.264962-08:00"
     },
     {
       "key": "A-002",
@@ -25,12 +26,13 @@
       "tag": "AGENT",
       "priority": "high",
       "assignee": "James Truchard",
-      "status": "pending",
+      "status": "complete",
       "sourceStandup": "2026-02-25-adhoc-hub-standup-system-overhaul",
       "sourceDate": "2026-02-25",
       "createdAt": "2026-02-25T17:47:48.495383-08:00",
       "approvedAt": "2026-02-25T17:47:48.495696-08:00",
-      "approvedBy": "joshua"
+      "approvedBy": "joshua",
+      "completedAt": "2026-02-25T18:17:56.229324-08:00"
     },
     {
       "key": "J-001",
@@ -45,6 +47,60 @@
       "sourceDate": "2026-02-25",
       "createdAt": "2026-02-25T18:12:00.402517-08:00",
       "approvedAt": "2026-02-25T18:12:00.402917-08:00",
+      "approvedBy": "joshua"
+    },
+    {
+      "key": "A-003",
+      "text": "Commit 4 uncommitted hub files and stress-test approval gateway",
+      "description": "",
+      "acceptanceCriteria": [],
+      "tag": "AGENT",
+      "priority": "high",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "sourceStandup": "2026-02-25-adhoc-hub-standup-system-overhaul",
+      "sourceStandupType": "Hub Standup System Overhaul",
+      "sourceDate": "2026-02-25",
+      "createdAt": "2026-02-25T18:17:21.497177-08:00",
+      "updatedAt": "2026-02-25T18:17:21.497412-08:00",
+      "completedAt": null,
+      "approvedAt": "2026-02-25T18:17:21.497415-08:00",
+      "approvedBy": "joshua"
+    },
+    {
+      "key": "A-004",
+      "text": "Document rollback procedure and establish monitoring dashboard",
+      "description": "",
+      "acceptanceCriteria": [],
+      "tag": "AGENT",
+      "priority": "high",
+      "assignee": "James Truchard",
+      "status": "pending",
+      "sourceStandup": "2026-02-25-adhoc-hub-standup-system-overhaul",
+      "sourceStandupType": "Hub Standup System Overhaul",
+      "sourceDate": "2026-02-25",
+      "createdAt": "2026-02-25T18:17:21.497429-08:00",
+      "updatedAt": "2026-02-25T18:17:21.497431-08:00",
+      "completedAt": null,
+      "approvedAt": "2026-02-25T18:17:21.497433-08:00",
+      "approvedBy": "joshua"
+    },
+    {
+      "key": "J-002",
+      "text": "Define and track shipping velocity success metrics",
+      "description": "",
+      "acceptanceCriteria": [],
+      "tag": "JOSHUA",
+      "priority": "high",
+      "assignee": "Theo",
+      "status": "pending",
+      "sourceStandup": "2026-02-25-adhoc-hub-standup-system-overhaul",
+      "sourceStandupType": "Hub Standup System Overhaul",
+      "sourceDate": "2026-02-25",
+      "createdAt": "2026-02-25T18:17:21.497440-08:00",
+      "updatedAt": "2026-02-25T18:17:21.497442-08:00",
+      "completedAt": null,
+      "approvedAt": "2026-02-25T18:17:21.497443-08:00",
       "approvedBy": "joshua"
     }
   ]

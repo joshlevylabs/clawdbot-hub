@@ -1,6 +1,44 @@
 {
   "date": "2026-02-25",
-  "generatedAt": "2026-02-25T17:44:56.384848-08:00",
-  "priorities": [],
-  "agentHandled": []
+  "generatedAt": "2026-02-25T18:26:42.760635-08:00",
+  "priorities": [
+    {
+      "text": "Define and track shipping velocity success metrics",
+      "source": "adhoc-lever-financial-app-separation",
+      "urgency": "high",
+      "taskKey": "J-001"
+    },
+    {
+      "text": "Define and track shipping velocity success metrics",
+      "source": "Hub Standup System Overhaul",
+      "urgency": "high",
+      "taskKey": "J-002"
+    }
+  ],
+  "agentHandled": [
+    {
+      "text": "Commit 4 uncommitted hub files and stress-test approval gateway",
+      "assignee": "Elon Musk",
+      "status": "complete",
+      "taskKey": "A-001"
+    },
+    {
+      "text": "Document rollback procedure and establish monitoring dashboard",
+      "assignee": "James Truchard",
+      "status": "complete",
+      "taskKey": "A-002"
+    },
+    {
+      "text": "Commit 4 uncommitted hub files and stress-test approval gateway",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "taskKey": "A-003"
+    },
+    {
+      "text": "Document rollback procedure and establish monitoring dashboard",
+      "assignee": "James Truchard",
+      "status": "pending",
+      "taskKey": "A-004"
+    }
+  ]
 }

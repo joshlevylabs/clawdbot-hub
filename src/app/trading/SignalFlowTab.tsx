@@ -970,7 +970,10 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
     // Use tighter control points when nodes are at similar Y to prevent visual crossing
     const controlPointOffset = dy < 50 ? Math.min(dx * 0.3, 80) : Math.min(dx * 0.4, 150);
     
-    return `M ${from.x} ${from.y} C ${from.x + controlPointOffset} ${from.y} ${to.x - controlPointOffset} ${to.y} ${to.x} ${to.y}`;
+    // Add a slight arc for nearly-flat connections so they remain visible
+    const arcBump = dy < 8 ? -12 : 0;
+    
+    return `M ${from.x} ${from.y} C ${from.x + controlPointOffset} ${from.y + arcBump} ${to.x - controlPointOffset} ${to.y + arcBump} ${to.x} ${to.y}`;
   };
 
   const pipelineVersion = pipelineData?.input?.passed?.[0]?.meta?.version || '3.1.0';

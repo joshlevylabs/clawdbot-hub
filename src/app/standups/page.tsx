@@ -2594,48 +2594,33 @@ function StandupsPageInner() {
       </div>
 
       {/* Tab Navigation */}
-      <div className="flex items-center gap-2 border-b border-slate-800">
-        <button
-          onClick={() => setActiveTab("history")}
-          className={`px-4 py-2 rounded-t-lg text-sm font-medium transition-colors ${
-            activeTab === "history"
-              ? "bg-primary-600/20 text-primary-400 border-t border-l border-r border-primary-500/30 border-b-transparent"
-              : "text-slate-500 hover:text-slate-400"
-          }`}
-        >
-          📋 History
-        </button>
-        <button
-          onClick={() => setActiveTab("directives")}
-          className={`px-4 py-2 rounded-t-lg text-sm font-medium transition-colors ${
-            activeTab === "directives"
-              ? "bg-primary-600/20 text-primary-400 border-t border-l border-r border-primary-500/30 border-b-transparent"
-              : "text-slate-500 hover:text-slate-400"
-          }`}
-        >
-          ⚡ CEO Directives
-        </button>
-        <button
-          onClick={() => setActiveTab("scheduled")}
-          className={`px-4 py-2 rounded-t-lg text-sm font-medium transition-colors ${
-            activeTab === "scheduled"
-              ? "bg-primary-600/20 text-primary-400 border-t border-l border-r border-primary-500/30 border-b-transparent"
-              : "text-slate-500 hover:text-slate-400"
-          }`}
-        >
-          📅 Scheduled
-        </button>
-        <button
-          onClick={() => setActiveTab("manage")}
-          className={`px-4 py-2 rounded-t-lg text-sm font-medium transition-colors ${
-            activeTab === "manage"
-              ? "bg-primary-600/20 text-primary-400 border-t border-l border-r border-primary-500/30 border-b-transparent"
-              : "text-slate-500 hover:text-slate-400"
-          }`}
-        >
-          ⚙️ Manage
-        </button>
-""
+      <div className="mb-6">
+        <div className="flex gap-1 overflow-x-auto pb-2" style={{ WebkitOverflowScrolling: "touch" }}>
+          {([
+            { id: "history" as TabType, emoji: "📋", label: "History" },
+            { id: "directives" as TabType, emoji: "⚡", label: "CEO Directives" },
+            { id: "scheduled" as TabType, emoji: "📅", label: "Scheduled" },
+            { id: "manage" as TabType, emoji: "⚙️", label: "Manage" },
+          ]).map((tab) => {
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all shrink-0"
+                style={{
+                  backgroundColor: isActive ? "rgba(212, 160, 32, 0.15)" : "transparent",
+                  color: isActive ? "#D4A020" : "#8B8B80",
+                  border: isActive ? "1px solid rgba(212, 160, 32, 0.3)" : "1px solid transparent",
+                }}
+              >
+                <span>{tab.emoji}</span>
+                <span>{tab.label}</span>
+              </button>
+            );
+          })}
+        </div>
+        <div className="h-px" style={{ background: "linear-gradient(to right, transparent, #2A2A38, transparent)" }} />
       </div>
 
       {/* Filter Tabs - Only show on History tab */}

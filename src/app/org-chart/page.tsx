@@ -4834,21 +4834,28 @@ function HowItWorksTab() {
 
 function PageTabBar({ activeTab, onTabChange }: { activeTab: PageTab; onTabChange: (tab: PageTab) => void }) {
   return (
-    <div className="flex border-b border-slate-800/60 bg-slate-950/30 rounded-t-xl overflow-x-auto scrollbar-none">
-      {PAGE_TABS.map((tab) => (
-        <button
-          key={tab.id}
-          onClick={() => onTabChange(tab.id)}
-          className={`relative flex items-center gap-2 px-5 py-3.5 text-sm font-medium whitespace-nowrap border-b-2 transition-all flex-shrink-0 ${
-            activeTab === tab.id
-              ? "text-violet-300 border-violet-400 bg-slate-900/40"
-              : "text-slate-500 border-transparent hover:text-slate-300 hover:bg-slate-800/20"
-          }`}
-        >
-          <span>{tab.emoji}</span>
-          <span>{tab.label}</span>
-        </button>
-      ))}
+    <div className="mb-6">
+      <div className="flex gap-1 overflow-x-auto pb-2" style={{ WebkitOverflowScrolling: "touch" }}>
+        {PAGE_TABS.map((tab) => {
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => onTabChange(tab.id)}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all shrink-0"
+              style={{
+                backgroundColor: isActive ? "rgba(212, 160, 32, 0.15)" : "transparent",
+                color: isActive ? "#D4A020" : "#8B8B80",
+                border: isActive ? "1px solid rgba(212, 160, 32, 0.3)" : "1px solid transparent",
+              }}
+            >
+              <span>{tab.emoji}</span>
+              <span>{tab.label}</span>
+            </button>
+          );
+        })}
+      </div>
+      <div className="h-px" style={{ background: "linear-gradient(to right, transparent, #2A2A38, transparent)" }} />
     </div>
   );
 }

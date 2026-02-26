@@ -69,12 +69,22 @@
       "estimatedCost": 0.0393,
       "model": "claude-sonnet-4-20250514",
       "duration": "49.5s"
+    },
+    {
+      "date": "2026-02-26",
+      "type": "adhoc-globescope-handheld-hemisphere-with-internal-globe-projection",
+      "inputTokens": 2785,
+      "outputTokens": 1933,
+      "totalTokens": 4718,
+      "estimatedCost": 0.0373,
+      "model": "claude-sonnet-4-20250514",
+      "duration": "51.5s"
     }
   ],
   "totals": {
-    "today": 0.0826,
-    "week": 0.2834,
-    "month": 0.2834,
-    "standupCount": 7
+    "today": 0.1199,
+    "week": 0.3207,
+    "month": 0.3207,
+    "standupCount": 8
   }
 }

@@ -2,6 +2,19 @@
   "standups": [
     {
       "date": "2026-02-26",
+      "time": "15:47",
+      "type": "adhoc-globescope-handheld-hemisphere-with-internal-globe-projection",
+      "typeName": "GlobeScope: Handheld hemisphere with internal globe projection",
+      "typeEmoji": "\ud83d\udccb",
+      "topic": "GlobeScope: Handheld hemisphere with internal globe projection \u2014 Thursday Feb 26",
+      "file": "2026-02-26-adhoc-globescope-handheld-hemisphere-with-internal-globe-projection.json",
+      "tokenCost": 0.0373,
+      "verticals": [],
+      "initiatives": [],
+      "instanceKey": "STD-8"
+    },
+    {
+      "date": "2026-02-26",
       "time": "12:00",
       "type": "midday-checkpoint",
       "typeName": "Midday Checkpoint",

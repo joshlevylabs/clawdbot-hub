@@ -527,11 +527,10 @@ export default function TradingPage() {
   const avgLoss = losingTrades.length > 0 ? Math.abs(losingTrades.reduce((s, t) => s + t.pnl, 0) / losingTrades.length) : 0;
   const profitFactor = avgLoss > 0 ? avgWin / avgLoss : avgWin > 0 ? Infinity : 0;
 
-  const isPortfolioTab = activeTab === "overview" || activeTab === "real-time" || activeTab === "plays" || activeTab === "positions" || activeTab === "trades" || activeTab === "signals";
+  const isPortfolioTab = activeTab === "overview" || activeTab === "plays" || activeTab === "positions" || activeTab === "trades" || activeTab === "signals";
 
   const tabConfig: { key: ActiveTab; label: string }[] = [
     { key: "overview", label: "Overview" },
-    { key: "real-time", label: "Real-Time P&L" },
     { key: "plays", label: "Today's Plays" },
     { key: "positions", label: "Positions" },
     { key: "trades", label: "Trades" },

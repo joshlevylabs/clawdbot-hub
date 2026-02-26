@@ -923,6 +923,47 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
     <div 
       className="bg-slate-900/80 rounded-xl border border-slate-700/50 p-4 md:p-8 relative overflow-hidden"
       style={{ touchAction: 'none' }}
+    >
+      {/* Desktop zoom controls — hidden on mobile (pinch-to-zoom there instead) */}
+      <div className="hidden lg:flex items-center gap-1.5 absolute top-3 right-3 z-30">
+        <button
+          onClick={() => setScale((s) => Math.max(0.4, +(s - 0.1).toFixed(1)))}
+          className="w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold transition-all"
+          style={{ backgroundColor: "#1A1A24", border: "1px solid #2A2A38", color: "#8B8B80" }}
+          onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#D4A020"; e.currentTarget.style.color = "#D4A020"; }}
+          onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#2A2A38"; e.currentTarget.style.color = "#8B8B80"; }}
+          title="Zoom out"
+        >
+          −
+        </button>
+        <span className="text-[10px] font-mono w-10 text-center" style={{ color: "#626259" }}>
+          {Math.round(scale * 100)}%
+        </span>
+        <button
+          onClick={() => setScale((s) => Math.min(2, +(s + 0.1).toFixed(1)))}
+          className="w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold transition-all"
+          style={{ backgroundColor: "#1A1A24", border: "1px solid #2A2A38", color: "#8B8B80" }}
+          onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#D4A020"; e.currentTarget.style.color = "#D4A020"; }}
+          onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#2A2A38"; e.currentTarget.style.color = "#8B8B80"; }}
+          title="Zoom in"
+        >
+          +
+        </button>
+        {scale !== 1 && (
+          <button
+            onClick={() => setScale(1)}
+            className="ml-1 px-2 h-8 rounded-lg flex items-center justify-center text-[10px] font-medium transition-all"
+            style={{ backgroundColor: "#1A1A24", border: "1px solid #2A2A38", color: "#8B8B80" }}
+            onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#D4A020"; e.currentTarget.style.color = "#D4A020"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#2A2A38"; e.currentTarget.style.color = "#8B8B80"; }}
+            title="Reset zoom"
+          >
+            Reset
+          </button>
+        )}
+      </div>
+    <div 
+      className="relative"
       onTouchStart={(e) => {
         const touch = e.touches[0];
         const container = containerRef.current;
@@ -1493,6 +1534,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 }

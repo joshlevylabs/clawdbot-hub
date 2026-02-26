@@ -183,6 +183,7 @@ const roleColors: Record<string, { bg: string; text: string; border: string }> =
   CFTO: { bg: "bg-teal-500/20", text: "text-teal-400", border: "border-teal-500/30" },
   CTIO: { bg: "bg-cyan-500/20", text: "text-cyan-400", border: "border-cyan-500/30" },
   CPO: { bg: "bg-rose-500/20", text: "text-rose-400", border: "border-rose-500/30" },
+  CFFO: { bg: "bg-indigo-500/20", text: "text-indigo-400", border: "border-indigo-500/30" },
 };
 const defaultColor = { bg: "bg-slate-500/20", text: "text-slate-400", border: "border-slate-500/30" };
 
@@ -191,7 +192,7 @@ function getAgentColors(name: string, role?: string) {
   return defaultColor;
 }
 
-const roleIcons: Record<string, string> = { COO: "🏛️", CTO: "📡", CRO: "📈", CMO: "🎨", CFTO: "📈", CTIO: "⚡", CPO: "🧭" };
+const roleIcons: Record<string, string> = { COO: "🏛️", CTO: "📡", CRO: "📈", CMO: "🎨", CFTO: "📈", CTIO: "⚡", CPO: "🧭", CFFO: "💰" };
 
 // Vertical color map
 const verticalStyles: Record<string, { bg: string; text: string; border: string; emoji: string; label: string }> = {
@@ -1196,18 +1197,16 @@ interface ScheduleData {
 function ScheduledView() {
   const [scheduleData, setScheduleData] = useState<ScheduleData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [showOneTimeForm, setShowOneTimeForm] = useState(false);
-  const [oneTimeData, setOneTimeData] = useState<any>({});
+  const [showQuickForm, setShowQuickForm] = useState(false);
+  const [quickFormData, setQuickFormData] = useState<any>({});
   const [verticals, setVerticals] = useState<VerticalDef[]>([]);
-  const [initiatives, setInitiatives] = useState<InitiativeDef[]>([]);
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const [scheduleRes, verticalsRes, initiativesRes] = await Promise.all([
+        const [scheduleRes, verticalsRes] = await Promise.all([
           fetch("/api/standup-schedules", { cache: "no-store" }),
           fetch("/api/verticals", { cache: "no-store" }),
-          fetch("/api/initiatives", { cache: "no-store" }),
         ]);
 
         // Fallback to JSON if API isn't ready
@@ -1224,10 +1223,6 @@ function ScheduledView() {
         if (verticalsRes.ok) {
           const vData = await verticalsRes.json();
           setVerticals(vData.verticals || []);
-        }
-        if (initiativesRes.ok) {
-          const iData = await initiativesRes.json();
-          setInitiatives(iData.initiatives || []);
         }
       } catch (err) {
         console.error("Failed to load data:", err);
@@ -1248,7 +1243,7 @@ function ScheduledView() {
   }, []);
 
   const getTodayStandups = () => {
-    if (!scheduleData) return { upcoming: [], past: [] };
+    if (!scheduleData) return { upcoming: [], past: [], running: [] };
     
     // Get current time in PT timezone
     const now = new Date();
@@ -1274,15 +1269,61 @@ function ScheduledView() {
 
     const upcoming = todayStandups.filter(type => {
       const [h, m] = type.time.split(':').map(Number);
-      return h * 60 + m > currentTimeMinutes;
+      return h * 60 + m > currentTimeMinutes + 5; // 5 min buffer
+    });
+
+    const running = todayStandups.filter(type => {
+      const [h, m] = type.time.split(':').map(Number);
+      const timeMinutes = h * 60 + m;
+      return timeMinutes <= currentTimeMinutes + 5 && timeMinutes > currentTimeMinutes - 30; // Running window
     });
 
     const past = todayStandups.filter(type => {
       const [h, m] = type.time.split(':').map(Number);
-      return h * 60 + m <= currentTimeMinutes;
+      return h * 60 + m <= currentTimeMinutes - 30; // Completed
     });
 
-    return { upcoming, past };
+    return { upcoming, past, running };
+  };
+
+  const getWeekDays = () => {
+    if (!scheduleData) return [];
+    
+    const days = [];
+    const today = new Date();
+    
+    // Get current week (Mon-Sun)
+    const monday = new Date(today);
+    monday.setDate(today.getDate() - ((today.getDay() + 6) % 7)); // Get Monday
+    
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(monday);
+      date.setDate(monday.getDate() + i);
+      
+      const dayName = new Intl.DateTimeFormat('en-US', {
+        timeZone: 'America/Los_Angeles',
+        weekday: 'long'
+      }).format(date).toLowerCase();
+      
+      const matchesDay = (type: ScheduledStandupType) => {
+        if (type.schedule === 'daily') return true;
+        if (type.schedule === dayName) return true;
+        return false;
+      };
+      
+      const dayStandups = scheduleData.types.filter(matchesDay).sort((a, b) => a.time.localeCompare(b.time));
+      
+      days.push({
+        date: date,
+        dayName: dayName,
+        shortName: date.toLocaleDateString('en-US', { weekday: 'short', timeZone: 'America/Los_Angeles' }),
+        dayNumber: date.getDate(),
+        isToday: date.toDateString() === today.toDateString(),
+        standups: dayStandups
+      });
+    }
+    
+    return days;
   };
 
   const formatTime = (time: string) => {
@@ -1297,77 +1338,43 @@ function ScheduledView() {
     });
   };
 
-  const getScheduleLabel = (schedule: string) => {
-    if (schedule === 'daily') return 'Daily';
-    if (schedule.startsWith('once-')) return 'One-time';
-    return schedule.charAt(0).toUpperCase() + schedule.slice(1);
-  };
-
-  // Helper function to get next 30 days with standup counts
-  const getNext30Days = () => {
-    if (!scheduleData) return [];
+  const getTimeUntil = (time: string) => {
+    const [hours, minutes] = time.split(':').map(Number);
+    const now = new Date();
+    const standupTime = new Date();
+    standupTime.setHours(hours, minutes, 0, 0);
     
-    const days = [];
-    const today = new Date();
-    
-    for (let i = 0; i < 30; i++) {
-      const date = new Date(today);
-      date.setDate(today.getDate() + i);
-      
-      const dayName = new Intl.DateTimeFormat('en-US', {
-        timeZone: 'America/Los_Angeles',
-        weekday: 'long'
-      }).format(date).toLowerCase();
-      
-      const matchesDay = (type: ScheduledStandupType) => {
-        if (type.schedule === 'daily') return true;
-        if (type.schedule === dayName) return true;
-        // One-time standups only show on their specific day (today only for simplicity)
-        if (type.schedule === `once-${dayName}` && i === 0) return true;
-        return false;
-      };
-      
-      const standupsCount = scheduleData.types.filter(matchesDay).length;
-      
-      days.push({
-        date: date,
-        dayNumber: date.getDate(),
-        isToday: i === 0,
-        dayName: dayName,
-        standupsCount: standupsCount,
-        standups: scheduleData.types.filter(matchesDay).sort((a, b) => a.time.localeCompare(b.time))
-      });
+    if (standupTime < now) {
+      standupTime.setDate(standupTime.getDate() + 1);
     }
     
-    return days;
+    const diffMs = standupTime.getTime() - now.getTime();
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffMinutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+    
+    if (diffHours > 0) {
+      return `in ${diffHours}h ${diffMinutes}m`;
+    } else {
+      return `in ${diffMinutes}m`;
+    }
   };
 
-  if (loading) {
-    return (
-      <div className="space-y-4">
-        {[1, 2, 3].map((i) => (
-          <div key={i} className="bg-slate-900/50 rounded-xl border border-slate-800 p-4 h-24 animate-pulse" />
-        ))}
-      </div>
-    );
-  }
-
-  const handleAddOneTime = async (data: any) => {
+  const handleQuickLaunch = async (data: any) => {
     try {
-      // Generate a unique key for one-time standups
-      const key = `onetime-${Date.now()}`;
-      const today = new Date().toLocaleDateString('en-US', { timeZone: 'America/Los_Angeles', weekday: 'long' }).toLowerCase();
+      const now = new Date();
+      const timeString = data.scheduleForLater ? data.time : now.toTimeString().slice(0, 5);
+      
       const payload = {
-        key,
-        name: data.name || 'Ad-hoc Standup',
-        emoji: data.emoji || '📋',
-        schedule: `once-${today}`,
-        time: data.time || '14:00',
+        key: `adhoc-${Date.now()}`,
+        name: data.topic || 'Ad-hoc Standup',
+        emoji: '⚡',
+        schedule: 'once-today',
+        time: timeString,
         participants: data.participants || ['COO'],
-        agenda: data.agenda || '',
+        agenda: `Ad-hoc discussion: ${data.topic}`,
         autoExecute: false,
+        interactive: data.interactive || false,
         verticals: data.verticals || [],
-        initiatives: data.initiatives || [],
       };
 
       const response = await fetch('/api/standup-schedules', {
@@ -1382,256 +1389,278 @@ function ScheduledView() {
           ...prev,
           types: [...prev.types, result.schedule]
         } : { types: [result.schedule] });
-        setShowOneTimeForm(false);
-        setOneTimeData({});
+        setShowQuickForm(false);
+        setQuickFormData({});
       } else {
-        console.error('Failed to create one-time standup');
+        console.error('Failed to launch ad-hoc standup');
       }
     } catch (err) {
-      console.error('Error creating one-time standup:', err);
+      console.error('Error launching ad-hoc standup:', err);
     }
   };
 
-  const { upcoming, past } = getTodayStandups();
-  const next30Days = getNext30Days();
+  if (loading) {
+    return (
+      <div className="space-y-4">
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="bg-slate-900/50 rounded-xl border border-slate-800 p-4 h-24 animate-pulse" />
+        ))}
+      </div>
+    );
+  }
+
+  const { upcoming, past, running } = getTodayStandups();
+  const weekDays = getWeekDays();
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <h2 className="text-lg font-medium text-slate-200">Scheduled Standups</h2>
-        <button
-          onClick={() => {
-            setOneTimeData({});
-            setShowOneTimeForm(true);
-          }}
-          className="btn btn-primary flex items-center gap-2 text-sm"
-        >
-          <Plus className="w-4 h-4" />
-          Add Standup
-        </button>
-      </div>
-
-      {/* Upcoming Standups */}
+      {/* Today's Timeline */}
       <div>
-        <h3 className="text-sm font-medium text-slate-300 mb-3 flex items-center gap-2">
-          <Calendar className="w-4 h-4" />
-          Upcoming Today
-        </h3>
-        {upcoming.length === 0 ? (
-          <div className="text-sm text-slate-400 bg-slate-900/30 rounded-lg p-4 border border-slate-800 flex items-center gap-2">
-            <CheckCircle className="w-4 h-4 text-green-400" />
-            All standups completed for today ✅
-          </div>
-        ) : (
-          <div className="space-y-3">
-            {upcoming.map((standup) => (
-              <div key={standup.key} className="bg-slate-900/50 rounded-xl border border-slate-800 p-4">
-                <div className="flex items-start">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="text-lg">{standup.emoji}</span>
-                      <h4 className="font-medium text-slate-100">{standup.name}</h4>
-                      <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-primary-500/20 text-primary-400 border border-primary-500/30">
-                        {formatTime(standup.time)} PT
-                      </span>
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-medium text-slate-200 flex items-center gap-2">
+            <Clock className="w-5 h-5" />
+            Today&apos;s Timeline
+          </h3>
+          <button
+            onClick={() => {
+              setQuickFormData({ participants: ['COO'], interactive: false });
+              setShowQuickForm(true);
+            }}
+            className="btn btn-primary flex items-center gap-2 text-sm"
+          >
+            <Zap className="w-4 h-4" />
+            Run Ad-Hoc Standup
+          </button>
+        </div>
+
+        {/* Current/Upcoming Standups */}
+        {running.length > 0 && (
+          <div className="mb-4">
+            <p className="text-sm text-amber-400 mb-2 flex items-center gap-1">
+              <div className="w-2 h-2 bg-amber-400 rounded-full animate-pulse"></div>
+              Running Now
+            </p>
+            <div className="space-y-2">
+              {running.map((standup) => (
+                <div key={standup.key} className="bg-gradient-to-r from-amber-600/10 to-amber-800/5 rounded-lg border border-amber-500/30 p-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="flex items-center justify-center w-8 h-8 bg-amber-500/20 rounded-lg">
+                        <div className="w-2 h-2 bg-amber-400 rounded-full animate-pulse"></div>
+                      </div>
+                      <div>
+                        <p className="font-medium text-slate-100 text-sm">{standup.emoji} {standup.name}</p>
+                        <p className="text-xs text-slate-400">{formatTime(standup.time)} PT</p>
+                      </div>
                     </div>
-                    <p className="text-sm text-slate-400 mb-3 leading-relaxed">{standup.agenda}</p>
-                    <div className="flex items-center gap-2 flex-wrap">
-                      {standup.participants.map((role) => {
-                        const colors = getAgentColors("", role);
-                        return (
-                          <span key={role} className={`px-2 py-1 rounded-lg text-xs border ${colors.bg} ${colors.text} ${colors.border}`}>
-                            {roleIcons[role] || "👤"} {role}
-                          </span>
-                        );
-                      })}
-                      <span className="px-2 py-0.5 rounded text-xs bg-slate-700/50 text-slate-500 border border-slate-600/30">
-                        {getScheduleLabel(standup.schedule)}
-                      </span>
-                      {standup.autoExecute && (
-                        <span className="px-2 py-0.5 rounded text-xs bg-green-500/20 text-green-400 border border-green-500/30">
-                          Auto-Execute
+                    <div className="flex items-center gap-2">
+                      {standup.participants.slice(0, 3).map((role) => (
+                        <span key={role} className="text-xs text-slate-400">
+                          {roleIcons[role] || "👤"}
                         </span>
-                      )}
+                      ))}
                     </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {upcoming.length > 0 ? (
+          <div className="space-y-2">
+            <p className="text-sm text-primary-400 mb-2 flex items-center gap-1">
+              ⏰ Upcoming
+            </p>
+            {upcoming.map((standup) => (
+              <div key={standup.key} className="bg-slate-900/50 rounded-lg border border-slate-800 p-3 hover:border-slate-700 transition-colors">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center justify-center w-8 h-8 bg-primary-500/20 rounded-lg">
+                      <Clock className="w-4 h-4 text-primary-400" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-slate-100 text-sm">{standup.emoji} {standup.name}</p>
+                      <div className="flex items-center gap-2 text-xs text-slate-400">
+                        <span>{formatTime(standup.time)} PT</span>
+                        <span>•</span>
+                        <span className="text-primary-400">{getTimeUntil(standup.time)}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {standup.participants.slice(0, 3).map((role) => (
+                      <span key={role} className="text-xs text-slate-400">
+                        {roleIcons[role] || "👤"}
+                      </span>
+                    ))}
+                    {standup.participants.length > 3 && (
+                      <span className="text-xs text-slate-500">+{standup.participants.length - 3}</span>
+                    )}
                   </div>
                 </div>
               </div>
             ))}
+          </div>
+        ) : running.length === 0 ? (
+          <div className="text-center py-8 bg-slate-900/30 rounded-lg border border-slate-800">
+            <CheckCircle className="w-8 h-8 text-emerald-400 mx-auto mb-2" />
+            <p className="text-slate-400 text-sm">All standups completed for today</p>
+            <p className="text-slate-500 text-xs mt-1">Great job staying on top of things! ✅</p>
+          </div>
+        ) : null}
+
+        {/* Completed Today */}
+        {past.length > 0 && (
+          <div className="mt-4">
+            <p className="text-sm text-emerald-400 mb-2 flex items-center gap-1">
+              ✅ Completed Today
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              {past.map((standup) => (
+                <div key={standup.key} className="bg-emerald-500/5 rounded-lg border border-emerald-500/10 p-2 opacity-75">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-emerald-500 flex-shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-slate-300 text-sm truncate">{standup.emoji} {standup.name}</p>
+                      <p className="text-xs text-slate-500">{formatTime(standup.time)} PT</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </div>
 
-      {/* Past Standups (Today) */}
-      {past.length > 0 && (
-        <div>
-          <h3 className="text-sm font-medium text-slate-500 mb-3 flex items-center gap-2">
-            <CheckCircle className="w-4 h-4 text-green-500/50" />
-            Earlier Today
-          </h3>
-          <div className="space-y-2">
-            {past.map((standup) => (
-              <div key={standup.key} className="bg-slate-900/30 rounded-xl border border-slate-800/50 p-3 opacity-60">
-                <div className="flex items-center gap-2">
-                  <span className="text-base">{standup.emoji}</span>
-                  <h4 className="font-medium text-slate-400 text-sm">{standup.name}</h4>
-                  <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-slate-700/30 text-slate-500 border border-slate-700/30 line-through">
-                    {formatTime(standup.time)} PT
-                  </span>
-                  <CheckCircle className="w-3.5 h-3.5 text-green-500/50 ml-auto" />
+      {/* This Week View */}
+      <div>
+        <h3 className="text-sm font-medium text-slate-300 mb-3 flex items-center gap-2">
+          <Calendar className="w-4 h-4" />
+          This Week
+        </h3>
+        <div className="bg-slate-900/50 rounded-xl border border-slate-800 p-4">
+          <div className="grid grid-cols-7 gap-3">
+            {weekDays.map((day) => (
+              <div key={day.dayName} className={`p-3 rounded-lg border text-center ${
+                day.isToday 
+                  ? 'bg-primary-500/20 border-primary-500/50' 
+                  : 'bg-slate-800/50 border-slate-700'
+              }`}>
+                <div className="text-xs text-slate-400 mb-1">{day.shortName}</div>
+                <div className={`font-medium text-sm mb-2 ${day.isToday ? 'text-primary-300' : 'text-slate-300'}`}>
+                  {day.dayNumber}
+                </div>
+                <div className="space-y-1">
+                  {day.standups.slice(0, 3).map((standup, i) => (
+                    <div key={i} className="text-xs text-slate-400 truncate" title={`${standup.name} - ${formatTime(standup.time)}`}>
+                      {standup.emoji} {formatTime(standup.time).replace(' PT', '')}
+                    </div>
+                  ))}
+                  {day.standups.length > 3 && (
+                    <div className="text-xs text-slate-500">+{day.standups.length - 3} more</div>
+                  )}
                 </div>
               </div>
             ))}
           </div>
         </div>
-      )}
-
-      {/* 30-Day Calendar View */}
-      <div>
-        <h3 className="text-sm font-medium text-slate-300 mb-3 flex items-center gap-2">
-          <Calendar className="w-4 h-4" />
-          Next 30 Days
-        </h3>
-        <div className="bg-slate-900/50 rounded-xl border border-slate-800 p-4">
-          <div className="grid grid-cols-7 gap-2">
-            {next30Days.map((day, index) => (
-              <div
-                key={index}
-                className={`
-                  relative p-3 rounded-lg border text-center cursor-pointer transition-colors
-                  ${day.isToday 
-                    ? 'bg-primary-500/20 border-primary-500/50 text-primary-300' 
-                    : 'bg-slate-800/50 border-slate-700 text-slate-300 hover:bg-slate-800'
-                  }
-                `}
-                title={`${day.date.toLocaleDateString('en-US', { 
-                  timeZone: 'America/Los_Angeles',
-                  weekday: 'long', 
-                  month: 'long', 
-                  day: 'numeric' 
-                })}: ${day.standupsCount} standup${day.standupsCount !== 1 ? 's' : ''}`}
-              >
-                <div className="font-medium text-sm">{day.dayNumber}</div>
-                {day.standupsCount > 0 && (
-                  <div className={`
-                    absolute -top-1 -right-1 w-5 h-5 rounded-full text-xs font-bold flex items-center justify-center
-                    ${day.isToday 
-                      ? 'bg-primary-400 text-slate-900' 
-                      : 'bg-slate-600 text-slate-200'
-                    }
-                  `}>
-                    {day.standupsCount}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-          
-          {/* Calendar Legend */}
-          <div className="flex items-center gap-4 mt-4 pt-3 border-t border-slate-700 text-xs text-slate-400">
-            <div className="flex items-center gap-1">
-              <div className="w-3 h-3 rounded bg-primary-500/20 border border-primary-500/50"></div>
-              <span>Today</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <div className="w-3 h-3 rounded-full bg-slate-600 text-slate-200 text-xs flex items-center justify-center font-bold">4</div>
-              <span>Standup count</span>
-            </div>
-          </div>
-        </div>
       </div>
 
-      {/* One-Time Standup Form Modal */}
-      {showOneTimeForm && (
+      {/* Quick Launch Form Modal */}
+      {showQuickForm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-slate-800 rounded-xl p-6 w-full max-w-md mx-4">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-medium text-slate-100">Add One-Time Standup</h3>
+              <h3 className="text-lg font-medium text-slate-100">Run Ad-Hoc Standup</h3>
               <button
                 onClick={() => {
-                  setShowOneTimeForm(false);
-                  setOneTimeData({});
+                  setShowQuickForm(false);
+                  setQuickFormData({});
                 }}
                 className="p-1 hover:bg-slate-700 rounded"
               >
                 <X className="w-4 h-4 text-slate-400" />
               </button>
             </div>
-            <p className="text-xs text-slate-500 mb-4">Schedule a single standup for today to discuss specific topics.</p>
             
             <form
               onSubmit={(e) => {
                 e.preventDefault();
-                handleAddOneTime(oneTimeData);
+                handleQuickLaunch(quickFormData);
               }}
               className="space-y-4"
             >
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1">Topic / Name</label>
+                <label className="block text-sm font-medium text-slate-300 mb-1">Topic</label>
                 <input
                   type="text"
-                  value={oneTimeData.name || ''}
-                  onChange={(e) => setOneTimeData({ ...oneTimeData, name: e.target.value })}
+                  value={quickFormData.topic || ''}
+                  onChange={(e) => setQuickFormData({ ...quickFormData, topic: e.target.value })}
                   className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-slate-200"
-                  placeholder="MRE V14 Review"
+                  placeholder="Revenue review, tech update, etc."
                   required
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-1">Time (PT)</label>
-                  <input
-                    type="time"
-                    value={oneTimeData.time || ''}
-                    onChange={(e) => setOneTimeData({ ...oneTimeData, time: e.target.value })}
-                    className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-slate-200"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-1">Emoji</label>
-                  <input
-                    type="text"
-                    value={oneTimeData.emoji || ''}
-                    onChange={(e) => setOneTimeData({ ...oneTimeData, emoji: e.target.value })}
-                    className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-slate-200"
-                    placeholder="📋"
-                  />
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-1">Time</label>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="radio"
+                      name="timing"
+                      checked={!quickFormData.scheduleForLater}
+                      onChange={() => setQuickFormData({ ...quickFormData, scheduleForLater: false })}
+                      className="rounded"
+                    />
+                    <label className="text-sm text-slate-300">Now</label>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="radio"
+                      name="timing"
+                      checked={quickFormData.scheduleForLater === true}
+                      onChange={() => setQuickFormData({ ...quickFormData, scheduleForLater: true })}
+                      className="rounded"
+                    />
+                    <label className="text-sm text-slate-300">Schedule for later today</label>
+                  </div>
+                  {quickFormData.scheduleForLater && (
+                    <input
+                      type="time"
+                      value={quickFormData.time || ''}
+                      onChange={(e) => setQuickFormData({ ...quickFormData, time: e.target.value })}
+                      className="ml-6 w-32 bg-slate-900 border border-slate-700 rounded px-3 py-2 text-slate-200 text-sm"
+                      required
+                    />
+                  )}
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1">Agenda / Topics</label>
-                <textarea
-                  value={oneTimeData.agenda || ''}
-                  onChange={(e) => setOneTimeData({ ...oneTimeData, agenda: e.target.value })}
-                  className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-slate-200"
-                  rows={3}
-                  placeholder="Discuss MRE V14 performance, review 48hr monitoring results..."
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1">Participants</label>
+                <label className="block text-sm font-medium text-slate-300 mb-2">Participants</label>
                 <div className="flex flex-wrap gap-2">
-                  {['COO', 'CTO', 'CMO', 'CRO', 'CFTO', 'CTIO', 'CPO'].map((role) => (
-                    <label key={role} className="flex items-center gap-1.5 bg-slate-900 border border-slate-700 rounded px-3 py-1.5 cursor-pointer hover:border-slate-600">
+                  {['COO', 'CTO', 'CMO', 'CRO', 'CFTO', 'CTIO', 'CPO', 'CFFO'].map((role) => (
+                    <label key={role} className={`flex items-center gap-1.5 rounded px-2 py-1 cursor-pointer border transition-colors ${
+                      quickFormData.participants?.includes(role) 
+                        ? 'bg-primary-500/20 text-primary-400 border-primary-500/30' 
+                        : 'bg-slate-900 text-slate-300 border-slate-700 hover:border-slate-600'
+                    }`}>
                       <input
                         type="checkbox"
-                        checked={oneTimeData.participants?.includes(role) || false}
+                        checked={quickFormData.participants?.includes(role) || false}
                         onChange={(e) => {
-                          const current = oneTimeData.participants || [];
+                          const current = quickFormData.participants || [];
                           if (e.target.checked) {
-                            setOneTimeData({ ...oneTimeData, participants: [...current, role] });
+                            setQuickFormData({ ...quickFormData, participants: [...current, role] });
                           } else {
-                            setOneTimeData({ ...oneTimeData, participants: current.filter((r: string) => r !== role) });
+                            setQuickFormData({ ...quickFormData, participants: current.filter((r: string) => r !== role) });
                           }
                         }}
-                        className="rounded"
+                        className="rounded hidden"
                       />
-                      <span className="text-sm text-slate-300">{roleIcons[role] || '👤'} {role}</span>
+                      <span className="text-sm">{roleIcons[role] || '👤'} {role}</span>
                     </label>
                   ))}
                 </div>
@@ -1639,25 +1668,25 @@ function ScheduledView() {
               
               {verticals.length > 0 && (
                 <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-1">Verticals</label>
+                  <label className="block text-sm font-medium text-slate-300 mb-2">Verticals</label>
                   <div className="flex flex-wrap gap-2">
                     {verticals.map((v) => {
                       const vs = verticalStyles[v.key];
                       return (
-                        <label key={v.key} className={`flex items-center gap-1.5 rounded px-3 py-1.5 cursor-pointer border ${
-                          oneTimeData.verticals?.includes(v.key) 
-                            ? (vs ? `${vs.bg} ${vs.text} ${vs.border}` : 'bg-slate-700 text-slate-200 border-slate-500') 
+                        <label key={v.key} className={`flex items-center gap-1.5 rounded px-2 py-1 cursor-pointer border transition-colors ${
+                          quickFormData.verticals?.includes(v.key) 
+                            ? (vs ? `${vs.bg} ${vs.text} ${vs.border}` : 'bg-primary-500/20 text-primary-400 border-primary-500/30') 
                             : 'bg-slate-900 text-slate-300 border-slate-700 hover:border-slate-600'
                         }`}>
                           <input
                             type="checkbox"
-                            checked={oneTimeData.verticals?.includes(v.key) || false}
+                            checked={quickFormData.verticals?.includes(v.key) || false}
                             onChange={(e) => {
-                              const current = oneTimeData.verticals || [];
+                              const current = quickFormData.verticals || [];
                               if (e.target.checked) {
-                                setOneTimeData({ ...oneTimeData, verticals: [...current, v.key] });
+                                setQuickFormData({ ...quickFormData, verticals: [...current, v.key] });
                               } else {
-                                setOneTimeData({ ...oneTimeData, verticals: current.filter((k: string) => k !== v.key) });
+                                setQuickFormData({ ...quickFormData, verticals: current.filter((k: string) => k !== v.key) });
                               }
                             }}
                             className="rounded hidden"
@@ -1670,46 +1699,29 @@ function ScheduledView() {
                 </div>
               )}
 
-              {initiatives.length > 0 && (
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-1">Initiatives</label>
-                  <div className="flex flex-wrap gap-2">
-                    {initiatives.filter(i => i.status === 'active').map((ini) => (
-                      <label key={ini.key} className={`flex items-center gap-1.5 rounded px-3 py-1.5 cursor-pointer border ${
-                        oneTimeData.initiatives?.includes(ini.key) 
-                          ? 'bg-indigo-500/20 text-indigo-400 border-indigo-500/30' 
-                          : 'bg-slate-900 text-slate-300 border-slate-700 hover:border-slate-600'
-                      }`}>
-                        <input
-                          type="checkbox"
-                          checked={oneTimeData.initiatives?.includes(ini.key) || false}
-                          onChange={(e) => {
-                            const current = oneTimeData.initiatives || [];
-                            if (e.target.checked) {
-                              setOneTimeData({ ...oneTimeData, initiatives: [...current, ini.key] });
-                            } else {
-                              setOneTimeData({ ...oneTimeData, initiatives: current.filter((k: string) => k !== ini.key) });
-                            }
-                          }}
-                          className="rounded hidden"
-                        />
-                        <span className="text-sm">{ini.name}</span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-              )}
+              <div>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={quickFormData.interactive || false}
+                    onChange={(e) => setQuickFormData({ ...quickFormData, interactive: e.target.checked })}
+                    className="rounded"
+                  />
+                  <span className="text-sm text-slate-300">🎯 Interactive mode (CEO decision buttons)</span>
+                </label>
+                <p className="text-xs text-slate-500 mt-1 ml-6">Pause standup for CEO decisions via Telegram</p>
+              </div>
 
               <div className="flex gap-2 pt-4">
                 <button type="submit" className="btn btn-primary flex-1">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Schedule
+                  <Zap className="w-4 h-4 mr-2" />
+                  Launch
                 </button>
                 <button
                   type="button"
                   onClick={() => {
-                    setShowOneTimeForm(false);
-                    setOneTimeData({});
+                    setShowQuickForm(false);
+                    setQuickFormData({});
                   }}
                   className="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded text-slate-200"
                 >
@@ -1730,13 +1742,9 @@ function ManageView() {
   const [initiatives, setInitiatives] = useState<InitiativeDef[]>([]);
   const [recurringStandups, setRecurringStandups] = useState<ScheduledStandupType[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showVerticalForm, setShowVerticalForm] = useState(false);
-  const [showInitiativeForm, setShowInitiativeForm] = useState(false);
   const [showRecurringForm, setShowRecurringForm] = useState(false);
-  const [editingVertical, setEditingVertical] = useState<VerticalDef | null>(null);
-  const [editingInitiative, setEditingInitiative] = useState<InitiativeDef | null>(null);
   const [editingRecurring, setEditingRecurring] = useState<ScheduledStandupType | null>(null);
-  const [deleteConfirm, setDeleteConfirm] = useState<{ type: 'vertical' | 'initiative' | 'recurring', key: string } | null>(null);
+  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [formData, setFormData] = useState<any>({});
 
   const formatTime = (time: string) => {
@@ -1789,60 +1797,6 @@ function ManageView() {
     fetchData();
   }, []);
 
-  const handleSaveVertical = async (data: any) => {
-    try {
-      const method = editingVertical ? 'PATCH' : 'POST';
-      const response = await fetch('/api/verticals', {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      });
-
-      if (response.ok) {
-        const result = await response.json();
-        if (editingVertical) {
-          setVerticals(prev => prev.map(v => v.key === data.key ? result.vertical : v));
-        } else {
-          setVerticals(prev => [...prev, result.vertical]);
-        }
-        setShowVerticalForm(false);
-        setEditingVertical(null);
-        setFormData({});
-      } else {
-        console.error('Failed to save vertical');
-      }
-    } catch (err) {
-      console.error('Error saving vertical:', err);
-    }
-  };
-
-  const handleSaveInitiative = async (data: any) => {
-    try {
-      const method = editingInitiative ? 'PATCH' : 'POST';
-      const response = await fetch('/api/initiatives', {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      });
-
-      if (response.ok) {
-        const result = await response.json();
-        if (editingInitiative) {
-          setInitiatives(prev => prev.map(i => i.key === data.key ? result.initiative : i));
-        } else {
-          setInitiatives(prev => [...prev, result.initiative]);
-        }
-        setShowInitiativeForm(false);
-        setEditingInitiative(null);
-        setFormData({});
-      } else {
-        console.error('Failed to save initiative');
-      }
-    } catch (err) {
-      console.error('Error saving initiative:', err);
-    }
-  };
-
   const handleSaveRecurring = async (data: any) => {
     try {
       const method = editingRecurring ? 'PATCH' : 'POST';
@@ -1870,31 +1824,20 @@ function ManageView() {
     }
   };
 
-  const handleDelete = async (type: 'vertical' | 'initiative' | 'recurring', key: string) => {
+  const handleDelete = async (key: string) => {
     try {
-      let endpoint: string;
-      if (type === 'vertical') endpoint = 'verticals';
-      else if (type === 'initiative') endpoint = 'initiatives';
-      else endpoint = 'standup-schedules';
-      
-      const response = await fetch(`/api/${endpoint}?key=${encodeURIComponent(key)}`, {
+      const response = await fetch(`/api/standup-schedules?key=${encodeURIComponent(key)}`, {
         method: 'DELETE'
       });
 
       if (response.ok) {
-        if (type === 'vertical') {
-          setVerticals(prev => prev.filter(v => v.key !== key));
-        } else if (type === 'initiative') {
-          setInitiatives(prev => prev.filter(i => i.key !== key));
-        } else if (type === 'recurring') {
-          setRecurringStandups(prev => prev.filter(r => r.key !== key));
-        }
+        setRecurringStandups(prev => prev.filter(r => r.key !== key));
         setDeleteConfirm(null);
       } else {
-        console.error(`Failed to delete ${type}`);
+        console.error('Failed to delete recurring standup');
       }
     } catch (err) {
-      console.error(`Error deleting ${type}:`, err);
+      console.error('Error deleting recurring standup:', err);
     }
   };
 
@@ -1927,13 +1870,13 @@ function ManageView() {
           </button>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
           {recurringStandups.map((standup) => (
             <div key={standup.key} className="bg-slate-900/50 rounded-xl border border-slate-800 p-4">
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <span className="text-lg">{standup.emoji}</span>
-                  <h4 className="font-medium text-slate-100">{standup.name}</h4>
+                  <h4 className="font-medium text-slate-100 text-sm">{standup.name}</h4>
                 </div>
                 <div className="flex items-center gap-1">
                   <button
@@ -1947,7 +1890,7 @@ function ManageView() {
                     <Pencil className="w-3 h-3 text-slate-400" />
                   </button>
                   <button
-                    onClick={() => setDeleteConfirm({ type: 'recurring', key: standup.key })}
+                    onClick={() => setDeleteConfirm(standup.key)}
                     className="p-1.5 hover:bg-slate-800 rounded"
                   >
                     <Trash2 className="w-3 h-3 text-red-400" />
@@ -1955,13 +1898,16 @@ function ManageView() {
                 </div>
               </div>
               
-              <div className="flex items-center gap-2 mb-2">
-                <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-primary-500/20 text-primary-400 border border-primary-500/30">
+              <div className="flex items-center gap-2 mb-2 flex-wrap">
+                <span className="px-2 py-0.5 rounded text-xs font-medium bg-primary-500/20 text-primary-400 border border-primary-500/30">
                   {formatTime(standup.time)} PT
                 </span>
                 <span className="px-2 py-0.5 rounded text-xs bg-slate-700/50 text-slate-500 border border-slate-600/30">
                   {getScheduleLabel(standup.schedule)}
                 </span>
+              </div>
+              
+              <div className="flex items-center gap-2 mb-2 flex-wrap">
                 {standup.autoExecute && (
                   <span className="px-2 py-0.5 rounded text-xs bg-green-500/20 text-green-400 border border-green-500/30">
                     Auto-Execute
@@ -1972,410 +1918,99 @@ function ManageView() {
                     🎯 Interactive
                   </span>
                 )}
+                <span className="px-2 py-0.5 rounded text-xs bg-blue-500/20 text-blue-400 border border-blue-500/30">
+                  Claude Sonnet 4
+                </span>
               </div>
               
-              {standup.agenda && (
-                <p className="text-sm text-slate-400 mb-3 leading-relaxed">{standup.agenda}</p>
-              )}
-              
-              <div className="flex items-center gap-2 flex-wrap mb-2">
-                {standup.participants.map((role) => {
-                  const colors = getAgentColors("", role);
-                  return (
-                    <span key={role} className={`px-2 py-1 rounded-lg text-xs border ${colors.bg} ${colors.text} ${colors.border}`}>
-                      {roleIcons[role] || "👤"} {role}
-                    </span>
-                  );
-                })}
+              <div className="flex items-center gap-1 flex-wrap">
+                {standup.participants.slice(0, 4).map((role) => (
+                  <span key={role} className="text-xs text-slate-400">
+                    {roleIcons[role] || "👤"}
+                  </span>
+                ))}
+                {standup.participants.length > 4 && (
+                  <span className="text-xs text-slate-500">+{standup.participants.length - 4}</span>
+                )}
               </div>
-              
-              {standup.verticals && standup.verticals.length > 0 && (
-                <div className="flex items-center gap-1.5 flex-wrap">
-                  {standup.verticals.map((vk) => (
-                    <VerticalBadge key={vk} verticalKey={vk} />
-                  ))}
-                </div>
-              )}
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* System Settings */}
+      <div>
+        <h3 className="text-lg font-medium text-slate-200 mb-4">System Settings</h3>
+        <div className="bg-slate-900/50 rounded-xl border border-slate-800 p-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div>
+              <p className="text-sm font-medium text-slate-300 mb-1">Model</p>
+              <p className="text-sm text-slate-400">Claude Sonnet 4</p>
+            </div>
+            <div>
+              <p className="text-sm font-medium text-slate-300 mb-1">Max Tokens</p>
+              <p className="text-sm text-slate-400">8,000</p>
+            </div>
+            <div>
+              <p className="text-sm font-medium text-slate-300 mb-1">Delivery</p>
+              <p className="text-sm text-slate-400">The Board Room (Telegram)</p>
+            </div>
+            <div>
+              <p className="text-sm font-medium text-slate-300 mb-1">Ticket Approval</p>
+              <p className="text-sm text-emerald-400">✅ Enabled (Phase 3)</p>
+            </div>
+          </div>
+          <div className="mt-6 pt-4 border-t border-slate-800">
+            <div className="flex items-center gap-4">
+              <div>
+                <p className="text-sm font-medium text-slate-300 mb-1">Directive Cleanup</p>
+                <p className="text-sm text-slate-400">Daily at 1:00 AM PT</p>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-slate-300 mb-1">Chat ID</p>
+                <p className="text-sm text-slate-500 font-mono">-1003729220981</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
       {/* Verticals Section */}
       <div>
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-medium text-slate-200">Verticals</h3>
-          <button
-            onClick={() => {
-              setFormData({});
-              setEditingVertical(null);
-              setShowVerticalForm(true);
-            }}
-            className="btn btn-primary flex items-center gap-2 text-sm"
-          >
-            <Plus className="w-4 h-4" />
+        <h3 className="text-lg font-medium text-slate-200 mb-4">Verticals</h3>
+        <div className="flex items-center gap-2 flex-wrap">
+          {verticals.map((vertical) => {
+            const vs = verticalStyles[vertical.key];
+            return (
+              <span key={vertical.key} className={`px-3 py-1.5 rounded-lg text-sm border ${
+                vs ? `${vs.bg} ${vs.text} ${vs.border}` : 'bg-slate-500/20 text-slate-400 border-slate-500/30'
+              }`}>
+                {vertical.emoji} {vertical.name}
+              </span>
+            );
+          })}
+          <button className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 rounded-lg text-sm text-slate-400 border border-slate-700 border-dashed">
+            <Plus className="w-4 h-4 inline mr-1" />
             Add Vertical
           </button>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {verticals.map((vertical) => (
-            <div key={vertical.key} className="bg-slate-900/50 rounded-xl border border-slate-800 p-4">
-              <div className="flex items-start justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <span className="text-lg">{vertical.emoji}</span>
-                  <h4 className="font-medium text-slate-100">{vertical.name}</h4>
-                </div>
-                <div className="flex items-center gap-1">
-                  <button
-                    onClick={() => {
-                      setFormData(vertical);
-                      setEditingVertical(vertical);
-                      setShowVerticalForm(true);
-                    }}
-                    className="p-1.5 hover:bg-slate-800 rounded"
-                  >
-                    <Pencil className="w-3 h-3 text-slate-400" />
-                  </button>
-                  <button
-                    onClick={() => setDeleteConfirm({ type: 'vertical', key: vertical.key })}
-                    className="p-1.5 hover:bg-slate-800 rounded"
-                  >
-                    <Trash2 className="w-3 h-3 text-red-400" />
-                  </button>
-                </div>
-              </div>
-              {vertical.description && (
-                <p className="text-sm text-slate-400 mb-3">{vertical.description}</p>
-              )}
-              {vertical.color && (
-                <div className="flex items-center gap-2">
-                  <div className={`w-3 h-3 rounded-full bg-${vertical.color}-500`}></div>
-                  <span className="text-xs text-slate-500">{vertical.color}</span>
-                </div>
-              )}
-            </div>
-          ))}
         </div>
       </div>
 
       {/* Initiatives Section */}
       <div>
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-medium text-slate-200">Initiatives</h3>
-          <button
-            onClick={() => {
-              setFormData({});
-              setEditingInitiative(null);
-              setShowInitiativeForm(true);
-            }}
-            className="btn btn-primary flex items-center gap-2 text-sm"
-          >
-            <Plus className="w-4 h-4" />
+        <h3 className="text-lg font-medium text-slate-200 mb-4">Initiatives</h3>
+        <div className="flex items-center gap-2 flex-wrap">
+          {initiatives.filter(i => i.status === 'active').map((initiative) => (
+            <span key={initiative.key} className="px-3 py-1.5 rounded-lg text-sm bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
+              🎯 {initiative.name}
+            </span>
+          ))}
+          <button className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 rounded-lg text-sm text-slate-400 border border-slate-700 border-dashed">
+            <Plus className="w-4 h-4 inline mr-1" />
             Add Initiative
           </button>
         </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {initiatives.map((initiative) => (
-            <div key={initiative.key} className="bg-slate-900/50 rounded-xl border border-slate-800 p-4">
-              <div className="flex items-start justify-between mb-2">
-                <h4 className="font-medium text-slate-100">{initiative.name}</h4>
-                <div className="flex items-center gap-1">
-                  <button
-                    onClick={() => {
-                      setFormData(initiative);
-                      setEditingInitiative(initiative);
-                      setShowInitiativeForm(true);
-                    }}
-                    className="p-1.5 hover:bg-slate-800 rounded"
-                  >
-                    <Pencil className="w-3 h-3 text-slate-400" />
-                  </button>
-                  <button
-                    onClick={() => setDeleteConfirm({ type: 'initiative', key: initiative.key })}
-                    className="p-1.5 hover:bg-slate-800 rounded"
-                  >
-                    <Trash2 className="w-3 h-3 text-red-400" />
-                  </button>
-                </div>
-              </div>
-              
-              {initiative.description && (
-                <p className="text-sm text-slate-400 mb-3">{initiative.description}</p>
-              )}
-              
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className={`px-2 py-0.5 rounded text-xs font-medium ${
-                  initiative.status === 'active' ? 'bg-emerald-500/20 text-emerald-400' :
-                  initiative.status === 'paused' ? 'bg-amber-500/20 text-amber-400' :
-                  'bg-slate-500/20 text-slate-400'
-                }`}>
-                  {initiative.status}
-                </span>
-                
-                {initiative.priority && (
-                  <PriorityBadge priority={initiative.priority} />
-                )}
-                
-                {initiative.verticals?.map((vKey) => (
-                  <VerticalBadge key={vKey} verticalKey={vKey} />
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
       </div>
-
-      {/* Vertical Form Modal */}
-      {showVerticalForm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-slate-800 rounded-xl p-6 w-full max-w-md mx-4">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-medium text-slate-100">
-                {editingVertical ? 'Edit Vertical' : 'Add Vertical'}
-              </h3>
-              <button
-                onClick={() => {
-                  setShowVerticalForm(false);
-                  setEditingVertical(null);
-                  setFormData({});
-                }}
-                className="p-1 hover:bg-slate-700 rounded"
-              >
-                <X className="w-4 h-4 text-slate-400" />
-              </button>
-            </div>
-            
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleSaveVertical(formData);
-              }}
-              className="space-y-4"
-            >
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1">Key</label>
-                <input
-                  type="text"
-                  value={formData.key || ''}
-                  onChange={(e) => setFormData({ ...formData, key: e.target.value })}
-                  className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-slate-200"
-                  placeholder="ecosystem"
-                  required
-                  disabled={!!editingVertical}
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1">Name</label>
-                <input
-                  type="text"
-                  value={formData.name || ''}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-slate-200"
-                  placeholder="Ecosystem"
-                  required
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1">Emoji</label>
-                <input
-                  type="text"
-                  value={formData.emoji || ''}
-                  onChange={(e) => setFormData({ ...formData, emoji: e.target.value })}
-                  className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-slate-200"
-                  placeholder="🌐"
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1">Description</label>
-                <textarea
-                  value={formData.description || ''}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-slate-200"
-                  rows={3}
-                  placeholder="Cross-cutting concerns spanning all products"
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1">Color</label>
-                <select
-                  value={formData.color || ''}
-                  onChange={(e) => setFormData({ ...formData, color: e.target.value })}
-                  className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-slate-200"
-                >
-                  <option value="">Select color</option>
-                  <option value="slate">Slate</option>
-                  <option value="blue">Blue</option>
-                  <option value="purple">Purple</option>
-                  <option value="emerald">Emerald</option>
-                  <option value="amber">Amber</option>
-                  <option value="red">Red</option>
-                </select>
-              </div>
-              
-              <div className="flex gap-2 pt-4">
-                <button type="submit" className="btn btn-primary flex-1">
-                  <Save className="w-4 h-4 mr-2" />
-                  {editingVertical ? 'Update' : 'Create'}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowVerticalForm(false);
-                    setEditingVertical(null);
-                    setFormData({});
-                  }}
-                  className="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded text-slate-200"
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Initiative Form Modal */}
-      {showInitiativeForm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-slate-800 rounded-xl p-6 w-full max-w-md mx-4">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-medium text-slate-100">
-                {editingInitiative ? 'Edit Initiative' : 'Add Initiative'}
-              </h3>
-              <button
-                onClick={() => {
-                  setShowInitiativeForm(false);
-                  setEditingInitiative(null);
-                  setFormData({});
-                }}
-                className="p-1 hover:bg-slate-700 rounded"
-              >
-                <X className="w-4 h-4 text-slate-400" />
-              </button>
-            </div>
-            
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleSaveInitiative(formData);
-              }}
-              className="space-y-4"
-            >
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1">Key</label>
-                <input
-                  type="text"
-                  value={formData.key || ''}
-                  onChange={(e) => setFormData({ ...formData, key: e.target.value })}
-                  className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-slate-200"
-                  placeholder="app-store-submit"
-                  required
-                  disabled={!!editingInitiative}
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1">Name</label>
-                <input
-                  type="text"
-                  value={formData.name || ''}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-slate-200"
-                  placeholder="App Store Submission"
-                  required
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1">Description</label>
-                <textarea
-                  value={formData.description || ''}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-slate-200"
-                  rows={3}
-                  placeholder="Get Lever app ready and submitted to Apple App Store"
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1">Status</label>
-                <select
-                  value={formData.status || ''}
-                  onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                  className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-slate-200"
-                >
-                  <option value="">Select status</option>
-                  <option value="active">Active</option>
-                  <option value="paused">Paused</option>
-                  <option value="completed">Completed</option>
-                </select>
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1">Priority</label>
-                <select
-                  value={formData.priority || ''}
-                  onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
-                  className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-slate-200"
-                >
-                  <option value="">Select priority</option>
-                  <option value="high">High</option>
-                  <option value="medium">Medium</option>
-                  <option value="low">Low</option>
-                </select>
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1">Verticals</label>
-                <div className="space-y-2 max-h-32 overflow-y-auto">
-                  {verticals.map((vertical) => (
-                    <label key={vertical.key} className="flex items-center gap-2">
-                      <input
-                        type="checkbox"
-                        checked={formData.verticals?.includes(vertical.key) || false}
-                        onChange={(e) => {
-                          const currentVerticals = formData.verticals || [];
-                          if (e.target.checked) {
-                            setFormData({ ...formData, verticals: [...currentVerticals, vertical.key] });
-                          } else {
-                            setFormData({ ...formData, verticals: currentVerticals.filter((v: string) => v !== vertical.key) });
-                          }
-                        }}
-                        className="rounded"
-                      />
-                      <span className="text-sm text-slate-300">{vertical.emoji} {vertical.name}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-              
-              <div className="flex gap-2 pt-4">
-                <button type="submit" className="btn btn-primary flex-1">
-                  <Save className="w-4 h-4 mr-2" />
-                  {editingInitiative ? 'Update' : 'Create'}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowInitiativeForm(false);
-                    setEditingInitiative(null);
-                    setFormData({});
-                  }}
-                  className="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded text-slate-200"
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
 
       {/* Recurring Standup Form Modal */}
       {showRecurringForm && (
@@ -2492,7 +2127,7 @@ function ManageView() {
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-1">Participants</label>
                 <div className="flex flex-wrap gap-2">
-                  {['COO', 'CTO', 'CMO', 'CRO', 'CFTO', 'CTIO', 'CPO'].map((role) => (
+                  {['COO', 'CTO', 'CMO', 'CRO', 'CFTO', 'CTIO', 'CPO', 'CFFO'].map((role) => (
                     <label key={role} className="flex items-center gap-1.5 bg-slate-900 border border-slate-700 rounded px-3 py-1.5 cursor-pointer hover:border-slate-600">
                       <input
                         type="checkbox"
@@ -2515,9 +2150,9 @@ function ManageView() {
 
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-1">Verticals</label>
-                <div className="space-y-2 max-h-32 overflow-y-auto">
+                <div className="flex flex-wrap gap-2">
                   {verticals.map((vertical) => (
-                    <label key={vertical.key} className="flex items-center gap-2">
+                    <label key={vertical.key} className="flex items-center gap-1.5 bg-slate-900 border border-slate-700 rounded px-3 py-1.5 cursor-pointer hover:border-slate-600">
                       <input
                         type="checkbox"
                         checked={formData.verticals?.includes(vertical.key) || false}
@@ -2539,9 +2174,9 @@ function ManageView() {
 
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-1">Initiatives</label>
-                <div className="space-y-2 max-h-32 overflow-y-auto">
-                  {initiatives.map((initiative) => (
-                    <label key={initiative.key} className="flex items-center gap-2">
+                <div className="flex flex-wrap gap-2">
+                  {initiatives.filter(i => i.status === 'active').map((initiative) => (
+                    <label key={initiative.key} className="flex items-center gap-1.5 bg-slate-900 border border-slate-700 rounded px-3 py-1.5 cursor-pointer hover:border-slate-600">
                       <input
                         type="checkbox"
                         checked={formData.initiatives?.includes(initiative.key) || false}
@@ -2623,11 +2258,11 @@ function ManageView() {
           <div className="bg-slate-800 rounded-xl p-6 w-full max-w-sm mx-4">
             <h3 className="text-lg font-medium text-slate-100 mb-2">Confirm Delete</h3>
             <p className="text-sm text-slate-400 mb-4">
-              Are you sure you want to delete this {deleteConfirm.type}? This action cannot be undone.
+              Are you sure you want to delete this recurring standup? This action cannot be undone.
             </p>
             <div className="flex gap-2">
               <button
-                onClick={() => handleDelete(deleteConfirm.type, deleteConfirm.key)}
+                onClick={() => handleDelete(deleteConfirm)}
                 className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded text-white flex-1"
               >
                 Delete

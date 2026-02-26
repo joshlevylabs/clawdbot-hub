@@ -19,6 +19,7 @@ import {
   Zap,
   Target,
   Grid,
+  BarChart3,
 } from "lucide-react";
 
 // ── Brand data interfaces ──────────────────────────────────────────
@@ -440,7 +441,7 @@ const ANIMATION_TIMING: Record<string, AnimationTiming> = {
 
 // ── Tab definitions ──────────────────────────────────────────────
 
-type TabId = "dna" | "colors" | "typography" | "spacing" | "components" | "products" | "animation";
+type TabId = "dna" | "colors" | "typography" | "spacing" | "components" | "products" | "animation" | "dataviz";
 
 interface TabDef {
   id: TabId;
@@ -457,6 +458,7 @@ const TABS: TabDef[] = [
   { id: "components", label: "Components", icon: Component, shortLabel: "UI" },
   { id: "products", label: "Products", icon: Layers },
   { id: "animation", label: "Animation", icon: Sparkles, shortLabel: "Motion" },
+  { id: "dataviz", label: "Data Visualization", icon: BarChart3, shortLabel: "Charts" },
 ];
 
 // ── Utility ──────────────────────────────────────────────────────
@@ -1178,6 +1180,279 @@ export default function BrandGuidelinesPage() {
                 </svg>
                 <span className="text-xs font-medium" style={{ color: "#F5F5F0", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>Data Flow</span>
               </div>
+            </div>
+          </Section>
+        </>
+      )}
+
+      {activeTab === "dataviz" && (
+        <>
+          {/* Philosophy */}
+          <Section>
+            <SectionHeader icon={BarChart3} title="Data Visualization" subtitle="Charts are data-first — visual clarity over decoration" />
+            <p className="text-sm leading-relaxed mb-6" style={{ color: "#B8B8AD" }}>
+              Every chart uses the same grid, axis, and color language across the entire platform. Consistency builds trust in the data.
+            </p>
+          </Section>
+
+          {/* Canvas / Grid Tokens */}
+          <Section>
+            <h3 className="text-sm font-semibold mb-4" style={{ color: "#F5F5F0", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>
+              Canvas &amp; Grid Tokens
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {[
+                { label: "Chart Background", hex: "#0B0B11", token: "obsidian", desc: "Same as page — charts feel embedded" },
+                { label: "Grid Lines", hex: "#1A1A24", token: "surface-warm", desc: "Subtle, never competes with data" },
+                { label: "Axis Lines", hex: "#2A2A38", token: "border-warm", desc: "Structural frame for the chart" },
+                { label: "Axis Labels", hex: "#8B8B80", token: "smoke", desc: "Muted so data dominates" },
+                { label: "Tooltip Background", hex: "#13131B", token: "carbon", desc: "Dark tooltip, warm border" },
+                { label: "Reference Line", hex: "#343444", token: "border-strong", desc: "Dashed 4 4 for baselines" },
+              ].map((item) => (
+                <div key={item.token} className="p-3 rounded-lg border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-8 h-8 rounded-md border" style={{ backgroundColor: item.hex, borderColor: "#2A2A38" }} />
+                    <div>
+                      <div className="text-xs font-semibold" style={{ color: "#F5F5F0" }}>{item.label}</div>
+                      <div className="flex items-center gap-2">
+                        <code className="text-[10px] font-mono" style={{ color: "#D4A020" }}>{item.hex}</code>
+                        <CopyButton text={item.hex} />
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-[11px]" style={{ color: "#8B8B80" }}>{item.desc}</p>
+                </div>
+              ))}
+            </div>
+          </Section>
+
+          {/* Line Chart Spec */}
+          <Section>
+            <h3 className="text-sm font-semibold mb-4" style={{ color: "#F5F5F0", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>
+              📈 Line Charts
+            </h3>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              {/* Live demo */}
+              <div className="p-4 rounded-xl border" style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}>
+                <div className="text-xs font-medium mb-3" style={{ color: "#B8B8AD" }}>Live Preview</div>
+                <svg width="100%" height="120" viewBox="0 0 400 120" preserveAspectRatio="xMidYMid meet">
+                  {/* Grid */}
+                  {[0, 30, 60, 90, 120].map((y) => (
+                    <line key={y} x1="0" y1={y} x2="400" y2={y} stroke="#1A1A24" strokeWidth="1" />
+                  ))}
+                  {/* Primary line — Forge Gold */}
+                  <path d="M 0 90 C 50 85, 80 70, 120 55 S 200 30, 260 35 S 340 25, 400 20" stroke="#D4A020" strokeWidth="2" fill="none" strokeLinecap="round" />
+                  <path d="M 0 90 C 50 85, 80 70, 120 55 S 200 30, 260 35 S 340 25, 400 20 L 400 120 L 0 120 Z" fill="url(#brandGoldGrad)" />
+                  {/* Secondary line — Deep Indigo */}
+                  <path d="M 0 80 C 60 78, 100 75, 160 65 S 240 55, 300 50 S 360 45, 400 40" stroke="#4F46E5" strokeWidth="2" fill="none" strokeLinecap="round" />
+                  {/* Tertiary line — Signal Cyan */}
+                  <path d="M 0 100 C 70 95, 140 90, 200 85 S 280 70, 340 65 S 380 60, 400 55" stroke="#22D3EE" strokeWidth="2" fill="none" strokeLinecap="round" strokeDasharray="4 3" />
+                  <defs>
+                    <linearGradient id="brandGoldGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#D4A020" stopOpacity="0.2" />
+                      <stop offset="100%" stopColor="#D4A020" stopOpacity="0" />
+                    </linearGradient>
+                  </defs>
+                </svg>
+                <div className="flex items-center gap-4 mt-3">
+                  <div className="flex items-center gap-1.5"><div className="w-4 h-0.5 rounded" style={{ backgroundColor: "#D4A020" }} /><span className="text-[10px]" style={{ color: "#B8B8AD" }}>Primary</span></div>
+                  <div className="flex items-center gap-1.5"><div className="w-4 h-0.5 rounded" style={{ backgroundColor: "#4F46E5" }} /><span className="text-[10px]" style={{ color: "#B8B8AD" }}>Secondary</span></div>
+                  <div className="flex items-center gap-1.5"><div className="w-4 h-0.5 rounded" style={{ backgroundColor: "#22D3EE", borderTop: "1px dashed" }} /><span className="text-[10px]" style={{ color: "#B8B8AD" }}>Tertiary</span></div>
+                </div>
+              </div>
+              {/* Spec table */}
+              <div className="space-y-2">
+                {[
+                  { prop: "Primary Line", value: "#D4A020", note: "Forge Gold — main metric" },
+                  { prop: "Secondary Line", value: "#4F46E5", note: "Deep Indigo — comparison" },
+                  { prop: "Tertiary Line", value: "#22D3EE", note: "Signal Cyan — overlay" },
+                  { prop: "Stroke Width", value: "2px", note: "Consistent across all lines" },
+                  { prop: "Curve", value: "monotoneX", note: "Smooth but faithful to data" },
+                  { prop: "Dots", value: "none", note: "Only on hover/active states" },
+                  { prop: "Area Fill", value: "20% → 0%", note: "Gradient of line color, top to bottom" },
+                ].map((row) => (
+                  <div key={row.prop} className="flex items-center gap-3 p-2 rounded-lg" style={{ backgroundColor: "rgba(19, 19, 27, 0.5)" }}>
+                    <span className="text-xs font-medium w-28 shrink-0" style={{ color: "#F5F5F0" }}>{row.prop}</span>
+                    <code className="text-xs font-mono w-24 shrink-0" style={{ color: "#D4A020" }}>{row.value}</code>
+                    <span className="text-[11px]" style={{ color: "#8B8B80" }}>{row.note}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </Section>
+
+          {/* Bar Chart Spec */}
+          <Section>
+            <h3 className="text-sm font-semibold mb-4" style={{ color: "#F5F5F0", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>
+              📊 Bar Charts
+            </h3>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <div className="p-4 rounded-xl border" style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}>
+                <div className="text-xs font-medium mb-3" style={{ color: "#B8B8AD" }}>Live Preview</div>
+                <svg width="100%" height="100" viewBox="0 0 300 100" preserveAspectRatio="xMidYMid meet">
+                  {[0, 50, 100].map((y) => (
+                    <line key={y} x1="0" y1={y} x2="300" y2={y} stroke="#1A1A24" strokeWidth="1" />
+                  ))}
+                  <rect x="10" y="30" width="35" height="70" rx="4" fill="#D4A020" opacity="0.85" />
+                  <rect x="55" y="45" width="35" height="55" rx="4" fill="#D4A020" opacity="0.85" />
+                  <rect x="100" y="15" width="35" height="85" rx="4" fill="#10B981" opacity="0.85" />
+                  <rect x="145" y="50" width="35" height="50" rx="4" fill="#4F46E5" opacity="0.85" />
+                  <rect x="190" y="60" width="35" height="40" rx="4" fill="#EF4444" opacity="0.85" />
+                  <rect x="235" y="25" width="35" height="75" rx="4" fill="#D4A020" opacity="0.85" />
+                  {/* Threshold line */}
+                  <line x1="0" y1="40" x2="300" y2="40" stroke="#D4A020" strokeWidth="1.5" strokeDasharray="6 4" opacity="0.6" />
+                </svg>
+                <div className="flex items-center gap-4 mt-3 flex-wrap">
+                  <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-sm" style={{ backgroundColor: "#D4A020" }} /><span className="text-[10px]" style={{ color: "#B8B8AD" }}>Primary</span></div>
+                  <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-sm" style={{ backgroundColor: "#10B981" }} /><span className="text-[10px]" style={{ color: "#B8B8AD" }}>Positive</span></div>
+                  <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-sm" style={{ backgroundColor: "#EF4444" }} /><span className="text-[10px]" style={{ color: "#B8B8AD" }}>Negative</span></div>
+                  <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-sm" style={{ backgroundColor: "#4F46E5" }} /><span className="text-[10px]" style={{ color: "#B8B8AD" }}>Secondary</span></div>
+                </div>
+              </div>
+              <div className="space-y-2">
+                {[
+                  { prop: "Primary Fill", value: "#D4A020", note: "Forge Gold" },
+                  { prop: "Secondary Fill", value: "#4F46E5", note: "Deep Indigo" },
+                  { prop: "Positive", value: "#10B981", note: "Emerald — gains" },
+                  { prop: "Negative", value: "#EF4444", note: "Red — losses" },
+                  { prop: "Border Radius", value: "4px", note: "Slightly rounded top corners" },
+                  { prop: "Opacity", value: "0.85", note: "Slight transparency, 1.0 on hover" },
+                  { prop: "Threshold", value: "#D4A020 6 4", note: "Forge Gold dashed for thresholds" },
+                ].map((row) => (
+                  <div key={row.prop} className="flex items-center gap-3 p-2 rounded-lg" style={{ backgroundColor: "rgba(19, 19, 27, 0.5)" }}>
+                    <span className="text-xs font-medium w-28 shrink-0" style={{ color: "#F5F5F0" }}>{row.prop}</span>
+                    <code className="text-xs font-mono w-24 shrink-0" style={{ color: "#D4A020" }}>{row.value}</code>
+                    <span className="text-[11px]" style={{ color: "#8B8B80" }}>{row.note}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </Section>
+
+          {/* Candlestick */}
+          <Section>
+            <h3 className="text-sm font-semibold mb-4" style={{ color: "#F5F5F0", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>
+              🕯️ Candlestick Charts
+            </h3>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <div className="p-4 rounded-xl border" style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}>
+                <div className="text-xs font-medium mb-3" style={{ color: "#B8B8AD" }}>Live Preview</div>
+                <svg width="100%" height="100" viewBox="0 0 280 100" preserveAspectRatio="xMidYMid meet">
+                  {[0, 50, 100].map((y) => (
+                    <line key={y} x1="0" y1={y} x2="280" y2={y} stroke="#1A1A24" strokeWidth="1" />
+                  ))}
+                  {/* Green candles */}
+                  <line x1="25" y1="10" x2="25" y2="80" stroke="#10B981" strokeWidth="1" />
+                  <rect x="18" y="30" width="14" height="35" fill="#10B981" opacity="0.9" />
+                  <line x1="65" y1="15" x2="65" y2="70" stroke="#10B981" strokeWidth="1" />
+                  <rect x="58" y="25" width="14" height="30" fill="#10B981" opacity="0.9" />
+                  <line x1="145" y1="20" x2="145" y2="85" stroke="#10B981" strokeWidth="1" />
+                  <rect x="138" y="35" width="14" height="30" fill="#10B981" opacity="0.9" />
+                  <line x1="225" y1="5" x2="225" y2="60" stroke="#10B981" strokeWidth="1" />
+                  <rect x="218" y="15" width="14" height="30" fill="#10B981" opacity="0.9" />
+                  {/* Red candles */}
+                  <line x1="105" y1="25" x2="105" y2="90" stroke="#EF4444" strokeWidth="1" />
+                  <rect x="98" y="35" width="14" height="40" fill="#EF4444" opacity="0.9" />
+                  <line x1="185" y1="30" x2="185" y2="95" stroke="#EF4444" strokeWidth="1" />
+                  <rect x="178" y="40" width="14" height="35" fill="#EF4444" opacity="0.9" />
+                  <line x1="265" y1="15" x2="265" y2="75" stroke="#EF4444" strokeWidth="1" />
+                  <rect x="258" y="25" width="14" height="35" fill="#EF4444" opacity="0.9" />
+                </svg>
+              </div>
+              <div className="space-y-2">
+                {[
+                  { prop: "Bullish (Up)", value: "#10B981", note: "Emerald — body, border, and wick" },
+                  { prop: "Bearish (Down)", value: "#EF4444", note: "Red — body, border, and wick" },
+                  { prop: "Body Opacity", value: "0.9", note: "Slight transparency for layered feel" },
+                  { prop: "Wick Width", value: "1px", note: "Always 1px, same color as body" },
+                ].map((row) => (
+                  <div key={row.prop} className="flex items-center gap-3 p-2 rounded-lg" style={{ backgroundColor: "rgba(19, 19, 27, 0.5)" }}>
+                    <span className="text-xs font-medium w-28 shrink-0" style={{ color: "#F5F5F0" }}>{row.prop}</span>
+                    <code className="text-xs font-mono w-24 shrink-0" style={{ color: "#D4A020" }}>{row.value}</code>
+                    <span className="text-[11px]" style={{ color: "#8B8B80" }}>{row.note}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </Section>
+
+          {/* Multi-Series Palette */}
+          <Section>
+            <h3 className="text-sm font-semibold mb-4" style={{ color: "#F5F5F0", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>
+              🎨 Multi-Series Palette
+            </h3>
+            <p className="text-xs mb-4" style={{ color: "#8B8B80" }}>
+              When a chart has multiple series (e.g., 8 strategies), use this ordered palette. Designed for maximum distinguishability on dark backgrounds.
+            </p>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {[
+                { name: "Forge Gold", hex: "#D4A020", usage: "Primary / Series 1" },
+                { name: "Deep Indigo", hex: "#4F46E5", usage: "Series 2" },
+                { name: "Emerald", hex: "#10B981", usage: "Series 3 / Positive" },
+                { name: "Signal Cyan", hex: "#22D3EE", usage: "Series 4" },
+                { name: "Amber", hex: "#F59E0B", usage: "Series 5" },
+                { name: "Violet", hex: "#8B5CF6", usage: "Series 6" },
+                { name: "Rose", hex: "#F43F5E", usage: "Series 7" },
+                { name: "Teal", hex: "#14B8A6", usage: "Series 8" },
+              ].map((c, i) => (
+                <div key={c.hex} className="p-3 rounded-lg border text-center" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+                  <div className="w-full h-8 rounded-md mb-2" style={{ backgroundColor: c.hex, opacity: 0.85 }} />
+                  <div className="text-xs font-semibold" style={{ color: "#F5F5F0" }}>{c.name}</div>
+                  <div className="flex items-center justify-center gap-1">
+                    <code className="text-[10px] font-mono" style={{ color: "#D4A020" }}>{c.hex}</code>
+                    <CopyButton text={c.hex} />
+                  </div>
+                  <div className="text-[10px] mt-1" style={{ color: "#8B8B80" }}>#{i + 1} — {c.usage}</div>
+                </div>
+              ))}
+            </div>
+          </Section>
+
+          {/* Moving Averages */}
+          <Section>
+            <h3 className="text-sm font-semibold mb-4" style={{ color: "#F5F5F0", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>
+              📉 Moving Average Colors
+            </h3>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {[
+                { label: "MA5 (Fast)", hex: "#D4A020" },
+                { label: "MA20 (Medium)", hex: "#4F46E5" },
+                { label: "MA50 (Slow)", hex: "#22D3EE" },
+                { label: "MA100 (Very Slow)", hex: "#8B5CF6" },
+              ].map((ma) => (
+                <div key={ma.label} className="flex items-center gap-3 p-3 rounded-lg border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+                  <div className="w-10 h-1 rounded-full" style={{ backgroundColor: ma.hex }} />
+                  <div>
+                    <div className="text-xs font-medium" style={{ color: "#F5F5F0" }}>{ma.label}</div>
+                    <div className="flex items-center gap-1">
+                      <code className="text-[10px] font-mono" style={{ color: "#D4A020" }}>{ma.hex}</code>
+                      <CopyButton text={ma.hex} />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Section>
+
+          {/* Don'ts */}
+          <Section>
+            <h3 className="text-sm font-semibold mb-4" style={{ color: "#EF4444", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>
+              🚫 Chart Don&apos;ts
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              {[
+                "Never use cold blue grids (#1e293b, #334155) — use warm #1A1A24",
+                "Never use #94a3b8 (cold slate) for axis labels — use warm #8B8B80",
+                "Never use different grid colors across charts — #1A1A24 everywhere",
+                "Never mix Forge Gold with arbitrary yellows (#fbbf24) — use #D4A020",
+                "Never use rainbow colors for sequential data — use the ordered palette",
+                "Never show dots on line charts by default — only on hover/active",
+              ].map((rule) => (
+                <div key={rule} className="flex items-start gap-2 p-2 rounded-lg" style={{ backgroundColor: "rgba(239, 68, 68, 0.05)" }}>
+                  <span className="text-red-400 text-xs mt-0.5">✕</span>
+                  <span className="text-xs" style={{ color: "#B8B8AD" }}>{rule}</span>
+                </div>
+              ))}
             </div>
           </Section>
         </>

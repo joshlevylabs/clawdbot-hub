@@ -1096,7 +1096,7 @@ export default function BrandGuidelinesPage() {
                       border: "1px solid #D4A020",
                       color: "#F5F5F0",
                       fontFamily: "Inter, system-ui, sans-serif",
-                      ringColor: "rgba(212, 160, 32, 0.2)"
+                      boxShadow: "0 0 0 2px rgba(212, 160, 32, 0.2)"
                     }}
                     readOnly
                   />

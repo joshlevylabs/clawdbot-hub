@@ -205,7 +205,7 @@ const STRATEGY_DESCRIPTIONS: Record<string, string> = {
   '6-of-8 Vote Consensus': "Tickers where 6 of the 8 strategies voted BUY. Near-unanimous consensus.",
   '7-of-8 Vote Consensus': "Tickers where 7 of the 8 strategies voted BUY. Near-unanimous consensus.",
   '8-of-8 Vote Consensus': "Tickers where all 8 strategies unanimously voted BUY. Maximum consensus signals with highest confidence and lowest risk.",
-  'Signal Gating': "Suppresses BUY signals in bear regimes (bear suppress) and converts SELL signals to HOLD (sell suppress) to reduce risk.\n\n**Filters:**\n• Bear regime suppression: blocks BUY signals when ticker is in bear regime (price below key SMAs)\n• Sell suppression: converts SELL signals to HOLD during uncertain regimes to prevent panic selling\n• Sideways penalty: reduces confidence for tickers in sideways/choppy regimes",
+  'Signal Gating': "A pass-through filter that operates on persistence-confirmed signals only. Applies defensive logic to reduce risk without modifying signal scores.\n\n**Bear Regime Suppression:**\n• Converts BUY signals to HOLD when a ticker's regime is bearish (price below key moving averages)\n• Prevents buying into downtrends regardless of strategy consensus strength\n\n**Sell Suppression:**\n• Converts SELL signals to HOLD to prevent panic selling during uncertain market conditions\n• Maintains defensive positioning rather than actively shorting\n\n**Pass-Through Design:**\n• No score modification — only signal suppression (BUY→HOLD, SELL→HOLD)\n• Operates exclusively on signals that have already passed 2-day persistence confirmation\n• Consensus tier structure is preserved through gating",
   'Confidence Tuning': "Adjusts raw signal confidence using multiple contextual factors to produce a final confidence score.\n\n**Adjustment factors:**\n• Regime weight: bull regime boosts confidence, bear reduces it\n• Asset role evaluation: core vs. satellite positioning\n• Sector rotation modifier: favors sectors in the current cycle phase\n• Sideways penalty: reduces confidence in range-bound markets\n• Kalshi prediction market data: incorporates market-implied probabilities when available",
   'Final Filters': "Last-pass filters that enforce portfolio construction rules and risk management.\n\n**Filters:**\n• Cluster limit: max 2 BUY signals per sector (prevents over-concentration)\n• Asset confidence threshold: minimum confidence required to pass\n• Crash mode protection: suppresses all BUY signals during market crashes (VIX spike + broad decline)\n• Multiplier caps: limits maximum position sizing multipliers",
 };
@@ -1652,6 +1652,130 @@ function BlendedFGTickerRow({ ticker }: { ticker: TickerDetail }) {
   );
 }
 
+// ============================================================
+// Signal Gating Ticker Row — for Signal Gating modal
+// ============================================================
+function SignalGatingTickerRow({ ticker }: { ticker: TickerDetail }) {
+  const raw = ticker.rawData;
+  if (!raw) return null;
+
+  const getSignalColor = (signal: string) => {
+    switch(signal) {
+      case 'BUY': return 'text-emerald-400';
+      case 'SELL': return 'text-red-400';
+      case 'HOLD': return 'text-amber-400';
+      default: return 'text-slate-400';
+    }
+  };
+
+  const getRegimeColor = (regime: string) => {
+    switch(regime) {
+      case 'bull': return 'text-emerald-400';
+      case 'bear': return 'text-red-400';
+      case 'sideways': return 'text-amber-400';
+      default: return 'text-slate-400';
+    }
+  };
+
+  const getRegimeIcon = (regime: string) => {
+    switch(regime) {
+      case 'bull': return '🟢';
+      case 'bear': return '🔴';
+      case 'sideways': return '🟡';
+      default: return '⚪';
+    }
+  };
+
+  return (
+    <div className="bg-slate-800/50 rounded-lg p-3 border border-slate-700/50">
+      {/* Header with symbol and current signal */}
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2">
+          <span className="font-mono font-semibold text-slate-200 text-sm">{raw.symbol}</span>
+          <span className="text-[10px] text-slate-500 capitalize">{raw.asset_class?.replace('_', ' ')}</span>
+        </div>
+        <span className={`px-2 py-0.5 rounded text-xs font-medium ${getSignalColor(raw.signal)} bg-slate-700/50`}>
+          {raw.signal}
+        </span>
+      </div>
+
+      {/* Signal Gating Details */}
+      <div className="space-y-2">
+        {/* Regime Row */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-medium text-slate-300">Regime:</span>
+            <span className="flex items-center gap-1">
+              <span>{getRegimeIcon(raw.regime)}</span>
+              <span className={`font-semibold capitalize ${getRegimeColor(raw.regime)}`}>
+                {raw.regime}
+              </span>
+            </span>
+          </div>
+          {raw.regime_details?.regime_days && (
+            <span className="text-[10px] text-slate-400">
+              {raw.regime_details.regime_days} days
+            </span>
+          )}
+        </div>
+
+        {/* Bear Suppression Status */}
+        {raw.bear_suppressed && (
+          <div className="bg-red-900/20 border border-red-700/30 rounded p-2">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-medium text-red-400">🛑 Bear Suppressed</span>
+            </div>
+            <div className="text-[10px] text-red-300 mt-1">
+              BUY signal converted to HOLD due to bearish regime
+            </div>
+            {raw.regime_details && (
+              <div className="text-[10px] text-slate-400 mt-1">
+                Price below key moving averages ({raw.regime_details.regime_stage})
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Sell Suppression Status */}
+        {raw.sell_suppressed && (
+          <div className="bg-amber-900/20 border border-amber-700/30 rounded p-2">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-medium text-amber-400">⏸️ Sell Suppressed</span>
+            </div>
+            <div className="text-[10px] text-amber-300 mt-1">
+              SELL signal converted to HOLD to prevent panic selling
+            </div>
+          </div>
+        )}
+
+        {/* Pass-Through Status */}
+        {!raw.bear_suppressed && !raw.sell_suppressed && (
+          <div className="bg-emerald-900/20 border border-emerald-700/30 rounded p-2">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-medium text-emerald-400">✅ Passed Through</span>
+            </div>
+            <div className="text-[10px] text-emerald-300 mt-1">
+              Signal unchanged by gating filters
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Current Price (if available) */}
+      {raw.price && (
+        <div className="mt-3 pt-2 border-t border-slate-700/50">
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-slate-400">Current Price:</span>
+            <span className="text-sm font-mono text-slate-200">
+              ${raw.price.toFixed(2)}
+            </span>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function PipelineDetailPanel({
   stageDetails,
   onClose
@@ -2126,7 +2250,11 @@ export default function PipelineDetailPanel({
                   <div className="space-y-2">
                     {filteredOutput.length > 0 ? (
                       filteredOutput.map((ticker, idx) => (
-                        <BlendedFGTickerRow key={idx} ticker={ticker} />
+                        stageDetails.name.includes('Signal Gating') ? (
+                          <SignalGatingTickerRow key={idx} ticker={ticker} />
+                        ) : (
+                          <BlendedFGTickerRow key={idx} ticker={ticker} />
+                        )
                       ))
                     ) : (
                       <div className="text-center text-slate-400 py-8">
@@ -2139,7 +2267,11 @@ export default function PipelineDetailPanel({
                   <div className="space-y-2">
                     {filteredPending.length > 0 ? (
                       filteredPending.slice(0, 100).map((ticker, idx) => (
-                        <BlendedFGTickerRow key={idx} ticker={ticker} />
+                        stageDetails.name.includes('Signal Gating') ? (
+                          <SignalGatingTickerRow key={idx} ticker={ticker} />
+                        ) : (
+                          <BlendedFGTickerRow key={idx} ticker={ticker} />
+                        )
                       ))
                     ) : (
                       <div className="text-center text-slate-400 py-8">
@@ -2152,7 +2284,11 @@ export default function PipelineDetailPanel({
                   <div className="space-y-2">
                     {filteredFiltered.length > 0 ? (
                       filteredFiltered.slice(0, 100).map((ticker, idx) => (
-                        <BlendedFGTickerRow key={idx} ticker={ticker} />
+                        stageDetails.name.includes('Signal Gating') ? (
+                          <SignalGatingTickerRow key={idx} ticker={ticker} />
+                        ) : (
+                          <BlendedFGTickerRow key={idx} ticker={ticker} />
+                        )
                       ))
                     ) : (
                       <div className="text-center text-slate-400 py-8">

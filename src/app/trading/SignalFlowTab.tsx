@@ -1231,7 +1231,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
                   <div key={`sg-wrap-${path.voteCount}`} className="relative">
                     <WorkflowNode
                       ref={(el) => { nodeRefs.current[`signalGating_tier_${path.voteCount}`] = el; }}
-                      name={path.voteCount >= 3 ? `≥3/8` : `${path.voteCount}/8`}
+                      name={`${path.voteCount}/8`}
                       description={`${inputCount} → ${outputCount}`}
                       inputCount={inputCount}
                       outputCount={outputCount}
@@ -1266,7 +1266,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
                       <WorkflowNode
                     key={path.voteCount}
                     ref={(el) => { nodeRefs.current[`confidenceTuning_tier_${path.voteCount}`] = el; }}
-                    name={path.voteCount >= 3 ? `≥3/8` : `${path.voteCount}/8`}
+                    name={`${path.voteCount}/8`}
                     description={`${inputCount} → ${outputCount}`}
                     inputCount={inputCount}
                     outputCount={outputCount}
@@ -1301,7 +1301,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
                       <WorkflowNode
                     key={path.voteCount}
                     ref={(el) => { nodeRefs.current[`finalFilters_tier_${path.voteCount}`] = el; }}
-                    name={path.voteCount >= 3 ? `≥3/8` : `${path.voteCount}/8`}
+                    name={`${path.voteCount}/8`}
                     description={`${inputCount} → ${outputCount}`}
                     inputCount={inputCount}
                     outputCount={outputCount}
@@ -1336,7 +1336,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
                       <WorkflowNode
                     key={path.voteCount}
                     ref={(el) => { nodeRefs.current[`output_tier_${path.voteCount}`] = el; }}
-                    name={path.voteCount >= 3 ? `≥3/8` : `${path.voteCount}/8`}
+                    name={`${path.voteCount}/8`}
                     description={`${inputCount} → ${outputCount}`}
                     inputCount={inputCount}
                     outputCount={outputCount}
@@ -1371,7 +1371,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
                       <WorkflowNode
                     key={path.voteCount}
                     ref={(el) => { nodeRefs.current[`fibonacciLevels_tier_${path.voteCount}`] = el; }}
-                    name={path.voteCount >= 3 ? `≥3/8` : `${path.voteCount}/8`}
+                    name={`${path.voteCount}/8`}
                     description={`${inputCount} signals`}
                     inputCount={inputCount}
                     outputCount={outputCount}
@@ -1406,7 +1406,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
                       <WorkflowNode
                     key={path.voteCount}
                     ref={(el) => { nodeRefs.current[`agentAnalysis_tier_${path.voteCount}`] = el; }}
-                    name={path.voteCount >= 3 ? `≥3/8` : `${path.voteCount}/8`}
+                    name={`${path.voteCount}/8`}
                     description={`${inputCount} signals`}
                     inputCount={inputCount}
                     outputCount={outputCount}
@@ -1832,7 +1832,7 @@ export default function SignalFlowTab() {
       
       // Get tier-specific data
       const tierData = stage.perTierData?.[voteCount];
-      const tierLabel = voteCount >= 3 ? `≥3/8` : `${voteCount}/8`;
+      const tierLabel = `${voteCount}/8`;
       
       // Filter passed/filtered tickers to only this tier
       const tierFilter = (t: any) => {
@@ -1841,7 +1841,7 @@ export default function SignalFlowTab() {
           if (t.persistence_by_strategy && (t.persistence_by_strategy[sv.key] || 0) > 0) return true;
           return false;
         }).length;
-        return voteCount >= 3 ? tVotes >= 3 : tVotes === voteCount;
+        return tVotes === voteCount;
       };
       
       const tierPassed = (stage.passed || []).filter(tierFilter);

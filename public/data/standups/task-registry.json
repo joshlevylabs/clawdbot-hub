@@ -185,12 +185,15 @@
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "Alex",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "2026-02-25-evening-session",
       "sourceDate": "2026-02-25",
       "createdAt": "2026-02-25T20:23:58.405901-08:00",
       "approvedAt": "2026-02-25T20:23:58.406173-08:00",
-      "approvedBy": "joshua"
+      "approvedBy": "joshua",
+      "updatedAt": "2026-02-26T09:17:05.780507-08:00",
+      "dispatchedAt": "2026-02-26T09:11:36.456830-08:00",
+      "completedAt": "2026-02-26T09:17:05.780252-08:00"
     },
     {
       "key": "A-010",
@@ -205,12 +208,15 @@
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "Alex",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "2026-02-25-evening-session",
       "sourceDate": "2026-02-25",
       "createdAt": "2026-02-25T20:24:09.118179-08:00",
       "approvedAt": "2026-02-25T20:24:09.118430-08:00",
-      "approvedBy": "joshua"
+      "approvedBy": "joshua",
+      "updatedAt": "2026-02-26T09:17:22.882064-08:00",
+      "dispatchedAt": "2026-02-26T09:11:37.097412-08:00",
+      "completedAt": "2026-02-26T09:17:22.881684-08:00"
     },
     {
       "key": "A-011",
@@ -225,12 +231,15 @@
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "Elon",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "2026-02-25-evening-session",
       "sourceDate": "2026-02-25",
       "createdAt": "2026-02-25T20:24:20.630219-08:00",
       "approvedAt": "2026-02-25T20:24:20.630461-08:00",
-      "approvedBy": "joshua"
+      "approvedBy": "joshua",
+      "updatedAt": "2026-02-26T09:20:09.481443-08:00",
+      "dispatchedAt": "2026-02-26T09:11:37.714239-08:00",
+      "completedAt": "2026-02-26T09:20:09.481163-08:00"
     },
     {
       "key": "A-012",
@@ -243,12 +252,15 @@
       "tag": "AGENT",
       "priority": "low",
       "assignee": "Elon Musk",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "2026-02-25-night-wrap",
       "sourceDate": "2026-02-25",
       "createdAt": "2026-02-25T22:34:48.083996-08:00",
       "approvedAt": "2026-02-25T22:34:48.084244-08:00",
-      "approvedBy": "joshua"
+      "approvedBy": "joshua",
+      "updatedAt": "2026-02-26T09:16:33.094451-08:00",
+      "dispatchedAt": "2026-02-26T09:11:38.391022-08:00",
+      "completedAt": "2026-02-26T09:16:33.094197-08:00"
     },
     {
       "key": "A-013",
@@ -263,12 +275,15 @@
       "tag": "AGENT",
       "priority": "high",
       "assignee": "Steve Jobs",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "2026-02-26-adhoc-personal-agent-canvas-app-the-death-of-hardcoded-frontends",
       "sourceDate": "2026-02-26",
       "createdAt": "2026-02-26T08:56:23.766297-08:00",
       "approvedAt": "2026-02-26T08:56:23.766651-08:00",
-      "approvedBy": "joshua"
+      "approvedBy": "joshua",
+      "updatedAt": "2026-02-26T09:19:03.634776-08:00",
+      "dispatchedAt": "2026-02-26T09:11:38.914001-08:00",
+      "completedAt": "2026-02-26T09:19:03.634516-08:00"
     },
     {
       "key": "A-014",
@@ -282,12 +297,15 @@
       "tag": "AGENT",
       "priority": "high",
       "assignee": "Elon",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "2026-02-26-adhoc-personal-agent-canvas-app-the-death-of-hardcoded-frontends",
       "sourceDate": "2026-02-26",
       "createdAt": "2026-02-26T08:56:41.950738-08:00",
       "approvedAt": "2026-02-26T08:56:41.951030-08:00",
-      "approvedBy": "joshua"
+      "approvedBy": "joshua",
+      "updatedAt": "2026-02-26T09:20:22.246782-08:00",
+      "dispatchedAt": "2026-02-26T09:11:39.454168-08:00",
+      "completedAt": "2026-02-26T09:20:22.246498-08:00"
     },
     {
       "key": "A-015",
@@ -301,12 +319,15 @@
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "Jordan Peterson",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "2026-02-26-adhoc-personal-agent-canvas-app-the-death-of-hardcoded-frontends",
       "sourceDate": "2026-02-26",
       "createdAt": "2026-02-26T08:56:57.254554-08:00",
       "approvedAt": "2026-02-26T08:56:57.254898-08:00",
-      "approvedBy": "joshua"
+      "approvedBy": "joshua",
+      "updatedAt": "2026-02-26T09:15:54.819163-08:00",
+      "dispatchedAt": "2026-02-26T09:11:40.094075-08:00",
+      "completedAt": "2026-02-26T09:15:54.818809-08:00"
     },
     {
       "key": "A-016",
@@ -320,12 +341,15 @@
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "Dave Ramsey",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "2026-02-26-adhoc-personal-agent-canvas-app-the-death-of-hardcoded-frontends",
       "sourceDate": "2026-02-26",
       "createdAt": "2026-02-26T08:57:11.659706-08:00",
       "approvedAt": "2026-02-26T08:57:11.660093-08:00",
-      "approvedBy": "joshua"
+      "approvedBy": "joshua",
+      "updatedAt": "2026-02-26T09:16:42.418440-08:00",
+      "dispatchedAt": "2026-02-26T09:11:40.860849-08:00",
+      "completedAt": "2026-02-26T09:16:42.418174-08:00"
     },
     {
       "key": "A-017",
@@ -339,12 +363,15 @@
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "Alex Hormozi",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "2026-02-26-adhoc-personal-agent-canvas-app-the-death-of-hardcoded-frontends",
       "sourceDate": "2026-02-26",
       "createdAt": "2026-02-26T08:57:28.415159-08:00",
       "approvedAt": "2026-02-26T08:57:28.415457-08:00",
-      "approvedBy": "joshua"
+      "approvedBy": "joshua",
+      "updatedAt": "2026-02-26T09:18:30.901833-08:00",
+      "dispatchedAt": "2026-02-26T09:11:41.536297-08:00",
+      "completedAt": "2026-02-26T09:18:30.901556-08:00"
     }
   ]
 }

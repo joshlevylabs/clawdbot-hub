@@ -10,11 +10,8 @@ import {
   Plug,
   Search,
   ChevronRight,
-  ExternalLink,
   Copy,
   Check,
-  Cpu,
-  Code,
   Layers,
   Zap,
   Shield,
@@ -22,6 +19,10 @@ import {
   Terminal,
   Radio,
   Package,
+  Monitor,
+  Smartphone,
+  DollarSign,
+  ArrowDown,
 } from "lucide-react";
 
 // ── Types ──────────────────────────────────────────────────────
@@ -315,6 +316,15 @@ const PIPELINES: { name: string; description: string; steps: string[]; consumers
   },
 ];
 
+const REVENUE_STREAMS: { stream: string; platform: string; status: string; potential: string }[] = [
+  { stream: "Today's Plays Subscription", platform: "Website + App", status: "built", potential: "$10-50/mo × subscribers" },
+  { stream: "Watt Purchases", platform: "App", status: "built", potential: "Microtransactions" },
+  { stream: "Marriage Compass Premium", platform: "Website + App", status: "built", potential: "Bundled" },
+  { stream: "Newsletter Sponsorships", platform: "Beehiiv", status: "planned", potential: "$50-500/issue" },
+  { stream: "Podcast Sponsorships", platform: "Spotify/YouTube", status: "planned", potential: "$100-1000/ep" },
+  { stream: "Consulting", platform: "Website", status: "planned", potential: "$200-500/hr" },
+];
+
 // ── Components ──────────────────────────────────────────────────
 
 function StatusBadge({ status }: { status: ResourceStatus }) {
@@ -522,6 +532,46 @@ export default function RegistryPage() {
             </div>
           </div>
 
+          {/* Architecture Diagram */}
+          <div className="rounded-2xl border p-6 mb-6" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+            <div className="flex items-center justify-center gap-2 mb-5">
+              <Database className="w-5 h-5" style={{ color: "#D4A020" }} />
+              <span className="text-sm font-semibold" style={{ color: "#D4A020" }}>Supabase</span>
+              <span className="text-xs ml-2" style={{ color: "#626259" }}>Auth · Profiles · Signals · Compass · Faith · Newsletters · Agents</span>
+            </div>
+            <div className="flex items-center justify-center mb-4">
+              <ArrowDown className="w-4 h-4" style={{ color: "#2A2A38" }} />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="text-center p-4 rounded-xl border" style={{ backgroundColor: "rgba(34, 211, 238, 0.05)", borderColor: "rgba(34, 211, 238, 0.2)" }}>
+                <Globe className="w-7 h-7 mx-auto mb-2" style={{ color: "#22D3EE" }} />
+                <p className="text-sm font-semibold" style={{ color: "#22D3EE" }}>joshlevylabs.com</p>
+                <p className="text-[10px] mt-1" style={{ color: "#8B8B80" }}>The Brand</p>
+              </div>
+              <div className="text-center p-4 rounded-xl border" style={{ backgroundColor: "rgba(212, 160, 32, 0.05)", borderColor: "rgba(212, 160, 32, 0.2)" }}>
+                <Monitor className="w-7 h-7 mx-auto mb-2" style={{ color: "#D4A020" }} />
+                <p className="text-sm font-semibold" style={{ color: "#D4A020" }}>JoshOS Hub</p>
+                <p className="text-[10px] mt-1" style={{ color: "#8B8B80" }}>Platform Layer</p>
+              </div>
+              <div className="text-center p-4 rounded-xl border" style={{ backgroundColor: "rgba(99, 102, 241, 0.05)", borderColor: "rgba(99, 102, 241, 0.2)" }}>
+                <Smartphone className="w-7 h-7 mx-auto mb-2" style={{ color: "#6366F1" }} />
+                <p className="text-sm font-semibold" style={{ color: "#6366F1" }}>Lever App</p>
+                <p className="text-[10px] mt-1" style={{ color: "#8B8B80" }}>Consumer Mobile</p>
+              </div>
+            </div>
+            <div className="flex items-center justify-center mt-4">
+              <ArrowDown className="w-4 h-4" style={{ color: "#2A2A38" }} />
+            </div>
+            <div className="flex items-center justify-center gap-3 mt-2">
+              <Package className="w-4 h-4" style={{ color: "#626259" }} />
+              <span className="text-xs" style={{ color: "#626259" }}>@joshlevylabs/shared</span>
+              <span style={{ color: "#343444" }}>·</span>
+              <span className="text-xs" style={{ color: "#626259" }}>@joshlevylabs/ui</span>
+              <span style={{ color: "#343444" }}>·</span>
+              <span className="text-xs" style={{ color: "#626259" }}>Edge Functions</span>
+            </div>
+          </div>
+
           {/* Stats grid */}
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-6">
             {[
@@ -564,6 +614,32 @@ export default function RegistryPage() {
                       </span>
                     ))}
                   </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Revenue Streams */}
+          <div className="mb-6">
+            <h3 className="text-sm font-semibold mb-3 flex items-center gap-2" style={{ color: "#F5F5F0" }}>
+              <DollarSign className="w-4 h-4" style={{ color: "#10B981" }} />
+              Revenue Streams
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {REVENUE_STREAMS.map((r) => (
+                <div key={r.stream} className="p-4 rounded-xl border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="text-sm font-medium" style={{ color: "#F5F5F0" }}>{r.stream}</h4>
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold border" style={{
+                      backgroundColor: r.status === "built" ? "rgba(16, 185, 129, 0.1)" : "rgba(99, 102, 241, 0.1)",
+                      color: r.status === "built" ? "#10B981" : "#6366F1",
+                      borderColor: r.status === "built" ? "rgba(16, 185, 129, 0.2)" : "rgba(99, 102, 241, 0.2)",
+                    }}>
+                      {r.status}
+                    </span>
+                  </div>
+                  <p className="text-xs" style={{ color: "#8B8B80" }}>{r.platform}</p>
+                  <p className="text-xs font-medium mt-1" style={{ color: "#B8B8AD" }}>{r.potential}</p>
                 </div>
               ))}
             </div>

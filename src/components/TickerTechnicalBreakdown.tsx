@@ -497,9 +497,9 @@ export default function TickerTechnicalBreakdown({
   }
 
   // Confidence Tuning / Signal Gating / Final Filters — show modifier details
-  const isConfidenceTuning = stageName === 'Confidence Tuning';
-  const isSignalGating = stageName === 'Signal Gating';
-  const isFinalFilters = stageName === 'Final Filters';
+  const isConfidenceTuning = stageName?.includes('Confidence Tuning') ?? false;
+  const isSignalGating = stageName?.includes('Signal Gating') ?? false;
+  const isFinalFilters = stageName?.includes('Final Filters') ?? false;
 
   if ((isConfidenceTuning || isSignalGating || isFinalFilters) && rawData) {
     const getModifierColor = (value: number, baseline: number = 1) => {
@@ -829,7 +829,7 @@ export default function TickerTechnicalBreakdown({
             </div>
             {signalStrength !== undefined && signalStrength > 0 && (
               <div className="text-sm">
-                <span className="text-slate-400">Conf: </span>
+                <span className="text-slate-400">Str: </span>
                 <span className="text-emerald-400 font-medium">{Math.round(signalStrength)}</span>
               </div>
             )}

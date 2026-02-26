@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-// Hardcoded cron jobs data - in production, this would fetch from Clawdbot gateway
+// Hardcoded cron jobs data - in production, this would fetch from JoshOS gateway
 const cronJobs = [
   {
     id: "28c654c7-a297-421d-9a04-018f6acc9c0c",

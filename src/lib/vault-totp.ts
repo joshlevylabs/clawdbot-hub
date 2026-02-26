@@ -2,7 +2,7 @@ import { TOTP, Secret } from 'otpauth';
 
 export function generateTOTPSecret(): { secret: string; uri: string } {
   const totp = new TOTP({
-    issuer: 'Clawdbot Hub',
+    issuer: 'JoshOS Hub',
     label: 'Vault',
     algorithm: 'SHA1',
     digits: 6,
@@ -17,7 +17,7 @@ export function generateTOTPSecret(): { secret: string; uri: string } {
 
 export function verifyTOTP(secret: string, token: string): boolean {
   const totp = new TOTP({
-    issuer: 'Clawdbot Hub',
+    issuer: 'JoshOS Hub',
     label: 'Vault',
     algorithm: 'SHA1',
     digits: 6,

@@ -210,7 +210,7 @@ const LOGOS: { [key: string]: string } = {
 
 const PRODUCTS: Record<string, ProductInfo> = {
   hub: {
-    name: "Clawdbot Hub",
+    name: "JoshOS Hub",
     description: "Command center for the agent ecosystem",
     stack: "Next.js + Tailwind CSS",
     font: "Space Grotesk",

@@ -1607,7 +1607,7 @@ export default function VaultPage() {
                   value={projName}
                   onChange={(e) => setProjName(e.target.value)}
                   className="w-full px-3 py-2.5 bg-slate-800 rounded-lg border border-slate-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500/50 text-slate-200 text-sm"
-                  placeholder="e.g. Clawdbot Hub"
+                  placeholder="e.g. JoshOS Hub"
                   autoFocus
                 />
               </div>

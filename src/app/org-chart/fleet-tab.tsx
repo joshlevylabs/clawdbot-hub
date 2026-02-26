@@ -991,7 +991,7 @@ function ProviderCard({
             )}
             {(hasKey || showApiInput) && (
               <p className="text-[10px] text-slate-600 mt-1.5 ml-1">
-                Stored in browser localStorage · To permanently configure, add to Clawdbot gateway config
+                Stored in browser localStorage · To permanently configure, add to JoshOS gateway config
               </p>
             )}
           </div>

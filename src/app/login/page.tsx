@@ -43,7 +43,7 @@ export default function LoginPage() {
           <div className="w-16 h-16 bg-gradient-to-br from-primary-600 to-accent-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
             <Lock className="w-8 h-8 text-white" strokeWidth={1.5} />
           </div>
-          <h1 className="text-2xl font-semibold text-slate-100">Clawdbot Hub</h1>
+          <h1 className="text-2xl font-semibold text-slate-100">JoshOS Hub</h1>
           <p className="text-slate-500 mt-2 text-sm">Enter password to continue</p>
         </div>
 

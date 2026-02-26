@@ -602,7 +602,7 @@ export default function SettingsPage() {
 
         <button
           onClick={async () => {
-            if (confirm("Sign out of Clawdbot Hub?")) {
+            if (confirm("Sign out of JoshOS Hub?")) {
               await fetch("/api/auth/logout", { method: "POST" });
               window.location.href = "/login";
             }

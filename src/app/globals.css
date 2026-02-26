@@ -3,42 +3,62 @@
 @tailwind utilities;
 
 :root {
-  --background: #0F172A;
-  --foreground: #E2E8F0;
+  --background: #0B0B11;
+  --foreground: #F5F5F0;
+  --forge-gold: #D4A020;
+  --forge-dark: #B8860B;
+  --forge-light: #F4D03F;
+  --carbon: #13131B;
+  --surface: #1A1A24;
+  --border-warm: #2A2A38;
+  --border-strong: #343444;
+  --text-primary: #F5F5F0;
+  --text-secondary: #B8B8AD;
+  --text-muted: #8B8B80;
+  --text-faint: #626259;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
+  font-family: var(--font-inter), system-ui, sans-serif;
 }
 
-/* Custom scrollbar */
+/* Headings use Space Grotesk */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-space-grotesk), system-ui, sans-serif;
+  letter-spacing: -0.02em;
+}
+
+/* Custom scrollbar — warm tones */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #1E293B;
+  background: #13131B;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #334155;
+  background: #2A2A38;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #0D9488;
+  background: #D4A020;
 }
 
-/* Card hover effects */
+/* Card hover effects — warm carbon */
 .card {
-  @apply border border-slate-800 rounded-xl transition-all duration-150;
-  background-color: #131B2E;
+  @apply border rounded-xl transition-all duration-150;
+  background-color: #13131B;
+  border-color: #2A2A38;
 }
 
 .card:hover {
-  @apply border-slate-700 shadow-card-hover;
+  border-color: #343444;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
 }
 
 /* Interactive elements */
@@ -47,7 +67,7 @@ body {
 }
 
 .interactive:hover {
-  @apply bg-slate-800/50;
+  background-color: rgba(26, 26, 36, 0.5);
 }
 
 /* Status indicators */
@@ -56,15 +76,15 @@ body {
 }
 
 .status-online {
-  @apply bg-accent-500;
+  background-color: #10B981;
 }
 
 .status-offline {
-  @apply bg-slate-600;
+  background-color: #626259;
 }
 
 .status-error {
-  @apply bg-status-error;
+  background-color: #DC2626;
 }
 
 /* Kanban drag styles */
@@ -74,26 +94,56 @@ body {
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
 }
 
-/* Focus states */
+/* Focus states — Forge Gold */
 input:focus,
 textarea:focus,
 select:focus {
-  @apply outline-none ring-2 ring-primary-500/50 border-primary-500;
+  @apply outline-none ring-2;
+  ring-color: rgba(212, 160, 32, 0.5);
+  border-color: #D4A020;
 }
 
 /* Button base */
 .btn {
-  @apply px-4 py-2 rounded-lg font-medium text-sm transition-all duration-150;
+  @apply px-4 py-2 rounded-xl font-medium text-sm transition-all duration-150;
+  font-family: var(--font-space-grotesk), system-ui, sans-serif;
 }
 
 .btn-primary {
-  @apply bg-primary-600 text-white hover:bg-primary-700;
+  background: linear-gradient(135deg, #D4A020 0%, #B8860B 100%);
+  color: #0B0B11;
+  box-shadow: 0 0 12px rgba(212, 160, 32, 0.2);
+}
+
+.btn-primary:hover {
+  box-shadow: 0 0 20px rgba(212, 160, 32, 0.35);
+  transform: translateY(-1px);
 }
 
 .btn-accent {
-  @apply bg-accent-600 text-white hover:bg-accent-700;
+  background: linear-gradient(135deg, #4F46E5 0%, #3730A3 100%);
+  color: #F5F5F0;
+  box-shadow: 0 0 12px rgba(79, 70, 229, 0.2);
+}
+
+.btn-accent:hover {
+  box-shadow: 0 0 20px rgba(79, 70, 229, 0.35);
 }
 
 .btn-ghost {
-  @apply bg-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-800;
+  @apply bg-transparent;
+  color: #8B8B80;
+}
+
+.btn-ghost:hover {
+  color: #F5F5F0;
+  background-color: rgba(26, 26, 36, 0.5);
+}
+
+/* Forge Gold gradient text utility */
+.text-forge-gradient {
+  background: linear-gradient(135deg, #F4D03F 0%, #D4A020 50%, #B8860B 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }

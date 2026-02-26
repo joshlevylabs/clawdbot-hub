@@ -3,7 +3,7 @@
   "date": "February 26, 2026",
   "day": "Thursday",
   "weather": {
-    "title": "🌤️ Weather - Temecula",
+    "title": "\ud83c\udf24\ufe0f Weather - Temecula",
     "current_temp_c": 10.9,
     "current_temp_f": 52,
     "high_c": 31.1,
@@ -14,23 +14,23 @@
     "wind_kmh": 6.1,
     "wind_mph": 3.8,
     "precipitation_chance": 0,
-    "summary": "Clear skies, 52°F now rising to 88°F. No rain expected."
+    "summary": "Clear skies, 52\u00b0F now rising to 88\u00b0F. No rain expected."
   },
   "prayer": {
-    "title": "🕐️ Morning Prayer",
+    "title": "\ud83d\udd50\ufe0f Morning Prayer",
     "date": "Thursday, February 26, 2026",
     "hebrew_date": "28 Cheshvan",
     "parsha": "Miketz",
     "parsha_theme": "sudden elevation, preparation meeting opportunity",
-    "modeh_ani": "מודה אני לפניך — I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
-    "blessing": "Blessed are You who girds Israel with strength — fortify me for the work ahead.",
+    "modeh_ani": "\u05de\u05d5\u05d3\u05d4 \u05d0\u05e0\u05d9 \u05dc\u05e4\u05e0\u05d9\u05da \u2014 I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
+    "blessing": "Blessed are You who girds Israel with strength \u2014 fortify me for the work ahead.",
     "psalm": "**Psalm 16:8**: \"I have set the Lord always before me; He is at my right hand, I will not be shaken.\"",
     "proverb": "**Proverbs 27:23**: \"Know well the condition of your flocks, and give attention to your herds.\"",
     "intention": "Give me discernment between opportunities and distractions. Not everything good is good for me right now.",
     "closing": "The Lord goes before you today. He will be with you; He will never leave you nor forsake you. Do not be afraid; do not be discouraged."
   },
   "calendar": {
-    "title": "📅 Calendar",
+    "title": "\ud83d\udcc5 Calendar",
     "today": [
       {
         "time": "10:30 AM - 11:00 AM",
@@ -54,7 +54,7 @@
     "summary": "Light day with one meeting at 10:30 AM."
   },
   "email_highlights": {
-    "title": "📧 Email Highlights",
+    "title": "\ud83d\udce7 Email Highlights",
     "accounts": [
       {
         "account": "josh@joshlevylabs.com",
@@ -62,7 +62,7 @@
         "highlights": [
           {
             "from": "OpusClip Team",
-            "subject": "Issue Resolved – 100 Credits Added",
+            "subject": "Issue Resolved \u2013 100 Credits Added",
             "time": "6:01 AM",
             "priority": "low"
           },
@@ -84,7 +84,7 @@
     "summary": "10 unread emails, including Vercel deployment failure needing attention."
   },
   "mre": {
-    "title": "📊 MRE Trading",
+    "title": "\ud83d\udcca MRE Trading",
     "fear_greed": 46,
     "fear_greed_rating": "neutral",
     "regime": "bull",
@@ -96,7 +96,7 @@
         "confidence": "MEDIUM"
       },
       {
-        "symbol": "QQQ", 
+        "symbol": "QQQ",
         "action": "BUY",
         "price": 616.68,
         "confidence": "MEDIUM"
@@ -106,7 +106,7 @@
     "thesis": "Fear/Greed neutral at 46. Bull regime confirmed in SPY/QQQ. Tech showing bullish signals with MACD crossovers."
   },
   "family_focus": {
-    "title": "❤️ Family Focus",
+    "title": "\u2764\ufe0f Family Focus",
     "relationship_status": "critical",
     "power_safety": {
       "power": 1.14,
@@ -125,7 +125,7 @@
     }
   },
   "news": {
-    "title": "🌍 World News",
+    "title": "\ud83c\udf0d World News",
     "conservative_focus": [
       {
         "headline": "US-Iran nuclear talks pause amid 'creative and positive ideas'",
@@ -134,21 +134,21 @@
         "relevance": "Middle East stability"
       },
       {
-        "headline": "Modi, Netanyahu Seal New Deals for India–Israel Innovation",
+        "headline": "Modi, Netanyahu Seal New Deals for India\u2013Israel Innovation",
         "source": "Times Now",
         "summary": "High-level meetings in Jerusalem strengthen agricultural and tech cooperation",
         "relevance": "Israel partnership expansion"
       },
       {
         "headline": "Tehran billboard threatens Israel, calls it 'Trump's 51st state'",
-        "source": "Times of Israel", 
+        "source": "Times of Israel",
         "summary": "Escalating rhetoric from Iran amid nuclear talks",
         "relevance": "Iran threat assessment"
       }
     ]
   },
   "ai_news": {
-    "title": "🤖 AI News",
+    "title": "\ud83e\udd16 AI News",
     "highlights": [
       {
         "headline": "Big Tech to invest $650 billion in AI in 2026",
@@ -171,7 +171,7 @@
     ]
   },
   "focus_areas": {
-    "title": "🎯 Today's Focus",
+    "title": "\ud83c\udfaf Today's Focus",
     "priorities": [
       "Fix Vercel deployment issues (check email)",
       "Relationship repair work - acts of service focus",

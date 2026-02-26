@@ -541,6 +541,19 @@ function calculatePipelineStages(signals: MRESignal[], dataType: 'core' | 'unive
     perTierData: agentPerTierData
   };
 
+  // Build a unified tier list from postPersistenceConsensusPaths so that ALL tiers
+  // that have confirmed signals render cards in every subsequent column — even if
+  // gating/tuning/filters removed all signals for that tier.  This guarantees
+  // connection lines can always route from Confirmed Signals → Signal Gating → … → Agent Analysis.
+  const allFlowTiers: VoteConsensusPath[] = (postPersistenceConsensusPaths.length > 0
+    ? postPersistenceConsensusPaths
+    : postGatingConsensusPaths   // fallback when persistence has no confirmed signals
+  ).map(path => {
+    // Use postGating count if available (the surviving count), else 0
+    const gatingPath = postGatingConsensusPaths.find(p => p.voteCount === path.voteCount);
+    return { ...path, gatingCount: gatingPath?.count ?? 0 };
+  });
+
   return {
     input: inputStage,
     strategyVotes,
@@ -550,6 +563,7 @@ function calculatePipelineStages(signals: MRESignal[], dataType: 'core' | 'unive
     persistenceGate,
     signalGating: signalGateStage,
     postGatingConsensusPaths,
+    allFlowTiers,
     confidenceTuning: confidenceStage,
     finalFilters: finalStage,
     output: outputStage,
@@ -567,9 +581,9 @@ function getTierColor(voteCount: number): { dot: string; text: string; label: st
 
 // ── HTML-based tier connector line (extends from card right edge into gap) ──
 function TierConnectorLine({ voteCount, isLast = false }: { voteCount: number; isLast?: boolean }) {
-  // Brand palette: emerald for high tiers, deep indigo for mid, smoke for low
-  const color = voteCount >= 3 ? 'rgb(52, 211, 153)' : voteCount >= 2 ? '#4F46E5' : '#8B8B80';
-  const opacity = voteCount >= 3 ? 0.9 : voteCount >= 2 ? 0.8 : 0.5;
+  // Brand palette: Forge Gold throughout — tier differentiation via opacity only
+  const color = '#D4A020';
+  const opacity = voteCount >= 3 ? 0.9 : voteCount >= 2 ? 0.7 : 0.4;
   if (isLast) return null; // No connector after the last column
   return (
     <div 
@@ -867,14 +881,14 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
     // 6. Sequential tier-to-tier connections: Each tier flows through all remaining nodes
     const seqKeys = ['signalGating', 'confidenceTuning', 'finalFilters', 'output', 'fibonacciLevels', 'agentAnalysis'];
     
-    // Simple center-to-center connections for each tier
-    if (pipelineData.postGatingConsensusPaths?.length > 0) {
+    // Use allFlowTiers so every tier that entered the pipeline has connections across all columns
+    const flowTiers = pipelineData.allFlowTiers || pipelineData.postGatingConsensusPaths || [];
+    if (flowTiers.length > 0) {
       for (let i = 0; i < seqKeys.length - 1; i++) {
         const fromNodeKey = seqKeys[i];
         const toNodeKey = seqKeys[i + 1];
         
-        pipelineData.postGatingConsensusPaths.forEach((path: VoteConsensusPath) => {
-          if (path.count === 0) return; // Skip empty tiers
+        flowTiers.forEach((path: VoteConsensusPath) => {
           
           const fromNode = nodeRefs.current[`${fromNodeKey}_tier_${path.voteCount}`];
           const toNode = nodeRefs.current[`${toNodeKey}_tier_${path.voteCount}`];
@@ -1174,23 +1188,24 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
             </div>
           </div>
 
-          {/* Column 6: Signal Gating - Per-Tier Cards */}
+          {/* Column 6: Signal Gating - Per-Tier Cards (uses allFlowTiers for full connectivity) */}
           <div className="flex flex-col items-center gap-6">
             <div className="text-xs font-semibold text-slate-400 text-center mb-2">Signal Gating</div>
             <div className="flex flex-col gap-2">
-              {pipelineData.postGatingConsensusPaths?.map((path: VoteConsensusPath) => {
+              {pipelineData.allFlowTiers?.map((path: any) => {
                 const inputPath = pipelineData.postPersistenceConsensusPaths?.find((p: VoteConsensusPath) => p.voteCount === path.voteCount);
                 const inputCount = inputPath?.count || 0;
-                const tier = getTierColor(path.voteCount);
+                const gatingPath = pipelineData.postGatingConsensusPaths?.find((p: VoteConsensusPath) => p.voteCount === path.voteCount);
+                const outputCount = gatingPath?.count || 0;
                 
                 return (
                   <div key={`sg-wrap-${path.voteCount}`} className="relative">
                     <WorkflowNode
                       ref={(el) => { nodeRefs.current[`signalGating_tier_${path.voteCount}`] = el; }}
                       name={path.voteCount >= 3 ? `≥3/8` : `${path.voteCount}/8`}
-                      description={`${inputCount} → ${path.count}`}
+                      description={`${inputCount} → ${outputCount}`}
                       inputCount={inputCount}
-                      outputCount={path.count}
+                      outputCount={outputCount}
                       onClick={() => onStageClick('signalGating_tier_' + path.voteCount)}
                       nodeType="filter"
                       className={`max-w-[140px] border-2 ${path.voteCount >= 3 ? 'border-emerald-500/40' : path.voteCount >= 2 ? 'border-blue-400/40' : 'border-slate-500/40'}`}
@@ -1201,7 +1216,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
                   </div>
                 );
               })}
-              {(!pipelineData.postGatingConsensusPaths || pipelineData.postGatingConsensusPaths.length === 0) && (
+              {(!pipelineData.allFlowTiers || pipelineData.allFlowTiers.length === 0) && (
                 <div className="text-xs text-slate-500 italic p-4">No gated signals</div>
               )}
             </div>
@@ -1211,11 +1226,11 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
           <div className="flex flex-col items-center gap-6">
             <div className="text-xs font-semibold text-slate-400 text-center mb-2">Confidence Tuning</div>
             <div className="flex flex-col gap-2">
-              {pipelineData.postGatingConsensusPaths?.map((path: VoteConsensusPath) => {
+              {pipelineData.allFlowTiers?.map((path: any) => {
                 const tierData = pipelineData.confidenceTuning.perTierData?.[path.voteCount];
-                const inputCount = path.count;
+                const gatingPath = pipelineData.postGatingConsensusPaths?.find((p: VoteConsensusPath) => p.voteCount === path.voteCount);
+                const inputCount = gatingPath?.count || 0;
                 const outputCount = tierData?.output || 0;
-                const tier = getTierColor(path.voteCount);
                 
                 return (
                   <div key={`confidenceTuning-wrap-${path.voteCount}`} className="relative">
@@ -1236,7 +1251,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
                     </div>
                 );
               })}
-              {(!pipelineData.postGatingConsensusPaths || pipelineData.postGatingConsensusPaths.length === 0) && (
+              {(!pipelineData.allFlowTiers || pipelineData.allFlowTiers.length === 0) && (
                 <div className="text-xs text-slate-500 italic p-4">No signals to tune</div>
               )}
             </div>
@@ -1246,13 +1261,11 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
           <div className="flex flex-col items-center gap-6">
             <div className="text-xs font-semibold text-slate-400 text-center mb-2">Final Filters</div>
             <div className="flex flex-col gap-2">
-              {pipelineData.postGatingConsensusPaths?.map((path: VoteConsensusPath) => {
+              {pipelineData.allFlowTiers?.map((path: any) => {
                 const tierData = pipelineData.finalFilters.perTierData?.[path.voteCount];
-                // Input to final filters comes from confidence tuning output for this tier
                 const confidenceTierData = pipelineData.confidenceTuning.perTierData?.[path.voteCount];
                 const inputCount = confidenceTierData?.output || 0;
                 const outputCount = tierData?.output || 0;
-                const tier = getTierColor(path.voteCount);
                 
                 return (
                   <div key={`finalFilters-wrap-${path.voteCount}`} className="relative">
@@ -1273,7 +1286,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
                     </div>
                 );
               })}
-              {(!pipelineData.postGatingConsensusPaths || pipelineData.postGatingConsensusPaths.length === 0) && (
+              {(!pipelineData.allFlowTiers || pipelineData.allFlowTiers.length === 0) && (
                 <div className="text-xs text-slate-500 italic p-4">No signals to filter</div>
               )}
             </div>
@@ -1283,13 +1296,11 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
           <div className="flex flex-col items-center gap-6">
             <div className="text-xs font-semibold text-slate-400 text-center mb-2">BUY Signals</div>
             <div className="flex flex-col gap-2">
-              {pipelineData.postGatingConsensusPaths?.map((path: VoteConsensusPath) => {
+              {pipelineData.allFlowTiers?.map((path: any) => {
                 const tierData = pipelineData.output.perTierData?.[path.voteCount];
-                // Input to output comes from final filters output for this tier
                 const finalFiltersTierData = pipelineData.finalFilters.perTierData?.[path.voteCount];
                 const inputCount = finalFiltersTierData?.output || 0;
                 const outputCount = tierData?.output || 0;
-                const tier = getTierColor(path.voteCount);
                 
                 return (
                   <div key={`output-wrap-${path.voteCount}`} className="relative">
@@ -1310,7 +1321,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
                     </div>
                 );
               })}
-              {(!pipelineData.postGatingConsensusPaths || pipelineData.postGatingConsensusPaths.length === 0) && (
+              {(!pipelineData.allFlowTiers || pipelineData.allFlowTiers.length === 0) && (
                 <div className="text-xs text-slate-500 italic p-4">No BUY signals</div>
               )}
             </div>
@@ -1320,13 +1331,11 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
           <div className="flex flex-col items-center gap-6">
             <div className="text-xs font-semibold text-slate-400 text-center mb-2">Fib Levels</div>
             <div className="flex flex-col gap-2">
-              {pipelineData.postGatingConsensusPaths?.map((path: VoteConsensusPath) => {
+              {pipelineData.allFlowTiers?.map((path: any) => {
                 const tierData = pipelineData.fibonacciLevels.perTierData?.[path.voteCount];
-                // Input to fibonacci levels comes from output for this tier (pass-through)
                 const outputTierData = pipelineData.output.perTierData?.[path.voteCount];
                 const inputCount = outputTierData?.output || 0;
                 const outputCount = tierData?.output || 0;
-                const tier = getTierColor(path.voteCount);
                 
                 return (
                   <div key={`fibonacciLevels-wrap-${path.voteCount}`} className="relative">
@@ -1347,7 +1356,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
                     </div>
                 );
               })}
-              {(!pipelineData.postGatingConsensusPaths || pipelineData.postGatingConsensusPaths.length === 0) && (
+              {(!pipelineData.allFlowTiers || pipelineData.allFlowTiers.length === 0) && (
                 <div className="text-xs text-slate-500 italic p-4">No fib levels</div>
               )}
             </div>
@@ -1357,13 +1366,11 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
           <div className="flex flex-col items-center gap-6">
             <div className="text-xs font-semibold text-slate-400 text-center mb-2">Agent Analysis</div>
             <div className="flex flex-col gap-2">
-              {pipelineData.postGatingConsensusPaths?.map((path: VoteConsensusPath) => {
+              {pipelineData.allFlowTiers?.map((path: any) => {
                 const tierData = pipelineData.agentAnalysis.perTierData?.[path.voteCount];
-                // Input to agent analysis comes from fibonacci levels for this tier (pass-through)
                 const fibTierData = pipelineData.fibonacciLevels.perTierData?.[path.voteCount];
                 const inputCount = fibTierData?.output || 0;
                 const outputCount = tierData?.output || 0;
-                const tier = getTierColor(path.voteCount);
                 
                 return (
                   <div key={`agentAnalysis-wrap-${path.voteCount}`} className="relative">
@@ -1384,7 +1391,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
                     </div>
                 );
               })}
-              {(!pipelineData.postGatingConsensusPaths || pipelineData.postGatingConsensusPaths.length === 0) && (
+              {(!pipelineData.allFlowTiers || pipelineData.allFlowTiers.length === 0) && (
                 <div className="text-xs text-slate-500 italic p-4">No agent analysis</div>
               )}
             </div>
@@ -1461,28 +1468,29 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
             const isPending = (connection as any).isPending;
             const tierVoteCount = (connection as any).tierVoteCount;
             
-            // Brand: Forge Gold data flow baseline
+            // Brand: ALL connections use Forge Gold palette
+            // Tier differentiation via opacity and stroke width only — never different hues
             let strokeColor = "url(#connectionGradient)";
             let className = "";
             let opacity = "0.35";
             let strokeWidth = "2";
             
-            // Tier-specific styling using brand palette
             if (tierVoteCount !== undefined) {
+              // Tier connections — Forge Gold with tier-based intensity
               if (tierVoteCount >= 3) {
-                strokeColor = "url(#tier3PlusGradient)"; // Emerald for high tiers
+                strokeColor = "url(#activeGradient)"; // Forge Gold full intensity
                 opacity = "0.9";
-                strokeWidth = "2";
+                strokeWidth = "2.5";
                 className = "flow-active";
               } else if (tierVoteCount >= 2) {
-                strokeColor = "url(#tier2Gradient)"; // Deep Indigo for mid tiers
-                opacity = "0.8";
+                strokeColor = "url(#activeGradient)"; // Forge Gold medium intensity
+                opacity = "0.7";
                 strokeWidth = "2";
                 className = "flow-active";
               } else {
-                strokeColor = "url(#tier1Gradient)"; // Smoke for low tiers
-                opacity = "0.6";
-                strokeWidth = "2";
+                strokeColor = "url(#pendingGradient)"; // Forge Gold muted
+                opacity = "0.5";
+                strokeWidth = "1.5";
                 className = "flow-active";
               }
             } else {

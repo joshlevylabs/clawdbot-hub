@@ -565,6 +565,26 @@ function getTierColor(voteCount: number): { dot: string; text: string; label: st
   return { dot: 'border-slate-500 bg-slate-500/20', text: 'text-slate-500', label: `${voteCount}/8` };
 }
 
+// ── HTML-based tier connector line (extends from card right edge into gap) ──
+function TierConnectorLine({ voteCount, isLast = false }: { voteCount: number; isLast?: boolean }) {
+  const color = voteCount >= 3 ? 'rgb(52, 211, 153)' : voteCount >= 2 ? 'rgb(96, 165, 250)' : 'rgb(203, 213, 225)';
+  const opacity = voteCount >= 3 ? 0.9 : voteCount >= 2 ? 0.8 : 0.6;
+  if (isLast) return null; // No connector after the last column
+  return (
+    <div 
+      className="absolute right-0 top-1/2 pointer-events-none"
+      style={{
+        width: '96px', // gap-24 = 96px
+        height: '3px',
+        transform: 'translate(100%, -50%)',
+        background: `repeating-linear-gradient(to right, ${color} 0px, ${color} 8px, transparent 8px, transparent 14px)`,
+        opacity,
+        zIndex: 30,
+      }}
+    />
+  );
+}
+
 // ── Labeled multi-dot connectors (reusable for all pipeline nodes) ──
 // Dots start below the icon+title area. Labels only on right (output) side.
 function MultiDotConnectors({
@@ -1105,19 +1125,21 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
                 const tier = getTierColor(path.voteCount);
                 
                 return (
-                  <WorkflowNode
-                    key={path.voteCount}
-                    ref={(el) => { nodeRefs.current[`signalGating_tier_${path.voteCount}`] = el; }}
-                    name={path.voteCount >= 3 ? `≥3/8` : `${path.voteCount}/8`}
-                    description={`${inputCount} → ${path.count}`}
-                    inputCount={inputCount}
-                    outputCount={path.count}
-                    onClick={() => onStageClick('signalGating')}
-                    nodeType="filter"
-                    className={`max-w-[140px] border-2 ${path.voteCount >= 3 ? 'border-emerald-500/40' : path.voteCount >= 2 ? 'border-blue-400/40' : 'border-slate-500/40'}`}
-                    style={{ padding: '8px', minHeight: '80px' }}
-                    confidence={PIPELINE_NODE_CONFIDENCE.signalGating}
-                  />
+                  <div key={`sg-wrap-${path.voteCount}`} className="relative">
+                    <WorkflowNode
+                      ref={(el) => { nodeRefs.current[`signalGating_tier_${path.voteCount}`] = el; }}
+                      name={path.voteCount >= 3 ? `≥3/8` : `${path.voteCount}/8`}
+                      description={`${inputCount} → ${path.count}`}
+                      inputCount={inputCount}
+                      outputCount={path.count}
+                      onClick={() => onStageClick('signalGating')}
+                      nodeType="filter"
+                      className={`max-w-[140px] border-2 ${path.voteCount >= 3 ? 'border-emerald-500/40' : path.voteCount >= 2 ? 'border-blue-400/40' : 'border-slate-500/40'}`}
+                      style={{ padding: '8px', minHeight: '80px' }}
+                      confidence={PIPELINE_NODE_CONFIDENCE.signalGating}
+                    />
+                    <TierConnectorLine voteCount={path.voteCount} />
+                  </div>
                 );
               })}
               {(!pipelineData.postGatingConsensusPaths || pipelineData.postGatingConsensusPaths.length === 0) && (
@@ -1137,7 +1159,8 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
                 const tier = getTierColor(path.voteCount);
                 
                 return (
-                  <WorkflowNode
+                  <div key={`confidenceTuning-wrap-${path.voteCount}`} className="relative">
+                      <WorkflowNode
                     key={path.voteCount}
                     ref={(el) => { nodeRefs.current[`confidenceTuning_tier_${path.voteCount}`] = el; }}
                     name={path.voteCount >= 3 ? `≥3/8` : `${path.voteCount}/8`}
@@ -1150,6 +1173,8 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
                     style={{ padding: '8px', minHeight: '80px' }}
                     confidence={PIPELINE_NODE_CONFIDENCE.confidenceTuning}
                   />
+                      <TierConnectorLine voteCount={path.voteCount} />
+                    </div>
                 );
               })}
               {(!pipelineData.postGatingConsensusPaths || pipelineData.postGatingConsensusPaths.length === 0) && (
@@ -1171,7 +1196,8 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
                 const tier = getTierColor(path.voteCount);
                 
                 return (
-                  <WorkflowNode
+                  <div key={`finalFilters-wrap-${path.voteCount}`} className="relative">
+                      <WorkflowNode
                     key={path.voteCount}
                     ref={(el) => { nodeRefs.current[`finalFilters_tier_${path.voteCount}`] = el; }}
                     name={path.voteCount >= 3 ? `≥3/8` : `${path.voteCount}/8`}
@@ -1184,6 +1210,8 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
                     style={{ padding: '8px', minHeight: '80px' }}
                     confidence={PIPELINE_NODE_CONFIDENCE.finalFilters}
                   />
+                      <TierConnectorLine voteCount={path.voteCount} />
+                    </div>
                 );
               })}
               {(!pipelineData.postGatingConsensusPaths || pipelineData.postGatingConsensusPaths.length === 0) && (
@@ -1205,7 +1233,8 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
                 const tier = getTierColor(path.voteCount);
                 
                 return (
-                  <WorkflowNode
+                  <div key={`output-wrap-${path.voteCount}`} className="relative">
+                      <WorkflowNode
                     key={path.voteCount}
                     ref={(el) => { nodeRefs.current[`output_tier_${path.voteCount}`] = el; }}
                     name={path.voteCount >= 3 ? `≥3/8` : `${path.voteCount}/8`}
@@ -1218,6 +1247,8 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
                     style={{ padding: '8px', minHeight: '80px' }}
                     confidence={PIPELINE_NODE_CONFIDENCE.output}
                   />
+                      <TierConnectorLine voteCount={path.voteCount} />
+                    </div>
                 );
               })}
               {(!pipelineData.postGatingConsensusPaths || pipelineData.postGatingConsensusPaths.length === 0) && (
@@ -1239,7 +1270,8 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
                 const tier = getTierColor(path.voteCount);
                 
                 return (
-                  <WorkflowNode
+                  <div key={`fibonacciLevels-wrap-${path.voteCount}`} className="relative">
+                      <WorkflowNode
                     key={path.voteCount}
                     ref={(el) => { nodeRefs.current[`fibonacciLevels_tier_${path.voteCount}`] = el; }}
                     name={path.voteCount >= 3 ? `≥3/8` : `${path.voteCount}/8`}
@@ -1252,6 +1284,8 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
                     style={{ padding: '6px', minHeight: '70px' }}
                     confidence={PIPELINE_NODE_CONFIDENCE.fibonacciLevels}
                   />
+                      <TierConnectorLine voteCount={path.voteCount} />
+                    </div>
                 );
               })}
               {(!pipelineData.postGatingConsensusPaths || pipelineData.postGatingConsensusPaths.length === 0) && (
@@ -1273,7 +1307,8 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
                 const tier = getTierColor(path.voteCount);
                 
                 return (
-                  <WorkflowNode
+                  <div key={`agentAnalysis-wrap-${path.voteCount}`} className="relative">
+                      <WorkflowNode
                     key={path.voteCount}
                     ref={(el) => { nodeRefs.current[`agentAnalysis_tier_${path.voteCount}`] = el; }}
                     name={path.voteCount >= 3 ? `≥3/8` : `${path.voteCount}/8`}
@@ -1286,6 +1321,8 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
                     style={{ padding: '6px', minHeight: '70px' }}
                     confidence={PIPELINE_NODE_CONFIDENCE.agentAnalysis}
                   />
+                      <TierConnectorLine voteCount={path.voteCount} isLast={true} />
+                    </div>
                 );
               })}
               {(!pipelineData.postGatingConsensusPaths || pipelineData.postGatingConsensusPaths.length === 0) && (

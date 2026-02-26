@@ -20,6 +20,7 @@ import {
   ClipboardList,
   Activity,
   Palette,
+  Package,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -33,6 +34,7 @@ const navItems = [
   { href: "/podcast", icon: Mic, label: "Podcast" },
   { href: "/newsletter", icon: Mail, label: "Newsletter" },
   { href: "/ecosystem", icon: Layers, label: "Ecosystem" },
+  { href: "/registry", icon: Package, label: "Registry" },
   { href: "/brand", icon: Palette, label: "Brand" },
   { href: "/vault", icon: Lock, label: "Vault" },
   { href: "/settings", icon: Settings, label: "Settings" },

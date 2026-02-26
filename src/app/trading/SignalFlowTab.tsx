@@ -840,48 +840,39 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
       });
     }
     
-    // 6. Sequential multi-dot cascade: Gating → Tuning → Filters → Output → Fibonacci → Agents
+    // 6. Sequential tier-to-tier connections: Each tier flows through all remaining nodes
     const seqKeys = ['signalGating', 'confidenceTuning', 'finalFilters', 'output', 'fibonacciLevels', 'agentAnalysis'];
-    // Multi-dot cascade: Each consensus tier flows through all remaining nodes
-    for (let i = 0; i < seqKeys.length - 1; i++) {
-      const fromNodeKey = seqKeys[i];
-      const toNodeKey = seqKeys[i + 1];
-      const fromNode = nodeRefs.current[fromNodeKey];
-      const toNode = nodeRefs.current[toNodeKey];
-      
-      if (fromNode && toNode && pipelineData.postGatingConsensusPaths?.length > 0) {
-        // Draw one connection per consensus tier that has signals
-        pipelineData.postGatingConsensusPaths.forEach((path: VoteConsensusPath, tierIndex: number) => {
+    
+    // Simple center-to-center connections for each tier
+    if (pipelineData.postGatingConsensusPaths?.length > 0) {
+      for (let i = 0; i < seqKeys.length - 1; i++) {
+        const fromNodeKey = seqKeys[i];
+        const toNodeKey = seqKeys[i + 1];
+        
+        pipelineData.postGatingConsensusPaths.forEach((path: VoteConsensusPath) => {
           if (path.count === 0) return; // Skip empty tiers
           
-          const totalDots = pipelineData.postGatingConsensusPaths.length;
+          const fromNode = nodeRefs.current[`${fromNodeKey}_tier_${path.voteCount}`];
+          const toNode = nodeRefs.current[`${toNodeKey}_tier_${path.voteCount}`];
           
-          // Use proper dot positioning functions
-          const fromPos = getRightDot(fromNode, tierIndex, totalDots);
-          const toPos = toNodeKey === 'agentAnalysis' 
-            ? getLeftDot(toNode, tierIndex, totalDots)  // Agent Analysis has input dots
-            : getLeftDot(toNode, tierIndex, totalDots);  // All other nodes have input dots
-          
-          // Determine if this tier connection is active
-          let isActive = false;
-          if (fromNodeKey === 'signalGating') isActive = pipelineData.signalGating.outputCount > 0;
-          else if (fromNodeKey === 'confidenceTuning') isActive = pipelineData.confidenceTuning.outputCount > 0;
-          else if (fromNodeKey === 'finalFilters') isActive = pipelineData.finalFilters.outputCount > 0;
-          else if (fromNodeKey === 'output') isActive = pipelineData.output.outputCount > 0;
-          else if (fromNodeKey === 'fibonacciLevels') isActive = pipelineData.fibonacciLevels.outputCount > 0;
-          
-          // Add tier-specific styling
-          const tierConnection = {
-            from: `${fromNodeKey}_tier_${path.voteCount}`, 
-            to: `${toNodeKey}_tier_${path.voteCount}`,
-            fromPos, 
-            toPos,
-            isActive,
-            tierVoteCount: path.voteCount, // Add tier info for styling
-            isPending: false
-          } as typeof newConnections[0] & { tierVoteCount?: number };
-          
-          newConnections.push(tierConnection);
+          if (fromNode && toNode) {
+            // Use center-to-center connections like other single-dot connections
+            const fromPos = getRight(fromNode);
+            const toPos = getLeft(toNode);
+            
+            // Determine if this tier connection is active based on the tier having signals
+            let isActive = path.count > 0;
+            
+            newConnections.push({
+              from: `${fromNodeKey}_tier_${path.voteCount}`,
+              to: `${toNodeKey}_tier_${path.voteCount}`,
+              fromPos,
+              toPos,
+              isActive,
+              tierVoteCount: path.voteCount, // Add tier info for styling
+              isPending: false
+            } as typeof newConnections[0] & { tierVoteCount?: number });
+          }
         });
       }
     }
@@ -1107,458 +1098,202 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
             </div>
           </div>
 
-          {/* Column 6: Combined Signal Gating with Multi-Dot Connections */}
+          {/* Column 6: Signal Gating - Per-Tier Cards */}
           <div className="flex flex-col items-center gap-6">
-            <div
-              ref={(el) => { nodeRefs.current['signalGating'] = el; }}
-              className={`
-                relative bg-slate-800/90 rounded-xl border-2 p-4 cursor-pointer
-                transition-all duration-200 hover:shadow-lg hover:shadow-black/20
-                min-w-[180px] md:min-w-[200px] max-w-[220px] md:max-w-[240px]
-                ${pipelineData.signalGating.outputCount > 0 
-                  ? 'border-emerald-500/40 hover:border-emerald-400/60' 
-                  : 'border-slate-600/40 hover:border-slate-500/60'}
-              `}
-              onClick={() => onStageClick('signalGating')}
-              style={{ minHeight: `${Math.max(180, 80 + (pipelineData.postGatingConsensusPaths?.length || 0) * 24)}px` }}
-            >
-              {/* Labeled input dots (left side) */}
-              <MultiDotConnectors paths={pipelineData.postPersistenceConsensusPaths || []} side="left" />
-              
-              {/* Labeled output dots (right side) */}
-              <MultiDotConnectors paths={pipelineData.postGatingConsensusPaths || []} side="right" />
-              
-              {/* Icon */}
-              <div className="bg-emerald-500/20 rounded-lg p-2 w-fit mb-3">
-                <Activity className="w-4 h-4 text-emerald-400" />
-              </div>
-              
-              <h3 className="text-sm font-bold text-slate-200 mb-1 leading-tight">🛡️ Signal Gating</h3>
-              <p className="text-xs text-slate-400 mb-3 leading-tight">Bear & sell suppression</p>
-              
-              {/* Per-tier gating results */}
-              <div className="space-y-1 mb-3">
-                {pipelineData.postGatingConsensusPaths?.length > 0 ? (
-                  pipelineData.postGatingConsensusPaths
-                    .map((path: VoteConsensusPath) => {
-                      // Find corresponding input count from postPersistenceConsensusPaths
-                      const inputPath = pipelineData.postPersistenceConsensusPaths?.find((p: VoteConsensusPath) => p.voteCount === path.voteCount);
-                      const inputCount = inputPath?.count || 0;
-                      
-                      const getIconAndStyle = (voteCount: number) => {
-                        if (voteCount >= 3) return { icon: '🔥', color: 'text-emerald-400', weight: 'font-bold' };
-                        if (voteCount >= 2) return { icon: '⚡', color: 'text-blue-400', weight: 'font-medium' };
-                        return { icon: '', color: 'text-slate-400', weight: 'font-normal' };
-                      };
-                      
-                      const { icon, color, weight } = getIconAndStyle(path.voteCount);
-                      
-                      return (
-                        <div key={path.voteCount} className="flex justify-between text-xs">
-                          <span className={`${color} ${weight}`}>
-                            {path.voteCount}/8: {inputCount} → {path.count} {icon}
-                          </span>
-                        </div>
-                      );
-                    })
-                ) : (
-                  <div className="text-xs text-slate-500 italic">No signals to gate</div>
-                )}
-              </div>
-
-              {/* Summary divider and totals */}
-              <div className="border-t border-slate-700/50 pt-2 mb-3">
-                <div className="flex justify-between text-xs mb-1">
-                  <span className="text-slate-500">Filtered:</span>
-                  <span className="text-red-400 font-medium">
-                    {pipelineData.signalGating.inputCount - pipelineData.signalGating.outputCount}
-                  </span>
-                </div>
-                <div className="flex justify-between text-xs">
-                  <span className="text-slate-500">Total:</span>
-                  <span className={`font-bold ${pipelineData.signalGating.outputCount > 0 ? 'text-emerald-400' : 'text-slate-600'}`}>
-                    {pipelineData.signalGating.inputCount} → {pipelineData.signalGating.outputCount}
-                  </span>
-                </div>
-              </div>
-
-              {/* Version + Confidence */}
-              <div className="flex items-center gap-1.5 flex-wrap">
-                <span className="inline-block bg-slate-700/50 text-slate-500 px-2 py-0.5 rounded text-[9px] font-medium">
-                  {mreVersions?.signals || '2.0.0'}
-                </span>
-                <span className="inline-block bg-emerald-900/40 text-emerald-400 px-2 py-0.5 rounded text-[9px] font-medium">
-                  {PIPELINE_NODE_CONFIDENCE.signalGating}% conf
-                </span>
-              </div>
-
-              {/* Bypass label if applicable */}
-              {pipelineData.signalGating.persistenceBypass && (
-                <div className="mt-2 px-2 py-1 bg-amber-900/30 border border-amber-700/30 rounded text-[9px] text-amber-400">
-                  Persistence bypass — using raw votes
-                </div>
-              )}
-
-              {/* Hover glow */}
-              <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-white/[0.05] to-transparent opacity-0 hover:opacity-100 transition-opacity pointer-events-none" />
-            </div>
-          </div>
-          
-          {/* Column 7: Confidence Tuning with Multi-Dot Connections */}
-          <div className="flex flex-col items-center gap-6">
-            <div
-              ref={(el) => { nodeRefs.current['confidenceTuning'] = el; }}
-              className={`
-                relative bg-slate-800/90 rounded-xl border-2 p-4 cursor-pointer
-                transition-all duration-200 hover:shadow-lg hover:shadow-black/20
-                min-w-[160px] md:min-w-[180px] max-w-[200px] md:max-w-[220px]
-                ${pipelineData.confidenceTuning.outputCount > 0 
-                  ? 'border-blue-500/40 hover:border-blue-400/60' 
-                  : 'border-slate-600/40 hover:border-slate-500/60'}
-              `}
-              onClick={() => onStageClick('confidenceTuning')}
-              style={{ minHeight: '140px' }}
-            >
-              {/* Labeled input dots (left side) */}
-              <MultiDotConnectors paths={pipelineData.postGatingConsensusPaths || []} side="left" />
-              
-              {/* Labeled output dots (right side) */}
-              <MultiDotConnectors paths={pipelineData.postGatingConsensusPaths || []} side="right" />
-              
-              {/* Icon */}
-              <div className="bg-blue-500/20 rounded-lg p-2 w-fit mb-3">
-                <Target className="w-4 h-4 text-blue-400" />
-              </div>
-              
-              <h3 className="text-sm font-bold text-slate-200 mb-1 leading-tight">Confidence Tuning</h3>
-              <p className="text-xs text-slate-400 mb-3 leading-tight">Regime, role, rotation adjustments</p>
-              
-              {/* Input/Output counts */}
-              <div className="space-y-1 mb-3">
-                <div className="flex justify-between text-xs">
-                  <span className="text-slate-500">Input:</span>
-                  <span className="text-slate-300 font-medium">{pipelineData.confidenceTuning.inputCount}</span>
-                </div>
-                <div className="flex justify-between text-xs">
-                  <span className="text-slate-500">Output:</span>
-                  <span className={`font-bold ${pipelineData.confidenceTuning.outputCount > 0 ? 'text-blue-400' : 'text-slate-600'}`}>
-                    {pipelineData.confidenceTuning.outputCount}
-                  </span>
-                </div>
-              </div>
-
-              {/* Version + Confidence */}
-              <div className="flex items-center gap-1.5 flex-wrap">
-                <span className="inline-block bg-slate-700/50 text-slate-500 px-2 py-0.5 rounded text-[9px] font-medium">
-                  {mreVersions?.pit || '1.1.0'}
-                </span>
-                <span className="inline-block bg-blue-900/40 text-blue-400 px-2 py-0.5 rounded text-[9px] font-medium">
-                  {PIPELINE_NODE_CONFIDENCE.confidenceTuning}% conf
-                </span>
-              </div>
-
-              {/* Hover glow */}
-              <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-white/[0.05] to-transparent opacity-0 hover:opacity-100 transition-opacity pointer-events-none" />
-            </div>
-          </div>
-          
-          {/* Column 8: Final Filters with Multi-Dot Connections */}
-          <div className="flex flex-col items-center gap-6">
-            <div
-              ref={(el) => { nodeRefs.current['finalFilters'] = el; }}
-              className={`
-                relative bg-slate-800/90 rounded-xl border-2 p-4 cursor-pointer
-                transition-all duration-200 hover:shadow-lg hover:shadow-black/20
-                min-w-[160px] md:min-w-[180px] max-w-[200px] md:max-w-[220px]
-                ${pipelineData.finalFilters.outputCount > 0 
-                  ? 'border-purple-500/40 hover:border-purple-400/60' 
-                  : 'border-slate-600/40 hover:border-slate-500/60'}
-              `}
-              onClick={() => onStageClick('finalFilters')}
-              style={{ minHeight: '140px' }}
-            >
-              {/* Labeled input dots (left side) */}
-              <MultiDotConnectors paths={pipelineData.postGatingConsensusPaths || []} side="left" />
-              
-              {/* Labeled output dots (right side) */}
-              <MultiDotConnectors paths={pipelineData.postGatingConsensusPaths || []} side="right" />
-              
-              {/* Icon */}
-              <div className="bg-purple-500/20 rounded-lg p-2 w-fit mb-3">
-                <Filter className="w-4 h-4 text-purple-400" />
-              </div>
-              
-              <h3 className="text-sm font-bold text-slate-200 mb-1 leading-tight">Final Filters</h3>
-              <p className="text-xs text-slate-400 mb-3 leading-tight">Cluster, confidence, caps</p>
-              
-              {/* Input/Output counts */}
-              <div className="space-y-1 mb-3">
-                <div className="flex justify-between text-xs">
-                  <span className="text-slate-500">Input:</span>
-                  <span className="text-slate-300 font-medium">{pipelineData.finalFilters.inputCount}</span>
-                </div>
-                <div className="flex justify-between text-xs">
-                  <span className="text-slate-500">Output:</span>
-                  <span className={`font-bold ${pipelineData.finalFilters.outputCount > 0 ? 'text-purple-400' : 'text-slate-600'}`}>
-                    {pipelineData.finalFilters.outputCount}
-                  </span>
-                </div>
-              </div>
-
-              {/* Version + Confidence */}
-              <div className="flex items-center gap-1.5 flex-wrap">
-                <span className="inline-block bg-slate-700/50 text-slate-500 px-2 py-0.5 rounded text-[9px] font-medium">
-                  {mreVersions?.config || '2.0.0'}
-                </span>
-                <span className="inline-block bg-purple-900/40 text-purple-400 px-2 py-0.5 rounded text-[9px] font-medium">
-                  {PIPELINE_NODE_CONFIDENCE.finalFilters}% conf
-                </span>
-              </div>
-
-              {/* Hover glow */}
-              <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-white/[0.05] to-transparent opacity-0 hover:opacity-100 transition-opacity pointer-events-none" />
-            </div>
-          </div>
-          
-          {/* Column 9: BUY Signals Output with Multi-Dot Connections */}
-          <div className="flex flex-col items-center gap-6">
-            <div
-              ref={(el) => { nodeRefs.current['output'] = el; }}
-              className={`
-                relative bg-slate-800/90 rounded-xl border-2 p-4 cursor-pointer
-                transition-all duration-200 hover:shadow-lg hover:shadow-black/20
-                min-w-[160px] md:min-w-[180px] max-w-[200px] md:max-w-[220px]
-                ${pipelineData.output.outputCount > 0 
-                  ? 'border-emerald-500/40 hover:border-emerald-400/60' 
-                  : 'border-slate-600/40 hover:border-slate-500/60'}
-              `}
-              onClick={() => onStageClick('output')}
-              style={{ minHeight: '140px' }}
-            >
-              {/* Labeled input dots (left side) */}
-              <MultiDotConnectors paths={pipelineData.postGatingConsensusPaths || []} side="left" />
-              
-              {/* Labeled output dots (right side) */}
-              <MultiDotConnectors paths={pipelineData.postGatingConsensusPaths || []} side="right" />
-              
-              {/* Icon */}
-              <div className="bg-emerald-500/20 rounded-lg p-2 w-fit mb-3">
-                <TrendingUp className="w-4 h-4 text-emerald-400" />
-              </div>
-              
-              <h3 className="text-sm font-bold text-slate-200 mb-1 leading-tight">BUY Signals</h3>
-              <p className="text-xs text-slate-400 mb-3 leading-tight">Final confirmed signals</p>
-              
-              {/* Input/Output counts */}
-              <div className="space-y-1 mb-3">
-                <div className="flex justify-between text-xs">
-                  <span className="text-slate-500">Input:</span>
-                  <span className="text-slate-300 font-medium">{pipelineData.output.inputCount}</span>
-                </div>
-                <div className="flex justify-between text-xs">
-                  <span className="text-slate-500">Output:</span>
-                  <span className={`font-bold ${pipelineData.output.outputCount > 0 ? 'text-emerald-400' : 'text-slate-600'}`}>
-                    {pipelineData.output.outputCount}
-                  </span>
-                </div>
-              </div>
-
-              {/* Version + Confidence */}
-              <div className="flex items-center gap-1.5 flex-wrap">
-                <span className="inline-block bg-slate-700/50 text-slate-500 px-2 py-0.5 rounded text-[9px] font-medium">
-                  {pipelineVersion}
-                </span>
-                <span className="inline-block bg-emerald-900/40 text-emerald-400 px-2 py-0.5 rounded text-[9px] font-medium">
-                  {PIPELINE_NODE_CONFIDENCE.output}% conf
-                </span>
-              </div>
-
-              {/* Hover glow */}
-              <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-white/[0.05] to-transparent opacity-0 hover:opacity-100 transition-opacity pointer-events-none" />
-            </div>
-          </div>
-          
-          {/* Column 10: Fibonacci Level Selection */}
-          <div className="flex flex-col items-center gap-6">
-            <div
-              ref={(el) => { nodeRefs.current['fibonacciLevels'] = el; }}
-              className={`
-                relative bg-slate-800/90 rounded-xl border-2 p-4 cursor-pointer
-                transition-all duration-200 hover:shadow-lg hover:shadow-black/20
-                min-w-[140px] md:min-w-[160px] max-w-[180px] md:max-w-[200px]
-                ${pipelineData.fibonacciLevels.inputCount > 0 
-                  ? 'border-violet-500/40 hover:border-violet-400/60' 
-                  : 'border-slate-600/40 hover:border-slate-500/60'}
-              `}
-              onClick={() => onStageClick('fibonacciLevels')}
-            >
-              {/* Labeled input dots (left side) */}
-              <MultiDotConnectors paths={pipelineData.postGatingConsensusPaths || []} side="left" />
-              
-              {/* Labeled output dots (right side) */}
-              <MultiDotConnectors paths={pipelineData.postGatingConsensusPaths || []} side="right" />
-              
-              {/* Icon */}
-              <div className="bg-violet-500/20 rounded-lg p-2 w-fit mb-3">
-                <TrendingUp className="w-3.5 h-3.5 text-violet-400" />
-              </div>
-              
-              <h3 className="text-sm font-bold text-slate-200 mb-1 leading-tight">Fib Levels</h3>
-              <p className="text-xs text-slate-400 mb-3 leading-tight">A/B/C retracement & extension</p>
-              
-              {/* Fib level indicators */}
-              <div className="space-y-1 mb-3">
-                <div className="flex justify-between text-xs">
-                  <span className="text-slate-500">Entry:</span>
-                  <span className={`font-medium ${pipelineData.fibonacciLevels.inputCount > 0 ? 'text-violet-400' : 'text-slate-600'}`}>
-                    {pipelineData.fibonacciLevels.inputCount > 0 ? '0.618 ret' : '—'}
-                  </span>
-                </div>
-                <div className="flex justify-between text-xs">
-                  <span className="text-slate-500">Stop Loss:</span>
-                  <span className={`font-medium ${pipelineData.fibonacciLevels.inputCount > 0 ? 'text-red-400' : 'text-slate-600'}`}>
-                    {pipelineData.fibonacciLevels.inputCount > 0 ? '0.786 ret' : '—'}
-                  </span>
-                </div>
-                <div className="flex justify-between text-xs">
-                  <span className="text-slate-500">Target:</span>
-                  <span className={`font-medium ${pipelineData.fibonacciLevels.inputCount > 0 ? 'text-emerald-400' : 'text-slate-600'}`}>
-                    {pipelineData.fibonacciLevels.inputCount > 0 ? '1.618 ext' : '—'}
-                  </span>
-                </div>
-              </div>
-
-              {/* A/B/C points visual */}
-              <div className="bg-slate-900/60 rounded-md p-2 mb-3">
-                <svg viewBox="0 0 120 40" className="w-full h-auto">
-                  {/* A-B-C Fibonacci pattern */}
-                  <polyline
-                    points="5,35 40,5 75,25 110,5"
-                    fill="none"
-                    stroke={pipelineData.fibonacciLevels.inputCount > 0 ? 'rgba(167,139,250,0.6)' : 'rgba(148,163,184,0.2)'}
-                    strokeWidth="1.5"
-                    strokeLinejoin="round"
-                  />
-                  {/* Point labels */}
-                  <circle cx="5" cy="35" r="2" fill={pipelineData.fibonacciLevels.inputCount > 0 ? 'rgba(167,139,250,0.8)' : 'rgba(148,163,184,0.3)'} />
-                  <text x="5" y="32" fontSize="6" fill="rgba(167,139,250,0.6)" textAnchor="middle" fontFamily="monospace">A</text>
-                  <circle cx="40" cy="5" r="2" fill={pipelineData.fibonacciLevels.inputCount > 0 ? 'rgba(167,139,250,0.8)' : 'rgba(148,163,184,0.3)'} />
-                  <text x="40" y="14" fontSize="6" fill="rgba(167,139,250,0.6)" textAnchor="middle" fontFamily="monospace">B</text>
-                  <circle cx="75" cy="25" r="2" fill={pipelineData.fibonacciLevels.inputCount > 0 ? 'rgba(167,139,250,0.8)' : 'rgba(148,163,184,0.3)'} />
-                  <text x="75" y="22" fontSize="6" fill="rgba(167,139,250,0.6)" textAnchor="middle" fontFamily="monospace">C</text>
-                  {/* Extension target */}
-                  <circle cx="110" cy="5" r="2" fill={pipelineData.fibonacciLevels.inputCount > 0 ? 'rgba(52,211,153,0.8)' : 'rgba(148,163,184,0.2)'} />
-                  <text x="110" y="14" fontSize="5" fill="rgba(52,211,153,0.5)" textAnchor="middle" fontFamily="monospace">1.618</text>
-                  {/* Retracement levels (dashed) */}
-                  <line x1="40" y1="17" x2="75" y2="17" stroke="rgba(167,139,250,0.2)" strokeWidth="0.5" strokeDasharray="2 2" />
-                  <text x="77" y="18" fontSize="4" fill="rgba(167,139,250,0.3)" fontFamily="monospace">.618</text>
-                  <line x1="40" y1="21" x2="75" y2="21" stroke="rgba(248,113,113,0.2)" strokeWidth="0.5" strokeDasharray="2 2" />
-                  <text x="77" y="22" fontSize="4" fill="rgba(248,113,113,0.3)" fontFamily="monospace">.786</text>
-                </svg>
-              </div>
-
-              {/* Metrics */}
-              <div className="flex justify-between text-xs mb-3">
-                <span className="text-slate-500">Tickers:</span>
-                <span className={`font-bold ${pipelineData.fibonacciLevels.inputCount > 0 ? 'text-violet-400' : 'text-slate-600'}`}>
-                  {pipelineData.fibonacciLevels.inputCount}
-                </span>
-              </div>
-
-              {/* Version + Confidence */}
-              <div className="flex items-center gap-1.5 flex-wrap">
-                <span className="inline-block bg-slate-700/50 text-slate-500 px-2 py-0.5 rounded text-[9px] font-medium">v1.0.0</span>
-                <span className="inline-block bg-orange-900/40 text-orange-400 px-2 py-0.5 rounded text-[9px] font-medium">
-                  {PIPELINE_NODE_CONFIDENCE.fibonacciLevels}% conf
-                </span>
-              </div>
-
-              {/* Hover glow */}
-              <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-white/[0.05] to-transparent opacity-0 hover:opacity-100 transition-opacity pointer-events-none" />
-            </div>
-          </div>
-
-          {/* Column 11: Agent Analysis */}
-          <div className="flex flex-col items-center gap-6">
-            <div
-              ref={(el) => { nodeRefs.current['agentAnalysis'] = el; }}
-              className={`
-                relative bg-slate-800/90 rounded-xl border-2 p-4 cursor-pointer
-                transition-all duration-200 hover:shadow-lg hover:shadow-black/20
-                min-w-[140px] md:min-w-[160px] max-w-[180px] md:max-w-[200px]
-                ${pipelineData.agentAnalysis.inputCount > 0 
-                  ? 'border-cyan-500/40 hover:border-cyan-400/60' 
-                  : 'border-slate-600/40 hover:border-slate-500/60'}
-              `}
-              onClick={() => onStageClick('agentAnalysis')}
-            >
-              {/* Labeled input dots (left side) */}
-              <MultiDotConnectors paths={pipelineData.postGatingConsensusPaths || []} side="left" />
-              
-              {/* Icon */}
-              <div className="bg-cyan-500/20 rounded-lg p-2 w-fit mb-3">
-                <Eye className="w-3.5 h-3.5 text-cyan-400" />
-              </div>
-              
-              <h3 className="text-sm font-bold text-slate-200 mb-1 leading-tight">Agent Analysis</h3>
-              <p className="text-xs text-slate-400 mb-3 leading-tight">Expert opinions on final picks</p>
-              
-              {/* Agent roster */}
-              <div className="space-y-2 mb-3">
-                {/* Chris Vermeullen */}
-                <div className={`
-                  flex items-center gap-2 rounded-md px-2 py-1.5
-                  ${pipelineData.agentAnalysis.inputCount > 0 
-                    ? 'bg-emerald-900/20 border border-emerald-700/20' 
-                    : 'bg-slate-800/40 border border-slate-700/20'}
-                `}>
-                  <div className={`w-2 h-2 rounded-full shrink-0 ${
-                    pipelineData.agentAnalysis.inputCount > 0 
-                      ? 'bg-emerald-400 shadow-sm shadow-emerald-400/50' 
-                      : 'bg-slate-700'
-                  }`} />
-                  <div className="flex-1 min-w-0">
-                    <span className={`text-[10px] font-medium block truncate ${
-                      pipelineData.agentAnalysis.inputCount > 0 ? 'text-slate-200' : 'text-slate-500'
-                    }`}>Chris Vermeullen</span>
-                    <span className="text-[8px] text-slate-500">Technical Analysis</span>
-                  </div>
-                </div>
+            <div className="text-xs font-semibold text-slate-400 text-center mb-2">Signal Gating</div>
+            <div className="flex flex-col gap-2">
+              {pipelineData.postGatingConsensusPaths?.map((path: VoteConsensusPath) => {
+                const inputPath = pipelineData.postPersistenceConsensusPaths?.find((p: VoteConsensusPath) => p.voteCount === path.voteCount);
+                const inputCount = inputPath?.count || 0;
+                const tier = getTierColor(path.voteCount);
                 
-                {/* Warren Buffett */}
-                <div className="flex items-center gap-2 rounded-md px-2 py-1.5 bg-slate-800/40 border border-amber-700/20">
-                  <div className="w-2 h-2 rounded-full shrink-0 bg-amber-500/50" />
-                  <div className="flex-1 min-w-0">
-                    <span className="text-[10px] font-medium block truncate text-slate-400">Warren Buffett</span>
-                    <span className="text-[8px] text-amber-500/60">Fundamental • pending setup</span>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Metrics */}
-              <div className="space-y-1.5">
-                <div className="flex justify-between text-xs">
-                  <span className="text-slate-500">Tickers:</span>
-                  <span className={`font-bold ${pipelineData.agentAnalysis.inputCount > 0 ? 'text-cyan-400' : 'text-slate-600'}`}>
-                    {pipelineData.agentAnalysis.inputCount}
-                  </span>
-                </div>
-                <div className="flex justify-between text-xs">
-                  <span className="text-slate-500">Agents:</span>
-                  <span className="text-slate-400 font-medium">1/2 active</span>
-                </div>
-              </div>
+                return (
+                  <WorkflowNode
+                    key={path.voteCount}
+                    ref={(el) => { nodeRefs.current[`signalGating_tier_${path.voteCount}`] = el; }}
+                    name={path.voteCount >= 3 ? `≥3/8` : `${path.voteCount}/8`}
+                    description={`${inputCount} → ${path.count}`}
+                    inputCount={inputCount}
+                    outputCount={path.count}
+                    onClick={() => onStageClick('signalGating')}
+                    nodeType="filter"
+                    className={`max-w-[140px] border-2 ${path.voteCount >= 3 ? 'border-emerald-500/40' : path.voteCount >= 2 ? 'border-blue-400/40' : 'border-slate-500/40'}`}
+                    style={{ padding: '8px', minHeight: '80px' }}
+                    confidence={PIPELINE_NODE_CONFIDENCE.signalGating}
+                  />
+                );
+              })}
+              {(!pipelineData.postGatingConsensusPaths || pipelineData.postGatingConsensusPaths.length === 0) && (
+                <div className="text-xs text-slate-500 italic p-4">No gated signals</div>
+              )}
+            </div>
+          </div>
+          
+          {/* Column 7: Confidence Tuning - Per-Tier Cards */}
+          <div className="flex flex-col items-center gap-6">
+            <div className="text-xs font-semibold text-slate-400 text-center mb-2">Confidence Tuning</div>
+            <div className="flex flex-col gap-2">
+              {pipelineData.postGatingConsensusPaths?.map((path: VoteConsensusPath) => {
+                const tierData = pipelineData.confidenceTuning.perTierData?.[path.voteCount];
+                const inputCount = path.count;
+                const outputCount = tierData?.output || 0;
+                const tier = getTierColor(path.voteCount);
+                
+                return (
+                  <WorkflowNode
+                    key={path.voteCount}
+                    ref={(el) => { nodeRefs.current[`confidenceTuning_tier_${path.voteCount}`] = el; }}
+                    name={path.voteCount >= 3 ? `≥3/8` : `${path.voteCount}/8`}
+                    description={`${inputCount} → ${outputCount}`}
+                    inputCount={inputCount}
+                    outputCount={outputCount}
+                    onClick={() => onStageClick('confidenceTuning')}
+                    nodeType="modifier"
+                    className={`max-w-[140px] border-2 ${path.voteCount >= 3 ? 'border-emerald-500/40' : path.voteCount >= 2 ? 'border-blue-400/40' : 'border-slate-500/40'}`}
+                    style={{ padding: '8px', minHeight: '80px' }}
+                    confidence={PIPELINE_NODE_CONFIDENCE.confidenceTuning}
+                  />
+                );
+              })}
+              {(!pipelineData.postGatingConsensusPaths || pipelineData.postGatingConsensusPaths.length === 0) && (
+                <div className="text-xs text-slate-500 italic p-4">No signals to tune</div>
+              )}
+            </div>
+          </div>
+          
+          {/* Column 8: Final Filters - Per-Tier Cards */}
+          <div className="flex flex-col items-center gap-6">
+            <div className="text-xs font-semibold text-slate-400 text-center mb-2">Final Filters</div>
+            <div className="flex flex-col gap-2">
+              {pipelineData.postGatingConsensusPaths?.map((path: VoteConsensusPath) => {
+                const tierData = pipelineData.finalFilters.perTierData?.[path.voteCount];
+                // Input to final filters comes from confidence tuning output for this tier
+                const confidenceTierData = pipelineData.confidenceTuning.perTierData?.[path.voteCount];
+                const inputCount = confidenceTierData?.output || 0;
+                const outputCount = tierData?.output || 0;
+                const tier = getTierColor(path.voteCount);
+                
+                return (
+                  <WorkflowNode
+                    key={path.voteCount}
+                    ref={(el) => { nodeRefs.current[`finalFilters_tier_${path.voteCount}`] = el; }}
+                    name={path.voteCount >= 3 ? `≥3/8` : `${path.voteCount}/8`}
+                    description={`${inputCount} → ${outputCount}`}
+                    inputCount={inputCount}
+                    outputCount={outputCount}
+                    onClick={() => onStageClick('finalFilters')}
+                    nodeType="filter"
+                    className={`max-w-[140px] border-2 ${path.voteCount >= 3 ? 'border-emerald-500/40' : path.voteCount >= 2 ? 'border-blue-400/40' : 'border-slate-500/40'}`}
+                    style={{ padding: '8px', minHeight: '80px' }}
+                    confidence={PIPELINE_NODE_CONFIDENCE.finalFilters}
+                  />
+                );
+              })}
+              {(!pipelineData.postGatingConsensusPaths || pipelineData.postGatingConsensusPaths.length === 0) && (
+                <div className="text-xs text-slate-500 italic p-4">No signals to filter</div>
+              )}
+            </div>
+          </div>
+          
+          {/* Column 9: BUY Signals - Per-Tier Cards */}
+          <div className="flex flex-col items-center gap-6">
+            <div className="text-xs font-semibold text-slate-400 text-center mb-2">BUY Signals</div>
+            <div className="flex flex-col gap-2">
+              {pipelineData.postGatingConsensusPaths?.map((path: VoteConsensusPath) => {
+                const tierData = pipelineData.output.perTierData?.[path.voteCount];
+                // Input to output comes from final filters output for this tier
+                const finalFiltersTierData = pipelineData.finalFilters.perTierData?.[path.voteCount];
+                const inputCount = finalFiltersTierData?.output || 0;
+                const outputCount = tierData?.output || 0;
+                const tier = getTierColor(path.voteCount);
+                
+                return (
+                  <WorkflowNode
+                    key={path.voteCount}
+                    ref={(el) => { nodeRefs.current[`output_tier_${path.voteCount}`] = el; }}
+                    name={path.voteCount >= 3 ? `≥3/8` : `${path.voteCount}/8`}
+                    description={`${inputCount} → ${outputCount}`}
+                    inputCount={inputCount}
+                    outputCount={outputCount}
+                    onClick={() => onStageClick('output')}
+                    nodeType="output"
+                    className={`max-w-[140px] border-2 ${path.voteCount >= 3 ? 'border-emerald-500/40' : path.voteCount >= 2 ? 'border-blue-400/40' : 'border-slate-500/40'}`}
+                    style={{ padding: '8px', minHeight: '80px' }}
+                    confidence={PIPELINE_NODE_CONFIDENCE.output}
+                  />
+                );
+              })}
+              {(!pipelineData.postGatingConsensusPaths || pipelineData.postGatingConsensusPaths.length === 0) && (
+                <div className="text-xs text-slate-500 italic p-4">No BUY signals</div>
+              )}
+            </div>
+          </div>
+          
+          {/* Column 10: Fibonacci Levels - Per-Tier Cards */}
+          <div className="flex flex-col items-center gap-6">
+            <div className="text-xs font-semibold text-slate-400 text-center mb-2">Fib Levels</div>
+            <div className="flex flex-col gap-2">
+              {pipelineData.postGatingConsensusPaths?.map((path: VoteConsensusPath) => {
+                const tierData = pipelineData.fibonacciLevels.perTierData?.[path.voteCount];
+                // Input to fibonacci levels comes from output for this tier (pass-through)
+                const outputTierData = pipelineData.output.perTierData?.[path.voteCount];
+                const inputCount = outputTierData?.output || 0;
+                const outputCount = tierData?.output || 0;
+                const tier = getTierColor(path.voteCount);
+                
+                return (
+                  <WorkflowNode
+                    key={path.voteCount}
+                    ref={(el) => { nodeRefs.current[`fibonacciLevels_tier_${path.voteCount}`] = el; }}
+                    name={path.voteCount >= 3 ? `≥3/8` : `${path.voteCount}/8`}
+                    description={`${inputCount} signals`}
+                    inputCount={inputCount}
+                    outputCount={outputCount}
+                    onClick={() => onStageClick('fibonacciLevels')}
+                    nodeType="modifier"
+                    className={`max-w-[120px] border-2 ${path.voteCount >= 3 ? 'border-emerald-500/40' : path.voteCount >= 2 ? 'border-blue-400/40' : 'border-slate-500/40'}`}
+                    style={{ padding: '6px', minHeight: '70px' }}
+                    confidence={PIPELINE_NODE_CONFIDENCE.fibonacciLevels}
+                  />
+                );
+              })}
+              {(!pipelineData.postGatingConsensusPaths || pipelineData.postGatingConsensusPaths.length === 0) && (
+                <div className="text-xs text-slate-500 italic p-4">No fib levels</div>
+              )}
+            </div>
+          </div>
 
-              {/* Version + Confidence */}
-              <div className="mt-3 flex items-center gap-1.5 flex-wrap">
-                <span className="inline-block bg-slate-700/50 text-slate-500 px-2 py-0.5 rounded text-[9px] font-medium">v0.1.0</span>
-                <span className="inline-block bg-red-900/40 text-red-400 px-2 py-0.5 rounded text-[9px] font-medium">
-                  {PIPELINE_NODE_CONFIDENCE.agentAnalysis}% conf
-                </span>
-              </div>
-
-              {/* Hover glow */}
-              <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-white/[0.05] to-transparent opacity-0 hover:opacity-100 transition-opacity pointer-events-none" />
+          {/* Column 11: Agent Analysis - Per-Tier Cards */}
+          <div className="flex flex-col items-center gap-6">
+            <div className="text-xs font-semibold text-slate-400 text-center mb-2">Agent Analysis</div>
+            <div className="flex flex-col gap-2">
+              {pipelineData.postGatingConsensusPaths?.map((path: VoteConsensusPath) => {
+                const tierData = pipelineData.agentAnalysis.perTierData?.[path.voteCount];
+                // Input to agent analysis comes from fibonacci levels for this tier (pass-through)
+                const fibTierData = pipelineData.fibonacciLevels.perTierData?.[path.voteCount];
+                const inputCount = fibTierData?.output || 0;
+                const outputCount = tierData?.output || 0;
+                const tier = getTierColor(path.voteCount);
+                
+                return (
+                  <WorkflowNode
+                    key={path.voteCount}
+                    ref={(el) => { nodeRefs.current[`agentAnalysis_tier_${path.voteCount}`] = el; }}
+                    name={path.voteCount >= 3 ? `≥3/8` : `${path.voteCount}/8`}
+                    description={`${inputCount} signals`}
+                    inputCount={inputCount}
+                    outputCount={outputCount}
+                    onClick={() => onStageClick('agentAnalysis')}
+                    nodeType="output"
+                    className={`max-w-[120px] border-2 ${path.voteCount >= 3 ? 'border-emerald-500/40' : path.voteCount >= 2 ? 'border-blue-400/40' : 'border-slate-500/40'}`}
+                    style={{ padding: '6px', minHeight: '70px' }}
+                    confidence={PIPELINE_NODE_CONFIDENCE.agentAnalysis}
+                  />
+                );
+              })}
+              {(!pipelineData.postGatingConsensusPaths || pipelineData.postGatingConsensusPaths.length === 0) && (
+                <div className="text-xs text-slate-500 italic p-4">No agent analysis</div>
+              )}
             </div>
           </div>
         </div>

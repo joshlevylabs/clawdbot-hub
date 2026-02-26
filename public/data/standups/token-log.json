@@ -39,12 +39,22 @@
       "estimatedCost": 0.0381,
       "model": "claude-sonnet-4-20250514",
       "duration": "45.3s"
+    },
+    {
+      "date": "2026-02-25",
+      "type": "night-wrap",
+      "inputTokens": 3398,
+      "outputTokens": 1684,
+      "totalTokens": 5082,
+      "estimatedCost": 0.0355,
+      "model": "claude-sonnet-4-20250514",
+      "duration": "43.8s"
     }
   ],
   "totals": {
-    "today": 0.1653,
-    "week": 0.1653,
-    "month": 0.1653,
-    "standupCount": 4
+    "today": 0.2008,
+    "week": 0.2008,
+    "month": 0.2008,
+    "standupCount": 5
   }
 }

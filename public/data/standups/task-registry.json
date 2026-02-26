@@ -253,8 +253,13 @@
     {
       "key": "A-013",
       "text": "Design prototype agent canvas experience - single screen with 2-widget dynamic display",
-      "description": "",
-      "acceptanceCriteria": [],
+      "description": "Design a prototype of the agent canvas experience: a single blank screen where the user meets their personal AI agent. The agent asks 3 key questions about life priorities, then dynamically surfaces 2-3 relevant capability cards. This is the minimum viable agent-first experience.",
+      "acceptanceCriteria": [
+        "Single-screen prototype with conversational agent onboarding",
+        "Agent asks 3 priority questions and generates personalized card layout",
+        "At least 3 capability cards can be dynamically surfaced",
+        "User can rearrange cards through conversation"
+      ],
       "tag": "AGENT",
       "priority": "high",
       "assignee": "Steve Jobs",
@@ -268,8 +273,12 @@
     {
       "key": "A-014",
       "text": "Architect widget system migration for current Lever tabs",
-      "description": "",
-      "acceptanceCriteria": [],
+      "description": "Design the technical architecture for migrating current Lever tabs (Faith, Family, Finance) into a composable widget/card system. Each existing tab becomes a widget block that can be arranged, hidden, or surfaced by the agent. Must work within current Expo/React Native/Turborepo stack.",
+      "acceptanceCriteria": [
+        "Widget registry architecture documented with API contracts",
+        "Migration path from current tab-based UI to widget system defined",
+        "Backward compatibility plan for existing Lever users"
+      ],
       "tag": "AGENT",
       "priority": "high",
       "assignee": "Elon",
@@ -283,8 +292,12 @@
     {
       "key": "A-015",
       "text": "Develop agent onboarding psychological framework and guardrails",
-      "description": "",
-      "acceptanceCriteria": [],
+      "description": "Develop the psychological framework for how the personal agent onboards users \u2014 what questions to ask, how to build trust progressively, ethical guardrails for an AI that learns deeply about someone's life. Ensure the agent genuinely helps rather than manipulates.",
+      "acceptanceCriteria": [
+        "Onboarding question framework with progressive depth levels",
+        "Ethical guardrails document for agent-user relationships",
+        "Trust-building progression model (day 1 \u2192 week 1 \u2192 month 1)"
+      ],
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "Jordan Peterson",
@@ -298,8 +311,12 @@
     {
       "key": "A-016",
       "text": "Define revenue model for agent-canvas hybrid architecture",
-      "description": "",
-      "acceptanceCriteria": [],
+      "description": "Define the revenue model for an agent-canvas hybrid app. Explore: free agent + premium capability blocks, subscription tiers, freemium with advanced agent features, marketplace for third-party widgets. Must be sustainable without exploiting the agent relationship.",
+      "acceptanceCriteria": [
+        "At least 3 revenue model options analyzed with projections",
+        "Pricing tiers defined with feature boundaries",
+        "Unit economics estimated (CAC, LTV, margin per tier)"
+      ],
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "Dave Ramsey",
@@ -313,8 +330,12 @@
     {
       "key": "A-017",
       "text": "Create marketing narrative for agent-first personal app category",
-      "description": "",
-      "acceptanceCriteria": [],
+      "description": "Create the marketing narrative for a new app category: the agent-first personal OS. Position against both traditional apps (static, one-size-fits-all) and horizontal AI assistants (ChatGPT, Apple Intelligence). Our advantage: vertical depth in faith, family, and finance with a personal relationship layer.",
+      "acceptanceCriteria": [
+        "Category-defining positioning statement drafted",
+        "Competitive landscape analysis vs. horizontal AI + vertical apps",
+        "Launch narrative and tagline options presented"
+      ],
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "Alex Hormozi",

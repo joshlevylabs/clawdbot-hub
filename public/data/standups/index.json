@@ -1,6 +1,19 @@
 {
   "standups": [
     {
+      "date": "2026-02-26",
+      "time": "08:44",
+      "type": "adhoc-personal-agent-canvas-app-the-death-of-hardcoded-frontends",
+      "typeName": "Personal Agent Canvas App: The Death of Hardcoded Frontends",
+      "typeEmoji": "\ud83e\udde0",
+      "topic": "Personal Agent Canvas App: The Death of Hardcoded Frontends \u2014 Thursday Feb 26",
+      "file": "2026-02-26-adhoc-personal-agent-canvas-app-the-death-of-hardcoded-frontends.json",
+      "tokenCost": 0.0433,
+      "verticals": [],
+      "initiatives": [],
+      "instanceKey": "STD-5"
+    },
+    {
       "date": "2026-02-25",
       "time": "22:30",
       "type": "night-wrap",

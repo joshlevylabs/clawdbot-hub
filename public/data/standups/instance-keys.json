@@ -1,9 +1,10 @@
 {
-  "global_counter": 4,
+  "global_counter": 5,
   "counters": {
     "adhoc-hub-standup-system-overhaul": 1,
     "adhoc-lever-financial-app-separation": 1,
     "evening-session": 1,
-    "night-wrap": 1
+    "night-wrap": 1,
+    "adhoc-personal-agent-canvas-app-the-death-of-hardcoded-frontends": 1
   }
 }

@@ -49,12 +49,22 @@
       "estimatedCost": 0.0355,
       "model": "claude-sonnet-4-20250514",
       "duration": "43.8s"
+    },
+    {
+      "date": "2026-02-26",
+      "type": "adhoc-personal-agent-canvas-app-the-death-of-hardcoded-frontends",
+      "inputTokens": 3118,
+      "outputTokens": 2266,
+      "totalTokens": 5384,
+      "estimatedCost": 0.0433,
+      "model": "claude-sonnet-4-20250514",
+      "duration": "59.4s"
     }
   ],
   "totals": {
-    "today": 0.2008,
-    "week": 0.2008,
-    "month": 0.2008,
-    "standupCount": 5
+    "today": 0.0433,
+    "week": 0.2441,
+    "month": 0.2441,
+    "standupCount": 6
   }
 }

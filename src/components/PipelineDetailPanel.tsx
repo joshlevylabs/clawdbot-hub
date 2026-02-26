@@ -101,6 +101,13 @@ interface MRESignal {
   // Sector-equivalent thresholds (scaled by sector/global ratio)
   sector_fear_threshold_conservative?: number;
   sector_fear_threshold_opportunistic?: number;
+  // Per-stage signal snapshots
+  stage_signals?: {
+    strategies: 'BUY' | 'HOLD' | 'SELL' | 'WATCH';
+    signal_gating: 'BUY' | 'HOLD' | 'SELL' | 'WATCH';
+    confidence_tuning: 'BUY' | 'HOLD' | 'SELL' | 'WATCH';
+    final_filters: 'BUY' | 'HOLD' | 'SELL' | 'WATCH';
+  };
 }
 
 interface TickerDetail {

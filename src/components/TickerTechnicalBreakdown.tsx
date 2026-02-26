@@ -112,6 +112,13 @@ interface MRESignal {
     global_weight: number;
     sector_weight: number;
   };
+  // Per-stage signal snapshots
+  stage_signals?: {
+    strategies: 'BUY' | 'HOLD' | 'SELL' | 'WATCH';
+    signal_gating: 'BUY' | 'HOLD' | 'SELL' | 'WATCH';
+    confidence_tuning: 'BUY' | 'HOLD' | 'SELL' | 'WATCH';
+    final_filters: 'BUY' | 'HOLD' | 'SELL' | 'WATCH';
+  };
 }
 
 interface TickerTechnicalBreakdownProps {
@@ -172,6 +179,27 @@ export default function TickerTechnicalBreakdown({
   };
 
   const isVoteConsensusSubModal = stageName.includes('Vote Consensus');
+
+  // Function to get stage-specific signal based on stage name
+  const getStageSpecificSignal = () => {
+    if (!rawData?.stage_signals) return signal; // Fallback to final signal
+    
+    // Map stage names to stage_signals keys
+    if (stageName.includes('Signal Gating') || stageName.toLowerCase().includes('gating')) {
+      return rawData.stage_signals.signal_gating || signal;
+    }
+    if (stageName.includes('Confidence Tuning') || stageName.toLowerCase().includes('confidence')) {
+      return rawData.stage_signals.confidence_tuning || signal;
+    }
+    if (stageName.includes('Final Filters') || stageName.toLowerCase().includes('final')) {
+      return rawData.stage_signals.final_filters || signal;
+    }
+    if (stageName.includes('Strategy') || stageName.toLowerCase().includes('strategies')) {
+      return rawData.stage_signals.strategies || signal;
+    }
+    
+    return signal; // Default to final signal
+  };
 
   // Simplified view for Vote Consensus sub-modals
   if (isVoteConsensusSubModal && rawData?.strategy_votes) {
@@ -771,9 +799,9 @@ export default function TickerTechnicalBreakdown({
                 // In Vote Consensus contexts, these tickers passed the strategy vote — show BUY
                 (stageName.includes('Vote Consensus') || stageName.includes('-of-5'))
                   ? getSignalBg('BUY')
-                  : getSignalBg(signal)
+                  : getSignalBg(getStageSpecificSignal())
               }`}>
-                {stageName.includes('Vote Consensus') ? 'BUY' : signal}
+                {stageName.includes('Vote Consensus') ? 'BUY' : getStageSpecificSignal()}
               </span>
             )}
             {rawData.asset_class && (

@@ -2,6 +2,19 @@
   "standups": [
     {
       "date": "2026-02-26",
+      "time": "12:00",
+      "type": "midday-checkpoint",
+      "typeName": "Midday Checkpoint",
+      "typeEmoji": "\u2600\ufe0f",
+      "topic": "Midday Checkpoint \u2014 Thursday Feb 26",
+      "file": "2026-02-26-midday-checkpoint.json",
+      "tokenCost": 0.0393,
+      "verticals": [],
+      "initiatives": [],
+      "instanceKey": "STD-6"
+    },
+    {
+      "date": "2026-02-26",
       "time": "08:44",
       "type": "adhoc-personal-agent-canvas-app-the-death-of-hardcoded-frontends",
       "typeName": "Personal Agent Canvas App: The Death of Hardcoded Frontends",

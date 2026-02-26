@@ -122,6 +122,13 @@ interface MRESignal {
     global_weight: number;
     sector_weight: number;
   };
+  // Per-stage signal snapshots
+  stage_signals?: {
+    strategies: 'BUY' | 'HOLD' | 'SELL' | 'WATCH';
+    signal_gating: 'BUY' | 'HOLD' | 'SELL' | 'WATCH';
+    confidence_tuning: 'BUY' | 'HOLD' | 'SELL' | 'WATCH';
+    final_filters: 'BUY' | 'HOLD' | 'SELL' | 'WATCH';
+  };
 }
 
 interface MREData {
@@ -363,12 +370,16 @@ function calculatePipelineStages(signals: MRESignal[], dataType: 'core' | 'unive
   // Step 3: Signal Gating (sell suppress + bear suppress) — operates on persistence-confirmed signals
   const persistenceBypass = allConfirmed.length === 0 && anyVotePassed.length > 0;
   const gatingInput = allConfirmed.length > 0 ? allConfirmed : anyVotePassed;
-  const signalGatePassed = gatingInput.filter(s => 
-    !s.bear_suppressed && !s.sell_suppressed
-  );
-  const signalGateFiltered = gatingInput.filter(s => 
-    s.bear_suppressed || s.sell_suppressed
-  );
+  
+  // Use stage-specific signal for Signal Gating categorization
+  const signalGatePassed = gatingInput.filter(s => {
+    const stageSignal = s.stage_signals?.signal_gating || s.signal;
+    return stageSignal === 'BUY' || stageSignal === 'WATCH';
+  });
+  const signalGateFiltered = gatingInput.filter(s => {
+    const stageSignal = s.stage_signals?.signal_gating || s.signal;
+    return stageSignal === 'HOLD' || s.bear_suppressed || s.sell_suppressed;
+  });
   
   const signalGateStage = {
     inputCount: gatingInput.length,
@@ -399,8 +410,15 @@ function calculatePipelineStages(signals: MRESignal[], dataType: 'core' | 'unive
   }
   
   // Step 4: Confidence Tuning (all modifiers: regime, role, rotation, sideways, kalshi)
-  const confidencePassed = signalGatePassed.filter(s => s.signal !== 'HOLD');
-  const confidenceFiltered = signalGatePassed.filter(s => s.signal === 'HOLD');
+  // Use stage-specific signal for Confidence Tuning categorization
+  const confidencePassed = signalGatePassed.filter(s => {
+    const stageSignal = s.stage_signals?.confidence_tuning || s.signal;
+    return stageSignal !== 'HOLD';
+  });
+  const confidenceFiltered = signalGatePassed.filter(s => {
+    const stageSignal = s.stage_signals?.confidence_tuning || s.signal;
+    return stageSignal === 'HOLD';
+  });
   
   // Add per-tier data for confidence tuning
   const confidencePerTierData: Record<number, { input: number, output: number, tickers: MRESignal[] }> = {};
@@ -429,8 +447,15 @@ function calculatePipelineStages(signals: MRESignal[], dataType: 'core' | 'unive
   };
   
   // Step 5: Final Filters (cluster limit, asset confidence, crash mode, multiplier cap)
-  const finalPassed = confidencePassed.filter(s => s.signal === 'BUY');
-  const finalFiltered = confidencePassed.filter(s => s.signal !== 'BUY');
+  // Use stage-specific signal for Final Filters categorization
+  const finalPassed = confidencePassed.filter(s => {
+    const stageSignal = s.stage_signals?.final_filters || s.signal;
+    return stageSignal === 'BUY';
+  });
+  const finalFiltered = confidencePassed.filter(s => {
+    const stageSignal = s.stage_signals?.final_filters || s.signal;
+    return stageSignal !== 'BUY';
+  });
   
   // Add per-tier data for final filters
   const finalPerTierData: Record<number, { input: number, output: number, tickers: MRESignal[] }> = {};

@@ -420,14 +420,17 @@ function calculatePipelineStages(signals: MRESignal[], dataType: 'core' | 'unive
     return stageSignal === 'HOLD';
   });
   
-  // Add per-tier data for confidence tuning
+  // Add per-tier data for confidence tuning — use stage-specific signal
   const confidencePerTierData: Record<number, { input: number, output: number, tickers: MRESignal[] }> = {};
   for (let voteCount = 1; voteCount <= 8; voteCount++) {
     const tierInputTickers = signalGatePassed.filter(s => {
       const actualVoteCount = strategyNames.filter(({ key }) => didStrategyFire(s, key)).length;
       return actualVoteCount === voteCount;
     });
-    const tierOutputTickers = tierInputTickers.filter(s => s.signal !== 'HOLD');
+    const tierOutputTickers = tierInputTickers.filter(s => {
+      const stageSignal = s.stage_signals?.confidence_tuning || s.signal;
+      return stageSignal !== 'HOLD';
+    });
     
     if (tierInputTickers.length > 0) {
       confidencePerTierData[voteCount] = {
@@ -457,14 +460,17 @@ function calculatePipelineStages(signals: MRESignal[], dataType: 'core' | 'unive
     return stageSignal !== 'BUY';
   });
   
-  // Add per-tier data for final filters
+  // Add per-tier data for final filters — use stage-specific signal
   const finalPerTierData: Record<number, { input: number, output: number, tickers: MRESignal[] }> = {};
   for (let voteCount = 1; voteCount <= 8; voteCount++) {
     const tierInputTickers = confidencePassed.filter(s => {
       const actualVoteCount = strategyNames.filter(({ key }) => didStrategyFire(s, key)).length;
       return actualVoteCount === voteCount;
     });
-    const tierOutputTickers = tierInputTickers.filter(s => s.signal === 'BUY');
+    const tierOutputTickers = tierInputTickers.filter(s => {
+      const stageSignal = s.stage_signals?.final_filters || s.signal;
+      return stageSignal === 'BUY';
+    });
     
     if (tierInputTickers.length > 0) {
       finalPerTierData[voteCount] = {

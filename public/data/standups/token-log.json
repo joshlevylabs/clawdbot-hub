@@ -119,12 +119,22 @@
       "estimatedCost": 0.0434,
       "model": "claude-sonnet-4-20250514",
       "duration": "54.1s"
+    },
+    {
+      "date": "2026-02-27",
+      "type": "adhoc-dlp4710-projection-lens-selection-for-marin-globe",
+      "inputTokens": 3042,
+      "outputTokens": 1775,
+      "totalTokens": 4817,
+      "estimatedCost": 0.0358,
+      "model": "claude-sonnet-4-20250514",
+      "duration": "46.3s"
     }
   ],
   "totals": {
-    "today": 0.0809,
-    "week": 0.4836,
-    "month": 0.4836,
-    "standupCount": 12
+    "today": 0.1167,
+    "week": 0.5194,
+    "month": 0.5194,
+    "standupCount": 13
   }
 }

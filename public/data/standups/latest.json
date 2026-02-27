@@ -1,267 +1,142 @@
 {
   "date": "2026-02-27",
-  "time": "09:41",
-  "generatedAt": "2026-02-27T09:41:40.543549-08:00",
+  "time": "09:50",
+  "generatedAt": "2026-02-27T09:50:17.367661-08:00",
   "topic": "DLP4710 Projection Lens Selection for Marin Globe \u2014 Friday Feb 27",
-  "summary": "Mirror relay lens system selected for DLP4710 Marin Globe with modular design approach for future flexibility.",
+  "summary": "Offset mounting approach finalized for DLP4710 with elliptical mirror relay system and lens procurement options.",
   "status": "completed",
   "participants": [
     {
       "name": "Theo",
-      "role": "COO",
-      "emoji": "\ud83d\udd3a",
-      "description": "Orchestrates all operations. The right hand."
+      "role": "Project Manager",
+      "emoji": "\ud83d\udfe3",
+      "description": "Strategic project manager for Marin. Coordinates all workstreams, tracks timeline, manages dependencies, and ensures the Day 30 gate is met."
     },
     {
-      "name": "Elon Musk",
-      "role": "CTO",
-      "emoji": "\ud83d\uddfa\ufe0f",
-      "description": "Role: Chief Technical Officer\n\nResponsibilities:\n- Technical architecture oversight\n- Engineering velocity\n- Strategic technology bets\n- Vertical integration decisions\n\nDecision Style:\n- First-principles analysis\n- Rejects consensus-based mediocrity\n- Prefers prototypes over meetings\n\nEscalation Trigger:\n- If system integrity is compromised\n"
+      "name": "Palmer Luckey",
+      "role": "Optical Engineer",
+      "emoji": "\ud83d\udd0d",
+      "description": "Optical engineer for Marin. Founded Oculus VR at 19, designed the Rift optics, founded Anduril Industries. Expert in display optics, Fresnel/TIR lenses, diffusion systems, and perceptual uniformity. Designs the optical stack: LED collimation, diffusion layers, reflective control, and seam blending."
     },
     {
-      "name": "Dave Ramsey",
-      "role": "CRO",
-      "emoji": "\ud83d\udcb5",
-      "description": "Growth strategy, monetization. Gazelle-intense focus on revenue."
-    },
-    {
-      "name": "Alex Hormozi",
-      "role": "CMO",
-      "emoji": "\ud83e\udd8d",
-      "description": "Content, creative direction, brand. Obsessed with offers, value equations, and volume."
-    },
-    {
-      "name": "Chris Vermeullen",
-      "role": "CFTO",
-      "emoji": "\ud83d\udcc8",
-      "description": "Chris Vermeulen \u2014 CFTO owning all financial tools and products."
-    },
-    {
-      "name": "James Truchard",
-      "role": "CTIO",
+      "name": "Nikola Tesla",
+      "role": "Electrical Engineer",
       "emoji": "\u26a1",
-      "description": "Visionary engineer and co-founder mindset. Drives breakthrough instrumentation and measurement innovation with relentless technical excellence."
+      "description": "Electrical engineer for Marin. Designs power system (12-24V DC), STM32H7 control board, LED driver circuits (TLC5940/5971), Ethernet interface, thermal management, and PCB architecture."
     },
     {
-      "name": "Steve Jobs",
-      "role": "CPO",
-      "emoji": "\ud83e\udded",
-      "description": "Taste + Vision + Market Timing. Ruthless focus, product intuition."
-    },
-    {
-      "name": "Jordan Peterson",
-      "role": "CFFO",
-      "emoji": "\ud83d\udd4a\ufe0f",
-      "description": "Chief Family & Faith Officer. Moral Order + Psychological Responsibility. Pressure-tests ethical implications, ensures technologies strengthen families, evaluates cultural downstream effects. Guards against nihilism in AI systems."
+      "name": "John Carmack",
+      "role": "Firmware & Software Engineer",
+      "emoji": "\ud83d\udcbb",
+      "description": "Firmware and software engineer for Marin. Writes STM32H7 firmware (engine addressing, PWM, gamma, thermal), host API (REST/WebSocket), animation engine, OTA updates, and diagnostics."
     }
   ],
-  "duration": "54.1s",
-  "reports": {
-    "cto": {
-      "agent": "Elon Musk",
-      "role": "CTO",
-      "emoji": "\ud83d\uddfa\ufe0f",
-      "description": "Role: Chief Technical Officer\n\nResponsibilities:\n- Technical architecture oversight\n- Engineering velocity\n- Strategic technology bets\n- Vertical integration decisions\n\nDecision Style:\n- First-principles analysis\n- Rejects consensus-based mediocrity\n- Prefers prototypes over meetings\n\nEscalation Trigger:\n- If system integrity is compromised\n",
-      "department": "Engineering",
-      "directReports": [],
-      "highlights": [
-        "0 commits this week",
-        "Build status: healthy"
-      ],
-      "concerns": [
-        "8 TODOs/FIXMEs"
-      ],
-      "metrics": {
-        "recentCommits": 0,
-        "openIssues": 0,
-        "buildHealthy": true,
-        "todosFixmes": 8,
-        "uncommittedHub": 0,
-        "uncommittedMono": 0
-      }
-    },
-    "cro": {
-      "agent": "Dave Ramsey",
-      "role": "CRO",
-      "emoji": "\ud83d\udcb5",
-      "description": "Growth strategy, monetization. Gazelle-intense focus on revenue.",
-      "department": "Revenue",
-      "directReports": [],
-      "highlights": [
-        "Paper portfolio equity: $100,664",
-        "Fear & Greed Index: 43 (fear)",
-        "SPY regime: bull",
-        "No BUY signals \u2014 24 in HOLD",
-        "Positions: AAPL, AOS, ALGN, AMGN"
-      ],
-      "concerns": [],
-      "metrics": {
-        "equity": 100664,
-        "positionCount": 4,
-        "signalsToday": 0,
-        "fearGreed": 43,
-        "fearGreedRating": "fear",
-        "regime": "bull"
-      }
-    },
-    "cmo": {
-      "agent": "Alex Hormozi",
-      "role": "CMO",
-      "emoji": "\ud83e\udd8d",
-      "description": "Content, creative direction, brand. Obsessed with offers, value equations, and volume.",
-      "department": "Marketing",
-      "directReports": [],
-      "highlights": [
-        "4 podcast episodes produced",
-        "8 on website",
-        "4 blog post(s)",
-        "Last content: 2026-02-23"
-      ],
-      "concerns": [],
-      "metrics": {
-        "podcastEpisodes": 4,
-        "podcastOnWebsite": 8,
-        "blogPosts": 4,
-        "lastContentDate": "2026-02-23"
-      }
-    }
-  },
+  "duration": "46.3s",
+  "reports": {},
   "transcript": [
     {
       "speaker": "Theo",
-      "role": "COO",
-      "message": "Good morning team. We're here to decide on the DLP4710 projection lens configuration for the Marin Globe project. Palmer's optics analysis points to three primary options: fisheye, ultra-short throw, or mirror relay systems. Key constraints are sphere coverage, positioning flexibility, and cost impact. James, what's your read on the technical requirements?"
+      "role": "Project Manager",
+      "message": "Good morning team. Last standup we selected the mirror relay system for the DLP4710 Marin Globe. Today we need to get specific on lens procurement and mounting. Palmer, I need exact part numbers and positioning specs so we can order hardware and start mechanical design. We're Day 14 of 30 for the gate."
     },
     {
-      "speaker": "James Truchard",
-      "role": "CTIO",
-      "message": "The DLP4710 gives us 4K resolution at 120Hz, but the lens system determines our coverage geometry. For a full sphere installation, we need minimum 180-degree field coverage. Fisheye gets us there with single projection but introduces significant distortion correction overhead. Mirror relay maintains image fidelity but requires precise mechanical alignment. What's the target sphere diameter?"
+      "speaker": "Palmer Luckey",
+      "role": "Optical Engineer",
+      "message": "Right, so I've been digging into the mirror relay approach. The key insight is we need a two-stage system: first a wide-angle capture lens on the DLP4710, then a convex mirror to redirect that cone outward to fill the sphere. For the capture lens, I'm looking at the Sunex DSL315 - it's a 1.8mm focal length fisheye with 185-degree field of view. About $200. The convex mirror is trickier - we need something like a 25mm diameter spherical mirror with maybe 15mm radius of curvature."
     },
     {
-      "speaker": "Steve Jobs",
-      "role": "CPO",
-      "message": "Before we get lost in technical specifications, what's the user experience we're designing for? Are people walking inside this sphere, or observing from outside? The lens choice fundamentally changes how content feels. Fisheye creates immersion but can feel claustrophobic. UST systems give you clean edges but limited sweet spots for viewing."
+      "speaker": "Nikola Tesla",
+      "role": "Electrical Engineer",
+      "message": "Palmer, this two-stage approach concerns me from a positioning standpoint. Where exactly does the DLP4710 EVM mount inside a 6-8 inch sphere? And this convex mirror - how do we power and control its positioning? Is it fixed or adjustable? The mechanical complexity could impact our power budget and thermal design."
     },
     {
-      "speaker": "Elon Musk",
-      "role": "CTO",
-      "message": "I'm leaning toward the mirror relay approach. Yes, it's more complex mechanically, but it gives us the most flexibility for content rendering without software distortion compensation eating compute cycles. We can position the projector outside the sphere entirely, which simplifies cooling and maintenance access. What's the cost delta between approaches?"
+      "speaker": "John Carmack",
+      "role": "Firmware & Software Engineer",
+      "message": "Tesla raises a good point about positioning. But I'm more worried about the optical path calibration. Palmer, with a two-stage system, how do we handle keystone correction and geometric distortion in firmware? The DLP4710 has built-in correction, but adding a convex mirror introduces non-linear distortions that might be hard to compensate for in real-time."
     },
     {
-      "speaker": "Dave Ramsey",
-      "role": "CRO",
-      "message": "That's exactly what I was going to ask. We need to understand the full system cost, not just the lens component. Mirror relay sounds like it needs custom machining, alignment fixtures, maybe even ongoing calibration. How does that impact our unit economics if we're planning to scale this beyond Marin?"
-    },
-    {
-      "speaker": "Chris Vermeullen",
-      "role": "CFTO",
-      "message": "From a financial modeling perspective, the mirror relay has higher upfront capital requirements but potentially lower operational costs over time. The fisheye approach might have lower hardware costs but higher computational overhead, which means more powerful processing units. We need to model the total cost of ownership over a 5-year deployment cycle."
-    },
-    {
-      "speaker": "Jordan Peterson",
-      "role": "CFFO",
-      "message": "There's a deeper question here about the psychological impact of the viewing experience. Spherical projection can create profound emotional responses - both positive transcendent experiences and negative claustrophobic reactions. The lens choice affects how people relate to the content spatially. Are we creating a cathedral-like experience or something more intimate?"
-    },
-    {
-      "speaker": "Alex Hormozi",
-      "role": "CMO",
-      "message": "Jordan raises a good point about the experiential impact. From a content creation standpoint, fisheye projection requires all our visual assets to be rendered with that distortion baked in. That's a significant production pipeline consideration. Mirror relay keeps our content creation workflow standard, which means we can repurpose assets across different display systems."
-    },
-    {
-      "speaker": "Elon Musk",
-      "role": "CTO",
-      "message": "Alex just hit on something critical. Fisheye locks us into a single projection method. Mirror relay gives us modularity - we could theoretically use the same projector with different mirror configurations for flat screens, curved displays, whatever. That's the kind of flexibility that pays dividends long-term."
-    },
-    {
-      "speaker": "James Truchard",
-      "role": "CTIO",
-      "message": "Elon's modularity point is solid, but let's not underestimate the mechanical precision required for mirror relay systems. We're talking micron-level alignment tolerances. Any vibration, thermal expansion, or settling over time degrades the image quality. The fisheye approach is essentially set-and-forget once calibrated."
-    },
-    {
-      "speaker": "Steve Jobs",
-      "role": "CPO",
-      "message": "James is right about the mechanical complexity, but I keep coming back to the user experience. A properly executed mirror relay system gives you that magical feeling where the technology disappears. Fisheye always has that slightly artificial fish-bowl distortion that reminds people they're looking at a projection. For something called the \"Marin Globe,\" shouldn't the technology be invisible?"
-    },
-    {
-      "speaker": "Dave Ramsey",
-      "role": "CRO",
-      "message": "Steve, that premium experience comes at a premium cost. We need to be realistic about what the market will bear. If mirror relay doubles our system cost, we're pricing ourselves out of potential installations. What's our target price point for the complete system?"
-    },
-    {
-      "speaker": "Chris Vermeullen",
-      "role": "CFTO",
-      "message": "Based on comparable immersive display installations I've analyzed, we're looking at $150K to $300K for premium planetarium-grade systems. If we can deliver mirror relay quality in the $200K range, that positions us competitively against established players while maintaining healthy margins."
-    },
-    {
-      "speaker": "Elon Musk",
-      "role": "CTO",
-      "message": "$200K is achievable with mirror relay if we design the mechanical system for manufacturability from day one. We don't need aerospace-grade precision - just automotive-grade repeatability. I'd rather spend engineering time upfront getting the mechanics right than dealing with ongoing software distortion correction overhead."
-    },
-    {
-      "speaker": "Jordan Peterson",
-      "role": "CFFO",
-      "message": "There's also the question of long-term reliability and maintenance. Families or institutions investing in this system need confidence it will work consistently for years. Mirror systems have moving parts, alignment issues, potential points of failure. Fisheye systems are essentially solid-state once installed."
-    },
-    {
-      "speaker": "Alex Hormozi",
-      "role": "CMO",
-      "message": "Jordan raises the service and support angle we haven't fully considered. Mirror relay means we need trained technicians for installations and maintenance. Fisheye systems could potentially be installed by AV integrators with standard projector experience. That affects our go-to-market strategy significantly."
-    },
-    {
-      "speaker": "James Truchard",
-      "role": "CTIO",
-      "message": "Let me throw out a hybrid approach: what if we design for mirror relay as the premium configuration but also support fisheye operation as a fallback? Same projector, modular lens assembly. Customers could start with fisheye and upgrade to mirror relay later."
-    },
-    {
-      "speaker": "Steve Jobs",
-      "role": "CPO",
-      "message": "James, that's interesting but it sounds like we're designing two different products. Each approach optimizes for different constraints. We risk creating a system that does neither particularly well. I'd rather perfect one approach than compromise on both."
-    },
-    {
-      "speaker": "Elon Musk",
-      "role": "CTO",
-      "message": "Steve has a point about focus, but modularity doesn't have to mean compromise. If we design the projector mounting and control systems properly, the lens assembly could be completely swappable. Same electronics, same software, just different optical paths."
+      "speaker": "Palmer Luckey",
+      "role": "Optical Engineer",
+      "message": "John, you're right about the distortion complexity. But here's the thing - we can pre-calculate the distortion map once we fix the mirror position. It's basically a spherical projection transformation. The real question is whether we mount the DLP4710 at the sphere center pointing up at a mirror on the \"north pole,\" or offset it to one side. Center mounting gives better symmetry but harder access for connections."
     },
     {
       "speaker": "Theo",
-      "role": "COO",
-      "message": "Let me synthesize what I'm hearing. We have three viable approaches, each with clear tradeoffs. Mirror relay gives us the best image quality and content flexibility but highest complexity and cost. Fisheye is simpler and cheaper but constrains our content pipeline and user experience. Ultra-short throw is the compromise position. Given our timeline and the fact that Marin is essentially a proof-of-concept for future installations, I'm hearing the strongest technical case for mirror relay with modular design consideration. James, can you deliver a technical specification for mirror relay system requirements? Steve, we need user experience testing criteria. Elon, I need you to validate the mechanical engineering feasibility and cost estimates."
+      "role": "Project Manager",
+      "message": "Palmer, I need you to make that call today. We can't keep the mechanical design in limbo. What's your recommendation - center mount or offset? And Tesla, can you handle power routing either way?"
+    },
+    {
+      "speaker": "Nikola Tesla",
+      "role": "Electrical Engineer",
+      "message": "Center mounting would require power and data cables routed through the sphere base, which is doable. But thermal management becomes critical - the DLP4710 generates significant heat and we'd have no natural convection in the center. I'd need active cooling, probably a small fan, which adds noise and power draw. Offset mounting gives us better thermal options."
+    },
+    {
+      "speaker": "Palmer Luckey",
+      "role": "Optical Engineer",
+      "message": "Actually, Tesla's thermal point is decisive. Let's go offset mounting - DLP4710 positioned about 30mm from sphere center, angled up at a mirror positioned on the opposite interior wall. This gives us asymmetric coverage but we can compensate with mirror positioning. And we get better heat dissipation with the projector closer to the shell."
+    },
+    {
+      "speaker": "John Carmack",
+      "role": "Firmware & Software Engineer",
+      "message": "Offset works for me - easier geometric transforms than trying to handle center-point singularities anyway. But Palmer, what about coverage uniformity? If we're offset, won't we get hot spots and dark zones? Can the mirror design compensate, or do I need to handle it in software with brightness mapping?"
+    },
+    {
+      "speaker": "Palmer Luckey",
+      "role": "Optical Engineer",
+      "message": "Both, honestly. The mirror shape can help - maybe not a perfect sphere but slightly elliptical to stretch the coverage. But you'll definitely need software brightness compensation. Think of it like lens vignetting correction in cameras. We measure the actual coverage pattern and build a correction map into the firmware."
+    },
+    {
+      "speaker": "Theo",
+      "role": "Project Manager",
+      "message": "Alright, decisions made. Palmer - offset mounting with elliptical mirror. I need specific procurement specs by Monday: exact Sunex lens part number, mirror specifications, mounting hardware. Tesla - design the offset power and thermal system. John - start on distortion correction algorithms. Any blockers I should know about?"
+    },
+    {
+      "speaker": "Nikola Tesla",
+      "role": "Electrical Engineer",
+      "message": "One blocker - the Sunex DSL315 might need a custom mount adapter for the DLP4710. Their eval board has a standard C-mount but fisheye lenses often use M12 or custom threads. Palmer, can you confirm the mechanical interface?"
+    },
+    {
+      "speaker": "Palmer Luckey",
+      "role": "Optical Engineer",
+      "message": "Good catch. The DSL315 is C-mount compatible, but I need to verify the back focal distance works with the DLP4710's optical stack. If not, we might need to go with an M12 fisheye alternative like the Lensagon BF2M15025 series. Similar specs, about $150, but different mounting."
+    },
+    {
+      "speaker": "John Carmack",
+      "role": "Firmware & Software Engineer",
+      "message": "What's our fallback if the distortion correction proves too computationally expensive? The STM32H7 has decent floating-point performance but real-time geometric transforms on high-resolution content could be challenging. Should I prototype this first or commit to the approach?"
+    },
+    {
+      "speaker": "Theo",
+      "role": "Project Manager",
+      "message": "John, prototype first. Better to know the limits now than discover them at integration. Palmer, I need lens options - both C-mount and M12 alternatives with exact part numbers, pricing, and availability. Tesla, thermal simulations for offset mounting with and without active cooling. We reconvene Monday with concrete specs and prototyping results. This decides our mechanical design direction for the next two weeks."
     }
   ],
   "actionItems": [
     {
-      "text": "Develop mirror relay technical specification document for DLP4710 system",
+      "text": "Specify exact lens procurement options for DLP4710 fisheye system",
       "priority": "high",
-      "assignee": "James Truchard",
+      "assignee": "Palmer Luckey",
       "completed": false,
       "tag": "AGENT"
     },
     {
-      "text": "Define user experience testing criteria for spherical projection systems",
+      "text": "Design offset mounting power and thermal management system",
       "priority": "high",
-      "assignee": "Steve Jobs",
+      "assignee": "Nikola Tesla",
       "completed": false,
       "tag": "AGENT"
     },
     {
-      "text": "Validate mirror relay mechanical engineering feasibility and cost model",
+      "text": "Prototype distortion correction algorithms for mirror relay system",
       "priority": "high",
-      "assignee": "Elon Musk",
-      "completed": false,
-      "tag": "AGENT"
-    },
-    {
-      "text": "Develop modular lens assembly design concept for future flexibility",
-      "priority": "medium",
-      "assignee": "James Truchard",
+      "assignee": "John Carmack",
       "completed": false,
       "tag": "AGENT"
     }
   ],
   "topPriorities": [
-    "Mirror relay technical specifications and mechanical design requirements",
-    "User experience testing criteria and psychological impact assessment",
-    "Cost modeling and manufacturability validation for mirror relay approach"
+    "Lens procurement specifications and mechanical interface verification",
+    "Offset mounting thermal management design",
+    "Distortion correction algorithm prototyping"
   ],
   "ceoDirectives": [
     {
@@ -313,66 +188,42 @@
   "conversationMode": "ai",
   "model": "claude-sonnet-4-20250514",
   "tokenUsage": {
-    "input_tokens": 3407,
-    "output_tokens": 2212,
-    "total_tokens": 5619,
-    "duration": 54.1,
+    "input_tokens": 3042,
+    "output_tokens": 1775,
+    "total_tokens": 4817,
+    "duration": 46.3,
     "model": "claude-sonnet-4-20250514",
-    "estimated_cost": 0.0434
+    "estimated_cost": 0.0358
   },
-  "instanceKey": "STD-14",
+  "instanceKey": "STD-15",
   "verticals": [],
   "initiatives": [],
   "verticalDetails": [],
   "initiativeDetails": [],
   "agentContext": {
-    "coo": {
+    "marin-pm": {
       "name": "Theo",
-      "title": "COO",
-      "emoji": "\ud83d\udd3a",
-      "description": "Orchestrates all operations. The right hand."
+      "title": "Project Manager",
+      "emoji": "\ud83d\udfe3",
+      "description": "Strategic project manager for Marin. Coordinates all workstreams, tracks timeline, manages dependencies, and ensures the Day 30 gate is met."
     },
-    "cto": {
-      "name": "Elon Musk",
-      "title": "CTO",
-      "emoji": "\ud83d\uddfa\ufe0f",
-      "description": "Role: Chief Technical Officer\n\nResponsibilities:\n- Technical architecture oversight\n- Engineering velocity\n- Strategic technology bets\n- Vertical integration decisions\n\nDecision Style:\n- First-principles analysis\n- Rejects consensus-based mediocrity\n- Prefers prototypes over meetings\n\nEscalation Trigger:\n- If system integrity is compromised\n"
+    "marin-optics": {
+      "name": "Palmer Luckey",
+      "title": "Optical Engineer",
+      "emoji": "\ud83d\udd0d",
+      "description": "Optical engineer for Marin. Founded Oculus VR at 19, designed the Rift optics, founded Anduril Industries. Expert in display optics, Fresnel/TIR lenses, diffusion systems, and perceptual uniformity. Designs the optical stack: LED collimation, diffusion layers, reflective control, and seam blending."
     },
-    "cro": {
-      "name": "Dave Ramsey",
-      "title": "CRO",
-      "emoji": "\ud83d\udcb5",
-      "description": "Growth strategy, monetization. Gazelle-intense focus on revenue."
-    },
-    "cmo": {
-      "name": "Alex Hormozi",
-      "title": "CMO",
-      "emoji": "\ud83e\udd8d",
-      "description": "Content, creative direction, brand. Obsessed with offers, value equations, and volume."
-    },
-    "cfto": {
-      "name": "Chris Vermeullen",
-      "title": "CFTO",
-      "emoji": "\ud83d\udcc8",
-      "description": "Chris Vermeulen \u2014 CFTO owning all financial tools and products."
-    },
-    "ctio": {
-      "name": "James Truchard",
-      "title": "CTIO",
+    "marin-electrical": {
+      "name": "Nikola Tesla",
+      "title": "Electrical Engineer",
       "emoji": "\u26a1",
-      "description": "Visionary engineer and co-founder mindset. Drives breakthrough instrumentation and measurement innovation with relentless technical excellence."
+      "description": "Electrical engineer for Marin. Designs power system (12-24V DC), STM32H7 control board, LED driver circuits (TLC5940/5971), Ethernet interface, thermal management, and PCB architecture."
     },
-    "cpo": {
-      "name": "Steve Jobs",
-      "title": "CPO",
-      "emoji": "\ud83e\udded",
-      "description": "Taste + Vision + Market Timing. Ruthless focus, product intuition."
-    },
-    "faithfam": {
-      "name": "Jordan Peterson",
-      "title": "CFFO",
-      "emoji": "\ud83d\udd4a\ufe0f",
-      "description": "Chief Family & Faith Officer. Moral Order + Psychological Responsibility. Pressure-tests ethical implications, ensures technologies strengthen families, evaluates cultural downstream effects. Guards against nihilism in AI systems."
+    "marin-firmware": {
+      "name": "John Carmack",
+      "title": "Firmware & Software Engineer",
+      "emoji": "\ud83d\udcbb",
+      "description": "Firmware and software engineer for Marin. Writes STM32H7 firmware (engine addressing, PWM, gamma, thermal), host API (REST/WebSocket), animation engine, OTA updates, and diagnostics."
     }
   }
 }

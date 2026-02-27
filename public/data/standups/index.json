@@ -2,16 +2,16 @@
   "standups": [
     {
       "date": "2026-02-27",
-      "time": "09:41",
+      "time": "09:50",
       "type": "adhoc-dlp4710-projection-lens-selection-for-marin-globe",
       "typeName": "DLP4710 Projection Lens Selection for Marin Globe",
       "typeEmoji": "\ud83d\udccb",
       "topic": "DLP4710 Projection Lens Selection for Marin Globe \u2014 Friday Feb 27",
       "file": "2026-02-27-adhoc-dlp4710-projection-lens-selection-for-marin-globe.json",
-      "tokenCost": 0.0434,
+      "tokenCost": 0.0358,
       "verticals": [],
       "initiatives": [],
-      "instanceKey": "STD-14"
+      "instanceKey": "STD-15"
     },
     {
       "date": "2026-02-27",

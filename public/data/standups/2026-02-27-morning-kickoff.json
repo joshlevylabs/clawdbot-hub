@@ -1,0 +1,411 @@
+{
+  "date": "2026-02-27",
+  "time": "05:00",
+  "generatedAt": "2026-02-27T05:04:28.280353-08:00",
+  "topic": "Morning Kickoff \u2014 Friday Feb 27",
+  "summary": "App Store submission today, daily faith content pipeline launch, trading widget monetization spec.",
+  "status": "completed",
+  "participants": [
+    {
+      "name": "Theo",
+      "role": "COO",
+      "emoji": "\ud83d\udd3a",
+      "description": "Orchestrates all operations. The right hand."
+    },
+    {
+      "name": "Elon Musk",
+      "role": "CTO",
+      "emoji": "\ud83d\uddfa\ufe0f",
+      "description": "Role: Chief Technical Officer\n\nResponsibilities:\n- Technical architecture oversight\n- Engineering velocity\n- Strategic technology bets\n- Vertical integration decisions\n\nDecision Style:\n- First-principles analysis\n- Rejects consensus-based mediocrity\n- Prefers prototypes over meetings\n\nEscalation Trigger:\n- If system integrity is compromised\n"
+    },
+    {
+      "name": "Alex Hormozi",
+      "role": "CMO",
+      "emoji": "\ud83e\udd8d",
+      "description": "Content, creative direction, brand. Obsessed with offers, value equations, and volume."
+    },
+    {
+      "name": "Dave Ramsey",
+      "role": "CRO",
+      "emoji": "\ud83d\udcb5",
+      "description": "Growth strategy, monetization. Gazelle-intense focus on revenue."
+    },
+    {
+      "name": "Chris Vermeullen",
+      "role": "CFTO",
+      "emoji": "\ud83d\udcc8",
+      "description": "Chris Vermeulen \u2014 CFTO owning all financial tools and products."
+    },
+    {
+      "name": "James Truchard",
+      "role": "CTIO",
+      "emoji": "\u26a1",
+      "description": "Visionary engineer and co-founder mindset. Drives breakthrough instrumentation and measurement innovation with relentless technical excellence."
+    },
+    {
+      "name": "Steve Jobs",
+      "role": "CPO",
+      "emoji": "\ud83e\udded",
+      "description": "Taste + Vision + Market Timing. Ruthless focus, product intuition."
+    },
+    {
+      "name": "Jordan Peterson",
+      "role": "CFFO",
+      "emoji": "\ud83d\udd4a\ufe0f",
+      "description": "Chief Family & Faith Officer. Moral Order + Psychological Responsibility. Pressure-tests ethical implications, ensures technologies strengthen families, evaluates cultural downstream effects. Guards against nihilism in AI systems."
+    }
+  ],
+  "duration": "46.8s",
+  "reports": {
+    "cto": {
+      "agent": "Elon Musk",
+      "role": "CTO",
+      "emoji": "\ud83d\uddfa\ufe0f",
+      "description": "Role: Chief Technical Officer\n\nResponsibilities:\n- Technical architecture oversight\n- Engineering velocity\n- Strategic technology bets\n- Vertical integration decisions\n\nDecision Style:\n- First-principles analysis\n- Rejects consensus-based mediocrity\n- Prefers prototypes over meetings\n\nEscalation Trigger:\n- If system integrity is compromised\n",
+      "department": "Engineering",
+      "directReports": [],
+      "highlights": [
+        "0 commits this week",
+        "Build status: healthy"
+      ],
+      "concerns": [
+        "8 TODOs/FIXMEs"
+      ],
+      "metrics": {
+        "recentCommits": 0,
+        "openIssues": 0,
+        "buildHealthy": true,
+        "todosFixmes": 8,
+        "uncommittedHub": 0,
+        "uncommittedMono": 0
+      }
+    },
+    "cro": {
+      "agent": "Dave Ramsey",
+      "role": "CRO",
+      "emoji": "\ud83d\udcb5",
+      "description": "Growth strategy, monetization. Gazelle-intense focus on revenue.",
+      "department": "Revenue",
+      "directReports": [],
+      "highlights": [
+        "Paper portfolio equity: $100,656",
+        "Fear & Greed Index: 43 (fear)",
+        "SPY regime: bull",
+        "No BUY signals \u2014 24 in HOLD",
+        "Positions: AAPL, AOS, ALGN, AMGN"
+      ],
+      "concerns": [],
+      "metrics": {
+        "equity": 100656,
+        "positionCount": 4,
+        "signalsToday": 0,
+        "fearGreed": 43,
+        "fearGreedRating": "fear",
+        "regime": "bull"
+      }
+    },
+    "cmo": {
+      "agent": "Alex Hormozi",
+      "role": "CMO",
+      "emoji": "\ud83e\udd8d",
+      "description": "Content, creative direction, brand. Obsessed with offers, value equations, and volume.",
+      "department": "Marketing",
+      "directReports": [],
+      "highlights": [
+        "4 podcast episodes produced",
+        "8 on website",
+        "4 blog post(s)",
+        "Last content: 2026-02-23"
+      ],
+      "concerns": [],
+      "metrics": {
+        "podcastEpisodes": 4,
+        "podcastOnWebsite": 8,
+        "blogPosts": 4,
+        "lastContentDate": "2026-02-23"
+      }
+    }
+  },
+  "transcript": [
+    {
+      "speaker": "Theo",
+      "role": "COO",
+      "message": "Good morning everyone. Friday priorities - we've got Lever App Store submission happening today, 176 commits in the Hub over 48 hours, and $53k cash sitting idle. Faith lessons at 7, family tracking solid at 6 members. Elon, build status for App Store push?"
+    },
+    {
+      "speaker": "Elon",
+      "role": "CTO",
+      "message": "Build's healthy, submission ready. But I'm seeing a gap - we're extracting Lever tabs into Mosaic widgets while simultaneously submitting the current build. That's technical debt accumulating in real-time. We should nail the submission first, then architect the widget extraction properly."
+    },
+    {
+      "speaker": "Steve",
+      "role": "CPO",
+      "message": "Agreed on sequencing, but let's not lose sight of user experience. Seven faith lessons isn't enough for launch. Users will consume that in days, then what? We need a content pipeline that feeds ongoing engagement, not just a static library."
+    },
+    {
+      "speaker": "Alex",
+      "role": "CMO",
+      "message": "Seven lessons is fine for MVP if they're deep, transformative content. Quality over quantity. But Steve's right about the pipeline - I need to be generating daily devotional content systematically. What's the content architecture for scaling faith engagement?"
+    },
+    {
+      "speaker": "Jordan",
+      "role": "CFFO",
+      "message": "The number of lessons matters far less than their psychological depth and moral clarity. Seven profound, life-altering lessons trump fifty shallow platitudes. But Alex raises the crucial point - we need sustainable content generation that maintains doctrinal integrity while scaling."
+    },
+    {
+      "speaker": "Dave",
+      "role": "CRO",
+      "message": "Hold on - we're debating content strategy when we have zero revenue streams active and $53k burning a hole in our balance sheet. Chris, what's the market telling us about deployment opportunities?"
+    },
+    {
+      "speaker": "Chris",
+      "role": "CFTO",
+      "message": "Fear & Greed at 43 suggests cautious sentiment, but SPY's still in bull regime. With 24 HOLD assets generating signals, there's opportunity. But Josh's directive is clear - keep cash liquid until we have post-launch revenue data. That's the right call."
+    },
+    {
+      "speaker": "James",
+      "role": "CTIO",
+      "message": "From an instrumentation perspective, we're flying blind on user engagement metrics. We need telemetry on faith lesson completion rates, family touchpoint interactions. How do we measure what's working before we scale content production?"
+    },
+    {
+      "speaker": "Theo",
+      "role": "COO",
+      "message": "Good point James. But let's not over-engineer pre-launch. Elon, can we get basic analytics into the App Store build without delaying submission?"
+    },
+    {
+      "speaker": "Elon",
+      "role": "CTO",
+      "message": "Basic engagement tracking, yes. But I'm more concerned about the widget extraction roadmap. Once we submit, do we immediately pivot to Mosaic architecture, or do we maintain Lever as-is and build Mosaic separately?"
+    },
+    {
+      "speaker": "Steve",
+      "role": "CPO",
+      "message": "That's the wrong question. The right question is: what does the user need six months from now? Lever serves the personal productivity use case. Mosaic serves the broader ecosystem play. We can't conflate them without losing focus on both."
+    },
+    {
+      "speaker": "Alex",
+      "role": "CMO",
+      "message": "Steve's absolutely right. Lever is Josh's personal optimization tool that happens to have product potential. Mosaic is the scalable platform play. Different value propositions, different go-to-market strategies."
+    },
+    {
+      "speaker": "Dave",
+      "role": "CRO",
+      "message": "Which brings us back to revenue. Alex, what's the monetization timeline for Builder's Frequency? We need income streams flowing while Lever finds its market."
+    },
+    {
+      "speaker": "Alex",
+      "role": "CMO",
+      "message": "Builder's Frequency is audience-building phase. Newsletter subscribers are growing, but we need better tracking. The monetization play comes through premium content tiers and potential affiliate partnerships, but that's 90-day horizon minimum."
+    },
+    {
+      "speaker": "Jordan",
+      "role": "CFFO",
+      "message": "Before we optimize for revenue, we must ensure we're building something that strengthens rather than weakens human flourishing. The faith content pipeline must maintain theological rigor. The family tracking must enhance rather than gamify relationships."
+    },
+    {
+      "speaker": "Chris",
+      "role": "CFTO",
+      "message": "Jordan's concerns are valid, but we also need financial sustainability. The trading widget integration could be immediate revenue - basic free analytics, premium for advanced features. Paper trading with delayed data gives us a defensible free tier."
+    },
+    {
+      "speaker": "James",
+      "role": "CTIO",
+      "message": "The technical foundation supports that model. We have 4 equity positions generating signals, 24 HOLD assets providing data. The instrumentation for trading analytics is already there."
+    },
+    {
+      "speaker": "Theo",
+      "role": "COO",
+      "message": "Alright, I'm hearing three parallel tracks. First, App Store submission today with current build. Second, faith content pipeline scaling. Third, trading widget monetization. Elon, submission confidence level?"
+    },
+    {
+      "speaker": "Elon",
+      "role": "CTO",
+      "message": "High confidence. Build's solid, all four tabs functional, seven faith lessons integrated. Submit after this call, expect review within 24-48 hours given our clean previous submission history."
+    },
+    {
+      "speaker": "Steve",
+      "role": "CPO",
+      "message": "Faith lessons need expansion immediately post-launch. Alex, can you commit to daily devotional generation based on our eight faith dimensions?"
+    },
+    {
+      "speaker": "Alex",
+      "role": "CMO",
+      "message": "Absolutely. Daily devotionals are perfect for maintaining engagement and building the content library systematically. I can draft the first week's worth alongside ongoing Builder's Frequency content."
+    },
+    {
+      "speaker": "Dave",
+      "role": "CRO",
+      "message": "And Chris, what's the timeline for integrating basic trading analytics into the finance tab?"
+    },
+    {
+      "speaker": "Chris",
+      "role": "CFTO",
+      "message": "Two weeks for basic implementation. Free tier gets delayed market data and simple analytics. Premium tier gets advanced charting and signal analysis. Manual entry system can launch within that timeframe."
+    },
+    {
+      "speaker": "Jordan",
+      "role": "CFFO",
+      "message": "I need oversight on both content streams - faith devotionals and trading psychology. Both domains require ethical guardrails to prevent manipulation or false promises."
+    },
+    {
+      "speaker": "James",
+      "role": "CTIO",
+      "message": "I can provide the usage telemetry to measure engagement across faith, family, and finance tabs. That data informs content prioritization and feature development."
+    },
+    {
+      "speaker": "Theo",
+      "role": "COO",
+      "message": "Perfect. Final priorities: Elon submits to App Store today, Alex launches daily devotional pipeline, Chris specs the trading widget integration. Everyone else supports these three pillars. Questions?"
+    },
+    {
+      "speaker": "Dave",
+      "role": "CRO",
+      "message": "One last thing - that $53k idle cash. Once we have App Store approval and initial user data, I want deployment options ready. Market timing won't wait for perfect revenue metrics."
+    },
+    {
+      "speaker": "Theo",
+      "role": "COO",
+      "message": "Agreed. Let's reconvene Monday with App Store status and first-week devotional content pipeline. Focus on execution, measure what matters, keep building."
+    }
+  ],
+  "actionItems": [
+    {
+      "text": "Evaluate deployment of idle cash ($53,034 available)",
+      "priority": "medium",
+      "assignee": "Dave",
+      "completed": false,
+      "tag": "JOSHUA"
+    },
+    {
+      "text": "Generate daily devotional content based on 8 faith dimensions",
+      "priority": "medium",
+      "assignee": "Alex",
+      "completed": false,
+      "tag": "AGENT"
+    },
+    {
+      "text": "Draft feature spec for expanding Family tab (currently 455 lines)",
+      "priority": "medium",
+      "assignee": "Elon",
+      "completed": false,
+      "tag": "AGENT"
+    }
+  ],
+  "topPriorities": [
+    "Submit Lever to App Store with current build",
+    "Launch daily devotional content generation pipeline",
+    "Spec trading widget integration for finance tab monetization"
+  ],
+  "ceoDirectives": [
+    {
+      "directive": "What is Lever's direction? \u2192 Hybrid \u2014 personal tool now with product optionality built in",
+      "decided": "2026-02-19T12:01:00-08:00",
+      "source": "afternoon-checkpoint 2026-02-19",
+      "priority": "high"
+    },
+    {
+      "directive": "Keep faith content as separate standalone section (not merged into Family tab)",
+      "decided": "2026-02-19T12:01:00-08:00",
+      "source": "afternoon-checkpoint 2026-02-19",
+      "priority": "high"
+    },
+    {
+      "directive": "Keep cash liquid \u2014 no deployment until post-launch revenue data",
+      "decided": "2026-02-21T12:34:50-08:00",
+      "source": "midday-checkpoint 2026-02-21",
+      "priority": "medium"
+    },
+    {
+      "directive": "App Store submission: full current build (all 4 tabs) as-is with faith lessons. Submit immediately after merge, ship modal as day-one update.",
+      "decided": "2026-02-22T05:04:20-08:00",
+      "source": "morning-kickoff 2026-02-22",
+      "priority": "high"
+    },
+    {
+      "directive": "Paper trading MVP: manual entry (6 weeks), basic free / advanced analytics premium. Integrate into current Lever app finance tab.",
+      "decided": "2026-02-22T21:45:22-08:00",
+      "source": "adhoc-paper-trading 2026-02-22",
+      "priority": "high"
+    },
+    {
+      "directive": "Launch with delayed market data for both free and premium tiers. Real-time as future ultra-premium.",
+      "decided": "2026-02-24T20:55:13-08:00",
+      "source": "evening-session 2026-02-24",
+      "priority": "medium"
+    },
+    {
+      "directive": "Org flattened to 8 C-suite agents. No permanent sub-agents \u2014 spawn dynamically via sessions_spawn.",
+      "decided": "2026-02-25T14:00:00-08:00",
+      "source": "command-center-overhaul 2026-02-25",
+      "priority": "high"
+    }
+  ],
+  "type": "morning-kickoff",
+  "typeName": "Morning Kickoff",
+  "typeEmoji": "\ud83c\udf05",
+  "conversationMode": "ai",
+  "model": "claude-sonnet-4-20250514",
+  "tokenUsage": {
+    "input_tokens": 3562,
+    "output_tokens": 1790,
+    "total_tokens": 5352,
+    "duration": 46.8,
+    "model": "claude-sonnet-4-20250514",
+    "estimated_cost": 0.0375
+  },
+  "instanceKey": "STD-12",
+  "verticals": [],
+  "initiatives": [],
+  "verticalDetails": [],
+  "initiativeDetails": [],
+  "agentContext": {
+    "coo": {
+      "name": "Theo",
+      "title": "COO",
+      "emoji": "\ud83d\udd3a",
+      "description": "Orchestrates all operations. The right hand."
+    },
+    "cto": {
+      "name": "Elon Musk",
+      "title": "CTO",
+      "emoji": "\ud83d\uddfa\ufe0f",
+      "description": "Role: Chief Technical Officer\n\nResponsibilities:\n- Technical architecture oversight\n- Engineering velocity\n- Strategic technology bets\n- Vertical integration decisions\n\nDecision Style:\n- First-principles analysis\n- Rejects consensus-based mediocrity\n- Prefers prototypes over meetings\n\nEscalation Trigger:\n- If system integrity is compromised\n"
+    },
+    "cmo": {
+      "name": "Alex Hormozi",
+      "title": "CMO",
+      "emoji": "\ud83e\udd8d",
+      "description": "Content, creative direction, brand. Obsessed with offers, value equations, and volume."
+    },
+    "cro": {
+      "name": "Dave Ramsey",
+      "title": "CRO",
+      "emoji": "\ud83d\udcb5",
+      "description": "Growth strategy, monetization. Gazelle-intense focus on revenue."
+    },
+    "cfto": {
+      "name": "Chris Vermeullen",
+      "title": "CFTO",
+      "emoji": "\ud83d\udcc8",
+      "description": "Chris Vermeulen \u2014 CFTO owning all financial tools and products."
+    },
+    "ctio": {
+      "name": "James Truchard",
+      "title": "CTIO",
+      "emoji": "\u26a1",
+      "description": "Visionary engineer and co-founder mindset. Drives breakthrough instrumentation and measurement innovation with relentless technical excellence."
+    },
+    "cpo": {
+      "name": "Steve Jobs",
+      "title": "CPO",
+      "emoji": "\ud83e\udded",
+      "description": "Taste + Vision + Market Timing. Ruthless focus, product intuition."
+    },
+    "faithfam": {
+      "name": "Jordan Peterson",
+      "title": "CFFO",
+      "emoji": "\ud83d\udd4a\ufe0f",
+      "description": "Chief Family & Faith Officer. Moral Order + Psychological Responsibility. Pressure-tests ethical implications, ensures technologies strengthen families, evaluates cultural downstream effects. Guards against nihilism in AI systems."
+    }
+  }
+}

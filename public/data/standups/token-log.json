@@ -89,12 +89,42 @@
       "estimatedCost": 0.0441,
       "model": "claude-sonnet-4-20250514",
       "duration": "61.0s"
+    },
+    {
+      "date": "2026-02-26",
+      "type": "adhoc-night-wrap-recent-hub-changes-and-day-close-out",
+      "inputTokens": 3335,
+      "outputTokens": 1857,
+      "totalTokens": 5192,
+      "estimatedCost": 0.0379,
+      "model": "claude-sonnet-4-20250514",
+      "duration": "47.0s"
+    },
+    {
+      "date": "2026-02-27",
+      "type": "morning-kickoff",
+      "inputTokens": 3562,
+      "outputTokens": 1790,
+      "totalTokens": 5352,
+      "estimatedCost": 0.0375,
+      "model": "claude-sonnet-4-20250514",
+      "duration": "46.8s"
+    },
+    {
+      "date": "2026-02-27",
+      "type": "adhoc-dlp4710-projection-lens-selection-for-marin-globe",
+      "inputTokens": 3407,
+      "outputTokens": 2212,
+      "totalTokens": 5619,
+      "estimatedCost": 0.0434,
+      "model": "claude-sonnet-4-20250514",
+      "duration": "54.1s"
     }
   ],
   "totals": {
-    "today": 0.164,
-    "week": 0.3648,
-    "month": 0.3648,
-    "standupCount": 9
+    "today": 0.0809,
+    "week": 0.4836,
+    "month": 0.4836,
+    "standupCount": 12
   }
 }

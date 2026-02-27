@@ -1,6 +1,45 @@
 {
   "standups": [
     {
+      "date": "2026-02-27",
+      "time": "09:41",
+      "type": "adhoc-dlp4710-projection-lens-selection-for-marin-globe",
+      "typeName": "DLP4710 Projection Lens Selection for Marin Globe",
+      "typeEmoji": "\ud83d\udccb",
+      "topic": "DLP4710 Projection Lens Selection for Marin Globe \u2014 Friday Feb 27",
+      "file": "2026-02-27-adhoc-dlp4710-projection-lens-selection-for-marin-globe.json",
+      "tokenCost": 0.0434,
+      "verticals": [],
+      "initiatives": [],
+      "instanceKey": "STD-14"
+    },
+    {
+      "date": "2026-02-27",
+      "time": "05:00",
+      "type": "morning-kickoff",
+      "typeName": "Morning Kickoff",
+      "typeEmoji": "\ud83c\udf05",
+      "topic": "Morning Kickoff \u2014 Friday Feb 27",
+      "file": "2026-02-27-morning-kickoff.json",
+      "tokenCost": 0.0375,
+      "verticals": [],
+      "initiatives": [],
+      "instanceKey": "STD-12"
+    },
+    {
+      "date": "2026-02-26",
+      "time": "22:57",
+      "type": "adhoc-night-wrap-recent-hub-changes-and-day-close-out",
+      "typeName": "Night Wrap \u2014 Recent Hub changes and day close-out",
+      "typeEmoji": "\ud83d\udccb",
+      "topic": "Night Wrap \u2014 Recent Hub changes and day close-out \u2014 Thursday Feb 26",
+      "file": "2026-02-26-adhoc-night-wrap-recent-hub-changes-and-day-close-out.json",
+      "tokenCost": 0.0379,
+      "verticals": [],
+      "initiatives": [],
+      "instanceKey": "STD-11"
+    },
+    {
       "date": "2026-02-26",
       "time": "21:06",
       "type": "adhoc-agent-canvas-app-name-it-scope-it-build-it",

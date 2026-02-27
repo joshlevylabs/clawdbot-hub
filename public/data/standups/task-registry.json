@@ -372,6 +372,312 @@
       "updatedAt": "2026-02-26T09:18:30.901833-08:00",
       "dispatchedAt": "2026-02-26T09:11:41.536297-08:00",
       "completedAt": "2026-02-26T09:18:30.901556-08:00"
+    },
+    {
+      "key": "CVS-001",
+      "text": "Name & Brand: Register Mosaic brand assets",
+      "description": "Register Mosaic name, create brand guidelines, logo concepts, color palette. Ensure no trademark conflicts.",
+      "acceptanceCriteria": [
+        "branding",
+        "marketing"
+      ],
+      "tag": "AGENT",
+      "priority": "high",
+      "assignee": "Alex Hormozi",
+      "status": "pending",
+      "sourceStandup": "2026-02-26-adhoc-canvas-platform",
+      "sourceDate": "2026-02-26",
+      "createdAt": "2026-02-26T21:38:26.540294-08:00",
+      "approvedAt": "2026-02-26T21:38:26.540294-08:00",
+      "approvedBy": "joshua"
+    },
+    {
+      "key": "CVS-002",
+      "text": "Add Mosaic as ecosystem vertical in Hub",
+      "description": "Add Mosaic to the ecosystem verticals alongside Lyceum, Lever, Builders Frequency. Update Hub dashboard, standup types, and vertical tracking.",
+      "acceptanceCriteria": [
+        "infrastructure",
+        "hub"
+      ],
+      "tag": "AGENT",
+      "priority": "high",
+      "assignee": "Theo",
+      "status": "pending",
+      "sourceStandup": "2026-02-26-adhoc-canvas-platform",
+      "sourceDate": "2026-02-26",
+      "createdAt": "2026-02-26T21:38:26.540294-08:00",
+      "approvedAt": "2026-02-26T21:38:26.540294-08:00",
+      "approvedBy": "joshua"
+    },
+    {
+      "key": "CVS-003",
+      "text": "Mosaic technical architecture document",
+      "description": "Define the composable widget system architecture: component model, state management, layout engine, dynamic loading, inter-widget communication. React Native/Expo compatible.",
+      "acceptanceCriteria": [
+        "architecture",
+        "engineering"
+      ],
+      "tag": "AGENT",
+      "priority": "high",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "sourceStandup": "2026-02-26-adhoc-canvas-platform",
+      "sourceDate": "2026-02-26",
+      "createdAt": "2026-02-26T21:38:26.540294-08:00",
+      "approvedAt": "2026-02-26T21:38:26.540294-08:00",
+      "approvedBy": "joshua"
+    },
+    {
+      "key": "CVS-004",
+      "text": "Define Mosaic widget component interface/API",
+      "description": "Standardized props, lifecycle hooks, state persistence, layout constraints. Every widget must implement this interface.",
+      "acceptanceCriteria": [
+        "architecture",
+        "engineering"
+      ],
+      "tag": "AGENT",
+      "priority": "high",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "sourceStandup": "2026-02-26-adhoc-canvas-platform",
+      "sourceDate": "2026-02-26",
+      "createdAt": "2026-02-26T21:38:26.540294-08:00",
+      "approvedAt": "2026-02-26T21:38:26.540294-08:00",
+      "approvedBy": "joshua"
+    },
+    {
+      "key": "CVS-005",
+      "text": "Extract Lever Finance tab \u2192 Mosaic widget",
+      "description": "Refactor the Finance tab into a self-contained Mosaic widget with standardized props and state management. First widget extraction.",
+      "acceptanceCriteria": [
+        "engineering",
+        "lever"
+      ],
+      "tag": "AGENT",
+      "priority": "high",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "sourceStandup": "2026-02-26-adhoc-canvas-platform",
+      "sourceDate": "2026-02-26",
+      "createdAt": "2026-02-26T21:38:26.540294-08:00",
+      "approvedAt": "2026-02-26T21:38:26.540294-08:00",
+      "approvedBy": "joshua"
+    },
+    {
+      "key": "CVS-006",
+      "text": "Extract Lever Faith tab \u2192 Mosaic widget",
+      "description": "Refactor the Faith tab (lessons, journal, prayer) into a Mosaic widget. Maintain all existing functionality.",
+      "acceptanceCriteria": [
+        "engineering",
+        "lever"
+      ],
+      "tag": "AGENT",
+      "priority": "high",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "sourceStandup": "2026-02-26-adhoc-canvas-platform",
+      "sourceDate": "2026-02-26",
+      "createdAt": "2026-02-26T21:38:26.540294-08:00",
+      "approvedAt": "2026-02-26T21:38:26.540294-08:00",
+      "approvedBy": "joshua"
+    },
+    {
+      "key": "CVS-007",
+      "text": "Extract Lever Family tab \u2192 Mosaic widget",
+      "description": "Refactor the Family tab (touchpoints, relationship tracking) into a Mosaic widget.",
+      "acceptanceCriteria": [
+        "engineering",
+        "lever"
+      ],
+      "tag": "AGENT",
+      "priority": "high",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "sourceStandup": "2026-02-26-adhoc-canvas-platform",
+      "sourceDate": "2026-02-26",
+      "createdAt": "2026-02-26T21:38:26.540294-08:00",
+      "approvedAt": "2026-02-26T21:38:26.540294-08:00",
+      "approvedBy": "joshua"
+    },
+    {
+      "key": "CVS-008",
+      "text": "Extract Lever Marriage tab \u2192 Mosaic widget",
+      "description": "Refactor the Marriage Compass tab into a Mosaic widget.",
+      "acceptanceCriteria": [
+        "engineering",
+        "lever"
+      ],
+      "tag": "AGENT",
+      "priority": "high",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "sourceStandup": "2026-02-26-adhoc-canvas-platform",
+      "sourceDate": "2026-02-26",
+      "createdAt": "2026-02-26T21:38:26.540294-08:00",
+      "approvedAt": "2026-02-26T21:38:26.540294-08:00",
+      "approvedBy": "joshua"
+    },
+    {
+      "key": "CVS-009",
+      "text": "Mosaic grid layout engine (MVP)",
+      "description": "Build the basic grid layout engine for widget positioning. Simple grid system that works on mobile. Users can arrange widgets in a grid.",
+      "acceptanceCriteria": [
+        "engineering",
+        "ux"
+      ],
+      "tag": "AGENT",
+      "priority": "high",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "sourceStandup": "2026-02-26-adhoc-canvas-platform",
+      "sourceDate": "2026-02-26",
+      "createdAt": "2026-02-26T21:38:26.540294-08:00",
+      "approvedAt": "2026-02-26T21:38:26.540294-08:00",
+      "approvedBy": "joshua"
+    },
+    {
+      "key": "CVS-010",
+      "text": "Mosaic UX/interface design patterns",
+      "description": "Design the Mosaic user experience: widget cards, drag/drop (or move), resize, add/remove. Beautiful transitions. Must feel magical per Steve Jobs directive.",
+      "acceptanceCriteria": [
+        "design",
+        "ux"
+      ],
+      "tag": "AGENT",
+      "priority": "high",
+      "assignee": "Steve Jobs",
+      "status": "pending",
+      "sourceStandup": "2026-02-26-adhoc-canvas-platform",
+      "sourceDate": "2026-02-26",
+      "createdAt": "2026-02-26T21:38:26.540294-08:00",
+      "approvedAt": "2026-02-26T21:38:26.540294-08:00",
+      "approvedBy": "joshua"
+    },
+    {
+      "key": "CVS-011",
+      "text": "Agent onboarding flow",
+      "description": "Design the first-run experience where the AI agent learns about the user (name, interests, goals, family) and suggests an initial widget layout. Conversational, not form-based.",
+      "acceptanceCriteria": [
+        "design",
+        "ai"
+      ],
+      "tag": "AGENT",
+      "priority": "high",
+      "assignee": "Steve Jobs",
+      "status": "pending",
+      "sourceStandup": "2026-02-26-adhoc-canvas-platform",
+      "sourceDate": "2026-02-26",
+      "createdAt": "2026-02-26T21:38:26.540294-08:00",
+      "approvedAt": "2026-02-26T21:38:26.540294-08:00",
+      "approvedBy": "joshua"
+    },
+    {
+      "key": "CVS-012",
+      "text": "Mosaic premium widget monetization model",
+      "description": "Define pricing tiers: free widgets (Lever core), premium widgets (trading, analytics, advanced faith), subscription vs one-time. 3 pricing scenarios.",
+      "acceptanceCriteria": [
+        "revenue",
+        "strategy"
+      ],
+      "tag": "AGENT",
+      "priority": "medium",
+      "assignee": "Dave Ramsey",
+      "status": "pending",
+      "sourceStandup": "2026-02-26-adhoc-canvas-platform",
+      "sourceDate": "2026-02-26",
+      "createdAt": "2026-02-26T21:38:26.540294-08:00",
+      "approvedAt": "2026-02-26T21:38:26.540294-08:00",
+      "approvedBy": "joshua"
+    },
+    {
+      "key": "CVS-013",
+      "text": "Mosaic go-to-market positioning",
+      "description": "Market positioning: \"Build your life dashboard on Mosaic.\" Competitive analysis vs Notion, Apple widgets, etc. Launch messaging.",
+      "acceptanceCriteria": [
+        "marketing",
+        "strategy"
+      ],
+      "tag": "AGENT",
+      "priority": "medium",
+      "assignee": "Alex Hormozi",
+      "status": "pending",
+      "sourceStandup": "2026-02-26-adhoc-canvas-platform",
+      "sourceDate": "2026-02-26",
+      "createdAt": "2026-02-26T21:38:26.540294-08:00",
+      "approvedAt": "2026-02-26T21:38:26.540294-08:00",
+      "approvedBy": "joshua"
+    },
+    {
+      "key": "CVS-014",
+      "text": "Mosaic usage telemetry system",
+      "description": "Implement per-widget engagement tracking: time spent, interaction patterns, widget combinations. Feed into product decisions.",
+      "acceptanceCriteria": [
+        "analytics",
+        "engineering"
+      ],
+      "tag": "AGENT",
+      "priority": "medium",
+      "assignee": "James Truchard",
+      "status": "pending",
+      "sourceStandup": "2026-02-26-adhoc-canvas-platform",
+      "sourceDate": "2026-02-26",
+      "createdAt": "2026-02-26T21:38:26.540294-08:00",
+      "approvedAt": "2026-02-26T21:38:26.540294-08:00",
+      "approvedBy": "joshua"
+    },
+    {
+      "key": "CVS-015",
+      "text": "Psychological safeguards & engagement guardrails",
+      "description": "Design and implement: usage time limits, engagement quality metrics, family time protection, anti-compulsive-tinkering measures. Per Jordan Peterson directive.",
+      "acceptanceCriteria": [
+        "safety",
+        "faith-family"
+      ],
+      "tag": "AGENT",
+      "priority": "medium",
+      "assignee": "Jordan Peterson",
+      "status": "pending",
+      "sourceStandup": "2026-02-26-adhoc-canvas-platform",
+      "sourceDate": "2026-02-26",
+      "createdAt": "2026-02-26T21:38:26.540294-08:00",
+      "approvedAt": "2026-02-26T21:38:26.540294-08:00",
+      "approvedBy": "joshua"
+    },
+    {
+      "key": "CVS-016",
+      "text": "Trading widget for Mosaic (premium)",
+      "description": "Design premium trading widget: portfolio dashboard, MRE signals, market alerts, position tracking. Integrates with existing MRE/paper trading infrastructure.",
+      "acceptanceCriteria": [
+        "trading",
+        "premium"
+      ],
+      "tag": "AGENT",
+      "priority": "medium",
+      "assignee": "Chris Vermeullen",
+      "status": "pending",
+      "sourceStandup": "2026-02-26-adhoc-canvas-platform",
+      "sourceDate": "2026-02-26",
+      "createdAt": "2026-02-26T21:38:26.540294-08:00",
+      "approvedAt": "2026-02-26T21:38:26.540294-08:00",
+      "approvedBy": "joshua"
+    },
+    {
+      "key": "CVS-017",
+      "text": "Finalize Lever App Store submission",
+      "description": "Complete the Lever app submission to App Store with all 4 tabs as-is. Mosaic architecture can be added post-launch. Revenue validation first.",
+      "acceptanceCriteria": [
+        "lever",
+        "shipping"
+      ],
+      "tag": "JOSHUA",
+      "priority": "high",
+      "assignee": "Joshua",
+      "status": "pending",
+      "sourceStandup": "2026-02-26-adhoc-canvas-platform",
+      "sourceDate": "2026-02-26",
+      "createdAt": "2026-02-26T21:38:26.540294-08:00",
+      "approvedAt": "2026-02-26T21:38:26.540294-08:00",
+      "approvedBy": "joshua"
     }
   ]
 }

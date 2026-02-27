@@ -1,13 +1,116 @@
 {
-  "date": "2026-02-26",
-  "generatedAt": "2026-02-26T21:06:32.855570-08:00",
+  "date": "2026-02-27",
+  "generatedAt": "2026-02-27T09:41:40.543549-08:00",
   "priorities": [
     {
       "text": "Submit current Lever build to App Store as planned",
       "source": "Lever Financial App Separation",
       "urgency": "high",
       "taskKey": "J-003"
+    },
+    {
+      "text": "Finalize Lever App Store submission",
+      "source": "adhoc-dlp4710-projection-lens-selection-for-marin-globe",
+      "urgency": "high",
+      "taskKey": "CVS-017"
     }
   ],
-  "agentHandled": []
+  "agentHandled": [
+    {
+      "text": "Name & Brand: Register Mosaic brand assets",
+      "assignee": "Alex Hormozi",
+      "status": "pending",
+      "taskKey": "CVS-001"
+    },
+    {
+      "text": "Add Mosaic as ecosystem vertical in Hub",
+      "assignee": "Theo",
+      "status": "pending",
+      "taskKey": "CVS-002"
+    },
+    {
+      "text": "Mosaic technical architecture document",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "taskKey": "CVS-003"
+    },
+    {
+      "text": "Define Mosaic widget component interface/API",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "taskKey": "CVS-004"
+    },
+    {
+      "text": "Extract Lever Finance tab \u2192 Mosaic widget",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "taskKey": "CVS-005"
+    },
+    {
+      "text": "Extract Lever Faith tab \u2192 Mosaic widget",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "taskKey": "CVS-006"
+    },
+    {
+      "text": "Extract Lever Family tab \u2192 Mosaic widget",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "taskKey": "CVS-007"
+    },
+    {
+      "text": "Extract Lever Marriage tab \u2192 Mosaic widget",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "taskKey": "CVS-008"
+    },
+    {
+      "text": "Mosaic grid layout engine (MVP)",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "taskKey": "CVS-009"
+    },
+    {
+      "text": "Mosaic UX/interface design patterns",
+      "assignee": "Steve Jobs",
+      "status": "pending",
+      "taskKey": "CVS-010"
+    },
+    {
+      "text": "Agent onboarding flow",
+      "assignee": "Steve Jobs",
+      "status": "pending",
+      "taskKey": "CVS-011"
+    },
+    {
+      "text": "Mosaic premium widget monetization model",
+      "assignee": "Dave Ramsey",
+      "status": "pending",
+      "taskKey": "CVS-012"
+    },
+    {
+      "text": "Mosaic go-to-market positioning",
+      "assignee": "Alex Hormozi",
+      "status": "pending",
+      "taskKey": "CVS-013"
+    },
+    {
+      "text": "Mosaic usage telemetry system",
+      "assignee": "James Truchard",
+      "status": "pending",
+      "taskKey": "CVS-014"
+    },
+    {
+      "text": "Psychological safeguards & engagement guardrails",
+      "assignee": "Jordan Peterson",
+      "status": "pending",
+      "taskKey": "CVS-015"
+    },
+    {
+      "text": "Trading widget for Mosaic (premium)",
+      "assignee": "Chris Vermeullen",
+      "status": "pending",
+      "taskKey": "CVS-016"
+    }
+  ]
 }

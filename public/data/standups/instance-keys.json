@@ -1,5 +1,5 @@
 {
-  "global_counter": 10,
+  "global_counter": 14,
   "counters": {
     "adhoc-hub-standup-system-overhaul": 1,
     "adhoc-lever-financial-app-separation": 1,
@@ -10,6 +10,10 @@
     "adhoc-globescope-handheld-hemisphere-with-internal-projection-mapping-of-earth-need-greenfield-collaborative-web-platform-for-hardware-development-prd-creation-architecture-docs-flow-diagrams-off-shelf-component-selection-schematic-creation-and-cad-pcb-drawings-starting-with-hemisphere-prototype-team-brainstorm-feasibility-projection-tech-options-key-electronic-components-and-web-platform-architecture": 1,
     "adhoc-globescope-handheld-hemisphere-with-internal-globe-projection": 1,
     "adhoc-agent-first-blank-canvas-app-continue-development-we-need-a-name-for-this-app-add-it-as-a-new-vertical-to-the-ecosystem-and-continue-building-from-the-previous-standup-discussion-context-the-vision-is-an-ios-app-that-starts-as-a-blank-canvas-with-a-personal-ai-agent-the-agent-onboards-the-user-learns-about-them-then-arranges-capability-blocks-finance-faith-habits-calendar-etc-based-on-what-it-discovers-no-hardcoded-screens-agent-configured-experiences-key-decisions-needed-1-final-app-name-2-vertical-positioning-in-the-ecosystem-alongside-lyceum-lever-builder-s-frequency-3-technical-architecture-for-composable-widget-card-system-on-react-native-expo-4-revenue-model-5-mvp-scope-and-first-sprint-plan-6-how-does-this-relate-to-or-replace-lever": 1,
-    "adhoc-agent-canvas-app-name-it-scope-it-build-it": 1
+    "adhoc-agent-canvas-app-name-it-scope-it-build-it": 1,
+    "adhoc-night-wrap-recent-hub-changes-and-day-close-out": 1,
+    "morning-kickoff": 1,
+    "adhoc-ti-dlp4710-projection-lens-selection-what-fisheye-or-wide-angle-lens-do-we-need-for-the-dlp4710-evm-to-achieve-maximum-sphere-coverage-discuss-lens-type-fisheye-vs-ultra-short-throw-vs-convex-mirror-relay-physical-size-mounting-position-inside-sphere-expected-coverage-angle-specific-purchasable-lenses-m12-fisheye-sunex-etc-cost-and-how-to-position-the-engine-lens-combo-for-maximum-interior-sphere-coverage-palmer-should-lead-with-optics-expertise": 1,
+    "adhoc-dlp4710-projection-lens-selection-for-marin-globe": 1
   }
 }

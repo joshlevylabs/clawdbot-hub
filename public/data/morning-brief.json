@@ -1,182 +1,76 @@
 {
-  "generated_at": "2026-02-26T06:01:34-08:00",
-  "date": "February 26, 2026",
-  "day": "Thursday",
-  "weather": {
-    "title": "\ud83c\udf24\ufe0f Weather - Temecula",
-    "current_temp_c": 10.9,
-    "current_temp_f": 52,
-    "high_c": 31.1,
-    "high_f": 88,
-    "low_c": 10.9,
-    "low_f": 52,
-    "condition": "Clear",
-    "wind_kmh": 6.1,
-    "wind_mph": 3.8,
-    "precipitation_chance": 0,
-    "summary": "Clear skies, 52\u00b0F now rising to 88\u00b0F. No rain expected."
-  },
-  "prayer": {
-    "title": "\ud83d\udd50\ufe0f Morning Prayer",
-    "date": "Thursday, February 26, 2026",
-    "hebrew_date": "28 Cheshvan",
-    "parsha": "Miketz",
-    "parsha_theme": "sudden elevation, preparation meeting opportunity",
-    "modeh_ani": "\u05de\u05d5\u05d3\u05d4 \u05d0\u05e0\u05d9 \u05dc\u05e4\u05e0\u05d9\u05da \u2014 I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
-    "blessing": "Blessed are You who girds Israel with strength \u2014 fortify me for the work ahead.",
-    "psalm": "**Psalm 16:8**: \"I have set the Lord always before me; He is at my right hand, I will not be shaken.\"",
-    "proverb": "**Proverbs 27:23**: \"Know well the condition of your flocks, and give attention to your herds.\"",
-    "intention": "Give me discernment between opportunities and distractions. Not everything good is good for me right now.",
-    "closing": "The Lord goes before you today. He will be with you; He will never leave you nor forsake you. Do not be afraid; do not be discouraged."
-  },
-  "calendar": {
-    "title": "\ud83d\udcc5 Calendar",
-    "today": [
-      {
-        "time": "10:30 AM - 11:00 AM",
-        "title": "Maren",
-        "location": "Microsoft Teams Meeting",
-        "attendees": "Joe Dewulf"
-      }
-    ],
-    "week": [
-      {
-        "date": "2026-02-26",
-        "events": [
-          {
-            "time": "10:30 AM - 11:00 AM",
-            "title": "Maren",
-            "location": "Microsoft Teams Meeting"
-          }
-        ]
-      }
-    ],
-    "summary": "Light day with one meeting at 10:30 AM."
-  },
-  "email_highlights": {
-    "title": "\ud83d\udce7 Email Highlights",
-    "accounts": [
-      {
-        "account": "josh@joshlevylabs.com",
-        "unread_count": 10,
-        "highlights": [
-          {
-            "from": "OpusClip Team",
-            "subject": "Issue Resolved \u2013 100 Credits Added",
-            "time": "6:01 AM",
-            "priority": "low"
-          },
-          {
-            "from": "Joel @ ngrok",
-            "subject": "[ngrok news] I built a self-improving coding agent and here's what I learned",
-            "time": "7:22 PM (Yesterday)",
-            "priority": "medium"
-          },
-          {
-            "from": "Vercel",
-            "subject": "Failed production deployment on team 'joshlevylabs' projects'",
-            "time": "8:40 PM (Yesterday)",
-            "priority": "high"
-          }
-        ]
-      }
-    ],
-    "summary": "10 unread emails, including Vercel deployment failure needing attention."
-  },
-  "mre": {
-    "title": "\ud83d\udcca MRE Trading",
-    "fear_greed": 46,
-    "fear_greed_rating": "neutral",
-    "regime": "bull",
-    "todays_plays": [
-      {
-        "symbol": "XLK",
-        "action": "BUY",
-        "price": 143.01,
-        "confidence": "MEDIUM"
-      },
-      {
-        "symbol": "QQQ",
-        "action": "BUY",
-        "price": 616.68,
-        "confidence": "MEDIUM"
-      }
-    ],
-    "pending_triggers": [],
-    "thesis": "Fear/Greed neutral at 46. Bull regime confirmed in SPY/QQQ. Tech showing bullish signals with MACD crossovers."
-  },
-  "family_focus": {
-    "title": "\u2764\ufe0f Family Focus",
-    "relationship_status": "critical",
-    "power_safety": {
-      "power": 1.14,
-      "safety": 1.0,
-      "quadrant": "Secure Leadership",
-      "in_ideal_zone": false
+  "date": "2026-02-27",
+  "generated_at": "2026-02-27T06:00:15.000Z",
+  "sections": {
+    "prayer": {
+      "title": "🕎 Morning Prayer",
+      "date": "Friday, February 27, 2026",
+      "hebrew_date": "29 Cheshvan",
+      "parsha": "Miketz",
+      "parsha_theme": "sudden elevation, preparation meeting opportunity",
+      "modeh_ani": "מודה אני לפניך — I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
+      "blessing": "Blessed are You who has provided me with all I need — I lack nothing essential.",
+      "psalm": "**Psalm 121:8**: \"The Lord will watch over your coming and going both now and forevermore.\"",
+      "proverb": "**Proverbs 24:27**: \"Prepare your work outside; get everything ready, then build your house.\"",
+      "intention": "Let today's small faithfulness lead to tomorrow's greater stewardship.",
+      "closing": "Baruch atah Adonai — Blessed are You, Lord, who renews creation daily with goodness."
     },
-    "recommendations": [
-      "PRIORITY: Focus on repair. Acknowledge recent conflicts without defending.",
-      "Increase acts of service dramatically this week.",
-      "Create space for her to express frustrations without fixing."
-    ],
-    "love_languages": {
-      "primary": "quality_time",
-      "secondary": "acts_of_service"
+    "weather": {
+      "title": "🌤️ Weather",
+      "location": "Temecula, CA",
+      "status": "Data temporarily unavailable",
+      "note": "Check local conditions as needed"
+    },
+    "calendar": {
+      "title": "📅 Calendar",
+      "today": [],
+      "week": [],
+      "month": [],
+      "note": "Calendar data temporarily unavailable - check your devices"
+    },
+    "mre": {
+      "title": "📊 MRE Trading",
+      "fear_greed": 44,
+      "fear_greed_rating": "fear",
+      "regime": "bull",
+      "todays_plays": [],
+      "pending_triggers": [],
+      "thesis": "Fear at 44, bull regime intact. Markets are fearful — watch for oversold bounces. No active BUY signals today - all assets on HOLD."
+    },
+    "relationship": {
+      "title": "💕 Family Focus",
+      "temperature": "critical",
+      "trend": "urgent",
+      "ratio": 1.2,
+      "recommendations": [
+        "PRIORITY: Focus on repair. Acknowledge recent conflicts without defending.",
+        "Increase acts of service dramatically this week.",
+        "Create space for her to express frustrations without fixing."
+      ],
+      "love_languages": {
+        "primary": "quality_time",
+        "secondary": "acts_of_service"
+      }
+    },
+    "news": {
+      "title": "🌍 World & AI News",
+      "highlights": [
+        {
+          "category": "Israel/Geopolitics",
+          "headline": "US-Iran nuclear talks pause amid Huckabee diplomatic friction",
+          "summary": "Ambassador Huckabee's comments about Israeli Middle East control spark Arab backlash, prompting Trump admin damage control."
+        },
+        {
+          "category": "AI",
+          "headline": "February 2026 AI Model War heats up",
+          "summary": "Claude Opus 4.6 released with agent teams, PowerPoint integration, 1M token context. GPT-5, Gemini 3.1 Pro, Grok 4.20 all competing."
+        }
+      ]
+    },
+    "emails": {
+      "title": "📧 Email Highlights",
+      "status": "Summary not available",
+      "note": "Check josh@joshlevylabs.com and joshua.seth.levy@gmail.com manually"
     }
-  },
-  "news": {
-    "title": "\ud83c\udf0d World News",
-    "conservative_focus": [
-      {
-        "headline": "US-Iran nuclear talks pause amid 'creative and positive ideas'",
-        "source": "Times of Israel",
-        "summary": "Diplomatic pause in nuclear negotiations as Omani FM reports progress",
-        "relevance": "Middle East stability"
-      },
-      {
-        "headline": "Modi, Netanyahu Seal New Deals for India\u2013Israel Innovation",
-        "source": "Times Now",
-        "summary": "High-level meetings in Jerusalem strengthen agricultural and tech cooperation",
-        "relevance": "Israel partnership expansion"
-      },
-      {
-        "headline": "Tehran billboard threatens Israel, calls it 'Trump's 51st state'",
-        "source": "Times of Israel",
-        "summary": "Escalating rhetoric from Iran amid nuclear talks",
-        "relevance": "Iran threat assessment"
-      }
-    ]
-  },
-  "ai_news": {
-    "title": "\ud83e\udd16 AI News",
-    "highlights": [
-      {
-        "headline": "Big Tech to invest $650 billion in AI in 2026",
-        "source": "Reuters",
-        "summary": "Bridgewater reports massive investment surge, Anthropic/OpenAI need breakthroughs for IPO funding",
-        "relevance": "Market dynamics"
-      },
-      {
-        "headline": "OpenAI hires OpenClaw founder for personal AI agent strategy",
-        "source": "MarketingProfs",
-        "summary": "Peter Steinberger recruited to lead multi-agent systems development",
-        "relevance": "Industry talent movement"
-      },
-      {
-        "headline": "Grand Valley State University awarded $1M for AI consortium",
-        "source": "Crescendo AI",
-        "summary": "Federal funding for academia-industry AI collaboration in West Michigan",
-        "relevance": "Education/regional development"
-      }
-    ]
-  },
-  "focus_areas": {
-    "title": "\ud83c\udfaf Today's Focus",
-    "priorities": [
-      "Fix Vercel deployment issues (check email)",
-      "Relationship repair work - acts of service focus",
-      "10:30 AM meeting with Joe Dewulf (Maren project)",
-      "Monitor tech position entries (XLK, QQQ showing bullish signals)"
-    ]
   }
 }

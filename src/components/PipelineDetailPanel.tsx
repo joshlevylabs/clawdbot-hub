@@ -3,6 +3,7 @@
 import { X, TrendingUp, TrendingDown, Filter, Minus, DollarSign, Activity, Search, ChevronDown, ChevronRight, Calendar, Target, TrendingDownIcon, Thermometer } from 'lucide-react';
 import { useEffect, useState, useMemo } from 'react';
 import TickerTechnicalBreakdown from './TickerTechnicalBreakdown';
+import FibonacciInlineChart from './FibonacciInlineChart';
 
 // Define MRESignal interface for rawData
 interface MRESignal {
@@ -87,6 +88,7 @@ interface MRESignal {
     profit_targets?: number[];               // [395.67, 437.15] (number array!)
     extension_type?: string;
     pullback_low?: number;
+    pullback_high?: number;
     pullback_date?: string;
   };
   // New sector F&G fields from A-198 pipeline update
@@ -1188,6 +1190,278 @@ function StrategyTechnicalOverview({ strategyName, tickers }: { strategyName: st
                     <span className="text-sm font-medium text-slate-300">{count}</span>
                   </div>
                 ))}
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // Fibonacci Levels — entry/stop/target analysis with inline chart
+  if (strategyName.includes('Fibonacci Levels')) {
+    const fibTickers = tickers.filter(t => t.rawData?.fibonacci?.swing_high);
+    const [selectedFibTicker, setSelectedFibTicker] = useState<string>(
+      fibTickers[0]?.symbol || ''
+    );
+    const selectedTicker = fibTickers.find(t => t.symbol === selectedFibTicker) || fibTickers[0];
+    const fib = selectedTicker?.rawData?.fibonacci;
+    const currentPrice = selectedTicker?.rawData?.price || fib?.current_price || 0;
+
+    // Summary stats
+    const total = fibTickers.length;
+    const uptrendCount = fibTickers.filter(t => t.rawData?.fibonacci?.trend === 'uptrend').length;
+    const downtrendCount = fibTickers.filter(t => t.rawData?.fibonacci?.trend === 'downtrend').length;
+    const threePointCount = fibTickers.filter(t => t.rawData?.fibonacci?.pullback_low || t.rawData?.fibonacci?.pullback_high).length;
+    const impulseCount = fibTickers.filter(t => t.rawData?.fibonacci?.swing_quality === 'impulse').length;
+
+    // Tickers near entry zone (price between 38.2% and 61.8% retracement)
+    const nearEntry = fibTickers.filter(t => {
+      const f = t.rawData?.fibonacci;
+      const p = t.rawData?.price || f?.current_price || 0;
+      const r382 = f?.retracements?.["38.2"];
+      const r618 = f?.retracements?.["61.8"];
+      if (r382 == null || r618 == null) return false;
+      const lo = Math.min(r382, r618);
+      const hi = Math.max(r382, r618);
+      return p >= lo && p <= hi;
+    });
+
+    const formatCurr = (v: number) => v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+    return (
+      <div className="p-4 sm:p-6 border-b border-slate-700/50 bg-slate-800/30">
+        <div className="flex items-center gap-3 mb-4">
+          <Filter className="w-5 h-5 text-primary-400" />
+          <h3 className="text-base font-semibold text-slate-200">Fibonacci Analysis</h3>
+        </div>
+
+        {/* Summary metrics */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
+          <div className="bg-slate-700/40 rounded-lg p-3 text-center">
+            <div className="text-xl font-bold text-slate-200">{total}</div>
+            <div className="text-xs text-slate-400 mt-1">Tickers</div>
+          </div>
+          <div className="bg-slate-700/40 rounded-lg p-3 text-center">
+            <div className="text-xl font-bold text-emerald-400">{uptrendCount}</div>
+            <div className="text-xs text-slate-400 mt-1">Uptrend</div>
+          </div>
+          <div className="bg-slate-700/40 rounded-lg p-3 text-center">
+            <div className="text-xl font-bold text-cyan-400">{threePointCount}</div>
+            <div className="text-xs text-slate-400 mt-1">3-Point A→B→C</div>
+          </div>
+          <div className="bg-slate-700/40 rounded-lg p-3 text-center">
+            <div className="text-xl font-bold text-amber-400">{nearEntry.length}</div>
+            <div className="text-xs text-slate-400 mt-1">In Entry Zone</div>
+          </div>
+        </div>
+
+        {/* Ticker selector */}
+        {fibTickers.length > 0 && (
+          <div className="mb-4">
+            <div className="text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wider">Select Ticker</div>
+            <div className="flex flex-wrap gap-1.5">
+              {fibTickers.map(t => {
+                const f = t.rawData?.fibonacci;
+                const isUptrend = f?.trend === 'uptrend';
+                const isSelected = t.symbol === selectedFibTicker;
+                return (
+                  <button
+                    key={t.symbol}
+                    onClick={() => setSelectedFibTicker(t.symbol)}
+                    className={`px-2.5 py-1.5 rounded-lg text-xs font-medium border transition-all ${
+                      isSelected
+                        ? 'bg-primary-500/20 border-primary-500/50 text-primary-300'
+                        : 'bg-slate-700/40 border-slate-600/30 text-slate-400 hover:bg-slate-700/60 hover:text-slate-300'
+                    }`}
+                  >
+                    <span className="font-semibold">{t.symbol}</span>
+                    <span className={`ml-1 ${isUptrend ? 'text-emerald-400' : 'text-red-400'}`}>
+                      {isUptrend ? '↑' : '↓'}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Chart + levels for selected ticker */}
+        {fib && selectedTicker && (
+          <>
+            {/* Header badges */}
+            <div className="flex items-center gap-2 flex-wrap mb-3">
+              <span className="text-sm font-bold text-slate-200">{selectedTicker.symbol}</span>
+              <span className="text-xs font-mono text-slate-400">${formatCurr(currentPrice)}</span>
+              <span className={`text-[10px] px-1.5 py-0.5 rounded-md border font-medium uppercase tracking-wide ${
+                fib.trend === 'uptrend'
+                  ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40'
+                  : 'bg-red-500/20 text-red-400 border-red-500/40'
+              }`}>
+                {fib.trend}
+              </span>
+              {fib.swing_quality && (
+                <span className={`text-[10px] px-1.5 py-0.5 rounded-md border font-medium uppercase tracking-wide ${
+                  fib.swing_quality === 'impulse'
+                    ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40'
+                    : 'bg-amber-500/20 text-amber-400 border-amber-500/40'
+                }`}>
+                  {fib.swing_quality}
+                </span>
+              )}
+              <span className={`text-[10px] px-1.5 py-0.5 rounded-md border font-medium uppercase tracking-wide ${
+                (fib.pullback_low || fib.pullback_high)
+                  ? 'bg-cyan-500/20 text-cyan-400 border-cyan-500/40'
+                  : 'bg-slate-500/20 text-slate-400 border-slate-500/40'
+              }`}>
+                {(fib.pullback_low || fib.pullback_high) ? '3-POINT A→B→C' : '2-POINT'}
+              </span>
+            </div>
+
+            {/* Inline Fibonacci Chart */}
+            <div className="bg-slate-800/50 rounded-xl border border-slate-700/30 p-2 mb-4">
+              <FibonacciInlineChart
+                symbol={selectedTicker.symbol}
+                fibonacci={fib as any}
+                height={300}
+              />
+            </div>
+
+            {/* Key Levels Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+              {/* Entry / Stop / Targets */}
+              <div className="bg-slate-700/30 rounded-lg p-3">
+                <div className="text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wider">Trade Setup</div>
+                <div className="space-y-2">
+                  {fib.entry_zone && (
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-amber-400">🎯 Entry Zone</span>
+                      <span className="text-xs font-mono text-slate-300">${fib.entry_zone}</span>
+                    </div>
+                  )}
+                  {(fib.nearest_support ?? 0) > 0 && (
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-red-400">🛑 Nearest Support</span>
+                      <span className="text-xs font-mono text-slate-300">${formatCurr(fib.nearest_support!)}</span>
+                    </div>
+                  )}
+                  {(fib.nearest_resistance ?? 0) > 0 && (
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-emerald-400">🚀 Nearest Resistance</span>
+                      <span className="text-xs font-mono text-slate-300">${formatCurr(fib.nearest_resistance!)}</span>
+                    </div>
+                  )}
+                  {fib.profit_targets && fib.profit_targets.length > 0 && (
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-cyan-400">💰 Profit Targets</span>
+                      <span className="text-xs font-mono text-slate-300">
+                        {fib.profit_targets.map(t => `$${formatCurr(t)}`).join(', ')}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Swing Points */}
+              <div className="bg-slate-700/30 rounded-lg p-3">
+                <div className="text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wider">Swing Points</div>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-pink-400">
+                      A — {fib.trend === 'uptrend' ? 'Swing Low' : 'Swing High'}
+                    </span>
+                    <div className="text-right">
+                      <span className="text-xs font-mono text-slate-300">
+                        ${formatCurr(fib.trend === 'uptrend' ? fib.swing_low : fib.swing_high)}
+                      </span>
+                      {(fib.trend === 'uptrend' ? fib.swing_low_date : fib.swing_high_date) && (
+                        <span className="text-[10px] text-slate-500 ml-1">
+                          {fib.trend === 'uptrend' ? fib.swing_low_date : fib.swing_high_date}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-cyan-400">
+                      B — {fib.trend === 'uptrend' ? 'Swing High' : 'Swing Low'}
+                    </span>
+                    <div className="text-right">
+                      <span className="text-xs font-mono text-slate-300">
+                        ${formatCurr(fib.trend === 'uptrend' ? fib.swing_high : fib.swing_low)}
+                      </span>
+                      {(fib.trend === 'uptrend' ? fib.swing_high_date : fib.swing_low_date) && (
+                        <span className="text-[10px] text-slate-500 ml-1">
+                          {fib.trend === 'uptrend' ? fib.swing_high_date : fib.swing_low_date}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  {(fib.pullback_low || fib.pullback_high) && (
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-amber-400">C — Pullback</span>
+                      <div className="text-right">
+                        <span className="text-xs font-mono text-slate-300">
+                          ${formatCurr(fib.pullback_low || fib.pullback_high || 0)}
+                        </span>
+                        {fib.pullback_date && (
+                          <span className="text-[10px] text-slate-500 ml-1">{fib.pullback_date}</span>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Retracement Levels Table */}
+            {fib.retracements && Object.keys(fib.retracements).length > 0 && (
+              <div className="bg-slate-700/30 rounded-lg p-3">
+                <div className="text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wider">Retracement Levels</div>
+                <div className="bg-slate-800/50 rounded-lg border border-slate-700/50 overflow-hidden">
+                  <table className="w-full text-xs">
+                    <thead>
+                      <tr className="border-b border-slate-700/50">
+                        <th className="text-left px-3 py-1.5 text-slate-500 font-medium">Level</th>
+                        <th className="text-right px-3 py-1.5 text-slate-500 font-medium">Price</th>
+                        <th className="text-right px-3 py-1.5 text-slate-500 font-medium">vs Current</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {Object.entries(fib.retracements)
+                        .sort(([a], [b]) => parseFloat(a) - parseFloat(b))
+                        .map(([pct, price]) => {
+                          const diff = ((price - currentPrice) / currentPrice) * 100;
+                          const pctNum = parseFloat(pct);
+                          const isEntryZone = pctNum >= 38.2 && pctNum <= 61.8;
+                          const isAnchor = pctNum === 0 || pctNum === 100;
+                          return (
+                            <tr key={pct} className={`border-b border-slate-700/30 last:border-0 ${isEntryZone ? 'bg-amber-500/5' : ''}`}>
+                              <td className="px-3 py-1.5">
+                                <span className={`font-medium ${isAnchor ? 'text-cyan-400' : isEntryZone ? 'text-amber-400' : 'text-slate-300'}`}>
+                                  {pctNum === 0 ? 'Swing High (0%)' : pctNum === 100 ? 'Swing Low (100%)' : `${pct}%`}
+                                </span>
+                                {isEntryZone && <span className="text-[10px] text-amber-500 ml-1">ENTRY</span>}
+                              </td>
+                              <td className="px-3 py-1.5 text-right font-mono text-slate-300">${formatCurr(price)}</td>
+                              <td className={`px-3 py-1.5 text-right font-mono ${diff > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                                {diff > 0 ? '+' : ''}{diff.toFixed(1)}%
+                              </td>
+                            </tr>
+                          );
+                        })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+          </>
+        )}
+
+        {/* Entry zone alert */}
+        {nearEntry.length > 0 && (
+          <div className="mt-4 bg-amber-500/10 border border-amber-500/20 rounded-lg p-3">
+            <div className="text-xs font-semibold text-amber-400 mb-1">🎯 In Fibonacci Entry Zone</div>
+            <div className="text-xs text-slate-400">
+              {nearEntry.map(t => t.symbol).join(', ')} — price within 38.2%–61.8% retracement
             </div>
           </div>
         )}

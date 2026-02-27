@@ -79,12 +79,22 @@
       "estimatedCost": 0.0373,
       "model": "claude-sonnet-4-20250514",
       "duration": "51.5s"
+    },
+    {
+      "date": "2026-02-26",
+      "type": "adhoc-agent-canvas-app-name-it-scope-it-build-it",
+      "inputTokens": 2853,
+      "outputTokens": 2370,
+      "totalTokens": 5223,
+      "estimatedCost": 0.0441,
+      "model": "claude-sonnet-4-20250514",
+      "duration": "61.0s"
     }
   ],
   "totals": {
-    "today": 0.1199,
-    "week": 0.3207,
-    "month": 0.3207,
-    "standupCount": 8
+    "today": 0.164,
+    "week": 0.3648,
+    "month": 0.3648,
+    "standupCount": 9
   }
 }

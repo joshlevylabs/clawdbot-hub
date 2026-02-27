@@ -2,6 +2,19 @@
   "standups": [
     {
       "date": "2026-02-26",
+      "time": "21:06",
+      "type": "adhoc-agent-canvas-app-name-it-scope-it-build-it",
+      "typeName": "Agent Canvas App \u2014 Name It, Scope It, Build It",
+      "typeEmoji": "\ud83d\udccb",
+      "topic": "Agent Canvas App \u2014 Name It, Scope It, Build It \u2014 Thursday Feb 26",
+      "file": "2026-02-26-adhoc-agent-canvas-app-name-it-scope-it-build-it.json",
+      "tokenCost": 0.0441,
+      "verticals": [],
+      "initiatives": [],
+      "instanceKey": "STD-10"
+    },
+    {
+      "date": "2026-02-26",
       "time": "15:47",
       "type": "adhoc-globescope-handheld-hemisphere-with-internal-globe-projection",
       "typeName": "GlobeScope: Handheld hemisphere with internal globe projection",

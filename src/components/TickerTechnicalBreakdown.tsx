@@ -194,7 +194,7 @@ export default function TickerTechnicalBreakdown({
     if (stageName.includes('Final Filters') || stageName.toLowerCase().includes('final')) {
       return rawData.stage_signals.final_filters || signal;
     }
-    if (stageName.includes('Strategy') || stageName.toLowerCase().includes('strategies')) {
+    if (stageName.includes('Strategy') || stageName.toLowerCase().includes('strategies') || stageName.includes('Persistence Gate')) {
       return rawData.stage_signals.strategies || signal;
     }
     

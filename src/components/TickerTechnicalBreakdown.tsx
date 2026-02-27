@@ -53,6 +53,8 @@ interface MRESignal {
     vix_mean_reversion?: boolean;
   };
   persistence_by_strategy?: Record<string, number>;
+  persistence_days?: number;
+  persistence_confirmed?: boolean;
   price?: number;
   asset_class?: string;
   sector?: string;
@@ -185,16 +187,23 @@ export default function TickerTechnicalBreakdown({
     if (!rawData?.stage_signals) return signal; // Fallback to final signal
     
     // Map stage names to stage_signals keys
+    // Stage 2-3: Signal Gating
     if (stageName.includes('Signal Gating') || stageName.toLowerCase().includes('gating')) {
       return rawData.stage_signals.signal_gating || signal;
     }
+    // Stage 4-8: Confidence Tuning
     if (stageName.includes('Confidence Tuning') || stageName.toLowerCase().includes('confidence')) {
       return rawData.stage_signals.confidence_tuning || signal;
     }
-    if (stageName.includes('Final Filters') || stageName.toLowerCase().includes('final')) {
+    // Stage 9-12: Final Filters, Final BUY Signals, Fibonacci, Agent Analysis
+    if (stageName.includes('Final Filters') || stageName.includes('Final BUY') || 
+        stageName.includes('Fibonacci') || stageName.includes('Agent Analysis')) {
       return rawData.stage_signals.final_filters || signal;
     }
-    if (stageName.includes('Strategy') || stageName.toLowerCase().includes('strategies') || stageName.includes('Persistence Gate')) {
+    // Stage 1: Strategies — Vote Consensus, Persistence Gate, individual strategies, Universe Input
+    if (stageName.includes('Strategy') || stageName.toLowerCase().includes('strategies') || 
+        stageName.includes('Persistence Gate') || stageName.includes('Vote Consensus') ||
+        stageName.includes('Universe Input') || stageName.includes('-of-8')) {
       return rawData.stage_signals.strategies || signal;
     }
     
@@ -543,8 +552,8 @@ export default function TickerTechnicalBreakdown({
           <div className="flex items-center gap-2">
             <span className="font-mono font-semibold text-slate-200">{symbol}</span>
             {rawData.signal && (
-              <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium border ${getSignalBg(rawData.signal)}`}>
-                {rawData.signal}
+              <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium border ${getSignalBg(getStageSpecificSignal())}`}>
+                {getStageSpecificSignal()}
               </span>
             )}
             {rawData.asset_class && (
@@ -759,24 +768,50 @@ export default function TickerTechnicalBreakdown({
   const generatePipelineDecision = () => {
     if (!rawData) return "No detailed data available.";
     
-    const { signal, signal_strength, signal_source, regime, momentum_20d, rsi_14, bear_suppressed, sell_suppressed } = rawData;
+    const stageSignal = getStageSpecificSignal();
+    const { signal_strength, signal_source, regime, momentum_20d, rsi_14, bear_suppressed, sell_suppressed } = rawData;
     
-    if (signal === 'BUY') {
+    // Early stages: describe based on strategy votes and persistence
+    const isEarlyStage = stageName.includes('Vote Consensus') || stageName.includes('-of-8') || 
+      stageName.includes('Persistence Gate') || stageName.includes('Universe Input') || stageName.includes('Strategy');
+    
+    if (isEarlyStage) {
+      const agreeing = rawData.strategies_agreeing || 0;
+      const persistence = rawData.persistence_days ?? 0;
+      const confirmed = rawData.persistence_confirmed ? 'confirmed' : `pending (day ${persistence})`;
+      if (stageSignal === 'BUY') {
+        return `${symbol} has ${agreeing}/8 strategy votes in ${regime} regime. Persistence: ${confirmed}. ${momentum_20d ? `20d momentum: ${momentum_20d.toFixed(1)}%.` : ''}`;
+      }
+      return `${symbol} has ${agreeing}/8 strategy votes. Insufficient consensus or pending persistence confirmation in ${regime} regime.`;
+    }
+    
+    // Signal Gating: describe suppression
+    if (stageName.includes('Signal Gating') || stageName.toLowerCase().includes('gating')) {
+      if (bear_suppressed) return `${symbol}: BUY → HOLD. Bear regime suppression applied (${regime} regime).`;
+      if (sell_suppressed) return `${symbol}: SELL → HOLD. Sell suppression applied for risk management.`;
+      return `${symbol} passed signal gating. Signal: ${stageSignal} in ${regime} regime.`;
+    }
+    
+    // Confidence Tuning: describe confidence factors
+    if (stageName.includes('Confidence Tuning')) {
+      const conf = (rawData.asset_confidence * 100).toFixed(0);
+      return `${symbol} confidence: ${conf}%. Regime: ${regime}, rotation modifier: ${rawData.rotation_modifier?.toFixed(2)}×. ${rawData.sideways_applied ? 'Sideways penalty applied.' : ''} Signal at this stage: ${stageSignal}.`;
+    }
+    
+    // Final Filters and later: full context
+    if (stageSignal === 'BUY') {
       return `${symbol} passed via ${signal_source} strategy with ${momentum_20d ? `${momentum_20d.toFixed(1)}% 20d momentum` : 'momentum data'} in ${regime} regime. RSI ${rsi_14 ? `at ${rsi_14.toFixed(1)}` : 'neutral'}. Signal strength: ${signal_strength.toFixed(1)}.`;
     }
     
-    if (signal === 'HOLD') {
-      if (bear_suppressed) {
-        return `${symbol} bear_suppressed: BUY signal blocked due to ${regime} regime despite meeting ${signal_source} criteria.`;
-      }
-      if (sell_suppressed) {
-        return `${symbol} sell_suppressed: Signal adjusted to HOLD for risk management.`;
-      }
+    if (stageSignal === 'HOLD') {
+      if (rawData.cluster_limited) return `${symbol}: BUY → HOLD. Cluster limited (max 2 BUY per sector).`;
+      if (bear_suppressed) return `${symbol}: BUY → HOLD. Bear regime suppression (${regime} regime).`;
+      if (sell_suppressed) return `${symbol}: SELL → HOLD. Sell suppression applied.`;
       const failedVotes = rawData.strategy_votes ? Object.entries(rawData.strategy_votes).filter(([_, voted]) => !voted).map(([strategy, _]) => strategy).join(', ') : 'strategies';
       return `${symbol} failed ${failedVotes}. ${regime} regime with ${momentum_20d ? `${momentum_20d.toFixed(1)}%` : 'negative'} momentum. RSI at ${rsi_14 || 'unknown'}.`;
     }
     
-    return `${symbol} signal: ${signal}. ${reason || 'See technical details for more information.'}`;
+    return `${symbol} signal: ${stageSignal}. ${reason || 'See technical details for more information.'}`;
   };
 
   return (
@@ -1030,33 +1065,115 @@ function OverviewTab({
         )}
       </div>
 
-      {/* Key Modifiers */}
-      <div>
-        <h4 className="text-sm font-semibold text-slate-300 mb-3 flex items-center gap-2">
-          <AlertTriangle className="w-4 h-4" />
-          Applied Modifiers
-        </h4>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-          <div className="bg-slate-900/50 rounded p-2">
-            <div className="text-xs text-slate-500">Bear Suppressed</div>
-            <div className={`text-sm font-medium ${rawData.bear_suppressed ? 'text-red-400' : 'text-slate-400'}`}>
-              {rawData.bear_suppressed ? 'Yes' : 'No'}
+      {/* Key Modifiers — only show modifiers relevant to the current stage */}
+      {(() => {
+        const isEarlyStage = stageName.includes('Vote Consensus') || stageName.includes('-of-8') || 
+          stageName.includes('Persistence Gate') || stageName.includes('Universe Input') || stageName.includes('Strategy');
+        const isGatingStage = stageName.includes('Signal Gating') || stageName.toLowerCase().includes('gating');
+        const isConfStage = stageName.includes('Confidence Tuning');
+        const isLateStage = stageName.includes('Final Filters') || stageName.includes('Final BUY') || 
+          stageName.includes('Fibonacci') || stageName.includes('Agent Analysis');
+        
+        // Early stages (strategies/voting/persistence): show strategy votes & regime only
+        if (isEarlyStage) return (
+          <div>
+            <h4 className="text-sm font-semibold text-slate-300 mb-3 flex items-center gap-2">
+              <AlertTriangle className="w-4 h-4" />
+              Stage Context
+            </h4>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+              <div className="bg-slate-900/50 rounded p-2">
+                <div className="text-xs text-slate-500">Strategies Agreeing</div>
+                <div className="text-sm font-medium text-slate-300">{rawData.strategies_agreeing}/8</div>
+              </div>
+              <div className="bg-slate-900/50 rounded p-2">
+                <div className="text-xs text-slate-500">Regime</div>
+                <div className={`text-sm font-medium capitalize ${rawData.regime === 'bull' ? 'text-emerald-400' : rawData.regime === 'bear' ? 'text-red-400' : 'text-amber-400'}`}>{rawData.regime}</div>
+              </div>
+              {rawData.persistence_days !== undefined && (
+                <div className="bg-slate-900/50 rounded p-2">
+                  <div className="text-xs text-slate-500">Persistence Days</div>
+                  <div className={`text-sm font-medium ${rawData.persistence_confirmed ? 'text-emerald-400' : 'text-amber-400'}`}>
+                    {rawData.persistence_days}d {rawData.persistence_confirmed ? '✓' : '(pending)'}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
-          <div className="bg-slate-900/50 rounded p-2">
-            <div className="text-xs text-slate-500">Asset Confidence</div>
-            <div className="text-sm font-medium text-slate-300">
-              {(rawData.asset_confidence * 100).toFixed(0)}%
+        );
+
+        // Signal Gating: show bear/sell suppression
+        if (isGatingStage) return (
+          <div>
+            <h4 className="text-sm font-semibold text-slate-300 mb-3 flex items-center gap-2">
+              <AlertTriangle className="w-4 h-4" />
+              Gating Modifiers
+            </h4>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+              <div className="bg-slate-900/50 rounded p-2">
+                <div className="text-xs text-slate-500">Bear Suppressed</div>
+                <div className={`text-sm font-medium ${rawData.bear_suppressed ? 'text-red-400' : 'text-slate-400'}`}>{rawData.bear_suppressed ? 'Yes' : 'No'}</div>
+              </div>
+              <div className="bg-slate-900/50 rounded p-2">
+                <div className="text-xs text-slate-500">Sell Suppressed</div>
+                <div className={`text-sm font-medium ${rawData.sell_suppressed ? 'text-amber-400' : 'text-slate-400'}`}>{rawData.sell_suppressed ? 'Yes' : 'No'}</div>
+              </div>
+              <div className="bg-slate-900/50 rounded p-2">
+                <div className="text-xs text-slate-500">Regime</div>
+                <div className={`text-sm font-medium capitalize ${rawData.regime === 'bull' ? 'text-emerald-400' : rawData.regime === 'bear' ? 'text-red-400' : 'text-amber-400'}`}>{rawData.regime}</div>
+              </div>
             </div>
           </div>
-          <div className="bg-slate-900/50 rounded p-2">
-            <div className="text-xs text-slate-500">Cluster Limited</div>
-            <div className={`text-sm font-medium ${rawData.cluster_limited ? 'text-amber-400' : 'text-slate-400'}`}>
-              {rawData.cluster_limited ? 'Yes' : 'No'}
+        );
+
+        // Confidence Tuning: show confidence-specific modifiers
+        if (isConfStage) return (
+          <div>
+            <h4 className="text-sm font-semibold text-slate-300 mb-3 flex items-center gap-2">
+              <AlertTriangle className="w-4 h-4" />
+              Confidence Modifiers
+            </h4>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+              <div className="bg-slate-900/50 rounded p-2">
+                <div className="text-xs text-slate-500">Asset Confidence</div>
+                <div className="text-sm font-medium text-slate-300">{(rawData.asset_confidence * 100).toFixed(0)}%</div>
+              </div>
+              <div className="bg-slate-900/50 rounded p-2">
+                <div className="text-xs text-slate-500">Rotation Modifier</div>
+                <div className={`text-sm font-medium ${rawData.rotation_modifier > 1 ? 'text-emerald-400' : rawData.rotation_modifier < 1 ? 'text-red-400' : 'text-slate-300'}`}>{rawData.rotation_modifier?.toFixed(2)}×</div>
+              </div>
+              <div className="bg-slate-900/50 rounded p-2">
+                <div className="text-xs text-slate-500">Sideways Applied</div>
+                <div className={`text-sm font-medium ${rawData.sideways_applied ? 'text-amber-400' : 'text-slate-400'}`}>{rawData.sideways_applied ? 'Yes' : 'No'}</div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
+        );
+
+        // Final Filters / late stages: show all modifiers
+        return (
+          <div>
+            <h4 className="text-sm font-semibold text-slate-300 mb-3 flex items-center gap-2">
+              <AlertTriangle className="w-4 h-4" />
+              Applied Modifiers
+            </h4>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+              <div className="bg-slate-900/50 rounded p-2">
+                <div className="text-xs text-slate-500">Bear Suppressed</div>
+                <div className={`text-sm font-medium ${rawData.bear_suppressed ? 'text-red-400' : 'text-slate-400'}`}>{rawData.bear_suppressed ? 'Yes' : 'No'}</div>
+              </div>
+              <div className="bg-slate-900/50 rounded p-2">
+                <div className="text-xs text-slate-500">Asset Confidence</div>
+                <div className="text-sm font-medium text-slate-300">{(rawData.asset_confidence * 100).toFixed(0)}%</div>
+              </div>
+              <div className="bg-slate-900/50 rounded p-2">
+                <div className="text-xs text-slate-500">Cluster Limited</div>
+                <div className={`text-sm font-medium ${rawData.cluster_limited ? 'text-amber-400' : 'text-slate-400'}`}>{rawData.cluster_limited ? 'Yes' : 'No'}</div>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 }

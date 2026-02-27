@@ -33,7 +33,13 @@ interface MRESignal {
     rsi_oversold: boolean;
     mean_reversion: boolean;
     momentum: boolean;
+    time_series_momentum?: boolean;
+    qvm_factor?: boolean;
+    vix_mean_reversion?: boolean;
   };
+  persistence_by_strategy?: Record<string, number>;
+  persistence_days?: number;
+  persistence_confirmed?: boolean;
   price?: number;
   asset_class?: string;
   sector?: string;
@@ -1182,6 +1188,229 @@ function StrategyTechnicalOverview({ strategyName, tickers }: { strategyName: st
                     <span className="text-sm font-medium text-slate-300">{count}</span>
                   </div>
                 ))}
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // BUY Signals — final output summary for a consensus tier
+  if (strategyName.includes('BUY Signals')) {
+    const buyTickers = tickers.filter(t => t.rawData?.signal === 'BUY');
+    const total = buyTickers.length;
+
+    // Signal source breakdown
+    const sourceCounts = buyTickers.reduce((acc, t) => {
+      const src = t.rawData?.signal_source || 'unknown';
+      acc[src] = (acc[src] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    // Regime breakdown
+    const regimeCounts = buyTickers.reduce((acc, t) => {
+      const r = t.rawData?.regime || 'unknown';
+      acc[r] = (acc[r] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    // Asset class breakdown
+    const assetClassCounts = buyTickers.reduce((acc, t) => {
+      const ac = t.rawData?.asset_class || 'unknown';
+      acc[ac] = (acc[ac] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    // Conviction: count how many strategies fired (confirmed + persistence)
+    const convictionDist = buyTickers.reduce((acc, t) => {
+      const votes = t.rawData?.strategy_votes || {};
+      const persistence = t.rawData?.persistence_by_strategy || {};
+      const confirmedKeys = Object.entries(votes).filter(([, v]) => v).map(([k]) => k);
+      const pendingKeys = Object.entries(persistence).filter(([, v]) => v && (v as number) > 0).map(([k]) => k);
+      const allKeys = Array.from(new Set(confirmedKeys.concat(pendingKeys)));
+      const totalFired = allKeys.length;
+      const key = `${totalFired}`;
+      acc[key] = (acc[key] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    // Average metrics
+    const avgStrength = total > 0 ? buyTickers.reduce((s, t) => s + (t.rawData?.signal_strength || 0), 0) / total : 0;
+    const avgFG = total > 0 ? buyTickers.reduce((s, t) => s + (t.rawData?.effective_fg || 0), 0) / total : 0;
+    const persistenceConfirmed = buyTickers.filter(t => t.rawData?.persistence_confirmed).length;
+
+    // Top signals by strength
+    const topByStrength = [...buyTickers].sort((a, b) => (b.rawData?.signal_strength || 0) - (a.rawData?.signal_strength || 0)).slice(0, 5);
+
+    // Fibonacci data
+    const withFib = buyTickers.filter(t => t.rawData?.fibonacci?.nearest_support);
+    const nearSupport = withFib.filter(t => {
+      const price = t.rawData?.price || 0;
+      const support = t.rawData?.fibonacci?.nearest_support || 0;
+      return support > 0 && ((price - support) / price) < 0.03;
+    });
+
+    const getRegimeColor = (r: string) => {
+      if (r === 'bull') return 'text-emerald-400';
+      if (r === 'bear') return 'text-red-400';
+      return 'text-amber-400';
+    };
+
+    const getSourceLabel = (s: string) => {
+      if (s === 'multi_confirm') return 'Multi-Confirm';
+      if (s === 'time_series_momentum') return 'TS Momentum';
+      if (s === 'fear_greed') return 'Fear & Greed';
+      return s.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+    };
+
+    return (
+      <div className="p-4 sm:p-6 border-b border-slate-700/50 bg-slate-800/30">
+        <div className="flex items-center gap-3 mb-4">
+          <Filter className="w-5 h-5 text-primary-400" />
+          <h3 className="text-base font-semibold text-slate-200">BUY Signal Analysis</h3>
+        </div>
+
+        {/* Key Metrics Row */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
+          <div className="bg-slate-700/40 rounded-lg p-3 text-center">
+            <div className="text-xl font-bold text-emerald-400">{total}</div>
+            <div className="text-xs text-slate-400 mt-1">BUY Signals</div>
+          </div>
+          <div className="bg-slate-700/40 rounded-lg p-3 text-center">
+            <div className="text-xl font-bold text-slate-200">{avgStrength.toFixed(1)}</div>
+            <div className="text-xs text-slate-400 mt-1">Avg Strength</div>
+          </div>
+          <div className="bg-slate-700/40 rounded-lg p-3 text-center">
+            <div className="text-xl font-bold text-amber-400">{avgFG.toFixed(0)}</div>
+            <div className="text-xs text-slate-400 mt-1">Avg F&G</div>
+          </div>
+          <div className="bg-slate-700/40 rounded-lg p-3 text-center">
+            <div className="text-xl font-bold text-cyan-400">{persistenceConfirmed}/{total}</div>
+            <div className="text-xs text-slate-400 mt-1">Persistence ✓</div>
+          </div>
+        </div>
+
+        {/* Signal Source + Conviction */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
+          {/* Signal Sources */}
+          <div className="bg-slate-700/30 rounded-lg p-3">
+            <div className="text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wider">Signal Source</div>
+            <div className="space-y-1.5">
+              {Object.entries(sourceCounts)
+                .sort(([, a], [, b]) => b - a)
+                .map(([src, count]) => (
+                  <div key={src} className="flex items-center justify-between">
+                    <span className="text-sm text-slate-300">{getSourceLabel(src)}</span>
+                    <div className="flex items-center gap-2">
+                      <div className="w-20 h-1.5 bg-slate-600 rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-primary-400 rounded-full"
+                          style={{ width: `${(count / total) * 100}%` }}
+                        />
+                      </div>
+                      <span className="text-xs font-medium text-slate-400 w-6 text-right">{count}</span>
+                    </div>
+                  </div>
+                ))}
+            </div>
+          </div>
+
+          {/* Conviction Distribution */}
+          <div className="bg-slate-700/30 rounded-lg p-3">
+            <div className="text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wider">Conviction (Strategies Fired)</div>
+            <div className="space-y-1.5">
+              {Object.entries(convictionDist)
+                .sort(([a], [b]) => Number(b) - Number(a))
+                .map(([votes, count]) => (
+                  <div key={votes} className="flex items-center justify-between">
+                    <span className="text-sm text-slate-300">{votes} of 8 strategies</span>
+                    <div className="flex items-center gap-2">
+                      <div className="w-20 h-1.5 bg-slate-600 rounded-full overflow-hidden">
+                        <div
+                          className={`h-full rounded-full ${Number(votes) >= 3 ? 'bg-emerald-400' : Number(votes) >= 2 ? 'bg-amber-400' : 'bg-slate-400'}`}
+                          style={{ width: `${(count / total) * 100}%` }}
+                        />
+                      </div>
+                      <span className="text-xs font-medium text-slate-400 w-6 text-right">{count}</span>
+                    </div>
+                  </div>
+                ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Regime + Asset Class */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
+          {/* Regime Breakdown */}
+          <div className="bg-slate-700/30 rounded-lg p-3">
+            <div className="text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wider">Regime</div>
+            <div className="space-y-1.5">
+              {Object.entries(regimeCounts)
+                .sort(([, a], [, b]) => b - a)
+                .map(([regime, count]) => (
+                  <div key={regime} className="flex items-center justify-between">
+                    <span className={`text-sm capitalize ${getRegimeColor(regime)}`}>{regime}</span>
+                    <span className="text-xs font-medium text-slate-400">{count} ({((count / total) * 100).toFixed(0)}%)</span>
+                  </div>
+                ))}
+            </div>
+          </div>
+
+          {/* Asset Class */}
+          <div className="bg-slate-700/30 rounded-lg p-3">
+            <div className="text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wider">Asset Class</div>
+            <div className="space-y-1.5">
+              {Object.entries(assetClassCounts)
+                .sort(([, a], [, b]) => b - a)
+                .slice(0, 6)
+                .map(([ac, count]) => (
+                  <div key={ac} className="flex items-center justify-between">
+                    <span className="text-sm text-slate-300 capitalize">{ac.replace(/_/g, ' ')}</span>
+                    <span className="text-xs font-medium text-slate-400">{count}</span>
+                  </div>
+                ))}
+              {Object.keys(assetClassCounts).length > 6 && (
+                <div className="text-xs text-slate-500">+{Object.keys(assetClassCounts).length - 6} more</div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Top Signals */}
+        {topByStrength.length > 0 && (
+          <div className="bg-slate-700/30 rounded-lg p-3 mb-4">
+            <div className="text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wider">Top Signals by Strength</div>
+            <div className="space-y-2">
+              {topByStrength.map((t) => {
+                const votes = t.rawData?.strategy_votes || {};
+                const persistence = t.rawData?.persistence_by_strategy || {};
+                const cKeys = Object.entries(votes).filter(([, v]) => v).map(([k]) => k);
+                const pKeys = Object.entries(persistence).filter(([, v]) => v && (v as number) > 0).map(([k]) => k);
+                const totalFired = Array.from(new Set(cKeys.concat(pKeys))).length;
+                return (
+                  <div key={t.symbol} className="flex items-center justify-between py-1 border-b border-slate-700/30 last:border-0">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-semibold text-slate-200">{t.symbol}</span>
+                      <span className={`text-xs ${getRegimeColor(t.rawData?.regime || '')}`}>{t.rawData?.regime}</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className="text-xs text-slate-400">{totalFired}/8 strats</span>
+                      <span className="text-xs text-slate-400">{getSourceLabel(t.rawData?.signal_source || '')}</span>
+                      <span className="text-sm font-medium text-emerald-400">Str: {t.rawData?.signal_strength?.toFixed(1)}</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Fibonacci proximity alert */}
+        {nearSupport.length > 0 && (
+          <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3">
+            <div className="text-xs font-semibold text-amber-400 mb-1">⚠️ Near Fibonacci Support</div>
+            <div className="text-xs text-slate-400">
+              {nearSupport.map(t => t.symbol).join(', ')} — within 3% of nearest Fib support level
             </div>
           </div>
         )}

@@ -8,8 +8,10 @@ const secretKey = new TextEncoder().encode(
 
 const AUTH_COOKIE = 'clawdbot-auth';
 
-export async function createSession() {
-  const token = await new SignJWT({ authenticated: true })
+export type AuthScope = 'hub' | 'tv';
+
+export async function createSession(scope: AuthScope = 'hub') {
+  const token = await new SignJWT({ authenticated: true, scope })
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
     .setExpirationTime('7d')
@@ -40,11 +42,28 @@ export async function isAuthenticated(request: NextRequest): Promise<boolean> {
   return verifySession(token);
 }
 
-export function validatePassword(password: string): boolean {
+export function validatePassword(password: string, scope: AuthScope = 'hub'): boolean {
+  if (scope === 'tv') {
+    const tvPassword = process.env.TV_PASSWORD;
+    if (!tvPassword) {
+      console.error('TV_PASSWORD environment variable not set!');
+      return false;
+    }
+    return password === tvPassword;
+  }
   const correctPassword = process.env.AUTH_PASSWORD;
   if (!correctPassword) {
     console.error('AUTH_PASSWORD environment variable not set!');
     return false;
   }
   return password === correctPassword;
+}
+
+export async function getSessionScope(token: string): Promise<AuthScope | null> {
+  try {
+    const { payload } = await jwtVerify(token, secretKey);
+    return (payload.scope as AuthScope) || 'hub';
+  } catch {
+    return null;
+  }
 }

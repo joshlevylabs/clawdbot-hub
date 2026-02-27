@@ -7,19 +7,23 @@ const secretKey = new TextEncoder().encode(
 );
 
 const AUTH_COOKIE = 'clawdbot-auth';
+const TV_AUTH_COOKIE = 'clawdbot-tv-auth';
 
 // Routes that don't require authentication
-const publicPaths = ['/login', '/api/auth/login', '/api/auth/logout', '/api/markets', '/api/price-history', '/api/faith/'];
+const publicPaths = ['/login', '/tv-login', '/api/auth/login', '/api/auth/tv-login', '/api/auth/logout', '/api/markets', '/api/price-history', '/api/faith/'];
 
 // Static assets that should always be accessible
 const staticPaths = ['/_next', '/favicon.ico', '/data/', '/audio/'];
 
-async function verifyToken(token: string): Promise<boolean> {
+// TV routes — accessible with either hub or tv scope
+const tvPaths = ['/tv'];
+
+async function verifyToken(token: string): Promise<string | null> {
   try {
-    await jwtVerify(token, secretKey);
-    return true;
+    const { payload } = await jwtVerify(token, secretKey);
+    return (payload.scope as string) || 'hub';
   } catch {
-    return false;
+    return null;
   }
 }
 
@@ -36,27 +40,53 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Check for auth cookie
+  // Check if this is a TV route
+  const isTvRoute = tvPaths.some(path => pathname === path || pathname.startsWith(path + '/'));
+
+  if (isTvRoute) {
+    // TV routes accept either TV token or Hub token
+    const tvToken = request.cookies.get(TV_AUTH_COOKIE)?.value;
+    const hubToken = request.cookies.get(AUTH_COOKIE)?.value;
+
+    // Try TV token first
+    if (tvToken) {
+      const scope = await verifyToken(tvToken);
+      if (scope === 'tv' || scope === 'hub') return NextResponse.next();
+    }
+    // Fall back to Hub token (hub users can see everything)
+    if (hubToken) {
+      const scope = await verifyToken(hubToken);
+      if (scope === 'hub') return NextResponse.next();
+    }
+
+    // No valid token, redirect to TV login
+    const loginUrl = new URL('/tv-login', request.url);
+    return NextResponse.redirect(loginUrl);
+  }
+
+  // Hub routes — require hub scope
   const token = request.cookies.get(AUTH_COOKIE)?.value;
 
   if (!token) {
-    // No token, redirect to login
     const loginUrl = new URL('/login', request.url);
     return NextResponse.redirect(loginUrl);
   }
 
-  // Verify token
-  const isValid = await verifyToken(token);
+  const scope = await verifyToken(token);
 
-  if (!isValid) {
-    // Invalid token, clear cookie and redirect to login
+  if (!scope) {
     const loginUrl = new URL('/login', request.url);
     const response = NextResponse.redirect(loginUrl);
     response.cookies.delete(AUTH_COOKIE);
     return response;
   }
 
-  // Token is valid, allow access
+  // TV-only tokens can't access the full Hub
+  if (scope === 'tv') {
+    const tvUrl = new URL('/tv', request.url);
+    return NextResponse.redirect(tvUrl);
+  }
+
   return NextResponse.next();
 }
 

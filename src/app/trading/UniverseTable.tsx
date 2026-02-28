@@ -46,6 +46,26 @@ interface UniverseSignal {
   momentum_20d: number;
   volatility_20d: number;
   role: string;
+  // Alpha Rank fields
+  alpha_rank_score?: number;
+  alpha_decile?: number;
+  alpha_sector_rank_pct?: number;
+  alpha_composite_raw?: number;
+  alpha_factors?: {
+    trend: number;
+    momentum: number;
+    mean_reversion: number;
+    vol_compression: number;
+    fg_divergence: number;
+  };
+  alpha_top_contributors?: Array<{
+    factor: string;
+    contribution: number;
+    direction: string;
+  }>;
+  alpha_factors_available?: number;
+  alpha_regime_weights_applied?: string;
+  alpha_mean_rev_dampened?: boolean;
 }
 
 interface UniverseData {
@@ -90,7 +110,8 @@ type SortField =
   | "sector"
   | "momentum_20d"
   | "volatility_20d"
-  | "expected_accuracy";
+  | "expected_accuracy"
+  | "alpha_rank_score";
 
 type SortDir = "asc" | "desc";
 
@@ -188,6 +209,7 @@ export default function UniverseTable() {
   const [sectorFilters, setSectorFilters] = useState<Set<string>>(new Set());
   const [typeFilter, setTypeFilter] = useState<"all" | "core" | "stock" | "etf">("all");
   const [regimeFilters, setRegimeFilters] = useState<Set<string>>(new Set());
+  const [topDecileOnly, setTopDecileOnly] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
 
   // Sort
@@ -283,6 +305,11 @@ export default function UniverseTable() {
       signals = signals.filter((s) => regimeFilters.has(s.regime));
     }
 
+    // Top Decile filter
+    if (topDecileOnly) {
+      signals = signals.filter((s) => (s.alpha_decile || 0) >= 10);
+    }
+
     const totalFiltered = signals.length;
 
     // Sort
@@ -320,18 +347,21 @@ export default function UniverseTable() {
         case "expected_accuracy":
           cmp = a.expected_accuracy - b.expected_accuracy;
           break;
+        case "alpha_rank_score":
+          cmp = (a.alpha_rank_score || 0) - (b.alpha_rank_score || 0);
+          break;
       }
       return sortDir === "asc" ? cmp : -cmp;
     });
 
     return { filteredSignals: signals, totalFiltered };
-  }, [data, search, signalFilters, sectorFilters, typeFilter, regimeFilters, sortField, sortDir]);
+  }, [data, search, signalFilters, sectorFilters, typeFilter, regimeFilters, topDecileOnly, sortField, sortDir]);
 
   // Paginated slice
   const totalPages = Math.ceil(totalFiltered / PAGE_SIZE);
   const pageSignals = filteredSignals.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
 
-  const hasActiveFilters = search.trim() || signalFilters.size > 0 || sectorFilters.size > 0 || typeFilter !== "all" || regimeFilters.size > 0;
+  const hasActiveFilters = search.trim() || signalFilters.size > 0 || sectorFilters.size > 0 || typeFilter !== "all" || regimeFilters.size > 0 || topDecileOnly;
 
   const clearFilters = () => {
     setSearch("");
@@ -339,6 +369,7 @@ export default function UniverseTable() {
     setSectorFilters(new Set());
     setTypeFilter("all");
     setRegimeFilters(new Set());
+    setTopDecileOnly(false);
     setPage(0);
   };
 
@@ -486,7 +517,7 @@ export default function UniverseTable() {
           Filters
           {hasActiveFilters && (
             <span className="w-5 h-5 rounded-full bg-primary-500 text-white text-xs flex items-center justify-center">
-              {(signalFilters.size > 0 ? 1 : 0) + (sectorFilters.size > 0 ? 1 : 0) + (typeFilter !== "all" ? 1 : 0) + (regimeFilters.size > 0 ? 1 : 0)}
+              {(signalFilters.size > 0 ? 1 : 0) + (sectorFilters.size > 0 ? 1 : 0) + (typeFilter !== "all" ? 1 : 0) + (regimeFilters.size > 0 ? 1 : 0) + (topDecileOnly ? 1 : 0)}
             </span>
           )}
         </button>
@@ -585,6 +616,19 @@ export default function UniverseTable() {
               ))}
             </div>
           </div>
+
+          {/* Alpha Rank */}
+          <div>
+            <div className="text-xs text-slate-500 uppercase tracking-wide mb-2">Alpha Rank</div>
+            <div className="flex flex-wrap gap-2">
+              <FilterChip
+                label="🏆 Top Decile"
+                active={topDecileOnly}
+                onClick={() => { setTopDecileOnly(!topDecileOnly); setPage(0); }}
+                colorClass="bg-emerald-600/30 text-emerald-400 border-emerald-500/50"
+              />
+            </div>
+          </div>
         </div>
       )}
 
@@ -617,6 +661,12 @@ export default function UniverseTable() {
                   onClick={() => handleSort("expected_accuracy")}
                 >
                   Confidence <SortIcon field="expected_accuracy" sortField={sortField} sortDir={sortDir} />
+                </th>
+                <th
+                  className="text-right py-2.5 px-3 cursor-pointer hover:text-slate-300 transition-colors"
+                  onClick={() => handleSort("alpha_rank_score")}
+                >
+                  Alpha Rank <SortIcon field="alpha_rank_score" sortField={sortField} sortDir={sortDir} />
                 </th>
                 <th
                   className="text-right py-2.5 px-3 cursor-pointer hover:text-slate-300 transition-colors"
@@ -653,7 +703,7 @@ export default function UniverseTable() {
             <tbody>
               {pageSignals.length === 0 ? (
                 <tr>
-                  <td colSpan={9} className="py-12 text-center text-slate-500">
+                  <td colSpan={10} className="py-12 text-center text-slate-500">
                     No assets match your filters
                   </td>
                 </tr>
@@ -751,6 +801,30 @@ export default function UniverseTable() {
                         </div>
                         <span className="text-xs font-mono text-slate-400 w-10 text-right">
                           {sig.expected_accuracy.toFixed(0)}%
+                        </span>
+                      </div>
+                    </td>
+
+                    {/* Alpha Rank */}
+                    <td className="py-2 px-3 text-right">
+                      <div className="flex items-center justify-end gap-1.5">
+                        <div
+                          className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs font-medium ${
+                            (sig.alpha_decile || 0) >= 10
+                              ? "bg-emerald-500/15 text-emerald-400"
+                              : (sig.alpha_decile || 0) >= 8
+                              ? "bg-lime-500/15 text-lime-400"
+                              : (sig.alpha_decile || 0) >= 6
+                              ? "bg-yellow-500/15 text-yellow-400"
+                              : (sig.alpha_decile || 0) >= 4
+                              ? "bg-orange-500/15 text-orange-400"
+                              : "bg-red-500/15 text-red-400"
+                          }`}
+                        >
+                          D{sig.alpha_decile || 5}
+                        </div>
+                        <span className="text-xs font-mono text-slate-400 w-10 text-right">
+                          {(sig.alpha_rank_score || 50).toFixed(0)}
                         </span>
                       </div>
                     </td>

@@ -1612,7 +1612,7 @@ export default function SignalFlowTab() {
   const [mreVersions, setMreVersions] = useState<any>(null);
   const [strategyVersions, setStrategyVersions] = useState<any>(null);
   const [selectedStage, setSelectedStage] = useState<StageDetails | null>(null);
-  const [dataMode, setDataMode] = useState<'core' | 'universe' | 'geopolitical'>('universe');
+  const [dataMode, setDataMode] = useState<'pipeline' | 'geopolitical'>('pipeline');
   const [loading, setLoading] = useState(false);
   const [filters, setFilters] = useState({
     searchQuery: '',
@@ -1670,16 +1670,16 @@ export default function SignalFlowTab() {
     return () => clearInterval(interval);
   }, []);
 
-  // Memoized pipeline data (only for core/universe modes)
+  // Memoized pipeline data — always uses universe (merged with core)
   const pipelineData = useMemo(() => {
     if (dataMode === 'geopolitical') return null;
-    const currentData = dataMode === 'core' ? coreData : universeData;
-    if (!currentData?.signals?.by_asset_class) return null;
+    const baseData = universeData || coreData;
+    if (!baseData?.signals?.by_asset_class) return null;
     
-    let signals = currentData.signals.by_asset_class;
+    let signals = baseData.signals.by_asset_class;
     
-    // For universe mode: merge core 24 tickers (they're missing from universe file)
-    if (dataMode === 'universe' && coreData?.signals?.by_asset_class) {
+    // Merge core 24 tickers if missing from universe file
+    if (universeData && coreData?.signals?.by_asset_class) {
       const uniSymbols = new Set(signals.map((s: MRESignal) => s.symbol));
       const missingCore = coreData.signals.by_asset_class.filter(
         (s: MRESignal) => !uniSymbols.has(s.symbol)
@@ -1689,10 +1689,10 @@ export default function SignalFlowTab() {
       }
     }
     
-    return calculatePipelineStages(signals, dataMode as 'core' | 'universe');
+    return calculatePipelineStages(signals, 'universe');
   }, [coreData, universeData, dataMode]);
   
-  const currentData = dataMode === 'core' ? coreData : universeData;
+  const currentData = universeData || coreData;
   
   // Handler for stage clicks
   const handleStageClick = (stageKey: string) => {
@@ -2169,24 +2169,14 @@ export default function SignalFlowTab() {
           {/* Data Mode Toggle */}
           <div className="bg-slate-800/50 rounded-lg p-1 border border-slate-700/50">
             <button
-              onClick={() => setDataMode('core')}
+              onClick={() => setDataMode('pipeline')}
               className={`px-3 py-1.5 rounded text-sm font-medium transition-all ${
-                dataMode === 'core'
+                dataMode === 'pipeline'
                   ? 'bg-primary-600 text-white'
                   : 'text-slate-400 hover:text-slate-300'
               }`}
             >
-              Core (24)
-            </button>
-            <button
-              onClick={() => setDataMode('universe')}
-              className={`px-3 py-1.5 rounded text-sm font-medium transition-all ${
-                dataMode === 'universe'
-                  ? 'bg-primary-600 text-white'
-                  : 'text-slate-400 hover:text-slate-300'
-              }`}
-            >
-              Universe (676)
+              Pipeline (690)
             </button>
             <button
               onClick={() => setDataMode('geopolitical')}

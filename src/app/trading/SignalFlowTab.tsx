@@ -18,6 +18,7 @@ import WorkflowNode from "@/components/WorkflowNode";
 import PipelineDetailPanel from "@/components/PipelineDetailPanel";
 import PersistenceFlipFlop from "@/components/PersistenceFlipFlop";
 import SectorFearGreedPanel from "./SectorFearGreedPanel";
+import GeopoliticalFlowTab from "./GeopoliticalFlowTab";
 
 // Interface for MRE signal data
 interface MRESignal {
@@ -1611,7 +1612,7 @@ export default function SignalFlowTab() {
   const [mreVersions, setMreVersions] = useState<any>(null);
   const [strategyVersions, setStrategyVersions] = useState<any>(null);
   const [selectedStage, setSelectedStage] = useState<StageDetails | null>(null);
-  const [dataMode, setDataMode] = useState<'core' | 'universe'>('universe');
+  const [dataMode, setDataMode] = useState<'core' | 'universe' | 'geopolitical'>('universe');
   const [loading, setLoading] = useState(false);
   const [filters, setFilters] = useState({
     searchQuery: '',
@@ -1669,8 +1670,9 @@ export default function SignalFlowTab() {
     return () => clearInterval(interval);
   }, []);
 
-  // Memoized pipeline data
+  // Memoized pipeline data (only for core/universe modes)
   const pipelineData = useMemo(() => {
+    if (dataMode === 'geopolitical') return null;
     const currentData = dataMode === 'core' ? coreData : universeData;
     if (!currentData?.signals?.by_asset_class) return null;
     
@@ -1687,7 +1689,7 @@ export default function SignalFlowTab() {
       }
     }
     
-    return calculatePipelineStages(signals, dataMode);
+    return calculatePipelineStages(signals, dataMode as 'core' | 'universe');
   }, [coreData, universeData, dataMode]);
   
   const currentData = dataMode === 'core' ? coreData : universeData;
@@ -2186,6 +2188,16 @@ export default function SignalFlowTab() {
             >
               Universe (676)
             </button>
+            <button
+              onClick={() => setDataMode('geopolitical')}
+              className={`px-3 py-1.5 rounded text-sm font-medium transition-all ${
+                dataMode === 'geopolitical'
+                  ? 'bg-red-600 text-white'
+                  : 'text-slate-400 hover:text-slate-300'
+              }`}
+            >
+              ⚔️ Geopolitical
+            </button>
           </div>
         </div>
         
@@ -2202,6 +2214,11 @@ export default function SignalFlowTab() {
         </div>
       </div>
 
+      {/* Geopolitical Mode — render dedicated tab */}
+      {dataMode === 'geopolitical' && <GeopoliticalFlowTab />}
+
+      {/* MRE Pipeline Mode (Core/Universe) */}
+      {dataMode !== 'geopolitical' && <>
       {/* Metrics Bar */}
       <div className="grid grid-cols-2 md:grid-cols-6 gap-3 mb-8">
         <div className="bg-slate-800/50 rounded-lg p-3 border border-slate-700/50">
@@ -2280,6 +2297,7 @@ export default function SignalFlowTab() {
         stageDetails={selectedStage}
         onClose={handleModalClose}
       />
+      </>}
     </>
   );
 }

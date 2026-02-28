@@ -111,6 +111,8 @@ interface AssetSignal {
   return_5d?: number;
   momentum_20d?: number;
   volatility_20d?: number;
+  alpha_rank_score?: number;
+  alpha_decile?: number;
   strategy_votes?: {
     fear_greed: boolean;
     regime_confirmation: boolean;
@@ -236,6 +238,9 @@ interface ActionItem {
   consensus?: number;
   // Strategy votes raw
   strategyVotes?: AssetSignal["strategy_votes"];
+  // Alpha Rank
+  alphaRank?: number | null;
+  alphaDecile?: number | null;
 }
 
 interface ActionsDashboardProps {
@@ -367,6 +372,9 @@ function generateActions(data: MREData): ActionItem[] {
         Math.min(100, (expected_sharpe || 0) * 20) * 0.20 +
         (regime === "bull" ? 100 : regime === "sideways" ? 50 : 0) * 0.15
       ),
+      // Alpha Rank
+      alphaRank: asset.alpha_rank_score ?? null,
+      alphaDecile: asset.alpha_decile ?? null,
       // Consensus: count how many of the 5 strategies agree
       consensus: asset.strategy_votes
         ? Object.values(asset.strategy_votes).filter(Boolean).length
@@ -1090,6 +1098,31 @@ export default function ActionsDashboard({
         <td className="py-2.5 px-2 font-mono text-xs text-slate-300">
           {item.signalStrength !== undefined ? item.signalStrength : "—"}
         </td>
+        {/* Alpha Rank */}
+        <td className="py-2.5 px-2 font-mono text-xs">
+          {item.alphaRank != null ? (
+            <div className="flex items-center gap-1">
+              <span className={`font-bold ${
+                item.alphaRank >= 90 ? "text-emerald-400" :
+                item.alphaRank >= 70 ? "text-emerald-400/70" :
+                item.alphaRank >= 30 ? "text-slate-300" :
+                "text-red-400"
+              }`}>
+                {item.alphaRank.toFixed(0)}
+              </span>
+              {item.alphaDecile != null && (
+                <span className={`text-[9px] px-1 py-0 rounded border ${
+                  item.alphaDecile >= 9 ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/50" :
+                  item.alphaDecile >= 7 ? "bg-emerald-500/10 text-emerald-400/60 border-emerald-500/30" :
+                  item.alphaDecile <= 2 ? "bg-red-500/10 text-red-400/60 border-red-500/30" :
+                  "bg-slate-500/10 text-slate-500 border-slate-600"
+                }`}>
+                  D{item.alphaDecile}
+                </span>
+              )}
+            </div>
+          ) : <span className="text-slate-600">—</span>}
+        </td>
         {/* Swap Score (composite) */}
         <td className="py-2.5 px-2 font-mono text-xs">
           {item.swapScore !== undefined ? (
@@ -1305,6 +1338,7 @@ export default function ActionsDashboard({
                     <SortHeader label="Price" sortKey="currentPrice" currentSort={sortKey} currentDir={sortDir} onSort={handleSort} className="text-left" title="Current market price" />
                     <SortHeader label="Mom 20d" sortKey="momentum" currentSort={sortKey} currentDir={sortDir} onSort={handleSort} className="text-left" title="20-day price momentum (percentage change over last 20 trading days)" />
                     <SortHeader label="Signal Str" sortKey="signalStrength" currentSort={sortKey} currentDir={sortDir} onSort={handleSort} className="text-left" title="Raw signal strength before regime weighting and calibration adjustments" />
+                    <SortHeader label="Alpha Rank" sortKey="alphaRank" currentSort={sortKey} currentDir={sortDir} onSort={handleSort} className="text-left" title="Cross-sectional alpha rank (0-100) — sector-neutralized, regime-aware factor score. Top decile (D1) = strongest alpha signal" />
                     <SortHeader label="Swap Score" sortKey="swapScore" currentSort={sortKey} currentDir={sortDir} onSort={handleSort} className="text-left" title="Position swap ranking — higher score = stronger candidate to replace a weaker holding" />
                     <th className="text-left py-2 px-2" title="Relative Strength Index (14-day) — below 30 is oversold, above 70 is overbought">RSI</th>
                     <th className="text-left py-2 px-2" title="5-day return — how much the price has dropped in the last week">5d Dip</th>
@@ -1323,7 +1357,7 @@ export default function ActionsDashboard({
                   Object.entries(groupedActions).sort().map(([group, items]) => (
                     <tbody key={group}>
                       <tr className="bg-slate-800/60">
-                        <td colSpan={(tradingEnabled ? 17 : 16) + (onAnalyze ? 1 : 0)} className="py-1.5 px-2 text-xs font-bold text-primary-400 uppercase tracking-wider">
+                        <td colSpan={(tradingEnabled ? 18 : 17) + (onAnalyze ? 1 : 0)} className="py-1.5 px-2 text-xs font-bold text-primary-400 uppercase tracking-wider">
                           {groupBy === "regime" && (group === "bull" ? "🟢 " : group === "bear" ? "🔴 " : "🟡 ")}
                           {groupBy === "category" && items.length > 0 && `${items[0].categoryIcon} `}
                           {group} ({items.length})
@@ -1361,6 +1395,7 @@ export default function ActionsDashboard({
                       <td className="py-2.5 px-2"><span className="text-xs text-slate-600">—</span></td>
                       <td className="py-2.5 px-2"><span className="text-xs text-slate-600">—</span></td>
                       <td className="py-2.5 px-2"><span className="text-xs text-slate-600">—</span></td>
+                      <td className="py-2.5 px-2"><span className="text-xs text-slate-600">—</span></td>
                       <td className="py-2.5 px-2">
                         <div className="text-xs">
                           <span className="text-amber-400 font-mono">${cash.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
@@ -1382,7 +1417,7 @@ export default function ActionsDashboard({
                   {/* Portfolio Totals */}
                   {positions.length > 0 && (
                     <tr className="border-t-2 border-slate-600 bg-slate-800/80">
-                      <td className="py-2.5 px-2 font-bold text-slate-100" colSpan={12}>
+                      <td className="py-2.5 px-2 font-bold text-slate-100" colSpan={13}>
                         Portfolio Total — {positions.filter(p => p.qty > 0).length} positions + cash
                       </td>
                       <td className="py-2.5 px-2 text-xs text-slate-400">

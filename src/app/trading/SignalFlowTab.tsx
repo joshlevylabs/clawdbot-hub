@@ -1123,7 +1123,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
               nodeType="input"
               version={mreVersions?.signals || '2.0.0'}
               confidence={PIPELINE_NODE_CONFIDENCE.input}
-              refreshFrequency="On change"
+              refreshFrequency="Daily batch"
             />
           </div>
           
@@ -1152,7 +1152,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
                     className="max-w-[160px] min-h-[80px]"
                     style={{ padding: '8px', minHeight: '80px' }}
                     confidence={getStrategyConfidence(sv.key)}
-                    refreshFrequency="Daily"
+                    refreshFrequency="Daily batch"
                   />
                 );
               })}
@@ -1179,7 +1179,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
                     nodeType="consensus"
                     className="max-w-[140px]"
                     confidence={conf}
-                    refreshFrequency="Daily"
+                    refreshFrequency="Daily batch"
                   />
                 );
               })}
@@ -1213,7 +1213,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
                       onClick={() => onStageClick(`persistenceGate_${voteCount}`)}
                       version="4.0.0"
                       confidence={PIPELINE_NODE_CONFIDENCE.persistence}
-                      refreshFrequency="Daily"
+                      refreshFrequency="Daily batch"
                     />
                   </div>
                 );
@@ -1244,7 +1244,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
                     nodeType="consensus"
                     className="max-w-[140px] border-emerald-500/40"
                     confidence={conf}
-                    refreshFrequency="Daily"
+                    refreshFrequency="Daily batch"
                   />
                 );
               })}
@@ -1277,7 +1277,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
                       className={`max-w-[140px] border-2 ${path.voteCount >= 3 ? 'border-emerald-500/40' : path.voteCount >= 2 ? 'border-blue-400/40' : 'border-slate-500/40'}`}
                       style={{ padding: '8px', minHeight: '80px' }}
                       confidence={PIPELINE_NODE_CONFIDENCE.signalGating}
-                      refreshFrequency="Daily"
+                      refreshFrequency="Daily batch"
                     />
                     
                   </div>
@@ -1313,7 +1313,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
                     className={`max-w-[140px] border-2 ${path.voteCount >= 3 ? 'border-emerald-500/40' : path.voteCount >= 2 ? 'border-blue-400/40' : 'border-slate-500/40'}`}
                     style={{ padding: '8px', minHeight: '80px' }}
                     confidence={PIPELINE_NODE_CONFIDENCE.confidenceTuning}
-                    refreshFrequency="Daily"
+                    refreshFrequency="Daily batch"
                   />
                       
                     </div>
@@ -1349,7 +1349,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
                     className={`max-w-[140px] border-2 ${path.voteCount >= 3 ? 'border-emerald-500/40' : path.voteCount >= 2 ? 'border-blue-400/40' : 'border-slate-500/40'}`}
                     style={{ padding: '8px', minHeight: '80px' }}
                     confidence={PIPELINE_NODE_CONFIDENCE.finalFilters}
-                    refreshFrequency="Daily"
+                    refreshFrequency="Daily batch"
                   />
                       
                     </div>
@@ -1385,7 +1385,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
                     className={`max-w-[140px] border-2 ${path.voteCount >= 3 ? 'border-emerald-500/40' : path.voteCount >= 2 ? 'border-blue-400/40' : 'border-slate-500/40'}`}
                     style={{ padding: '8px', minHeight: '80px' }}
                     confidence={PIPELINE_NODE_CONFIDENCE.output}
-                    refreshFrequency="Daily"
+                    refreshFrequency="Daily batch"
                   />
                       
                     </div>
@@ -1421,7 +1421,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
                     className={`max-w-[120px] border-2 ${path.voteCount >= 3 ? 'border-emerald-500/40' : path.voteCount >= 2 ? 'border-blue-400/40' : 'border-slate-500/40'}`}
                     style={{ padding: '6px', minHeight: '70px' }}
                     confidence={PIPELINE_NODE_CONFIDENCE.fibonacciLevels}
-                    refreshFrequency="Daily"
+                    refreshFrequency="Daily batch"
                   />
                       
                     </div>

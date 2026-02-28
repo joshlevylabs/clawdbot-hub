@@ -1,6 +1,6 @@
 {
   "date": "2026-02-27",
-  "generatedAt": "2026-02-27T09:50:17.367661-08:00",
+  "generatedAt": "2026-02-27T13:45:49.803946-08:00",
   "priorities": [
     {
       "text": "Submit current Lever build to App Store as planned",
@@ -10,7 +10,7 @@
     },
     {
       "text": "Finalize Lever App Store submission",
-      "source": "adhoc-dlp4710-projection-lens-selection-for-marin-globe",
+      "source": "adhoc-mosaic-plugin-strategy",
       "urgency": "high",
       "taskKey": "CVS-017"
     }

@@ -2,6 +2,19 @@
   "standups": [
     {
       "date": "2026-02-27",
+      "time": "13:42",
+      "type": "adhoc-mosaic-plugin-strategy",
+      "typeName": "Mosaic Plugin Strategy",
+      "typeEmoji": "\ud83d\udccb",
+      "topic": "Mosaic Plugin Strategy \u2014 Friday Feb 27",
+      "file": "2026-02-27-adhoc-mosaic-plugin-strategy.json",
+      "tokenCost": 0.0389,
+      "verticals": [],
+      "initiatives": [],
+      "instanceKey": "STD-16"
+    },
+    {
+      "date": "2026-02-27",
       "time": "09:50",
       "type": "adhoc-dlp4710-projection-lens-selection-for-marin-globe",
       "typeName": "DLP4710 Projection Lens Selection for Marin Globe",

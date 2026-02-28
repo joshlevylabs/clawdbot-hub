@@ -3,49 +3,49 @@
   "day": "Saturday",
   "generated_at": "2026-02-28T06:00:45Z",
   "prayer": {
-    "title": "🕐️ Morning Prayer",
+    "title": "\ud83d\udd50\ufe0f Morning Prayer",
     "date": "Saturday, February 28, 2026",
     "hebrew_date": "30 Cheshvan",
     "parsha": "Miketz",
     "parsha_theme": "sudden elevation, preparation meeting opportunity",
-    "modeh_ani": "מודה אני לפניך — I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
-    "blessing": "Blessed are You who clothes the naked — provide for all my needs this day.",
+    "modeh_ani": "\u05de\u05d5\u05d3\u05d4 \u05d0\u05e0\u05d9 \u05dc\u05e4\u05e0\u05d9\u05da \u2014 I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
+    "blessing": "Blessed are You who clothes the naked \u2014 provide for all my needs this day.",
     "psalm": "**Psalm 32:8**: \"I will instruct you and teach you in the way you should go.\"",
     "proverb": "**Proverbs 11:1**: \"Dishonest scales are an abomination to the Lord, but accurate weights are His delight.\"",
     "intention": "Protect my family while I work. Guard their hearts and minds.",
     "closing": "May your work today be a pleasing offering. May your rest tonight be deep and restorative."
   },
   "weather": {
-    "title": "🌤️ Weather",
+    "title": "\ud83c\udf24\ufe0f Weather",
     "location": "Temecula, CA",
     "current": {
-      "temp": "50°F",
+      "temp": "50\u00b0F",
       "condition": "Clear",
-      "feels_like": "50°F"
+      "feels_like": "50\u00b0F"
     },
     "today": {
-      "high": "90°F",
-      "low": "56°F",
+      "high": "90\u00b0F",
+      "low": "56\u00b0F",
       "condition": "Mostly sunny",
       "wind": "Light winds"
     },
     "forecast": [
       {
         "day": "Sunday",
-        "high": "86°F",
-        "low": "51°F",
+        "high": "86\u00b0F",
+        "low": "51\u00b0F",
         "condition": "Scattered clouds"
       },
       {
-        "day": "Monday", 
-        "high": "72°F",
-        "low": "45°F",
+        "day": "Monday",
+        "high": "72\u00b0F",
+        "low": "45\u00b0F",
         "condition": "Partly cloudy"
       }
     ]
   },
   "mre": {
-    "title": "📊 MRE Trading",
+    "title": "\ud83d\udcca MRE Trading",
     "fear_greed": 44,
     "fear_greed_rating": "fear",
     "regime": "bull",
@@ -59,20 +59,29 @@
       }
     ],
     "market_overview": {
-      "SPY": {"price": 685.99, "change": "-0.48%"},
-      "QQQ": {"price": 607.29, "change": "-0.32%"},
-      "IWM": {"price": 261.41, "change": "-1.72%"},
+      "SPY": {
+        "price": 685.99,
+        "change": "-0.48%"
+      },
+      "QQQ": {
+        "price": 607.29,
+        "change": "-0.32%"
+      },
+      "IWM": {
+        "price": 261.41,
+        "change": "-1.72%"
+      },
       "VIX": 19.86
     },
     "thesis": "Fear at 44, bull regime intact. Markets showing neutral sentiment with elevated volatility. Watch NVDA for bearish breakdown."
   },
   "family": {
-    "title": "💝 Family Focus",
+    "title": "\ud83d\udc9d Family Focus",
     "relationship_temperature": "critical",
     "trend": "urgent",
     "priority_actions": [
       "Focus on repair - acknowledge recent conflicts without defending",
-      "Increase acts of service dramatically this week", 
+      "Increase acts of service dramatically this week",
       "Create space for Jillian to express frustrations without fixing"
     ],
     "love_languages": {
@@ -81,25 +90,25 @@
     }
   },
   "world_news": {
-    "title": "🌍 World News",
-    "headline": "🚨 BREAKING: Israel launches preemptive attack against Iran",
+    "title": "\ud83c\udf0d World News",
+    "headline": "\ud83d\udea8 BREAKING: Israel launches preemptive attack against Iran",
     "summary": "Israel and U.S. launched coordinated strikes on Iran Saturday morning. Explosions reported in Tehran. Iran's Supreme Leader transferred to secure location. This follows 12-day air war in June and represents major escalation in Middle East tensions. All Israeli airspace closed, schools/workplaces shut except essential services.",
     "significance": "Major geopolitical development affecting global stability and markets"
   },
   "ai_news": {
-    "title": "🤖 AI News",
+    "title": "\ud83e\udd16 AI News",
     "headline": "OpenAI raises $110B at $840B valuation",
     "summary": "Massive funding round signals continued AI investment frenzy. European sovereign AI solutions gaining traction. Smaller, efficient models reducing infrastructure costs and expanding deployment flexibility.",
     "implication": "AI infrastructure continues massive scaling"
   },
   "calendar": {
-    "title": "📅 Today's Schedule", 
+    "title": "\ud83d\udcc5 Today's Schedule",
     "status": "OAuth tokens expired - unable to fetch calendar data",
     "note": "Manual calendar check recommended"
   },
   "email": {
-    "title": "📧 Email Highlights",
-    "status": "OAuth tokens expired - unable to fetch email data", 
+    "title": "\ud83d\udce7 Email Highlights",
+    "status": "OAuth tokens expired - unable to fetch email data",
     "note": "Manual email check recommended"
   }
 }

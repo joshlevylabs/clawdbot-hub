@@ -268,8 +268,10 @@ function generateActions(data: MREData): ActionItem[] {
   for (const asset of allAssets) {
     const { symbol, price, fibonacci, regime_details, expected_accuracy, signal, expected_sharpe, hold_days } = asset;
     
-    // Handle cases where regime_details might not exist (universe data)
-    const regime = regime_details?.regime || asset.regime || "unknown";
+    // Use the pipeline's signal-driving regime (asset.regime) as primary source.
+    // regime_details.regime is the raw per-ticker EMA regime which can diverge
+    // (e.g. "bear" per-ticker EMA while pipeline classifies as "sideways").
+    const regime = asset.regime || regime_details?.regime || "unknown";
     const confidence = regime_details?.confidence || 50;
     const momentum_20d = regime_details?.momentum_20d || asset.momentum_20d || 0;
     const regime_stage = regime_details?.regime_stage || "unknown";

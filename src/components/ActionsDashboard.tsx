@@ -794,6 +794,11 @@ export default function ActionsDashboard({
   const [groupBy, setGroupBy] = useState<GroupBy>("none");
   const [sortKey, setSortKey] = useState<SortKey>("signalStrength");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
+  
+  // Cascading filters
+  const [regimeFilter, setRegimeFilter] = useState<"all" | "bull" | "sideways" | "bear">("all");
+  const [alphaDecileFilter, setAlphaDecileFilter] = useState<"all" | "top10" | "top20" | "top30">("all");
+  const [minConfidence, setMinConfidence] = useState<number>(0);
 
   useEffect(() => {
     async function load() {
@@ -931,6 +936,18 @@ export default function ActionsDashboard({
       items = items.filter(a => a.action === signalFilter);
     }
 
+    // Cascading filters — applied on top of signal filter
+    if (regimeFilter !== "all") {
+      items = items.filter(a => a.regime === regimeFilter);
+    }
+    if (alphaDecileFilter !== "all") {
+      const minDecile = alphaDecileFilter === "top10" ? 10 : alphaDecileFilter === "top20" ? 9 : 8;
+      items = items.filter(a => (a.alphaDecile || 0) >= minDecile);
+    }
+    if (minConfidence > 0) {
+      items = items.filter(a => a.confidence >= minConfidence);
+    }
+
     items.sort((a, b) => {
       let cmp = 0;
       switch (sortKey) {
@@ -944,13 +961,14 @@ export default function ActionsDashboard({
         case "assetClass": cmp = a.assetClass.localeCompare(b.assetClass); break;
         case "sharpe": cmp = a.sharpe - b.sharpe; break;
         case "signalStrength": cmp = (a.signalStrength || 0) - (b.signalStrength || 0); break;
+        case "alphaRank": cmp = (a.alphaRank || 0) - (b.alphaRank || 0); break;
         case "swapScore": cmp = (a.swapScore || 0) - (b.swapScore || 0); break;
       }
       return sortDir === "asc" ? cmp : -cmp;
     });
     return items;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [actionsWithPositions, signalFilter, sortKey, sortDir, positions]);
+  }, [actionsWithPositions, signalFilter, sortKey, sortDir, positions, regimeFilter, alphaDecileFilter, minConfidence]);
 
   // Group
   const groupedActions = useMemo(() => {
@@ -1307,6 +1325,61 @@ export default function ActionsDashboard({
               <option value="regime">Group by Regime</option>
             </select>
           </div>
+        </div>
+        
+        {/* Cascading Filters Row */}
+        <div className="flex flex-wrap items-center gap-2 mt-2 px-1">
+          <span className="text-[10px] text-slate-500 uppercase tracking-wider font-semibold mr-1">Filters:</span>
+          
+          {/* Regime Filter */}
+          {(["all", "bull", "sideways", "bear"] as const).map(r => (
+            <button key={r} onClick={() => setRegimeFilter(r)}
+              className={`px-2 py-0.5 text-[11px] rounded-md font-medium transition-colors ${
+                regimeFilter === r
+                  ? r === "bull" ? "bg-emerald-500/30 text-emerald-300 border border-emerald-500/50"
+                    : r === "bear" ? "bg-red-500/30 text-red-300 border border-red-500/50"
+                    : r === "sideways" ? "bg-amber-500/30 text-amber-300 border border-amber-500/50"
+                    : "bg-slate-700 text-slate-300 border border-slate-600"
+                  : "bg-slate-800/50 text-slate-500 border border-slate-700/50 hover:text-slate-300"
+              }`}>
+              {r === "all" ? "All Regimes" : r === "bull" ? "🟢 Bull" : r === "sideways" ? "🟡 Sideways" : "🔴 Bear"}
+            </button>
+          ))}
+          
+          <div className="w-px h-3.5 bg-slate-700/50" />
+          
+          {/* Alpha Decile Filter */}
+          {(["all", "top10", "top20", "top30"] as const).map(d => (
+            <button key={d} onClick={() => setAlphaDecileFilter(d)}
+              className={`px-2 py-0.5 text-[11px] rounded-md font-medium transition-colors ${
+                alphaDecileFilter === d
+                  ? "bg-yellow-500/30 text-yellow-300 border border-yellow-500/50"
+                  : "bg-slate-800/50 text-slate-500 border border-slate-700/50 hover:text-slate-300"
+              }`}>
+              {d === "all" ? "All Alpha" : d === "top10" ? "⭐ Top 10%" : d === "top20" ? "Top 20%" : "Top 30%"}
+            </button>
+          ))}
+          
+          <div className="w-px h-3.5 bg-slate-700/50" />
+          
+          {/* Min Confidence Filter */}
+          <select value={minConfidence} onChange={e => setMinConfidence(Number(e.target.value))}
+            className="bg-slate-800/50 text-slate-400 text-[11px] border border-slate-700/50 rounded-md px-1.5 py-0.5">
+            <option value={0}>Min Conf: Any</option>
+            <option value={50}>Min Conf: 50%+</option>
+            <option value={60}>Min Conf: 60%+</option>
+            <option value={70}>Min Conf: 70%+</option>
+            <option value={80}>Min Conf: 80%+</option>
+          </select>
+          
+          {/* Clear All Filters */}
+          {(regimeFilter !== "all" || alphaDecileFilter !== "all" || minConfidence > 0) && (
+            <button 
+              onClick={() => { setRegimeFilter("all"); setAlphaDecileFilter("all"); setMinConfidence(0); }}
+              className="px-2 py-0.5 text-[11px] rounded-md font-medium text-red-400 bg-red-500/10 border border-red-500/30 hover:bg-red-500/20 transition-colors">
+              ✕ Clear
+            </button>
+          )}
         </div>
 
         {/* Table */}

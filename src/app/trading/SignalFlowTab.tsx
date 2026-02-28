@@ -91,6 +91,16 @@ interface MRESignal {
     momentum_20d: number;
     ema_spread_pct: number;
   };
+  // Alpha Rank fields
+  alpha_rank_score?: number;
+  alpha_decile?: number;
+  alpha_sector_rank_pct?: number;
+  alpha_composite_raw?: number;
+  alpha_factors?: Record<string, number>;
+  alpha_factors_available?: number;
+  alpha_regime_weights_applied?: string;
+  alpha_mean_rev_dampened?: boolean;
+  alpha_top_contributors?: Array<{ factor: string; contribution: number; direction: string }>;
   fibonacci?: {
     symbol: string;
     current_price: number;
@@ -166,6 +176,14 @@ interface MREData {
   meta?: {
     version: string;
     core_pipeline?: string;
+  };
+  alpha_rank_meta?: {
+    config_version: string;
+    config_hash: string;
+    config_date: string;
+    regime_weights_applied: string;
+    factors: string[];
+    weights: Record<string, number>;
   };
 }
 
@@ -516,8 +534,45 @@ function calculatePipelineStages(signals: MRESignal[], dataType: 'core' | 'unive
     perTierData: outputPerTierData
   };
   
-  // Step 7: Fibonacci Level Selection (post-output — determines entry, SL, TP)
-  // Add per-tier data for fibonacci levels (same as output since it's pass-through)
+  // Step 7: Alpha Rank Gate — independent cross-sectional ranking (all 666 ranked tickers)
+  // Prime Trades = BUY signal + Top Decile Alpha Rank
+  const alphaRankedSignals = signals.filter(s => s.alpha_rank_score !== undefined && s.alpha_rank_score !== null);
+  const topDecileSignals = alphaRankedSignals.filter(s => (s.alpha_decile || 0) >= 10);
+  const primeTradeSignals = finalPassed.filter(s => (s.alpha_decile || 0) >= 10);
+  
+  // Per-tier alpha rank data
+  const alphaRankPerTierData: Record<number, { input: number, output: number, tickers: MRESignal[], primeCount: number }> = {};
+  for (let voteCount = 1; voteCount <= 8; voteCount++) {
+    const tierTickers = finalPassed.filter(s => {
+      const actualVoteCount = strategyNames.filter(({ key }) => didStrategyFire(s, key)).length;
+      return actualVoteCount === voteCount;
+    });
+    
+    if (tierTickers.length > 0) {
+      const primeTickers = tierTickers.filter(s => (s.alpha_decile || 0) >= 10);
+      alphaRankPerTierData[voteCount] = {
+        input: tierTickers.length,
+        output: tierTickers.length, // Pass-through (rank is informational)
+        tickers: tierTickers,
+        primeCount: primeTickers.length
+      };
+    }
+  }
+  
+  const alphaRankStage = {
+    inputCount: finalPassed.length,
+    outputCount: finalPassed.length, // Pass-through — Alpha Rank is a scoring overlay, not a filter
+    passed: finalPassed,
+    filtered: [] as MRESignal[],
+    totalRanked: alphaRankedSignals.length,
+    topDecileCount: topDecileSignals.length,
+    primeTradeCount: primeTradeSignals.length,
+    primeTradeSignals,
+    perTierData: alphaRankPerTierData
+  };
+
+  // Step 9: Fibonacci Level Selection (post-output — determines entry, SL, TP)
+  // Add per-tier data for fibonacci levels (same as alpha rank output since it's pass-through)
   const fibonacciPerTierData: Record<number, { input: number, output: number, tickers: MRESignal[] }> = {};
   for (let voteCount = 1; voteCount <= 8; voteCount++) {
     const tierTickers = finalPassed.filter(s => {
@@ -543,7 +598,7 @@ function calculatePipelineStages(signals: MRESignal[], dataType: 'core' | 'unive
     perTierData: fibonacciPerTierData
   };
 
-  // Step 8: Agent Analysis (final review by trading agents)
+  // Step 10: Agent Analysis (final review by trading agents)
   // Add per-tier data for agent analysis (same as fibonacci since it's pass-through)
   const agentPerTierData: Record<number, { input: number, output: number, tickers: MRESignal[] }> = {};
   for (let voteCount = 1; voteCount <= 8; voteCount++) {
@@ -599,6 +654,7 @@ function calculatePipelineStages(signals: MRESignal[], dataType: 'core' | 'unive
     confidenceTuning: confidenceStage,
     finalFilters: finalStage,
     output: outputStage,
+    alphaRank: alphaRankStage,
     fibonacciLevels,
     agentAnalysis,
   };
@@ -720,6 +776,7 @@ const PIPELINE_NODE_CONFIDENCE: Record<string, number> = {
   confidenceTuning: 75, // Multiple adjustment factors — moderate complexity
   finalFilters: 82,    // Cluster limits + crash mode — well-defined rules
   output: 95,          // Pass-through — minimal logic
+  alphaRank: 72,       // New — Cross-sectional factor ranking (5 factors, sector-neutralized, regime-aware)
   fibonacciLevels: 60, // New — Fibonacci A/B/C retracement + extension system
   agentAnalysis: 45,   // New — Agent opinions (Chris Vermeullen + Warren Buffett)
 };
@@ -911,7 +968,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
     });
     
     // 6. Sequential tier-to-tier connections: Each tier flows through all remaining nodes
-    const seqKeys = ['signalGating', 'confidenceTuning', 'finalFilters', 'output', 'fibonacciLevels', 'agentAnalysis'];
+    const seqKeys = ['signalGating', 'confidenceTuning', 'finalFilters', 'output', 'alphaRank', 'fibonacciLevels', 'agentAnalysis'];
     
     // Use allFlowTiers so every tier that entered the pipeline has connections across all columns
     const flowTiers = pipelineData.allFlowTiers || pipelineData.postGatingConsensusPaths || [];
@@ -1397,7 +1454,44 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
             </div>
           </div>
           
-          {/* Column 10: Fibonacci Levels - Per-Tier Cards */}
+          {/* Column 10: Alpha Rank - Per-Tier Cards */}
+          <div className="flex flex-col items-center gap-6">
+            <div className="text-xs font-semibold text-slate-400 text-center mb-2">Alpha Rank</div>
+            <div className="flex flex-col gap-2">
+              {pipelineData.allFlowTiers?.map((path: any) => {
+                const tierData = pipelineData.alphaRank.perTierData?.[path.voteCount];
+                const outputTierData = pipelineData.output.perTierData?.[path.voteCount];
+                const inputCount = outputTierData?.output || 0;
+                const outputCount = tierData?.output || 0;
+                const primeCount = tierData?.primeCount || 0;
+                
+                return (
+                  <div key={`alphaRank-wrap-${path.voteCount}`} className="relative">
+                      <WorkflowNode
+                    key={path.voteCount}
+                    ref={(el) => { nodeRefs.current[`alphaRank_tier_${path.voteCount}`] = el; }}
+                    name={`${path.voteCount}/8`}
+                    description={primeCount > 0 ? `${inputCount} ranked · ${primeCount} ⭐` : `${inputCount} ranked`}
+                    inputCount={inputCount}
+                    outputCount={outputCount}
+                    onClick={() => onStageClick('alphaRank_tier_' + path.voteCount)}
+                    nodeType="modifier"
+                    className={`max-w-[140px] border-2 ${primeCount > 0 ? 'border-yellow-500/60' : path.voteCount >= 3 ? 'border-emerald-500/40' : path.voteCount >= 2 ? 'border-blue-400/40' : 'border-slate-500/40'}`}
+                    style={{ padding: '8px', minHeight: '80px' }}
+                    confidence={PIPELINE_NODE_CONFIDENCE.alphaRank}
+                    refreshFrequency="Daily batch"
+                  />
+                      
+                    </div>
+                );
+              })}
+              {(!pipelineData.allFlowTiers || pipelineData.allFlowTiers.length === 0) && (
+                <div className="text-xs text-slate-500 italic p-4">No ranked signals</div>
+              )}
+            </div>
+          </div>
+
+          {/* Column 11: Fibonacci Levels - Per-Tier Cards */}
           <div className="flex flex-col items-center gap-6">
             <div className="text-xs font-semibold text-slate-400 text-center mb-2">Fib Levels</div>
             <div className="flex flex-col gap-2">
@@ -1867,7 +1961,37 @@ export default function SignalFlowTab() {
     }
 
     // Handle per-tier clicks for sequential stages (signalGating, confidenceTuning, finalFilters, output, fibonacciLevels, agentAnalysis)
-    const tierStageMatch = stageKey.match(/^(signalGating|confidenceTuning|finalFilters|output|fibonacciLevels|agentAnalysis)_tier_(\d+)$/);
+    // Handle Alpha Rank tier clicks with enriched data
+    const alphaRankTierMatch = stageKey.match(/^alphaRank_tier_(\d+)$/);
+    if (alphaRankTierMatch) {
+      const voteCount = parseInt(alphaRankTierMatch[1]);
+      const tierData = pipelineData.alphaRank.perTierData?.[voteCount];
+      if (!tierData) return;
+      
+      const primeCount = tierData.primeCount || 0;
+      const sortedTickers = [...tierData.tickers].sort((a: MRESignal, b: MRESignal) => 
+        (b.alpha_rank_score || 0) - (a.alpha_rank_score || 0)
+      );
+      
+      setSelectedStage({
+        name: `Alpha Rank (${voteCount}/8)`,
+        description: `Cross-sectional factor ranking for BUY signals with ${voteCount}/8 consensus. 5 factors: trend, momentum, mean reversion, vol compression, F&G divergence. Sector-neutralized, regime-aware.${primeCount > 0 ? ` ⭐ ${primeCount} Prime Trade${primeCount > 1 ? 's' : ''} (BUY + Top Decile)` : ''}`,
+        stageType: 'modifier',
+        inputCount: tierData.input,
+        outputCount: tierData.output,
+        filteredTickers: [],
+        passedTickers: sortedTickers.map((t: MRESignal) => ({
+          symbol: t.symbol,
+          signal: t.signal,
+          signalStrength: t.signal_strength,
+          currentPrice: t.price,
+          rawData: t
+        }))
+      });
+      return;
+    }
+
+    const tierStageMatch = stageKey.match(/^(signalGating|confidenceTuning|finalFilters|output|alphaRank|fibonacciLevels|agentAnalysis)_tier_(\d+)$/);
     if (tierStageMatch) {
       const [, stageName, voteCountStr] = tierStageMatch;
       const voteCount = parseInt(voteCountStr);
@@ -1896,6 +2020,7 @@ export default function SignalFlowTab() {
         confidenceTuning: 'Confidence Tuning',
         finalFilters: 'Final Filters',
         output: 'BUY Signals',
+        alphaRank: 'Alpha Rank',
         fibonacciLevels: 'Fibonacci Levels',
         agentAnalysis: 'Agent Analysis',
       };
@@ -1904,6 +2029,7 @@ export default function SignalFlowTab() {
         confidenceTuning: 'Regime weight, role evaluation, rotation penalty for this tier',
         finalFilters: 'Cluster limit, asset confidence, crash mode for this tier',
         output: 'Final BUY signals from this consensus tier',
+        alphaRank: 'Cross-sectional factor ranking — 5 factors (trend, momentum, mean reversion, vol compression, F&G divergence), sector-neutralized, regime-aware. ⭐ = Prime Trade (BUY + Top Decile)',
         fibonacciLevels: 'Fibonacci entry, stop loss, and profit target levels for this tier',
         agentAnalysis: 'Agent opinions on signals from this tier',
       };
@@ -2083,6 +2209,24 @@ export default function SignalFlowTab() {
           outputCount: stageData.outputCount,
           filteredTickers: [],
           passedTickers: stageData.passed.map(t => ({
+            symbol: t.symbol,
+            signal: t.signal,
+            signalStrength: t.signal_strength,
+            currentPrice: t.price,
+            rawData: t
+          }))
+        };
+        break;
+
+      case 'alphaRank':
+        stageDetails = {
+          name: 'Alpha Rank (All Tiers)',
+          description: `Cross-sectional factor ranking — ${pipelineData.alphaRank.totalRanked} tickers ranked, ${pipelineData.alphaRank.topDecileCount} in top decile, ${pipelineData.alphaRank.primeTradeCount} Prime Trades (BUY + Top Decile). Factors: trend, momentum, mean reversion, vol compression, F&G divergence. Sector-neutralized, regime-aware.`,
+          stageType: 'modifier',
+          inputCount: pipelineData.alphaRank.inputCount,
+          outputCount: pipelineData.alphaRank.outputCount,
+          filteredTickers: [],
+          passedTickers: [...pipelineData.alphaRank.passed].sort((a: any, b: any) => (b.alpha_rank_score || 0) - (a.alpha_rank_score || 0)).map((t: any) => ({
             symbol: t.symbol,
             signal: t.signal,
             signalStrength: t.signal_strength,

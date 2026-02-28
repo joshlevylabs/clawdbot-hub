@@ -251,7 +251,7 @@ interface ActionsDashboardProps {
   onAnalyze?: (symbol: string) => void;
 }
 
-type SortKey = "symbol" | "action" | "regime" | "confidence" | "currentPrice" | "pnl" | "momentum" | "assetClass" | "sharpe" | "signalStrength" | "swapScore";
+type SortKey = "symbol" | "action" | "regime" | "confidence" | "currentPrice" | "pnl" | "momentum" | "assetClass" | "sharpe" | "signalStrength" | "alphaRank" | "swapScore";
 type SortDir = "asc" | "desc";
 type SignalFilter = "ACTIONABLE" | "ALL" | "BUY" | "HOLD" | "WATCH" | "WAIT" | "SELL" | "POSITIONS" | "BROAD_MARKET" | "SECTORS" | "INTERNATIONAL" | "BONDS" | "COMMODITIES" | "CORE" | "UNIVERSE";
 type GroupBy = "none" | "assetClass" | "regime" | "category";

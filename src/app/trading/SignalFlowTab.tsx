@@ -2137,7 +2137,7 @@ export default function SignalFlowTab() {
     );
   }
 
-  if (!currentData || !pipelineData) {
+  if (dataMode !== 'geopolitical' && (!currentData || !pipelineData)) {
     return (
       <div className="h-[600px] flex items-center justify-center">
         <div className="text-center text-slate-400">
@@ -2148,10 +2148,10 @@ export default function SignalFlowTab() {
     );
   }
 
-  const fgValue = Math.round(currentData.fear_greed?.current || 0);
-  const fgRating = currentData.fear_greed?.rating || 'Unknown';
-  const regimeValue = currentData.regime?.global || 'Unknown';
-  const summary = currentData.signals?.summary;
+  const fgValue = Math.round(currentData?.fear_greed?.current || 0);
+  const fgRating = currentData?.fear_greed?.rating || 'Unknown';
+  const regimeValue = currentData?.regime?.global || 'Unknown';
+  const summary = currentData?.signals?.summary;
   
   // Get pipeline version from signal data meta
   const pipelineVersion = currentData?.meta?.version || '3.1.0';
@@ -2270,7 +2270,7 @@ export default function SignalFlowTab() {
 
       {/* Sector Fear & Greed Panel */}
       <SectorFearGreedPanel 
-        sectorFearGreed={currentData.sector_fear_greed}
+        sectorFearGreed={currentData?.sector_fear_greed}
         globalFearGreed={fgValue}
       />
 

@@ -1,6 +1,6 @@
 {
-  "nextAgentId": 18,
-  "nextJoshuaId": 4,
+  "nextAgentId": 22,
+  "nextJoshuaId": 5,
   "tasks": [
     {
       "key": "A-001",
@@ -678,6 +678,85 @@
       "createdAt": "2026-02-26T21:38:26.540294-08:00",
       "approvedAt": "2026-02-26T21:38:26.540294-08:00",
       "approvedBy": "joshua"
+    },
+    {
+      "key": "J-004",
+      "text": "Upgrade Mac Mini RAM and diagnose build resource exhaustion",
+      "assignee": "Joshua",
+      "priority": "high",
+      "tag": "JOSHUA",
+      "source": "Mosaic Build Pipeline Audit",
+      "status": "pending",
+      "approvedAt": "2026-02-28T12:34:00-08:00",
+      "description": "Task: Upgrade Mac Mini RAM and diagnose build resource exhaustion. Assigned to Joshua at high priority.",
+      "acceptanceCriteria": [
+        "Task 'Upgrade Mac Mini RAM and diagnose build resource exhaustion' is completed and verified",
+        "Results documented or committed"
+      ]
+    },
+    {
+      "key": "A-018",
+      "text": "Fix Catapult script false success reporting and add TestFlight verification",
+      "assignee": "Elon Musk",
+      "priority": "high",
+      "tag": "AGENT",
+      "source": "Mosaic Build Pipeline Audit",
+      "status": "done",
+      "approvedAt": "2026-02-28T12:34:00-08:00",
+      "description": "Task: Fix Catapult script false success reporting and add TestFlight verification. Assigned to Elon Musk at high priority.",
+      "acceptanceCriteria": [
+        "Task 'Fix Catapult script false success reporting and add TestFlig' is completed and verified",
+        "Results documented or committed"
+      ],
+      "resolvedAt": "2026-02-28T12:45:00-08:00",
+      "resolution": "Added Stage 0 memory gate (warns <1500MB, blocks <800MB with FORCE_BUILD override) and Stage 7 ASC API verification loop (polls processingState + internalBuildState). Stage 8 now reports truthful status instead of hardcoded success. Commit 63ab43e6."
+    },
+    {
+      "key": "A-019",
+      "text": "Design production-grade Mosaic CI/CD architecture with monitoring",
+      "assignee": "James Truchard",
+      "priority": "high",
+      "tag": "AGENT",
+      "source": "Mosaic Build Pipeline Audit",
+      "status": "pending",
+      "approvedAt": "2026-02-28T12:34:00-08:00",
+      "description": "Task: Design production-grade Mosaic CI/CD architecture with monitoring. Assigned to James Truchard at high priority.",
+      "acceptanceCriteria": [
+        "Task 'Design production-grade Mosaic CI/CD architecture with monit' is completed and verified",
+        "Results documented or committed"
+      ]
+    },
+    {
+      "key": "A-020",
+      "text": "Audit and fix npm dependency management for build stability",
+      "assignee": "Elon Musk",
+      "priority": "medium",
+      "tag": "AGENT",
+      "source": "Mosaic Build Pipeline Audit",
+      "status": "done",
+      "approvedAt": "2026-02-28T12:34:00-08:00",
+      "description": "Task: Audit and fix npm dependency management for build stability. Assigned to Elon Musk at medium priority.",
+      "acceptanceCriteria": [
+        "Task 'Audit and fix npm dependency management for build stability' is completed and verified",
+        "Results documented or committed"
+      ],
+      "resolvedAt": "2026-02-28T12:45:00-08:00",
+      "resolution": "Audited: root package-lock.json committed and tracked. 30 floating deps (normal for Expo \u2014 ^/~ ranges pinned by lockfile). npm workspaces monorepo structure correct. Build 5 failure was transient network/registry issue, not dep management. No code changes needed \u2014 lockfile provides deterministic installs."
+    },
+    {
+      "key": "A-021",
+      "text": "Define Mosaic build notification and error UX flow",
+      "assignee": "Steve Jobs",
+      "priority": "medium",
+      "tag": "AGENT",
+      "source": "Mosaic Build Pipeline Audit",
+      "status": "pending",
+      "approvedAt": "2026-02-28T12:34:00-08:00",
+      "description": "Task: Define Mosaic build notification and error UX flow. Assigned to Steve Jobs at medium priority.",
+      "acceptanceCriteria": [
+        "Task 'Define Mosaic build notification and error UX flow' is completed and verified",
+        "Results documented or committed"
+      ]
     }
   ]
 }

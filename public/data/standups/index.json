@@ -1,6 +1,21 @@
 {
   "standups": [
     {
+      "date": "2026-02-28",
+      "time": "12:31",
+      "type": "adhoc-mosaic-pipeline-audit",
+      "typeName": "Mosaic Build Pipeline Audit",
+      "typeEmoji": "\ud83d\udd27",
+      "topic": "Mosaic Build Pipeline Audit \u2014 Saturday Feb 28",
+      "file": "2026-02-28-adhoc-mosaic-pipeline-audit.json",
+      "tokenCost": 0.0418,
+      "verticals": [
+        "mosaic"
+      ],
+      "initiatives": [],
+      "instanceKey": "STD-18"
+    },
+    {
       "date": "2026-02-27",
       "time": "13:42",
       "type": "adhoc-mosaic-plugin-strategy",

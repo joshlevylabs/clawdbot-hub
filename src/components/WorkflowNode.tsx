@@ -29,6 +29,7 @@ interface WorkflowNodeProps {
   isPending?: boolean;
   bypassLabel?: string;
   confidence?: number; // 0-100 accuracy/confidence score
+  refreshFrequency?: string; // e.g. "Daily", "Real-time", "Weekly"
 }
 
 const WorkflowNode = forwardRef<HTMLDivElement, WorkflowNodeProps>(({
@@ -47,6 +48,7 @@ const WorkflowNode = forwardRef<HTMLDivElement, WorkflowNodeProps>(({
   isPending = false,
   bypassLabel,
   confidence,
+  refreshFrequency,
 }, ref) => {
   
   // Color schemes and icons based on node type
@@ -219,8 +221,8 @@ const WorkflowNode = forwardRef<HTMLDivElement, WorkflowNodeProps>(({
         )}
       </div>
 
-      {/* Version + Confidence badges */}
-      {(version || confidence !== undefined) && (
+      {/* Version + Confidence + Refresh badges */}
+      {(version || confidence !== undefined || refreshFrequency) && (
         <div className="mt-3 flex items-center gap-1.5 flex-wrap">
           {version && (
             <span className="inline-block bg-slate-700/50 text-slate-500 px-2 py-0.5 rounded text-[9px] font-medium">
@@ -235,6 +237,11 @@ const WorkflowNode = forwardRef<HTMLDivElement, WorkflowNodeProps>(({
               'bg-red-900/40 text-red-400'
             }`}>
               {confidence}% conf
+            </span>
+          )}
+          {refreshFrequency && (
+            <span className="inline-block bg-cyan-900/30 text-cyan-400 px-2 py-0.5 rounded text-[9px] font-medium">
+              🔄 {refreshFrequency}
             </span>
           )}
         </div>

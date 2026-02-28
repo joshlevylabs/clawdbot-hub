@@ -406,6 +406,7 @@ export default function GeopoliticalFlowTab() {
               outputCount={7}
               nodeType="input"
               onClick={() => handleStageClick('input')}
+              refreshFrequency="Manual"
             />
 
             {/* Signal Strategy Nodes */}
@@ -420,6 +421,7 @@ export default function GeopoliticalFlowTab() {
                 confidence={signal.score}
                 onClick={() => handleStageClick(key)}
                 className={`${getStatusColor(signal.status)} border-2`}
+                refreshFrequency={key === 'vix_fear' || key === 'defense_momentum' || key === 'gold_safe_haven' ? 'Intraday' : key === 'oil_price_shock' || key === 'hormuz_flow' ? 'Hourly' : 'Event-driven'}
               />
             ))}
 
@@ -432,6 +434,7 @@ export default function GeopoliticalFlowTab() {
               nodeType="consensus"
               confidence={data.escalation_score}
               onClick={() => handleStageClick('consensus')}
+              refreshFrequency="On signal update"
             />
 
             {/* Regime Classification */}
@@ -443,6 +446,7 @@ export default function GeopoliticalFlowTab() {
               nodeType="filter"
               onClick={() => handleStageClick('regime')}
               className={`${getStatusColor(data.overall_regime)} border-2`}
+              refreshFrequency="On signal update"
             />
 
             {/* Sector Rotation Engine */}
@@ -453,6 +457,7 @@ export default function GeopoliticalFlowTab() {
               outputCount={data.sector_recommendations.OVERWEIGHT.length + data.sector_recommendations.UNDERWEIGHT.length + data.sector_recommendations.MONITOR.length}
               nodeType="modifier"
               onClick={() => handleStageClick('rotation')}
+              refreshFrequency="On regime change"
             />
 
             {/* Portfolio Actions */}
@@ -463,6 +468,7 @@ export default function GeopoliticalFlowTab() {
               outputCount={data.sector_recommendations.OVERWEIGHT.length + data.sector_recommendations.UNDERWEIGHT.length}
               nodeType="output"
               onClick={() => handleStageClick('output')}
+              refreshFrequency="On regime change"
             />
           </div>
         </div>

@@ -139,12 +139,22 @@
       "estimatedCost": 0.0389,
       "model": "claude-sonnet-4-20250514",
       "duration": "51.8s"
+    },
+    {
+      "date": "2026-02-28",
+      "type": "adhoc-mosaic-pipeline-audit",
+      "inputTokens": 3189,
+      "outputTokens": 2146,
+      "totalTokens": 5335,
+      "estimatedCost": 0.0418,
+      "model": "claude-sonnet-4-20250514",
+      "duration": "54.2s"
     }
   ],
   "totals": {
-    "today": 0.1556,
-    "week": 0.5583,
-    "month": 0.5583,
-    "standupCount": 14
+    "today": 0.0418,
+    "week": 0.6001,
+    "month": 0.6001,
+    "standupCount": 15
   }
 }

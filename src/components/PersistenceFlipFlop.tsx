@@ -12,6 +12,7 @@ interface PersistenceFlipFlopProps {
   version?: string;
   confidence?: number;
   className?: string;
+  refreshFrequency?: string;
 }
 
 /**
@@ -45,6 +46,7 @@ export default function PersistenceFlipFlop({
   version,
   confidence,
   className = '',
+  refreshFrequency,
 }: PersistenceFlipFlopProps) {
   const [animate, setAnimate] = useState(false);
 
@@ -235,8 +237,8 @@ export default function PersistenceFlipFlop({
         </div>
       )}
 
-      {/* Version + Confidence badges */}
-      {(version || confidence !== undefined) && (
+      {/* Version + Confidence + Refresh badges */}
+      {(version || confidence !== undefined || refreshFrequency) && (
         <div className="flex items-center gap-1.5 flex-wrap">
           {version && (
             <span className="inline-block bg-slate-700/50 text-slate-500 px-2 py-0.5 rounded text-[9px] font-medium">
@@ -251,6 +253,11 @@ export default function PersistenceFlipFlop({
               'bg-red-900/40 text-red-400'
             }`}>
               {confidence}% conf
+            </span>
+          )}
+          {refreshFrequency && (
+            <span className="inline-block bg-cyan-900/30 text-cyan-400 px-2 py-0.5 rounded text-[9px] font-medium">
+              🔄 {refreshFrequency}
             </span>
           )}
         </div>

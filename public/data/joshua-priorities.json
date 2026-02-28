@@ -1,6 +1,6 @@
 {
-  "date": "2026-02-27",
-  "generatedAt": "2026-02-27T13:45:49.803946-08:00",
+  "date": "2026-02-28",
+  "generatedAt": "2026-02-28T12:31:04.995285-08:00",
   "priorities": [
     {
       "text": "Submit current Lever build to App Store as planned",
@@ -10,7 +10,7 @@
     },
     {
       "text": "Finalize Lever App Store submission",
-      "source": "adhoc-mosaic-plugin-strategy",
+      "source": "adhoc-mosaic-pipeline-audit",
       "urgency": "high",
       "taskKey": "CVS-017"
     }

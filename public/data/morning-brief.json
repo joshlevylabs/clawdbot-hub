@@ -1,76 +1,105 @@
 {
-  "date": "2026-02-27",
-  "generated_at": "2026-02-27T06:00:15.000Z",
-  "sections": {
-    "prayer": {
-      "title": "🕎 Morning Prayer",
-      "date": "Friday, February 27, 2026",
-      "hebrew_date": "29 Cheshvan",
-      "parsha": "Miketz",
-      "parsha_theme": "sudden elevation, preparation meeting opportunity",
-      "modeh_ani": "מודה אני לפניך — I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
-      "blessing": "Blessed are You who has provided me with all I need — I lack nothing essential.",
-      "psalm": "**Psalm 121:8**: \"The Lord will watch over your coming and going both now and forevermore.\"",
-      "proverb": "**Proverbs 24:27**: \"Prepare your work outside; get everything ready, then build your house.\"",
-      "intention": "Let today's small faithfulness lead to tomorrow's greater stewardship.",
-      "closing": "Baruch atah Adonai — Blessed are You, Lord, who renews creation daily with goodness."
+  "date": "2026-02-28",
+  "day": "Saturday",
+  "generated_at": "2026-02-28T06:00:45Z",
+  "prayer": {
+    "title": "🕐️ Morning Prayer",
+    "date": "Saturday, February 28, 2026",
+    "hebrew_date": "30 Cheshvan",
+    "parsha": "Miketz",
+    "parsha_theme": "sudden elevation, preparation meeting opportunity",
+    "modeh_ani": "מודה אני לפניך — I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
+    "blessing": "Blessed are You who clothes the naked — provide for all my needs this day.",
+    "psalm": "**Psalm 32:8**: \"I will instruct you and teach you in the way you should go.\"",
+    "proverb": "**Proverbs 11:1**: \"Dishonest scales are an abomination to the Lord, but accurate weights are His delight.\"",
+    "intention": "Protect my family while I work. Guard their hearts and minds.",
+    "closing": "May your work today be a pleasing offering. May your rest tonight be deep and restorative."
+  },
+  "weather": {
+    "title": "🌤️ Weather",
+    "location": "Temecula, CA",
+    "current": {
+      "temp": "50°F",
+      "condition": "Clear",
+      "feels_like": "50°F"
     },
-    "weather": {
-      "title": "🌤️ Weather",
-      "location": "Temecula, CA",
-      "status": "Data temporarily unavailable",
-      "note": "Check local conditions as needed"
+    "today": {
+      "high": "90°F",
+      "low": "56°F",
+      "condition": "Mostly sunny",
+      "wind": "Light winds"
     },
-    "calendar": {
-      "title": "📅 Calendar",
-      "today": [],
-      "week": [],
-      "month": [],
-      "note": "Calendar data temporarily unavailable - check your devices"
-    },
-    "mre": {
-      "title": "📊 MRE Trading",
-      "fear_greed": 44,
-      "fear_greed_rating": "fear",
-      "regime": "bull",
-      "todays_plays": [],
-      "pending_triggers": [],
-      "thesis": "Fear at 44, bull regime intact. Markets are fearful — watch for oversold bounces. No active BUY signals today - all assets on HOLD."
-    },
-    "relationship": {
-      "title": "💕 Family Focus",
-      "temperature": "critical",
-      "trend": "urgent",
-      "ratio": 1.2,
-      "recommendations": [
-        "PRIORITY: Focus on repair. Acknowledge recent conflicts without defending.",
-        "Increase acts of service dramatically this week.",
-        "Create space for her to express frustrations without fixing."
-      ],
-      "love_languages": {
-        "primary": "quality_time",
-        "secondary": "acts_of_service"
+    "forecast": [
+      {
+        "day": "Sunday",
+        "high": "86°F",
+        "low": "51°F",
+        "condition": "Scattered clouds"
+      },
+      {
+        "day": "Monday", 
+        "high": "72°F",
+        "low": "45°F",
+        "condition": "Partly cloudy"
       }
+    ]
+  },
+  "mre": {
+    "title": "📊 MRE Trading",
+    "fear_greed": 44,
+    "fear_greed_rating": "fear",
+    "regime": "bull",
+    "todays_plays": [
+      {
+        "symbol": "NVDA",
+        "action": "SELL",
+        "price": 177.19,
+        "confidence": "HIGH",
+        "rationale": "BEARISH trend, MACD bearish crossover, high volume"
+      }
+    ],
+    "market_overview": {
+      "SPY": {"price": 685.99, "change": "-0.48%"},
+      "QQQ": {"price": 607.29, "change": "-0.32%"},
+      "IWM": {"price": 261.41, "change": "-1.72%"},
+      "VIX": 19.86
     },
-    "news": {
-      "title": "🌍 World & AI News",
-      "highlights": [
-        {
-          "category": "Israel/Geopolitics",
-          "headline": "US-Iran nuclear talks pause amid Huckabee diplomatic friction",
-          "summary": "Ambassador Huckabee's comments about Israeli Middle East control spark Arab backlash, prompting Trump admin damage control."
-        },
-        {
-          "category": "AI",
-          "headline": "February 2026 AI Model War heats up",
-          "summary": "Claude Opus 4.6 released with agent teams, PowerPoint integration, 1M token context. GPT-5, Gemini 3.1 Pro, Grok 4.20 all competing."
-        }
-      ]
-    },
-    "emails": {
-      "title": "📧 Email Highlights",
-      "status": "Summary not available",
-      "note": "Check josh@joshlevylabs.com and joshua.seth.levy@gmail.com manually"
+    "thesis": "Fear at 44, bull regime intact. Markets showing neutral sentiment with elevated volatility. Watch NVDA for bearish breakdown."
+  },
+  "family": {
+    "title": "💝 Family Focus",
+    "relationship_temperature": "critical",
+    "trend": "urgent",
+    "priority_actions": [
+      "Focus on repair - acknowledge recent conflicts without defending",
+      "Increase acts of service dramatically this week", 
+      "Create space for Jillian to express frustrations without fixing"
+    ],
+    "love_languages": {
+      "primary": "Quality Time",
+      "secondary": "Acts of Service"
     }
+  },
+  "world_news": {
+    "title": "🌍 World News",
+    "headline": "🚨 BREAKING: Israel launches preemptive attack against Iran",
+    "summary": "Israel and U.S. launched coordinated strikes on Iran Saturday morning. Explosions reported in Tehran. Iran's Supreme Leader transferred to secure location. This follows 12-day air war in June and represents major escalation in Middle East tensions. All Israeli airspace closed, schools/workplaces shut except essential services.",
+    "significance": "Major geopolitical development affecting global stability and markets"
+  },
+  "ai_news": {
+    "title": "🤖 AI News",
+    "headline": "OpenAI raises $110B at $840B valuation",
+    "summary": "Massive funding round signals continued AI investment frenzy. European sovereign AI solutions gaining traction. Smaller, efficient models reducing infrastructure costs and expanding deployment flexibility.",
+    "implication": "AI infrastructure continues massive scaling"
+  },
+  "calendar": {
+    "title": "📅 Today's Schedule", 
+    "status": "OAuth tokens expired - unable to fetch calendar data",
+    "note": "Manual calendar check recommended"
+  },
+  "email": {
+    "title": "📧 Email Highlights",
+    "status": "OAuth tokens expired - unable to fetch email data", 
+    "note": "Manual email check recommended"
   }
 }

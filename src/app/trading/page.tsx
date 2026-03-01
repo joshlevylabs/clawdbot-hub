@@ -606,26 +606,28 @@ export default function TradingPage() {
               </button>
             )}
           </div>
-          <div className="flex gap-1 overflow-x-auto pb-1 items-center" style={{ WebkitOverflowScrolling: "touch" }}>
-            {primaryTabs.map((tab) => {
-              const isActive = activeTab === tab.key;
-              return (
-                <button
-                  key={tab.key}
-                  onClick={() => { setActiveTab(tab.key); setDevMenuOpen(false); }}
-                  className="px-3 py-2 rounded-xl text-sm font-medium transition-all whitespace-nowrap shrink-0"
-                  style={{
-                    backgroundColor: isActive ? "rgba(212, 160, 32, 0.15)" : "transparent",
-                    color: isActive ? "#D4A020" : "#8B8B80",
-                    border: isActive ? "1px solid rgba(212, 160, 32, 0.3)" : "1px solid transparent",
-                  }}
-                >
-                  {tab.label}
-                </button>
-              );
-            })}
+          <div className="flex gap-1 items-center">
+            <div className="flex gap-1 overflow-x-auto pb-1 items-center" style={{ WebkitOverflowScrolling: "touch" }}>
+              {primaryTabs.map((tab) => {
+                const isActive = activeTab === tab.key;
+                return (
+                  <button
+                    key={tab.key}
+                    onClick={() => { setActiveTab(tab.key); setDevMenuOpen(false); }}
+                    className="px-3 py-2 rounded-xl text-sm font-medium transition-all whitespace-nowrap shrink-0"
+                    style={{
+                      backgroundColor: isActive ? "rgba(212, 160, 32, 0.15)" : "transparent",
+                      color: isActive ? "#D4A020" : "#8B8B80",
+                      border: isActive ? "1px solid rgba(212, 160, 32, 0.3)" : "1px solid transparent",
+                    }}
+                  >
+                    {tab.label}
+                  </button>
+                );
+              })}
+            </div>
             
-            {/* Dev dropdown */}
+            {/* Dev dropdown — outside overflow container so it doesn't get clipped */}
             <div className="relative shrink-0 ml-1">
               <button
                 onClick={() => setDevMenuOpen(!devMenuOpen)}
@@ -639,7 +641,7 @@ export default function TradingPage() {
                 {isDevTab ? devTabs.find(t => t.key === activeTab)?.label : "⚙️ Dev"} ▾
               </button>
               {devMenuOpen && (
-                <div className="absolute top-full left-0 mt-1 bg-slate-800 border border-slate-700 rounded-lg shadow-xl z-50 min-w-[160px] py-1">
+                <div className="absolute top-full right-0 mt-1 bg-slate-800 border border-slate-700 rounded-lg shadow-xl z-50 min-w-[160px] py-1">
                   {devTabs.map((tab) => (
                     <button
                       key={tab.key}

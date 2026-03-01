@@ -376,5 +376,12 @@
     "regime": "bull",
     "buy_signals": 0,
     "diverged_pairs": 1
+  },
+  {
+    "timestamp": "2026-03-01T03:33:35.327392",
+    "fg_score": 42.8857142857143,
+    "regime": "sideways",
+    "buy_signals": 0,
+    "diverged_pairs": 0
   }
 ]

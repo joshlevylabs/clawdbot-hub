@@ -1,6 +1,6 @@
 {
   "date": "2026-02-28",
-  "generatedAt": "2026-02-28T12:31:04.995285-08:00",
+  "generatedAt": "2026-02-28T17:01:06.701001-08:00",
   "priorities": [
     {
       "text": "Submit current Lever build to App Store as planned",
@@ -10,9 +10,15 @@
     },
     {
       "text": "Finalize Lever App Store submission",
-      "source": "adhoc-mosaic-pipeline-audit",
+      "source": "adhoc-marin-daily-component-sourcing-optical-stack-electrical-design-firmware-progress",
       "urgency": "high",
       "taskKey": "CVS-017"
+    },
+    {
+      "text": "Upgrade Mac Mini RAM and diagnose build resource exhaustion",
+      "source": "adhoc-marin-daily-component-sourcing-optical-stack-electrical-design-firmware-progress",
+      "urgency": "high",
+      "taskKey": "J-004"
     }
   ],
   "agentHandled": [
@@ -111,6 +117,18 @@
       "assignee": "Chris Vermeullen",
       "status": "pending",
       "taskKey": "CVS-016"
+    },
+    {
+      "text": "Design production-grade Mosaic CI/CD architecture with monitoring",
+      "assignee": "James Truchard",
+      "status": "pending",
+      "taskKey": "A-019"
+    },
+    {
+      "text": "Define Mosaic build notification and error UX flow",
+      "assignee": "Steve Jobs",
+      "status": "pending",
+      "taskKey": "A-021"
     }
   ]
 }

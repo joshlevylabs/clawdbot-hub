@@ -2,6 +2,19 @@
   "standups": [
     {
       "date": "2026-02-28",
+      "time": "17:01",
+      "type": "adhoc-marin-daily-component-sourcing-optical-stack-electrical-design-firmware-progress",
+      "typeName": "Marin Daily: Component sourcing, optical stack, electrical design, firmware progress",
+      "typeEmoji": "\ud83d\udd2e",
+      "topic": "Marin Daily: Component sourcing, optical stack, electrical design, firmware progress \u2014 Saturday Feb 28",
+      "file": "2026-02-28-adhoc-marin-daily-component-sourcing-optical-stack-electrical-design-firmware-progress.json",
+      "tokenCost": 0.0444,
+      "verticals": [],
+      "initiatives": [],
+      "instanceKey": "STD-19"
+    },
+    {
+      "date": "2026-02-28",
       "time": "12:31",
       "type": "adhoc-mosaic-pipeline-audit",
       "typeName": "Mosaic Build Pipeline Audit",

@@ -1276,108 +1276,100 @@ export default function ActionsDashboard({
           </p>
         </div>
 
-        {/* Filter Bar */}
-        <div className="px-4 py-2.5 border-b border-slate-700/50 flex flex-wrap items-center gap-2">
-          <Filter className="w-3.5 h-3.5 text-slate-500" />
-          
-          {/* Signal Filters */}
-          {(["ACTIONABLE", "ALL", "BUY", "POSITIONS", "UNIVERSE"] as SignalFilter[]).map(f => (
+        {/* Unified Filter Bar — compact single row with pills + dropdowns */}
+        <div className="px-4 py-2 border-b border-slate-700/50 flex flex-wrap items-center gap-1.5">
+          {/* Primary signal pills */}
+          {(["ACTIONABLE", "ALL", "BUY"] as SignalFilter[]).map(f => (
             <button key={f} onClick={() => setSignalFilter(f)}
-              className={`px-2.5 py-1 text-xs rounded-lg font-medium transition-colors ${
+              className={`px-2 py-1 text-[11px] rounded-lg font-medium transition-colors ${
                 signalFilter === f
                   ? "bg-primary-500/30 text-primary-300 border border-primary-500/50"
                   : "bg-slate-800 text-slate-500 border border-slate-700 hover:text-slate-300"
               }`}>
-              {f === "ACTIONABLE" ? `⚡ Today's Plays (${signalCounts.ACTIONABLE})` :
-               f === "POSITIONS" ? `📦 Positions (${signalCounts.POSITIONS})` :
+              {f === "ACTIONABLE" ? `⚡ Plays (${signalCounts.ACTIONABLE})` :
                f === "ALL" ? `All (${signalCounts.ALL})` :
-               f === "CORE" ? `Core (${signalCounts.CORE})` :
-               f === "UNIVERSE" ? `Universe (${signalCounts.UNIVERSE})` :
-               `${f} (${signalCounts[f]})`}
+               `BUY (${signalCounts.BUY})`}
             </button>
           ))}
-          
-          <div className="w-px h-4 bg-slate-700" />
-          
-          {/* Category Filters */}
-          {(["BROAD_MARKET", "SECTORS", "INTERNATIONAL", "BONDS", "COMMODITIES"] as SignalFilter[]).map(f => (
-            <button key={f} onClick={() => setSignalFilter(f)}
-              className={`px-2.5 py-1 text-xs rounded-lg font-medium transition-colors ${
-                signalFilter === f
-                  ? "bg-primary-500/30 text-primary-300 border border-primary-500/50"
-                  : "bg-slate-800 text-slate-500 border border-slate-700 hover:text-slate-300"
-              }`}>
-              {f === "BROAD_MARKET" ? `📊 Broad (${signalCounts.BROAD_MARKET})` :
-               f === "SECTORS" ? `🏭 Sectors (${signalCounts.SECTORS})` :
-               f === "INTERNATIONAL" ? `🌍 Intl (${signalCounts.INTERNATIONAL})` :
-               f === "BONDS" ? `🏛️ Bonds (${signalCounts.BONDS})` :
-               `🥇 Commodities (${signalCounts.COMMODITIES})`}
-            </button>
-          ))}
-          
-          <div className="ml-auto flex items-center gap-2">
-            <Layers className="w-3.5 h-3.5 text-slate-500" />
-            <select value={groupBy} onChange={e => setGroupBy(e.target.value as GroupBy)}
-              className="bg-slate-800 text-slate-400 text-xs border border-slate-700 rounded-lg px-2 py-1">
-              <option value="none">No grouping</option>
-              <option value="category">Group by Category</option>
-              <option value="assetClass">Group by Class</option>
-              <option value="regime">Group by Regime</option>
-            </select>
-          </div>
-        </div>
-        
-        {/* Cascading Filters Row */}
-        <div className="flex flex-wrap items-center gap-2 mt-2 px-1">
-          <span className="text-[10px] text-slate-500 uppercase tracking-wider font-semibold mr-1">Filters:</span>
-          
-          {/* Regime Filter */}
-          {(["all", "bull", "sideways", "bear"] as const).map(r => (
-            <button key={r} onClick={() => setRegimeFilter(r)}
-              className={`px-2 py-0.5 text-[11px] rounded-md font-medium transition-colors ${
-                regimeFilter === r
-                  ? r === "bull" ? "bg-emerald-500/30 text-emerald-300 border border-emerald-500/50"
-                    : r === "bear" ? "bg-red-500/30 text-red-300 border border-red-500/50"
-                    : r === "sideways" ? "bg-amber-500/30 text-amber-300 border border-amber-500/50"
-                    : "bg-slate-700 text-slate-300 border border-slate-600"
-                  : "bg-slate-800/50 text-slate-500 border border-slate-700/50 hover:text-slate-300"
-              }`}>
-              {r === "all" ? "All Regimes" : r === "bull" ? "🟢 Bull" : r === "sideways" ? "🟡 Sideways" : "🔴 Bear"}
-            </button>
-          ))}
-          
-          <div className="w-px h-3.5 bg-slate-700/50" />
-          
-          {/* Alpha Decile Filter */}
-          {(["all", "top10", "top20", "top30"] as const).map(d => (
-            <button key={d} onClick={() => setAlphaDecileFilter(d)}
-              className={`px-2 py-0.5 text-[11px] rounded-md font-medium transition-colors ${
-                alphaDecileFilter === d
-                  ? "bg-yellow-500/30 text-yellow-300 border border-yellow-500/50"
-                  : "bg-slate-800/50 text-slate-500 border border-slate-700/50 hover:text-slate-300"
-              }`}>
-              {d === "all" ? "All Alpha" : d === "top10" ? "⭐ Top 10%" : d === "top20" ? "Top 20%" : "Top 30%"}
-            </button>
-          ))}
-          
-          <div className="w-px h-3.5 bg-slate-700/50" />
-          
-          {/* Min Confidence Filter */}
-          <select value={minConfidence} onChange={e => setMinConfidence(Number(e.target.value))}
-            className="bg-slate-800/50 text-slate-400 text-[11px] border border-slate-700/50 rounded-md px-1.5 py-0.5">
-            <option value={0}>Min Conf: Any</option>
-            <option value={50}>Min Conf: 50%+</option>
-            <option value={60}>Min Conf: 60%+</option>
-            <option value={70}>Min Conf: 70%+</option>
-            <option value={80}>Min Conf: 80%+</option>
+
+          <div className="w-px h-4 bg-slate-700/40" />
+
+          {/* View dropdown — replaces 7 category pill buttons */}
+          <select 
+            value={["POSITIONS","UNIVERSE","BROAD_MARKET","SECTORS","INTERNATIONAL","BONDS","COMMODITIES"].includes(signalFilter) ? signalFilter : "_"}
+            onChange={e => { if (e.target.value !== "_") setSignalFilter(e.target.value as SignalFilter); }}
+            className={`text-[11px] rounded-lg px-1.5 py-1 border transition-colors ${
+              ["POSITIONS","UNIVERSE","BROAD_MARKET","SECTORS","INTERNATIONAL","BONDS","COMMODITIES"].includes(signalFilter)
+                ? "bg-primary-500/20 text-primary-300 border-primary-500/50"
+                : "bg-slate-800 text-slate-500 border-slate-700"
+            }`}>
+            <option value="_" disabled>View…</option>
+            <option value="POSITIONS">📦 Positions ({signalCounts.POSITIONS})</option>
+            <option value="UNIVERSE">Universe ({signalCounts.UNIVERSE})</option>
+            <option value="BROAD_MARKET">📊 Broad ({signalCounts.BROAD_MARKET})</option>
+            <option value="SECTORS">🏭 Sectors ({signalCounts.SECTORS})</option>
+            <option value="INTERNATIONAL">🌍 Intl ({signalCounts.INTERNATIONAL})</option>
+            <option value="BONDS">🏛️ Bonds ({signalCounts.BONDS})</option>
+            <option value="COMMODITIES">🥇 Commodities ({signalCounts.COMMODITIES})</option>
           </select>
-          
-          {/* Clear All Filters */}
+
+          {/* Regime dropdown */}
+          <select value={regimeFilter} onChange={e => setRegimeFilter(e.target.value as typeof regimeFilter)}
+            className={`text-[11px] rounded-lg px-1.5 py-1 border transition-colors ${
+              regimeFilter !== "all" 
+                ? regimeFilter === "bull" ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/50"
+                  : regimeFilter === "bear" ? "bg-red-500/20 text-red-300 border-red-500/50"
+                  : "bg-amber-500/20 text-amber-300 border-amber-500/50"
+                : "bg-slate-800 text-slate-500 border-slate-700"
+            }`}>
+            <option value="all">Regime: All</option>
+            <option value="bull">🟢 Bull</option>
+            <option value="sideways">🟡 Sideways</option>
+            <option value="bear">🔴 Bear</option>
+          </select>
+
+          {/* Alpha Rank dropdown */}
+          <select value={alphaDecileFilter} onChange={e => setAlphaDecileFilter(e.target.value as typeof alphaDecileFilter)}
+            className={`text-[11px] rounded-lg px-1.5 py-1 border transition-colors ${
+              alphaDecileFilter !== "all" 
+                ? "bg-yellow-500/20 text-yellow-300 border-yellow-500/50"
+                : "bg-slate-800 text-slate-500 border-slate-700"
+            }`}>
+            <option value="all">Alpha: All</option>
+            <option value="top10">⭐ Top 10%</option>
+            <option value="top20">Top 20%</option>
+            <option value="top30">Top 30%</option>
+          </select>
+
+          {/* Min Confidence dropdown */}
+          <select value={minConfidence} onChange={e => setMinConfidence(Number(e.target.value))}
+            className={`text-[11px] rounded-lg px-1.5 py-1 border transition-colors ${
+              minConfidence > 0
+                ? "bg-primary-500/20 text-primary-300 border-primary-500/50"
+                : "bg-slate-800 text-slate-500 border-slate-700"
+            }`}>
+            <option value={0}>Conf: Any</option>
+            <option value={50}>Conf: 50%+</option>
+            <option value={60}>Conf: 60%+</option>
+            <option value={70}>Conf: 70%+</option>
+            <option value={80}>Conf: 80%+</option>
+          </select>
+
+          {/* Group by dropdown — pushed right on desktop, inline on mobile */}
+          <select value={groupBy} onChange={e => setGroupBy(e.target.value as GroupBy)}
+            className="bg-slate-800 text-slate-500 text-[11px] border border-slate-700 rounded-lg px-1.5 py-1 md:ml-auto">
+            <option value="none">No grouping</option>
+            <option value="category">By Category</option>
+            <option value="assetClass">By Class</option>
+            <option value="regime">By Regime</option>
+          </select>
+
+          {/* Clear — only shows when filters active */}
           {(regimeFilter !== "all" || alphaDecileFilter !== "all" || minConfidence > 0) && (
             <button 
               onClick={() => { setRegimeFilter("all"); setAlphaDecileFilter("all"); setMinConfidence(0); }}
-              className="px-2 py-0.5 text-[11px] rounded-md font-medium text-red-400 bg-red-500/10 border border-red-500/30 hover:bg-red-500/20 transition-colors">
-              ✕ Clear
+              className="px-1.5 py-1 text-[11px] rounded-lg font-medium text-red-400 bg-red-500/10 border border-red-500/30 hover:bg-red-500/20 transition-colors">
+              ✕
             </button>
           )}
         </div>

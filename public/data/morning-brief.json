@@ -1,114 +1,108 @@
 {
-  "date": "2026-02-28",
-  "day": "Saturday",
-  "generated_at": "2026-02-28T06:00:45Z",
-  "prayer": {
-    "title": "\ud83d\udd50\ufe0f Morning Prayer",
-    "date": "Saturday, February 28, 2026",
-    "hebrew_date": "30 Cheshvan",
-    "parsha": "Miketz",
-    "parsha_theme": "sudden elevation, preparation meeting opportunity",
-    "modeh_ani": "\u05de\u05d5\u05d3\u05d4 \u05d0\u05e0\u05d9 \u05dc\u05e4\u05e0\u05d9\u05da \u2014 I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
-    "blessing": "Blessed are You who clothes the naked \u2014 provide for all my needs this day.",
-    "psalm": "**Psalm 32:8**: \"I will instruct you and teach you in the way you should go.\"",
-    "proverb": "**Proverbs 11:1**: \"Dishonest scales are an abomination to the Lord, but accurate weights are His delight.\"",
-    "intention": "Protect my family while I work. Guard their hearts and minds.",
-    "closing": "May your work today be a pleasing offering. May your rest tonight be deep and restorative."
-  },
-  "weather": {
-    "title": "\ud83c\udf24\ufe0f Weather",
-    "location": "Temecula, CA",
-    "current": {
-      "temp": "50\u00b0F",
-      "condition": "Clear",
-      "feels_like": "50\u00b0F"
+  "date": "2026-03-01",
+  "generated_at": "2026-03-01T14:00:00.000Z",
+  "sections": {
+    "prayer": {
+      "title": "🕙️ Morning Prayer",
+      "date": "Sunday, March 01, 2026",
+      "hebrew_date": "1 Kislev",
+      "parsha": "Miketz",
+      "parsha_theme": "sudden elevation, preparation meeting opportunity",
+      "modeh_ani": "מודה אני לפניך — I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
+      "blessing": "Blessed are You who guides the steps of man — direct my path today.",
+      "psalm": "**Psalm 16:8**: \"I have set the Lord always before me; He is at my right hand, I will not be shaken.\"",
+      "proverb": "**Proverbs 21:5**: \"The plans of the diligent lead surely to abundance.\"",
+      "intention": "Open doors that no one can shut, and close doors that would lead me astray.",
+      "closing": "The Lord goes before you today. He will be with you; He will never leave you nor forsake you. Do not be afraid; do not be discouraged."
     },
-    "today": {
-      "high": "90\u00b0F",
-      "low": "56\u00b0F",
-      "condition": "Mostly sunny",
-      "wind": "Light winds"
+    "weather": {
+      "title": "🌤️ Weather",
+      "location": "Temecula, CA",
+      "today": {
+        "condition": "Sunny",
+        "high": 86,
+        "low": 49,
+        "wind": "Light and variable becoming south 10-15 mph, gusts up to 20 mph"
+      },
+      "tomorrow": {
+        "condition": "Mostly sunny", 
+        "high": 71,
+        "low": 43,
+        "wind": "Southwest 10-15 mph, gusts up to 25 mph"
+      },
+      "summary": "Beautiful sunny Sunday with high 86°F. Cooler Monday at 71°F with stronger winds."
     },
-    "forecast": [
-      {
-        "day": "Sunday",
-        "high": "86\u00b0F",
-        "low": "51\u00b0F",
-        "condition": "Scattered clouds"
-      },
-      {
-        "day": "Monday",
-        "high": "72\u00b0F",
-        "low": "45\u00b0F",
-        "condition": "Partly cloudy"
-      }
-    ]
-  },
-  "mre": {
-    "title": "\ud83d\udcca MRE Trading",
-    "fear_greed": 44,
-    "fear_greed_rating": "fear",
-    "regime": "bull",
-    "todays_plays": [
-      {
-        "symbol": "NVDA",
-        "action": "SELL",
-        "price": 177.19,
-        "confidence": "HIGH",
-        "rationale": "BEARISH trend, MACD bearish crossover, high volume"
-      }
-    ],
-    "market_overview": {
-      "SPY": {
-        "price": 685.99,
-        "change": "-0.48%"
-      },
-      "QQQ": {
-        "price": 607.29,
-        "change": "-0.32%"
-      },
-      "IWM": {
-        "price": 261.41,
-        "change": "-1.72%"
-      },
-      "VIX": 19.86
+    "mre": {
+      "title": "📊 MRE Trading",
+      "fear_greed": 42.9,
+      "fear_greed_rating": "fear",
+      "regime": "sideways",
+      "todays_plays": [],
+      "pending_triggers": [],
+      "thesis": "Markets fearful at 43, sideways regime. No buy signals — staying cautious.",
+      "summary": "Fear elevated, sideways chop continues. Cash heavy until conditions improve."
     },
-    "thesis": "Fear at 44, bull regime intact. Markets showing neutral sentiment with elevated volatility. Watch NVDA for bearish breakdown."
-  },
-  "family": {
-    "title": "\ud83d\udc9d Family Focus",
-    "relationship_temperature": "critical",
-    "trend": "urgent",
-    "priority_actions": [
-      "Focus on repair - acknowledge recent conflicts without defending",
-      "Increase acts of service dramatically this week",
-      "Create space for Jillian to express frustrations without fixing"
-    ],
-    "love_languages": {
-      "primary": "Quality Time",
-      "secondary": "Acts of Service"
+    "calendar": {
+      "title": "📅 Calendar",
+      "today": [],
+      "week": [],
+      "month": [],
+      "summary": "Calendar data not available - check manually."
+    },
+    "email": {
+      "title": "📧 Email Highlights", 
+      "summary": "Email check not available - review manually.",
+      "urgent": []
+    },
+    "family": {
+      "title": "👨‍👩‍👧‍👦 Family Focus",
+      "temperature": "critical",
+      "trend": "urgent",
+      "priority_actions": [
+        "Focus on repair - acknowledge recent conflicts without defending",
+        "Increase acts of service dramatically this week", 
+        "Create space for Jillian to express frustrations without fixing"
+      ],
+      "love_languages": "Quality Time + Acts of Service",
+      "conversation_starters": [
+        "What book are you reading right now?",
+        "How can I support you better with the boys?",
+        "What's something you're looking forward to?"
+      ],
+      "upcoming": [
+        "Wedding Anniversary (March 26) - 3 weeks away"
+      ]
+    },
+    "news": {
+      "title": "🌍 News Highlights",
+      "ai_tech": [
+        {
+          "headline": "Apple's AI-powered Siri set to debut in 2026",
+          "summary": "Complete reimagining with context-aware, on-screen awareness capabilities"
+        },
+        {
+          "headline": "AI moving from hype to pragmatism in 2026", 
+          "summary": "Focus on smaller models, embedded intelligence, and clean workflow integration"
+        },
+        {
+          "headline": "Alphabet issues $20B in bonds for AI infrastructure",
+          "summary": "Including 100-year offering to finance AI growth sustainably"
+        }
+      ],
+      "israel_conservative": [
+        {
+          "headline": "Netanyahu to speak at CPAC Hungary 2026",
+          "summary": "Israeli PM featured speaker at conservative conference this March"
+        },
+        {
+          "headline": "US proposes severing Swiss bank over Iran links",
+          "summary": "Treasury action targeting financial connections to sanctioned entities"
+        },
+        {
+          "headline": "Global backlash over Israel's West Bank plans",
+          "summary": "US, EU, Arab nations condemn plans ministers say will 'kill Palestinian state idea'"
+        }
+      ]
     }
-  },
-  "world_news": {
-    "title": "\ud83c\udf0d World News",
-    "headline": "\ud83d\udea8 BREAKING: Israel launches preemptive attack against Iran",
-    "summary": "Israel and U.S. launched coordinated strikes on Iran Saturday morning. Explosions reported in Tehran. Iran's Supreme Leader transferred to secure location. This follows 12-day air war in June and represents major escalation in Middle East tensions. All Israeli airspace closed, schools/workplaces shut except essential services.",
-    "significance": "Major geopolitical development affecting global stability and markets"
-  },
-  "ai_news": {
-    "title": "\ud83e\udd16 AI News",
-    "headline": "OpenAI raises $110B at $840B valuation",
-    "summary": "Massive funding round signals continued AI investment frenzy. European sovereign AI solutions gaining traction. Smaller, efficient models reducing infrastructure costs and expanding deployment flexibility.",
-    "implication": "AI infrastructure continues massive scaling"
-  },
-  "calendar": {
-    "title": "\ud83d\udcc5 Today's Schedule",
-    "status": "OAuth tokens expired - unable to fetch calendar data",
-    "note": "Manual calendar check recommended"
-  },
-  "email": {
-    "title": "\ud83d\udce7 Email Highlights",
-    "status": "OAuth tokens expired - unable to fetch email data",
-    "note": "Manual email check recommended"
   }
 }

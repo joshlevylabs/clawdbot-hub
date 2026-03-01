@@ -43,6 +43,8 @@ import MarketCycles from "./MarketCycles";
 import SignalFlowTab from "./SignalFlowTab";
 import RealTimePnLDashboard from "@/components/trading/RealTimePnLDashboard";
 import RealTimePositionsTable from "@/components/trading/RealTimePositionsTable";
+import BrierCalibrationCard from "@/components/BrierCalibrationCard";
+import CorrelationPanel from "@/components/CorrelationPanel";
 
 // ===== Types =====
 
@@ -529,22 +531,33 @@ export default function TradingPage() {
 
   const isPortfolioTab = activeTab === "overview" || activeTab === "plays" || activeTab === "positions" || activeTab === "trades" || activeTab === "signals";
 
-  const tabConfig: { key: ActiveTab; label: string }[] = [
-    { key: "overview", label: "Overview" },
+  // Primary tabs — the main trading views
+  const primaryTabs: { key: ActiveTab; label: string }[] = [
+    { key: "overview", label: "Dashboard" },
     { key: "plays", label: "Today's Plays" },
     { key: "positions", label: "Positions" },
     { key: "trades", label: "Trades" },
-    { key: "signals", label: "Signals" },
     { key: "signal-flow", label: "Signal Flow" },
-    { key: "mre", label: "MRE" },
-    { key: "universe", label: "Universe" },
+    { key: "markets", label: "Markets" },
+  ];
+
+  // Dev/advanced tabs — power tools in a dropdown
+  const devTabs: { key: ActiveTab; label: string }[] = [
+    { key: "signals", label: "Raw Signals" },
+    { key: "mre", label: "MRE Core" },
+    { key: "universe", label: "Universe Table" },
     { key: "optimizer", label: "Optimizer" },
     { key: "backtests", label: "Backtests" },
     { key: "versions", label: "Versions" },
-    { key: "markets", label: "Markets" },
     { key: "cycles", label: "Cycles" },
     { key: "validation", label: "Validation" },
   ];
+
+  const [devMenuOpen, setDevMenuOpen] = useState(false);
+  const isDevTab = devTabs.some(t => t.key === activeTab);
+
+  // Combined for backward compat
+  const tabConfig = [...primaryTabs, ...devTabs];
 
   return (
     <div className="min-h-screen bg-slate-900">
@@ -593,13 +606,13 @@ export default function TradingPage() {
               </button>
             )}
           </div>
-          <div className="flex gap-1 overflow-x-auto pb-1" style={{ WebkitOverflowScrolling: "touch" }}>
-            {tabConfig.map((tab) => {
+          <div className="flex gap-1 overflow-x-auto pb-1 items-center" style={{ WebkitOverflowScrolling: "touch" }}>
+            {primaryTabs.map((tab) => {
               const isActive = activeTab === tab.key;
               return (
                 <button
                   key={tab.key}
-                  onClick={() => setActiveTab(tab.key)}
+                  onClick={() => { setActiveTab(tab.key); setDevMenuOpen(false); }}
                   className="px-3 py-2 rounded-xl text-sm font-medium transition-all whitespace-nowrap shrink-0"
                   style={{
                     backgroundColor: isActive ? "rgba(212, 160, 32, 0.15)" : "transparent",
@@ -611,6 +624,35 @@ export default function TradingPage() {
                 </button>
               );
             })}
+            
+            {/* Dev dropdown */}
+            <div className="relative shrink-0 ml-1">
+              <button
+                onClick={() => setDevMenuOpen(!devMenuOpen)}
+                className="px-3 py-2 rounded-xl text-sm font-medium transition-all whitespace-nowrap"
+                style={{
+                  backgroundColor: isDevTab ? "rgba(212, 160, 32, 0.15)" : "transparent",
+                  color: isDevTab ? "#D4A020" : "#626259",
+                  border: isDevTab ? "1px solid rgba(212, 160, 32, 0.3)" : "1px solid transparent",
+                }}
+              >
+                {isDevTab ? devTabs.find(t => t.key === activeTab)?.label : "⚙️ Dev"} ▾
+              </button>
+              {devMenuOpen && (
+                <div className="absolute top-full left-0 mt-1 bg-slate-800 border border-slate-700 rounded-lg shadow-xl z-50 min-w-[160px] py-1">
+                  {devTabs.map((tab) => (
+                    <button
+                      key={tab.key}
+                      onClick={() => { setActiveTab(tab.key); setDevMenuOpen(false); }}
+                      className="w-full text-left px-3 py-1.5 text-sm transition-colors hover:bg-slate-700/50"
+                      style={{ color: activeTab === tab.key ? "#D4A020" : "#8B8B80" }}
+                    >
+                      {tab.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
           <div className="h-px mt-1" style={{ background: "linear-gradient(to right, transparent, #2A2A38, transparent)" }} />
         </div>
@@ -723,8 +765,11 @@ export default function TradingPage() {
                 startingCapital={startingCapital}
               />
 
-              {/* Signal Accuracy */}
-              {signalStats && <SignalAccuracyPanel stats={signalStats} />}
+              {/* Signal Accuracy + Calibration */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {signalStats && <SignalAccuracyPanel stats={signalStats} />}
+                <BrierCalibrationCard />
+              </div>
             </>
           )}
 
@@ -749,6 +794,8 @@ export default function TradingPage() {
 
           {/* ===== TODAY'S PLAYS TAB ===== */}
           {activeTab === "plays" && !loading && !error && (
+            <div className="space-y-4">
+            <CorrelationPanel />
             <ActionsDashboard
               positions={legacyPositions}
               cash={cash}
@@ -773,6 +820,7 @@ export default function TradingPage() {
                 }
               }}
             />
+            </div>
           )}
 
           {/* ===== POSITIONS TAB ===== */}

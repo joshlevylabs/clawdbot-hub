@@ -1,0 +1,62 @@
+{
+  "generated_at": "2026-03-01T06:16:40.424604",
+  "total_signals": 153,
+  "with_5d_outcomes": 153,
+  "with_10d_outcomes": 33,
+  "brier_score_5d": 0.2163,
+  "brier_score_10d": 0.2151,
+  "brier_by_signal": {
+    "BUY": 0.2472,
+    "HOLD": 0.213
+  },
+  "calibration_curve": [
+    {
+      "label": "40-50%",
+      "predicted": 0.4,
+      "actual": 0.8824,
+      "count": 17
+    },
+    {
+      "label": "50-60%",
+      "predicted": 0.5121,
+      "actual": 0.8947,
+      "count": 19
+    },
+    {
+      "label": "60-70%",
+      "predicted": 0.618,
+      "actual": 0.5667,
+      "count": 30
+    },
+    {
+      "label": "70-80%",
+      "predicted": 0.7188,
+      "actual": 0.75,
+      "count": 32
+    },
+    {
+      "label": "80-100%",
+      "predicted": 0.8685,
+      "actual": 0.8,
+      "count": 55
+    }
+  ],
+  "rolling": {
+    "30d": {
+      "brier": 0.2163,
+      "accuracy": 0.7647,
+      "count": 153
+    },
+    "60d": {
+      "brier": 0.2163,
+      "accuracy": 0.7647,
+      "count": 153
+    },
+    "90d": {
+      "brier": 0.2163,
+      "accuracy": 0.7647,
+      "count": 153
+    }
+  },
+  "overall_accuracy_5d": 0.7647
+}

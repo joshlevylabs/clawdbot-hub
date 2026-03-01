@@ -1,5 +1,5 @@
 {
-  "nextAgentId": 22,
+  "nextAgentId": 26,
   "nextJoshuaId": 5,
   "tasks": [
     {
@@ -755,6 +755,66 @@
       "description": "Task: Define Mosaic build notification and error UX flow. Assigned to Steve Jobs at medium priority.",
       "acceptanceCriteria": [
         "Task 'Define Mosaic build notification and error UX flow' is completed and verified",
+        "Results documented or committed"
+      ]
+    },
+    {
+      "key": "A-022",
+      "text": "Design and implement agent conversation interface for Mosaic",
+      "assignee": "Steve Jobs",
+      "priority": "high",
+      "tag": "AGENT",
+      "source": "Mosaic UX Overhaul \u2014 Agent-Driven Dashboard",
+      "status": "pending",
+      "approvedAt": "2026-02-28T20:52:00-08:00",
+      "description": "Task: Design and implement agent conversation interface for Mosaic. Assigned to Steve Jobs at high priority.",
+      "acceptanceCriteria": [
+        "Task 'Design and implement agent conversation interface for Mosaic' is completed and verified",
+        "Results documented or committed"
+      ]
+    },
+    {
+      "key": "A-023",
+      "text": "Extend CVS-003 to include agent orchestration architecture",
+      "assignee": "Elon Musk",
+      "priority": "high",
+      "tag": "AGENT",
+      "source": "Mosaic UX Overhaul \u2014 Agent-Driven Dashboard",
+      "status": "pending",
+      "approvedAt": "2026-02-28T20:52:00-08:00",
+      "description": "Task: Extend CVS-003 to include agent orchestration architecture. Assigned to Elon Musk at high priority.",
+      "acceptanceCriteria": [
+        "Task 'Extend CVS-003 to include agent orchestration architecture' is completed and verified",
+        "Results documented or committed"
+      ]
+    },
+    {
+      "key": "A-024",
+      "text": "Design consent-based engagement depth model with privacy safeguards",
+      "assignee": "Jordan Peterson",
+      "priority": "high",
+      "tag": "AGENT",
+      "source": "Mosaic UX Overhaul \u2014 Agent-Driven Dashboard",
+      "status": "pending",
+      "approvedAt": "2026-02-28T20:52:00-08:00",
+      "description": "Task: Design consent-based engagement depth model with privacy safeguards. Assigned to Jordan Peterson at high priority.",
+      "acceptanceCriteria": [
+        "Task 'Design consent-based engagement depth model with privacy saf' is completed and verified",
+        "Results documented or committed"
+      ]
+    },
+    {
+      "key": "A-025",
+      "text": "Expand widget ecosystems within Faith, Family, Finance categories",
+      "assignee": "Elon Musk",
+      "priority": "medium",
+      "tag": "AGENT",
+      "source": "Mosaic UX Overhaul \u2014 Agent-Driven Dashboard",
+      "status": "pending",
+      "approvedAt": "2026-02-28T20:52:00-08:00",
+      "description": "Task: Expand widget ecosystems within Faith, Family, Finance categories. Assigned to Elon Musk at medium priority.",
+      "acceptanceCriteria": [
+        "Task 'Expand widget ecosystems within Faith, Family, Finance categ' is completed and verified",
         "Results documented or committed"
       ]
     }

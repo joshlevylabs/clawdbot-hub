@@ -2,6 +2,21 @@
   "standups": [
     {
       "date": "2026-02-28",
+      "time": "20:49",
+      "type": "adhoc-mosaic-ux-overhaul",
+      "typeName": "Mosaic UX Overhaul \u2014 Agent-Driven Dashboard",
+      "typeEmoji": "\ud83c\udfa8",
+      "topic": "Mosaic UX Overhaul \u2014 Agent-Driven Dashboard \u2014 Saturday Feb 28",
+      "file": "2026-02-28-adhoc-mosaic-ux-overhaul.json",
+      "tokenCost": 0.0449,
+      "verticals": [
+        "mosaic"
+      ],
+      "initiatives": [],
+      "instanceKey": "STD-20"
+    },
+    {
+      "date": "2026-02-28",
       "time": "17:01",
       "type": "adhoc-marin-daily-component-sourcing-optical-stack-electrical-design-firmware-progress",
       "typeName": "Marin Daily: Component sourcing, optical stack, electrical design, firmware progress",

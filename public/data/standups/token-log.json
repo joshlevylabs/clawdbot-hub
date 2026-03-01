@@ -159,12 +159,22 @@
       "estimatedCost": 0.0444,
       "model": "claude-sonnet-4-20250514",
       "duration": "60.6s"
+    },
+    {
+      "date": "2026-02-28",
+      "type": "adhoc-mosaic-ux-overhaul",
+      "inputTokens": 3753,
+      "outputTokens": 2246,
+      "totalTokens": 5999,
+      "estimatedCost": 0.0449,
+      "model": "claude-sonnet-4-20250514",
+      "duration": "58.1s"
     }
   ],
   "totals": {
-    "today": 0.0862,
-    "week": 0.6445,
-    "month": 0.6445,
-    "standupCount": 16
+    "today": 0.1311,
+    "week": 0.6894,
+    "month": 0.6894,
+    "standupCount": 17
   }
 }

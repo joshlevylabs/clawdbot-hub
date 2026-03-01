@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-01T12:00:04.247759",
+  "generated_at": "2026-03-01T12:30:04.671556",
   "active_sessions": 1,
   "billing_model": "subscription",
   "subscriptions": {
@@ -15,14 +15,14 @@
     "today": 6.67,
     "week": 46.67,
     "month": 200.0,
-    "api_equivalent_today": 15.0252,
-    "api_equivalent_week": 184.8057,
-    "api_equivalent_month": 190.2774,
-    "savings_today": 8.36,
+    "api_equivalent_today": 13.4578,
+    "api_equivalent_week": 183.2383,
+    "api_equivalent_month": 188.7101,
+    "savings_today": 6.79,
     "savings_month": 0,
     "subscription_daily": 6.67,
     "subscription_monthly": 200.0,
-    "tokens_today": 20710975
+    "tokens_today": 19377047
   },
   "by_model": {
     "Claude Opus 4": {
@@ -35,22 +35,22 @@
       "calls_today": 137
     },
     "Claude Sonnet 4": {
-      "cost_today": 1.9937,
-      "cost_week": 1.9937,
-      "cost_month": 1.9937,
-      "tokens_today": 1661994,
-      "tokens_week": 1661994,
-      "tokens_month": 1661994,
-      "calls_today": 71
+      "cost_today": 0.4264,
+      "cost_week": 0.4264,
+      "cost_month": 0.4264,
+      "tokens_today": 328066,
+      "tokens_week": 328066,
+      "tokens_month": 328066,
+      "calls_today": 13
     }
   },
   "by_agent": {
     "unknown": {
-      "cost_today": 14.0247,
-      "cost_week": 183.8051,
-      "cost_month": 189.2769,
-      "tokens_today": 20314344,
-      "primary_model": "Claude Sonnet 4",
+      "cost_today": 12.4385,
+      "cost_week": 182.219,
+      "cost_month": 187.6908,
+      "tokens_today": 18937645,
+      "primary_model": "Claude Opus 4",
       "department": "other"
     },
     "theo": {
@@ -62,10 +62,10 @@
       "department": "executive"
     },
     "cron": {
-      "cost_today": 0.0101,
-      "cost_week": 0.0101,
-      "cost_month": 0.0101,
-      "tokens_today": 21311,
+      "cost_today": 0.0289,
+      "cost_week": 0.0289,
+      "cost_month": 0.0289,
+      "tokens_today": 64082,
       "primary_model": "Claude Sonnet 4",
       "department": "other"
     }
@@ -77,6 +77,6 @@
     "2026-02-26": 45.179251,
     "2026-02-27": 36.405413999999986,
     "2026-02-28": 59.05813599999996,
-    "2026-03-01": 15.0251888
+    "2026-03-01": 13.45783655
   }
 }

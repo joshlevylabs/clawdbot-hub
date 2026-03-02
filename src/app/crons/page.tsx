@@ -388,6 +388,11 @@ function GanttTimeline({ jobs }: { jobs: CronJob[] }) {
   const TIMELINE_W = HOUR_W * 24; // total timeline width
   const NAME_W = 280; // name column width
 
+  // Row colors — alternating warm/cool tints for clear separation
+  const rowBg = (idx: number) => idx % 2 === 0 ? 'rgba(30, 41, 59, 0.7)' : 'rgba(15, 23, 42, 0.5)';
+  // Column colors — subtle alternating tint on even hours
+  const colBg = (hour: number) => hour % 2 === 0 ? 'rgba(51, 65, 85, 0.15)' : 'transparent';
+
   const toggleGroup = (groupName: string) => {
     setExpandedGroups(prev => {
       const next = new Set(prev);
@@ -459,8 +464,8 @@ function GanttTimeline({ jobs }: { jobs: CronJob[] }) {
                     return (
                       <div
                         key={job.id}
-                        className={`flex items-center gap-2 px-4 border-b border-r border-slate-700/60 ${idx % 2 === 0 ? 'bg-slate-900/60' : 'bg-slate-900/30'}`}
-                        style={{ height: ROW_H }}
+                        className="flex items-center gap-2 px-4 border-b border-r border-slate-700/60"
+                        style={{ height: ROW_H, backgroundColor: rowBg(idx) }}
                       >
                         <div className="flex items-center gap-1.5 flex-shrink-0">
                           {!job.enabled && <span className="w-2 h-2 rounded-full bg-slate-500" />}
@@ -483,12 +488,12 @@ function GanttTimeline({ jobs }: { jobs: CronJob[] }) {
           <div className="flex-1 overflow-x-auto">
             <div style={{ width: TIMELINE_W, position: 'relative' }}>
               {/* Hour header */}
-              <div className="flex border-b border-slate-700 bg-slate-800/80" style={{ height: GROUP_H }}>
+              <div className="flex border-b border-slate-700" style={{ height: GROUP_H }}>
                 {hours.map(hour => (
                   <div
                     key={hour}
-                    className="flex items-center justify-center border-r border-slate-700/60 text-xs font-mono text-slate-400"
-                    style={{ width: HOUR_W }}
+                    className="flex items-center justify-center border-r border-slate-700/60 text-xs font-mono font-semibold"
+                    style={{ width: HOUR_W, backgroundColor: hour % 2 === 0 ? 'rgba(51, 65, 85, 0.5)' : 'rgba(30, 41, 59, 0.5)', color: hour % 2 === 0 ? '#cbd5e1' : '#94a3b8' }}
                   >
                     {hour.toString().padStart(2, '0')}:00
                   </div>
@@ -502,9 +507,9 @@ function GanttTimeline({ jobs }: { jobs: CronJob[] }) {
                   <div key={group.name}>
                     {/* Group summary row */}
                     <div className="relative border-b border-slate-700 bg-slate-800/50" style={{ height: GROUP_H }}>
-                      {/* Vertical hour gridlines */}
+                      {/* Alternating column backgrounds */}
                       {hours.map(hour => (
-                        <div key={hour} className="absolute top-0 bottom-0 border-r border-slate-700/30" style={{ left: hour * HOUR_W, width: HOUR_W }} />
+                        <div key={hour} className="absolute top-0 bottom-0 border-r border-slate-700/30" style={{ left: hour * HOUR_W, width: HOUR_W, backgroundColor: colBg(hour) }} />
                       ))}
                       {/* Aggregated dots for collapsed groups */}
                       {!isOpen && group.jobs.filter(j => j.enabled).map(job => {
@@ -531,12 +536,12 @@ function GanttTimeline({ jobs }: { jobs: CronJob[] }) {
                       return (
                         <div
                           key={job.id}
-                          className={`relative border-b border-slate-700/40 ${idx % 2 === 0 ? 'bg-slate-900/60' : 'bg-slate-900/30'}`}
-                          style={{ height: ROW_H }}
+                          className="relative border-b border-slate-700/40"
+                          style={{ height: ROW_H, backgroundColor: rowBg(idx) }}
                         >
-                          {/* Vertical hour gridlines */}
+                          {/* Alternating column backgrounds + gridlines */}
                           {hours.map(hour => (
-                            <div key={hour} className="absolute top-0 bottom-0 border-r border-slate-700/20" style={{ left: hour * HOUR_W, width: HOUR_W }} />
+                            <div key={hour} className="absolute top-0 bottom-0 border-r border-slate-700/20" style={{ left: hour * HOUR_W, width: HOUR_W, backgroundColor: colBg(hour) }} />
                           ))}
 
                           {/* High frequency band */}

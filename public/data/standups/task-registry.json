@@ -1,5 +1,5 @@
 {
-  "nextAgentId": 26,
+  "nextAgentId": 32,
   "nextJoshuaId": 5,
   "tasks": [
     {
@@ -817,6 +817,84 @@
         "Task 'Expand widget ecosystems within Faith, Family, Finance categ' is completed and verified",
         "Results documented or committed"
       ]
+    },
+    {
+      "key": "A-026",
+      "text": "Technical Architecture: Faith Journey Agent Platform",
+      "description": "Spiritual knowledge structure, agent training pipeline, portable export format spec. API-based vs fine-tuned models. 3-5 faith traditions.",
+      "tag": "AGENT",
+      "priority": "high",
+      "assignee": "Elon Musk",
+      "status": "approved",
+      "sourceStandup": "2026-03-02-adhoc-faith-journey-app-ai-religious-guide-builder",
+      "sourceDate": "2026-03-02",
+      "createdAt": "2026-03-02T12:36:23.376029",
+      "approvedAt": "2026-03-02T12:38:17.694098",
+      "approvedBy": "joshua"
+    },
+    {
+      "key": "A-027",
+      "text": "Ethical Frameworks for Religious AI Safety",
+      "description": "Content moderation for theological accuracy, spiritual safety guardrails, denomination-aware boundaries, anti-hallucination safeguards.",
+      "tag": "AGENT",
+      "priority": "high",
+      "assignee": "Jordan Peterson",
+      "status": "approved",
+      "sourceStandup": "2026-03-02-adhoc-faith-journey-app-ai-religious-guide-builder",
+      "sourceDate": "2026-03-02",
+      "createdAt": "2026-03-02T12:36:23.376029",
+      "approvedAt": "2026-03-02T12:39:10.430276",
+      "approvedBy": "joshua"
+    },
+    {
+      "key": "A-028",
+      "text": "User Research: Faith Traditions & Spiritual Guidance Patterns",
+      "description": "Interview framework across 5 major faiths. Trust, avoidance, spiritual decision-making patterns. PMF validation.",
+      "tag": "AGENT",
+      "priority": "high",
+      "assignee": "Steve Jobs",
+      "status": "approved",
+      "sourceStandup": "2026-03-02-adhoc-faith-journey-app-ai-religious-guide-builder",
+      "sourceDate": "2026-03-02",
+      "createdAt": "2026-03-02T12:36:23.376029",
+      "approvedAt": "2026-03-02T12:40:54.899675",
+      "approvedBy": "joshua"
+    },
+    {
+      "key": "A-029",
+      "text": "Content Strategy & Religious Text Licensing",
+      "description": "Licensing strategy for religious texts, content partnerships, original devotional content plan.",
+      "tag": "AGENT",
+      "priority": "high",
+      "assignee": "Alex Hormozi",
+      "status": "pending",
+      "sourceStandup": "2026-03-02-adhoc-faith-journey-app-ai-religious-guide-builder",
+      "sourceDate": "2026-03-02",
+      "createdAt": "2026-03-02T12:36:23.376029"
+    },
+    {
+      "key": "A-030",
+      "text": "Faith Journey Revenue Model & Financial Projections",
+      "description": "Pricing tiers, revenue targets, CAC, content licensing costs, subscription economics.",
+      "tag": "AGENT",
+      "priority": "medium",
+      "assignee": "Dave Ramsey",
+      "status": "pending",
+      "sourceStandup": "2026-03-02-adhoc-faith-journey-app-ai-religious-guide-builder",
+      "sourceDate": "2026-03-02",
+      "createdAt": "2026-03-02T12:36:23.376029"
+    },
+    {
+      "key": "A-031",
+      "text": "Portable Spiritual AI Export Format Spec",
+      "description": "Interoperable export standard for spiritual AI. Serialization of theological training, ethical boundaries. Claude/GPT-4/Gemini compatibility.",
+      "tag": "AGENT",
+      "priority": "high",
+      "assignee": "Chris Vermeullen",
+      "status": "pending",
+      "sourceStandup": "2026-03-02-adhoc-faith-journey-app-ai-religious-guide-builder",
+      "sourceDate": "2026-03-02",
+      "createdAt": "2026-03-02T12:36:23.376029"
     }
   ]
 }

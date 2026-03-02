@@ -2,16 +2,29 @@
   "standups": [
     {
       "date": "2026-03-02",
-      "time": "08:36",
+      "time": "12:53",
       "type": "adhoc-faith-journey-app-ai-religious-guide-builder",
       "typeName": "Faith Journey App \u2014 AI Religious Guide Builder",
-      "typeEmoji": "\ud83d\ude4f",
+      "typeEmoji": "\u271d\ufe0f",
       "topic": "Faith Journey App \u2014 AI Religious Guide Builder \u2014 Monday Mar 2",
       "file": "2026-03-02-adhoc-faith-journey-app-ai-religious-guide-builder.json",
-      "tokenCost": 0.0472,
+      "tokenCost": 0.0453,
       "verticals": [],
       "initiatives": [],
-      "instanceKey": "STD-21"
+      "instanceKey": "STD-23"
+    },
+    {
+      "date": "2026-03-02",
+      "time": "12:00",
+      "type": "midday-checkpoint",
+      "typeName": "Midday Checkpoint",
+      "typeEmoji": "\u2600\ufe0f",
+      "topic": "Midday Checkpoint \u2014 Monday Mar 2",
+      "file": "2026-03-02-midday-checkpoint.json",
+      "tokenCost": 0.0367,
+      "verticals": [],
+      "initiatives": [],
+      "instanceKey": "STD-22"
     },
     {
       "date": "2026-02-28",

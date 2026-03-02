@@ -179,12 +179,32 @@
       "estimatedCost": 0.0472,
       "model": "claude-sonnet-4-20250514",
       "duration": "63.0s"
+    },
+    {
+      "date": "2026-03-02",
+      "type": "midday-checkpoint",
+      "inputTokens": 3809,
+      "outputTokens": 1683,
+      "totalTokens": 5492,
+      "estimatedCost": 0.0367,
+      "model": "claude-sonnet-4-20250514",
+      "duration": "44.4s"
+    },
+    {
+      "date": "2026-03-02",
+      "type": "adhoc-faith-journey-app-ai-religious-guide-builder",
+      "inputTokens": 3717,
+      "outputTokens": 2274,
+      "totalTokens": 5991,
+      "estimatedCost": 0.0453,
+      "model": "claude-sonnet-4-20250514",
+      "duration": "60.1s"
     }
   ],
   "totals": {
-    "today": 0.0472,
-    "week": 0.7366,
-    "month": 0.7366,
-    "standupCount": 18
+    "today": 0.1292,
+    "week": 0.8186,
+    "month": 0.8186,
+    "standupCount": 20
   }
 }

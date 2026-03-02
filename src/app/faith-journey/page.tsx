@@ -123,6 +123,7 @@ interface DenominationAgent {
   focus: string;
   description: string;
   color: string;
+  coreTexts: string[];
 }
 
 type ActiveTab = "overview" | "guides" | "lessons" | "calendar" | "audio" | "texts" | "conversations";
@@ -138,7 +139,8 @@ const denominationAgents: DenominationAgent[] = [
     emoji: "🕯️",
     focus: "Talmudic wisdom, strict halachic observance",
     description: "Deep expertise in traditional Jewish law and Talmudic interpretation. Guides students through rigorous study of Torah and halakha.",
-    color: "#3B82F6"
+    color: "#3B82F6",
+    coreTexts: ["Torah (Pentateuch)", "Tanakh", "Talmud Bavli", "Talmud Yerushalmi", "Mishnah", "Shulchan Aruch"]
   },
   {
     name: "Rabbi Sarah",
@@ -147,7 +149,8 @@ const denominationAgents: DenominationAgent[] = [
     emoji: "⭐",
     focus: "Traditional with modern adaptation",
     description: "Balances reverence for tradition with thoughtful adaptation to contemporary life. Expert in Jewish history and progressive halakha.",
-    color: "#3B82F6"
+    color: "#3B82F6",
+    coreTexts: ["Torah (Pentateuch)", "Tanakh", "Talmud Bavli", "Mishnah", "Midrash", "Modern Responsa"]
   },
   {
     name: "Rabbi David",
@@ -156,7 +159,8 @@ const denominationAgents: DenominationAgent[] = [
     emoji: "🌿",
     focus: "Progressive interpretation, social justice focus",
     description: "Emphasizes ethical teachings and social justice. Guides students through liberal Jewish thought and community engagement.",
-    color: "#3B82F6"
+    color: "#3B82F6",
+    coreTexts: ["Torah (Pentateuch)", "Tanakh", "Mishnah", "Modern Jewish Ethics", "Social Justice Teachings"]
   },
   {
     name: "Rabbi Yeshua",
@@ -165,7 +169,8 @@ const denominationAgents: DenominationAgent[] = [
     emoji: "✡️",
     focus: "Jewish roots with Yeshua as Messiah",
     description: "Bridges Jewish tradition with Messianic faith. Expert in Hebrew scriptures and Jewish cultural observance within Christian context.",
-    color: "#3B82F6"
+    color: "#3B82F6",
+    coreTexts: ["Torah (Pentateuch)", "Tanakh", "New Testament", "Messianic Writings", "Hebrew Roots Texts"]
   },
   
   // Christianity
@@ -176,7 +181,8 @@ const denominationAgents: DenominationAgent[] = [
     emoji: "⛪",
     focus: "Sacramental theology, Church tradition",
     description: "Deep knowledge of Catholic doctrine, sacraments, and 2,000 years of Church tradition. Spiritual director and theologian.",
-    color: "#8B5CF6"
+    color: "#8B5CF6",
+    coreTexts: ["Old Testament", "New Testament", "Catechism", "Church Fathers", "Papal Encyclicals"]
   },
   {
     name: "Pastor James",
@@ -185,7 +191,8 @@ const denominationAgents: DenominationAgent[] = [
     emoji: "✝️",
     focus: "Sola Scriptura, personal relationship",
     description: "Passionate about Biblical authority and personal relationship with Christ. Expert in Protestant theology and evangelism.",
-    color: "#8B5CF6"
+    color: "#8B5CF6",
+    coreTexts: ["Old Testament", "New Testament", "Reformation Texts", "Evangelical Writings"]
   },
   {
     name: "Father Alexei",
@@ -194,7 +201,8 @@ const denominationAgents: DenominationAgent[] = [
     emoji: "☦️",
     focus: "Eastern mysticism, theosis, icons",
     description: "Guides through Eastern Orthodox spirituality, mystical traditions, and the journey toward theosis (deification).",
-    color: "#8B5CF6"
+    color: "#8B5CF6",
+    coreTexts: ["Old Testament", "New Testament", "Philokalia", "Church Fathers", "Liturgical Texts"]
   },
   {
     name: "Reverend Grace",
@@ -203,7 +211,8 @@ const denominationAgents: DenominationAgent[] = [
     emoji: "🕊️",
     focus: "Social gospel, inclusive theology",
     description: "Emphasizes Christ's call to social justice and inclusive community. Expert in progressive Christian thought and activism.",
-    color: "#8B5CF6"
+    color: "#8B5CF6",
+    coreTexts: ["Old Testament", "New Testament", "Book of Common Prayer", "Liberation Theology"]
   },
   
   // Islam
@@ -214,7 +223,8 @@ const denominationAgents: DenominationAgent[] = [
     emoji: "☪️",
     focus: "Mainstream Islamic scholarship",
     description: "Traditional Sunni scholar with expertise in Quran, Hadith, and Islamic jurisprudence. Guides through orthodox Islamic practice.",
-    color: "#10B981"
+    color: "#10B981",
+    coreTexts: ["Quran", "Sahih Bukhari", "Sahih Muslim", "Tafsir", "Fiqh Texts"]
   },
   {
     name: "Ayatollah Hassan",
@@ -223,7 +233,8 @@ const denominationAgents: DenominationAgent[] = [
     emoji: "🌙",
     focus: "Imamate theology, Husayn's sacrifice",
     description: "Shia Islamic authority with deep knowledge of the Twelve Imams and the spiritual significance of Karbala and martyrdom.",
-    color: "#10B981"
+    color: "#10B981",
+    coreTexts: ["Quran", "Hadith", "Nahj al-Balagha", "Shi'a Fiqh", "Imamate Texts"]
   },
   {
     name: "Sufi Master Rumi",
@@ -232,7 +243,8 @@ const denominationAgents: DenominationAgent[] = [
     emoji: "🌀",
     focus: "Mystical Islam, divine love, poetry",
     description: "Mystical teacher emphasizing inner purification, divine love, and the spiritual journey toward union with Allah through poetry and dhikr.",
-    color: "#10B981"
+    color: "#10B981",
+    coreTexts: ["Quran", "Hadith", "Masnavi", "Sufi Poetry", "Mystical Texts"]
   },
   
   // Hinduism
@@ -243,7 +255,8 @@ const denominationAgents: DenominationAgent[] = [
     emoji: "🕉️",
     focus: "Non-dualistic philosophy",
     description: "Teacher of Advaita Vedanta emphasizing the unity of all existence and the realization of the Self (Atman) as Brahman.",
-    color: "#F59E0B"
+    color: "#F59E0B",
+    coreTexts: ["Vedas (Rigveda)", "Upanishads", "Bhagavad Gita", "Brahma Sutras", "Advaita Texts"]
   },
   {
     name: "Pandit Krishna",
@@ -252,7 +265,8 @@ const denominationAgents: DenominationAgent[] = [
     emoji: "🪷",
     focus: "Devotion to Vishnu/Krishna",
     description: "Devotional teacher emphasizing bhakti (devotion) to Lord Krishna and the path of loving surrender to the Divine.",
-    color: "#F59E0B"
+    color: "#F59E0B",
+    coreTexts: ["Bhagavad Gita", "Ramayana", "Mahabharata", "Puranas", "Vaishnava Texts"]
   },
   {
     name: "Guru Shiva",
@@ -261,7 +275,8 @@ const denominationAgents: DenominationAgent[] = [
     emoji: "🔱",
     focus: "Shiva worship, yoga, tantra",
     description: "Tantric master teaching the path of Shiva through yoga, meditation, and the integration of spiritual and material existence.",
-    color: "#F59E0B"
+    color: "#F59E0B",
+    coreTexts: ["Vedas", "Upanishads", "Shiva Puranas", "Tantric Texts", "Yoga Sutras"]
   },
   
   // Buddhism
@@ -272,7 +287,8 @@ const denominationAgents: DenominationAgent[] = [
     emoji: "🧘",
     focus: "Original teachings, mindfulness, Pali canon",
     description: "Theravada monk emphasizing the original Buddha's teachings, vipassana meditation, and the Four Noble Truths.",
-    color: "#EAB308"
+    color: "#EAB308",
+    coreTexts: ["Pali Canon (Tipitaka)", "Vinaya Pitaka", "Sutta Pitaka", "Abhidhamma Pitaka"]
   },
   {
     name: "Roshi Kenji",
@@ -281,7 +297,8 @@ const denominationAgents: DenominationAgent[] = [
     emoji: "⚫",
     focus: "Zazen, koans, sudden enlightenment",
     description: "Zen master teaching the direct path to awakening through seated meditation, koan study, and sudden realization.",
-    color: "#EAB308"
+    color: "#EAB308",
+    coreTexts: ["Heart Sutra", "Diamond Sutra", "Lotus Sutra", "Zen Koans", "Platform Sutra"]
   },
   {
     name: "Lama Tenzin",
@@ -290,7 +307,8 @@ const denominationAgents: DenominationAgent[] = [
     emoji: "🏔️",
     focus: "Tantric practices, compassion",
     description: "Tibetan Buddhist teacher emphasizing bodhisattva compassion, tantric visualization, and the Dalai Lama's lineage.",
-    color: "#EAB308"
+    color: "#EAB308",
+    coreTexts: ["Lotus Sutra", "Tibetan Book of the Dead", "Tantric Texts", "Lamrim", "Madhyamaka Texts"]
   },
   
   // Other Traditions
@@ -301,7 +319,8 @@ const denominationAgents: DenominationAgent[] = [
     emoji: "🌟",
     focus: "Unity of religion, progressive revelation",
     description: "Bahá'í teacher emphasizing the unity of God, religions, and humanity. Expert in progressive revelation and social justice.",
-    color: "#EC4899"
+    color: "#EC4899",
+    coreTexts: ["Kitáb-i-Aqdas", "Kitáb-i-Íqán", "Gleanings", "Some Answered Questions", "Writings of Bahá'u'lláh"]
   },
   {
     name: "Humanist Guide",
@@ -310,7 +329,8 @@ const denominationAgents: DenominationAgent[] = [
     emoji: "🌍",
     focus: "Ethics without theology",
     description: "Philosophical guide emphasizing human reason, ethics, and dignity without supernatural beliefs. Focus on this-world solutions.",
-    color: "#6B7280"
+    color: "#6B7280",
+    coreTexts: ["Humanist Manifestos", "Philosophical Works", "Ethical Texts", "Scientific Literature", "Secular Philosophy"]
   },
   {
     name: "Mystic",
@@ -319,7 +339,8 @@ const denominationAgents: DenominationAgent[] = [
     emoji: "✨",
     focus: "Perennial philosophy, direct experience",
     description: "Interfaith mystic drawing wisdom from all traditions. Emphasizes direct spiritual experience and universal spiritual principles.",
-    color: "#A855F7"
+    color: "#A855F7",
+    coreTexts: ["Perennial Philosophy", "Mystical Texts", "Cross-Traditional Wisdom", "Universal Spiritual Principles"]
   }
 ];
 
@@ -509,6 +530,7 @@ export default function FaithJourneyPage() {
   const [expandedLessons, setExpandedLessons] = useState<Set<string>>(new Set());
   const [holidayFilters, setHolidayFilters] = useState<Set<string>>(new Set(["Judaism", "Christianity", "Islam", "Hinduism", "Buddhism", "Bahá'í"]));
   const [selectedMonth, setSelectedMonth] = useState<number>(new Date().getMonth());
+  const [expandedTextsTraditions, setExpandedTextsTraditions] = useState<Set<string>>(new Set(["Judaism"]));
 
   const loadData = async () => {
     try {
@@ -560,6 +582,16 @@ export default function FaithJourneyPage() {
       newFilters.add(tradition);
     }
     setHolidayFilters(newFilters);
+  };
+
+  const toggleTextsTradition = (tradition: string) => {
+    const newExpanded = new Set(expandedTextsTraditions);
+    if (newExpanded.has(tradition)) {
+      newExpanded.delete(tradition);
+    } else {
+      newExpanded.add(tradition);
+    }
+    setExpandedTextsTraditions(newExpanded);
   };
 
   const groupAgentsByTradition = () => {
@@ -775,22 +807,52 @@ export default function FaithJourneyPage() {
                             <span className="text-2xl">{agent.emoji}</span>
                             <div className="flex-1">
                               <h3 className="font-semibold text-slate-200">{agent.name}</h3>
-                              <p className="text-xs px-2 py-1 rounded-lg border inline-block"
-                                 style={{ 
-                                   backgroundColor: `${agent.color}20`, 
-                                   borderColor: `${agent.color}50`,
-                                   color: agent.color 
-                                 }}>
-                                {agent.denomination}
-                              </p>
+                              <div className="flex items-center gap-2 mt-1">
+                                <p className="text-xs px-2 py-1 rounded-lg border inline-block"
+                                   style={{ 
+                                     backgroundColor: `${agent.color}20`, 
+                                     borderColor: `${agent.color}50`,
+                                     color: agent.color 
+                                   }}>
+                                  {agent.denomination}
+                                </p>
+                                <span className="text-xs px-1.5 py-0.5 rounded border inline-flex items-center gap-1"
+                                      style={{ 
+                                        backgroundColor: "rgba(234, 179, 8, 0.1)", 
+                                        borderColor: "rgba(234, 179, 8, 0.3)",
+                                        color: "#EAB308" 
+                                      }}
+                                      title="Texts identified but not yet embedded">
+                                  🟡 Pending
+                                </span>
+                              </div>
                             </div>
                           </div>
                           <p className="text-sm font-medium mb-2" style={{ color: "#D4A020" }}>
                             {agent.focus}
                           </p>
-                          <p className="text-xs text-slate-400 leading-relaxed">
+                          <p className="text-xs text-slate-400 leading-relaxed mb-3">
                             {agent.description}
                           </p>
+                          
+                          {/* Core Texts */}
+                          <div>
+                            <h4 className="text-xs font-medium text-slate-300 mb-2">Core Texts:</h4>
+                            <div className="flex flex-wrap gap-1">
+                              {agent.coreTexts.map((text, index) => (
+                                <span key={index} 
+                                      className="text-xs px-2 py-1 rounded border hover:border-opacity-70 cursor-help"
+                                      style={{ 
+                                        backgroundColor: "rgba(100, 116, 139, 0.1)", 
+                                        borderColor: "rgba(100, 116, 139, 0.3)",
+                                        color: "#94A3B8" 
+                                      }}
+                                      title={`${text} - Core religious text for ${agent.tradition} ${agent.denomination}`}>
+                                  {text}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -1044,6 +1106,9 @@ export default function FaithJourneyPage() {
                     <Mic className="w-5 h-5" style={{ color: "#D4A020" }} />
                     Voice Configuration
                   </h2>
+                  <div className="text-xs text-slate-500 mb-3">
+                    Browser preview — production uses ElevenLabs voices
+                  </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {[
                       { name: "Joshua", description: "Primary voice for daily prayers", tradition: "General", preview: "▶ Sample" },
@@ -1067,8 +1132,17 @@ export default function FaithJourneyPage() {
                                 }}>
                             {voice.tradition}
                           </span>
-                          <button className="text-xs text-slate-500 hover:text-slate-400">
-                            {voice.preview}
+                          <button 
+                            onClick={() => {
+                              if (window.speechSynthesis) {
+                                const utterance = new SpeechSynthesisUtterance("Peace be with you on your spiritual journey");
+                                window.speechSynthesis.speak(utterance);
+                              }
+                            }}
+                            className="text-xs text-slate-500 hover:text-slate-400 flex items-center gap-1"
+                          >
+                            <Play className="w-3 h-3" />
+                            Sample
                           </button>
                         </div>
                       </div>
@@ -1076,27 +1150,161 @@ export default function FaithJourneyPage() {
                   </div>
                 </div>
 
-                {/* Daily Prayer Audio */}
+                {/* ElevenLabs Account Management */}
+                <div className="rounded-xl p-4 border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+                  <h2 className="text-lg font-semibold text-slate-100 mb-4 flex items-center gap-2">
+                    <Settings className="w-5 h-5" style={{ color: "#D4A020" }} />
+                    ElevenLabs Account Management
+                  </h2>
+                  
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {/* Account Status */}
+                    <div>
+                      <h3 className="text-slate-300 font-medium mb-3">Account Status</h3>
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="text-slate-400">API Key:</span>
+                          <span className="text-slate-300 font-mono">sk-...7x3f</span>
+                        </div>
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="text-slate-400">Plan Tier:</span>
+                          <span className="text-emerald-400 font-medium">Creator</span>
+                        </div>
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="text-slate-400">Rate Limit:</span>
+                          <span className="text-slate-300">120 requests/min</span>
+                        </div>
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="text-slate-400">Concurrent Requests:</span>
+                          <span className="text-slate-300">3 max</span>
+                        </div>
+                      </div>
+
+                      {/* Usage Progress */}
+                      <div className="mt-4">
+                        <div className="flex items-center justify-between text-sm mb-2">
+                          <span className="text-slate-400">Monthly Usage</span>
+                          <span className="text-slate-300">45,000 / 100,000 characters</span>
+                        </div>
+                        <div className="w-full bg-slate-700 rounded-full h-2">
+                          <div 
+                            className="h-2 rounded-full" 
+                            style={{ 
+                              backgroundColor: "#D4A020", 
+                              width: "45%" 
+                            }}
+                          ></div>
+                        </div>
+                        <div className="flex items-center justify-between text-xs text-slate-500 mt-1">
+                          <span>Resets Feb 1st</span>
+                          <span>55% used</span>
+                        </div>
+                      </div>
+
+                      {/* Usage Warning */}
+                      <div className="mt-4">
+                        <label className="text-sm text-slate-400">Warning threshold:</label>
+                        <select className="w-full mt-1 px-2 py-1 rounded text-sm" style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38", color: "#D4A020" }}>
+                          <option>80% of monthly limit</option>
+                          <option>90% of monthly limit</option>
+                          <option>95% of monthly limit</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    {/* Available Models */}
+                    <div>
+                      <h3 className="text-slate-300 font-medium mb-3">Available Models</h3>
+                      <div className="space-y-3">
+                        {[
+                          { name: "eleven_v3", description: "Highest quality, most natural voice", recommended: true },
+                          { name: "eleven_turbo_v2", description: "Fast generation, good quality", recommended: false },
+                          { name: "eleven_multilingual_v2", description: "Supports multiple languages", recommended: false }
+                        ].map((model, index) => (
+                          <div key={index} 
+                               className="rounded-lg p-3 border"
+                               style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}>
+                            <div className="flex items-center justify-between mb-1">
+                              <h4 className="font-medium text-slate-200">{model.name}</h4>
+                              {model.recommended && (
+                                <span className="text-xs px-2 py-0.5 rounded border"
+                                      style={{ 
+                                        backgroundColor: "rgba(34, 197, 94, 0.1)", 
+                                        borderColor: "rgba(34, 197, 94, 0.3)",
+                                        color: "#22C55E" 
+                                      }}>
+                                  Recommended
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-xs text-slate-400">{model.description}</p>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Default Model Selection */}
+                      <div className="mt-4">
+                        <label className="text-sm text-slate-400">Default model for voices:</label>
+                        <select className="w-full mt-1 px-2 py-1 rounded text-sm" style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38", color: "#D4A020" }}>
+                          <option>eleven_v3 (Recommended)</option>
+                          <option>eleven_turbo_v2</option>
+                          <option>eleven_multilingual_v2</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Daily Prayer Audio — ALL Religions & Denominations */}
                 <div className="rounded-xl p-4 border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
                   <h2 className="text-lg font-semibold text-slate-100 mb-4 flex items-center gap-2">
                     <Heart className="w-5 h-5" style={{ color: "#D4A020" }} />
-                    Daily Prayer Audio
+                    Daily Prayer Audio — ALL Religions & Denominations
                   </h2>
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     <div>
-                      <h3 className="text-slate-300 font-medium mb-2">Today's Prayer Text</h3>
+                      <h3 className="text-slate-300 font-medium mb-2">Tradition & Denomination</h3>
+                      <div className="space-y-3">
+                        <div>
+                          <label className="text-sm text-slate-500">Tradition:</label>
+                          <select className="w-full px-2 py-1 rounded text-sm" style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38", color: "#D4A020" }}>
+                            <option>Judaism</option>
+                            <option>Christianity</option>
+                            <option>Islam</option>
+                            <option>Hinduism</option>
+                            <option>Buddhism</option>
+                            <option>Bahá'í</option>
+                            <option>Secular Humanism</option>
+                            <option>Interfaith</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className="text-sm text-slate-500">Denomination:</label>
+                          <select className="w-full px-2 py-1 rounded text-sm" style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38", color: "#D4A020" }}>
+                            <option>Orthodox</option>
+                            <option>Conservative/Masorti</option>
+                            <option>Reform</option>
+                            <option>Messianic</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className="text-sm text-slate-500">Voice Assignment:</label>
+                          <select className="w-full px-2 py-1 rounded text-sm" style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38", color: "#D4A020" }}>
+                            <option>Rabbi Voice</option>
+                            <option>Joshua</option>
+                            <option>Narrator Voice</option>
+                          </select>
+                        </div>
+                      </div>
+                      
+                      <h3 className="text-slate-300 font-medium mb-2 mt-4">Today's Prayer Preview</h3>
                       <div className="rounded-lg p-3 border text-sm" style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}>
                         <p className="text-slate-400 italic">
-                          "Grant me the serenity to accept the things I cannot change, the courage to change the things I can, and the wisdom to know the difference..."
+                          "Baruch Atah Adonai, Eloheinu Melech ha'olam, asher kidshanu b'mitzvotav v'tzivanu al netilat yadayim..."
                         </p>
-                      </div>
-                      <div className="flex items-center gap-2 mt-3">
-                        <label className="text-sm text-slate-500">Voice:</label>
-                        <select className="px-2 py-1 rounded text-sm" style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38", color: "#D4A020" }}>
-                          <option>Joshua</option>
-                          <option>Rabbi Voice</option>
-                          <option>Pastor Voice</option>
-                        </select>
+                        <p className="text-slate-500 text-xs mt-2">
+                          Orthodox tradition • Morning blessings • Hebrew with English translation
+                        </p>
                       </div>
                     </div>
                     <div>
@@ -1110,44 +1318,104 @@ export default function FaithJourneyPage() {
                           <span className="text-slate-400">Last generated:</span>
                           <span className="text-slate-500">Yesterday 7:00 AM</span>
                         </div>
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="text-slate-400">Current tradition:</span>
+                          <span className="text-slate-300">Judaism • Orthodox</span>
+                        </div>
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="text-slate-400">Estimated duration:</span>
+                          <span className="text-slate-300">~3 minutes</span>
+                        </div>
                         <button className="w-full py-2 mt-3 rounded-lg text-sm transition-colors"
                                 style={{ backgroundColor: "#D4A020", color: "#0B0B11" }}>
                           Generate Audio
                         </button>
                       </div>
+                      
+                      {/* Quick tradition switcher */}
+                      <div className="mt-4">
+                        <h4 className="text-sm text-slate-400 mb-2">Quick Switch:</h4>
+                        <div className="grid grid-cols-2 gap-1 text-xs">
+                          {["Christian • Catholic", "Muslim • Sunni", "Hindu • Vedanta", "Buddhist • Zen"].map((tradition, i) => (
+                            <button key={i} className="text-left px-2 py-1 rounded text-slate-500 hover:text-slate-400 hover:bg-slate-800">
+                              {tradition}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Nightly Bible Story */}
+                {/* Nightly Sacred Story — ALL Religions & Denominations */}
                 <div className="rounded-xl p-4 border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
                   <h2 className="text-lg font-semibold text-slate-100 mb-4 flex items-center gap-2">
                     <Moon className="w-5 h-5" style={{ color: "#D4A020" }} />
-                    Nightly Bible Story
+                    Nightly Sacred Story — ALL Religions & Denominations
                   </h2>
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     <div>
-                      <h3 className="text-slate-300 font-medium mb-2">Current Story</h3>
+                      <h3 className="text-slate-300 font-medium mb-2">Tradition & Story Type</h3>
+                      <div className="space-y-3">
+                        <div>
+                          <label className="text-sm text-slate-500">Tradition:</label>
+                          <select className="w-full px-2 py-1 rounded text-sm" style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38", color: "#D4A020" }}>
+                            <option>Judaism</option>
+                            <option>Christianity</option>
+                            <option>Islam</option>
+                            <option>Hinduism</option>
+                            <option>Buddhism</option>
+                            <option>Bahá'í</option>
+                            <option>Secular Humanism</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className="text-sm text-slate-500">Denomination:</label>
+                          <select className="w-full px-2 py-1 rounded text-sm" style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38", color: "#D4A020" }}>
+                            <option>Orthodox</option>
+                            <option>Conservative/Masorti</option>
+                            <option>Reform</option>
+                            <option>Messianic</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className="text-sm text-slate-500">Story Source:</label>
+                          <select className="w-full px-2 py-1 rounded text-sm" style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38", color: "#D4A020" }}>
+                            <option>Torah Stories</option>
+                            <option>Talmudic Tales</option>
+                            <option>Midrash</option>
+                            <option>Hasidic Stories</option>
+                          </select>
+                        </div>
+                      </div>
+                      
+                      <h3 className="text-slate-300 font-medium mb-2 mt-4">Current Story</h3>
                       <div className="rounded-lg p-3 border" style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}>
-                        <h4 className="text-slate-200 font-medium">David and Goliath</h4>
+                        <h4 className="text-slate-200 font-medium">Moses and the Burning Bush</h4>
                         <p className="text-slate-400 text-sm mt-1">
-                          The young shepherd David faces the giant Philistine warrior with nothing but faith and a sling...
+                          A shepherd becomes a prophet when the Divine calls to him from a bush that burns but is not consumed...
+                        </p>
+                        <p className="text-slate-500 text-xs mt-2">
+                          Torah • Exodus 3:1-15 • Jewish Orthodox tradition
                         </p>
                       </div>
+                      
                       <div className="grid grid-cols-2 gap-2 mt-3">
                         <div>
                           <label className="text-sm text-slate-500">Voice:</label>
                           <select className="w-full px-2 py-1 rounded text-sm" style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38", color: "#D4A020" }}>
+                            <option>Rabbi Voice</option>
                             <option>Narrator Voice</option>
-                            <option>Pastor Voice</option>
                             <option>Joshua</option>
                           </select>
                         </div>
                         <div>
-                          <label className="text-sm text-slate-500">Background:</label>
+                          <label className="text-sm text-slate-500">Background Music:</label>
                           <select className="w-full px-2 py-1 rounded text-sm" style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38", color: "#D4A020" }}>
-                            <option>Serene Ambient</option>
-                            <option>Nature Sounds</option>
+                            <option>Serene</option>
+                            <option>Ambient</option>
+                            <option>Meditative</option>
+                            <option>Classical</option>
                             <option>None</option>
                           </select>
                         </div>
@@ -1158,11 +1426,15 @@ export default function FaithJourneyPage() {
                       <div className="space-y-2">
                         <div className="flex items-center justify-between text-sm">
                           <span className="text-slate-400">Estimated duration:</span>
-                          <span className="text-slate-300">~28 minutes</span>
+                          <span className="text-slate-300">~30 minutes</span>
                         </div>
                         <div className="flex items-center justify-between text-sm">
                           <span className="text-slate-400">Next scheduled:</span>
                           <span className="text-slate-300">Tonight 9:00 PM</span>
+                        </div>
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="text-slate-400">Current tradition:</span>
+                          <span className="text-slate-300">Judaism • Orthodox</span>
                         </div>
                         <div className="flex items-center justify-between text-sm">
                           <span className="text-slate-400">Auto-generate:</span>
@@ -1172,6 +1444,20 @@ export default function FaithJourneyPage() {
                                 style={{ backgroundColor: "#D4A020", color: "#0B0B11" }}>
                           Generate Now
                         </button>
+                      </div>
+                      
+                      {/* Story type examples by tradition */}
+                      <div className="mt-4">
+                        <h4 className="text-sm text-slate-400 mb-2">Story Types by Tradition:</h4>
+                        <div className="space-y-1 text-xs text-slate-500">
+                          <div>• <span className="text-blue-400">Jewish:</span> Torah, Talmud, Midrash, Hasidic tales</div>
+                          <div>• <span className="text-purple-400">Christian:</span> Bible stories, Saints' lives</div>
+                          <div>• <span className="text-green-400">Islamic:</span> Quran stories, Prophet tales</div>
+                          <div>• <span className="text-yellow-400">Hindu:</span> Vedic, Puranic, Bhagavad Gita</div>
+                          <div>• <span className="text-orange-400">Buddhist:</span> Jataka tales, Dharma stories</div>
+                          <div>• <span className="text-teal-400">Bahá'í:</span> Sacred writings, historical accounts</div>
+                          <div>• <span className="text-gray-400">Humanist:</span> Philosophical narratives</div>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -1235,62 +1521,349 @@ export default function FaithJourneyPage() {
               </div>
             )}
 
-            {/* Texts Tab */}
-            {activeTab === "texts" && data && (
-              <div className="rounded-xl p-4 border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
-                <h2 className="text-lg font-semibold text-slate-100 mb-4 flex items-center gap-2">
-                  <Scroll className="w-5 h-5" style={{ color: "#D4A020" }} />
-                  Religious Texts & Prayers ({data.texts.length})
-                </h2>
-                {data.texts.length === 0 ? (
-                  <EmptyState 
-                    icon={Scroll}
-                    title="No texts yet"
-                    description="Prayers and religious texts will appear here once content is added."
-                  />
-                ) : (
-                  <div className="overflow-x-auto">
-                    <table className="w-full">
-                      <thead>
-                        <tr className="text-xs text-slate-500 uppercase border-b border-slate-700">
-                          <th className="text-left py-2 px-2">Title</th>
-                          <th className="text-left py-2 px-2">Tradition</th>
-                          <th className="text-left py-2 px-2">Type</th>
-                          <th className="text-left py-2 px-2">Created</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {data.texts.slice(0, 20).map((text) => (
-                          <tr key={text.id} className="border-b border-slate-800 hover:bg-slate-800/50">
-                            <td className="py-3 px-2">
-                              <span className="text-slate-300 font-medium">{text.title}</span>
-                            </td>
-                            <td className="py-3 px-2">
-                              <span className="text-xs px-2 py-1 rounded-lg border"
-                                    style={{ 
-                                      backgroundColor: "rgba(212, 160, 32, 0.1)", 
-                                      borderColor: "rgba(212, 160, 32, 0.3)",
-                                      color: "#D4A020" 
-                                    }}>
-                                {text.tradition}
-                              </span>
-                            </td>
-                            <td className="py-3 px-2">
-                              <span className={`text-xs px-2 py-1 rounded-full ${
-                                text.type === 'library' 
-                                  ? 'bg-blue-900/30 text-blue-400' 
-                                  : 'bg-purple-900/30 text-purple-400'
-                              }`}>
-                                {text.type}
-                              </span>
-                            </td>
-                            <td className="py-3 px-2 text-slate-400 text-sm">{formatDate(text.dateCreated)}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+            {/* Texts Tab - Full Religious Texts Library */}
+            {activeTab === "texts" && (
+              <div className="space-y-6">
+                
+                {/* Header */}
+                <div className="rounded-xl p-4 border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-lg font-semibold text-slate-100 flex items-center gap-2">
+                      <Scroll className="w-5 h-5" style={{ color: "#D4A020" }} />
+                      Religious Texts Library (247 texts)
+                    </h2>
+                    <div className="flex items-center gap-2">
+                      <Search className="w-4 h-4 text-slate-500" />
+                      <input 
+                        type="text" 
+                        placeholder="Search texts..." 
+                        className="px-3 py-1 rounded text-sm"
+                        style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38", color: "#D4A020" }}
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="flex flex-wrap gap-2">
+                    {["Judaism", "Christianity", "Islam", "Hinduism", "Buddhism", "Bahá'í", "Other"].map((tradition) => {
+                      const isExpanded = expandedTextsTraditions.has(tradition);
+                      const colors = {
+                        "Judaism": "#3B82F6",
+                        "Christianity": "#8B5CF6", 
+                        "Islam": "#10B981",
+                        "Hinduism": "#F59E0B",
+                        "Buddhism": "#EAB308",
+                        "Bahá'í": "#EC4899",
+                        "Other": "#6B7280"
+                      };
+                      const color = colors[tradition as keyof typeof colors];
+                      return (
+                        <button
+                          key={tradition}
+                          onClick={() => toggleTextsTradition(tradition)}
+                          className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all"
+                          style={{
+                            backgroundColor: isExpanded ? `${color}20` : "#0B0B11",
+                            borderColor: isExpanded ? `${color}50` : "#2A2A38",
+                            color: isExpanded ? color : "#8B8B80",
+                            border: "1px solid"
+                          }}
+                        >
+                          <span style={{ color: color }}>●</span>
+                          {tradition}
+                          {isExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Judaism */}
+                {expandedTextsTraditions.has("Judaism") && (
+                  <div className="rounded-xl p-4 border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+                    <h3 className="text-lg font-semibold text-slate-100 mb-4 flex items-center gap-2">
+                      <span className="text-blue-400">●</span>
+                      Judaism (67 texts)
+                    </h3>
+                    
+                    <div className="space-y-4">
+                      {/* Torah */}
+                      <div>
+                        <h4 className="text-slate-200 font-medium mb-2">Torah (Pentateuch) - 5 books</h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mb-3">
+                          {[
+                            { name: "Genesis (Bereshit)", chapters: 50, lang: "Hebrew", description: "Creation, patriarchs, Joseph" },
+                            { name: "Exodus (Shemot)", chapters: 40, lang: "Hebrew", description: "Egypt, Exodus, Sinai" },
+                            { name: "Leviticus (Vayikra)", chapters: 27, lang: "Hebrew", description: "Priestly laws, holiness" },
+                            { name: "Numbers (Bamidbar)", chapters: 36, lang: "Hebrew", description: "Wilderness journey" },
+                            { name: "Deuteronomy (Devarim)", chapters: 34, lang: "Hebrew", description: "Moses' final speeches" },
+                          ].map((book, i) => (
+                            <div key={i} className="rounded-lg p-3 border" style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}>
+                              <div className="flex items-center justify-between mb-1">
+                                <h5 className="text-slate-200 text-sm font-medium">{book.name}</h5>
+                                <span className="text-xs px-1.5 py-0.5 rounded border" style={{ backgroundColor: "rgba(234, 179, 8, 0.1)", borderColor: "rgba(234, 179, 8, 0.3)", color: "#EAB308" }}>
+                                  🟡 Pending
+                                </span>
+                              </div>
+                              <p className="text-xs text-slate-400">{book.description}</p>
+                              <div className="flex items-center justify-between mt-1 text-xs text-slate-500">
+                                <span>{book.chapters} chapters</span>
+                                <span>{book.lang}</span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Nevi'im (Prophets) */}
+                      <div>
+                        <h4 className="text-slate-200 font-medium mb-2">Nevi'im (Prophets) - 21 books</h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
+                          {[
+                            "Joshua (Yehoshua)", "Judges (Shoftim)", "Samuel I & II", "Kings I & II", 
+                            "Isaiah (Yeshayahu)", "Jeremiah (Yirmiyahu)", "Ezekiel (Yechezkel)", 
+                            "Hosea (Hoshea)", "Joel (Yoel)", "Amos", "Obadiah (Ovadiah)", 
+                            "Jonah (Yonah)", "Micah (Michah)", "Nahum", "Habakkuk", "Zephaniah", 
+                            "Haggai", "Zechariah", "Malachi"
+                          ].map((book, i) => (
+                            <div key={i} className="rounded-lg p-2 border text-center" style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}>
+                              <div className="text-xs text-slate-200">{book}</div>
+                              <span className="text-xs px-1 py-0.5 rounded mt-1 inline-block" style={{ backgroundColor: "rgba(234, 179, 8, 0.1)", color: "#EAB308" }}>🟡</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Ketuvim (Writings) */}
+                      <div>
+                        <h4 className="text-slate-200 font-medium mb-2">Ketuvim (Writings) - 13 books</h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
+                          {[
+                            "Psalms (Tehillim)", "Proverbs (Mishlei)", "Job (Iyov)", 
+                            "Song of Songs", "Ruth", "Lamentations", "Ecclesiastes", 
+                            "Esther", "Daniel", "Ezra", "Nehemiah", "Chronicles I & II"
+                          ].map((book, i) => (
+                            <div key={i} className="rounded-lg p-2 border text-center" style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}>
+                              <div className="text-xs text-slate-200">{book}</div>
+                              <span className="text-xs px-1 py-0.5 rounded mt-1 inline-block" style={{ backgroundColor: "rgba(234, 179, 8, 0.1)", color: "#EAB308" }}>🟡</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Talmud & Rabbinic Literature */}
+                      <div>
+                        <h4 className="text-slate-200 font-medium mb-2">Talmud & Rabbinic Literature</h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                          <div className="rounded-lg p-3 border" style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}>
+                            <div className="flex items-center justify-between mb-2">
+                              <h5 className="text-slate-200 text-sm font-medium">Talmud Bavli (Babylonian)</h5>
+                              <span className="text-xs px-1.5 py-0.5 rounded border" style={{ backgroundColor: "rgba(234, 179, 8, 0.1)", borderColor: "rgba(234, 179, 8, 0.3)", color: "#EAB308" }}>🟡 Pending</span>
+                            </div>
+                            <p className="text-xs text-slate-400 mb-1">37 tractates, ~2,700 pages</p>
+                            <p className="text-xs text-slate-500">Hebrew/Aramaic</p>
+                          </div>
+                          <div className="rounded-lg p-3 border" style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}>
+                            <div className="flex items-center justify-between mb-2">
+                              <h5 className="text-slate-200 text-sm font-medium">Mishnah</h5>
+                              <span className="text-xs px-1.5 py-0.5 rounded border" style={{ backgroundColor: "rgba(234, 179, 8, 0.1)", borderColor: "rgba(234, 179, 8, 0.3)", color: "#EAB308" }}>🟡 Pending</span>
+                            </div>
+                            <p className="text-xs text-slate-400 mb-1">6 orders, 63 tractates</p>
+                            <p className="text-xs text-slate-500">Hebrew</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 )}
+
+                {/* Christianity */}
+                {expandedTextsTraditions.has("Christianity") && (
+                  <div className="rounded-xl p-4 border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+                    <h3 className="text-lg font-semibold text-slate-100 mb-4 flex items-center gap-2">
+                      <span className="text-purple-400">●</span>
+                      Christianity (66+ texts)
+                    </h3>
+                    
+                    <div className="space-y-4">
+                      {/* New Testament */}
+                      <div>
+                        <h4 className="text-slate-200 font-medium mb-2">New Testament - 27 books</h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mb-3">
+                          <div>
+                            <h5 className="text-sm font-medium text-slate-300 mb-2">Gospels (4)</h5>
+                            {["Matthew", "Mark", "Luke", "John"].map((book, i) => (
+                              <div key={i} className="text-xs text-slate-400 flex items-center justify-between mb-1">
+                                <span>{book}</span>
+                                <span style={{ color: "#EAB308" }}>🟡</span>
+                              </div>
+                            ))}
+                          </div>
+                          <div>
+                            <h5 className="text-sm font-medium text-slate-300 mb-2">Pauline Epistles (13)</h5>
+                            {["Romans", "1 Corinthians", "2 Corinthians", "Galatians", "Ephesians", "Philippians"].map((book, i) => (
+                              <div key={i} className="text-xs text-slate-400 flex items-center justify-between mb-1">
+                                <span>{book}</span>
+                                <span style={{ color: "#EAB308" }}>🟡</span>
+                              </div>
+                            ))}
+                            <div className="text-xs text-slate-500">...and 7 more</div>
+                          </div>
+                          <div>
+                            <h5 className="text-sm font-medium text-slate-300 mb-2">Other (10)</h5>
+                            {["Acts", "Hebrews", "James", "1 Peter", "2 Peter", "Revelation"].map((book, i) => (
+                              <div key={i} className="text-xs text-slate-400 flex items-center justify-between mb-1">
+                                <span>{book}</span>
+                                <span style={{ color: "#EAB308" }}>🟡</span>
+                              </div>
+                            ))}
+                            <div className="text-xs text-slate-500">...and 4 more</div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Denominational Texts */}
+                      <div>
+                        <h4 className="text-slate-200 font-medium mb-2">Denominational Texts</h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                          {[
+                            { name: "Catechism of the Catholic Church", denom: "Catholic", description: "Official Catholic doctrine", status: "🟡" },
+                            { name: "Book of Common Prayer", denom: "Anglican", description: "Anglican liturgy and prayers", status: "🟡" },
+                            { name: "Philokalia", denom: "Orthodox", description: "Eastern Orthodox mystical texts", status: "🟡" },
+                            { name: "Westminster Confession", denom: "Reformed", description: "Reformed/Presbyterian doctrine", status: "🟡" },
+                            { name: "Augsburg Confession", denom: "Lutheran", description: "Lutheran confessional document", status: "🟡" },
+                            { name: "Church Fathers", denom: "All", description: "Early Christian writings", status: "🟡" },
+                          ].map((text, i) => (
+                            <div key={i} className="rounded-lg p-3 border" style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}>
+                              <div className="flex items-center justify-between mb-1">
+                                <h5 className="text-slate-200 text-sm font-medium">{text.name}</h5>
+                                <span className="text-xs px-1.5 py-0.5 rounded border" style={{ backgroundColor: "rgba(234, 179, 8, 0.1)", borderColor: "rgba(234, 179, 8, 0.3)", color: "#EAB308" }}>
+                                  {text.status} Pending
+                                </span>
+                              </div>
+                              <div className="text-xs text-purple-400 mb-1">{text.denom}</div>
+                              <p className="text-xs text-slate-400">{text.description}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Islam */}
+                {expandedTextsTraditions.has("Islam") && (
+                  <div className="rounded-xl p-4 border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+                    <h3 className="text-lg font-semibold text-slate-100 mb-4 flex items-center gap-2">
+                      <span className="text-green-400">●</span>
+                      Islam (34+ texts)
+                    </h3>
+                    
+                    <div className="space-y-4">
+                      {/* Quran */}
+                      <div>
+                        <h4 className="text-slate-200 font-medium mb-2">Quran - 114 Surahs</h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mb-3">
+                          {[
+                            { name: "Al-Fatiha (The Opening)", num: 1, verses: 7, type: "Meccan" },
+                            { name: "Al-Baqarah (The Cow)", num: 2, verses: 286, type: "Medinan" },
+                            { name: "Al-Imran (Family of Imran)", num: 3, verses: 200, type: "Medinan" },
+                            { name: "An-Nisa (Women)", num: 4, verses: 176, type: "Medinan" },
+                            { name: "Al-Ma'idah (The Table)", num: 5, verses: 120, type: "Medinan" },
+                            { name: "Al-An'am (Cattle)", num: 6, verses: 165, type: "Meccan" },
+                          ].map((surah, i) => (
+                            <div key={i} className="rounded-lg p-3 border" style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}>
+                              <div className="flex items-center justify-between mb-1">
+                                <h5 className="text-slate-200 text-sm font-medium">{surah.name}</h5>
+                                <span className="text-xs px-1.5 py-0.5 rounded border" style={{ backgroundColor: "rgba(234, 179, 8, 0.1)", borderColor: "rgba(234, 179, 8, 0.3)", color: "#EAB308" }}>🟡</span>
+                              </div>
+                              <div className="flex items-center justify-between text-xs text-slate-400">
+                                <span>Surah {surah.num}</span>
+                                <span>{surah.verses} verses</span>
+                                <span className={surah.type === "Meccan" ? "text-amber-400" : "text-blue-400"}>{surah.type}</span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                        <p className="text-xs text-slate-500">...and 108 more surahs</p>
+                      </div>
+
+                      {/* Hadith Collections */}
+                      <div>
+                        <h4 className="text-slate-200 font-medium mb-2">Major Hadith Collections</h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                          {[
+                            { name: "Sahih Bukhari", compiler: "Imam Bukhari", hadiths: "~7,563", description: "Most authentic Sunni collection" },
+                            { name: "Sahih Muslim", compiler: "Imam Muslim", hadiths: "~7,563", description: "Second most authentic Sunni collection" },
+                            { name: "Sunan Abu Dawud", compiler: "Abu Dawud", hadiths: "~4,800", description: "Focus on legal matters" },
+                            { name: "Jami' at-Tirmidhi", compiler: "At-Tirmidhi", hadiths: "~3,956", description: "Includes weak and strong hadiths" },
+                            { name: "Sunan an-Nasa'i", compiler: "An-Nasa'i", hadiths: "~5,761", description: "Stricter authentication" },
+                            { name: "Sunan Ibn Majah", compiler: "Ibn Majah", hadiths: "~4,341", description: "Completes the six major books" },
+                          ].map((collection, i) => (
+                            <div key={i} className="rounded-lg p-3 border" style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}>
+                              <div className="flex items-center justify-between mb-1">
+                                <h5 className="text-slate-200 text-sm font-medium">{collection.name}</h5>
+                                <span className="text-xs px-1.5 py-0.5 rounded border" style={{ backgroundColor: "rgba(234, 179, 8, 0.1)", borderColor: "rgba(234, 179, 8, 0.3)", color: "#EAB308" }}>🟡 Pending</span>
+                              </div>
+                              <div className="text-xs text-green-400 mb-1">{collection.compiler}</div>
+                              <p className="text-xs text-slate-400 mb-1">{collection.description}</p>
+                              <div className="text-xs text-slate-500">{collection.hadiths} hadiths</div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Other traditions would continue here with similar structure... */}
+                {expandedTextsTraditions.has("Hinduism") && (
+                  <div className="rounded-xl p-4 border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+                    <h3 className="text-lg font-semibold text-slate-100 mb-4 flex items-center gap-2">
+                      <span className="text-yellow-400">●</span>
+                      Hinduism (50+ texts) - Vedas, Upanishads, Epics, Puranas
+                    </h3>
+                    <div className="text-sm text-slate-400 p-4 rounded border" style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}>
+                      <p>Major categories: Vedas (4), Upanishads (108+), Epics (Mahabharata, Ramayana), 18 major Puranas, and hundreds of other sacred texts. All marked as 🟡 Pending for embedding.</p>
+                    </div>
+                  </div>
+                )}
+
+                {expandedTextsTraditions.has("Buddhism") && (
+                  <div className="rounded-xl p-4 border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+                    <h3 className="text-lg font-semibold text-slate-100 mb-4 flex items-center gap-2">
+                      <span className="text-amber-400">●</span>
+                      Buddhism (100+ texts) - Pali Canon, Mahayana Sutras
+                    </h3>
+                    <div className="text-sm text-slate-400 p-4 rounded border" style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}>
+                      <p>Includes complete Pali Canon (Tipitaka), major Mahayana sutras (Heart, Diamond, Lotus), Zen texts, Tibetan Buddhist literature. All marked as 🟡 Pending for embedding.</p>
+                    </div>
+                  </div>
+                )}
+
+                {expandedTextsTraditions.has("Bahá'í") && (
+                  <div className="rounded-xl p-4 border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+                    <h3 className="text-lg font-semibold text-slate-100 mb-4 flex items-center gap-2">
+                      <span className="text-pink-400">●</span>
+                      Bahá'í (20+ texts) - Central Writings
+                    </h3>
+                    <div className="text-sm text-slate-400 p-4 rounded border" style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}>
+                      <p>Kitáb-i-Aqdas, Kitáb-i-Íqán, Gleanings, Some Answered Questions, and other central Bahá'í writings. All marked as 🟡 Pending for embedding.</p>
+                    </div>
+                  </div>
+                )}
+
+                {expandedTextsTraditions.has("Other") && (
+                  <div className="rounded-xl p-4 border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+                    <h3 className="text-lg font-semibold text-slate-100 mb-4 flex items-center gap-2">
+                      <span className="text-gray-400">●</span>
+                      Other Traditions (15+ texts) - Secular Humanism, Interfaith
+                    </h3>
+                    <div className="text-sm text-slate-400 p-4 rounded border" style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}>
+                      <p>Humanist Manifestos, philosophical works, interfaith texts, and other spiritual/ethical literature. All marked as 🟡 Pending for embedding.</p>
+                    </div>
+                  </div>
+                )}
+
               </div>
             )}
 

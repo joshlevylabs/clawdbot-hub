@@ -1,108 +1,124 @@
 {
-  "date": "2026-03-01",
-  "generated_at": "2026-03-01T14:00:00.000Z",
-  "sections": {
-    "prayer": {
-      "title": "🕙️ Morning Prayer",
-      "date": "Sunday, March 01, 2026",
-      "hebrew_date": "1 Kislev",
-      "parsha": "Miketz",
-      "parsha_theme": "sudden elevation, preparation meeting opportunity",
-      "modeh_ani": "מודה אני לפניך — I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
-      "blessing": "Blessed are You who guides the steps of man — direct my path today.",
-      "psalm": "**Psalm 16:8**: \"I have set the Lord always before me; He is at my right hand, I will not be shaken.\"",
-      "proverb": "**Proverbs 21:5**: \"The plans of the diligent lead surely to abundance.\"",
-      "intention": "Open doors that no one can shut, and close doors that would lead me astray.",
-      "closing": "The Lord goes before you today. He will be with you; He will never leave you nor forsake you. Do not be afraid; do not be discouraged."
-    },
-    "weather": {
-      "title": "🌤️ Weather",
-      "location": "Temecula, CA",
-      "today": {
-        "condition": "Sunny",
-        "high": 86,
-        "low": 49,
-        "wind": "Light and variable becoming south 10-15 mph, gusts up to 20 mph"
+  "date": "Monday, March 02, 2026",
+  "generated_at": "2026-03-02T06:01:00-08:00",
+  "version": "4.0.0",
+  "prayer": {
+    "title": "🕊️ Morning Prayer",
+    "date": "Monday, March 02, 2026",
+    "hebrew_date": "2 Kislev",
+    "parsha": "Vayigash",
+    "parsha_theme": "reunion, forgiveness, revealing truth",
+    "modeh_ani": "מודה אני לפניך — I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
+    "blessing": "Blessed are You who crowns Israel with glory — let my work bring You honor.",
+    "psalm": "**Psalm 37:5**: \"Commit your way to the Lord; trust in Him and He will act.\"",
+    "proverb": "**Proverbs 13:11**: \"Wealth gained hastily will dwindle, but whoever gathers little by little will increase it.\"",
+    "intention": "Give me discernment between opportunities and distractions. Not everything good is good for me right now.",
+    "closing": "Baruch atah Adonai — Blessed are You, Lord, who renews creation daily with goodness."
+  },
+  "weather": {
+    "title": "🌤️ Weather",
+    "location": "Temecula, CA",
+    "current": "Partly cloudy, 45°F",
+    "today_high": "68°F",
+    "today_low": "44°F",
+    "conditions": "Partly cloudy with light winds",
+    "forecast": "Clear skies through the week, typical March weather"
+  },
+  "calendar": {
+    "title": "📅 Today's Schedule",
+    "today": [],
+    "this_week": [
+      {
+        "date": "2026-03-06",
+        "time": "All day",
+        "title": "Brendon Schmidt's birthday",
+        "location": "",
+        "source": "josh@joshlevylabs.com"
+      }
+    ],
+    "this_month": [
+      {
+        "date": "2026-03-06",
+        "title": "Brendon Schmidt's birthday"
+      }
+    ]
+  },
+  "email_highlights": {
+    "title": "📧 Email Highlights",
+    "accounts_checked": ["josh@joshlevylabs.com"],
+    "unread_count": 3,
+    "important": [
+      {
+        "from": "LinkedIn notifications",
+        "subject": "You have 1 new message",
+        "priority": "low",
+        "action": "Review LinkedIn message"
       },
-      "tomorrow": {
-        "condition": "Mostly sunny", 
-        "high": 71,
-        "low": 43,
-        "wind": "Southwest 10-15 mph, gusts up to 25 mph"
+      {
+        "from": "Fly.io",
+        "subject": "Receipt #2270-1700",
+        "priority": "low",
+        "action": "Filed receipt"
+      }
+    ],
+    "summary": "Light email day — mainly notifications and receipts. LinkedIn message waiting."
+  },
+  "mre": {
+    "title": "📊 MRE Trading",
+    "fear_greed": 38,
+    "fear_greed_rating": "fear", 
+    "regime": "sideways",
+    "todays_plays": [],
+    "pending_triggers": [],
+    "thesis": "Fear at 38, sideways regime. All assets on HOLD — waiting for clear direction. No buy signals activated.",
+    "summary": "Markets fearful, all major indices sideways. VIX elevated at 23.2. No actionable signals today."
+  },
+  "family_focus": {
+    "title": "👨‍👩‍👧‍👦 Family Focus",
+    "relationship_temperature": "critical",
+    "primary_love_language": "quality_time",
+    "secondary_love_language": "acts_of_service",
+    "today_recommendation": "PRIORITY: Focus on repair. Acknowledge recent conflicts without defending. Increase acts of service dramatically.",
+    "action_items": [
+      "Create space for Jillian to express frustrations without fixing",
+      "Focus on quality time this evening",
+      "Lead with acts of service throughout the day"
+    ]
+  },
+  "world_news": {
+    "title": "🌍 World News",
+    "highlights": [
+      {
+        "title": "US Strikes Iran After Saudi-Israeli Lobbying",
+        "summary": "Trump launched wide-ranging attack on Iran following weeks of coordinated lobbying by Israel and Saudi Arabia",
+        "source": "Washington Post",
+        "relevance": "Major Middle East development, affects Israel relations"
       },
-      "summary": "Beautiful sunny Sunday with high 86°F. Cooler Monday at 71°F with stronger winds."
-    },
-    "mre": {
-      "title": "📊 MRE Trading",
-      "fear_greed": 42.9,
-      "fear_greed_rating": "fear",
-      "regime": "sideways",
-      "todays_plays": [],
-      "pending_triggers": [],
-      "thesis": "Markets fearful at 43, sideways regime. No buy signals — staying cautious.",
-      "summary": "Fear elevated, sideways chop continues. Cash heavy until conditions improve."
-    },
-    "calendar": {
-      "title": "📅 Calendar",
-      "today": [],
-      "week": [],
-      "month": [],
-      "summary": "Calendar data not available - check manually."
-    },
-    "email": {
-      "title": "📧 Email Highlights", 
-      "summary": "Email check not available - review manually.",
-      "urgent": []
-    },
-    "family": {
-      "title": "👨‍👩‍👧‍👦 Family Focus",
-      "temperature": "critical",
-      "trend": "urgent",
-      "priority_actions": [
-        "Focus on repair - acknowledge recent conflicts without defending",
-        "Increase acts of service dramatically this week", 
-        "Create space for Jillian to express frustrations without fixing"
-      ],
-      "love_languages": "Quality Time + Acts of Service",
-      "conversation_starters": [
-        "What book are you reading right now?",
-        "How can I support you better with the boys?",
-        "What's something you're looking forward to?"
-      ],
-      "upcoming": [
-        "Wedding Anniversary (March 26) - 3 weeks away"
-      ]
-    },
-    "news": {
-      "title": "🌍 News Highlights",
-      "ai_tech": [
-        {
-          "headline": "Apple's AI-powered Siri set to debut in 2026",
-          "summary": "Complete reimagining with context-aware, on-screen awareness capabilities"
-        },
-        {
-          "headline": "AI moving from hype to pragmatism in 2026", 
-          "summary": "Focus on smaller models, embedded intelligence, and clean workflow integration"
-        },
-        {
-          "headline": "Alphabet issues $20B in bonds for AI infrastructure",
-          "summary": "Including 100-year offering to finance AI growth sustainably"
-        }
-      ],
-      "israel_conservative": [
-        {
-          "headline": "Netanyahu to speak at CPAC Hungary 2026",
-          "summary": "Israeli PM featured speaker at conservative conference this March"
-        },
-        {
-          "headline": "US proposes severing Swiss bank over Iran links",
-          "summary": "Treasury action targeting financial connections to sanctioned entities"
-        },
-        {
-          "headline": "Global backlash over Israel's West Bank plans",
-          "summary": "US, EU, Arab nations condemn plans ministers say will 'kill Palestinian state idea'"
-        }
-      ]
-    }
+      {
+        "title": "Israeli Security Minister Expands Settlement Gun Licenses", 
+        "summary": "Ben-Gvir allows gun licenses for residents of 18 West Bank settlements",
+        "source": "Wikipedia",
+        "relevance": "Conservative security policy, internal Israeli politics"
+      }
+    ],
+    "summary": "Significant Middle East escalation with Iran. Israeli domestic security policies expanding."
+  },
+  "ai_news": {
+    "title": "🤖 AI News",
+    "highlights": [
+      {
+        "title": "Chinese AI Model Surge",
+        "summary": "Five new AI models from Tencent, Alibaba, Baidu, ByteDance. MiniMax's M2.5 rivals Claude Opus 4.6",
+        "source": "mean.ceo",
+        "relevance": "Competition heating up, quality improving"
+      },
+      {
+        "title": "AI Brain MRI Analysis Breakthrough",
+        "summary": "University of Michigan creates AI system interpreting brain MRI scans in seconds",
+        "source": "ScienceDaily", 
+        "relevance": "Medical AI advancement, practical healthcare application"
+      }
+    ],
+    "summary": "Chinese competition intensifying. Medical AI making real-world breakthroughs."
   }
 }

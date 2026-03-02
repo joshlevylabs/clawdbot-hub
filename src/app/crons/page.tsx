@@ -194,10 +194,12 @@ function generateTimelineEvents(jobs: CronJob[]): TimelineEvent[] {
     if (!job.enabled) return;
     
     const parsed = parseCronExpression(job.schedule.expr);
-    if (!parsed.hours || !parsed.minutes) return;
+    const hours = parsed.hours;
+    const minutes = parsed.minutes;
+    if (!hours || !minutes) return;
 
-    parsed.hours.forEach(hour => {
-      parsed.minutes.forEach(minute => {
+    hours.forEach(hour => {
+      minutes.forEach(minute => {
         events.push({
           job,
           hour,

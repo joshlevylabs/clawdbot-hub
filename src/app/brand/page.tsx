@@ -1057,6 +1057,94 @@ export default function BrandGuidelinesPage() {
       {/* ── PRODUCTS TAB ────────────────────────────────────────── */}
       {activeTab === "products" && (
         <>
+          {/* Brand Assets — Logo & Icon */}
+          <Section>
+            <SectionHeader icon={Layers} title="Brand Identity" subtitle="Josh Levy Labs — Logo & Icon" />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+              {/* Dark background — white logo */}
+              <div className="rounded-2xl border overflow-hidden" style={{ borderColor: "#2A2A38" }}>
+                <div className="p-3 border-b flex items-center justify-between" style={{ borderColor: "#2A2A38", backgroundColor: "#13131B" }}>
+                  <span className="text-xs font-medium" style={{ color: "#8B8B80" }}>Logo — Dark Background</span>
+                  <span className="text-[10px] px-2 py-0.5 rounded-full" style={{ backgroundColor: "rgba(212, 160, 32, 0.1)", color: "#D4A020" }}>Primary</span>
+                </div>
+                <div className="flex items-center justify-center p-12" style={{ backgroundColor: "#0B0B11" }}>
+                  <img src="/brand/joshuaOSlogo-white.png" alt="JoshOS Logo (White)" className="w-40 h-40 object-contain" />
+                </div>
+                <div className="p-3 border-t text-[11px]" style={{ borderColor: "#2A2A38", backgroundColor: "#13131B", color: "#8B8B80" }}>
+                  364×364 PNG · White on dark · <code className="px-1 py-0.5 rounded" style={{ backgroundColor: "#1A1A24" }}>/brand/joshuaOSlogo-white.png</code>
+                </div>
+              </div>
+
+              {/* Light background — black logo */}
+              <div className="rounded-2xl border overflow-hidden" style={{ borderColor: "#2A2A38" }}>
+                <div className="p-3 border-b flex items-center justify-between" style={{ borderColor: "#2A2A38", backgroundColor: "#13131B" }}>
+                  <span className="text-xs font-medium" style={{ color: "#8B8B80" }}>Logo — Light Background</span>
+                  <span className="text-[10px] px-2 py-0.5 rounded-full" style={{ backgroundColor: "rgba(139, 139, 128, 0.1)", color: "#8B8B80" }}>Alternate</span>
+                </div>
+                <div className="flex items-center justify-center p-12" style={{ backgroundColor: "#F5F5F0" }}>
+                  <img src="/brand/joshuaOSlogo-black.png" alt="JoshOS Logo (Black)" className="w-40 h-40 object-contain" />
+                </div>
+                <div className="p-3 border-t text-[11px]" style={{ borderColor: "#2A2A38", backgroundColor: "#13131B", color: "#8B8B80" }}>
+                  364×364 PNG · Black on light · <code className="px-1 py-0.5 rounded" style={{ backgroundColor: "#1A1A24" }}>/brand/joshuaOSlogo-black.png</code>
+                </div>
+              </div>
+
+              {/* Favicon / Tab Icon */}
+              <div className="rounded-2xl border overflow-hidden" style={{ borderColor: "#2A2A38" }}>
+                <div className="p-3 border-b flex items-center justify-between" style={{ borderColor: "#2A2A38", backgroundColor: "#13131B" }}>
+                  <span className="text-xs font-medium" style={{ color: "#8B8B80" }}>Favicon — Browser Tab</span>
+                  <span className="text-[10px] px-2 py-0.5 rounded-full" style={{ backgroundColor: "rgba(34, 211, 238, 0.1)", color: "#22D3EE" }}>Active</span>
+                </div>
+                <div className="flex items-center justify-center gap-8 p-8" style={{ backgroundColor: "#0B0B11" }}>
+                  <div className="text-center">
+                    <img src="/favicon/favicon-96x96.png" alt="Favicon 96px" className="w-12 h-12 object-contain mx-auto mb-2" />
+                    <span className="text-[10px]" style={{ color: "#8B8B80" }}>96×96</span>
+                  </div>
+                  <div className="text-center">
+                    <img src="/favicon/web-app-manifest-192x192.png" alt="Favicon 192px" className="w-16 h-16 object-contain mx-auto mb-2" />
+                    <span className="text-[10px]" style={{ color: "#8B8B80" }}>192×192</span>
+                  </div>
+                  <div className="text-center">
+                    <img src="/favicon/apple-touch-icon.png" alt="Apple Touch Icon" className="w-16 h-16 object-contain mx-auto mb-2 rounded-xl" />
+                    <span className="text-[10px]" style={{ color: "#8B8B80" }}>Apple Touch</span>
+                  </div>
+                </div>
+                <div className="p-3 border-t text-[11px]" style={{ borderColor: "#2A2A38", backgroundColor: "#13131B", color: "#8B8B80" }}>
+                  ICO + SVG + PNG · Applied to Chrome tab bar · <code className="px-1 py-0.5 rounded" style={{ backgroundColor: "#1A1A24" }}>/favicon/</code>
+                </div>
+              </div>
+
+              {/* Usage Guidelines */}
+              <div className="rounded-2xl border overflow-hidden" style={{ borderColor: "#2A2A38" }}>
+                <div className="p-3 border-b" style={{ borderColor: "#2A2A38", backgroundColor: "#13131B" }}>
+                  <span className="text-xs font-medium" style={{ color: "#8B8B80" }}>Usage Guidelines</span>
+                </div>
+                <div className="p-6 space-y-3" style={{ backgroundColor: "#13131B" }}>
+                  <div className="flex items-start gap-3">
+                    <div className="w-1.5 h-1.5 rounded-full mt-1.5 shrink-0" style={{ backgroundColor: "#22C55E" }} />
+                    <p className="text-sm" style={{ color: "#B8B8AD" }}>Use <strong style={{ color: "#F5F5F0" }}>white logo</strong> on dark backgrounds (#0B0B11, #13131B)</p>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-1.5 h-1.5 rounded-full mt-1.5 shrink-0" style={{ backgroundColor: "#22C55E" }} />
+                    <p className="text-sm" style={{ color: "#B8B8AD" }}>Use <strong style={{ color: "#F5F5F0" }}>black logo</strong> on light backgrounds (#F5F5F0, white)</p>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-1.5 h-1.5 rounded-full mt-1.5 shrink-0" style={{ backgroundColor: "#D4A020" }} />
+                    <p className="text-sm" style={{ color: "#B8B8AD" }}>Minimum clear space: <strong style={{ color: "#F5F5F0" }}>1× logo width</strong> on all sides</p>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-1.5 h-1.5 rounded-full mt-1.5 shrink-0" style={{ backgroundColor: "#EF4444" }} />
+                    <p className="text-sm" style={{ color: "#B8B8AD" }}>Never stretch, rotate, add effects, or change colors</p>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-1.5 h-1.5 rounded-full mt-1.5 shrink-0" style={{ backgroundColor: "#D4A020" }} />
+                    <p className="text-sm" style={{ color: "#B8B8AD" }}>The &ldquo;J&rdquo; orbital ring is the <strong style={{ color: "#F5F5F0" }}>core brand mark</strong> — use standalone when space is limited</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Section>
+
           <SectionHeader icon={Layers} title="Product Ecosystem" subtitle="Unified brand across 4 products" />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {Object.entries(PRODUCTS).map(([key, product]) => (

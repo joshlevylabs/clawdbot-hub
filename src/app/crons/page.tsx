@@ -19,6 +19,7 @@ import {
   EyeOff,
   ChevronDown,
   BarChart3,
+  ChevronRight,
 } from "lucide-react";
 
 /* ------------------------------------------------------------------ */
@@ -77,6 +78,13 @@ interface TimelineEvent {
   weekdays?: number[];
 }
 
+interface JobGroup {
+  name: string;
+  emoji: string;
+  jobs: CronJob[];
+  category: 'agent' | 'frequency' | 'system';
+}
+
 /* ------------------------------------------------------------------ */
 /*  Helpers                                                            */
 /* ------------------------------------------------------------------ */
@@ -110,11 +118,36 @@ function formatRelativeTime(ms: number): string {
   }
 }
 
-function parseCronExpression(expr: string | undefined | null): { hours?: number[]; minutes?: number[]; weekdays?: number[]; description: string } {
-  if (!expr) return { description: "one-shot" };
+function parseFrequencyType(expr: string | undefined | null): 'high' | 'medium' | 'low' | 'once' {
+  if (!expr) return 'once';
+  
+  // High frequency: every 15min or less
+  if (expr.includes('*/15') || expr.includes('*/10') || expr.includes('*/5') || expr.includes('*/1')) {
+    return 'high';
+  }
+  
+  // Medium frequency: every 30min to hourly
+  if (expr.includes('*/30') || expr === '0 * * * *') {
+    return 'medium';
+  }
+  
+  // Low frequency: daily or less
+  return 'low';
+}
+
+function parseCronExpression(expr: string | undefined | null): { 
+  hours?: number[]; 
+  minutes?: number[]; 
+  weekdays?: number[]; 
+  description: string;
+  frequency: 'high' | 'medium' | 'low' | 'once';
+} {
+  if (!expr) return { description: "one-shot", frequency: 'once' };
+  
+  const frequency = parseFrequencyType(expr);
   const parts = expr.trim().split(/\s+/);
   if (parts.length !== 5) {
-    return { description: expr };
+    return { description: expr, frequency };
   }
 
   const [minute, hour, dayOfMonth, month, dayOfWeek] = parts;
@@ -161,32 +194,42 @@ function parseCronExpression(expr: string | undefined | null): { hours?: number[
     }
   }
 
-  // Generate description
+  // Generate description based on frequency
   let description = "";
-  if (minute.startsWith("*/")) {
-    description += `Every ${minute.split("/")[1]} min`;
-  } else if (minutes.length === 1 && minutes[0] === 0) {
-    description += "Hourly";
+  if (frequency === 'high') {
+    if (minute.startsWith("*/")) {
+      description = `Every ${minute.split("/")[1]}min`;
+    } else {
+      description = "High frequency";
+    }
+  } else if (frequency === 'medium') {
+    if (minute.startsWith("*/30")) {
+      description = "Every 30min";
+    } else if (hour === "*") {
+      description = "Hourly";
+    } else {
+      description = "Medium frequency";
+    }
   } else {
-    description += `At :${minutes.map(m => m.toString().padStart(2, '0')).join(", :")}`;
-  }
-
-  if (hours.length === 1) {
-    description += ` at ${hours[0]}:00`;
-  } else if (hours.length > 1 && hours.length < 24) {
-    description += `, ${hours[0]}am-${hours[hours.length - 1]}pm`;
+    if (minutes.length === 1 && hours.length === 1) {
+      description = `Daily at ${hours[0]}:${minutes[0].toString().padStart(2, '0')}`;
+    } else if (minutes.length === 1) {
+      description = `At :${minutes[0].toString().padStart(2, '0')}`;
+    } else {
+      description = "Low frequency";
+    }
   }
 
   if (weekdays && weekdays.length < 7) {
     const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     if (weekdays.length === 5 && weekdays.every(d => d >= 1 && d <= 5)) {
-      description += " weekdays";
+      description += " (weekdays)";
     } else {
-      description += ` ${weekdays.map(d => dayNames[d]).join(", ")}`;
+      description += ` (${weekdays.map(d => dayNames[d]).join(", ")})`;
     }
   }
 
-  return { hours, minutes, weekdays, description };
+  return { hours, minutes, weekdays, description, frequency };
 }
 
 function generateTimelineEvents(jobs: CronJob[]): TimelineEvent[] {
@@ -213,6 +256,56 @@ function generateTimelineEvents(jobs: CronJob[]): TimelineEvent[] {
   });
 
   return events.sort((a, b) => a.hour === b.hour ? a.minute - b.minute : a.hour - b.hour);
+}
+
+function groupJobs(jobs: CronJob[]): JobGroup[] {
+  const groups: JobGroup[] = [];
+  
+  // Group by agent first
+  const agentGroups = new Map<string, CronJob[]>();
+  jobs.forEach(job => {
+    const key = job.agent.id;
+    if (!agentGroups.has(key)) {
+      agentGroups.set(key, []);
+    }
+    agentGroups.get(key)!.push(job);
+  });
+
+  // Convert to JobGroup format, sorted by number of jobs (largest first)
+  Array.from(agentGroups.entries())
+    .sort(([, aJobs], [, bJobs]) => bJobs.length - aJobs.length)
+    .forEach(([agentId, agentJobs]) => {
+      if (agentJobs.length === 0) return;
+      
+      const firstJob = agentJobs[0];
+      groups.push({
+        name: firstJob.agent.name || firstJob.agent.id,
+        emoji: firstJob.agent.emoji,
+        jobs: agentJobs.sort((a, b) => {
+          // Sort within group: enabled first, then by frequency, then by name
+          if (a.enabled !== b.enabled) return b.enabled ? 1 : -1;
+          
+          const aFreq = parseFrequencyType(a.schedule.expr);
+          const bFreq = parseFrequencyType(b.schedule.expr);
+          const freqOrder = ['high', 'medium', 'low', 'once'];
+          const aFreqIndex = freqOrder.indexOf(aFreq);
+          const bFreqIndex = freqOrder.indexOf(bFreq);
+          
+          if (aFreqIndex !== bFreqIndex) return aFreqIndex - bFreqIndex;
+          return a.name.localeCompare(b.name);
+        }),
+        category: 'agent'
+      });
+    });
+
+  return groups;
+}
+
+function getCurrentTimePosition(): number {
+  const now = new Date();
+  const hours = now.getHours();
+  const minutes = now.getMinutes();
+  return ((hours + minutes / 60) / 24) * 100;
 }
 
 /* ------------------------------------------------------------------ */
@@ -284,114 +377,229 @@ function StatsPanel({ jobs }: { jobs: CronJob[] }) {
   );
 }
 
-function Timeline({ jobs }: { jobs: CronJob[] }) {
-  const events = generateTimelineEvents(jobs);
+function GanttTimeline({ jobs }: { jobs: CronJob[] }) {
+  const groups = groupJobs(jobs);
   const hours = Array.from({ length: 24 }, (_, i) => i);
-  
-  // Group events by hour for overlap detection
-  const eventsByHour: Record<number, TimelineEvent[]> = {};
-  events.forEach(event => {
-    if (!eventsByHour[event.hour]) eventsByHour[event.hour] = [];
-    eventsByHour[event.hour].push(event);
-  });
+  const currentTimePos = getCurrentTimePosition();
+  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
+
+  const toggleGroup = (groupName: string) => {
+    setExpandedGroups(prev => {
+      const next = new Set(prev);
+      if (next.has(groupName)) {
+        next.delete(groupName);
+      } else {
+        next.add(groupName);
+      }
+      return next;
+    });
+  };
+
+  // Initialize with first group expanded
+  useEffect(() => {
+    if (groups.length > 0) {
+      setExpandedGroups(new Set([groups[0].name]));
+    }
+  }, [groups]);
+
+  const renderJobRow = (job: CronJob, isGroupHeader = false) => {
+    const parsed = parseCronExpression(job.schedule.expr);
+    const events = generateTimelineEvents([job]);
+    
+    const getJobColor = (job: CronJob) => {
+      if (!job.enabled) return '#64748b'; // slate-500
+      if (job.state.lastStatus === 'error') return '#ef4444'; // red-500
+      return '#22c55e'; // green-500
+    };
+
+    const color = getJobColor(job);
+
+    return (
+      <div key={job.id} className={`flex items-center border-b border-slate-800/30 ${isGroupHeader ? 'h-12' : 'h-10'}`}>
+        {/* Job Name Column */}
+        <div className={`w-72 flex-shrink-0 px-4 flex items-center gap-2 ${isGroupHeader ? 'bg-slate-800/30' : ''}`}>
+          {!isGroupHeader && <div className="w-4" />}
+          <span className={`text-lg ${isGroupHeader ? 'text-base' : 'text-sm'}`}>
+            {isGroupHeader ? job.agent.emoji : ''}
+          </span>
+          <div className="min-w-0 flex-1">
+            <span 
+              className={`${isGroupHeader ? 'text-slate-200 font-semibold' : 'text-slate-300'} truncate block`}
+              title={job.name}
+            >
+              {job.name}
+            </span>
+            {!isGroupHeader && (
+              <span className="text-xs text-slate-500 block truncate">
+                {parsed.description}
+              </span>
+            )}
+          </div>
+          <div className="flex items-center gap-1 flex-shrink-0">
+            {!job.enabled && <span className="w-2 h-2 rounded-full bg-slate-500" title="Disabled" />}
+            {job.state.lastStatus === 'error' && <span className="w-2 h-2 rounded-full bg-red-500" title="Error" />}
+            {job.enabled && job.state.lastStatus !== 'error' && (
+              <span className="w-2 h-2 rounded-full bg-green-500" title="Running" />
+            )}
+          </div>
+        </div>
+
+        {/* Timeline Column */}
+        <div className="flex-1 relative h-full">
+          {/* High frequency jobs show as bands */}
+          {parsed.frequency === 'high' && job.enabled && (
+            <div 
+              className="absolute top-1/2 -translate-y-1/2 h-4 rounded-sm opacity-80 border border-slate-700"
+              style={{
+                left: '2px',
+                right: '2px',
+                backgroundColor: color + '40', // Add transparency
+                borderColor: color,
+              }}
+              title={`${job.name} - ${parsed.description}`}
+            >
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className="text-xs font-medium text-white text-shadow-sm px-1">
+                  {parsed.frequency === 'high' ? parsed.description : ''}
+                </span>
+              </div>
+            </div>
+          )}
+          
+          {/* Medium and low frequency jobs show as blocks */}
+          {(parsed.frequency === 'medium' || parsed.frequency === 'low') && job.enabled && events.map((event, idx) => (
+            <div
+              key={idx}
+              className="absolute top-1/2 -translate-y-1/2 h-6 w-1 rounded-sm"
+              style={{
+                left: `${((event.hour + event.minute / 60) / 24) * 100}%`,
+                backgroundColor: color,
+              }}
+              title={`${job.name} at ${event.hour}:${event.minute.toString().padStart(2, '0')}`}
+            />
+          ))}
+          
+          {/* One-shot jobs */}
+          {parsed.frequency === 'once' && job.enabled && job.schedule.atMs && (
+            <div
+              className="absolute top-1/2 -translate-y-1/2 h-6 w-2 rounded-sm bg-amber-500"
+              style={{
+                left: `${((new Date(job.schedule.atMs).getHours() + new Date(job.schedule.atMs).getMinutes() / 60) / 24) * 100}%`,
+              }}
+              title={`${job.name} at ${new Date(job.schedule.atMs).toLocaleTimeString()}`}
+            />
+          )}
+        </div>
+      </div>
+    );
+  };
 
   return (
-    <div className="bg-slate-900/50 rounded-xl border border-slate-800 p-5 mb-6">
-      <div className="flex items-center gap-2 mb-4">
+    <div className="bg-slate-900/50 rounded-xl border border-slate-800 overflow-hidden mb-6">
+      {/* Header */}
+      <div className="flex items-center gap-2 p-4 border-b border-slate-800">
         <Calendar className="w-4 h-4 text-violet-400" strokeWidth={1.5} />
-        <h2 className="text-sm font-semibold text-slate-200">24-Hour Timeline (PT)</h2>
+        <h2 className="text-sm font-semibold text-slate-200">Execution Timeline (PT)</h2>
         <div className="ml-auto flex items-center gap-4 text-xs text-slate-500">
           <span className="flex items-center gap-1">
-            <span className="w-2 h-2 rounded-full bg-green-500" /> Enabled
-          </span>
-          <span className="flex items-center gap-1">
-            <span className="w-2 h-2 rounded-full bg-slate-600" /> Disabled
+            <span className="w-2 h-2 rounded-full bg-green-500" /> Active
           </span>
           <span className="flex items-center gap-1">
             <span className="w-2 h-2 rounded-full bg-red-500" /> Error
           </span>
+          <span className="flex items-center gap-1">
+            <span className="w-2 h-2 rounded-full bg-slate-500" /> Disabled
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="w-3 h-2 rounded-sm bg-green-500/40 border border-green-500" /> High freq
+          </span>
         </div>
       </div>
 
-      <div className="overflow-x-auto">
-        <div className="min-w-[800px]">
-          {/* Hour labels */}
-          <div className="flex mb-2">
-            {hours.map(hour => (
-              <div key={hour} className="flex-1 text-center">
-                <span className="text-xs text-slate-500 font-medium">
-                  {hour.toString().padStart(2, '0')}:00
-                </span>
-              </div>
-            ))}
+      {/* Timeline Header with Hours */}
+      <div className="sticky top-0 bg-slate-900/90 backdrop-blur-sm border-b border-slate-800">
+        <div className="flex items-center">
+          <div className="w-72 flex-shrink-0 px-4 py-2">
+            <span className="text-xs font-medium text-slate-400">Job Name & Schedule</span>
           </div>
-
-          {/* Timeline bars */}
-          <div className="relative h-16 bg-slate-800/30 rounded-lg mb-4">
-            {hours.map(hour => {
-              const hourEvents = eventsByHour[hour] || [];
-              const hasOverlap = hourEvents.length > 1;
-              
-              return (
-                <div key={hour} className="absolute top-0 bottom-0" style={{ 
-                  left: `${(hour / 24) * 100}%`, 
-                  width: `${100 / 24}%` 
-                }}>
-                  {hourEvents.map((event, idx) => {
-                    const color = !event.job.enabled ? '#64748b' : 
-                                 event.job.state.lastStatus === 'error' ? '#ef4444' : '#22c55e';
-                    const opacity = hasOverlap ? 0.7 : 1;
-                    const height = hasOverlap ? `${100 / hourEvents.length}%` : '100%';
-                    const top = hasOverlap ? `${(idx / hourEvents.length) * 100}%` : '0%';
-                    
-                    return (
-                      <div
-                        key={idx}
-                        className="absolute left-1 right-1 rounded"
-                        style={{ 
-                          backgroundColor: color,
-                          opacity,
-                          height,
-                          top,
-                        }}
-                        title={`${event.job.name} at ${hour}:${event.minute.toString().padStart(2, '0')}`}
-                      />
-                    );
-                  })}
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Job rows */}
-          <div className="space-y-1">
-            {jobs.filter(j => j.enabled).map(job => {
-              const jobEvents = events.filter(e => e.job.id === job.id);
-              const color = job.state.lastStatus === 'error' ? '#ef4444' : '#22c55e';
-              
-              return (
-                <div key={job.id} className="relative h-6 bg-slate-800/20 rounded flex items-center">
-                  <span className="text-xs text-slate-400 w-32 flex-shrink-0 px-2 truncate">
-                    {job.agent.emoji} {job.name}
+          <div className="flex-1 relative">
+            {/* Hour markers */}
+            <div className="flex h-8 border-l border-slate-800">
+              {hours.map(hour => (
+                <div key={hour} className="flex-1 border-r border-slate-800/50 flex items-center justify-center">
+                  <span className="text-xs text-slate-500 font-medium">
+                    {hour.toString().padStart(2, '0')}
                   </span>
-                  <div className="flex-1 relative">
-                    {jobEvents.map((event, idx) => (
-                      <div
-                        key={idx}
-                        className="absolute w-1 h-4 rounded-full"
-                        style={{
-                          left: `${((event.hour + event.minute / 60) / 24) * 100}%`,
-                          backgroundColor: color,
-                        }}
-                        title={`${event.hour}:${event.minute.toString().padStart(2, '0')}`}
-                      />
-                    ))}
-                  </div>
                 </div>
-              );
-            })}
+              ))}
+            </div>
+            
+            {/* Current time indicator */}
+            <div 
+              className="absolute top-0 bottom-0 w-0.5 bg-cyan-400 z-10"
+              style={{ left: `${currentTimePos}%` }}
+              title={`Current time: ${new Date().toLocaleTimeString()}`}
+            >
+              <div className="absolute -top-1 -left-1 w-2 h-2 bg-cyan-400 rounded-full"></div>
+            </div>
           </div>
         </div>
+      </div>
+
+      {/* Timeline Body */}
+      <div className="max-h-[600px] overflow-y-auto">
+        {groups.map(group => (
+          <div key={group.name}>
+            {/* Group Header */}
+            <div className="flex items-center bg-slate-800/30 border-b border-slate-800">
+              <div className="w-72 flex-shrink-0 px-4 py-3 flex items-center gap-2">
+                <button
+                  onClick={() => toggleGroup(group.name)}
+                  className="flex items-center gap-2 hover:text-slate-100 transition-colors"
+                >
+                  <ChevronRight 
+                    className={`w-4 h-4 text-slate-400 transition-transform ${
+                      expandedGroups.has(group.name) ? 'rotate-90' : ''
+                    }`} 
+                  />
+                  <span className="text-lg">{group.emoji}</span>
+                  <span className="text-sm font-semibold text-slate-200">{group.name}</span>
+                  <span className="text-xs text-slate-500 ml-auto">({group.jobs.length} jobs)</span>
+                </button>
+              </div>
+              <div className="flex-1 relative h-12">
+                {/* Show aggregated timeline for the group */}
+                <div className="absolute inset-0 flex items-center">
+                  {group.jobs.filter(j => j.enabled).map((job, idx) => {
+                    const parsed = parseCronExpression(job.schedule.expr);
+                    if (parsed.frequency === 'high') {
+                      return (
+                        <div
+                          key={job.id}
+                          className="absolute h-1 rounded-full opacity-60"
+                          style={{
+                            left: '2px',
+                            right: '2px',
+                            top: `${idx * 2 + 4}px`,
+                            backgroundColor: job.state.lastStatus === 'error' ? '#ef4444' : '#22c55e',
+                          }}
+                        />
+                      );
+                    }
+                    return null;
+                  })}
+                </div>
+              </div>
+            </div>
+            
+            {/* Group Jobs */}
+            {expandedGroups.has(group.name) && (
+              <div>
+                {group.jobs.map(job => renderJobRow(job, false))}
+              </div>
+            )}
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -439,6 +647,14 @@ function JobCard({ job, onCopyCommand }: { job: CronJob; onCopyCommand: (job: Cr
           <p className="text-xs text-slate-500 mb-1">Schedule</p>
           <p className="text-sm text-slate-200 font-medium">{parsed.description}</p>
           <p className="text-xs text-slate-600 font-mono">{job.schedule.expr || job.schedule.kind}</p>
+          <span className={`inline-block mt-1 px-2 py-0.5 rounded text-xs border ${
+            parsed.frequency === 'high' ? 'bg-red-500/10 text-red-400 border-red-500/30' :
+            parsed.frequency === 'medium' ? 'bg-orange-500/10 text-orange-400 border-orange-500/30' :
+            parsed.frequency === 'low' ? 'bg-green-500/10 text-green-400 border-green-500/30' :
+            'bg-blue-500/10 text-blue-400 border-blue-500/30'
+          }`}>
+            {parsed.frequency} freq
+          </span>
         </div>
         <div>
           <p className="text-xs text-slate-500 mb-1">Model</p>
@@ -539,10 +755,10 @@ function JobList({ jobs, onCopyCommand }: { jobs: CronJob[]; onCopyCommand: (job
       case "name":
         return a.name.localeCompare(b.name);
       case "frequency":
-        // Sort by estimated runs per day (rough approximation)
-        const aRuns = a.schedule.expr?.includes("*/") ? 96 : a.schedule.expr === "0 * * * *" ? 24 : 1;
-        const bRuns = b.schedule.expr?.includes("*/") ? 96 : b.schedule.expr === "0 * * * *" ? 24 : 1;
-        return bRuns - aRuns;
+        const aFreq = parseFrequencyType(a.schedule.expr);
+        const bFreq = parseFrequencyType(b.schedule.expr);
+        const freqOrder = ['high', 'medium', 'low', 'once'];
+        return freqOrder.indexOf(aFreq) - freqOrder.indexOf(bFreq);
       case "nextRun":
       default:
         if (!a.state.nextRunAtMs && !b.state.nextRunAtMs) return 0;
@@ -630,6 +846,14 @@ export default function CronsPage() {
 
   useEffect(() => {
     fetchData();
+    
+    // Auto-refresh every 30 seconds to update the current time indicator
+    const interval = setInterval(() => {
+      // Force a re-render to update current time position
+      setData(prevData => prevData ? { ...prevData } : null);
+    }, 30000);
+    
+    return () => clearInterval(interval);
   }, [fetchData]);
 
   const handleCopyCommand = useCallback((job: CronJob) => {
@@ -717,8 +941,8 @@ export default function CronsPage() {
       {/* Stats */}
       <StatsPanel jobs={data.jobs} />
 
-      {/* Timeline */}
-      <Timeline jobs={data.jobs} />
+      {/* Gantt Timeline */}
+      <GanttTimeline jobs={data.jobs} />
 
       {/* Job List */}
       <JobList jobs={data.jobs} onCopyCommand={handleCopyCommand} />

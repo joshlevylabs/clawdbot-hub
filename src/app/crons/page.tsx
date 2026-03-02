@@ -382,224 +382,228 @@ function GanttTimeline({ jobs }: { jobs: CronJob[] }) {
   const hours = Array.from({ length: 24 }, (_, i) => i);
   const currentTimePos = getCurrentTimePosition();
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
+  const ROW_H = 40; // px per job row
+  const GROUP_H = 44; // px per group header
+  const HOUR_W = 60; // px per hour column
+  const TIMELINE_W = HOUR_W * 24; // total timeline width
+  const NAME_W = 280; // name column width
 
   const toggleGroup = (groupName: string) => {
     setExpandedGroups(prev => {
       const next = new Set(prev);
-      if (next.has(groupName)) {
-        next.delete(groupName);
-      } else {
-        next.add(groupName);
-      }
+      if (next.has(groupName)) next.delete(groupName);
+      else next.add(groupName);
       return next;
     });
   };
 
-  // Initialize with first group expanded
   useEffect(() => {
     if (groups.length > 0) {
-      setExpandedGroups(new Set([groups[0].name]));
+      setExpandedGroups(new Set(groups.map(g => g.name)));
     }
   }, [groups]);
 
-  const renderJobRow = (job: CronJob, isGroupHeader = false) => {
-    const parsed = parseCronExpression(job.schedule.expr);
-    const events = generateTimelineEvents([job]);
-    
-    const getJobColor = (job: CronJob) => {
-      if (!job.enabled) return '#64748b'; // slate-500
-      if (job.state.lastStatus === 'error') return '#ef4444'; // red-500
-      return '#22c55e'; // green-500
-    };
-
-    const color = getJobColor(job);
-
-    return (
-      <div key={job.id} className={`flex items-center border-b border-slate-800/30 ${isGroupHeader ? 'h-12' : 'h-10'}`}>
-        {/* Job Name Column */}
-        <div className={`w-72 flex-shrink-0 px-4 flex items-center gap-2 ${isGroupHeader ? 'bg-slate-800/30' : ''}`}>
-          {!isGroupHeader && <div className="w-4" />}
-          <span className={`text-lg ${isGroupHeader ? 'text-base' : 'text-sm'}`}>
-            {isGroupHeader ? job.agent.emoji : ''}
-          </span>
-          <div className="min-w-0 flex-1">
-            <span 
-              className={`${isGroupHeader ? 'text-slate-200 font-semibold' : 'text-slate-300'} truncate block`}
-              title={job.name}
-            >
-              {job.name}
-            </span>
-            {!isGroupHeader && (
-              <span className="text-xs text-slate-500 block truncate">
-                {parsed.description}
-              </span>
-            )}
-          </div>
-          <div className="flex items-center gap-1 flex-shrink-0">
-            {!job.enabled && <span className="w-2 h-2 rounded-full bg-slate-500" title="Disabled" />}
-            {job.state.lastStatus === 'error' && <span className="w-2 h-2 rounded-full bg-red-500" title="Error" />}
-            {job.enabled && job.state.lastStatus !== 'error' && (
-              <span className="w-2 h-2 rounded-full bg-green-500" title="Running" />
-            )}
-          </div>
-        </div>
-
-        {/* Timeline Column */}
-        <div className="flex-1 relative h-full">
-          {/* High frequency jobs show as bands */}
-          {parsed.frequency === 'high' && job.enabled && (
-            <div 
-              className="absolute top-1/2 -translate-y-1/2 h-4 rounded-sm opacity-80 border border-slate-700"
-              style={{
-                left: '2px',
-                right: '2px',
-                backgroundColor: color + '40', // Add transparency
-                borderColor: color,
-              }}
-              title={`${job.name} - ${parsed.description}`}
-            >
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-xs font-medium text-white text-shadow-sm px-1">
-                  {parsed.frequency === 'high' ? parsed.description : ''}
-                </span>
-              </div>
-            </div>
-          )}
-          
-          {/* Medium and low frequency jobs show as blocks */}
-          {(parsed.frequency === 'medium' || parsed.frequency === 'low') && job.enabled && events.map((event, idx) => (
-            <div
-              key={idx}
-              className="absolute top-1/2 -translate-y-1/2 h-6 w-1 rounded-sm"
-              style={{
-                left: `${((event.hour + event.minute / 60) / 24) * 100}%`,
-                backgroundColor: color,
-              }}
-              title={`${job.name} at ${event.hour}:${event.minute.toString().padStart(2, '0')}`}
-            />
-          ))}
-          
-          {/* One-shot jobs */}
-          {parsed.frequency === 'once' && job.enabled && job.schedule.atMs && (
-            <div
-              className="absolute top-1/2 -translate-y-1/2 h-6 w-2 rounded-sm bg-amber-500"
-              style={{
-                left: `${((new Date(job.schedule.atMs).getHours() + new Date(job.schedule.atMs).getMinutes() / 60) / 24) * 100}%`,
-              }}
-              title={`${job.name} at ${new Date(job.schedule.atMs).toLocaleTimeString()}`}
-            />
-          )}
-        </div>
-      </div>
-    );
+  const getJobColor = (job: CronJob) => {
+    if (!job.enabled) return '#64748b';
+    if (job.state.lastStatus === 'error') return '#ef4444';
+    return '#22c55e';
   };
 
   return (
     <div className="bg-slate-900/50 rounded-xl border border-slate-800 overflow-hidden mb-6">
-      {/* Header */}
+      {/* Title Bar */}
       <div className="flex items-center gap-2 p-4 border-b border-slate-800">
         <Calendar className="w-4 h-4 text-violet-400" strokeWidth={1.5} />
         <h2 className="text-sm font-semibold text-slate-200">Execution Timeline (PT)</h2>
         <div className="ml-auto flex items-center gap-4 text-xs text-slate-500">
-          <span className="flex items-center gap-1">
-            <span className="w-2 h-2 rounded-full bg-green-500" /> Active
-          </span>
-          <span className="flex items-center gap-1">
-            <span className="w-2 h-2 rounded-full bg-red-500" /> Error
-          </span>
-          <span className="flex items-center gap-1">
-            <span className="w-2 h-2 rounded-full bg-slate-500" /> Disabled
-          </span>
-          <span className="flex items-center gap-1">
-            <span className="w-3 h-2 rounded-sm bg-green-500/40 border border-green-500" /> High freq
-          </span>
+          <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-green-500" /> Active</span>
+          <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-red-500" /> Error</span>
+          <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-slate-500" /> Disabled</span>
+          <span className="flex items-center gap-1"><span className="w-3 h-2 rounded-sm bg-green-500/25 border border-green-500/60" /> High freq</span>
         </div>
       </div>
 
-      {/* Timeline Header with Hours */}
-      <div className="sticky top-0 bg-slate-900/90 backdrop-blur-sm border-b border-slate-800">
-        <div className="flex items-center">
-          <div className="w-72 flex-shrink-0 px-4 py-2">
-            <span className="text-xs font-medium text-slate-400">Job Name & Schedule</span>
-          </div>
-          <div className="flex-1 relative">
-            {/* Hour markers */}
-            <div className="flex h-8 border-l border-slate-800">
-              {hours.map(hour => (
-                <div key={hour} className="flex-1 border-r border-slate-800/50 flex items-center justify-center">
-                  <span className="text-xs text-slate-500 font-medium">
-                    {hour.toString().padStart(2, '0')}
-                  </span>
-                </div>
-              ))}
-            </div>
-            
-            {/* Current time indicator */}
-            <div 
-              className="absolute top-0 bottom-0 w-0.5 bg-cyan-400 z-10"
-              style={{ left: `${currentTimePos}%` }}
-              title={`Current time: ${new Date().toLocaleTimeString()}`}
+      {/* Scrollable Table */}
+      <div className="max-h-[700px] overflow-y-auto">
+        <div className="flex" style={{ minWidth: NAME_W + TIMELINE_W }}>
+          {/* Sticky Name Column */}
+          <div className="flex-shrink-0 bg-slate-900 z-20" style={{ width: NAME_W, position: 'sticky', left: 0 }}>
+            {/* Header cell */}
+            <div
+              className="flex items-center px-4 border-b border-r border-slate-700 bg-slate-800/80 font-medium text-xs text-slate-400"
+              style={{ height: GROUP_H }}
             >
-              <div className="absolute -top-1 -left-1 w-2 h-2 bg-cyan-400 rounded-full"></div>
+              Job Name &amp; Schedule
             </div>
-          </div>
-        </div>
-      </div>
 
-      {/* Timeline Body */}
-      <div className="max-h-[600px] overflow-y-auto">
-        {groups.map(group => (
-          <div key={group.name}>
-            {/* Group Header */}
-            <div className="flex items-center bg-slate-800/30 border-b border-slate-800">
-              <div className="w-72 flex-shrink-0 px-4 py-3 flex items-center gap-2">
-                <button
-                  onClick={() => toggleGroup(group.name)}
-                  className="flex items-center gap-2 hover:text-slate-100 transition-colors"
-                >
-                  <ChevronRight 
-                    className={`w-4 h-4 text-slate-400 transition-transform ${
-                      expandedGroups.has(group.name) ? 'rotate-90' : ''
-                    }`} 
-                  />
-                  <span className="text-lg">{group.emoji}</span>
-                  <span className="text-sm font-semibold text-slate-200">{group.name}</span>
-                  <span className="text-xs text-slate-500 ml-auto">({group.jobs.length} jobs)</span>
-                </button>
-              </div>
-              <div className="flex-1 relative h-12">
-                {/* Show aggregated timeline for the group */}
-                <div className="absolute inset-0 flex items-center">
-                  {group.jobs.filter(j => j.enabled).map((job, idx) => {
+            {/* Rows */}
+            {groups.map(group => {
+              const isOpen = expandedGroups.has(group.name);
+              return (
+                <div key={group.name}>
+                  {/* Group row */}
+                  <button
+                    onClick={() => toggleGroup(group.name)}
+                    className="w-full flex items-center gap-2 px-4 border-b border-r border-slate-700 bg-slate-800/50 hover:bg-slate-800/80 transition-colors"
+                    style={{ height: GROUP_H }}
+                  >
+                    <ChevronRight className={`w-3.5 h-3.5 text-slate-400 transition-transform ${isOpen ? 'rotate-90' : ''}`} />
+                    <span className="text-base">{group.emoji}</span>
+                    <span className="text-sm font-semibold text-slate-200">{group.name}</span>
+                    <span className="text-xs text-slate-500 ml-1">({group.jobs.length})</span>
+                  </button>
+
+                  {/* Job rows */}
+                  {isOpen && group.jobs.map((job, idx) => {
                     const parsed = parseCronExpression(job.schedule.expr);
-                    if (parsed.frequency === 'high') {
+                    return (
+                      <div
+                        key={job.id}
+                        className={`flex items-center gap-2 px-4 border-b border-r border-slate-700/60 ${idx % 2 === 0 ? 'bg-slate-900/60' : 'bg-slate-900/30'}`}
+                        style={{ height: ROW_H }}
+                      >
+                        <div className="flex items-center gap-1.5 flex-shrink-0">
+                          {!job.enabled && <span className="w-2 h-2 rounded-full bg-slate-500" />}
+                          {job.state.lastStatus === 'error' && job.enabled && <span className="w-2 h-2 rounded-full bg-red-500" />}
+                          {job.enabled && job.state.lastStatus !== 'error' && <span className="w-2 h-2 rounded-full bg-green-500" />}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <span className="text-sm text-slate-200 block truncate" title={job.name}>{job.name}</span>
+                          <span className="text-[11px] text-slate-500 block">{parsed.description}</span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Scrollable Timeline Area */}
+          <div className="flex-1 overflow-x-auto">
+            <div style={{ width: TIMELINE_W, position: 'relative' }}>
+              {/* Hour header */}
+              <div className="flex border-b border-slate-700 bg-slate-800/80" style={{ height: GROUP_H }}>
+                {hours.map(hour => (
+                  <div
+                    key={hour}
+                    className="flex items-center justify-center border-r border-slate-700/60 text-xs font-mono text-slate-400"
+                    style={{ width: HOUR_W }}
+                  >
+                    {hour.toString().padStart(2, '0')}:00
+                  </div>
+                ))}
+              </div>
+
+              {/* Row grid + bars */}
+              {groups.map(group => {
+                const isOpen = expandedGroups.has(group.name);
+                return (
+                  <div key={group.name}>
+                    {/* Group summary row */}
+                    <div className="relative border-b border-slate-700 bg-slate-800/50" style={{ height: GROUP_H }}>
+                      {/* Vertical hour gridlines */}
+                      {hours.map(hour => (
+                        <div key={hour} className="absolute top-0 bottom-0 border-r border-slate-700/30" style={{ left: hour * HOUR_W, width: HOUR_W }} />
+                      ))}
+                      {/* Aggregated dots for collapsed groups */}
+                      {!isOpen && group.jobs.filter(j => j.enabled).map(job => {
+                        const events = generateTimelineEvents([job]);
+                        const parsed = parseCronExpression(job.schedule.expr);
+                        const color = getJobColor(job);
+                        if (parsed.frequency === 'high') {
+                          return <div key={job.id} className="absolute h-1 rounded-full opacity-40" style={{ left: 2, right: 2, top: 20, backgroundColor: color }} />;
+                        }
+                        return events.map((ev, i) => (
+                          <div key={`${job.id}-${i}`} className="absolute w-1 h-1 rounded-full opacity-50" style={{ left: ((ev.hour + ev.minute / 60) / 24) * TIMELINE_W, top: 20, backgroundColor: color }} />
+                        ));
+                      })}
+                      {/* Current time line */}
+                      <div className="absolute top-0 bottom-0 w-0.5 bg-cyan-400/40 z-10" style={{ left: `${currentTimePos}%` }} />
+                    </div>
+
+                    {/* Job timeline rows */}
+                    {isOpen && group.jobs.map((job, idx) => {
+                      const parsed = parseCronExpression(job.schedule.expr);
+                      const events = generateTimelineEvents([job]);
+                      const color = getJobColor(job);
+
                       return (
                         <div
                           key={job.id}
-                          className="absolute h-1 rounded-full opacity-60"
-                          style={{
-                            left: '2px',
-                            right: '2px',
-                            top: `${idx * 2 + 4}px`,
-                            backgroundColor: job.state.lastStatus === 'error' ? '#ef4444' : '#22c55e',
-                          }}
-                        />
+                          className={`relative border-b border-slate-700/40 ${idx % 2 === 0 ? 'bg-slate-900/60' : 'bg-slate-900/30'}`}
+                          style={{ height: ROW_H }}
+                        >
+                          {/* Vertical hour gridlines */}
+                          {hours.map(hour => (
+                            <div key={hour} className="absolute top-0 bottom-0 border-r border-slate-700/20" style={{ left: hour * HOUR_W, width: HOUR_W }} />
+                          ))}
+
+                          {/* High frequency band */}
+                          {parsed.frequency === 'high' && job.enabled && (
+                            <div
+                              className="absolute top-1/2 -translate-y-1/2 h-5 rounded"
+                              style={{ left: 4, right: 4, backgroundColor: color + '25', border: `1px solid ${color}60` }}
+                              title={`${job.name} — ${parsed.description}`}
+                            >
+                              <span className="absolute inset-0 flex items-center justify-center text-[10px] font-medium text-slate-300">
+                                {parsed.description}
+                              </span>
+                            </div>
+                          )}
+
+                          {/* Medium / low frequency blocks */}
+                          {(parsed.frequency === 'medium' || parsed.frequency === 'low') && job.enabled && events.map((ev, i) => {
+                            const x = ((ev.hour + ev.minute / 60) / 24) * TIMELINE_W;
+                            return (
+                              <div
+                                key={i}
+                                className="absolute top-1/2 -translate-y-1/2 rounded-sm"
+                                style={{ left: x - 3, width: 6, height: 20, backgroundColor: color }}
+                                title={`${job.name} at ${ev.hour}:${ev.minute.toString().padStart(2, '0')}`}
+                              />
+                            );
+                          })}
+
+                          {/* Disabled job — show faded markers */}
+                          {!job.enabled && events.map((ev, i) => {
+                            const x = ((ev.hour + ev.minute / 60) / 24) * TIMELINE_W;
+                            return (
+                              <div
+                                key={i}
+                                className="absolute top-1/2 -translate-y-1/2 rounded-sm opacity-30"
+                                style={{ left: x - 2, width: 4, height: 14, backgroundColor: '#64748b' }}
+                                title={`${job.name} at ${ev.hour}:${ev.minute.toString().padStart(2, '0')} (disabled)`}
+                              />
+                            );
+                          })}
+
+                          {/* One-shot jobs */}
+                          {parsed.frequency === 'once' && job.enabled && job.schedule.atMs && (() => {
+                            const d = new Date(job.schedule.atMs);
+                            const x = ((d.getHours() + d.getMinutes() / 60) / 24) * TIMELINE_W;
+                            return (
+                              <div
+                                className="absolute top-1/2 -translate-y-1/2 rounded-sm"
+                                style={{ left: x - 4, width: 8, height: 20, backgroundColor: '#f59e0b' }}
+                                title={`${job.name} at ${d.toLocaleTimeString()} (one-shot)`}
+                              />
+                            );
+                          })()}
+
+                          {/* Current time line */}
+                          <div className="absolute top-0 bottom-0 w-0.5 bg-cyan-400 z-10" style={{ left: `${currentTimePos}%` }}>
+                            <div className="absolute -top-0.5 -left-[3px] w-2 h-2 bg-cyan-400 rounded-full" />
+                          </div>
+                        </div>
                       );
-                    }
-                    return null;
-                  })}
-                </div>
-              </div>
+                    })}
+                  </div>
+                );
+              })}
             </div>
-            
-            {/* Group Jobs */}
-            {expandedGroups.has(group.name) && (
-              <div>
-                {group.jobs.map(job => renderJobRow(job, false))}
-              </div>
-            )}
           </div>
-        ))}
+        </div>
       </div>
     </div>
   );

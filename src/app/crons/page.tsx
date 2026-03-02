@@ -27,8 +27,9 @@ import {
 
 interface CronSchedule {
   kind: string;
-  expr: string;
-  tz: string;
+  expr?: string;
+  atMs?: number;
+  tz?: string;
 }
 
 interface CronState {
@@ -109,7 +110,8 @@ function formatRelativeTime(ms: number): string {
   }
 }
 
-function parseCronExpression(expr: string): { hours?: number[]; minutes?: number[]; weekdays?: number[]; description: string } {
+function parseCronExpression(expr: string | undefined | null): { hours?: number[]; minutes?: number[]; weekdays?: number[]; description: string } {
+  if (!expr) return { description: "one-shot" };
   const parts = expr.trim().split(/\s+/);
   if (parts.length !== 5) {
     return { description: expr };
@@ -436,7 +438,7 @@ function JobCard({ job, onCopyCommand }: { job: CronJob; onCopyCommand: (job: Cr
         <div>
           <p className="text-xs text-slate-500 mb-1">Schedule</p>
           <p className="text-sm text-slate-200 font-medium">{parsed.description}</p>
-          <p className="text-xs text-slate-600 font-mono">{job.schedule.expr}</p>
+          <p className="text-xs text-slate-600 font-mono">{job.schedule.expr || job.schedule.kind}</p>
         </div>
         <div>
           <p className="text-xs text-slate-500 mb-1">Model</p>
@@ -538,8 +540,8 @@ function JobList({ jobs, onCopyCommand }: { jobs: CronJob[]; onCopyCommand: (job
         return a.name.localeCompare(b.name);
       case "frequency":
         // Sort by estimated runs per day (rough approximation)
-        const aRuns = a.schedule.expr.includes("*/") ? 96 : a.schedule.expr === "0 * * * *" ? 24 : 1;
-        const bRuns = b.schedule.expr.includes("*/") ? 96 : b.schedule.expr === "0 * * * *" ? 24 : 1;
+        const aRuns = a.schedule.expr?.includes("*/") ? 96 : a.schedule.expr === "0 * * * *" ? 24 : 1;
+        const bRuns = b.schedule.expr?.includes("*/") ? 96 : b.schedule.expr === "0 * * * *" ? 24 : 1;
         return bRuns - aRuns;
       case "nextRun":
       default:
@@ -631,7 +633,7 @@ export default function CronsPage() {
   }, [fetchData]);
 
   const handleCopyCommand = useCallback((job: CronJob) => {
-    const command = `clawdbot cron update ${job.id} --enabled=${job.enabled} --schedule="${job.schedule.expr}" --name="${job.name}"`;
+    const command = `clawdbot cron update ${job.id} --enabled=${job.enabled}${job.schedule.expr ? ` --schedule="${job.schedule.expr}"` : ""} --name="${job.name}"`;
     navigator.clipboard.writeText(command);
     // Could add a toast notification here
   }, []);

@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-03-02T09:32:41.111959",
-  "active_sessions": 3,
+  "generated_at": "2026-03-02T10:00:31.163840",
+  "active_sessions": 4,
   "billing_model": "subscription",
   "subscriptions": {
     "Claude Max": {
@@ -15,14 +15,14 @@
     "today": 6.67,
     "week": 46.67,
     "month": 200.0,
-    "api_equivalent_today": 19.4534,
-    "api_equivalent_week": 267.0659,
-    "api_equivalent_month": 272.5377,
-    "savings_today": 12.79,
-    "savings_month": 72.54,
+    "api_equivalent_today": 19.7916,
+    "api_equivalent_week": 267.4041,
+    "api_equivalent_month": 272.8758,
+    "savings_today": 13.12,
+    "savings_month": 72.88,
     "subscription_daily": 6.67,
     "subscription_monthly": 200.0,
-    "tokens_today": 42791277
+    "tokens_today": 44113225
   },
   "by_model": {
     "Claude Opus 4": {
@@ -35,13 +35,13 @@
       "calls_today": 170
     },
     "Claude Sonnet 4": {
-      "cost_today": 8.924,
-      "cost_week": 19.555,
-      "cost_month": 19.555,
-      "tokens_today": 25587424,
-      "tokens_week": 37931149,
-      "tokens_month": 37931149,
-      "calls_today": 360
+      "cost_today": 9.2622,
+      "cost_week": 19.8932,
+      "cost_month": 19.8932,
+      "tokens_today": 26909372,
+      "tokens_week": 39253097,
+      "tokens_month": 39253097,
+      "calls_today": 326
     }
   },
   "by_agent": {
@@ -54,18 +54,18 @@
       "department": "other"
     },
     "theo": {
-      "cost_today": 7.4327,
-      "cost_week": 60.4844,
-      "cost_month": 60.4844,
-      "tokens_today": 21905929,
+      "cost_today": 8.5279,
+      "cost_week": 61.5796,
+      "cost_month": 61.5796,
+      "tokens_today": 25307611,
       "primary_model": "Claude Sonnet 4",
       "department": "executive"
     },
     "cron": {
-      "cost_today": 1.4913,
-      "cost_week": 1.4913,
-      "cost_month": 1.4913,
-      "tokens_today": 3681495,
+      "cost_today": 0.7343,
+      "cost_week": 0.7343,
+      "cost_month": 0.7343,
+      "tokens_today": 1601761,
       "primary_model": "Claude Sonnet 4",
       "department": "other"
     }
@@ -78,6 +78,6 @@
     "2026-02-27": 36.405413999999986,
     "2026-02-28": 59.05813599999996,
     "2026-03-01": 77.83200724999995,
-    "2026-03-02": 19.453405150000012
+    "2026-03-02": 19.791582100000014
   }
 }

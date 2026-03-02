@@ -73,7 +73,7 @@
       "tag": "JOSHUA",
       "priority": "high",
       "assignee": "Theo",
-      "status": "pending",
+      "status": "rejected",
       "sourceStandup": "2026-02-25-adhoc-lever-financial-app-separation",
       "sourceStandupType": "Lever Financial App Separation",
       "sourceDate": "2026-02-25",
@@ -81,7 +81,8 @@
       "updatedAt": "2026-02-25T19:06:16.651022-08:00",
       "completedAt": null,
       "approvedAt": "2026-02-25T19:06:16.651025-08:00",
-      "approvedBy": "joshua"
+      "approvedBy": "joshua",
+      "resolution": "Obsolete \u2014 Lever killed 2026-02-27"
     },
     {
       "key": "A-005",
@@ -384,12 +385,14 @@
       "tag": "AGENT",
       "priority": "high",
       "assignee": "Alex Hormozi",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "2026-02-26-adhoc-canvas-platform",
       "sourceDate": "2026-02-26",
       "createdAt": "2026-02-26T21:38:26.540294-08:00",
       "approvedAt": "2026-02-26T21:38:26.540294-08:00",
-      "approvedBy": "joshua"
+      "approvedBy": "joshua",
+      "resolution": "Completed: Mosaic brand established, app icon created, ASC app registered",
+      "completedAt": "2026-03-02T14:22:16.541111"
     },
     {
       "key": "CVS-002",
@@ -402,12 +405,14 @@
       "tag": "AGENT",
       "priority": "high",
       "assignee": "Theo",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "2026-02-26-adhoc-canvas-platform",
       "sourceDate": "2026-02-26",
       "createdAt": "2026-02-26T21:38:26.540294-08:00",
       "approvedAt": "2026-02-26T21:38:26.540294-08:00",
-      "approvedBy": "joshua"
+      "approvedBy": "joshua",
+      "resolution": "Completed: Mosaic registered as ecosystem vertical, PROJECT.md created",
+      "completedAt": "2026-03-02T14:22:16.541111"
     },
     {
       "key": "CVS-003",
@@ -420,12 +425,14 @@
       "tag": "AGENT",
       "priority": "high",
       "assignee": "Elon Musk",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "2026-02-26-adhoc-canvas-platform",
       "sourceDate": "2026-02-26",
       "createdAt": "2026-02-26T21:38:26.540294-08:00",
       "approvedAt": "2026-02-26T21:38:26.540294-08:00",
-      "approvedBy": "joshua"
+      "approvedBy": "joshua",
+      "resolution": "Completed: Architecture doc delivered (Wave 1, 22KB spec)",
+      "completedAt": "2026-03-02T14:22:16.541111"
     },
     {
       "key": "CVS-004",
@@ -438,12 +445,14 @@
       "tag": "AGENT",
       "priority": "high",
       "assignee": "Elon Musk",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "2026-02-26-adhoc-canvas-platform",
       "sourceDate": "2026-02-26",
       "createdAt": "2026-02-26T21:38:26.540294-08:00",
       "approvedAt": "2026-02-26T21:38:26.540294-08:00",
-      "approvedBy": "joshua"
+      "approvedBy": "joshua",
+      "resolution": "Completed: Widget API defined (Wave 2, 33KB spec), implemented in code",
+      "completedAt": "2026-03-02T14:22:16.541111"
     },
     {
       "key": "CVS-005",
@@ -456,12 +465,14 @@
       "tag": "AGENT",
       "priority": "high",
       "assignee": "Elon Musk",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "2026-02-26-adhoc-canvas-platform",
       "sourceDate": "2026-02-26",
       "createdAt": "2026-02-26T21:38:26.540294-08:00",
       "approvedAt": "2026-02-26T21:38:26.540294-08:00",
-      "approvedBy": "joshua"
+      "approvedBy": "joshua",
+      "resolution": "Completed: Finance widget extracted and built (FinanceWidget.tsx)",
+      "completedAt": "2026-03-02T14:22:16.541111"
     },
     {
       "key": "CVS-006",
@@ -474,12 +485,14 @@
       "tag": "AGENT",
       "priority": "high",
       "assignee": "Elon Musk",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "2026-02-26-adhoc-canvas-platform",
       "sourceDate": "2026-02-26",
       "createdAt": "2026-02-26T21:38:26.540294-08:00",
       "approvedAt": "2026-02-26T21:38:26.540294-08:00",
-      "approvedBy": "joshua"
+      "approvedBy": "joshua",
+      "resolution": "Completed: Faith widget extracted and built (FaithWidget.tsx + ScriptureWidget)",
+      "completedAt": "2026-03-02T14:22:16.541111"
     },
     {
       "key": "CVS-007",
@@ -492,12 +505,14 @@
       "tag": "AGENT",
       "priority": "high",
       "assignee": "Elon Musk",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "2026-02-26-adhoc-canvas-platform",
       "sourceDate": "2026-02-26",
       "createdAt": "2026-02-26T21:38:26.540294-08:00",
       "approvedAt": "2026-02-26T21:38:26.540294-08:00",
-      "approvedBy": "joshua"
+      "approvedBy": "joshua",
+      "resolution": "Completed: Family widget extracted and built (FamilyWidget.tsx + FamilyEventsWidget)",
+      "completedAt": "2026-03-02T14:22:16.541111"
     },
     {
       "key": "CVS-008",
@@ -510,12 +525,14 @@
       "tag": "AGENT",
       "priority": "high",
       "assignee": "Elon Musk",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "2026-02-26-adhoc-canvas-platform",
       "sourceDate": "2026-02-26",
       "createdAt": "2026-02-26T21:38:26.540294-08:00",
       "approvedAt": "2026-02-26T21:38:26.540294-08:00",
-      "approvedBy": "joshua"
+      "approvedBy": "joshua",
+      "resolution": "Completed: Marriage widget extracted and built (MarriageWidget.tsx + TouchpointWidget)",
+      "completedAt": "2026-03-02T14:22:16.541111"
     },
     {
       "key": "CVS-009",
@@ -528,12 +545,14 @@
       "tag": "AGENT",
       "priority": "high",
       "assignee": "Elon Musk",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "2026-02-26-adhoc-canvas-platform",
       "sourceDate": "2026-02-26",
       "createdAt": "2026-02-26T21:38:26.540294-08:00",
       "approvedAt": "2026-02-26T21:38:26.540294-08:00",
-      "approvedBy": "joshua"
+      "approvedBy": "joshua",
+      "resolution": "Completed: Grid layout engine built (WidgetGrid.tsx, MosaicDashboard.tsx)",
+      "completedAt": "2026-03-02T14:22:16.541111"
     },
     {
       "key": "CVS-010",
@@ -546,12 +565,14 @@
       "tag": "AGENT",
       "priority": "high",
       "assignee": "Steve Jobs",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "2026-02-26-adhoc-canvas-platform",
       "sourceDate": "2026-02-26",
       "createdAt": "2026-02-26T21:38:26.540294-08:00",
       "approvedAt": "2026-02-26T21:38:26.540294-08:00",
-      "approvedBy": "joshua"
+      "approvedBy": "joshua",
+      "resolution": "Completed: UX patterns delivered (Wave 1, 16KB spec)",
+      "completedAt": "2026-03-02T14:22:16.541111"
     },
     {
       "key": "CVS-011",
@@ -564,12 +585,14 @@
       "tag": "AGENT",
       "priority": "high",
       "assignee": "Steve Jobs",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "2026-02-26-adhoc-canvas-platform",
       "sourceDate": "2026-02-26",
       "createdAt": "2026-02-26T21:38:26.540294-08:00",
       "approvedAt": "2026-02-26T21:38:26.540294-08:00",
-      "approvedBy": "joshua"
+      "approvedBy": "joshua",
+      "resolution": "Completed: Onboarding flow built (MosaicOnboarding.tsx + OpenClaw MosaicChat)",
+      "completedAt": "2026-03-02T14:22:16.541111"
     },
     {
       "key": "CVS-012",
@@ -582,12 +605,14 @@
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "Dave Ramsey",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "2026-02-26-adhoc-canvas-platform",
       "sourceDate": "2026-02-26",
       "createdAt": "2026-02-26T21:38:26.540294-08:00",
       "approvedAt": "2026-02-26T21:38:26.540294-08:00",
-      "approvedBy": "joshua"
+      "approvedBy": "joshua",
+      "resolution": "Completed: Monetization model delivered (Wave 1, 10KB spec)",
+      "completedAt": "2026-03-02T14:22:16.541111"
     },
     {
       "key": "CVS-013",
@@ -600,12 +625,14 @@
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "Alex Hormozi",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "2026-02-26-adhoc-canvas-platform",
       "sourceDate": "2026-02-26",
       "createdAt": "2026-02-26T21:38:26.540294-08:00",
       "approvedAt": "2026-02-26T21:38:26.540294-08:00",
-      "approvedBy": "joshua"
+      "approvedBy": "joshua",
+      "resolution": "Completed: GTM strategy delivered (Wave 1, 12KB spec)",
+      "completedAt": "2026-03-02T14:22:16.541111"
     },
     {
       "key": "CVS-014",
@@ -618,12 +645,14 @@
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "James Truchard",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "2026-02-26-adhoc-canvas-platform",
       "sourceDate": "2026-02-26",
       "createdAt": "2026-02-26T21:38:26.540294-08:00",
       "approvedAt": "2026-02-26T21:38:26.540294-08:00",
-      "approvedBy": "joshua"
+      "approvedBy": "joshua",
+      "resolution": "Completed: Telemetry spec delivered (Wave 1, 18KB spec)",
+      "completedAt": "2026-03-02T14:22:16.541111"
     },
     {
       "key": "CVS-015",
@@ -636,12 +665,14 @@
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "Jordan Peterson",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "2026-02-26-adhoc-canvas-platform",
       "sourceDate": "2026-02-26",
       "createdAt": "2026-02-26T21:38:26.540294-08:00",
       "approvedAt": "2026-02-26T21:38:26.540294-08:00",
-      "approvedBy": "joshua"
+      "approvedBy": "joshua",
+      "resolution": "Completed: Safeguards spec delivered (Wave 1, 11KB spec)",
+      "completedAt": "2026-03-02T14:22:16.541111"
     },
     {
       "key": "CVS-016",
@@ -654,12 +685,14 @@
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "Chris Vermeullen",
-      "status": "pending",
+      "status": "done",
       "sourceStandup": "2026-02-26-adhoc-canvas-platform",
       "sourceDate": "2026-02-26",
       "createdAt": "2026-02-26T21:38:26.540294-08:00",
       "approvedAt": "2026-02-26T21:38:26.540294-08:00",
-      "approvedBy": "joshua"
+      "approvedBy": "joshua",
+      "resolution": "Completed: Trading widget spec delivered (Wave 2, 16KB spec)",
+      "completedAt": "2026-03-02T14:22:16.541111"
     },
     {
       "key": "CVS-017",
@@ -672,12 +705,13 @@
       "tag": "JOSHUA",
       "priority": "high",
       "assignee": "Joshua",
-      "status": "pending",
+      "status": "rejected",
       "sourceStandup": "2026-02-26-adhoc-canvas-platform",
       "sourceDate": "2026-02-26",
       "createdAt": "2026-02-26T21:38:26.540294-08:00",
       "approvedAt": "2026-02-26T21:38:26.540294-08:00",
-      "approvedBy": "joshua"
+      "approvedBy": "joshua",
+      "resolution": "Obsolete \u2014 Lever killed 2026-02-27"
     },
     {
       "key": "J-004",
@@ -718,13 +752,14 @@
       "priority": "high",
       "tag": "AGENT",
       "source": "Mosaic Build Pipeline Audit",
-      "status": "pending",
+      "status": "rejected",
       "approvedAt": "2026-02-28T12:34:00-08:00",
       "description": "Task: Design production-grade Mosaic CI/CD architecture with monitoring. Assigned to James Truchard at high priority.",
       "acceptanceCriteria": [
         "Task 'Design production-grade Mosaic CI/CD architecture with monit' is completed and verified",
         "Results documented or committed"
-      ]
+      ],
+      "resolution": "Superseded: Mosaic CI/CD \u2014 pivoted to Faith Journey"
     },
     {
       "key": "A-020",
@@ -750,13 +785,14 @@
       "priority": "medium",
       "tag": "AGENT",
       "source": "Mosaic Build Pipeline Audit",
-      "status": "pending",
+      "status": "rejected",
       "approvedAt": "2026-02-28T12:34:00-08:00",
       "description": "Task: Define Mosaic build notification and error UX flow. Assigned to Steve Jobs at medium priority.",
       "acceptanceCriteria": [
         "Task 'Define Mosaic build notification and error UX flow' is completed and verified",
         "Results documented or committed"
-      ]
+      ],
+      "resolution": "Superseded: Mosaic notification UX \u2014 pivoted to Faith Journey"
     },
     {
       "key": "A-022",
@@ -765,13 +801,14 @@
       "priority": "high",
       "tag": "AGENT",
       "source": "Mosaic UX Overhaul \u2014 Agent-Driven Dashboard",
-      "status": "pending",
+      "status": "rejected",
       "approvedAt": "2026-02-28T20:52:00-08:00",
       "description": "Task: Design and implement agent conversation interface for Mosaic. Assigned to Steve Jobs at high priority.",
       "acceptanceCriteria": [
         "Task 'Design and implement agent conversation interface for Mosaic' is completed and verified",
         "Results documented or committed"
-      ]
+      ],
+      "resolution": "Superseded: Mosaic conversation interface \u2014 replaced by OpenClaw + Faith Journey"
     },
     {
       "key": "A-023",
@@ -780,13 +817,14 @@
       "priority": "high",
       "tag": "AGENT",
       "source": "Mosaic UX Overhaul \u2014 Agent-Driven Dashboard",
-      "status": "pending",
+      "status": "rejected",
       "approvedAt": "2026-02-28T20:52:00-08:00",
       "description": "Task: Extend CVS-003 to include agent orchestration architecture. Assigned to Elon Musk at high priority.",
       "acceptanceCriteria": [
         "Task 'Extend CVS-003 to include agent orchestration architecture' is completed and verified",
         "Results documented or committed"
-      ]
+      ],
+      "resolution": "Superseded: Mosaic agent orchestration \u2014 replaced by Faith Journey architecture"
     },
     {
       "key": "A-024",
@@ -795,13 +833,14 @@
       "priority": "high",
       "tag": "AGENT",
       "source": "Mosaic UX Overhaul \u2014 Agent-Driven Dashboard",
-      "status": "pending",
+      "status": "rejected",
       "approvedAt": "2026-02-28T20:52:00-08:00",
       "description": "Task: Design consent-based engagement depth model with privacy safeguards. Assigned to Jordan Peterson at high priority.",
       "acceptanceCriteria": [
         "Task 'Design consent-based engagement depth model with privacy saf' is completed and verified",
         "Results documented or committed"
-      ]
+      ],
+      "resolution": "Superseded: Mosaic engagement model \u2014 replaced by A-027 Faith ethics"
     },
     {
       "key": "A-025",
@@ -810,13 +849,14 @@
       "priority": "medium",
       "tag": "AGENT",
       "source": "Mosaic UX Overhaul \u2014 Agent-Driven Dashboard",
-      "status": "pending",
+      "status": "rejected",
       "approvedAt": "2026-02-28T20:52:00-08:00",
       "description": "Task: Expand widget ecosystems within Faith, Family, Finance categories. Assigned to Elon Musk at medium priority.",
       "acceptanceCriteria": [
         "Task 'Expand widget ecosystems within Faith, Family, Finance categ' is completed and verified",
         "Results documented or committed"
-      ]
+      ],
+      "resolution": "Superseded: Mosaic widget ecosystems \u2014 replaced by Faith Journey focus"
     },
     {
       "key": "A-026",
@@ -825,12 +865,14 @@
       "tag": "AGENT",
       "priority": "high",
       "assignee": "Elon Musk",
-      "status": "approved",
+      "status": "done",
       "sourceStandup": "2026-03-02-adhoc-faith-journey-app-ai-religious-guide-builder",
       "sourceDate": "2026-03-02",
       "createdAt": "2026-03-02T12:36:23.376029",
       "approvedAt": "2026-03-02T12:38:17.694098",
-      "approvedBy": "joshua"
+      "approvedBy": "joshua",
+      "resolution": "Completed: 27KB architecture spec at mosaic/specs/FAITH-JOURNEY-ARCHITECTURE.md",
+      "completedAt": "2026-03-02T14:22:16.541111"
     },
     {
       "key": "A-027",
@@ -839,12 +881,14 @@
       "tag": "AGENT",
       "priority": "high",
       "assignee": "Jordan Peterson",
-      "status": "approved",
+      "status": "done",
       "sourceStandup": "2026-03-02-adhoc-faith-journey-app-ai-religious-guide-builder",
       "sourceDate": "2026-03-02",
       "createdAt": "2026-03-02T12:36:23.376029",
       "approvedAt": "2026-03-02T12:39:10.430276",
-      "approvedBy": "joshua"
+      "approvedBy": "joshua",
+      "resolution": "Completed: Ethics framework spec delivered",
+      "completedAt": "2026-03-02T14:22:16.541111"
     },
     {
       "key": "A-028",
@@ -853,12 +897,14 @@
       "tag": "AGENT",
       "priority": "high",
       "assignee": "Steve Jobs",
-      "status": "approved",
+      "status": "done",
       "sourceStandup": "2026-03-02-adhoc-faith-journey-app-ai-religious-guide-builder",
       "sourceDate": "2026-03-02",
       "createdAt": "2026-03-02T12:36:23.376029",
       "approvedAt": "2026-03-02T12:40:54.899675",
-      "approvedBy": "joshua"
+      "approvedBy": "joshua",
+      "resolution": "Completed: User research spec delivered",
+      "completedAt": "2026-03-02T14:22:16.541111"
     },
     {
       "key": "A-029",
@@ -867,10 +913,12 @@
       "tag": "AGENT",
       "priority": "high",
       "assignee": "Alex Hormozi",
-      "status": "approved",
+      "status": "done",
       "sourceStandup": "2026-03-02-adhoc-faith-journey-app-ai-religious-guide-builder",
       "sourceDate": "2026-03-02",
-      "createdAt": "2026-03-02T12:36:23.376029"
+      "createdAt": "2026-03-02T12:36:23.376029",
+      "resolution": "Completed: Content strategy at mosaic/specs/A-029-CONTENT-STRATEGY.md",
+      "completedAt": "2026-03-02T14:22:16.541111"
     },
     {
       "key": "A-030",
@@ -879,10 +927,12 @@
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "Dave Ramsey",
-      "status": "approved",
+      "status": "done",
       "sourceStandup": "2026-03-02-adhoc-faith-journey-app-ai-religious-guide-builder",
       "sourceDate": "2026-03-02",
-      "createdAt": "2026-03-02T12:36:23.376029"
+      "createdAt": "2026-03-02T12:36:23.376029",
+      "resolution": "Completed: Revenue model at mosaic/specs/A-030-REVENUE-MODEL.md",
+      "completedAt": "2026-03-02T14:22:16.541111"
     },
     {
       "key": "A-031",
@@ -891,10 +941,12 @@
       "tag": "AGENT",
       "priority": "high",
       "assignee": "Chris Vermeullen",
-      "status": "approved",
+      "status": "done",
       "sourceStandup": "2026-03-02-adhoc-faith-journey-app-ai-religious-guide-builder",
       "sourceDate": "2026-03-02",
-      "createdAt": "2026-03-02T12:36:23.376029"
+      "createdAt": "2026-03-02T12:36:23.376029",
+      "resolution": "Completed: Export format spec (PSAEF v1.0) at mosaic/specs/A-031-EXPORT-FORMAT.md",
+      "completedAt": "2026-03-02T14:22:16.541111"
     },
     {
       "key": "J-005",
@@ -913,10 +965,12 @@
       "tag": "AGENT",
       "priority": "high",
       "assignee": "Steve Jobs",
-      "status": "approved",
+      "status": "done",
       "sourceStandup": "2026-03-02-adhoc-faith-journey-app-ai-religious-guide-builder",
       "sourceDate": "2026-03-02",
-      "createdAt": "2026-03-02T12:56:00"
+      "createdAt": "2026-03-02T12:56:00",
+      "resolution": "Completed: Faith UX design at mosaic/specs/A-032-FAITH-UX.md",
+      "completedAt": "2026-03-02T14:22:16.541111"
     },
     {
       "key": "A-033",
@@ -924,10 +978,12 @@
       "tag": "AGENT",
       "priority": "medium",
       "assignee": "Alex Hormozi",
-      "status": "approved",
+      "status": "done",
       "sourceStandup": "2026-03-02-adhoc-faith-journey-app-ai-religious-guide-builder",
       "sourceDate": "2026-03-02",
-      "createdAt": "2026-03-02T12:56:00"
+      "createdAt": "2026-03-02T12:56:00",
+      "resolution": "Completed: Evangelical partnerships at mosaic/specs/A-033-EVANGELICAL-PARTNERSHIPS.md",
+      "completedAt": "2026-03-02T14:22:16.541111"
     },
     {
       "key": "A-034",
@@ -935,7 +991,7 @@
       "tag": "AGENT",
       "priority": "high",
       "assignee": "Elon Musk",
-      "status": "approved",
+      "status": "in-progress",
       "sourceStandup": "2026-03-02-adhoc-faith-journey-app-ai-religious-guide-builder",
       "sourceDate": "2026-03-02",
       "createdAt": "2026-03-02T12:56:00"

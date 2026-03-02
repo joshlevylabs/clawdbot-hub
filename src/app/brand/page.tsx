@@ -2,7 +2,7 @@
 
 /* ─────────────────────────────────────────────────────────────────
  *  Josh Levy Labs — Brand Guidelines v2.0
- *  "The Forge" — Where builders shape raw ideas into engineered products.
+ *  Josh Levy Labs — Brand System
  *  Inspired by legendary design systems. Geometric precision meets warm humanity.
  * ───────────────────────────────────────────────────────────────── */
 
@@ -123,10 +123,10 @@ interface AnimationTiming {
 // ── Brand data (redesigned) ─────────────────────────────────────────
 
 const BRAND_STORY = {
-  essence: "The Forge — Where builders shape raw ideas into engineered products.",
+  essence: "Where builders shape raw ideas into engineered products.",
   tagline: "Craft intentional tools.",
   personality: ["Geometric", "Warm-premium", "Constraint-focused", "Craft-obsessed", "Engineer-first"],
-  philosophy: "Like molten metal taking shape on an anvil, every design decision is deliberate, precise, and purposeful. We don't chase trends. We forge timeless tools."
+  philosophy: "Every design decision is deliberate, precise, and purposeful. We don't chase trends. We build timeless tools."
 };
 
 const DESIGN_PRINCIPLES: DesignPrinciple[] = [
@@ -578,7 +578,7 @@ export default function BrandGuidelinesPage() {
           />
           <div>
             <h1 className="text-3xl sm:text-4xl font-bold" style={{ fontFamily: "Space Grotesk, system-ui, sans-serif", letterSpacing: "-0.02em", color: "#F5F5F0" }}>
-              The Forge
+              Brand System
             </h1>
             <p className="text-base sm:text-lg" style={{ color: "#D4A020", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>
               {BRAND_STORY.tagline}
@@ -689,7 +689,7 @@ export default function BrandGuidelinesPage() {
 
           {/* Design Principles */}
           <Section>
-            <SectionHeader icon={Target} title="Design Principles" subtitle={`${DESIGN_PRINCIPLES.length} forged principles`} />
+            <SectionHeader icon={Target} title="Design Principles" subtitle={`${DESIGN_PRINCIPLES.length} core principles`} />
             <div className="space-y-4">
               {DESIGN_PRINCIPLES.map((principle, i) => (
                 <div key={i} className="p-5 rounded-2xl border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>

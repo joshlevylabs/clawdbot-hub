@@ -1,408 +1,1481 @@
-[
-  {
-    "id": "28c654c7-a297-421d-9a04-018f6acc9c0c",
-    "name": "Morning Brief",
-    "enabled": true,
-    "schedule": {
-      "kind": "cron",
-      "expr": "0 6 * * *",
-      "tz": "America/Los_Angeles"
+{
+  "version": 1,
+  "lastSync": "2026-03-02T19:37:06Z",
+  "jobs": [
+    {
+      "id": "28c654c7-a297-421d-9a04-018f6acc9c0c",
+      "name": "Morning Brief",
+      "description": null,
+      "enabled": true,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 6 * * *",
+        "tz": "America/Los_Angeles"
+      },
+      "sessionTarget": "isolated",
+      "state": {
+        "nextRunAtMs": 1772546400000,
+        "lastRunAtMs": 1772460000000,
+        "lastStatus": "ok",
+        "lastDurationMs": 225594
+      },
+      "payload": {
+        "model": "anthropic/claude-sonnet-4-20250514",
+        "deliver": true,
+        "channel": "telegram"
+      },
+      "agent": {
+        "id": "main",
+        "name": "Claude",
+        "emoji": "🤖",
+        "title": "Main Agent"
+      }
     },
-    "agent": {
-      "id": "coo",
-      "name": "Theo",
-      "emoji": "\ud83d\udd3a",
-      "title": "COO"
+    {
+      "id": "72b34921-f25f-47a0-8d2f-e4673a94f177",
+      "name": "Paper Trading Auto-Tracker",
+      "description": null,
+      "enabled": true,
+      "schedule": {
+        "kind": "cron",
+        "expr": "*/5 6-13 * * 1-5",
+        "tz": "America/Los_Angeles"
+      },
+      "sessionTarget": "isolated",
+      "state": {
+        "nextRunAtMs": 1772480400000,
+        "lastRunAtMs": 1772480100000,
+        "lastStatus": "ok",
+        "lastDurationMs": 27063
+      },
+      "payload": {
+        "model": "anthropic/claude-sonnet-4-20250514",
+        "deliver": false,
+        "channel": "telegram"
+      },
+      "agent": {
+        "id": "main",
+        "name": "Claude",
+        "emoji": "🤖",
+        "title": "Main Agent"
+      }
     },
-    "payload": {
-      "kind": "agentTurn",
-      "message": "Morning brief for Joshua at 6am.\n\n**STEP 1 - RUN TOOLS**\n1. Run prayer generator: `python3 ~/clawd/tools/morning-prayer/daily_prayer.py`\n2. Run MRE signals: `cd ~/clawd/tools/cgs-trader && source venv/bin/activate && python mre_signals.py`\n3. Run relationship analysis: `python3 ~/clawd/tools/jillian/analyze.py analyze`\n\n**STEP 2 - GATHER DATA**\n1. Weather forecast for Los Angeles/Temecula area\n2. **CALENDAR** - From ALL 4 accounts:\n   - `today`: Events happening today (with time, title, location",
-      "deliver": true,
-      "channel": "telegram",
-      "model": "anthropic/claude-sonnet-4-20250514"
+    {
+      "id": "e3dc2402-6e04-42ed-8420-5f410bc606a3",
+      "name": "MRE Pit: Signal Accuracy",
+      "description": null,
+      "enabled": true,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 22 * * *",
+        "tz": "America/Los_Angeles"
+      },
+      "sessionTarget": "isolated",
+      "state": {
+        "nextRunAtMs": 1772517600000,
+        "lastRunAtMs": 1772431200001,
+        "lastStatus": "ok",
+        "lastDurationMs": 118975
+      },
+      "payload": {
+        "model": "anthropic/claude-sonnet-4-20250514",
+        "deliver": false,
+        "channel": "telegram"
+      },
+      "agent": {
+        "id": "main",
+        "name": "Claude",
+        "emoji": "🤖",
+        "title": "Main Agent"
+      }
     },
-    "state": {
-      "nextRunAtMs": 1771336800000,
-      "lastRunAtMs": 1771250400108,
-      "lastStatus": "ok",
-      "lastDurationMs": 190863
+    {
+      "id": "0a119de4-9066-4556-90ef-388a60fccf92",
+      "name": "MRE Pit: Correlation Scan",
+      "description": null,
+      "enabled": true,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 23 * * *",
+        "tz": "America/Los_Angeles"
+      },
+      "sessionTarget": "isolated",
+      "state": {
+        "nextRunAtMs": 1772521200000,
+        "lastRunAtMs": 1772434800002,
+        "lastStatus": "ok",
+        "lastDurationMs": 136064
+      },
+      "payload": {
+        "model": "anthropic/claude-sonnet-4-20250514",
+        "deliver": false,
+        "channel": "telegram"
+      },
+      "agent": {
+        "id": "main",
+        "name": "Claude",
+        "emoji": "🤖",
+        "title": "Main Agent"
+      }
+    },
+    {
+      "id": "fc61664b-2637-425b-a2ea-6bba2c89e137",
+      "name": "MRE Pit: Regime & Markets",
+      "description": null,
+      "enabled": true,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 0 * * *",
+        "tz": "America/Los_Angeles"
+      },
+      "sessionTarget": "isolated",
+      "state": {
+        "nextRunAtMs": 1772524800000,
+        "lastRunAtMs": 1772438400001,
+        "lastStatus": "ok",
+        "lastDurationMs": 137417
+      },
+      "payload": {
+        "model": "anthropic/claude-sonnet-4-20250514",
+        "deliver": false,
+        "channel": "telegram"
+      },
+      "agent": {
+        "id": "main",
+        "name": "Claude",
+        "emoji": "🤖",
+        "title": "Main Agent"
+      }
+    },
+    {
+      "id": "81a1dc54-43b7-438d-bf0a-a611341cf03f",
+      "name": "MRE Pit: Param Sweep",
+      "description": null,
+      "enabled": true,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 1 * * *",
+        "tz": "America/Los_Angeles"
+      },
+      "sessionTarget": "isolated",
+      "state": {
+        "nextRunAtMs": 1772528400000,
+        "lastRunAtMs": 1772442000003,
+        "lastStatus": "ok",
+        "lastDurationMs": 182419
+      },
+      "payload": {
+        "model": "anthropic/claude-sonnet-4-20250514",
+        "deliver": false,
+        "channel": "telegram"
+      },
+      "agent": {
+        "id": "main",
+        "name": "Claude",
+        "emoji": "🤖",
+        "title": "Main Agent"
+      }
+    },
+    {
+      "id": "a853e675-27cf-4c28-a7f4-1ac96b9544ef",
+      "name": "MRE Pit: Synthesis & Apply",
+      "description": null,
+      "enabled": true,
+      "schedule": {
+        "kind": "cron",
+        "expr": "30 2 * * *",
+        "tz": "America/Los_Angeles"
+      },
+      "sessionTarget": "isolated",
+      "state": {
+        "nextRunAtMs": 1772533800000,
+        "lastRunAtMs": 1772447400001,
+        "lastStatus": "ok",
+        "lastDurationMs": 191140
+      },
+      "payload": {
+        "model": "anthropic/claude-sonnet-4-20250514",
+        "deliver": false,
+        "channel": "telegram"
+      },
+      "agent": {
+        "id": "main",
+        "name": "Claude",
+        "emoji": "🤖",
+        "title": "Main Agent"
+      }
+    },
+    {
+      "id": "ed2e5d43-3d67-45e4-9d98-a6e9317ae650",
+      "name": "MRE Pit: Deep Test & Picks",
+      "description": null,
+      "enabled": true,
+      "schedule": {
+        "kind": "cron",
+        "expr": "30 3 * * *",
+        "tz": "America/Los_Angeles"
+      },
+      "sessionTarget": "isolated",
+      "state": {
+        "nextRunAtMs": 1772537400000,
+        "lastRunAtMs": 1772451000002,
+        "lastStatus": "ok",
+        "lastDurationMs": 310434
+      },
+      "payload": {
+        "model": "anthropic/claude-sonnet-4-20250514",
+        "deliver": false,
+        "channel": "telegram"
+      },
+      "agent": {
+        "id": "main",
+        "name": "Claude",
+        "emoji": "🤖",
+        "title": "Main Agent"
+      }
+    },
+    {
+      "id": "d43c5e51-dcd5-45d9-a925-b2b5a69e27c2",
+      "name": "MRE Pit: Morning Report",
+      "description": null,
+      "enabled": true,
+      "schedule": {
+        "kind": "cron",
+        "expr": "30 5 * * *",
+        "tz": "America/Los_Angeles"
+      },
+      "sessionTarget": "isolated",
+      "state": {
+        "nextRunAtMs": 1772544600000,
+        "lastRunAtMs": 1772458200000,
+        "lastStatus": "ok",
+        "lastDurationMs": 234768
+      },
+      "payload": {
+        "model": "anthropic/claude-sonnet-4-20250514",
+        "deliver": true,
+        "channel": "telegram"
+      },
+      "agent": {
+        "id": "main",
+        "name": "Claude",
+        "emoji": "🤖",
+        "title": "Main Agent"
+      }
+    },
+    {
+      "id": "e66040e6-ad43-489e-b888-23d0f0453236",
+      "name": "Studio: Writer's Room",
+      "description": null,
+      "enabled": true,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 9 * * 0",
+        "tz": "America/Los_Angeles"
+      },
+      "sessionTarget": "isolated",
+      "state": {
+        "nextRunAtMs": 1772985600000,
+        "lastRunAtMs": 1772384400001,
+        "lastStatus": "ok",
+        "lastDurationMs": 78497
+      },
+      "payload": {
+        "model": "anthropic/claude-sonnet-4-20250514",
+        "deliver": true,
+        "channel": "telegram"
+      },
+      "agent": {
+        "id": "main",
+        "name": "Claude",
+        "emoji": "🤖",
+        "title": "Main Agent"
+      }
+    },
+    {
+      "id": "95c5dfc5-a730-44c5-bcbc-e2ca3293acb7",
+      "name": "Studio: Review Room",
+      "description": null,
+      "enabled": true,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 9 * * 5",
+        "tz": "America/Los_Angeles"
+      },
+      "sessionTarget": "isolated",
+      "state": {
+        "nextRunAtMs": 1772816400000,
+        "lastRunAtMs": 1772211624363,
+        "lastStatus": "ok",
+        "lastDurationMs": 101092
+      },
+      "payload": {
+        "model": "anthropic/claude-sonnet-4-20250514",
+        "deliver": true,
+        "channel": "telegram"
+      },
+      "agent": {
+        "id": "main",
+        "name": "Claude",
+        "emoji": "🤖",
+        "title": "Main Agent"
+      }
+    },
+    {
+      "id": "a2580e29-838d-4dec-b871-ae1d4b80aa58",
+      "name": "Price Refresh (Hub + Supabase)",
+      "description": null,
+      "enabled": true,
+      "schedule": {
+        "kind": "cron",
+        "expr": "2-58/15 6-13 * * 1-5",
+        "tz": "America/Los_Angeles"
+      },
+      "sessionTarget": "isolated",
+      "state": {
+        "nextRunAtMs": 1772480820000,
+        "lastRunAtMs": 1772479620001,
+        "lastStatus": "ok",
+        "lastDurationMs": 310872
+      },
+      "payload": {
+        "model": "anthropic/claude-sonnet-4-20250514",
+        "deliver": false,
+        "channel": "telegram"
+      },
+      "agent": {
+        "id": "main",
+        "name": "Claude",
+        "emoji": "🤖",
+        "title": "Main Agent"
+      }
+    },
+    {
+      "id": "60eee590-f9b8-44da-a9d6-05c778e2ef0f",
+      "name": "MRE V13 Weekly Optimizer",
+      "description": null,
+      "enabled": true,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 22 * * 0",
+        "tz": "America/Los_Angeles"
+      },
+      "sessionTarget": "isolated",
+      "state": {
+        "nextRunAtMs": 1773032400000,
+        "lastRunAtMs": 1772431318977,
+        "lastStatus": "ok",
+        "lastDurationMs": 114853
+      },
+      "payload": {
+        "model": "anthropic/claude-sonnet-4-20250514",
+        "deliver": true,
+        "channel": "telegram"
+      },
+      "agent": {
+        "id": "main",
+        "name": "Claude",
+        "emoji": "🤖",
+        "title": "Main Agent"
+      }
+    },
+    {
+      "id": "a441f404-50db-48ed-bdbd-feee5cff6633",
+      "name": "Fleet Tracker",
+      "description": null,
+      "enabled": true,
+      "schedule": {
+        "kind": "cron",
+        "expr": "*/30 * * * *",
+        "tz": "America/Los_Angeles"
+      },
+      "sessionTarget": "isolated",
+      "state": {
+        "nextRunAtMs": 1772481600000,
+        "lastRunAtMs": 1772479958337,
+        "lastStatus": "ok",
+        "lastDurationMs": 14811
+      },
+      "payload": {
+        "model": "anthropic/claude-sonnet-4-20250514",
+        "deliver": false,
+        "channel": "telegram"
+      },
+      "agent": {
+        "id": "main",
+        "name": "Claude",
+        "emoji": "🤖",
+        "title": "Main Agent"
+      }
+    },
+    {
+      "id": "308b0493-a502-4f3f-a811-a6f3f7269181",
+      "name": "Reminder: ChatBot + Job Hunt Agents",
+      "description": null,
+      "enabled": true,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 8 17 2 *",
+        "tz": "America/Los_Angeles"
+      },
+      "sessionTarget": "main",
+      "state": {
+        "nextRunAtMs": 1802880000000,
+        "lastRunAtMs": 1771344140478,
+        "lastStatus": "ok",
+        "lastDurationMs": 0
+      },
+      "payload": {
+        "model": null,
+        "deliver": null,
+        "channel": null
+      },
+      "agent": {
+        "id": "main",
+        "name": "Claude",
+        "emoji": "🤖",
+        "title": "Main Agent"
+      }
+    },
+    {
+      "id": "bf319483-ce6f-4250-a10a-e8e5b1b213d8",
+      "name": "Overnight Sprint 01/21 (23:30)",
+      "description": null,
+      "enabled": false,
+      "schedule": {
+        "kind": "cron",
+        "expr": "30 23 19 2 *",
+        "tz": "America/Los_Angeles"
+      },
+      "sessionTarget": "isolated",
+      "state": {
+        "nextRunAtMs": null,
+        "lastRunAtMs": 1771572611783,
+        "lastStatus": "ok",
+        "lastDurationMs": 107439
+      },
+      "payload": {
+        "model": "anthropic/claude-sonnet-4-20250514",
+        "deliver": false,
+        "channel": null
+      },
+      "agent": {
+        "id": "main",
+        "name": "Claude",
+        "emoji": "🤖",
+        "title": "Main Agent"
+      }
+    },
+    {
+      "id": "7e29394d-834b-4079-9550-1cf2c05cf94d",
+      "name": "Overnight Sprint 02/21 (23:45)",
+      "description": null,
+      "enabled": false,
+      "schedule": {
+        "kind": "cron",
+        "expr": "45 23 19 2 *",
+        "tz": "America/Los_Angeles"
+      },
+      "sessionTarget": "isolated",
+      "state": {
+        "nextRunAtMs": null,
+        "lastRunAtMs": 1771573500027,
+        "lastStatus": "ok",
+        "lastDurationMs": 95126
+      },
+      "payload": {
+        "model": "anthropic/claude-sonnet-4-20250514",
+        "deliver": false,
+        "channel": null
+      },
+      "agent": {
+        "id": "main",
+        "name": "Claude",
+        "emoji": "🤖",
+        "title": "Main Agent"
+      }
+    },
+    {
+      "id": "f75c6c31-d659-4bd4-871c-4123d77146b9",
+      "name": "Overnight Sprint 03/21 (00:00)",
+      "description": null,
+      "enabled": false,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 0 20 2 *",
+        "tz": "America/Los_Angeles"
+      },
+      "sessionTarget": "isolated",
+      "state": {
+        "nextRunAtMs": null,
+        "lastRunAtMs": 1771574564314,
+        "lastStatus": "ok",
+        "lastDurationMs": 89007
+      },
+      "payload": {
+        "model": "anthropic/claude-sonnet-4-20250514",
+        "deliver": false,
+        "channel": null
+      },
+      "agent": {
+        "id": "main",
+        "name": "Claude",
+        "emoji": "🤖",
+        "title": "Main Agent"
+      }
+    },
+    {
+      "id": "50700487-1f06-4198-b7e8-0ab41f8ccaa2",
+      "name": "Overnight Sprint 04/21 (00:15)",
+      "description": null,
+      "enabled": false,
+      "schedule": {
+        "kind": "cron",
+        "expr": "15 0 20 2 *",
+        "tz": "America/Los_Angeles"
+      },
+      "sessionTarget": "isolated",
+      "state": {
+        "nextRunAtMs": null,
+        "lastRunAtMs": 1771575300202,
+        "lastStatus": "ok",
+        "lastDurationMs": 163037
+      },
+      "payload": {
+        "model": "anthropic/claude-sonnet-4-20250514",
+        "deliver": false,
+        "channel": null
+      },
+      "agent": {
+        "id": "main",
+        "name": "Claude",
+        "emoji": "🤖",
+        "title": "Main Agent"
+      }
+    },
+    {
+      "id": "491d9021-b6ba-4e6e-b8c0-efaca8248c46",
+      "name": "Overnight Sprint 05/21 (00:30)",
+      "description": null,
+      "enabled": false,
+      "schedule": {
+        "kind": "cron",
+        "expr": "30 0 20 2 *",
+        "tz": "America/Los_Angeles"
+      },
+      "sessionTarget": "isolated",
+      "state": {
+        "nextRunAtMs": null,
+        "lastRunAtMs": 1771576215548,
+        "lastStatus": "ok",
+        "lastDurationMs": 59293
+      },
+      "payload": {
+        "model": "anthropic/claude-sonnet-4-20250514",
+        "deliver": false,
+        "channel": null
+      },
+      "agent": {
+        "id": "main",
+        "name": "Claude",
+        "emoji": "🤖",
+        "title": "Main Agent"
+      }
+    },
+    {
+      "id": "b819b456-71dc-4ed5-b106-195a5741930e",
+      "name": "Overnight Sprint 06/21 (00:45)",
+      "description": null,
+      "enabled": false,
+      "schedule": {
+        "kind": "cron",
+        "expr": "45 0 20 2 *",
+        "tz": "America/Los_Angeles"
+      },
+      "sessionTarget": "isolated",
+      "state": {
+        "nextRunAtMs": null,
+        "lastRunAtMs": 1771577100028,
+        "lastStatus": "ok",
+        "lastDurationMs": 100227
+      },
+      "payload": {
+        "model": "anthropic/claude-sonnet-4-20250514",
+        "deliver": false,
+        "channel": null
+      },
+      "agent": {
+        "id": "main",
+        "name": "Claude",
+        "emoji": "🤖",
+        "title": "Main Agent"
+      }
+    },
+    {
+      "id": "db5d3220-9211-4d13-9826-a78d75592b94",
+      "name": "Overnight Sprint 07/21 (01:00)",
+      "description": null,
+      "enabled": false,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 1 20 2 *",
+        "tz": "America/Los_Angeles"
+      },
+      "sessionTarget": "isolated",
+      "state": {
+        "nextRunAtMs": null,
+        "lastRunAtMs": 1771578389220,
+        "lastStatus": "ok",
+        "lastDurationMs": 68490
+      },
+      "payload": {
+        "model": "anthropic/claude-sonnet-4-20250514",
+        "deliver": false,
+        "channel": null
+      },
+      "agent": {
+        "id": "main",
+        "name": "Claude",
+        "emoji": "🤖",
+        "title": "Main Agent"
+      }
+    },
+    {
+      "id": "368985a9-ffbb-460a-914a-63523e3c2447",
+      "name": "Overnight Sprint 08/21 (01:15)",
+      "description": null,
+      "enabled": false,
+      "schedule": {
+        "kind": "cron",
+        "expr": "15 1 20 2 *",
+        "tz": "America/Los_Angeles"
+      },
+      "sessionTarget": "isolated",
+      "state": {
+        "nextRunAtMs": null,
+        "lastRunAtMs": 1771578900002,
+        "lastStatus": "ok",
+        "lastDurationMs": 119614
+      },
+      "payload": {
+        "model": "anthropic/claude-sonnet-4-20250514",
+        "deliver": false,
+        "channel": null
+      },
+      "agent": {
+        "id": "main",
+        "name": "Claude",
+        "emoji": "🤖",
+        "title": "Main Agent"
+      }
+    },
+    {
+      "id": "4d93fcb9-aa34-4449-b128-87781556c9f9",
+      "name": "Overnight Sprint 09/21 (01:30)",
+      "description": null,
+      "enabled": false,
+      "schedule": {
+        "kind": "cron",
+        "expr": "30 1 20 2 *",
+        "tz": "America/Los_Angeles"
+      },
+      "sessionTarget": "isolated",
+      "state": {
+        "nextRunAtMs": null,
+        "lastRunAtMs": 1771579812964,
+        "lastStatus": "ok",
+        "lastDurationMs": 67007
+      },
+      "payload": {
+        "model": "anthropic/claude-sonnet-4-20250514",
+        "deliver": false,
+        "channel": null
+      },
+      "agent": {
+        "id": "main",
+        "name": "Claude",
+        "emoji": "🤖",
+        "title": "Main Agent"
+      }
+    },
+    {
+      "id": "6e6aae44-a5ec-43f6-be12-07f2c3fa0215",
+      "name": "Overnight Sprint 10/21 (01:45)",
+      "description": null,
+      "enabled": false,
+      "schedule": {
+        "kind": "cron",
+        "expr": "45 1 20 2 *",
+        "tz": "America/Los_Angeles"
+      },
+      "sessionTarget": "isolated",
+      "state": {
+        "nextRunAtMs": null,
+        "lastRunAtMs": 1771580700068,
+        "lastStatus": "ok",
+        "lastDurationMs": 111687
+      },
+      "payload": {
+        "model": "anthropic/claude-sonnet-4-20250514",
+        "deliver": false,
+        "channel": null
+      },
+      "agent": {
+        "id": "main",
+        "name": "Claude",
+        "emoji": "🤖",
+        "title": "Main Agent"
+      }
+    },
+    {
+      "id": "c6e0a188-6800-47df-9a49-addc0cf0ddb8",
+      "name": "Overnight Sprint 11/21 (02:00)",
+      "description": null,
+      "enabled": false,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 2 20 2 *",
+        "tz": "America/Los_Angeles"
+      },
+      "sessionTarget": "isolated",
+      "state": {
+        "nextRunAtMs": null,
+        "lastRunAtMs": 1771581617454,
+        "lastStatus": "ok",
+        "lastDurationMs": 120680
+      },
+      "payload": {
+        "model": "anthropic/claude-sonnet-4-20250514",
+        "deliver": false,
+        "channel": null
+      },
+      "agent": {
+        "id": "main",
+        "name": "Claude",
+        "emoji": "🤖",
+        "title": "Main Agent"
+      }
+    },
+    {
+      "id": "5285f822-0630-4bd3-855c-6f1f35997086",
+      "name": "Overnight Sprint 12/21 (02:15)",
+      "description": null,
+      "enabled": false,
+      "schedule": {
+        "kind": "cron",
+        "expr": "15 2 20 2 *",
+        "tz": "America/Los_Angeles"
+      },
+      "sessionTarget": "isolated",
+      "state": {
+        "nextRunAtMs": null,
+        "lastRunAtMs": 1771582500835,
+        "lastStatus": "ok",
+        "lastDurationMs": 105642
+      },
+      "payload": {
+        "model": "anthropic/claude-sonnet-4-20250514",
+        "deliver": false,
+        "channel": null
+      },
+      "agent": {
+        "id": "main",
+        "name": "Claude",
+        "emoji": "🤖",
+        "title": "Main Agent"
+      }
+    },
+    {
+      "id": "b91bb849-ddd2-45e9-8503-72d397e01282",
+      "name": "Overnight Sprint 13/21 (02:30)",
+      "description": null,
+      "enabled": false,
+      "schedule": {
+        "kind": "cron",
+        "expr": "30 2 20 2 *",
+        "tz": "America/Los_Angeles"
+      },
+      "sessionTarget": "isolated",
+      "state": {
+        "nextRunAtMs": null,
+        "lastRunAtMs": 1771583724238,
+        "lastStatus": "ok",
+        "lastDurationMs": 81677
+      },
+      "payload": {
+        "model": "anthropic/claude-sonnet-4-20250514",
+        "deliver": false,
+        "channel": null
+      },
+      "agent": {
+        "id": "main",
+        "name": "Claude",
+        "emoji": "🤖",
+        "title": "Main Agent"
+      }
+    },
+    {
+      "id": "ba4ea7a6-f1ab-4f89-bac6-3758b1b74eff",
+      "name": "Overnight Sprint 14/21 (02:45)",
+      "description": null,
+      "enabled": false,
+      "schedule": {
+        "kind": "cron",
+        "expr": "45 2 20 2 *",
+        "tz": "America/Los_Angeles"
+      },
+      "sessionTarget": "isolated",
+      "state": {
+        "nextRunAtMs": null,
+        "lastRunAtMs": 1771584300194,
+        "lastStatus": "ok",
+        "lastDurationMs": 104012
+      },
+      "payload": {
+        "model": "anthropic/claude-sonnet-4-20250514",
+        "deliver": false,
+        "channel": null
+      },
+      "agent": {
+        "id": "main",
+        "name": "Claude",
+        "emoji": "🤖",
+        "title": "Main Agent"
+      }
+    },
+    {
+      "id": "e0e660cf-adbf-4848-ad05-88abfcf8f99c",
+      "name": "Overnight Sprint 15/21 (03:00)",
+      "description": null,
+      "enabled": false,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 3 20 2 *",
+        "tz": "America/Los_Angeles"
+      },
+      "sessionTarget": "isolated",
+      "state": {
+        "nextRunAtMs": null,
+        "lastRunAtMs": 1771585218013,
+        "lastStatus": "ok",
+        "lastDurationMs": 137615
+      },
+      "payload": {
+        "model": "anthropic/claude-sonnet-4-20250514",
+        "deliver": false,
+        "channel": null
+      },
+      "agent": {
+        "id": "main",
+        "name": "Claude",
+        "emoji": "🤖",
+        "title": "Main Agent"
+      }
+    },
+    {
+      "id": "44107d82-a212-48e8-bf9c-4d7a70cfc602",
+      "name": "Overnight Sprint 16/21 (03:15)",
+      "description": null,
+      "enabled": false,
+      "schedule": {
+        "kind": "cron",
+        "expr": "15 3 20 2 *",
+        "tz": "America/Los_Angeles"
+      },
+      "sessionTarget": "isolated",
+      "state": {
+        "nextRunAtMs": null,
+        "lastRunAtMs": 1771586100194,
+        "lastStatus": "ok",
+        "lastDurationMs": 69865
+      },
+      "payload": {
+        "model": "anthropic/claude-sonnet-4-20250514",
+        "deliver": false,
+        "channel": null
+      },
+      "agent": {
+        "id": "main",
+        "name": "Claude",
+        "emoji": "🤖",
+        "title": "Main Agent"
+      }
+    },
+    {
+      "id": "1b1d6d9b-2f2f-4004-ab93-fe23e8fd2764",
+      "name": "Overnight Sprint 17/21 (03:30)",
+      "description": null,
+      "enabled": false,
+      "schedule": {
+        "kind": "cron",
+        "expr": "30 3 20 2 *",
+        "tz": "America/Los_Angeles"
+      },
+      "sessionTarget": "isolated",
+      "state": {
+        "nextRunAtMs": null,
+        "lastRunAtMs": null,
+        "lastStatus": null,
+        "lastDurationMs": null
+      },
+      "payload": {
+        "model": "anthropic/claude-sonnet-4-20250514",
+        "deliver": false,
+        "channel": null
+      },
+      "agent": {
+        "id": "main",
+        "name": "Claude",
+        "emoji": "🤖",
+        "title": "Main Agent"
+      }
+    },
+    {
+      "id": "d3a9cb25-23ec-44ee-a667-5d3abb2b9c80",
+      "name": "Overnight Sprint 18/21 (03:45)",
+      "description": null,
+      "enabled": false,
+      "schedule": {
+        "kind": "cron",
+        "expr": "45 3 20 2 *",
+        "tz": "America/Los_Angeles"
+      },
+      "sessionTarget": "isolated",
+      "state": {
+        "nextRunAtMs": null,
+        "lastRunAtMs": 1771587900080,
+        "lastStatus": "ok",
+        "lastDurationMs": 72361
+      },
+      "payload": {
+        "model": "anthropic/claude-sonnet-4-20250514",
+        "deliver": false,
+        "channel": null
+      },
+      "agent": {
+        "id": "main",
+        "name": "Claude",
+        "emoji": "🤖",
+        "title": "Main Agent"
+      }
+    },
+    {
+      "id": "0639d38f-5a59-4129-957c-05414209e82d",
+      "name": "Overnight Sprint 19/21 (04:00)",
+      "description": null,
+      "enabled": false,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 4 20 2 *",
+        "tz": "America/Los_Angeles"
+      },
+      "sessionTarget": "isolated",
+      "state": {
+        "nextRunAtMs": null,
+        "lastRunAtMs": null,
+        "lastStatus": null,
+        "lastDurationMs": null
+      },
+      "payload": {
+        "model": "anthropic/claude-sonnet-4-20250514",
+        "deliver": false,
+        "channel": null
+      },
+      "agent": {
+        "id": "main",
+        "name": "Claude",
+        "emoji": "🤖",
+        "title": "Main Agent"
+      }
+    },
+    {
+      "id": "3180d5e6-f38b-4781-b6b9-5310551367e5",
+      "name": "Overnight Sprint 20/21 (04:15)",
+      "description": null,
+      "enabled": false,
+      "schedule": {
+        "kind": "cron",
+        "expr": "15 4 20 2 *",
+        "tz": "America/Los_Angeles"
+      },
+      "sessionTarget": "isolated",
+      "state": {
+        "nextRunAtMs": null,
+        "lastRunAtMs": 1771589700221,
+        "lastStatus": "ok",
+        "lastDurationMs": 123484
+      },
+      "payload": {
+        "model": "anthropic/claude-sonnet-4-20250514",
+        "deliver": false,
+        "channel": null
+      },
+      "agent": {
+        "id": "main",
+        "name": "Claude",
+        "emoji": "🤖",
+        "title": "Main Agent"
+      }
+    },
+    {
+      "id": "98da599b-dcd8-45c5-8235-6013be9664b5",
+      "name": "Overnight Sprint 21/21 (04:30)",
+      "description": null,
+      "enabled": false,
+      "schedule": {
+        "kind": "cron",
+        "expr": "30 4 20 2 *",
+        "tz": "America/Los_Angeles"
+      },
+      "sessionTarget": "isolated",
+      "state": {
+        "nextRunAtMs": null,
+        "lastRunAtMs": 1771590615824,
+        "lastStatus": "ok",
+        "lastDurationMs": 95066
+      },
+      "payload": {
+        "model": "anthropic/claude-sonnet-4-20250514",
+        "deliver": false,
+        "channel": null
+      },
+      "agent": {
+        "id": "main",
+        "name": "Claude",
+        "emoji": "🤖",
+        "title": "Main Agent"
+      }
+    },
+    {
+      "id": "082d574d-0b06-448c-a09b-103311f92321",
+      "name": "Overnight Sprint: Summary (04:45)",
+      "description": null,
+      "enabled": false,
+      "schedule": {
+        "kind": "cron",
+        "expr": "45 4 20 2 *",
+        "tz": "America/Los_Angeles"
+      },
+      "sessionTarget": "main",
+      "state": {
+        "nextRunAtMs": null,
+        "lastRunAtMs": 1771591500239,
+        "lastStatus": "ok",
+        "lastDurationMs": 50
+      },
+      "payload": {
+        "model": null,
+        "deliver": null,
+        "channel": null
+      },
+      "agent": {
+        "id": "main",
+        "name": "Claude",
+        "emoji": "🤖",
+        "title": "Main Agent"
+      }
+    },
+    {
+      "id": "b3b97d76-37e4-41f8-a167-cf139f4eaca4",
+      "name": "Lever TestFlight Overnight",
+      "description": null,
+      "enabled": false,
+      "schedule": {
+        "kind": "cron",
+        "expr": "*/15 * * * *",
+        "tz": "America/Los_Angeles"
+      },
+      "sessionTarget": "main",
+      "state": {
+        "nextRunAtMs": null,
+        "lastRunAtMs": 1771686900176,
+        "lastStatus": "ok",
+        "lastDurationMs": 11
+      },
+      "payload": {
+        "model": null,
+        "deliver": null,
+        "channel": null
+      },
+      "agent": {
+        "id": "main",
+        "name": "Claude",
+        "emoji": "🤖",
+        "title": "Main Agent"
+      }
+    },
+    {
+      "id": "493115df-3cc8-465d-9f7a-3cb6df33aa30",
+      "name": "Catapult Monitor",
+      "description": null,
+      "enabled": false,
+      "schedule": {
+        "kind": "cron",
+        "expr": "* * * * *",
+        "tz": "America/Los_Angeles"
+      },
+      "sessionTarget": "isolated",
+      "state": {
+        "nextRunAtMs": null,
+        "lastRunAtMs": 1771883539802,
+        "lastStatus": "ok",
+        "lastDurationMs": 38385
+      },
+      "payload": {
+        "model": "anthropic/claude-sonnet-4-20250514",
+        "deliver": true,
+        "channel": "telegram"
+      },
+      "agent": {
+        "id": "main",
+        "name": "Claude",
+        "emoji": "🤖",
+        "title": "Main Agent"
+      }
+    },
+    {
+      "id": "4db641c2-d5cf-4803-a495-a4b43b18f0b7",
+      "name": "Daily Directive Cleanup",
+      "description": null,
+      "enabled": true,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 1 * * *"
+      },
+      "sessionTarget": "main",
+      "state": {
+        "nextRunAtMs": 1772528400000,
+        "lastRunAtMs": 1772442193984,
+        "lastStatus": "ok",
+        "lastDurationMs": 0
+      },
+      "payload": {
+        "model": null,
+        "deliver": null,
+        "channel": null
+      },
+      "agent": {
+        "id": null,
+        "name": null,
+        "emoji": "🤖",
+        "title": "Agent"
+      }
+    },
+    {
+      "id": "1d37a921-4f4b-4c8c-97db-97ebe8a441bd",
+      "name": "morning-kickoff-standup",
+      "description": "Daily morning kickoff standup at 5:00 AM PT",
+      "enabled": true,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 5 * * *",
+        "tz": "America/Los_Angeles"
+      },
+      "sessionTarget": "isolated",
+      "state": {
+        "nextRunAtMs": 1772542800000,
+        "lastRunAtMs": 1772456411531,
+        "lastStatus": "ok",
+        "lastDurationMs": 12587
+      },
+      "payload": {
+        "model": "anthropic/claude-sonnet-4-20250514",
+        "deliver": null,
+        "channel": "last"
+      },
+      "agent": {
+        "id": null,
+        "name": null,
+        "emoji": "🤖",
+        "title": "Agent"
+      }
+    },
+    {
+      "id": "f7a87970-6991-48d7-81f0-6c5633caeb5c",
+      "name": "midday-checkpoint-standup",
+      "description": "Daily midday checkpoint standup at 12:00 PM PT",
+      "enabled": true,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 12 * * *",
+        "tz": "America/Los_Angeles"
+      },
+      "sessionTarget": "isolated",
+      "state": {
+        "nextRunAtMs": 1772481600000,
+        "lastRunAtMs": 1772395213672,
+        "lastStatus": "ok",
+        "lastDurationMs": 22207
+      },
+      "payload": {
+        "model": "anthropic/claude-sonnet-4-20250514",
+        "deliver": null,
+        "channel": "last"
+      },
+      "agent": {
+        "id": null,
+        "name": null,
+        "emoji": "🤖",
+        "title": "Agent"
+      }
+    },
+    {
+      "id": "48e48542-3f02-4432-a079-65cfa0c7aed6",
+      "name": "evening-session-standup",
+      "description": "Daily evening session standup at 8:00 PM PT",
+      "enabled": true,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 20 * * *",
+        "tz": "America/Los_Angeles"
+      },
+      "sessionTarget": "isolated",
+      "state": {
+        "nextRunAtMs": 1772510400000,
+        "lastRunAtMs": 1772424018706,
+        "lastStatus": "ok",
+        "lastDurationMs": 14004
+      },
+      "payload": {
+        "model": "anthropic/claude-sonnet-4-20250514",
+        "deliver": null,
+        "channel": "last"
+      },
+      "agent": {
+        "id": null,
+        "name": null,
+        "emoji": "🤖",
+        "title": "Agent"
+      }
+    },
+    {
+      "id": "7228acb0-6990-4118-84c4-78b5f3738a2b",
+      "name": "night-wrap-standup",
+      "description": "Daily night wrap standup at 10:30 PM PT",
+      "enabled": true,
+      "schedule": {
+        "kind": "cron",
+        "expr": "30 22 * * *",
+        "tz": "America/Los_Angeles"
+      },
+      "sessionTarget": "isolated",
+      "state": {
+        "nextRunAtMs": 1772519400000,
+        "lastRunAtMs": 1772433011957,
+        "lastStatus": "ok",
+        "lastDurationMs": 12008
+      },
+      "payload": {
+        "model": "anthropic/claude-sonnet-4-20250514",
+        "deliver": null,
+        "channel": "last"
+      },
+      "agent": {
+        "id": null,
+        "name": null,
+        "emoji": "🤖",
+        "title": "Agent"
+      }
+    },
+    {
+      "id": "585189d0-19e9-4ece-8db8-ea8f7acda627",
+      "name": "Weekly Velocity Report",
+      "description": null,
+      "enabled": true,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 21 * * 0",
+        "tz": "America/Los_Angeles"
+      },
+      "sessionTarget": "isolated",
+      "state": {
+        "nextRunAtMs": 1773028800000,
+        "lastRunAtMs": 1772427611509,
+        "lastStatus": "ok",
+        "lastDurationMs": 34088
+      },
+      "payload": {
+        "model": "anthropic/claude-sonnet-4-20250514",
+        "deliver": false,
+        "channel": "telegram"
+      },
+      "agent": {
+        "id": "main",
+        "name": "Claude",
+        "emoji": "🤖",
+        "title": "Main Agent"
+      }
+    },
+    {
+      "id": "c550a54c-f33e-49a8-a7e9-cedb63c18915",
+      "name": "Marin Nightly Research",
+      "description": null,
+      "enabled": true,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 23 * * *",
+        "tz": "America/Los_Angeles"
+      },
+      "sessionTarget": "isolated",
+      "state": {
+        "nextRunAtMs": 1772521200000,
+        "lastRunAtMs": 1772434949406,
+        "lastStatus": "ok",
+        "lastDurationMs": 383382
+      },
+      "payload": {
+        "model": "anthropic/claude-sonnet-4-20250514",
+        "deliver": false,
+        "channel": "telegram"
+      },
+      "agent": {
+        "id": "main",
+        "name": "Claude",
+        "emoji": "🤖",
+        "title": "Main Agent"
+      }
+    },
+    {
+      "id": "af30a83d-4206-4b79-856b-818c41132c9f",
+      "name": "Marin Daily Standup",
+      "description": "Daily standup for the Marin hardware project team at 5:00 PM PT",
+      "enabled": true,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 17 * * *",
+        "tz": "America/Los_Angeles"
+      },
+      "sessionTarget": "isolated",
+      "state": {
+        "nextRunAtMs": 1772499600000,
+        "lastRunAtMs": 1772413218819,
+        "lastStatus": "ok",
+        "lastDurationMs": 110563
+      },
+      "payload": {
+        "model": "anthropic/claude-sonnet-4-20250514",
+        "deliver": null,
+        "channel": "last"
+      },
+      "agent": {
+        "id": "main",
+        "name": "Claude",
+        "emoji": "🤖",
+        "title": "Main Agent"
+      }
+    },
+    {
+      "id": "2c2a59b5-e3e0-41ee-be3a-2644424125a7",
+      "name": "testflight-monitor",
+      "description": null,
+      "enabled": false,
+      "schedule": {
+        "kind": "at",
+        "atMs": 1740662400000
+      },
+      "sessionTarget": "main",
+      "state": {
+        "nextRunAtMs": null,
+        "lastRunAtMs": 1772202419954,
+        "lastStatus": "ok",
+        "lastDurationMs": 0
+      },
+      "payload": {
+        "model": null,
+        "deliver": null,
+        "channel": null
+      },
+      "agent": {
+        "id": "main",
+        "name": "Claude",
+        "emoji": "🤖",
+        "title": "Main Agent"
+      }
+    },
+    {
+      "id": "d0bb4504-6d90-434a-bb6c-7ad984b05626",
+      "name": "MRE Crash Sentinel",
+      "description": "Lightweight intraday crash mode detector — checks VIX, F&G, sector ETFs every 15 min during market hours. Sends Telegram alert to Joshua + MRE Trading Dev group if crash mode activates/escalates/deactivates.",
+      "enabled": true,
+      "schedule": {
+        "kind": "cron",
+        "expr": "*/15 6-13 * * 1-5",
+        "tz": "America/Los_Angeles"
+      },
+      "sessionTarget": "isolated",
+      "state": {
+        "nextRunAtMs": 1772480700000,
+        "lastRunAtMs": 1772479973148,
+        "lastStatus": "ok",
+        "lastDurationMs": 14846
+      },
+      "payload": {
+        "model": "anthropic/claude-sonnet-4-20250514",
+        "deliver": false,
+        "channel": "telegram"
+      },
+      "agent": {
+        "id": "main",
+        "name": "Claude",
+        "emoji": "🤖",
+        "title": "Main Agent"
+      }
+    },
+    {
+      "id": "167f218c-5988-46a1-8e5a-a5c4003a11f2",
+      "name": "faith-journey-build-monitor",
+      "description": null,
+      "enabled": false,
+      "schedule": {
+        "kind": "cron",
+        "expr": "*/3 * * * *"
+      },
+      "sessionTarget": "main",
+      "state": {
+        "nextRunAtMs": null,
+        "lastRunAtMs": null,
+        "lastStatus": null,
+        "lastDurationMs": null
+      },
+      "payload": {
+        "model": null,
+        "deliver": null,
+        "channel": null
+      },
+      "agent": {
+        "id": "main",
+        "name": "Claude",
+        "emoji": "🤖",
+        "title": "Main Agent"
+      }
+    },
+    {
+      "id": "fb4a386f-8686-43c5-880b-967c261274f1",
+      "name": "faith-journey-local-build",
+      "description": null,
+      "enabled": false,
+      "schedule": {
+        "kind": "cron",
+        "expr": "*/4 * * * *"
+      },
+      "sessionTarget": "main",
+      "state": {
+        "nextRunAtMs": null,
+        "lastRunAtMs": 1772407920008,
+        "lastStatus": "ok",
+        "lastDurationMs": 25
+      },
+      "payload": {
+        "model": null,
+        "deliver": null,
+        "channel": null
+      },
+      "agent": {
+        "id": "main",
+        "name": "Claude",
+        "emoji": "🤖",
+        "title": "Main Agent"
+      }
     }
-  },
-  {
-    "id": "72b34921-f25f-47a0-8d2f-e4673a94f177",
-    "name": "Paper Trading Auto-Tracker",
-    "enabled": true,
-    "schedule": {
-      "kind": "cron",
-      "expr": "*/5 6-13 * * 1-5",
-      "tz": "America/Los_Angeles"
-    },
-    "agent": {
-      "id": "ticker",
-      "name": "Ticker",
-      "emoji": "\ud83d\udcca",
-      "title": "Trading Lead"
-    },
-    "payload": {
-      "kind": "agentTurn",
-      "message": "Run the paper trading auto-tracker (replaces Alpaca bot).\n\n```bash\ncd ~/clawd/tools/paper-trader && bash auto_tracker.sh 2>&1\n```\n\nAfter the tracker runs, sync Alpaca paper account using the sync script:\n```bash\ncd ~/clawd/tools/paper-trader && source venv/bin/activate && python sync_alpaca.py 2>&1\n```\n\nIMPORTANT: The Supabase paper_positions table uses column `qty` (NOT `quantity`). Do NOT write custom Supabase queries \u2014 always use sync_alpaca.py which handles the schema correctly.\n\nOnly notify",
-      "deliver": false,
-      "channel": "telegram",
-      "model": "anthropic/claude-sonnet-4-20250514"
-    },
-    "state": {
-      "nextRunAtMs": 1771336800000,
-      "lastRunAtMs": 1771278900071,
-      "lastStatus": "ok",
-      "lastDurationMs": 13772
-    }
-  },
-  {
-    "id": "e3dc2402-6e04-42ed-8420-5f410bc606a3",
-    "name": "MRE Pit: Signal Accuracy",
-    "enabled": true,
-    "schedule": {
-      "kind": "cron",
-      "expr": "0 22 * * *",
-      "tz": "America/Los_Angeles"
-    },
-    "agent": {
-      "id": "ticker",
-      "name": "Ticker",
-      "emoji": "\ud83d\udcca",
-      "title": "Trading Lead"
-    },
-    "payload": {
-      "kind": "agentTurn",
-      "message": "MRE Overnight Pit \u2014 Phase 1: Signal Accuracy Analysis\n\nRead the pipeline doc: ~/clawd/agents/mre-optimizer/overnight/PIPELINE.md\n\n**Initialize tonight's state:**\n```bash\ncat > ~/clawd/agents/mre-optimizer/overnight/pipeline-state.json << 'INIT'\n{\"date\": \"$(date +%Y-%m-%d)\", \"version\": \"v7\", \"phases_completed\": [], \"current_phase\": \"signal_accuracy\", \"findings\": {}, \"changes_applied\": [], \"metrics_before\": {}, \"metrics_after\": {}}\nINIT\n```\n\n**Analyze signal performance:**\n1. Read current signals:",
-      "deliver": false,
-      "channel": "telegram",
-      "model": "anthropic/claude-sonnet-4-20250514"
-    },
-    "state": {
-      "nextRunAtMs": 1771308000000,
-      "lastRunAtMs": 1771221600020,
-      "lastStatus": "ok",
-      "lastDurationMs": 226038
-    }
-  },
-  {
-    "id": "0a119de4-9066-4556-90ef-388a60fccf92",
-    "name": "MRE Pit: Correlation Scan",
-    "enabled": true,
-    "schedule": {
-      "kind": "cron",
-      "expr": "0 23 * * *",
-      "tz": "America/Los_Angeles"
-    },
-    "agent": {
-      "id": "ticker",
-      "name": "Ticker",
-      "emoji": "\ud83d\udcca",
-      "title": "Trading Lead"
-    },
-    "payload": {
-      "kind": "agentTurn",
-      "message": "MRE Overnight Pit \u2014 Phase 2: Correlation & Cross-Asset Analysis\n\nRead pipeline state: `cat ~/clawd/agents/mre-optimizer/overnight/pipeline-state.json`\nRead Phase 1 results: `cat ~/clawd/agents/mre-optimizer/overnight/results/$(date +%Y-%m-%d)/signal_accuracy.json`\n\n**Run correlation analysis:**\n```bash\ncd ~/clawd/trading-bot/regime-detector && source venv/bin/activate\npython backtest/correlation_analyzer.py --deep 2>&1\n```\n\n**Analyze:**\n1. Lead/lag relationships (GLD\u2192SPY, VIX\u2192regime changes, bon",
-      "deliver": false,
-      "channel": "telegram",
-      "model": "anthropic/claude-sonnet-4-20250514"
-    },
-    "state": {
-      "nextRunAtMs": 1771311600000,
-      "lastRunAtMs": 1771225200176,
-      "lastStatus": "ok",
-      "lastDurationMs": 120685
-    }
-  },
-  {
-    "id": "fc61664b-2637-425b-a2ea-6bba2c89e137",
-    "name": "MRE Pit: Regime & Markets",
-    "enabled": true,
-    "schedule": {
-      "kind": "cron",
-      "expr": "0 0 * * *",
-      "tz": "America/Los_Angeles"
-    },
-    "agent": {
-      "id": "ticker",
-      "name": "Ticker",
-      "emoji": "\ud83d\udcca",
-      "title": "Trading Lead"
-    },
-    "payload": {
-      "kind": "agentTurn",
-      "message": "MRE Overnight Pit \u2014 Phase 3: Regime Detection & Prediction Markets\n\nRead pipeline state + prior phases:\n```bash\ncat ~/clawd/agents/mre-optimizer/overnight/pipeline-state.json\ncat ~/clawd/agents/mre-optimizer/overnight/results/$(date +%Y-%m-%d)/signal_accuracy.json\ncat ~/clawd/agents/mre-optimizer/overnight/results/$(date +%Y-%m-%d)/correlation.json\n```\n\n**Regime Detection:**\n1. Read current regime logic from ~/clawd/trading-bot/mre_signal_exporter.py (detect_regime functions)\n2. Test current SMA",
-      "deliver": false,
-      "channel": "telegram",
-      "model": "anthropic/claude-sonnet-4-20250514"
-    },
-    "state": {
-      "nextRunAtMs": 1771315200000,
-      "lastRunAtMs": 1771228800509,
-      "lastStatus": "ok",
-      "lastDurationMs": 193468
-    }
-  },
-  {
-    "id": "81a1dc54-43b7-438d-bf0a-a611341cf03f",
-    "name": "MRE Pit: Param Sweep",
-    "enabled": true,
-    "schedule": {
-      "kind": "cron",
-      "expr": "0 1 * * *",
-      "tz": "America/Los_Angeles"
-    },
-    "agent": {
-      "id": "ticker",
-      "name": "Ticker",
-      "emoji": "\ud83d\udcca",
-      "title": "Trading Lead"
-    },
-    "payload": {
-      "kind": "agentTurn",
-      "message": "MRE Overnight Pit \u2014 Phase 4: Targeted Parameter Sweep\n\nRead pipeline state + all prior phases:\n```bash\ncat ~/clawd/agents/mre-optimizer/overnight/pipeline-state.json\nfor f in ~/clawd/agents/mre-optimizer/overnight/results/$(date +%Y-%m-%d)/*.json; do echo \"=== $f ===\"; cat \"$f\" | python3 -c 'import json,sys; print(json.dumps(json.load(sys.stdin), indent=2))' 2>/dev/null | head -50; done\n```\n\n**Targeted sweep based on prior findings:**\n1. Focus on weak areas identified in Phase 1 (signal accuracy",
-      "deliver": false,
-      "channel": "telegram",
-      "model": "anthropic/claude-sonnet-4-20250514"
-    },
-    "state": {
-      "nextRunAtMs": 1771318800000,
-      "lastRunAtMs": 1771146000076,
-      "lastStatus": "ok",
-      "lastDurationMs": 600784
-    }
-  },
-  {
-    "id": "a853e675-27cf-4c28-a7f4-1ac96b9544ef",
-    "name": "MRE Pit: Synthesis & Apply",
-    "enabled": true,
-    "schedule": {
-      "kind": "cron",
-      "expr": "30 2 * * *",
-      "tz": "America/Los_Angeles"
-    },
-    "agent": {
-      "id": "ticker",
-      "name": "Ticker",
-      "emoji": "\ud83d\udcca",
-      "title": "Trading Lead"
-    },
-    "payload": {
-      "kind": "agentTurn",
-      "message": "MRE Overnight Pit \u2014 Phase 5: Synthesis & Apply Improvements\n\nRead ALL phase results:\n```bash\ncat ~/clawd/agents/mre-optimizer/overnight/pipeline-state.json\nfor f in ~/clawd/agents/mre-optimizer/overnight/results/$(date +%Y-%m-%d)/*.json; do echo \"=== $(basename $f) ===\"; cat \"$f\" | python3 -c 'import json,sys; print(json.dumps(json.load(sys.stdin), indent=2))' 2>/dev/null | head -80; done\n```\n\nRead current strategy: `cat ~/clawd/trading-bot/mre_strategies.py | head -200`\nRead current exporter: `",
-      "deliver": false,
-      "channel": "telegram",
-      "model": "anthropic/claude-sonnet-4-20250514"
-    },
-    "state": {
-      "nextRunAtMs": 1771324200000,
-      "lastRunAtMs": 1771237800164,
-      "lastStatus": "ok",
-      "lastDurationMs": 140995
-    }
-  },
-  {
-    "id": "ed2e5d43-3d67-45e4-9d98-a6e9317ae650",
-    "name": "MRE Pit: Deep Test & Picks",
-    "enabled": true,
-    "schedule": {
-      "kind": "cron",
-      "expr": "30 3 * * *",
-      "tz": "America/Los_Angeles"
-    },
-    "agent": {
-      "id": "ticker",
-      "name": "Ticker",
-      "emoji": "\ud83d\udcca",
-      "title": "Trading Lead"
-    },
-    "payload": {
-      "kind": "agentTurn",
-      "message": "MRE Overnight Pit \u2014 Phase 6: Deep Testing & Today's Picks Validation\n\nRead pipeline state + synthesis: `cat ~/clawd/agents/mre-optimizer/overnight/pipeline-state.json`\nRead synthesis results: `cat ~/clawd/agents/mre-optimizer/overnight/results/$(date +%Y-%m-%d)/synthesis.json`\n\n**Deep Testing (if changes were applied in Phase 5):**\n1. Run extended backtests on changed parameters\n2. Test edge cases: high volatility periods, regime transitions, flash crashes\n3. Validate cross-asset confirmation ru",
-      "deliver": false,
-      "channel": "telegram",
-      "model": "anthropic/claude-sonnet-4-20250514"
-    },
-    "state": {
-      "nextRunAtMs": 1771327800000,
-      "lastRunAtMs": 1771241400166,
-      "lastStatus": "ok",
-      "lastDurationMs": 113362
-    }
-  },
-  {
-    "id": "d43c5e51-dcd5-45d9-a925-b2b5a69e27c2",
-    "name": "MRE Pit: Morning Report",
-    "enabled": true,
-    "schedule": {
-      "kind": "cron",
-      "expr": "30 5 * * *",
-      "tz": "America/Los_Angeles"
-    },
-    "agent": {
-      "id": "ticker",
-      "name": "Ticker",
-      "emoji": "\ud83d\udcca",
-      "title": "Trading Lead"
-    },
-    "payload": {
-      "kind": "agentTurn",
-      "message": "MRE Overnight Pit \u2014 Phase 7: Morning Report (V7 INAUGURAL RUN)\n\nThis is the FIRST run of the unified Pit pipeline AND the V7 deployment night. Joshua asked for a comprehensive V7 vs V6 report.\n\nRead ALL results:\n```bash\ncat ~/clawd/agents/mre-optimizer/overnight/pipeline-state.json\nfor f in ~/clawd/agents/mre-optimizer/overnight/results/$(date +%Y-%m-%d)/*.json; do echo \"=== $(basename $f) ===\"; cat \"$f\" | python3 -c 'import json,sys; print(json.dumps(json.load(sys.stdin), indent=2))' 2>/dev/nul",
-      "deliver": true,
-      "channel": "telegram",
-      "model": "anthropic/claude-sonnet-4-20250514"
-    },
-    "state": {
-      "nextRunAtMs": 1771335000000,
-      "lastRunAtMs": 1771248600119,
-      "lastStatus": "ok",
-      "lastDurationMs": 172301
-    }
-  },
-  {
-    "id": "e66040e6-ad43-489e-b888-23d0f0453236",
-    "name": "Studio: Writer's Room",
-    "enabled": true,
-    "schedule": {
-      "kind": "cron",
-      "expr": "0 9 * * 0",
-      "tz": "America/Los_Angeles"
-    },
-    "agent": {
-      "id": "cmo",
-      "name": "Alex",
-      "emoji": "\ud83e\udd8d",
-      "title": "CMO"
-    },
-    "payload": {
-      "kind": "agentTurn",
-      "message": "Studio Writer's Room \u2014 Weekly Script Creation Session\n\nThis is an INTERACTIVE session with Joshua. You are facilitating a multi-agent creative room.\n\n**Read these SOUL.md files to embody each role:**\n- ~/clawd/agents/studio/cmo/SOUL.md\n- ~/clawd/agents/studio/show-runner/SOUL.md\n- ~/clawd/agents/studio/script-producer/SOUL.md\n- ~/clawd/agents/studio/brand-da/SOUL.md\n\n**Read shared context:**\n- ~/clawd/agents/studio/shared/brand-bible.md\n- ~/clawd/agents/studio/shared/content-calendar.md\n- ~/claw",
-      "deliver": true,
-      "channel": "telegram",
-      "model": "anthropic/claude-sonnet-4-20250514"
-    },
-    "state": {
-      "nextRunAtMs": 1771779600000,
-      "lastRunAtMs": 1771174800008,
-      "lastStatus": "ok",
-      "lastDurationMs": 59700
-    }
-  },
-  {
-    "id": "95c5dfc5-a730-44c5-bcbc-e2ca3293acb7",
-    "name": "Studio: Review Room",
-    "enabled": true,
-    "schedule": {
-      "kind": "cron",
-      "expr": "0 9 * * 5",
-      "tz": "America/Los_Angeles"
-    },
-    "agent": {
-      "id": "cmo",
-      "name": "Alex",
-      "emoji": "\ud83e\udd8d",
-      "title": "CMO"
-    },
-    "payload": {
-      "kind": "agentTurn",
-      "message": "Studio Review Room \u2014 Weekly Episode Review & Campaign Deploy\n\nThis is an INTERACTIVE session with Joshua. You are facilitating a multi-agent review and deployment room.\n\n**Read these SOUL.md files to embody each role:**\n- ~/clawd/agents/studio/production-critic/SOUL.md\n- ~/clawd/agents/studio/post-production-director/SOUL.md\n- ~/clawd/agents/studio/content-repurposer/SOUL.md\n- ~/clawd/agents/studio/copywriter/SOUL.md\n- ~/clawd/agents/studio/growth-marketer/SOUL.md\n- ~/clawd/agents/studio/campaig",
-      "deliver": true,
-      "channel": "telegram",
-      "model": "anthropic/claude-sonnet-4-20250514"
-    },
-    "state": {
-      "nextRunAtMs": 1771606800000,
-      "lastRunAtMs": 1771002093663,
-      "lastStatus": "ok",
-      "lastDurationMs": 54374
-    }
-  },
-  {
-    "id": "a2580e29-838d-4dec-b871-ae1d4b80aa58",
-    "name": "Price Refresh (Hub + Supabase)",
-    "enabled": true,
-    "schedule": {
-      "kind": "cron",
-      "expr": "*/5 6-13 * * 1-5",
-      "tz": "America/Los_Angeles"
-    },
-    "agent": {
-      "id": "ticker",
-      "name": "Ticker",
-      "emoji": "\ud83d\udcca",
-      "title": "Trading Lead"
-    },
-    "payload": {
-      "kind": "agentTurn",
-      "message": "Refresh live prices for the Hub and Supabase paper trading, then run the Universe pipeline.\n\n```bash\n# Step 1: Existing price refresh\nbash ~/clawd/tools/paper-trader/refresh_prices.sh 2>&1\n```\n\n```bash\n# Step 2: Universe signals (676 assets, ~50s)\nbash ~/clawd/trading-bot/run_universe.sh 2>&1\n```\n\nComplete silently unless error occurs.",
-      "deliver": false,
-      "channel": "telegram",
-      "model": "anthropic/claude-sonnet-4-20250514"
-    },
-    "state": {
-      "nextRunAtMs": 1771336800000,
-      "lastRunAtMs": 1771278913855,
-      "lastStatus": "ok",
-      "lastDurationMs": 67279
-    }
-  },
-  {
-    "id": "60eee590-f9b8-44da-a9d6-05c778e2ef0f",
-    "name": "MRE V13 Weekly Optimizer",
-    "enabled": true,
-    "schedule": {
-      "kind": "cron",
-      "expr": "0 22 * * 0",
-      "tz": "America/Los_Angeles"
-    },
-    "agent": {
-      "id": "ticker",
-      "name": "Ticker",
-      "emoji": "\ud83d\udcca",
-      "title": "Trading Lead"
-    },
-    "payload": {
-      "kind": "agentTurn",
-      "message": "Run the MRE V13 Overnight Optimizer \u2014 weekly recalibration.\n\n```bash\ncd ~/clawd/trading-bot && bash run_optimizer.sh 2>&1\n```\n\nAfter completion, send calibration summary to Joshua via Telegram. Include top 10 assets, confidence distribution, and any significant changes from last week.",
-      "deliver": true,
-      "channel": "telegram",
-      "model": "anthropic/claude-sonnet-4-20250514"
-    },
-    "state": {
-      "nextRunAtMs": 1771826400000,
-      "lastRunAtMs": 1771221826074,
-      "lastStatus": "ok",
-      "lastDurationMs": 612994
-    }
-  },
-  {
-    "id": "a441f404-50db-48ed-bdbd-feee5cff6633",
-    "name": "Fleet Tracker",
-    "enabled": true,
-    "schedule": {
-      "kind": "cron",
-      "expr": "*/30 * * * *",
-      "tz": "America/Los_Angeles"
-    },
-    "agent": {
-      "id": "coo",
-      "name": "Theo",
-      "emoji": "\ud83d\udd3a",
-      "title": "COO"
-    },
-    "payload": {
-      "kind": "agentTurn",
-      "message": "Run the fleet usage tracker to collect real cost data:\n\n```bash\n~/clawd/tools/fleet-tracker.sh\n```\n\nThen commit and push the updated data:\n```bash\ncd ~/clawd/clawdbot-hub && git add public/data/fleet-usage.json && git commit -m \"data: fleet usage update\" && git push origin main 2>&1\n```\n\nComplete silently.",
-      "deliver": false,
-      "channel": "telegram",
-      "model": "anthropic/claude-sonnet-4-20250514"
-    },
-    "state": {
-      "nextRunAtMs": 1771281000000,
-      "lastRunAtMs": 1771279309049,
-      "lastStatus": "ok",
-      "lastDurationMs": 12549
-    }
-  }
-]
+  ]
+}

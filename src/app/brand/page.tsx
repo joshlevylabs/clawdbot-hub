@@ -206,6 +206,27 @@ const LOGOS: { [key: string]: string } = {
     <rect x="15" y="6" width="3" height="16" fill="currentColor"/>
     <rect x="4" y="4" width="16" height="3" fill="currentColor"/>
     <rect x="4" y="20" width="16" height="2" fill="currentColor"/>
+  </svg>`,
+
+  faithjourney: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+    <path d="M12 2L14.5 9L12 7.5L9.5 9L12 2Z" fill="currentColor"/>
+    <path d="M12 2L15 10H12L9 10L12 2Z" fill="currentColor" opacity="0.7"/>
+    <path d="M4.5 9.5L9 11L7.5 12L6 10.5L4.5 9.5Z" fill="currentColor"/>
+    <path d="M19.5 9.5L15 11L16.5 12L18 10.5L19.5 9.5Z" fill="currentColor"/>
+    <path d="M6 18L9.5 14L12 16L14.5 14L18 18L6 18Z" fill="currentColor" opacity="0.5"/>
+    <circle cx="12" cy="12" r="1.5" fill="currentColor"/>
+  </svg>`,
+
+  mosaic: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+    <rect x="3" y="3" width="7" height="5" rx="1" fill="currentColor"/>
+    <rect x="12" y="3" width="9" height="3" rx="1" fill="currentColor" opacity="0.8"/>
+    <rect x="3" y="10" width="4" height="7" rx="1" fill="currentColor" opacity="0.7"/>
+    <rect x="9" y="8" width="6" height="4" rx="1" fill="currentColor" opacity="0.9"/>
+    <rect x="17" y="8" width="4" height="5" rx="1" fill="currentColor" opacity="0.6"/>
+    <rect x="9" y="14" width="5" height="3" rx="1" fill="currentColor" opacity="0.8"/>
+    <rect x="3" y="19" width="8" height="3" rx="1" fill="currentColor" opacity="0.5"/>
+    <rect x="13" y="19" width="8" height="3" rx="1" fill="currentColor" opacity="0.7"/>
+    <rect x="16" y="14" width="5" height="4" rx="1" fill="currentColor"/>
   </svg>`
 };
 
@@ -250,6 +271,26 @@ const PRODUCTS: Record<string, ProductInfo> = {
     logo: "lyceum",
     notes: "Agentic test automation for industrial equipment. Customers: Amazon, Meta, Oculus.",
     website: "https://www.thelyceum.io"
+  },
+  faithjourney: {
+    name: "Faith Journey",
+    description: "Multi-tradition spiritual exploration with AI guides",
+    stack: "Expo + React Native + Supabase",
+    font: "System Default (SF Pro / Roboto)",
+    accentFamily: "Warm Gold on Navy",
+    layout: "bottom-tab-nav",
+    logo: "faithjourney",
+    notes: "Standalone iOS app with Claude-powered AI guides, 9 faith tradition experts, structured lessons, daily prayers, and faith compass. Hallow-inspired dark design.",
+  },
+  mosaic: {
+    name: "Mosaic",
+    description: "Faith features within the Lever ecosystem",
+    stack: "Expo + React Native + NativeWind + Supabase",
+    font: "System Default (SF Pro / Roboto)",
+    accentFamily: "Multi-color Mosaic",
+    layout: "bottom-tab-nav",
+    logo: "mosaic",
+    notes: "Integrated faith module within Lever — compass radar chart, tradition exploration, roundtable discussions. Shares Supabase with Faith Journey.",
   }
 };
 
@@ -1145,54 +1186,73 @@ export default function BrandGuidelinesPage() {
             </div>
           </Section>
 
-          <SectionHeader icon={Layers} title="Product Ecosystem" subtitle="Unified brand across 4 products" />
+          <SectionHeader icon={Layers} title="Product Ecosystem" subtitle={`Unified brand across ${Object.keys(PRODUCTS).length} products`} />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {Object.entries(PRODUCTS).map(([key, product]) => (
-              <div
-                key={key}
-                className="p-5 rounded-2xl border transition-all hover:border-opacity-60"
-                style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}
-              >
-                <div className="flex items-start gap-4 mb-4">
-                  <div 
-                    className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" 
-                    style={{ backgroundColor: "rgba(212, 160, 32, 0.1)", color: "#D4A020" }}
-                    dangerouslySetInnerHTML={{ __html: LOGOS[product.logo] }}
-                  />
-                  <div className="flex-1">
-                    <h4 className="text-lg font-bold mb-1" style={{ color: "#F5F5F0", fontFamily: "Space Grotesk, system-ui, sans-serif", letterSpacing: "-0.01em" }}>
-                      {product.name}
-                    </h4>
-                    <p className="text-sm" style={{ color: "#B8B8AD" }}>{product.description}</p>
+            {Object.entries(PRODUCTS).map(([key, product]) => {
+              const APP_ICONS: Record<string, string> = {
+                faithjourney: "/brand/faith-journey-icon.png",
+                mosaic: "/brand/mosaic-icon.png",
+                lever: "/brand/lever-icon.png",
+              };
+              const appIcon = APP_ICONS[key];
+
+              return (
+                <div
+                  key={key}
+                  className="p-5 rounded-2xl border transition-all hover:border-opacity-60"
+                  style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}
+                >
+                  <div className="flex items-start gap-4 mb-4">
+                    {/* App icon if available, otherwise SVG logo */}
+                    {appIcon ? (
+                      <img
+                        src={appIcon}
+                        alt={`${product.name} icon`}
+                        className="w-14 h-14 rounded-2xl shrink-0 object-cover"
+                        style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.4)" }}
+                      />
+                    ) : (
+                      <div 
+                        className="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0" 
+                        style={{ backgroundColor: "rgba(212, 160, 32, 0.1)", color: "#D4A020" }}
+                        dangerouslySetInnerHTML={{ __html: LOGOS[product.logo] }}
+                      />
+                    )}
+                    <div className="flex-1">
+                      <h4 className="text-lg font-bold mb-1" style={{ color: "#F5F5F0", fontFamily: "Space Grotesk, system-ui, sans-serif", letterSpacing: "-0.01em" }}>
+                        {product.name}
+                      </h4>
+                      <p className="text-sm" style={{ color: "#B8B8AD" }}>{product.description}</p>
+                    </div>
                   </div>
-                </div>
-                
-                <div className="space-y-2 text-xs">
-                  <p style={{ color: "#8B8B80" }}>
-                    <span style={{ color: "#F5F5F0", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>Stack:</span> {product.stack}
-                  </p>
-                  <p style={{ color: "#8B8B80" }}>
-                    <span style={{ color: "#F5F5F0", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>Typography:</span> {product.font}
-                  </p>
-                  <p style={{ color: "#8B8B80" }}>
-                    <span style={{ color: "#F5F5F0", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>Accent:</span> {product.accentFamily}
-                  </p>
-                  <p style={{ color: "#8B8B80" }}>
-                    <span style={{ color: "#F5F5F0", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>Layout:</span> {product.layout}
-                  </p>
-                  {product.website && (
+                  
+                  <div className="space-y-2 text-xs">
                     <p style={{ color: "#8B8B80" }}>
-                      <span style={{ color: "#F5F5F0", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>Website:</span> 
-                      <a href={product.website} className="underline ml-1" style={{ color: "#22D3EE" }}>{product.website}</a>
+                      <span style={{ color: "#F5F5F0", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>Stack:</span> {product.stack}
                     </p>
-                  )}
+                    <p style={{ color: "#8B8B80" }}>
+                      <span style={{ color: "#F5F5F0", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>Typography:</span> {product.font}
+                    </p>
+                    <p style={{ color: "#8B8B80" }}>
+                      <span style={{ color: "#F5F5F0", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>Accent:</span> {product.accentFamily}
+                    </p>
+                    <p style={{ color: "#8B8B80" }}>
+                      <span style={{ color: "#F5F5F0", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>Layout:</span> {product.layout}
+                    </p>
+                    {product.website && (
+                      <p style={{ color: "#8B8B80" }}>
+                        <span style={{ color: "#F5F5F0", fontFamily: "Space Grotesk, system-ui, sans-serif" }}>Website:</span> 
+                        <a href={product.website} className="underline ml-1" style={{ color: "#22D3EE" }}>{product.website}</a>
+                      </p>
+                    )}
+                  </div>
+                  
+                  <p className="text-[11px] leading-relaxed mt-4 pt-3" style={{ color: "#8B8B80", borderTop: "1px solid #2A2A38" }}>
+                    {product.notes}
+                  </p>
                 </div>
-                
-                <p className="text-[11px] leading-relaxed mt-4 pt-3" style={{ color: "#8B8B80", borderTop: "1px solid #2A2A38" }}>
-                  {product.notes}
-                </p>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </>
       )}

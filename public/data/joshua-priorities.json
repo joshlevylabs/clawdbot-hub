@@ -1,6 +1,6 @@
 {
-  "date": "2026-02-28",
-  "generatedAt": "2026-02-28T20:49:50.376034-08:00",
+  "date": "2026-03-02",
+  "generatedAt": "2026-03-02T08:36:02.614917-08:00",
   "priorities": [
     {
       "text": "Submit current Lever build to App Store as planned",
@@ -10,13 +10,13 @@
     },
     {
       "text": "Finalize Lever App Store submission",
-      "source": "adhoc-mosaic-ux-overhaul",
+      "source": "adhoc-faith-journey-app-ai-religious-guide-builder",
       "urgency": "high",
       "taskKey": "CVS-017"
     },
     {
       "text": "Upgrade Mac Mini RAM and diagnose build resource exhaustion",
-      "source": "adhoc-mosaic-ux-overhaul",
+      "source": "adhoc-faith-journey-app-ai-religious-guide-builder",
       "urgency": "high",
       "taskKey": "J-004"
     }
@@ -129,6 +129,30 @@
       "assignee": "Steve Jobs",
       "status": "pending",
       "taskKey": "A-021"
+    },
+    {
+      "text": "Design and implement agent conversation interface for Mosaic",
+      "assignee": "Steve Jobs",
+      "status": "pending",
+      "taskKey": "A-022"
+    },
+    {
+      "text": "Extend CVS-003 to include agent orchestration architecture",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "taskKey": "A-023"
+    },
+    {
+      "text": "Design consent-based engagement depth model with privacy safeguards",
+      "assignee": "Jordan Peterson",
+      "status": "pending",
+      "taskKey": "A-024"
+    },
+    {
+      "text": "Expand widget ecosystems within Faith, Family, Finance categories",
+      "assignee": "Elon Musk",
+      "status": "pending",
+      "taskKey": "A-025"
     }
   ]
 }

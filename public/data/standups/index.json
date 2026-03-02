@@ -1,6 +1,19 @@
 {
   "standups": [
     {
+      "date": "2026-03-02",
+      "time": "08:36",
+      "type": "adhoc-faith-journey-app-ai-religious-guide-builder",
+      "typeName": "Faith Journey App \u2014 AI Religious Guide Builder",
+      "typeEmoji": "\ud83d\ude4f",
+      "topic": "Faith Journey App \u2014 AI Religious Guide Builder \u2014 Monday Mar 2",
+      "file": "2026-03-02-adhoc-faith-journey-app-ai-religious-guide-builder.json",
+      "tokenCost": 0.0472,
+      "verticals": [],
+      "initiatives": [],
+      "instanceKey": "STD-21"
+    },
+    {
       "date": "2026-02-28",
       "time": "20:49",
       "type": "adhoc-mosaic-ux-overhaul",

@@ -169,12 +169,22 @@
       "estimatedCost": 0.0449,
       "model": "claude-sonnet-4-20250514",
       "duration": "58.1s"
+    },
+    {
+      "date": "2026-03-02",
+      "type": "adhoc-faith-journey-app-ai-religious-guide-builder",
+      "inputTokens": 3677,
+      "outputTokens": 2408,
+      "totalTokens": 6085,
+      "estimatedCost": 0.0472,
+      "model": "claude-sonnet-4-20250514",
+      "duration": "63.0s"
     }
   ],
   "totals": {
-    "today": 0.1311,
-    "week": 0.6894,
-    "month": 0.6894,
-    "standupCount": 17
+    "today": 0.0472,
+    "week": 0.7366,
+    "month": 0.7366,
+    "standupCount": 18
   }
 }

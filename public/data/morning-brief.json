@@ -3,29 +3,29 @@
   "generated_at": "2026-03-02T06:01:00-08:00",
   "version": "4.0.0",
   "prayer": {
-    "title": "🕊️ Morning Prayer",
+    "title": "\ud83d\udd4a\ufe0f Morning Prayer",
     "date": "Monday, March 02, 2026",
     "hebrew_date": "2 Kislev",
     "parsha": "Vayigash",
     "parsha_theme": "reunion, forgiveness, revealing truth",
-    "modeh_ani": "מודה אני לפניך — I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
-    "blessing": "Blessed are You who crowns Israel with glory — let my work bring You honor.",
+    "modeh_ani": "\u05de\u05d5\u05d3\u05d4 \u05d0\u05e0\u05d9 \u05dc\u05e4\u05e0\u05d9\u05da \u2014 I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
+    "blessing": "Blessed are You who crowns Israel with glory \u2014 let my work bring You honor.",
     "psalm": "**Psalm 37:5**: \"Commit your way to the Lord; trust in Him and He will act.\"",
     "proverb": "**Proverbs 13:11**: \"Wealth gained hastily will dwindle, but whoever gathers little by little will increase it.\"",
     "intention": "Give me discernment between opportunities and distractions. Not everything good is good for me right now.",
-    "closing": "Baruch atah Adonai — Blessed are You, Lord, who renews creation daily with goodness."
+    "closing": "Baruch atah Adonai \u2014 Blessed are You, Lord, who renews creation daily with goodness."
   },
   "weather": {
-    "title": "🌤️ Weather",
+    "title": "\ud83c\udf24\ufe0f Weather",
     "location": "Temecula, CA",
-    "current": "Partly cloudy, 45°F",
-    "today_high": "68°F",
-    "today_low": "44°F",
+    "current": "Partly cloudy, 45\u00b0F",
+    "today_high": "68\u00b0F",
+    "today_low": "44\u00b0F",
     "conditions": "Partly cloudy with light winds",
     "forecast": "Clear skies through the week, typical March weather"
   },
   "calendar": {
-    "title": "📅 Today's Schedule",
+    "title": "\ud83d\udcc5 Today's Schedule",
     "today": [],
     "this_week": [
       {
@@ -44,8 +44,10 @@
     ]
   },
   "email_highlights": {
-    "title": "📧 Email Highlights",
-    "accounts_checked": ["josh@joshlevylabs.com"],
+    "title": "\ud83d\udce7 Email Highlights",
+    "accounts_checked": [
+      "josh@joshlevylabs.com"
+    ],
     "unread_count": 3,
     "important": [
       {
@@ -61,20 +63,20 @@
         "action": "Filed receipt"
       }
     ],
-    "summary": "Light email day — mainly notifications and receipts. LinkedIn message waiting."
+    "summary": "Light email day \u2014 mainly notifications and receipts. LinkedIn message waiting."
   },
   "mre": {
-    "title": "📊 MRE Trading",
+    "title": "\ud83d\udcca MRE Trading",
     "fear_greed": 38,
-    "fear_greed_rating": "fear", 
+    "fear_greed_rating": "fear",
     "regime": "sideways",
     "todays_plays": [],
     "pending_triggers": [],
-    "thesis": "Fear at 38, sideways regime. All assets on HOLD — waiting for clear direction. No buy signals activated.",
+    "thesis": "Fear at 38, sideways regime. All assets on HOLD \u2014 waiting for clear direction. No buy signals activated.",
     "summary": "Markets fearful, all major indices sideways. VIX elevated at 23.2. No actionable signals today."
   },
   "family_focus": {
-    "title": "👨‍👩‍👧‍👦 Family Focus",
+    "title": "\ud83d\udc68\u200d\ud83d\udc69\u200d\ud83d\udc67\u200d\ud83d\udc66 Family Focus",
     "relationship_temperature": "critical",
     "primary_love_language": "quality_time",
     "secondary_love_language": "acts_of_service",
@@ -86,7 +88,7 @@
     ]
   },
   "world_news": {
-    "title": "🌍 World News",
+    "title": "\ud83c\udf0d World News",
     "highlights": [
       {
         "title": "US Strikes Iran After Saudi-Israeli Lobbying",
@@ -95,7 +97,7 @@
         "relevance": "Major Middle East development, affects Israel relations"
       },
       {
-        "title": "Israeli Security Minister Expands Settlement Gun Licenses", 
+        "title": "Israeli Security Minister Expands Settlement Gun Licenses",
         "summary": "Ben-Gvir allows gun licenses for residents of 18 West Bank settlements",
         "source": "Wikipedia",
         "relevance": "Conservative security policy, internal Israeli politics"
@@ -104,7 +106,7 @@
     "summary": "Significant Middle East escalation with Iran. Israeli domestic security policies expanding."
   },
   "ai_news": {
-    "title": "🤖 AI News",
+    "title": "\ud83e\udd16 AI News",
     "highlights": [
       {
         "title": "Chinese AI Model Surge",
@@ -115,7 +117,7 @@
       {
         "title": "AI Brain MRI Analysis Breakthrough",
         "summary": "University of Michigan creates AI system interpreting brain MRI scans in seconds",
-        "source": "ScienceDaily", 
+        "source": "ScienceDaily",
         "relevance": "Medical AI advancement, practical healthcare application"
       }
     ],

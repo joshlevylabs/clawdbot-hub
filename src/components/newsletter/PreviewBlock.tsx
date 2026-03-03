@@ -130,6 +130,18 @@ function PctBadge({ value }: { value: number }) {
 
 function PortfolioPerformance({ data }: { data: Record<string, unknown> }) {
   const performance = (data.performance || []) as Array<Record<string, unknown>>;
+  const range = String(data.range || "all");
+
+  // Map newsletter range param → PerformanceChart time range default
+  const rangeMap: Record<string, "1D" | "1W" | "1M" | "3M" | "1Y"> = {
+    "1d": "1D",
+    "1w": "1W",
+    "1m": "1M",
+    "3m": "3M",
+    "1y": "1Y",
+    all: "1Y",
+  };
+  const defaultTimeRange = rangeMap[range.toLowerCase()] || "1Y";
 
   // Transform newsletter performance data into PerformanceChart snapshot format
   const snapshots = performance.map((p) => ({
@@ -176,6 +188,7 @@ function PortfolioPerformance({ data }: { data: Record<string, unknown> }) {
       snapshots={dailySnapshots}
       intradaySnapshots={intradaySnapshots}
       startingCapital={startingCapital}
+      defaultTimeRange={defaultTimeRange}
     />
   );
 }

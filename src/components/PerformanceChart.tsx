@@ -51,6 +51,8 @@ interface PerformanceChartProps {
   startingCapital?: number;
   /** Class name override */
   className?: string;
+  /** Override the default time range (defaults to "1D") */
+  defaultTimeRange?: TimeRange;
 }
 
 interface ChartDataPoint {
@@ -131,8 +133,9 @@ export default function PerformanceChart({
   compact = false,
   startingCapital = 100000,
   className = "",
+  defaultTimeRange,
 }: PerformanceChartProps) {
-  const [timeRange, setTimeRange] = useState<TimeRange>("1D");
+  const [timeRange, setTimeRange] = useState<TimeRange>(defaultTimeRange || "1D");
 
   // Convert intraday snapshots to PortfolioSnapshot format for unified processing
   const intradayAsPortfolio = useMemo<PortfolioSnapshot[]>(() => {

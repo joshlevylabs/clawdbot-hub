@@ -381,12 +381,15 @@ const fetchers: Record<string, DataFetcher> = {
   },
 
   'active-signals': () => {
-    const data = readDataFile('trading/mre-signals.json') as Record<string, unknown> | null;
+    // Prefer the 777-universe pipeline data; fall back to core 24
+    const universe = readDataFile('trading/mre-signals-universe.json') as Record<string, unknown> | null;
+    const data = universe || readDataFile('trading/mre-signals.json') as Record<string, unknown> | null;
     if (!data) return { error: 'No signals data available' };
     return {
       signals: data.signals || [],
       timestamp: data.timestamp,
       last_updated: data.last_updated,
+      universe_size: data.universe_size,
     };
   },
 

@@ -722,10 +722,10 @@
       "source": "Mosaic Build Pipeline Audit",
       "status": "pending",
       "approvedAt": "2026-02-28T12:34:00-08:00",
-      "description": "Task: Upgrade Mac Mini RAM and diagnose build resource exhaustion. Assigned to Joshua at high priority.",
+      "description": "Evaluate and decide on hardware upgrade path for the Mac Mini M1 8GB build machine. Current M1 has 8GB soldered RAM causing 50% build failure rate due to OOM during Xcode builds.",
       "acceptanceCriteria": [
-        "Task 'Upgrade Mac Mini RAM and diagnose build resource exhaustion' is completed and verified",
-        "Results documented or committed"
+        "Hardware option selected (M4 Mac Mini 16GB or EAS cloud builds)",
+        "Build success rate improved to >90%"
       ]
     },
     {
@@ -957,7 +957,13 @@
       "status": "approved",
       "sourceStandup": "2026-03-02-adhoc-faith-journey-app-ai-religious-guide-builder",
       "sourceDate": "2026-03-02",
-      "createdAt": "2026-03-02T12:56:00"
+      "createdAt": "2026-03-02T12:56:00",
+      "description": "Establish relationships with evangelical theological advisors to ensure doctrinal accuracy and cultural sensitivity in the Faith Journey app before public release.",
+      "acceptanceCriteria": [
+        "2-3 evangelical theological advisors identified and contacted",
+        "At least 1 advisor committed to reviewing Faith Journey content",
+        "Review framework established"
+      ]
     },
     {
       "key": "A-032",
@@ -994,7 +1000,15 @@
       "status": "in-progress",
       "sourceStandup": "2026-03-02-adhoc-faith-journey-app-ai-religious-guide-builder",
       "sourceDate": "2026-03-02",
-      "createdAt": "2026-03-02T12:56:00"
+      "createdAt": "2026-03-02T12:56:00",
+      "description": "Design and implement the standalone technical foundation for the Faith Journey app. This includes selecting the app framework (Expo/React Native reusing Mosaic widget architecture), setting up the project scaffolding, configuring Supabase integration for sacred text storage and user data, and establishing the AI pipeline for portable spiritual guide agent creation.",
+      "acceptanceCriteria": [
+        "Standalone Expo project scaffolded with Mosaic widget architecture",
+        "Supabase integration configured for sacred_texts and text_passages tables",
+        "pgvector semantic search endpoint functional with test queries",
+        "AI guide agent creation pipeline prototyped",
+        "Portable export format (PSAEF v1.0) implementation started"
+      ]
     }
   ]
 }

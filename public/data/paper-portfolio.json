@@ -6,7 +6,7 @@
     "starting_capital": 100000,
     "cash": 22580.2,
     "created_at": "2026-02-06T15:17:00-08:00",
-    "equity": 93040.87
+    "equity": 93003.16
   },
   "positions": [],
   "trades": [],
@@ -2723,7 +2723,7 @@
     },
     {
       "date": "2026-03-03",
-      "equity": 93040.87,
+      "equity": 93003.16,
       "cash": 22580.2,
       "spy_price": 681.11,
       "spy_baseline": 690.62
@@ -3249,6 +3249,13 @@
     {
       "date": "2026-03-03T12:40",
       "equity": 93040.87,
+      "cash": 22580.2,
+      "spy_price": 681.11,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-03-03T12:45",
+      "equity": 93003.16,
       "cash": 22580.2,
       "spy_price": 681.11,
       "spy_baseline": 690.62

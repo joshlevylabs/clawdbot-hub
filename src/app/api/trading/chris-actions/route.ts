@@ -9,11 +9,17 @@ const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
 interface MRESignal {
   symbol: string;
   signal: string;
-  confidence: number;
-  fear_greed: number;
+  signal_strength: number;
+  expected_accuracy: number;
+  current_fg: number;
   regime: string;
-  strategy_votes: any;
-  strength?: number;
+  signal_source: string;
+  strategies_agreeing: number;
+  strategy_votes: Record<string, boolean>;
+  sector?: string;
+  price?: number;
+  rsi_14?: number;
+  momentum_20d?: number;
 }
 
 interface MRESignalsData {
@@ -21,19 +27,19 @@ interface MRESignalsData {
   fear_greed: {
     current: number;
     rating: string;
-    is_fear: boolean;
-    is_extreme_fear: boolean;
-    is_greed: boolean;
-    is_extreme_greed: boolean;
+    is_fear?: boolean;
+    is_extreme_fear?: boolean;
+    is_greed?: boolean;
+    is_extreme_greed?: boolean;
   };
   regime: {
     global: string;
-    bear_pct: number;
-    vix: number;
-    crash_mode: {
+    bear_pct?: number;
+    vix?: number;
+    crash_mode?: {
       active: boolean;
-      crash_score: number;
-      severity: string;
+      crash_score?: number;
+      severity?: string;
     };
   };
   signals: {
@@ -42,8 +48,9 @@ interface MRESignalsData {
       total_hold: number;
       total_watch: number;
     };
-    data: MRESignal[];
+    by_asset_class: MRESignal[];
   };
+  sector_fear_greed?: Record<string, number>;
 }
 
 interface ChrisActionsResponse {
@@ -161,9 +168,9 @@ export async function GET(request: NextRequest) {
     }
 
     // 3. Extract top BUY signals
-    const buySignals = signalsData.signals.data
+    const buySignals = signalsData.signals.by_asset_class
       .filter(signal => signal.signal === 'BUY')
-      .sort((a, b) => (b.confidence || 0) - (a.confidence || 0))
+      .sort((a, b) => (b.signal_strength || 0) - (a.signal_strength || 0))
       .slice(0, 10);
 
     // 4. Build market context prompt
@@ -171,13 +178,13 @@ export async function GET(request: NextRequest) {
 MARKET CONTEXT:
 - Fear & Greed Index: ${signalsData.fear_greed.current.toFixed(1)} (${signalsData.fear_greed.rating.toUpperCase()})
 - Market Regime: ${signalsData.regime.global.toUpperCase()}
-- VIX: ${signalsData.regime.vix}
-- Bear Market %: ${signalsData.regime.bear_pct}%
-- Crash Mode: ${signalsData.regime.crash_mode.active ? 'ACTIVE' : 'INACTIVE'} (${signalsData.regime.crash_mode.severity})
+- VIX: ${signalsData.regime.vix || 'N/A'}
+- Bear Market %: ${signalsData.regime.bear_pct || 'N/A'}%
+- Crash Mode: ${signalsData.regime.crash_mode?.active ? 'ACTIVE' : 'INACTIVE'} (${signalsData.regime.crash_mode?.severity || 'none'})
 
 TODAY'S TOP BUY SIGNALS (${buySignals.length} total):
 ${buySignals.map(signal => 
-  `- ${signal.symbol}: Confidence ${signal.confidence}%, Regime ${signal.regime}, F&G ${signal.fear_greed}`
+  `- ${signal.symbol}: Strength ${signal.signal_strength?.toFixed(1)}%, Accuracy ${signal.expected_accuracy?.toFixed(0)}%, Regime ${signal.regime}, F&G ${signal.current_fg?.toFixed(0)}, Source: ${signal.signal_source}, ${signal.strategies_agreeing}/8 strategies${signal.sector ? `, Sector: ${signal.sector}` : ''}${signal.price ? `, Price: $${signal.price.toFixed(2)}` : ''}`
 ).join('\n')}
 
 CURRENT POSITIONS (${positions.length} total):
@@ -185,16 +192,27 @@ ${positions.map(pos => {
   const pnlPct = pos.current_price && pos.entry_price 
     ? ((pos.current_price - pos.entry_price) / pos.entry_price * 100).toFixed(2)
     : 'N/A';
-  const daysHeld = pos.hold_days || 0;
-  return `- ${pos.symbol}: Entry $${pos.entry_price}, Current $${pos.current_price || 'N/A'}, P&L ${pnlPct}%, ${daysHeld} days held, Stop ${pos.stop_loss || 'N/A'}, Target ${pos.take_profit || 'N/A'}`;
+  const daysHeld = Math.floor((Date.now() - new Date(pos.opened_at).getTime()) / (1000 * 60 * 60 * 24));
+  const holdTarget = pos.hold_days || 10;
+  return `- ${pos.symbol}: ${pos.qty} shares, Entry $${pos.entry_price}, Current $${pos.current_price || 'N/A'}, P&L ${pnlPct}%, ${daysHeld}d held (target ${holdTarget}d), Stop $${pos.stop_loss || 'N/A'}, Target $${pos.take_profit || 'N/A'}, Regime at entry: ${pos.signal_regime || 'N/A'}`;
 }).join('\n')}
 
 GLOBAL SIGNAL SUMMARY:
 - Total BUY signals: ${signalsData.signals.summary.total_buy}
 - Total HOLD signals: ${signalsData.signals.summary.total_hold}
 - Total WATCH signals: ${signalsData.signals.summary.total_watch}
+${signalsData.sector_fear_greed ? `
+SECTOR FEAR & GREED:
+${Object.entries(signalsData.sector_fear_greed).map(([sector, fg]) => `- ${sector}: ${typeof fg === 'number' ? fg.toFixed(0) : fg}`).join('\n')}` : ''}
 
-Provide your Chris Vermeulen analysis for ${today}.`;
+SIGNAL DATA FOR HELD POSITIONS:
+${positions.map(pos => {
+  const sig = signalsData.signals.by_asset_class.find(s => s.symbol === pos.symbol);
+  if (!sig) return `- ${pos.symbol}: NO SIGNAL DATA AVAILABLE`;
+  return `- ${pos.symbol}: Current Signal=${sig.signal}, Strength=${sig.signal_strength?.toFixed(1)}%, Regime=${sig.regime}, RSI=${sig.rsi_14?.toFixed(1) || 'N/A'}, Momentum=${sig.momentum_20d?.toFixed(2) || 'N/A'}, ${sig.strategies_agreeing}/8 strategies agreeing`;
+}).join('\n')}
+
+Today is ${today}. Provide your Chris Vermeulen analysis — be specific about price levels, position sizes, and timing.`;
 
     // 5. Call Anthropic API
     const response = await fetch("https://api.anthropic.com/v1/messages", {

@@ -102,7 +102,24 @@ export default function ChrisDailyActions() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const CACHE_KEY = 'chris-daily-actions';
+
   const fetchAnalysis = async (refresh: boolean = false) => {
+    // Check localStorage cache first (unless explicit refresh)
+    if (!refresh) {
+      try {
+        const cached = localStorage.getItem(CACHE_KEY);
+        if (cached) {
+          const cachedData = JSON.parse(cached);
+          const today = new Date().toISOString().split('T')[0];
+          if (cachedData.date === today && cachedData.market_assessment) {
+            setData(cachedData);
+            return; // Use cached, no loading spinner
+          }
+        }
+      } catch { /* cache miss */ }
+    }
+
     setLoading(true);
     setError(null);
     
@@ -122,6 +139,8 @@ export default function ChrisDailyActions() {
         const result = await response.json();
         setData(result);
         setError(null);
+        // Cache in localStorage
+        try { localStorage.setItem(CACHE_KEY, JSON.stringify(result)); } catch { /* quota */ }
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error');

@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from '@/lib/auth';
 import { paperSupabase, isPaperSupabaseConfigured, PaperPosition } from '@/lib/paper-supabase';
-import { readFile, writeFile } from 'fs/promises';
-import { join } from 'path';
 
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
 
@@ -132,25 +130,35 @@ export async function GET(request: NextRequest) {
   const refresh = searchParams.get('refresh') === 'true';
   const today = new Date().toISOString().split('T')[0];
 
-  // Check cache first (unless refresh requested)
+  // Determine base URL for fetching static data
+  const baseUrl = process.env.VERCEL_URL 
+    ? `https://${process.env.VERCEL_URL}` 
+    : process.env.NEXT_PUBLIC_VERCEL_URL 
+      ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
+      : 'http://localhost:3000';
+
+  // Check cache first (unless refresh requested) — stored in memory via static JSON
   if (!refresh) {
     try {
-      const cachedPath = join(process.cwd(), 'public/data/trading/chris-daily-actions.json');
-      const cached = await readFile(cachedPath, 'utf-8');
-      const cachedData = JSON.parse(cached);
-      
-      if (cachedData.date === today) {
-        return NextResponse.json(cachedData);
+      const cacheRes = await fetch(`${baseUrl}/data/trading/chris-daily-actions.json`, { cache: 'no-store' });
+      if (cacheRes.ok) {
+        const cachedData = await cacheRes.json();
+        if (cachedData.date === today) {
+          return NextResponse.json(cachedData);
+        }
       }
-    } catch (error) {
-      // Cache miss or error, continue to generate new analysis
+    } catch {
+      // Cache miss, continue to generate
     }
   }
 
   try {
-    // 1. Read MRE signals data
-    const signalsPath = join(process.cwd(), 'public/data/trading/mre-signals-universe.json');
-    const signalsData: MRESignalsData = JSON.parse(await readFile(signalsPath, 'utf-8'));
+    // 1. Read MRE signals data via HTTP (public static file)
+    const signalsRes = await fetch(`${baseUrl}/data/trading/mre-signals-universe.json`, { cache: 'no-store' });
+    if (!signalsRes.ok) {
+      throw new Error(`Failed to fetch signal data: ${signalsRes.status}`);
+    }
+    const signalsData: MRESignalsData = await signalsRes.json();
 
     // 2. Fetch current positions from Supabase
     let positions: PaperPosition[] = [];
@@ -256,24 +264,14 @@ Today is ${today}. Provide your Chris Vermeulen analysis — be specific about p
 
     const analysisResult: ChrisActionsResponse = JSON.parse(jsonStr);
 
-    // 6. Cache the result
-    try {
-      const cacheDir = join(process.cwd(), 'public/data/trading');
-      const cachedPath = join(cacheDir, 'chris-daily-actions.json');
-      
-      const cacheData = {
-        ...analysisResult,
-        generated_at: new Date().toISOString(),
-        timestamp: signalsData.timestamp,
-      };
-      
-      await writeFile(cachedPath, JSON.stringify(cacheData, null, 2));
-    } catch (cacheError) {
-      console.error('Failed to cache Chris actions:', cacheError);
-      // Don't fail the request if caching fails
-    }
+    // Add metadata to response
+    const responseData = {
+      ...analysisResult,
+      generated_at: new Date().toISOString(),
+      timestamp: signalsData.timestamp,
+    };
 
-    return NextResponse.json(analysisResult);
+    return NextResponse.json(responseData);
 
   } catch (error) {
     console.error("Chris actions API error:", error);

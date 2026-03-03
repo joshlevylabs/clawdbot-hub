@@ -1,0 +1,825 @@
+"use client";
+
+import { useState, useEffect, useCallback, useRef } from "react";
+import Link from "next/link";
+import {
+  Mic,
+  Play,
+  Pause,
+  Edit3,
+  ExternalLink,
+  CheckSquare,
+  Square,
+  Plus,
+  Trash2,
+  Save,
+  X,
+  Monitor,
+  FlipHorizontal,
+  FlipVertical,
+  ArrowLeft,
+  ChevronDown,
+  ChevronUp,
+  Maximize2,
+  Settings2,
+  Volume2,
+  SkipBack,
+  SkipForward,
+  Headphones,
+  Send,
+  Loader2,
+  Sparkles,
+  Download,
+  Copy,
+  Check,
+  MessageSquare,
+  Wand2,
+  Mail,
+  Users,
+  FileText,
+  TrendingUp,
+  Globe,
+  Edit,
+} from "lucide-react";
+import { Show } from "@/app/api/marketing/shows/route";
+import { Newsletter, NewsletterActivity, NewsletterStats } from "@/lib/newsletter-types";
+import { StatCard } from "@/components/newsletter/StatCard";
+import { NewsletterCard } from "@/components/newsletter/NewsletterCard";
+import { ActivityFeed } from "@/components/newsletter/ActivityFeed";
+
+// Types (keeping all the existing types from both pages)
+interface SpeechRecognitionResult {
+  readonly isFinal: boolean;
+  readonly length: number;
+  item(index: number): SpeechRecognitionAlternative;
+  [index: number]: SpeechRecognitionAlternative;
+}
+
+interface SpeechRecognitionAlternative {
+  readonly transcript: string;
+  readonly confidence: number;
+}
+
+interface SpeechRecognitionResultList {
+  readonly length: number;
+  item(index: number): SpeechRecognitionResult;
+  [index: number]: SpeechRecognitionResult;
+}
+
+interface SpeechRecognitionEventMap {
+  result: SpeechRecognitionEvent;
+  error: SpeechRecognitionErrorEvent;
+  end: Event;
+}
+
+interface SpeechRecognition extends EventTarget {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  onresult: ((event: SpeechRecognitionEvent) => void) | null;
+  onerror: ((event: SpeechRecognitionErrorEvent) => void) | null;
+  onend: (() => void) | null;
+  start(): void;
+  stop(): void;
+  abort(): void;
+}
+
+interface SpeechRecognitionEvent extends Event {
+  readonly results: SpeechRecognitionResultList;
+}
+
+interface SpeechRecognitionErrorEvent extends Event {
+  readonly error: string;
+}
+
+declare global {
+  interface Window {
+    SpeechRecognition: new () => SpeechRecognition;
+    webkitSpeechRecognition: new () => SpeechRecognition;
+  }
+}
+
+interface EpisodeLinks {
+  youtube?: string;
+  spotify?: string;
+  apple?: string;
+  linkedin?: string;
+  tiktok?: string;
+  medium?: string;
+  beehiiv?: string;
+}
+
+interface Episode {
+  number: number;
+  title: string;
+  pillar: string;
+  filename: string;
+  created: string;
+  finalized?: string;
+  status: string;
+  links?: EpisodeLinks;
+}
+
+interface PodcastIndex {
+  episodes: Episode[];
+  lastEpisodeNumber: number;
+  pillarCounts: Record<string, number>;
+  lastUpdated: string;
+}
+
+interface Todo {
+  id: string;
+  text: string;
+  completed: boolean;
+  createdAt: string;
+}
+
+interface PlatformMetrics {
+  platform: string;
+  followers?: number;
+  views?: number;
+  likes?: number;
+  comments?: number;
+  shares?: number;
+  subscribers?: number;
+  openRate?: number;
+  clickRate?: number;
+  posts?: number;
+  lastUpdated: string;
+  error?: string;
+}
+
+interface VideoMetric {
+  id: string;
+  title: string;
+  views: number;
+  likes: number;
+  comments: number;
+  publishedAt: string;
+  thumbnail?: string;
+}
+
+interface AnalyticsData {
+  youtube?: { channel: PlatformMetrics; videos: VideoMetric[] };
+  beehiiv?: PlatformMetrics;
+  manual?: PlatformMetrics[];
+}
+
+interface SocialPlatform {
+  name: string;
+  platform: string;
+  url: string;
+  followers: number;
+  views: number;
+  engagement: number;
+  lastUpdated: string;
+}
+
+const TABS = [
+  { id: 'podcast', label: 'Podcast', icon: Mic },
+  { id: 'newsletter', label: 'Newsletter', icon: Mail },
+  { id: 'social', label: 'Social Media', icon: TrendingUp },
+] as const;
+
+type TabId = typeof TABS[number]['id'];
+
+const PLATFORM_LINKS = [
+  { name: "YouTube", url: "https://www.youtube.com/@joshualevy6759", icon: "▶️" },
+  { name: "LinkedIn", url: "https://www.linkedin.com/in/joshuasethlevy/", icon: "💼" },
+  { name: "TikTok", url: "https://www.tiktok.com/@joshlevylabs", icon: "🎵" },
+  { name: "Medium", url: "https://medium.com/@joshualevy_38678", icon: "✍️" },
+  { name: "Beehiiv Newsletter", url: "https://the-builders-frequency.beehiiv.com/", icon: "📧" },
+  { name: "Spotify Podcasters", url: "https://podcasters.spotify.com/", icon: "🎧" },
+  { name: "Opus Pro", url: "https://app.opus.pro/", icon: "✂️" },
+  { name: "Riverside.fm", url: "https://riverside.fm/", icon: "🎬" },
+];
+
+// WPS speed utilities
+const MIN_WPS = 0.5;
+const MAX_WPS = 12;
+const sliderToWps = (slider: number): number => {
+  const normalized = slider / 100;
+  return MIN_WPS * Math.pow(MAX_WPS / MIN_WPS, normalized);
+};
+const wpsToSlider = (wps: number): number => {
+  return 100 * Math.log(wps / MIN_WPS) / Math.log(MAX_WPS / MIN_WPS);
+};
+
+// Social Media Platform Component
+function SocialMediaDashboard() {
+  const [platforms, setPlatforms] = useState<SocialPlatform[]>([
+    {
+      name: "YouTube",
+      platform: "youtube",
+      url: "https://www.youtube.com/@joshualevy6759",
+      followers: 0,
+      views: 0,
+      engagement: 0,
+      lastUpdated: new Date().toISOString(),
+    },
+    {
+      name: "LinkedIn",
+      platform: "linkedin",
+      url: "https://www.linkedin.com/in/joshuasethlevy/",
+      followers: 0,
+      views: 0,
+      engagement: 0,
+      lastUpdated: new Date().toISOString(),
+    },
+    {
+      name: "TikTok",
+      platform: "tiktok",
+      url: "https://www.tiktok.com/@joshlevylabs",
+      followers: 0,
+      views: 0,
+      engagement: 0,
+      lastUpdated: new Date().toISOString(),
+    },
+    {
+      name: "Medium",
+      platform: "medium",
+      url: "https://medium.com/@joshualevy_38678",
+      followers: 0,
+      views: 0,
+      engagement: 0,
+      lastUpdated: new Date().toISOString(),
+    },
+    {
+      name: "Beehiiv",
+      platform: "beehiiv",
+      url: "https://the-builders-frequency.beehiiv.com/",
+      followers: 0,
+      views: 0,
+      engagement: 0,
+      lastUpdated: new Date().toISOString(),
+    },
+    {
+      name: "Twitter/X",
+      platform: "twitter",
+      url: "https://twitter.com/joshualevy",
+      followers: 0,
+      views: 0,
+      engagement: 0,
+      lastUpdated: new Date().toISOString(),
+    },
+  ]);
+  const [editing, setEditing] = useState<string | null>(null);
+  const [editValues, setEditValues] = useState<Partial<SocialPlatform>>({});
+
+  const handleEdit = (platform: SocialPlatform) => {
+    setEditing(platform.platform);
+    setEditValues({
+      followers: platform.followers,
+      views: platform.views,
+      engagement: platform.engagement,
+    });
+  };
+
+  const handleSave = (platformId: string) => {
+    setPlatforms(prev => prev.map(p => 
+      p.platform === platformId 
+        ? { 
+            ...p, 
+            ...editValues, 
+            lastUpdated: new Date().toISOString() 
+          }
+        : p
+    ));
+    setEditing(null);
+    setEditValues({});
+  };
+
+  const handleCancel = () => {
+    setEditing(null);
+    setEditValues({});
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-xl font-semibold text-slate-100 flex items-center gap-3">
+            <TrendingUp className="w-6 h-6 text-primary-500" />
+            Social Media Dashboard
+          </h2>
+          <p className="text-slate-500 mt-1">Track your social media presence and growth</p>
+        </div>
+      </div>
+
+      {/* Platform Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {platforms.map((platform) => (
+          <div
+            key={platform.platform}
+            className="bg-slate-850 rounded-xl border border-slate-800 p-4 hover:border-slate-700 transition-colors"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-slate-800 flex items-center justify-center">
+                  <Globe className="w-5 h-5 text-slate-400" />
+                </div>
+                <div>
+                  <h3 className="font-medium text-slate-200">{platform.name}</h3>
+                  <a
+                    href={platform.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs text-slate-500 hover:text-primary-400 transition-colors"
+                  >
+                    View Profile
+                  </a>
+                </div>
+              </div>
+              {editing === platform.platform ? (
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={() => handleSave(platform.platform)}
+                    className="p-1 text-emerald-400 hover:text-emerald-300 transition-colors"
+                  >
+                    <Check className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={handleCancel}
+                    className="p-1 text-slate-400 hover:text-slate-300 transition-colors"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => handleEdit(platform)}
+                  className="p-1 text-slate-400 hover:text-slate-300 transition-colors"
+                >
+                  <Edit className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-slate-500">Followers</span>
+                {editing === platform.platform ? (
+                  <input
+                    type="number"
+                    value={editValues.followers || 0}
+                    onChange={(e) => setEditValues(prev => ({ ...prev, followers: parseInt(e.target.value) || 0 }))}
+                    className="w-20 px-2 py-1 text-sm bg-slate-800 border border-slate-700 rounded text-slate-200"
+                  />
+                ) : (
+                  <span className="font-medium text-slate-200">
+                    {platform.followers.toLocaleString()}
+                  </span>
+                )}
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-slate-500">Total Views</span>
+                {editing === platform.platform ? (
+                  <input
+                    type="number"
+                    value={editValues.views || 0}
+                    onChange={(e) => setEditValues(prev => ({ ...prev, views: parseInt(e.target.value) || 0 }))}
+                    className="w-20 px-2 py-1 text-sm bg-slate-800 border border-slate-700 rounded text-slate-200"
+                  />
+                ) : (
+                  <span className="font-medium text-slate-200">
+                    {platform.views.toLocaleString()}
+                  </span>
+                )}
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-slate-500">Engagement %</span>
+                {editing === platform.platform ? (
+                  <input
+                    type="number"
+                    step="0.1"
+                    value={editValues.engagement || 0}
+                    onChange={(e) => setEditValues(prev => ({ ...prev, engagement: parseFloat(e.target.value) || 0 }))}
+                    className="w-20 px-2 py-1 text-sm bg-slate-800 border border-slate-700 rounded text-slate-200"
+                  />
+                ) : (
+                  <span className="font-medium text-slate-200">
+                    {platform.engagement.toFixed(1)}%
+                  </span>
+                )}
+              </div>
+            </div>
+
+            <div className="mt-4 pt-3 border-t border-slate-800">
+              <span className="text-xs text-slate-500">
+                Last updated: {new Date(platform.lastUpdated).toLocaleDateString()}
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Growth Chart Placeholder */}
+      <div className="bg-slate-850 rounded-xl border border-slate-800 p-6">
+        <h3 className="font-medium text-slate-200 mb-4 flex items-center gap-2">
+          <TrendingUp className="w-5 h-5 text-primary-400" />
+          Growth Overview
+        </h3>
+        <div className="h-48 flex items-center justify-center border-2 border-dashed border-slate-700 rounded-lg">
+          <div className="text-center">
+            <TrendingUp className="w-8 h-8 text-slate-600 mx-auto mb-2" />
+            <p className="text-slate-500">Growth chart coming soon</p>
+            <p className="text-xs text-slate-600 mt-1">Auto-fetch and visualization in development</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Newsletter Dashboard Component
+function NewsletterDashboard() {
+  const [newsletters, setNewsletters] = useState<Newsletter[]>([]);
+  const [stats, setStats] = useState<NewsletterStats | null>(null);
+  const [activity, setActivity] = useState<NewsletterActivity[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const [nlRes, statsRes, actRes] = await Promise.all([
+          fetch("/api/newsletters"),
+          fetch("/api/newsletters/stats"),
+          fetch("/api/newsletters/activity?limit=10"),
+        ]);
+        const nlData = await nlRes.json();
+        const statsData = await statsRes.json();
+        const actData = await actRes.json();
+
+        setNewsletters(nlData.newsletters || []);
+        setStats(statsData);
+        setActivity(actData.activity || []);
+      } catch (err) {
+        console.error("Failed to load newsletter data:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="w-6 h-6 text-slate-500 animate-spin" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 className="text-xl font-semibold text-slate-100 flex items-center gap-3">
+            <Mail className="w-6 h-6 text-primary-500" />
+            Newsletter Dashboard
+          </h2>
+          <p className="text-slate-500 mt-1">
+            Manage your newsletters, subscribers, and issues
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Link href="/newsletter/contacts">
+            <button className="flex items-center gap-2 px-4 py-2 text-sm rounded-lg border border-slate-700 text-slate-300 hover:bg-slate-800 transition-colors">
+              <Users className="w-4 h-4" strokeWidth={1.5} />
+              Contacts
+            </button>
+          </Link>
+          <Link href="/newsletter/create">
+            <button className="btn btn-primary flex items-center gap-2">
+              <Plus className="w-4 h-4" strokeWidth={1.5} />
+              Create Newsletter
+            </button>
+          </Link>
+        </div>
+      </div>
+
+      {/* Stats Cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <StatCard
+          label="Total Subscribers"
+          value={stats?.total_subscribers || 0}
+          icon={Users}
+          color="text-emerald-400"
+        />
+        <StatCard
+          label="Newsletters"
+          value={stats?.total_newsletters || 0}
+          icon={Mail}
+          color="text-primary-400"
+        />
+        <StatCard
+          label="Issues Sent"
+          value={stats?.total_issues_sent || 0}
+          icon={Send}
+          color="text-blue-400"
+        />
+        <StatCard
+          label="Open Rate"
+          value="—"
+          icon={FileText}
+          color="text-amber-400"
+        />
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Newsletter Grid */}
+        <div className="lg:col-span-2">
+          <h3 className="text-lg font-medium text-slate-200 mb-4">Your Newsletters</h3>
+          {newsletters.length === 0 ? (
+            <div className="bg-slate-850 rounded-xl border border-slate-800 p-12 text-center">
+              <Mail className="w-12 h-12 text-slate-700 mx-auto mb-4" />
+              <h4 className="text-slate-300 font-medium mb-2">No newsletters yet</h4>
+              <p className="text-slate-500 text-sm mb-4">
+                Create your first newsletter to get started
+              </p>
+              <Link href="/newsletter/create">
+                <button className="btn btn-primary text-sm">
+                  Create Newsletter
+                </button>
+              </Link>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {newsletters.map((nl) => (
+                <NewsletterCard key={nl.id} newsletter={nl} />
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Activity Feed */}
+        <div>
+          <h3 className="text-lg font-medium text-slate-200 mb-4">Recent Activity</h3>
+          <div className="bg-slate-850 rounded-xl border border-slate-800 p-4">
+            <ActivityFeed activity={activity} />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Simplified Podcast Dashboard (main functionality moved to separate components)
+function PodcastDashboard() {
+  const [shows, setShows] = useState<Show[]>([]);
+  const [selectedShow, setSelectedShow] = useState<Show | null>(null);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadShows();
+  }, []);
+
+  const loadShows = async () => {
+    try {
+      const response = await fetch('/api/marketing/shows');
+      const data = await response.json();
+      setShows(data.shows || []);
+      if (data.shows?.length > 0 && !selectedShow) {
+        setSelectedShow(data.shows[0]);
+      }
+    } catch (error) {
+      console.error('Failed to load shows:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const createShow = async (showData: Partial<Show>) => {
+    try {
+      const response = await fetch('/api/marketing/shows', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'createShow',
+          ...showData,
+        }),
+      });
+      const result = await response.json();
+      if (result.success) {
+        await loadShows();
+        setShowCreateModal(false);
+      }
+    } catch (error) {
+      console.error('Failed to create show:', error);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="w-6 h-6 text-slate-500 animate-spin" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Header with Show Selector */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-xl font-semibold text-slate-100 flex items-center gap-3">
+            <Mic className="w-6 h-6 text-primary-500" />
+            Podcast Dashboard
+          </h2>
+          <p className="text-slate-500 mt-1">Manage your podcast shows and episodes</p>
+        </div>
+      </div>
+
+      {/* Show Selector */}
+      <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
+          <label className="text-sm font-medium text-slate-300">Show:</label>
+          <select
+            value={selectedShow?.id || ''}
+            onChange={(e) => {
+              const show = shows.find(s => s.id === e.target.value);
+              setSelectedShow(show || null);
+            }}
+            className="px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+          >
+            {shows.map((show) => (
+              <option key={show.id} value={show.id}>
+                {show.name}
+              </option>
+            ))}
+          </select>
+        </div>
+        <button
+          onClick={() => setShowCreateModal(true)}
+          className="flex items-center gap-2 px-3 py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm rounded-lg transition-colors"
+        >
+          <Plus className="w-4 h-4" />
+          New Show
+        </button>
+      </div>
+
+      {/* Selected Show Info */}
+      {selectedShow && (
+        <div className="bg-slate-850 rounded-xl border border-slate-800 p-6">
+          <div className="flex items-start justify-between">
+            <div>
+              <h3 className="text-lg font-semibold text-slate-100">{selectedShow.name}</h3>
+              <p className="text-slate-400 mt-1">{selectedShow.description}</p>
+              <div className="flex items-center gap-4 mt-3 text-sm text-slate-500">
+                <span>Frequency: {selectedShow.frequency}</span>
+                <span>Platforms: {selectedShow.platforms.join(', ')}</span>
+                <span>Created: {selectedShow.createdAt}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Podcast Tools Notice */}
+      <div className="bg-slate-850 rounded-xl border border-slate-800 p-6">
+        <div className="text-center">
+          <Mic className="w-12 h-12 text-slate-600 mx-auto mb-3" />
+          <h3 className="text-slate-300 font-medium mb-2">Podcast Tools</h3>
+          <p className="text-slate-500 text-sm mb-4">
+            Full podcast functionality (teleprompter, speech recognition, episode management, analytics) 
+            is still available at the dedicated podcast page.
+          </p>
+          <Link href="/podcast">
+            <button className="btn btn-primary text-sm">
+              Go to Full Podcast Dashboard
+            </button>
+          </Link>
+        </div>
+      </div>
+
+      {/* Create Show Modal */}
+      {showCreateModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-slate-850 rounded-xl border border-slate-800 p-6 w-full max-w-md">
+            <h3 className="text-lg font-semibold text-slate-100 mb-4">Create New Show</h3>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target as HTMLFormElement);
+                createShow({
+                  name: formData.get('name') as string,
+                  description: formData.get('description') as string,
+                  frequency: formData.get('frequency') as string,
+                  platforms: (formData.get('platforms') as string).split(',').map(p => p.trim()),
+                });
+              }}
+              className="space-y-4"
+            >
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">Show Name</label>
+                <input
+                  name="name"
+                  type="text"
+                  required
+                  className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  placeholder="e.g., Weekly MRE Updates"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">Description</label>
+                <textarea
+                  name="description"
+                  rows={3}
+                  className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  placeholder="Brief description of the show..."
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">Frequency</label>
+                <select
+                  name="frequency"
+                  className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                >
+                  <option value="daily">Daily</option>
+                  <option value="weekly">Weekly</option>
+                  <option value="monthly">Monthly</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">Platforms (comma-separated)</label>
+                <input
+                  name="platforms"
+                  type="text"
+                  className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  placeholder="youtube, spotify, apple"
+                  defaultValue="youtube, spotify, apple"
+                />
+              </div>
+              <div className="flex items-center gap-3 pt-4">
+                <button
+                  type="submit"
+                  className="flex-1 btn btn-primary"
+                >
+                  Create Show
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowCreateModal(false)}
+                  className="flex-1 px-4 py-2 border border-slate-700 text-slate-300 rounded-lg hover:bg-slate-800 transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Main Marketing Page Component
+export default function MarketingPage() {
+  const [activeTab, setActiveTab] = useState<TabId>('podcast');
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold text-slate-100">Marketing Hub</h1>
+          <p className="text-slate-500 mt-1">Unified dashboard for podcast, newsletter, and social media</p>
+        </div>
+      </div>
+
+      {/* Tab Navigation */}
+      <div className="border-b border-slate-800">
+        <nav className="flex space-x-8">
+          {TABS.map((tab) => {
+            const Icon = tab.icon;
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center gap-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                  isActive
+                    ? 'border-primary-500 text-primary-400'
+                    : 'border-transparent text-slate-500 hover:text-slate-300 hover:border-slate-600'
+                }`}
+              >
+                <Icon className="w-4 h-4" />
+                {tab.label}
+              </button>
+            );
+          })}
+        </nav>
+      </div>
+
+      {/* Tab Content */}
+      <div>
+        {activeTab === 'podcast' && <PodcastDashboard />}
+        {activeTab === 'newsletter' && <NewsletterDashboard />}
+        {activeTab === 'social' && <SocialMediaDashboard />}
+      </div>
+    </div>
+  );
+}

@@ -33,6 +33,7 @@ import ActionsDashboard from "@/components/ActionsDashboard";
 import PerformanceChart from "@/components/PerformanceChart";
 import MREDashboard from "./MREDashboard";
 import ChrisDailyActions from "@/components/trading/ChrisDailyActions";
+import BuffettDailyActions from "@/components/trading/BuffettDailyActions";
 import UniverseTable from "./UniverseTable";
 import MarketsOverview from "./MarketsOverview";
 import OptimizerResults from "./OptimizerResults";
@@ -729,6 +730,9 @@ export default function TradingPage() {
 
               {/* Chris's Daily Actions */}
               <ChrisDailyActions />
+
+              {/* Buffett's Value Assessment */}
+              <BuffettDailyActions />
 
               {/* Trade Performance Stats */}
               {trades.length > 0 && (

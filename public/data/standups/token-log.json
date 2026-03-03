@@ -209,12 +209,22 @@
       "estimatedCost": 0.0368,
       "model": "claude-sonnet-4-20250514",
       "duration": "46.8s"
+    },
+    {
+      "date": "2026-03-02",
+      "type": "adhoc-evening-session-hub-progress-faith-journey-pipeline",
+      "inputTokens": 2926,
+      "outputTokens": 2156,
+      "totalTokens": 5082,
+      "estimatedCost": 0.0411,
+      "model": "claude-sonnet-4-20250514",
+      "duration": "51.6s"
     }
   ],
   "totals": {
-    "today": 0.166,
-    "week": 0.8554,
-    "month": 0.8554,
-    "standupCount": 21
+    "today": 0.2071,
+    "week": 0.8965,
+    "month": 0.8965,
+    "standupCount": 22
   }
 }

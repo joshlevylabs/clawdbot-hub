@@ -2,6 +2,19 @@
   "standups": [
     {
       "date": "2026-03-02",
+      "time": "20:30",
+      "type": "adhoc-evening-session-hub-progress-faith-journey-pipeline",
+      "typeName": "Evening Session \u2014 Hub Progress & Faith Journey Pipeline",
+      "typeEmoji": "\ud83c\udf06",
+      "topic": "Evening Session \u2014 Hub Progress & Faith Journey Pipeline \u2014 Monday Mar 2",
+      "file": "2026-03-02-adhoc-evening-session-hub-progress-faith-journey-pipeline.json",
+      "tokenCost": 0.0411,
+      "verticals": [],
+      "initiatives": [],
+      "instanceKey": "STD-25"
+    },
+    {
+      "date": "2026-03-02",
       "time": "17:00",
       "type": "marin-daily",
       "typeName": "Marin Daily Standup",

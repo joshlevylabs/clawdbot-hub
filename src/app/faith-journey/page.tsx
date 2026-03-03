@@ -645,7 +645,7 @@ function TextReaderModal({
                 <span>{text.tradition}</span>
                 {text.translation && <span>• {text.translation}</span>}
                 <span>• {text.chapter_count} chapters</span>
-                <span>• {text.passage_count.toLocaleString()} passages</span>
+                <span>• {(text.passage_count ?? 0).toLocaleString()} passages</span>
               </div>
             </div>
             
@@ -1263,12 +1263,63 @@ export default function FaithJourneyPage() {
   );
 
   // Helper function to match guide core texts to actual texts
+  // Map guide coreText labels to DB matching logic
+  const coreTextMatchers: Record<string, (t: SacredText) => boolean> = {
+    // Judaism
+    "torah (pentateuch)": (t) => t.tradition_group === "torah" && (t.tradition === "judaism" || t.tradition === "christianity"),
+    "torah": (t) => t.tradition_group === "torah",
+    "tanakh": (t) => t.tradition === "judaism",
+    "talmud bavli": (t) => t.title.toLowerCase().includes("talmud"),
+    "talmud yerushalmi": (t) => t.title.toLowerCase().includes("talmud yerushalmi"),
+    "mishnah": (t) => t.title.toLowerCase().includes("mishnah"),
+    "midrash": (t) => t.title.toLowerCase().includes("midrash"),
+    "shulchan aruch": (t) => t.title.toLowerCase().includes("shulchan"),
+    // Christianity
+    "old testament": (t) => t.tradition === "christianity" && (t.tradition_group === "old_testament" || t.tradition_group === "torah"),
+    "new testament": (t) => t.tradition === "christianity" && t.tradition_group === "new_testament",
+    "catechism": (t) => t.title.toLowerCase().includes("catechism"),
+    "church fathers": (t) => t.title.toLowerCase().includes("church father"),
+    "philokalia": (t) => t.title.toLowerCase().includes("philokalia"),
+    "book of common prayer": (t) => t.title.toLowerCase().includes("book of common prayer"),
+    // Islam
+    "quran": (t) => t.tradition === "islam" && (t.tradition_group === "meccan" || t.tradition_group === "medinan" || t.title.toLowerCase().includes("quran")),
+    "sahih bukhari": (t) => t.title.toLowerCase().includes("bukhari"),
+    "sahih muslim": (t) => t.title.toLowerCase().includes("sahih muslim"),
+    "hadith": (t) => t.title.toLowerCase().includes("hadith"),
+    "nahj al-balagha": (t) => t.title.toLowerCase().includes("nahj"),
+    "masnavi": (t) => t.title.toLowerCase().includes("masnavi") || t.title.toLowerCase().includes("rumi"),
+    // Hinduism
+    "vedas (rigveda)": (t) => t.title.toLowerCase().includes("veda") || t.title.toLowerCase().includes("rigveda"),
+    "vedas": (t) => t.title.toLowerCase().includes("veda"),
+    "upanishads": (t) => t.title.toLowerCase().includes("upanishad"),
+    "bhagavad gita": (t) => t.title.toLowerCase().includes("bhagavad") || t.title.toLowerCase().includes("gita"),
+    "ramayana": (t) => t.title.toLowerCase().includes("ramayana"),
+    "mahabharata": (t) => t.title.toLowerCase().includes("mahabharata"),
+    "puranas": (t) => t.title.toLowerCase().includes("purana"),
+    "yoga sutras": (t) => t.title.toLowerCase().includes("yoga sutra"),
+    "brahma sutras": (t) => t.title.toLowerCase().includes("brahma sutra"),
+    // Buddhism
+    "pali canon (tipitaka)": (t) => t.title.toLowerCase().includes("tipitaka") || t.title.toLowerCase().includes("pali canon"),
+    "heart sutra": (t) => t.title.toLowerCase().includes("heart sutra"),
+    "diamond sutra": (t) => t.title.toLowerCase().includes("diamond sutra"),
+    "lotus sutra": (t) => t.title.toLowerCase().includes("lotus sutra"),
+    "platform sutra": (t) => t.title.toLowerCase().includes("platform sutra"),
+    "tibetan book of the dead": (t) => t.title.toLowerCase().includes("tibetan book"),
+    // Bahá'í
+    "kitáb-i-aqdas": (t) => t.title.toLowerCase().includes("aqdas"),
+    "kitáb-i-íqán": (t) => t.title.toLowerCase().includes("iqan") || t.title.toLowerCase().includes("íqán"),
+    "gleanings": (t) => t.title.toLowerCase().includes("gleanings"),
+  };
+
   const getGuideTextStats = (guide: DenominationAgent) => {
     const matchedTexts = sacredTexts.filter(text => 
-      guide.coreTexts.some(coreText => 
-        text.title.toLowerCase().includes(coreText.toLowerCase()) ||
-        (text.original_title && text.original_title.toLowerCase().includes(coreText.toLowerCase()))
-      )
+      guide.coreTexts.some(coreText => {
+        const matcher = coreTextMatchers[coreText.toLowerCase()];
+        if (matcher) return matcher(text);
+        // Fallback: substring match on title or original_title
+        return text.title.toLowerCase().includes(coreText.toLowerCase()) ||
+          (text.original_title && text.original_title.toLowerCase().includes(coreText.toLowerCase()));
+      })
     );
 
     const totalPassages = matchedTexts.reduce((sum, text) => sum + (text.passage_count || 0), 0);
@@ -1592,20 +1643,29 @@ export default function FaithJourneyPage() {
                               <h4 className="text-xs font-medium text-slate-300 mb-2">Core Texts:</h4>
                               <div className="grid grid-cols-1 gap-1">
                                 {agent.coreTexts.slice(0, 3).map((textTitle, index) => {
-                                  const matchedText = matchedTexts.find(t => 
-                                    t.title.toLowerCase().includes(textTitle.toLowerCase()) ||
-                                    (t.original_title && t.original_title.toLowerCase().includes(textTitle.toLowerCase()))
-                                  );
+                                  const matcher = coreTextMatchers[textTitle.toLowerCase()];
+                                  const matchedText = matcher 
+                                    ? matchedTexts.find(t => matcher(t))
+                                    : matchedTexts.find(t => 
+                                        t.title.toLowerCase().includes(textTitle.toLowerCase()) ||
+                                        (t.original_title && t.original_title.toLowerCase().includes(textTitle.toLowerCase()))
+                                      );
+                                  const matchCount = matcher 
+                                    ? matchedTexts.filter(t => matcher(t)).length 
+                                    : 0;
                                   
                                   return (
                                     <div key={index} className="flex items-center justify-between text-xs">
                                       <span className="text-slate-400 truncate flex-1">{textTitle}</span>
                                       {matchedText ? (
                                         <div className="flex items-center gap-2 ml-2">
+                                          {matchCount > 1 && (
+                                            <span className="text-slate-500">{matchCount} texts</span>
+                                          )}
                                           {renderStatusBadge(matchedText.ingestion_status)}
                                           {matchedText.ingestion_status === 'ingested' && (
                                             <span className="text-slate-500">
-                                              {matchedText.embedding_count}/{matchedText.passage_count}
+                                              {(matchedText.embedding_count || 0)}/{(matchedText.passage_count || 0)}
                                             </span>
                                           )}
                                         </div>
@@ -2255,14 +2315,14 @@ export default function FaithJourneyPage() {
                                 
                                 <div className="grid grid-cols-2 gap-2 text-xs text-slate-400">
                                   <div>
-                                    <span className="block">Chapters: {text.chapter_count}</span>
-                                    <span className="block">Verses: {text.verse_count.toLocaleString()}</span>
+                                    <span className="block">Chapters: {text.chapter_count ?? 0}</span>
+                                    <span className="block">Verses: {(text.verse_count ?? 0).toLocaleString()}</span>
                                   </div>
                                   <div>
-                                    <span className="block">Passages: {text.passage_count.toLocaleString()}</span>
+                                    <span className="block">Passages: {(text.passage_count ?? 0).toLocaleString()}</span>
                                     {text.ingestion_status === 'ingested' && (
                                       <span className="block">
-                                        Embeddings: <span className="text-blue-400">{text.embedding_count.toLocaleString()}</span>
+                                        Embeddings: <span className="text-blue-400">{(text.embedding_count ?? 0).toLocaleString()}</span>
                                       </span>
                                     )}
                                   </div>

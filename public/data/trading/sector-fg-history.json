@@ -207,63 +207,89 @@
         "international": 21.4,
         "commodities": 10.1
       }
+    },
+    {
+      "date": "2026-03-03",
+      "global_fg": 29.0,
+      "sectors": {
+        "broad_market": 52.0,
+        "technology": 47.8,
+        "healthcare": 65.6,
+        "financials": 39.5,
+        "real_estate": 70.8,
+        "energy": 74.5,
+        "bonds": 69.5,
+        "international": 56.3,
+        "commodities": 57.6
+      },
+      "divergences": {
+        "broad_market": 23.0,
+        "technology": 18.8,
+        "healthcare": 36.6,
+        "financials": 10.5,
+        "real_estate": 41.8,
+        "energy": 45.5,
+        "bonds": 40.5,
+        "international": 27.3,
+        "commodities": 28.6
+      }
     }
   ],
   "stats": {
     "broad_market": {
-      "mean_div": 16.2,
-      "std_div": 7.5,
-      "data_points": 8,
+      "mean_div": 17.0,
+      "std_div": 7.3,
+      "data_points": 9,
       "confidence": "low"
     },
     "technology": {
-      "mean_div": 6.8,
-      "std_div": 3.4,
-      "data_points": 8,
+      "mean_div": 8.1,
+      "std_div": 5.1,
+      "data_points": 9,
       "confidence": "low"
     },
     "healthcare": {
-      "mean_div": 26.1,
-      "std_div": 1.9,
-      "data_points": 8,
+      "mean_div": 27.3,
+      "std_div": 3.9,
+      "data_points": 9,
       "confidence": "low"
     },
     "financials": {
-      "mean_div": 5.7,
-      "std_div": 5.4,
-      "data_points": 8,
+      "mean_div": 6.2,
+      "std_div": 5.3,
+      "data_points": 9,
       "confidence": "low"
     },
     "real_estate": {
-      "mean_div": 28.8,
-      "std_div": 2.3,
-      "data_points": 8,
+      "mean_div": 30.2,
+      "std_div": 4.8,
+      "data_points": 9,
       "confidence": "low"
     },
     "energy": {
-      "mean_div": 32.3,
-      "std_div": 2.6,
-      "data_points": 8,
+      "mean_div": 33.7,
+      "std_div": 5.0,
+      "data_points": 9,
       "confidence": "low"
     },
     "bonds": {
-      "mean_div": 28.2,
-      "std_div": 2.2,
-      "data_points": 8,
+      "mean_div": 29.6,
+      "std_div": 4.6,
+      "data_points": 9,
       "confidence": "low"
     },
     "international": {
-      "mean_div": 20.6,
-      "std_div": 3.4,
-      "data_points": 8,
+      "mean_div": 21.4,
+      "std_div": 3.8,
+      "data_points": 9,
       "confidence": "low"
     },
     "commodities": {
-      "mean_div": 9.1,
-      "std_div": 2.3,
-      "data_points": 8,
+      "mean_div": 11.3,
+      "std_div": 6.8,
+      "data_points": 9,
       "confidence": "low"
     }
   },
-  "last_updated": "2026-03-02T13:48:15.572857"
+  "last_updated": "2026-03-03T07:48:10.504653"
 }

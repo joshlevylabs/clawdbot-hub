@@ -32,6 +32,7 @@ import {
 import ActionsDashboard from "@/components/ActionsDashboard";
 import PerformanceChart from "@/components/PerformanceChart";
 import MREDashboard from "./MREDashboard";
+import ChrisDailyActions from "@/components/trading/ChrisDailyActions";
 import UniverseTable from "./UniverseTable";
 import MarketsOverview from "./MarketsOverview";
 import OptimizerResults from "./OptimizerResults";
@@ -725,6 +726,9 @@ export default function TradingPage() {
                   trend="neutral"
                 />
               </div>
+
+              {/* Chris's Daily Actions */}
+              <ChrisDailyActions />
 
               {/* Trade Performance Stats */}
               {trades.length > 0 && (

@@ -1,126 +1,140 @@
 {
-  "date": "Monday, March 02, 2026",
-  "generated_at": "2026-03-02T06:01:00-08:00",
-  "version": "4.0.0",
-  "prayer": {
-    "title": "\ud83d\udd4a\ufe0f Morning Prayer",
-    "date": "Monday, March 02, 2026",
-    "hebrew_date": "2 Kislev",
-    "parsha": "Vayigash",
-    "parsha_theme": "reunion, forgiveness, revealing truth",
-    "modeh_ani": "\u05de\u05d5\u05d3\u05d4 \u05d0\u05e0\u05d9 \u05dc\u05e4\u05e0\u05d9\u05da \u2014 I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
-    "blessing": "Blessed are You who crowns Israel with glory \u2014 let my work bring You honor.",
-    "psalm": "**Psalm 37:5**: \"Commit your way to the Lord; trust in Him and He will act.\"",
-    "proverb": "**Proverbs 13:11**: \"Wealth gained hastily will dwindle, but whoever gathers little by little will increase it.\"",
-    "intention": "Give me discernment between opportunities and distractions. Not everything good is good for me right now.",
-    "closing": "Baruch atah Adonai \u2014 Blessed are You, Lord, who renews creation daily with goodness."
-  },
-  "weather": {
-    "title": "\ud83c\udf24\ufe0f Weather",
-    "location": "Temecula, CA",
-    "current": "Partly cloudy, 45\u00b0F",
-    "today_high": "68\u00b0F",
-    "today_low": "44\u00b0F",
-    "conditions": "Partly cloudy with light winds",
-    "forecast": "Clear skies through the week, typical March weather"
-  },
-  "calendar": {
-    "title": "\ud83d\udcc5 Today's Schedule",
-    "today": [],
-    "this_week": [
-      {
-        "date": "2026-03-06",
-        "time": "All day",
-        "title": "Brendon Schmidt's birthday",
-        "location": "",
-        "source": "josh@joshlevylabs.com"
-      }
-    ],
-    "this_month": [
-      {
-        "date": "2026-03-06",
-        "title": "Brendon Schmidt's birthday"
-      }
-    ]
-  },
-  "email_highlights": {
-    "title": "\ud83d\udce7 Email Highlights",
-    "accounts_checked": [
-      "josh@joshlevylabs.com"
-    ],
-    "unread_count": 3,
-    "important": [
-      {
-        "from": "LinkedIn notifications",
-        "subject": "You have 1 new message",
-        "priority": "low",
-        "action": "Review LinkedIn message"
+  "timestamp": "2026-03-03T06:00:00.000Z",
+  "date": "Tuesday, March 3rd, 2026",
+  "timezone": "America/Los_Angeles",
+  "sections": {
+    "prayer": {
+      "title": "🕊️ Morning Prayer",
+      "date": "Tuesday, March 03, 2026",
+      "hebrew_date": "3 Kislev",
+      "parsha": "Vayigash",
+      "parsha_theme": "reunion, forgiveness, revealing truth",
+      "modeh_ani": "מודה אני לפניך — I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
+      "blessing": "Blessed are You who releases the bound — free me from what holds me back.",
+      "psalm": "**Psalm 121:8**: \"The Lord will watch over your coming and going both now and forevermore.\"",
+      "proverb": "**Proverbs 16:9**: \"The heart of man plans his way, but the Lord establishes his steps.\"",
+      "intention": "Let today's small faithfulness lead to tomorrow's greater stewardship.",
+      "closing": "Baruch atah Adonai — Blessed are You, Lord, who renews creation daily with goodness."
+    },
+    "weather": {
+      "title": "🌤️ Weather",
+      "location": "Temecula, CA",
+      "forecast": "74°F / 48°F",
+      "feels_like": "67°F",
+      "wind": "6 mph from North",
+      "summary": "Pleasant spring weather with mild temperatures"
+    },
+    "calendar": {
+      "title": "📅 Calendar",
+      "status": "Authentication needed",
+      "message": "Calendar access requires configuration. Consider setting up gog authentication.",
+      "today": [],
+      "week": [],
+      "month": []
+    },
+    "email": {
+      "title": "📧 Email Highlights",
+      "status": "Setup needed",
+      "message": "Email access requires himalaya configuration for josh@joshlevylabs.com and joshua.seth.levy@gmail.com",
+      "highlights": []
+    },
+    "trading": {
+      "title": "📈 MRE Trading Signals",
+      "updated": "2026-03-03T03:33:27.396Z",
+      "fear_greed_index": {
+        "current": 34.6,
+        "rating": "Fear",
+        "summary": "Markets are fearful at 35. Sentiment is negative — watch for oversold bounces."
       },
-      {
-        "from": "Fly.io",
-        "subject": "Receipt #2270-1700",
-        "priority": "low",
-        "action": "Filed receipt"
-      }
-    ],
-    "summary": "Light email day \u2014 mainly notifications and receipts. LinkedIn message waiting."
-  },
-  "mre": {
-    "title": "\ud83d\udcca MRE Trading",
-    "fear_greed": 38,
-    "fear_greed_rating": "fear",
-    "regime": "sideways",
-    "todays_plays": [],
-    "pending_triggers": [],
-    "thesis": "Fear at 38, sideways regime. All assets on HOLD \u2014 waiting for clear direction. No buy signals activated.",
-    "summary": "Markets fearful, all major indices sideways. VIX elevated at 23.2. No actionable signals today."
-  },
-  "family_focus": {
-    "title": "\ud83d\udc68\u200d\ud83d\udc69\u200d\ud83d\udc67\u200d\ud83d\udc66 Family Focus",
-    "relationship_temperature": "critical",
-    "primary_love_language": "quality_time",
-    "secondary_love_language": "acts_of_service",
-    "today_recommendation": "PRIORITY: Focus on repair. Acknowledge recent conflicts without defending. Increase acts of service dramatically.",
-    "action_items": [
-      "Create space for Jillian to express frustrations without fixing",
-      "Focus on quality time this evening",
-      "Lead with acts of service throughout the day"
-    ]
-  },
-  "world_news": {
-    "title": "\ud83c\udf0d World News",
-    "highlights": [
-      {
-        "title": "US Strikes Iran After Saudi-Israeli Lobbying",
-        "summary": "Trump launched wide-ranging attack on Iran following weeks of coordinated lobbying by Israel and Saudi Arabia",
-        "source": "Washington Post",
-        "relevance": "Major Middle East development, affects Israel relations"
+      "regime": {
+        "spy": "sideways",
+        "qqq": "sideways", 
+        "summary": "SPY is sideways, QQQ is sideways. Momentum is weakening."
       },
-      {
-        "title": "Israeli Security Minister Expands Settlement Gun Licenses",
-        "summary": "Ben-Gvir allows gun licenses for residents of 18 West Bank settlements",
-        "source": "Wikipedia",
-        "relevance": "Conservative security policy, internal Israeli politics"
-      }
-    ],
-    "summary": "Significant Middle East escalation with Iran. Israeli domestic security policies expanding."
-  },
-  "ai_news": {
-    "title": "\ud83e\udd16 AI News",
-    "highlights": [
-      {
-        "title": "Chinese AI Model Surge",
-        "summary": "Five new AI models from Tencent, Alibaba, Baidu, ByteDance. MiniMax's M2.5 rivals Claude Opus 4.6",
-        "source": "mean.ceo",
-        "relevance": "Competition heating up, quality improving"
+      "signals": {
+        "total_buy": 0,
+        "total_hold": 24,
+        "total_watch": 0,
+        "summary": "All signals are HOLD. No active buy opportunities in current market conditions."
       },
-      {
-        "title": "AI Brain MRI Analysis Breakthrough",
-        "summary": "University of Michigan creates AI system interpreting brain MRI scans in seconds",
-        "source": "ScienceDaily",
-        "relevance": "Medical AI advancement, practical healthcare application"
+      "key_levels": {
+        "spy": {
+          "price": 686.38,
+          "support": 686.3,
+          "resistance": 697.84
+        },
+        "qqq": {
+          "price": 608.09,
+          "support": 601.62,
+          "resistance": 608.3
+        }
       }
-    ],
-    "summary": "Chinese competition intensifying. Medical AI making real-world breakthroughs."
-  }
+    },
+    "relationship": {
+      "title": "💖 Jillian Focus",
+      "status": "CRITICAL ATTENTION NEEDED",
+      "temperature": "Critical",
+      "trend": "Urgent",
+      "stats": {
+        "positive": 6,
+        "negative": 5,
+        "ratio": 1.2
+      },
+      "love_languages": {
+        "primary": "Quality Time",
+        "secondary": "Acts of Service"
+      },
+      "recommendations": [
+        "PRIORITY: Focus on repair. Acknowledge recent conflicts without defending.",
+        "Increase acts of service dramatically this week.",
+        "Create space for her to express frustrations without fixing."
+      ],
+      "action_required": "This requires immediate attention and intentional effort today."
+    },
+    "news": {
+      "world": {
+        "title": "🌍 World News (Israel Focus)",
+        "items": [
+          {
+            "headline": "Renewed rocket fire from Iran, Lebanon targets Israel",
+            "source": "Times of Israel",
+            "timeAgo": "4 hours ago",
+            "significance": "Ongoing security concerns in the region"
+          },
+          {
+            "headline": "Jewish politics shaping 2026 election map",
+            "source": "Pittsburgh Jewish Chronicle",
+            "significance": "Political developments affecting Jewish communities"
+          }
+        ]
+      },
+      "ai": {
+        "title": "🤖 AI News",
+        "items": [
+          {
+            "headline": "Weill Cornell Medicine launches 'AI to Advance Medicine' program",
+            "source": "Crescendo AI",
+            "significance": "AI integration into clinical care and research"
+          },
+          {
+            "headline": "LeCun leaves Meta to start $5B world model lab",
+            "source": "TechCrunch",
+            "significance": "Major industry movement toward world models"
+          },
+          {
+            "headline": "2026: AI moves from hype to pragmatism",
+            "source": "TechCrunch", 
+            "significance": "Industry maturation and practical applications"
+          }
+        ]
+      }
+    }
+  },
+  "summary": "Key focus areas for today: Critical relationship attention needed with Jillian (quality time + acts of service). Markets in fearful territory with all-hold signals. Pleasant weather for any outdoor time together. Torah theme of reunion and forgiveness is particularly relevant.",
+  "priorities": [
+    "🚨 Relationship repair with Jillian - quality time and acts of service",
+    "📈 Monitor market sentiment - oversold bounce potential", 
+    "🌤️ Take advantage of nice weather for family time",
+    "🕊️ Apply Torah theme of reunion/forgiveness in personal relationships"
+  ]
 }

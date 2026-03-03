@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { faithSupabase, isFaithSupabaseConfigured } from '@/lib/faith-supabase';
 import { FAITH_TRADITIONS } from '@/lib/faith-traditions';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export async function GET(request: NextRequest) {
   if (!isFaithSupabaseConfigured()) {
     return NextResponse.json({ error: 'Database not configured' }, { status: 500 });

@@ -531,6 +531,15 @@ export default function FaithJourneyPage() {
   const [holidayFilters, setHolidayFilters] = useState<Set<string>>(new Set(["Judaism", "Christianity", "Islam", "Hinduism", "Buddhism", "Bahá'í"]));
   const [selectedMonth, setSelectedMonth] = useState<number>(new Date().getMonth());
   const [expandedTextsTraditions, setExpandedTextsTraditions] = useState<Set<string>>(new Set(["Judaism"]));
+  
+  // Fetch sacred texts status from Supabase
+  const [sacredTexts, setSacredTexts] = useState<any[]>([]);
+  useEffect(() => {
+    fetch('/api/faith/texts')
+      .then(r => r.json())
+      .then(data => setSacredTexts(data.texts || []))
+      .catch(() => {});
+  }, []);
 
   const loadData = async () => {
     try {
@@ -592,6 +601,62 @@ export default function FaithJourneyPage() {
       newExpanded.add(tradition);
     }
     setExpandedTextsTraditions(newExpanded);
+  };
+
+  // Helper function to look up text status from Supabase data
+  const getTextStatus = (bookTitle: string, tradition: string) => {
+    const match = sacredTexts.find(t => 
+      t.title?.toLowerCase().includes(bookTitle.toLowerCase()) && 
+      t.tradition?.toLowerCase() === tradition.toLowerCase()
+    );
+    if (!match) return { status: 'pending', verses: 0 };
+    return { status: match.ingestion_status, verses: match.verse_count || 0 };
+  };
+
+  // Helper function to render status badge
+  const renderStatusBadge = (status: string) => {
+    switch (status) {
+      case 'ingested':
+        return (
+          <span className="text-xs px-1.5 py-0.5 rounded border" style={{ backgroundColor: "rgba(34, 197, 94, 0.1)", borderColor: "rgba(34, 197, 94, 0.3)", color: "#22C55E" }}>
+            ✅ Ingested
+          </span>
+        );
+      case 'ingesting':
+        return (
+          <span className="text-xs px-1.5 py-0.5 rounded border" style={{ backgroundColor: "rgba(59, 130, 246, 0.1)", borderColor: "rgba(59, 130, 246, 0.3)", color: "#3B82F6" }}>
+            🔄 Ingesting
+          </span>
+        );
+      case 'licensed_pending':
+        return (
+          <span className="text-xs px-1.5 py-0.5 rounded border" style={{ backgroundColor: "rgba(239, 68, 68, 0.1)", borderColor: "rgba(239, 68, 68, 0.3)", color: "#EF4444" }}>
+            🔴 Licensed
+          </span>
+        );
+      case 'pending':
+      default:
+        return (
+          <span className="text-xs px-1.5 py-0.5 rounded border" style={{ backgroundColor: "rgba(234, 179, 8, 0.1)", borderColor: "rgba(234, 179, 8, 0.3)", color: "#EAB308" }}>
+            🟡 Pending
+          </span>
+        );
+    }
+  };
+
+  // Calculate stats for the summary
+  const getTextsStats = () => {
+    const total = sacredTexts.length;
+    const ingested = sacredTexts.filter(t => t.ingestion_status === 'ingested');
+    const pending = sacredTexts.filter(t => t.ingestion_status === 'pending' || !t.ingestion_status);
+    const totalVerses = ingested.reduce((sum, t) => sum + (t.verse_count || 0), 0);
+    
+    return {
+      total,
+      ingestedCount: ingested.length,
+      pendingCount: pending.length,
+      totalVerses
+    };
   };
 
   const groupAgentsByTradition = () => {
@@ -1528,10 +1593,17 @@ export default function FaithJourneyPage() {
                 {/* Header */}
                 <div className="rounded-xl p-4 border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
                   <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-lg font-semibold text-slate-100 flex items-center gap-2">
-                      <Scroll className="w-5 h-5" style={{ color: "#D4A020" }} />
-                      Religious Texts Library (247 texts)
-                    </h2>
+                    <div>
+                      <h2 className="text-lg font-semibold text-slate-100 flex items-center gap-2">
+                        <Scroll className="w-5 h-5" style={{ color: "#D4A020" }} />
+                        Religious Texts Library
+                      </h2>
+                      <div className="flex items-center gap-4 mt-1 text-sm text-slate-400">
+                        <span>Total: <span className="text-slate-300 font-medium">{getTextsStats().total}</span></span>
+                        <span>Ingested: <span className="text-green-400 font-medium">{getTextsStats().ingestedCount}</span> ({getTextsStats().totalVerses.toLocaleString()} verses)</span>
+                        <span>Pending: <span className="text-yellow-400 font-medium">{getTextsStats().pendingCount}</span></span>
+                      </div>
+                    </div>
                     <div className="flex items-center gap-2">
                       <Search className="w-4 h-4 text-slate-500" />
                       <input 
@@ -1600,9 +1672,7 @@ export default function FaithJourneyPage() {
                             <div key={i} className="rounded-lg p-3 border" style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}>
                               <div className="flex items-center justify-between mb-1">
                                 <h5 className="text-slate-200 text-sm font-medium">{book.name}</h5>
-                                <span className="text-xs px-1.5 py-0.5 rounded border" style={{ backgroundColor: "rgba(234, 179, 8, 0.1)", borderColor: "rgba(234, 179, 8, 0.3)", color: "#EAB308" }}>
-                                  🟡 Pending
-                                </span>
+                                {renderStatusBadge(getTextStatus(book.name, 'Judaism').status)}
                               </div>
                               <p className="text-xs text-slate-400">{book.description}</p>
                               <div className="flex items-center justify-between mt-1 text-xs text-slate-500">
@@ -1627,7 +1697,17 @@ export default function FaithJourneyPage() {
                           ].map((book, i) => (
                             <div key={i} className="rounded-lg p-2 border text-center" style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}>
                               <div className="text-xs text-slate-200">{book}</div>
-                              <span className="text-xs px-1 py-0.5 rounded mt-1 inline-block" style={{ backgroundColor: "rgba(234, 179, 8, 0.1)", color: "#EAB308" }}>🟡</span>
+                              <div className="mt-1">
+                                {(() => {
+                                  const status = getTextStatus(book, 'Judaism').status;
+                                  switch (status) {
+                                    case 'ingested': return <span className="text-xs px-1 py-0.5 rounded inline-block" style={{ backgroundColor: "rgba(34, 197, 94, 0.1)", color: "#22C55E" }}>✅</span>;
+                                    case 'ingesting': return <span className="text-xs px-1 py-0.5 rounded inline-block" style={{ backgroundColor: "rgba(59, 130, 246, 0.1)", color: "#3B82F6" }}>🔄</span>;
+                                    case 'licensed_pending': return <span className="text-xs px-1 py-0.5 rounded inline-block" style={{ backgroundColor: "rgba(239, 68, 68, 0.1)", color: "#EF4444" }}>🔴</span>;
+                                    default: return <span className="text-xs px-1 py-0.5 rounded inline-block" style={{ backgroundColor: "rgba(234, 179, 8, 0.1)", color: "#EAB308" }}>🟡</span>;
+                                  }
+                                })()}
+                              </div>
                             </div>
                           ))}
                         </div>
@@ -1644,7 +1724,17 @@ export default function FaithJourneyPage() {
                           ].map((book, i) => (
                             <div key={i} className="rounded-lg p-2 border text-center" style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}>
                               <div className="text-xs text-slate-200">{book}</div>
-                              <span className="text-xs px-1 py-0.5 rounded mt-1 inline-block" style={{ backgroundColor: "rgba(234, 179, 8, 0.1)", color: "#EAB308" }}>🟡</span>
+                              <div className="mt-1">
+                                {(() => {
+                                  const status = getTextStatus(book, 'Judaism').status;
+                                  switch (status) {
+                                    case 'ingested': return <span className="text-xs px-1 py-0.5 rounded inline-block" style={{ backgroundColor: "rgba(34, 197, 94, 0.1)", color: "#22C55E" }}>✅</span>;
+                                    case 'ingesting': return <span className="text-xs px-1 py-0.5 rounded inline-block" style={{ backgroundColor: "rgba(59, 130, 246, 0.1)", color: "#3B82F6" }}>🔄</span>;
+                                    case 'licensed_pending': return <span className="text-xs px-1 py-0.5 rounded inline-block" style={{ backgroundColor: "rgba(239, 68, 68, 0.1)", color: "#EF4444" }}>🔴</span>;
+                                    default: return <span className="text-xs px-1 py-0.5 rounded inline-block" style={{ backgroundColor: "rgba(234, 179, 8, 0.1)", color: "#EAB308" }}>🟡</span>;
+                                  }
+                                })()}
+                              </div>
                             </div>
                           ))}
                         </div>
@@ -1657,7 +1747,7 @@ export default function FaithJourneyPage() {
                           <div className="rounded-lg p-3 border" style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}>
                             <div className="flex items-center justify-between mb-2">
                               <h5 className="text-slate-200 text-sm font-medium">Talmud Bavli (Babylonian)</h5>
-                              <span className="text-xs px-1.5 py-0.5 rounded border" style={{ backgroundColor: "rgba(234, 179, 8, 0.1)", borderColor: "rgba(234, 179, 8, 0.3)", color: "#EAB308" }}>🟡 Pending</span>
+                              {renderStatusBadge(getTextStatus('Talmud Bavli', 'Judaism').status)}
                             </div>
                             <p className="text-xs text-slate-400 mb-1">37 tractates, ~2,700 pages</p>
                             <p className="text-xs text-slate-500">Hebrew/Aramaic</p>
@@ -1665,7 +1755,7 @@ export default function FaithJourneyPage() {
                           <div className="rounded-lg p-3 border" style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}>
                             <div className="flex items-center justify-between mb-2">
                               <h5 className="text-slate-200 text-sm font-medium">Mishnah</h5>
-                              <span className="text-xs px-1.5 py-0.5 rounded border" style={{ backgroundColor: "rgba(234, 179, 8, 0.1)", borderColor: "rgba(234, 179, 8, 0.3)", color: "#EAB308" }}>🟡 Pending</span>
+                              {renderStatusBadge(getTextStatus('Mishnah', 'Judaism').status)}
                             </div>
                             <p className="text-xs text-slate-400 mb-1">6 orders, 63 tractates</p>
                             <p className="text-xs text-slate-500">Hebrew</p>
@@ -1694,7 +1784,17 @@ export default function FaithJourneyPage() {
                             {["Matthew", "Mark", "Luke", "John"].map((book, i) => (
                               <div key={i} className="text-xs text-slate-400 flex items-center justify-between mb-1">
                                 <span>{book}</span>
-                                <span style={{ color: "#EAB308" }}>🟡</span>
+                                <span>
+                                  {(() => {
+                                    const status = getTextStatus(book, 'Christianity').status;
+                                    switch (status) {
+                                      case 'ingested': return <span style={{ color: "#22C55E" }}>✅</span>;
+                                      case 'ingesting': return <span style={{ color: "#3B82F6" }}>🔄</span>;
+                                      case 'licensed_pending': return <span style={{ color: "#EF4444" }}>🔴</span>;
+                                      default: return <span style={{ color: "#EAB308" }}>🟡</span>;
+                                    }
+                                  })()}
+                                </span>
                               </div>
                             ))}
                           </div>
@@ -1703,7 +1803,17 @@ export default function FaithJourneyPage() {
                             {["Romans", "1 Corinthians", "2 Corinthians", "Galatians", "Ephesians", "Philippians"].map((book, i) => (
                               <div key={i} className="text-xs text-slate-400 flex items-center justify-between mb-1">
                                 <span>{book}</span>
-                                <span style={{ color: "#EAB308" }}>🟡</span>
+                                <span>
+                                  {(() => {
+                                    const status = getTextStatus(book, 'Christianity').status;
+                                    switch (status) {
+                                      case 'ingested': return <span style={{ color: "#22C55E" }}>✅</span>;
+                                      case 'ingesting': return <span style={{ color: "#3B82F6" }}>🔄</span>;
+                                      case 'licensed_pending': return <span style={{ color: "#EF4444" }}>🔴</span>;
+                                      default: return <span style={{ color: "#EAB308" }}>🟡</span>;
+                                    }
+                                  })()}
+                                </span>
                               </div>
                             ))}
                             <div className="text-xs text-slate-500">...and 7 more</div>
@@ -1713,7 +1823,17 @@ export default function FaithJourneyPage() {
                             {["Acts", "Hebrews", "James", "1 Peter", "2 Peter", "Revelation"].map((book, i) => (
                               <div key={i} className="text-xs text-slate-400 flex items-center justify-between mb-1">
                                 <span>{book}</span>
-                                <span style={{ color: "#EAB308" }}>🟡</span>
+                                <span>
+                                  {(() => {
+                                    const status = getTextStatus(book, 'Christianity').status;
+                                    switch (status) {
+                                      case 'ingested': return <span style={{ color: "#22C55E" }}>✅</span>;
+                                      case 'ingesting': return <span style={{ color: "#3B82F6" }}>🔄</span>;
+                                      case 'licensed_pending': return <span style={{ color: "#EF4444" }}>🔴</span>;
+                                      default: return <span style={{ color: "#EAB308" }}>🟡</span>;
+                                    }
+                                  })()}
+                                </span>
                               </div>
                             ))}
                             <div className="text-xs text-slate-500">...and 4 more</div>
@@ -1736,9 +1856,7 @@ export default function FaithJourneyPage() {
                             <div key={i} className="rounded-lg p-3 border" style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}>
                               <div className="flex items-center justify-between mb-1">
                                 <h5 className="text-slate-200 text-sm font-medium">{text.name}</h5>
-                                <span className="text-xs px-1.5 py-0.5 rounded border" style={{ backgroundColor: "rgba(234, 179, 8, 0.1)", borderColor: "rgba(234, 179, 8, 0.3)", color: "#EAB308" }}>
-                                  {text.status} Pending
-                                </span>
+                                {renderStatusBadge(getTextStatus(text.name, 'Christianity').status)}
                               </div>
                               <div className="text-xs text-purple-400 mb-1">{text.denom}</div>
                               <p className="text-xs text-slate-400">{text.description}</p>
@@ -1774,7 +1892,17 @@ export default function FaithJourneyPage() {
                             <div key={i} className="rounded-lg p-3 border" style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}>
                               <div className="flex items-center justify-between mb-1">
                                 <h5 className="text-slate-200 text-sm font-medium">{surah.name}</h5>
-                                <span className="text-xs px-1.5 py-0.5 rounded border" style={{ backgroundColor: "rgba(234, 179, 8, 0.1)", borderColor: "rgba(234, 179, 8, 0.3)", color: "#EAB308" }}>🟡</span>
+                                <span>
+                                  {(() => {
+                                    const status = getTextStatus(surah.name, 'Islam').status;
+                                    switch (status) {
+                                      case 'ingested': return <span className="text-xs px-1.5 py-0.5 rounded border" style={{ backgroundColor: "rgba(34, 197, 94, 0.1)", borderColor: "rgba(34, 197, 94, 0.3)", color: "#22C55E" }}>✅</span>;
+                                      case 'ingesting': return <span className="text-xs px-1.5 py-0.5 rounded border" style={{ backgroundColor: "rgba(59, 130, 246, 0.1)", borderColor: "rgba(59, 130, 246, 0.3)", color: "#3B82F6" }}>🔄</span>;
+                                      case 'licensed_pending': return <span className="text-xs px-1.5 py-0.5 rounded border" style={{ backgroundColor: "rgba(239, 68, 68, 0.1)", borderColor: "rgba(239, 68, 68, 0.3)", color: "#EF4444" }}>🔴</span>;
+                                      default: return <span className="text-xs px-1.5 py-0.5 rounded border" style={{ backgroundColor: "rgba(234, 179, 8, 0.1)", borderColor: "rgba(234, 179, 8, 0.3)", color: "#EAB308" }}>🟡</span>;
+                                    }
+                                  })()}
+                                </span>
                               </div>
                               <div className="flex items-center justify-between text-xs text-slate-400">
                                 <span>Surah {surah.num}</span>
@@ -1802,7 +1930,7 @@ export default function FaithJourneyPage() {
                             <div key={i} className="rounded-lg p-3 border" style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}>
                               <div className="flex items-center justify-between mb-1">
                                 <h5 className="text-slate-200 text-sm font-medium">{collection.name}</h5>
-                                <span className="text-xs px-1.5 py-0.5 rounded border" style={{ backgroundColor: "rgba(234, 179, 8, 0.1)", borderColor: "rgba(234, 179, 8, 0.3)", color: "#EAB308" }}>🟡 Pending</span>
+                                {renderStatusBadge(getTextStatus(collection.name, 'Islam').status)}
                               </div>
                               <div className="text-xs text-green-400 mb-1">{collection.compiler}</div>
                               <p className="text-xs text-slate-400 mb-1">{collection.description}</p>

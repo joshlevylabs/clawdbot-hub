@@ -1720,9 +1720,27 @@ export default function SignalFlowTab() {
   const [selectedStage, setSelectedStage] = useState<StageDetails | null>(null);
   const [dataMode, setDataMode] = useState<'pipeline' | 'geopolitical' | 'portfolio'>('pipeline');
   const [loading, setLoading] = useState(false);
+  const [portfolioSymbols, setPortfolioSymbols] = useState<string[]>([]);
   const [filters, setFilters] = useState({
     searchQuery: '',
   });
+
+  // Fetch portfolio positions for portfolio mode
+  useEffect(() => {
+    if (dataMode !== 'portfolio') return;
+    const fetchPositions = async () => {
+      try {
+        const res = await fetch('/api/paper-trading');
+        if (!res.ok) return;
+        const json = await res.json();
+        const symbols = (json.positions || []).map((p: { symbol: string }) => p.symbol);
+        setPortfolioSymbols(symbols);
+      } catch {
+        // Silently fail — portfolio signal flow will show empty state
+      }
+    };
+    fetchPositions();
+  }, [dataMode]);
 
   // Fetch data
   useEffect(() => {
@@ -1797,17 +1815,47 @@ export default function SignalFlowTab() {
     
     return calculatePipelineStages(signals, 'universe');
   }, [coreData, universeData, dataMode]);
+
+  // Portfolio-filtered pipeline data — same pipeline but only portfolio tickers
+  const portfolioPipelineData = useMemo(() => {
+    if (dataMode !== 'portfolio' || portfolioSymbols.length === 0) return null;
+    const baseData = universeData || coreData;
+    if (!baseData?.signals?.by_asset_class) return null;
+
+    let allSignals = baseData.signals.by_asset_class;
+
+    // Merge core tickers if missing
+    if (universeData && coreData?.signals?.by_asset_class) {
+      const uniSymbols = new Set(allSignals.map((s: MRESignal) => s.symbol));
+      const missingCore = coreData.signals.by_asset_class.filter(
+        (s: MRESignal) => !uniSymbols.has(s.symbol)
+      );
+      if (missingCore.length > 0) {
+        allSignals = [...allSignals, ...missingCore];
+      }
+    }
+
+    // Filter to only portfolio symbols
+    const portfolioSet = new Set(portfolioSymbols);
+    const portfolioSignals = allSignals.filter((s: MRESignal) => portfolioSet.has(s.symbol));
+
+    if (portfolioSignals.length === 0) return null;
+    return calculatePipelineStages(portfolioSignals, 'universe');
+  }, [coreData, universeData, dataMode, portfolioSymbols]);
   
   const currentData = universeData || coreData;
   
+  // Active pipeline data depends on mode
+  const activePipelineData = dataMode === 'portfolio' ? portfolioPipelineData : pipelineData;
+
   // Handler for stage clicks
   const handleStageClick = (stageKey: string) => {
-    if (!pipelineData) return;
+    if (!activePipelineData) return;
     
     // Handle individual strategy vote clicks
     if (stageKey.startsWith('strategy_')) {
       const stratKey = stageKey.replace('strategy_', '');
-      const sv = pipelineData.strategyVotes.find(s => s.key === stratKey);
+      const sv = activePipelineData.strategyVotes.find(s => s.key === stratKey);
       if (!sv) return;
       
       setSelectedStage({
@@ -1836,11 +1884,11 @@ export default function SignalFlowTab() {
     // Handle vote consensus path clicks
     if (stageKey.startsWith('vote_consensus_')) {
       const voteCount = parseInt(stageKey.replace('vote_consensus_', ''));
-      const path = pipelineData.voteConsensusGate.paths.find(p => p.voteCount === voteCount);
+      const path = activePipelineData.voteConsensusGate.paths.find(p => p.voteCount === voteCount);
       if (!path) return;
       
       // Filtered = all tickers from the gate that DON'T have this vote count
-      const filteredFromThisLevel = pipelineData.voteConsensusGate.passed.filter(
+      const filteredFromThisLevel = activePipelineData.voteConsensusGate.passed.filter(
         t => !path.tickers.includes(t)
       );
       
@@ -1850,7 +1898,7 @@ export default function SignalFlowTab() {
           ? `Tickers where exactly ${voteCount} of 8 strategies voted BUY`
           : `No tickers currently have exactly ${voteCount} of 8 strategies voting BUY`,
         stageType: 'filter',
-        inputCount: pipelineData.voteConsensusGate.inputCount,
+        inputCount: activePipelineData.voteConsensusGate.inputCount,
         outputCount: path.count,
         filteredTickers: filteredFromThisLevel.map(t => ({
           symbol: t.symbol,
@@ -1871,7 +1919,7 @@ export default function SignalFlowTab() {
     // Handle per-consensus persistence gate clicks
     if (stageKey.startsWith('persistenceGate_')) {
       const voteCount = stageKey.replace('persistenceGate_', '');
-      const persistenceData = pipelineData.perConsensusPersistence[parseInt(voteCount)];
+      const persistenceData = activePipelineData.perConsensusPersistence[parseInt(voteCount)];
       if (!persistenceData) return;
       
       setSelectedStage({
@@ -1909,7 +1957,7 @@ export default function SignalFlowTab() {
     // Handle post-persistence consensus clicks
     if (stageKey.startsWith('post_consensus_')) {
       const voteCount = parseInt(stageKey.replace('post_consensus_', ''));
-      const path = pipelineData.postPersistenceConsensusPaths?.find(p => p.voteCount === voteCount);
+      const path = activePipelineData.postPersistenceConsensusPaths?.find(p => p.voteCount === voteCount);
       if (!path) return;
       
       setSelectedStage({
@@ -1931,7 +1979,7 @@ export default function SignalFlowTab() {
     
     // Handle legacy persistence gate click (for backward compatibility)
     if (stageKey === 'persistenceGate') {
-      const pg = pipelineData.persistenceGate;
+      const pg = activePipelineData.persistenceGate;
       setSelectedStage({
         name: 'Signal Persistence Gate (Legacy)',
         description: `Combined view of all persistence gates. Total: ${pg.pendingCount} signals pending (day 1), ${pg.outputCount} confirmed.`,
@@ -1966,7 +2014,7 @@ export default function SignalFlowTab() {
     const alphaRankTierMatch = stageKey.match(/^alphaRank_tier_(\d+)$/);
     if (alphaRankTierMatch) {
       const voteCount = parseInt(alphaRankTierMatch[1]);
-      const tierData = pipelineData.alphaRank.perTierData?.[voteCount];
+      const tierData = activePipelineData.alphaRank.perTierData?.[voteCount];
       if (!tierData) return;
       
       const primeCount = tierData.primeCount || 0;
@@ -1996,7 +2044,7 @@ export default function SignalFlowTab() {
     if (tierStageMatch) {
       const [, stageName, voteCountStr] = tierStageMatch;
       const voteCount = parseInt(voteCountStr);
-      const stage = pipelineData[stageName as keyof typeof pipelineData] as any;
+      const stage = activePipelineData![stageName as keyof typeof activePipelineData] as any;
       if (!stage) return;
       
       // Get tier-specific data
@@ -2005,7 +2053,7 @@ export default function SignalFlowTab() {
       
       // Filter passed/filtered tickers to only this tier
       const tierFilter = (t: any) => {
-        const tVotes = pipelineData.strategyVotes.filter((sv: any) => {
+        const tVotes = activePipelineData.strategyVotes.filter((sv: any) => {
           if (t.strategy_votes?.[sv.key as keyof typeof t.strategy_votes] === true) return true;
           if (t.persistence_by_strategy && (t.persistence_by_strategy[sv.key] || 0) > 0) return true;
           return false;
@@ -2059,7 +2107,7 @@ export default function SignalFlowTab() {
       return;
     }
     
-    const stageData = pipelineData[stageKey as keyof typeof pipelineData];
+    const stageData = activePipelineData![stageKey as keyof typeof activePipelineData];
     if (!stageData || Array.isArray(stageData) || typeof stageData === 'object' && !('inputCount' in stageData)) return;
     
     // Create stage details for the panel
@@ -2069,7 +2117,7 @@ export default function SignalFlowTab() {
       case 'input':
         stageDetails = {
           name: 'Universe Input',
-          description: `${pipelineData.input.inputCount.toLocaleString()} tickers entering the MRE pipeline`,
+          description: `${activePipelineData.input.inputCount.toLocaleString()} tickers entering the MRE pipeline`,
           stageType: 'input',
           inputCount: stageData.inputCount,
           outputCount: stageData.outputCount,
@@ -2114,7 +2162,7 @@ export default function SignalFlowTab() {
           inputCount: stageData.inputCount,
           outputCount: stageData.outputCount,
           filteredTickers: stageData.filtered.map(t => {
-            const voteCount = pipelineData.strategyVotes.filter((sv: any) => {
+            const voteCount = activePipelineData.strategyVotes.filter((sv: any) => {
               if (t.strategy_votes?.[sv.key as keyof typeof t.strategy_votes] === true) return true;
               if (t.persistence_by_strategy && (t.persistence_by_strategy[sv.key] || 0) > 0) return true;
               return false;
@@ -2131,7 +2179,7 @@ export default function SignalFlowTab() {
             };
           }),
           passedTickers: stageData.passed.map(t => {
-            const voteCount = pipelineData.strategyVotes.filter((sv: any) => {
+            const voteCount = activePipelineData.strategyVotes.filter((sv: any) => {
               if (t.strategy_votes?.[sv.key as keyof typeof t.strategy_votes] === true) return true;
               if (t.persistence_by_strategy && (t.persistence_by_strategy[sv.key] || 0) > 0) return true;
               return false;
@@ -2222,12 +2270,12 @@ export default function SignalFlowTab() {
       case 'alphaRank':
         stageDetails = {
           name: 'Alpha Rank (All Tiers)',
-          description: `Cross-sectional factor ranking — ${pipelineData.alphaRank.totalRanked} tickers ranked, ${pipelineData.alphaRank.topDecileCount} in top decile, ${pipelineData.alphaRank.primeTradeCount} Prime Trades (BUY + Top Decile). Factors: trend, momentum, mean reversion, vol compression, F&G divergence. Sector-neutralized, regime-aware.`,
+          description: `Cross-sectional factor ranking — ${activePipelineData.alphaRank.totalRanked} tickers ranked, ${activePipelineData.alphaRank.topDecileCount} in top decile, ${activePipelineData.alphaRank.primeTradeCount} Prime Trades (BUY + Top Decile). Factors: trend, momentum, mean reversion, vol compression, F&G divergence. Sector-neutralized, regime-aware.`,
           stageType: 'modifier',
-          inputCount: pipelineData.alphaRank.inputCount,
-          outputCount: pipelineData.alphaRank.outputCount,
+          inputCount: activePipelineData.alphaRank.inputCount,
+          outputCount: activePipelineData.alphaRank.outputCount,
           filteredTickers: [],
-          passedTickers: [...pipelineData.alphaRank.passed].sort((a: any, b: any) => (b.alpha_rank_score || 0) - (a.alpha_rank_score || 0)).map((t: any) => ({
+          passedTickers: [...activePipelineData.alphaRank.passed].sort((a: any, b: any) => (b.alpha_rank_score || 0) - (a.alpha_rank_score || 0)).map((t: any) => ({
             symbol: t.symbol,
             signal: t.signal,
             signalStrength: t.signal_strength,
@@ -2242,10 +2290,10 @@ export default function SignalFlowTab() {
           name: 'Fibonacci Level Selection',
           description: 'Determines optimal entry, stop loss, and profit target levels using A/B/C point Fibonacci retracement and extension. Point A = swing low, Point B = swing high, Point C = retracement. Entry at 0.618 retracement, stop loss at 0.786 retracement, profit target at 1.618 extension.',
           stageType: 'modifier',
-          inputCount: pipelineData.fibonacciLevels.inputCount,
-          outputCount: pipelineData.fibonacciLevels.outputCount,
+          inputCount: activePipelineData.fibonacciLevels.inputCount,
+          outputCount: activePipelineData.fibonacciLevels.outputCount,
           filteredTickers: [],
-          passedTickers: pipelineData.fibonacciLevels.passed.map((t: any) => ({
+          passedTickers: activePipelineData.fibonacciLevels.passed.map((t: any) => ({
             symbol: t.symbol,
             signal: t.signal,
             currentPrice: t.price,
@@ -2259,10 +2307,10 @@ export default function SignalFlowTab() {
           name: 'Agent Analysis',
           description: 'Trading agents review final BUY signals and provide expert opinions. Chris Vermeullen (Technical Analysis) evaluates chart patterns, momentum, and technical setups. Warren Buffett (Fundamental Analysis — pending setup) will evaluate value metrics, moats, and long-term quality.',
           stageType: 'output',
-          inputCount: pipelineData.agentAnalysis.inputCount,
-          outputCount: pipelineData.agentAnalysis.outputCount,
+          inputCount: activePipelineData.agentAnalysis.inputCount,
+          outputCount: activePipelineData.agentAnalysis.outputCount,
           filteredTickers: [],
-          passedTickers: pipelineData.agentAnalysis.passed.map((t: any) => ({
+          passedTickers: activePipelineData.agentAnalysis.passed.map((t: any) => ({
             symbol: t.symbol,
             signal: t.signal,
             currentPrice: t.price,
@@ -2373,12 +2421,82 @@ export default function SignalFlowTab() {
       {/* Geopolitical Mode — render dedicated tab */}
       {dataMode === 'geopolitical' && <GeopoliticalFlowTab />}
 
-      {/* Portfolio Mode — render portfolio signal flow */}
+      {/* Portfolio Mode — workflow diagram filtered to portfolio tickers + position cards */}
       {dataMode === 'portfolio' && (
-        <PortfolioSignalFlow 
-          universeData={universeData}
-          coreData={coreData}
-        />
+        <>
+          {/* Portfolio-filtered pipeline visualization */}
+          {portfolioPipelineData ? (
+            <>
+              {/* Portfolio metrics bar */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
+                <div className="bg-slate-800/50 rounded-lg p-3 border border-slate-700/50">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Activity className="w-4 h-4 text-primary-400" />
+                    <span className="text-xs text-slate-400">Portfolio Tickers</span>
+                  </div>
+                  <div className="text-xl font-bold text-primary-400">{portfolioSymbols.length}</div>
+                </div>
+                <div className="bg-slate-800/50 rounded-lg p-3 border border-slate-700/50">
+                  <div className="flex items-center gap-2 mb-1">
+                    <TrendingUp className="w-4 h-4 text-emerald-400" />
+                    <span className="text-xs text-slate-400">Still BUY</span>
+                  </div>
+                  <div className="text-xl font-bold text-emerald-400">
+                    {portfolioPipelineData.output?.outputCount || 0}
+                  </div>
+                </div>
+                <div className="bg-slate-800/50 rounded-lg p-3 border border-slate-700/50">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Eye className="w-4 h-4 text-amber-400" />
+                    <span className="text-xs text-slate-400">Downgraded to HOLD</span>
+                  </div>
+                  <div className="text-xl font-bold text-amber-400">
+                    {portfolioSymbols.length - (portfolioPipelineData.output?.outputCount || 0)}
+                  </div>
+                </div>
+                <div className="bg-slate-800/50 rounded-lg p-3 border border-slate-700/50">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Target className="w-4 h-4 text-accent-400" />
+                    <span className="text-xs text-slate-400">Regime</span>
+                  </div>
+                  <div className="text-sm font-bold text-accent-400 capitalize">{regimeValue}</div>
+                </div>
+              </div>
+
+              {/* Same workflow visualization — filtered to portfolio tickers */}
+              <WorkflowVisualization
+                pipelineData={portfolioPipelineData}
+                mreVersions={mreVersions}
+                strategyVersions={strategyVersions}
+                onStageClick={handleStageClick}
+              />
+
+              {/* Detail panel for clicked stages */}
+              <PipelineDetailPanel
+                stageDetails={selectedStage}
+                onClose={handleModalClose}
+              />
+            </>
+          ) : (
+            <div className="h-[200px] flex items-center justify-center mb-6">
+              <div className="text-center text-slate-400">
+                <Activity className="w-12 h-12 mx-auto mb-4 text-slate-600" />
+                <p>No signal data found for portfolio tickers</p>
+                <p className="text-sm text-slate-500 mt-1">
+                  {portfolioSymbols.length === 0 ? 'No open positions' : `${portfolioSymbols.length} positions — signal data may not be available yet`}
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Position-level analysis cards below the diagram */}
+          <div className="mt-8">
+            <PortfolioSignalFlow 
+              universeData={universeData}
+              coreData={coreData}
+            />
+          </div>
+        </>
       )}
 
       {/* MRE Pipeline Mode (Core/Universe) */}

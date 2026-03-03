@@ -6,7 +6,7 @@
     "starting_capital": 100000,
     "cash": 22580.2,
     "created_at": "2026-02-06T15:17:00-08:00",
-    "equity": 92152.74
+    "equity": 93013.82
   },
   "positions": [],
   "trades": [],
@@ -2723,9 +2723,9 @@
     },
     {
       "date": "2026-03-03",
-      "equity": 92152.74,
+      "equity": 93013.82,
       "cash": 22580.2,
-      "spy_price": 671.52,
+      "spy_price": 680.08,
       "spy_baseline": 690.62
     },
     {
@@ -2852,6 +2852,230 @@
       "equity": 92152.74,
       "cash": 22580.2,
       "spy_price": 671.52,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-03-03T08:00",
+      "equity": 92286.58,
+      "cash": 22580.2,
+      "spy_price": 671.52,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-03-03T08:05",
+      "equity": 92484.85,
+      "cash": 22580.2,
+      "spy_price": 671.9,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-03-03T08:10",
+      "equity": 92554.06,
+      "cash": 22580.2,
+      "spy_price": 671.9,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-03-03T08:15",
+      "equity": 92614.73,
+      "cash": 22580.2,
+      "spy_price": 671.9,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-03-03T08:20",
+      "equity": 92528.68,
+      "cash": 22580.2,
+      "spy_price": 675.53,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-03-03T08:25",
+      "equity": 92623.34,
+      "cash": 22580.2,
+      "spy_price": 675.53,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-03-03T08:30",
+      "equity": 92581.27,
+      "cash": 22580.2,
+      "spy_price": 675.53,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-03-03T08:35",
+      "equity": 92644.34,
+      "cash": 22580.2,
+      "spy_price": 674.8,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-03-03T08:40",
+      "equity": 92608.03,
+      "cash": 22580.2,
+      "spy_price": 674.8,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-03-03T08:45",
+      "equity": 92800.97,
+      "cash": 22580.2,
+      "spy_price": 674.8,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-03-03T08:50",
+      "equity": 92865.37,
+      "cash": 22580.2,
+      "spy_price": 678.14,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-03-03T08:55",
+      "equity": 92866.46,
+      "cash": 22580.2,
+      "spy_price": 678.14,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-03-03T09:00",
+      "equity": 92827.94,
+      "cash": 22580.2,
+      "spy_price": 678.14,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-03-03T09:05",
+      "equity": 92837.3,
+      "cash": 22580.2,
+      "spy_price": 677.13,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-03-03T09:10",
+      "equity": 92706.81,
+      "cash": 22580.2,
+      "spy_price": 677.13,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-03-03T09:15",
+      "equity": 92677.42,
+      "cash": 22580.2,
+      "spy_price": 677.13,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-03-03T09:20",
+      "equity": 92769.05,
+      "cash": 22580.2,
+      "spy_price": 676.81,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-03-03T09:25",
+      "equity": 92824.51,
+      "cash": 22580.2,
+      "spy_price": 676.81,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-03-03T09:30",
+      "equity": 92787.5,
+      "cash": 22580.2,
+      "spy_price": 676.81,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-03-03T09:35",
+      "equity": 92616.34,
+      "cash": 22580.2,
+      "spy_price": 677.28,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-03-03T09:40",
+      "equity": 92715.64,
+      "cash": 22580.2,
+      "spy_price": 677.28,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-03-03T09:45",
+      "equity": 92875.31,
+      "cash": 22580.2,
+      "spy_price": 677.28,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-03-03T09:50",
+      "equity": 92922.11,
+      "cash": 22580.2,
+      "spy_price": 677.77,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-03-03T09:55",
+      "equity": 92774.55,
+      "cash": 22580.2,
+      "spy_price": 677.77,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-03-03T10:00",
+      "equity": 92827.56,
+      "cash": 22580.2,
+      "spy_price": 677.77,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-03-03T10:05",
+      "equity": 92911.52,
+      "cash": 22580.2,
+      "spy_price": 678.64,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-03-03T10:10",
+      "equity": 92926.39,
+      "cash": 22580.2,
+      "spy_price": 678.64,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-03-03T10:15",
+      "equity": 92827.36,
+      "cash": 22580.2,
+      "spy_price": 678.64,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-03-03T10:20",
+      "equity": 92937.02,
+      "cash": 22580.2,
+      "spy_price": 678.55,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-03-03T10:25",
+      "equity": 92969.27,
+      "cash": 22580.2,
+      "spy_price": 678.55,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-03-03T10:30",
+      "equity": 92947.89,
+      "cash": 22580.2,
+      "spy_price": 678.55,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-03-03T10:35",
+      "equity": 93013.82,
+      "cash": 22580.2,
+      "spy_price": 680.08,
       "spy_baseline": 690.62
     }
   ],

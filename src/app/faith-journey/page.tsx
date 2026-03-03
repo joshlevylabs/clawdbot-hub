@@ -2399,8 +2399,12 @@ export default function FaithJourneyPage() {
                                         <div>
                                           <h5 className="text-xs font-medium text-slate-400 mb-2 uppercase tracking-wide">Sources</h5>
                                           <ul className="list-disc list-inside space-y-1">
-                                            {perspective.source_citations.map((citation, ci) => (
-                                              <li key={ci} className="text-xs text-slate-400">{citation}</li>
+                                            {perspective.source_citations.map((citation: any, ci: number) => (
+                                              <li key={ci} className="text-xs text-slate-400">
+                                                {typeof citation === 'string' ? citation : (
+                                                  <><span className="font-medium text-slate-300">{citation.ref}</span>{citation.text ? ` — "${citation.text}"` : ''}</>
+                                                )}
+                                              </li>
                                             ))}
                                           </ul>
                                         </div>

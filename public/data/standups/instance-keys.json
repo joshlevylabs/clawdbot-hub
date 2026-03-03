@@ -1,5 +1,5 @@
 {
-  "global_counter": 25,
+  "global_counter": 26,
   "counters": {
     "adhoc-hub-standup-system-overhaul": 1,
     "adhoc-lever-financial-app-separation": 1,
@@ -22,6 +22,7 @@
     "adhoc-mosaic-ux-overhaul": 1,
     "adhoc-faith-journey-app-ai-religious-guide-builder": 2,
     "marin-daily": 1,
-    "adhoc-evening-session-hub-progress-faith-journey-pipeline": 1
+    "adhoc-evening-session-hub-progress-faith-journey-pipeline": 1,
+    "adhoc-dlp230np-projection-lens-selection-for-hemisphere-poc-what-lens-do-we-actually-need-to-project-from-the-dlp230np-evm-onto-a-6-inch-hemisphere-dome-the-current-mar-010-ticket-incorrectly-lists-a-camera-fisheye-lens-we-need-the-team-especially-palmer-and-ive-to-identify-the-correct-optical-element-to-spread-bend-the-dlp-projected-image-onto-the-hemisphere-interior-consider-projection-specific-wide-angle-adapters-short-throw-conversion-lenses-concave-convex-mirrors-fresnel-lenses-or-custom-optics-must-be-purchasable-for-the-poc-budget": 1
   }
 }

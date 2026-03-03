@@ -219,12 +219,22 @@
       "estimatedCost": 0.0411,
       "model": "claude-sonnet-4-20250514",
       "duration": "51.6s"
+    },
+    {
+      "date": "2026-03-02",
+      "type": "adhoc-dlp230np-projection-lens-selection-for-hemisphere-poc-what-lens-do-we-actually-need-to-project-from-the-dlp230np-evm-onto-a-6-inch-hemisphere-dome-the-current-mar-010-ticket-incorrectly-lists-a-camera-fisheye-lens-we-need-the-team-especially-palmer-and-ive-to-identify-the-correct-optical-element-to-spread-bend-the-dlp-projected-image-onto-the-hemisphere-interior-consider-projection-specific-wide-angle-adapters-short-throw-conversion-lenses-concave-convex-mirrors-fresnel-lenses-or-custom-optics-must-be-purchasable-for-the-poc-budget",
+      "inputTokens": 2883,
+      "outputTokens": 1871,
+      "totalTokens": 4754,
+      "estimatedCost": 0.0367,
+      "model": "claude-sonnet-4-20250514",
+      "duration": "44.1s"
     }
   ],
   "totals": {
-    "today": 0.2071,
-    "week": 0.8965,
-    "month": 0.8965,
-    "standupCount": 22
+    "today": 0.2438,
+    "week": 0.9332,
+    "month": 0.9332,
+    "standupCount": 23
   }
 }

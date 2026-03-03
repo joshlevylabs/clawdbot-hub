@@ -1,6 +1,6 @@
 {
   "date": "2026-03-02",
-  "generatedAt": "2026-03-02T20:30:32.506935-08:00",
+  "generatedAt": "2026-03-02T21:42:47.717902-08:00",
   "priorities": [
     {
       "text": "Submit current Lever build to App Store as planned",
@@ -10,19 +10,19 @@
     },
     {
       "text": "Finalize Lever App Store submission",
-      "source": "adhoc-evening-session-hub-progress-faith-journey-pipeline",
+      "source": "adhoc-dlp230np-projection-lens-selection-for-hemisphere-poc-what-lens-do-we-actually-need-to-project-from-the-dlp230np-evm-onto-a-6-inch-hemisphere-dome-the-current-mar-010-ticket-incorrectly-lists-a-camera-fisheye-lens-we-need-the-team-especially-palmer-and-ive-to-identify-the-correct-optical-element-to-spread-bend-the-dlp-projected-image-onto-the-hemisphere-interior-consider-projection-specific-wide-angle-adapters-short-throw-conversion-lenses-concave-convex-mirrors-fresnel-lenses-or-custom-optics-must-be-purchasable-for-the-poc-budget",
       "urgency": "high",
       "taskKey": "CVS-017"
     },
     {
       "text": "Upgrade Mac Mini RAM and diagnose build resource exhaustion",
-      "source": "adhoc-evening-session-hub-progress-faith-journey-pipeline",
+      "source": "adhoc-dlp230np-projection-lens-selection-for-hemisphere-poc-what-lens-do-we-actually-need-to-project-from-the-dlp230np-evm-onto-a-6-inch-hemisphere-dome-the-current-mar-010-ticket-incorrectly-lists-a-camera-fisheye-lens-we-need-the-team-especially-palmer-and-ive-to-identify-the-correct-optical-element-to-spread-bend-the-dlp-projected-image-onto-the-hemisphere-interior-consider-projection-specific-wide-angle-adapters-short-throw-conversion-lenses-concave-convex-mirrors-fresnel-lenses-or-custom-optics-must-be-purchasable-for-the-poc-budget",
       "urgency": "high",
       "taskKey": "J-004"
     },
     {
       "text": "Establish evangelical theological advisory relationships",
-      "source": "adhoc-evening-session-hub-progress-faith-journey-pipeline",
+      "source": "adhoc-dlp230np-projection-lens-selection-for-hemisphere-poc-what-lens-do-we-actually-need-to-project-from-the-dlp230np-evm-onto-a-6-inch-hemisphere-dome-the-current-mar-010-ticket-incorrectly-lists-a-camera-fisheye-lens-we-need-the-team-especially-palmer-and-ive-to-identify-the-correct-optical-element-to-spread-bend-the-dlp-projected-image-onto-the-hemisphere-interior-consider-projection-specific-wide-angle-adapters-short-throw-conversion-lenses-concave-convex-mirrors-fresnel-lenses-or-custom-optics-must-be-purchasable-for-the-poc-budget",
       "urgency": "high",
       "taskKey": "J-005"
     }

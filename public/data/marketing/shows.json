@@ -1,0 +1,15 @@
+{
+  "shows": [
+    {
+      "id": "builders-frequency",
+      "name": "The Builder's Frequency",
+      "description": "Insights for builders creating while employed",
+      "frequency": "weekly",
+      "coverArt": null,
+      "platforms": ["youtube", "spotify", "apple"],
+      "episodeIndexPath": "~/clawd/builders-frequency/episodes/index.json",
+      "createdAt": "2026-02-15",
+      "episodes": []
+    }
+  ]
+}

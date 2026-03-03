@@ -16,15 +16,18 @@ export default function ChartExportPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const [range, setRange] = useState<string>("1Y");
+
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const key = params.get("key") || "";
-    const range = params.get("range") || "1Y";
+    const r = params.get("range") || "1Y";
+    setRange(r);
 
-    fetch(`/api/charts/newsletter?key=${key}&range=${range}`)
-      .then((r) => {
-        if (!r.ok) throw new Error(`HTTP ${r.status}`);
-        return r.json();
+    fetch(`/api/charts/newsletter?key=${key}&range=${r}`)
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
       })
       .then((d) => {
         setData(d);
@@ -80,6 +83,23 @@ export default function ChartExportPage() {
     open_positions: s.open_positions,
   }));
 
+  // Map URL range param → PerformanceChart TimeRange
+  const rangeMap: Record<string, "1D" | "1W" | "1M" | "3M" | "1Y"> = {
+    "1D": "1D",
+    "1W": "1W",
+    "1M": "1M",
+    "3M": "3M",
+    "1Y": "1Y",
+    // lowercase aliases
+    "1d": "1D",
+    "1w": "1W",
+    "1m": "1M",
+    "3m": "3M",
+    "1y": "1Y",
+    all: "1Y",
+  };
+  const defaultTimeRange = rangeMap[range] || "1Y";
+
   return (
     <div className="min-h-screen bg-[#0B0B11] p-4">
       <div className="max-w-[640px] mx-auto">
@@ -87,6 +107,7 @@ export default function ChartExportPage() {
           snapshots={snapshots}
           intradaySnapshots={intradaySnapshots}
           startingCapital={data?.startingCapital || 100000}
+          defaultTimeRange={defaultTimeRange}
         />
       </div>
       {/* Hidden marker for screenshot automation to know chart is loaded */}

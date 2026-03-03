@@ -51,6 +51,11 @@ export function Sidebar() {
     router.refresh();
   };
 
+  // Hide sidebar on chart export pages (used for newsletter screenshots)
+  if (pathname?.startsWith("/charts/export")) {
+    return null;
+  }
+
   return (
     <>
       {/* Mobile Header */}

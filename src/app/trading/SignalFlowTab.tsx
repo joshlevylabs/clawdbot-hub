@@ -19,6 +19,7 @@ import PipelineDetailPanel from "@/components/PipelineDetailPanel";
 import PersistenceFlipFlop from "@/components/PersistenceFlipFlop";
 import SectorFearGreedPanel from "./SectorFearGreedPanel";
 import GeopoliticalFlowTab from "./GeopoliticalFlowTab";
+import PortfolioSignalFlow from "@/components/trading/PortfolioSignalFlow";
 
 // Interface for MRE signal data
 interface MRESignal {
@@ -1717,7 +1718,7 @@ export default function SignalFlowTab() {
   const [mreVersions, setMreVersions] = useState<any>(null);
   const [strategyVersions, setStrategyVersions] = useState<any>(null);
   const [selectedStage, setSelectedStage] = useState<StageDetails | null>(null);
-  const [dataMode, setDataMode] = useState<'pipeline' | 'geopolitical'>('pipeline');
+  const [dataMode, setDataMode] = useState<'pipeline' | 'geopolitical' | 'portfolio'>('pipeline');
   const [loading, setLoading] = useState(false);
   const [filters, setFilters] = useState({
     searchQuery: '',
@@ -2292,7 +2293,7 @@ export default function SignalFlowTab() {
     );
   }
 
-  if (dataMode !== 'geopolitical' && (!currentData || !pipelineData)) {
+  if (dataMode === 'pipeline' && (!currentData || !pipelineData)) {
     return (
       <div className="h-[600px] flex items-center justify-center">
         <div className="text-center text-slate-400">
@@ -2343,6 +2344,16 @@ export default function SignalFlowTab() {
             >
               ⚔️ Geopolitical
             </button>
+            <button
+              onClick={() => setDataMode('portfolio')}
+              className={`px-3 py-1.5 rounded text-sm font-medium transition-all ${
+                dataMode === 'portfolio'
+                  ? 'bg-emerald-600 text-white'
+                  : 'text-slate-400 hover:text-slate-300'
+              }`}
+            >
+              📊 Portfolio
+            </button>
           </div>
         </div>
         
@@ -2362,8 +2373,16 @@ export default function SignalFlowTab() {
       {/* Geopolitical Mode — render dedicated tab */}
       {dataMode === 'geopolitical' && <GeopoliticalFlowTab />}
 
+      {/* Portfolio Mode — render portfolio signal flow */}
+      {dataMode === 'portfolio' && (
+        <PortfolioSignalFlow 
+          universeData={universeData}
+          coreData={coreData}
+        />
+      )}
+
       {/* MRE Pipeline Mode (Core/Universe) */}
-      {dataMode !== 'geopolitical' && <>
+      {dataMode === 'pipeline' && <>
       {/* Metrics Bar */}
       <div className="grid grid-cols-2 md:grid-cols-6 gap-3 mb-8">
         <div className="bg-slate-800/50 rounded-lg p-3 border border-slate-700/50">

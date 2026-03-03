@@ -88,6 +88,10 @@ export async function GET(request: NextRequest) {
     // Process lessons with completion counts
     const lessonsWithProgress = lessons.map((lesson: any) => {
       const completions = lessonProgress.filter((lp: any) => lp.lesson_id === lesson.id);
+      const content = lesson.baseline_text || lesson.content || '';
+      // Estimate reading time: ~200 words per minute
+      const wordCount = content.split(/\s+/).length;
+      const readingTime = Math.max(1, Math.round(wordCount / 200));
       return {
         id: lesson.id,
         title: lesson.topic || lesson.title || `Lesson ${lesson.id}`,
@@ -96,6 +100,10 @@ export async function GET(request: NextRequest) {
         completionCount: completions.length,
         date: lesson.date || lesson.created_at,
         createdAt: lesson.created_at,
+        content,
+        estimatedReadingTime: readingTime,
+        scriptureRef: lesson.scripture_ref || null,
+        parsha: lesson.parsha || null,
       };
     });
 

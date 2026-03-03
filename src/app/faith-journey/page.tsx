@@ -92,6 +92,12 @@ interface DashboardData {
     createdAt: string;
     content?: string;
     estimatedReadingTime?: number;
+    scriptureRef?: string | null;
+    parsha?: string | null;
+    hebrewDate?: string | null;
+    calendarContext?: string | null;
+    baselineTraditionId?: string | null;
+    baselineText?: string | null;
   }>;
   texts: Array<{
     id: string;
@@ -472,6 +478,168 @@ const sampleLessons = [
     estimatedReadingTime: 5
   }
 ];
+
+// ===== Tradition Map =====
+
+const TRADITION_MAP: Record<string, { name: string; emoji: string; color: string }> = {
+  'c13ecfa9-a977-48ec-8b7a-637a21d7ff80': { name: 'Orthodox Judaism', emoji: '✡️', color: '#0047AB' },
+  '621564b2-d131-4c24-ac64-281658481f15': { name: 'Conservative Judaism', emoji: '✡️', color: '#2E5CB8' },
+  '95612ae9-a8e4-4824-8a88-440dc0862bf1': { name: 'Reform Judaism', emoji: '✡️', color: '#4A90D9' },
+  'dcbfa96f-e023-471b-9047-0cf42c06a521': { name: 'Reconstructionist Judaism', emoji: '✡️', color: '#6BA3E8' },
+  '07e9bc55-8ded-4951-b856-4e9d2fc95ec7': { name: 'Messianic Judaism', emoji: '✡️✝️', color: '#3D6098' },
+  'd2211e0e-1cb7-4c5c-b4cf-e87e44f00203': { name: 'Catholicism', emoji: '✝️', color: '#8B0000' },
+  'dcf8478c-62ea-4e6f-95cc-821ff763af26': { name: 'Eastern Orthodox', emoji: '☦️', color: '#8B4513' },
+  'e18e894d-011c-43a8-87c4-d95ca8e13394': { name: 'Evangelical Protestant', emoji: '📖', color: '#4169E1' },
+  '7e4cebb8-8a43-4e21-a26d-a12d1f1f3f1c': { name: 'Sunni Islam', emoji: '☪️', color: '#006400' },
+  '12e600a9-a55a-4952-ad8b-4fa2354ebb94': { name: 'Shia Islam', emoji: '☪️', color: '#228B22' },
+};
+
+// ===== Perspective Types =====
+
+interface Perspective {
+  id: string;
+  lesson_id: string;
+  tradition_id: string;
+  perspective_text: string;
+  source_citations: string[];
+  dimension_scores: Record<string, number>;
+  tradition?: {
+    name: string;
+    icon: string;
+    color: string;
+  };
+}
+
+// ===== Simple Markdown Renderer =====
+
+function renderMarkdown(text: string): React.ReactNode {
+  if (!text) return null;
+  const lines = text.split('\n');
+  const elements: React.ReactNode[] = [];
+  let currentList: string[] = [];
+  let currentBlockquote: string[] = [];
+  let key = 0;
+
+  const flushList = () => {
+    if (currentList.length > 0) {
+      elements.push(
+        <ul key={key++} className="list-disc list-inside space-y-1 my-2 text-slate-300">
+          {currentList.map((item, i) => <li key={i}>{renderInline(item)}</li>)}
+        </ul>
+      );
+      currentList = [];
+    }
+  };
+
+  const flushBlockquote = () => {
+    if (currentBlockquote.length > 0) {
+      elements.push(
+        <blockquote key={key++} className="border-l-4 pl-4 my-3 italic text-slate-400" style={{ borderColor: '#D4A020' }}>
+          {currentBlockquote.map((line, i) => <p key={i} className="my-1">{renderInline(line)}</p>)}
+        </blockquote>
+      );
+      currentBlockquote = [];
+    }
+  };
+
+  const renderInline = (text: string): React.ReactNode => {
+    // Handle **bold**
+    const parts = text.split(/(\*\*[^*]+\*\*)/g);
+    return parts.map((part, i) => {
+      if (part.startsWith('**') && part.endsWith('**')) {
+        return <strong key={i} className="text-slate-100 font-semibold">{part.slice(2, -2)}</strong>;
+      }
+      return part;
+    });
+  };
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+
+    // Empty line — flush and add spacing
+    if (trimmed === '') {
+      flushList();
+      flushBlockquote();
+      elements.push(<div key={key++} className="h-2" />);
+      continue;
+    }
+
+    // Headings
+    if (trimmed.startsWith('### ')) {
+      flushList();
+      flushBlockquote();
+      elements.push(<h3 key={key++} className="text-lg font-semibold text-slate-100 mt-4 mb-2">{renderInline(trimmed.slice(4))}</h3>);
+      continue;
+    }
+    if (trimmed.startsWith('## ')) {
+      flushList();
+      flushBlockquote();
+      elements.push(<h2 key={key++} className="text-xl font-bold text-slate-100 mt-4 mb-2">{renderInline(trimmed.slice(3))}</h2>);
+      continue;
+    }
+    if (trimmed.startsWith('# ')) {
+      flushList();
+      flushBlockquote();
+      elements.push(<h1 key={key++} className="text-2xl font-bold text-slate-100 mt-4 mb-2">{renderInline(trimmed.slice(2))}</h1>);
+      continue;
+    }
+
+    // Bullet list
+    if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
+      flushBlockquote();
+      currentList.push(trimmed.slice(2));
+      continue;
+    }
+
+    // Blockquote
+    if (trimmed.startsWith('> ')) {
+      flushList();
+      currentBlockquote.push(trimmed.slice(2));
+      continue;
+    }
+
+    // Plain paragraph
+    flushList();
+    flushBlockquote();
+    elements.push(<p key={key++} className="text-slate-300 leading-relaxed my-1">{renderInline(trimmed)}</p>);
+  }
+
+  flushList();
+  flushBlockquote();
+  return <>{elements}</>;
+}
+
+// ===== Calendar Context Parser =====
+
+function parseCalendarContext(calendarContext: string | null | undefined): { jewish: string | null; christian: string | null; islamic: string | null } {
+  if (!calendarContext) return { jewish: null, christian: null, islamic: null };
+  const parts = calendarContext.split('|').map(p => p.trim());
+  let jewish: string | null = null;
+  let christian: string | null = null;
+  let islamic: string | null = null;
+  for (const part of parts) {
+    const lower = part.toLowerCase();
+    if (lower.startsWith('torah portion') || lower.startsWith('jewish') || lower.startsWith('hebrew')) {
+      jewish = part;
+    } else if (lower.startsWith('christian') || lower.startsWith('liturgical')) {
+      christian = part;
+    } else if (lower.startsWith('islamic') || lower.startsWith('hijri')) {
+      islamic = part;
+    }
+  }
+  return { jewish, christian, islamic };
+}
+
+// ===== Shuffle helper =====
+
+function shuffleArray<T>(array: T[]): T[] {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
 
 // ===== Formatting =====
 
@@ -1103,6 +1271,12 @@ export default function FaithJourneyPage() {
   const [selectedDay, setSelectedDay] = useState<Date | null>(null);
   const [selectedLesson, setSelectedLesson] = useState<any>(null);
   
+  // Perspectives state
+  const [perspectives, setPerspectives] = useState<Perspective[]>([]);
+  const [perspectivesLoading, setPerspectivesLoading] = useState(false);
+  const [expandedPerspectives, setExpandedPerspectives] = useState<Set<string>>(new Set());
+  const [revealedTraditions, setRevealedTraditions] = useState<Set<string>>(new Set());
+
   // Sacred texts and reader modal
   const [sacredTexts, setSacredTexts] = useState<SacredText[]>([]);
   const [selectedText, setSelectedText] = useState<SacredText | null>(null);
@@ -1110,6 +1284,33 @@ export default function FaithJourneyPage() {
   
   // Guide chat modal
   const [selectedGuide, setSelectedGuide] = useState<DenominationAgent | null>(null);
+
+  // Fetch perspectives when a lesson is selected
+  useEffect(() => {
+    if (!selectedLesson || selectedLesson.id?.startsWith('sample-')) {
+      setPerspectives([]);
+      return;
+    }
+    const fetchPerspectives = async () => {
+      setPerspectivesLoading(true);
+      setExpandedPerspectives(new Set());
+      setRevealedTraditions(new Set());
+      try {
+        const res = await fetch(`/api/faith/lessons/${selectedLesson.id}/perspectives`);
+        if (res.ok) {
+          const data = await res.json();
+          setPerspectives(shuffleArray(data.perspectives || []));
+        } else {
+          setPerspectives([]);
+        }
+      } catch {
+        setPerspectives([]);
+      } finally {
+        setPerspectivesLoading(false);
+      }
+    };
+    fetchPerspectives();
+  }, [selectedLesson?.id]);
 
   // Fetch sacred texts status from Supabase
   useEffect(() => {
@@ -1881,8 +2082,70 @@ export default function FaithJourneyPage() {
                     
                     {(() => {
                       const events = getEventsForDate(selectedDay);
+                      const firstLessonWithContext = events.lessons.find((l: any) => l.calendarContext);
+                      const calCtx = firstLessonWithContext ? parseCalendarContext((firstLessonWithContext as any).calendarContext) : null;
+                      const hebrewDate = events.lessons.find((l: any) => l.hebrewDate)?.hebrewDate as string | undefined;
+                      const parsha = events.lessons.find((l: any) => l.parsha)?.parsha as string | undefined;
+
                       return (
                         <div className="space-y-4">
+                          {/* Religious Calendar Context from Lessons */}
+                          {(calCtx?.jewish || calCtx?.christian || calCtx?.islamic || hebrewDate || parsha) && (
+                            <div>
+                              <h4 className="text-md font-medium text-slate-200 mb-3 flex items-center gap-2">
+                                <Globe className="w-4 h-4" style={{ color: "#D4A020" }} />
+                                Religious Calendar Context
+                              </h4>
+                              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                {/* Jewish */}
+                                <div className="p-3 rounded-lg border" style={{ backgroundColor: "#0B0B11", borderColor: "#3B82F650" }}>
+                                  <div className="flex items-center gap-2 mb-2">
+                                    <span className="text-lg">✡️</span>
+                                    <h5 className="font-medium text-slate-200 text-sm">Jewish</h5>
+                                  </div>
+                                  {hebrewDate && (
+                                    <p className="text-xs text-slate-300 mb-1">{hebrewDate}</p>
+                                  )}
+                                  {parsha && (
+                                    <p className="text-xs text-slate-400 mb-1">Torah portion: {parsha}</p>
+                                  )}
+                                  {calCtx?.jewish && (
+                                    <p className="text-xs text-slate-400 leading-relaxed">{calCtx.jewish}</p>
+                                  )}
+                                  {!hebrewDate && !parsha && !calCtx?.jewish && (
+                                    <p className="text-xs text-slate-500 italic">No data available</p>
+                                  )}
+                                </div>
+
+                                {/* Christian */}
+                                <div className="p-3 rounded-lg border" style={{ backgroundColor: "#0B0B11", borderColor: "#8B5CF650" }}>
+                                  <div className="flex items-center gap-2 mb-2">
+                                    <span className="text-lg">✝️</span>
+                                    <h5 className="font-medium text-slate-200 text-sm">Christian</h5>
+                                  </div>
+                                  {calCtx?.christian ? (
+                                    <p className="text-xs text-slate-400 leading-relaxed">{calCtx.christian}</p>
+                                  ) : (
+                                    <p className="text-xs text-slate-500 italic">No data available</p>
+                                  )}
+                                </div>
+
+                                {/* Islamic */}
+                                <div className="p-3 rounded-lg border" style={{ backgroundColor: "#0B0B11", borderColor: "#10B98150" }}>
+                                  <div className="flex items-center gap-2 mb-2">
+                                    <span className="text-lg">☪️</span>
+                                    <h5 className="font-medium text-slate-200 text-sm">Islamic</h5>
+                                  </div>
+                                  {calCtx?.islamic ? (
+                                    <p className="text-xs text-slate-400 leading-relaxed">{calCtx.islamic}</p>
+                                  ) : (
+                                    <p className="text-xs text-slate-500 italic">No data available</p>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          )}
+
                           {/* Religious Events */}
                           {events.holidays.length > 0 && (
                             <div>
@@ -1996,41 +2259,204 @@ export default function FaithJourneyPage() {
                         >
                           {selectedLesson.tradition}
                         </span>
-                        {selectedLesson.scripture_reference && (
+                        {selectedLesson.scriptureRef && (
                           <span className="text-xs px-2 py-1 rounded bg-slate-800 text-slate-400">
-                            {selectedLesson.scripture_reference}
+                            📖 {selectedLesson.scriptureRef}
                           </span>
                         )}
-                        {selectedLesson.hebrew_date && (
+                        {selectedLesson.hebrewDate && (
                           <span className="text-xs px-2 py-1 rounded bg-slate-800 text-slate-400">
-                            {selectedLesson.hebrew_date}
+                            ✡️ {selectedLesson.hebrewDate}
                           </span>
                         )}
                         {selectedLesson.parsha && (
                           <span className="text-xs px-2 py-1 rounded bg-slate-800 text-slate-400">
-                            Parsha: {selectedLesson.parsha}
+                            📜 Parsha: {selectedLesson.parsha}
+                          </span>
+                        )}
+                        {selectedLesson.baselineTraditionId && TRADITION_MAP[selectedLesson.baselineTraditionId] && (
+                          <span className="text-xs px-2 py-1 rounded" style={{
+                            backgroundColor: TRADITION_MAP[selectedLesson.baselineTraditionId].color + '20',
+                            color: TRADITION_MAP[selectedLesson.baselineTraditionId].color
+                          }}>
+                            {TRADITION_MAP[selectedLesson.baselineTraditionId].emoji} {TRADITION_MAP[selectedLesson.baselineTraditionId].name}
                           </span>
                         )}
                       </div>
+
+                      {/* Religious Calendar Context for this lesson */}
+                      {selectedLesson.calendarContext && (() => {
+                        const ctx = parseCalendarContext(selectedLesson.calendarContext);
+                        return (
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            <div className="p-3 rounded-lg border" style={{ backgroundColor: "#0B0B11", borderColor: "#3B82F650" }}>
+                              <div className="flex items-center gap-2 mb-1">
+                                <span>✡️</span>
+                                <span className="font-medium text-slate-200 text-xs">Jewish</span>
+                              </div>
+                              <p className="text-xs text-slate-400 leading-relaxed">
+                                {selectedLesson.hebrewDate && <span className="block text-slate-300 mb-1">{selectedLesson.hebrewDate}</span>}
+                                {selectedLesson.parsha && <span className="block text-slate-300 mb-1">Torah: {selectedLesson.parsha}</span>}
+                                {ctx.jewish || 'No additional context'}
+                              </p>
+                            </div>
+                            <div className="p-3 rounded-lg border" style={{ backgroundColor: "#0B0B11", borderColor: "#8B5CF650" }}>
+                              <div className="flex items-center gap-2 mb-1">
+                                <span>✝️</span>
+                                <span className="font-medium text-slate-200 text-xs">Christian</span>
+                              </div>
+                              <p className="text-xs text-slate-400 leading-relaxed">{ctx.christian || 'No additional context'}</p>
+                            </div>
+                            <div className="p-3 rounded-lg border" style={{ backgroundColor: "#0B0B11", borderColor: "#10B98150" }}>
+                              <div className="flex items-center gap-2 mb-1">
+                                <span>☪️</span>
+                                <span className="font-medium text-slate-200 text-xs">Islamic</span>
+                              </div>
+                              <p className="text-xs text-slate-400 leading-relaxed">{ctx.islamic || 'No additional context'}</p>
+                            </div>
+                          </div>
+                        );
+                      })()}
                       
-                      {/* Lesson content */}
-                      {selectedLesson.baseline_text && (
+                      {/* Lesson content with markdown rendering */}
+                      {(selectedLesson.baselineText || selectedLesson.content) && (
                         <div className="p-4 rounded-lg" style={{ backgroundColor: "#0B0B11" }}>
-                          <h4 className="font-medium text-slate-200 mb-2">Lesson Content</h4>
+                          <h4 className="font-medium text-slate-200 mb-3">Lesson Content</h4>
                           <div className="prose prose-invert prose-sm max-w-none">
-                            <p className="text-slate-300 leading-relaxed whitespace-pre-wrap">
-                              {selectedLesson.baseline_text}
-                            </p>
+                            {renderMarkdown(selectedLesson.baselineText || selectedLesson.content || '')}
                           </div>
                         </div>
                       )}
                       
-                      {/* Perspectives placeholder */}
+                      {/* Tradition Perspectives — fetched from API */}
                       <div className="p-4 rounded-lg border" style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}>
-                        <h4 className="font-medium text-slate-200 mb-2">Tradition Perspectives</h4>
-                        <p className="text-slate-400 text-sm">
-                          Multiple tradition perspectives will be loaded here via the new API endpoint.
-                        </p>
+                        <h4 className="font-medium text-slate-200 mb-3 flex items-center gap-2">
+                          <Users className="w-4 h-4" style={{ color: "#D4A020" }} />
+                          Tradition Perspectives
+                        </h4>
+                        
+                        {perspectivesLoading ? (
+                          <div className="flex items-center justify-center py-8">
+                            <Loader className="w-6 h-6 animate-spin" style={{ color: "#D4A020" }} />
+                            <span className="ml-2 text-slate-400 text-sm">Loading perspectives...</span>
+                          </div>
+                        ) : perspectives.length === 0 ? (
+                          <p className="text-slate-500 text-sm py-4 text-center">
+                            No tradition perspectives available for this lesson yet.
+                          </p>
+                        ) : (
+                          <div className="space-y-3">
+                            {perspectives.map((perspective, idx) => {
+                              const letter = String.fromCharCode(65 + idx);
+                              const isExpanded = expandedPerspectives.has(perspective.id);
+                              const isRevealed = revealedTraditions.has(perspective.id);
+                              const tradition = perspective.tradition_id ? TRADITION_MAP[perspective.tradition_id] : null;
+                              
+                              return (
+                                <div 
+                                  key={perspective.id}
+                                  className="rounded-lg border overflow-hidden"
+                                  style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}
+                                >
+                                  {/* Accordion header */}
+                                  <button
+                                    onClick={() => {
+                                      const newSet = new Set(expandedPerspectives);
+                                      if (newSet.has(perspective.id)) {
+                                        newSet.delete(perspective.id);
+                                      } else {
+                                        newSet.add(perspective.id);
+                                      }
+                                      setExpandedPerspectives(newSet);
+                                    }}
+                                    className="w-full flex items-center justify-between p-3 text-left hover:bg-white/5 transition-colors"
+                                  >
+                                    <div className="flex items-center gap-3">
+                                      <span className="text-sm font-semibold px-2 py-1 rounded" style={{ backgroundColor: "rgba(212, 160, 32, 0.15)", color: "#D4A020" }}>
+                                        {isRevealed && tradition ? `${tradition.emoji} ${tradition.name}` : `Perspective ${letter}`}
+                                      </span>
+                                      {isRevealed && tradition && (
+                                        <span className="w-2 h-2 rounded-full" style={{ backgroundColor: tradition.color }} />
+                                      )}
+                                    </div>
+                                    {isExpanded ? (
+                                      <ChevronUp className="w-4 h-4 text-slate-400" />
+                                    ) : (
+                                      <ChevronDown className="w-4 h-4 text-slate-400" />
+                                    )}
+                                  </button>
+                                  
+                                  {/* Accordion body */}
+                                  {isExpanded && (
+                                    <div className="px-4 pb-4 space-y-4">
+                                      {/* Perspective text */}
+                                      <div className="text-sm text-slate-300 leading-relaxed">
+                                        {renderMarkdown(perspective.perspective_text || '')}
+                                      </div>
+                                      
+                                      {/* Source Citations */}
+                                      {perspective.source_citations && perspective.source_citations.length > 0 && (
+                                        <div>
+                                          <h5 className="text-xs font-medium text-slate-400 mb-2 uppercase tracking-wide">Sources</h5>
+                                          <ul className="list-disc list-inside space-y-1">
+                                            {perspective.source_citations.map((citation, ci) => (
+                                              <li key={ci} className="text-xs text-slate-400">{citation}</li>
+                                            ))}
+                                          </ul>
+                                        </div>
+                                      )}
+                                      
+                                      {/* Dimension Scores — horizontal bar charts */}
+                                      {perspective.dimension_scores && Object.keys(perspective.dimension_scores).length > 0 && (
+                                        <div>
+                                          <h5 className="text-xs font-medium text-slate-400 mb-2 uppercase tracking-wide">Dimension Scores</h5>
+                                          <div className="space-y-2">
+                                            {Object.entries(perspective.dimension_scores).map(([dim, score]) => (
+                                              <div key={dim} className="flex items-center gap-2">
+                                                <span className="text-xs text-slate-400 w-40 truncate capitalize">{dim.replace(/-/g, ' ')}</span>
+                                                <div className="flex-1 bg-slate-700 rounded-full h-2">
+                                                  <div 
+                                                    className="h-2 rounded-full transition-all"
+                                                    style={{ 
+                                                      width: `${Math.min((score as number) * 10, 100)}%`,
+                                                      backgroundColor: "#D4A020"
+                                                    }}
+                                                  />
+                                                </div>
+                                                <span className="text-xs text-slate-300 w-6 text-right">{score as number}</span>
+                                              </div>
+                                            ))}
+                                          </div>
+                                        </div>
+                                      )}
+                                      
+                                      {/* Reveal Tradition button */}
+                                      {!isRevealed && tradition && (
+                                        <button
+                                          onClick={() => {
+                                            const newSet = new Set(revealedTraditions);
+                                            newSet.add(perspective.id);
+                                            setRevealedTraditions(newSet);
+                                          }}
+                                          className="px-4 py-2 rounded-lg text-xs font-medium transition-all hover:opacity-80"
+                                          style={{ backgroundColor: "rgba(212, 160, 32, 0.15)", color: "#D4A020", border: "1px solid rgba(212, 160, 32, 0.3)" }}
+                                        >
+                                          🔍 Reveal Tradition
+                                        </button>
+                                      )}
+                                      {isRevealed && tradition && (
+                                        <div className="flex items-center gap-2 px-3 py-2 rounded-lg" style={{ backgroundColor: tradition.color + '15', border: `1px solid ${tradition.color}30` }}>
+                                          <span className="text-lg">{tradition.emoji}</span>
+                                          <span className="text-sm font-medium" style={{ color: tradition.color }}>{tradition.name}</span>
+                                        </div>
+                                      )}
+                                    </div>
+                                  )}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>

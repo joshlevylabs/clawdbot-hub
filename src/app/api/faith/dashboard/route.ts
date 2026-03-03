@@ -107,6 +107,10 @@ export async function GET(request: NextRequest) {
         estimatedReadingTime: readingTime,
         scriptureRef: lesson.scripture_ref || null,
         parsha: lesson.parsha || null,
+        hebrewDate: lesson.hebrew_date || null,
+        calendarContext: lesson.calendar_context || null,
+        baselineTraditionId: lesson.baseline_tradition_id || null,
+        baselineText: lesson.baseline_text || null,
       };
     });
 

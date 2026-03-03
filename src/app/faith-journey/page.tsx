@@ -163,7 +163,7 @@ interface ChatMessage {
   timestamp: string;
 }
 
-type ActiveTab = "overview" | "guides" | "lessons" | "calendar" | "audio" | "texts" | "conversations";
+type ActiveTab = "overview" | "guides" | "calendar" | "audio" | "texts" | "conversations";
 
 // ===== Data =====
 
@@ -1099,6 +1099,9 @@ export default function FaithJourneyPage() {
   const [expandedLessons, setExpandedLessons] = useState<Set<string>>(new Set());
   const [holidayFilters, setHolidayFilters] = useState<Set<string>>(new Set(["Judaism", "Christianity", "Islam", "Hinduism", "Buddhism", "Bahá'í"]));
   const [selectedMonth, setSelectedMonth] = useState<number>(new Date().getMonth());
+  const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
+  const [selectedDay, setSelectedDay] = useState<Date | null>(null);
+  const [selectedLesson, setSelectedLesson] = useState<any>(null);
   
   // Sacred texts and reader modal
   const [sacredTexts, setSacredTexts] = useState<SacredText[]>([]);
@@ -1141,7 +1144,6 @@ export default function FaithJourneyPage() {
   const tabs: { key: ActiveTab; label: string; icon: React.ElementType }[] = [
     { key: "overview", label: "Overview", icon: BarChart3 },
     { key: "guides", label: "Guides", icon: MessageSquare },
-    { key: "lessons", label: "Lessons", icon: GraduationCap },
     { key: "calendar", label: "Calendar", icon: Calendar },
     { key: "audio", label: "Audio", icon: Volume2 },
     { key: "texts", label: "Texts", icon: Scroll },
@@ -1167,6 +1169,31 @@ export default function FaithJourneyPage() {
     }
     setHolidayFilters(newFilters);
   };
+
+  // Calendar helper functions
+  const getDaysInMonth = (year: number, month: number) => {
+    return new Date(year, month + 1, 0).getDate();
+  };
+
+  const getFirstDayOfMonth = (year: number, month: number) => {
+    return new Date(year, month, 1).getDay();
+  };
+
+  const getEventsForDate = (date: Date) => {
+    const dateStr = date.toISOString().split('T')[0];
+    const holidays = getFilteredHolidays().filter(holiday => holiday.date === dateStr);
+    const lessons = data?.lessons?.filter(lesson => lesson.date === dateStr) || [];
+    return { holidays, lessons };
+  };
+
+  const getTraditionColors = () => ({
+    "Judaism": "#3B82F6",
+    "Christianity": "#8B5CF6", 
+    "Islam": "#10B981",
+    "Hinduism": "#F59E0B",
+    "Buddhism": "#EAB308",
+    "Bahá'í": "#EC4899"
+  });
 
   // Helper function to render status badge
   const renderStatusBadge = (status: string) => {
@@ -1693,154 +1720,8 @@ export default function FaithJourneyPage() {
               </div>
             )}
 
-            {/* Lessons Tab - Keep exactly as before */}
-            {activeTab === "lessons" && (
-              <div className="rounded-xl p-4 border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
-                <h2 className="text-lg font-semibold text-slate-100 mb-4 flex items-center gap-2">
-                  <GraduationCap className="w-5 h-5" style={{ color: "#D4A020" }} />
-                  Available Lessons ({(data?.lessons?.length || 0) + sampleLessons.length})
-                </h2>
-                
-                {/* Show actual lessons if available, otherwise show samples */}
-                {data?.lessons && data.lessons.length > 0 ? (
-                  <div className="space-y-4">
-                    {data.lessons.map((lesson) => {
-                      const isExpanded = expandedLessons.has(lesson.id);
-                      return (
-                        <div key={lesson.id} 
-                             className="rounded-lg border transition-all"
-                             style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}>
-                          <div className="p-4">
-                            <div className="flex items-center justify-between mb-2">
-                              <div className="flex items-center gap-3">
-                                <h3 className="font-semibold text-slate-200">{lesson.title}</h3>
-                                <div className="flex items-center gap-2">
-                                  <span className="text-xs px-2 py-1 rounded-lg border"
-                                        style={{ 
-                                          backgroundColor: "rgba(212, 160, 32, 0.1)", 
-                                          borderColor: "rgba(212, 160, 32, 0.3)",
-                                          color: "#D4A020" 
-                                        }}>
-                                    {lesson.tradition}
-                                  </span>
-                                  <span className={`text-xs px-2 py-1 rounded-full ${
-                                    lesson.difficulty === 'easy' 
-                                      ? 'bg-emerald-900/30 text-emerald-400' 
-                                      : lesson.difficulty === 'hard'
-                                      ? 'bg-red-900/30 text-red-400'
-                                      : 'bg-amber-900/30 text-amber-400'
-                                  }`}>
-                                    {getDifficultyLevel(lesson.difficulty)}
-                                  </span>
-                                </div>
-                              </div>
-                              <button
-                                onClick={() => toggleLessonExpansion(lesson.id)}
-                                className="flex items-center gap-2 text-sm text-slate-400 hover:text-slate-300"
-                              >
-                                {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                                {isExpanded ? 'Collapse' : 'Expand'}
-                              </button>
-                            </div>
-                            
-                            <div className="flex items-center gap-4 text-sm text-slate-500 mb-2">
-                              <div className="flex items-center gap-1">
-                                <Clock className="w-3 h-3" />
-                                {lesson.estimatedReadingTime || getReadingTime(lesson.content || '')} min read
-                              </div>
-                              <div className="flex items-center gap-1">
-                                <Star className="w-3 h-3" />
-                                {lesson.completionCount} completions
-                              </div>
-                              <span>Created {formatDate(lesson.date)}</span>
-                            </div>
 
-                            {isExpanded && lesson.content && (
-                              <div className="mt-4 pt-4 border-t" style={{ borderColor: "#2A2A38" }}>
-                                <div className="prose prose-invert prose-sm max-w-none">
-                                  <p className="text-slate-300 leading-relaxed">{lesson.content}</p>
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                ) : (
-                  /* Sample lessons when no real data */
-                  <div className="space-y-4">
-                    {sampleLessons.map((lesson) => {
-                      const isExpanded = expandedLessons.has(lesson.id);
-                      return (
-                        <div key={lesson.id} 
-                             className="rounded-lg border transition-all"
-                             style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}>
-                          <div className="p-4">
-                            <div className="flex items-center justify-between mb-2">
-                              <div className="flex items-center gap-3">
-                                <h3 className="font-semibold text-slate-200">{lesson.title}</h3>
-                                <div className="flex items-center gap-2">
-                                  <span className="text-xs px-2 py-1 rounded-lg border"
-                                        style={{ 
-                                          backgroundColor: "rgba(212, 160, 32, 0.1)", 
-                                          borderColor: "rgba(212, 160, 32, 0.3)",
-                                          color: "#D4A020" 
-                                        }}>
-                                    {lesson.tradition}
-                                  </span>
-                                  <span className={`text-xs px-2 py-1 rounded-full ${
-                                    lesson.difficulty === 'easy' || lesson.difficulty === 'beginner'
-                                      ? 'bg-emerald-900/30 text-emerald-400' 
-                                      : lesson.difficulty === 'hard' || lesson.difficulty === 'advanced'
-                                      ? 'bg-red-900/30 text-red-400'
-                                      : 'bg-amber-900/30 text-amber-400'
-                                  }`}>
-                                    {getDifficultyLevel(lesson.difficulty)}
-                                  </span>
-                                  <span className="text-xs px-2 py-1 rounded-full bg-slate-800/50 text-slate-400">
-                                    Sample
-                                  </span>
-                                </div>
-                              </div>
-                              <button
-                                onClick={() => toggleLessonExpansion(lesson.id)}
-                                className="flex items-center gap-2 text-sm text-slate-400 hover:text-slate-300"
-                              >
-                                {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                                {isExpanded ? 'Collapse' : 'Expand'}
-                              </button>
-                            </div>
-                            
-                            <div className="flex items-center gap-4 text-sm text-slate-500 mb-2">
-                              <div className="flex items-center gap-1">
-                                <Clock className="w-3 h-3" />
-                                {lesson.estimatedReadingTime || getReadingTime(lesson.content || '')} min read
-                              </div>
-                              <div className="flex items-center gap-1">
-                                <Star className="w-3 h-3" />
-                                {lesson.completionCount} completions
-                              </div>
-                              <span>Created {formatDate(lesson.date)}</span>
-                            </div>
-
-                            {isExpanded && lesson.content && (
-                              <div className="mt-4 pt-4 border-t" style={{ borderColor: "#2A2A38" }}>
-                                <div className="prose prose-invert prose-sm max-w-none">
-                                  <p className="text-slate-300 leading-relaxed">{lesson.content}</p>
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Calendar Tab - Keep exactly as before */}
+            {/* Unified Calendar Tab */}
             {activeTab === "calendar" && (
               <div className="space-y-6">
                 {/* Calendar Header with Filters */}
@@ -1848,29 +1729,35 @@ export default function FaithJourneyPage() {
                   <div className="flex items-center justify-between mb-4">
                     <h2 className="text-lg font-semibold text-slate-100 flex items-center gap-2">
                       <Calendar className="w-5 h-5" style={{ color: "#D4A020" }} />
-                      Religious Calendar ({getFilteredHolidays().length} events)
+                      Faith Calendar - {new Date(selectedYear, selectedMonth).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
                     </h2>
                     <div className="flex items-center gap-2">
-                      <Filter className="w-4 h-4 text-slate-500" />
-                      <select 
-                        value={selectedMonth}
-                        onChange={(e) => setSelectedMonth(parseInt(e.target.value))}
-                        className="px-3 py-1 rounded text-sm"
-                        style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38", color: "#D4A020" }}
+                      <button
+                        onClick={() => {
+                          if (selectedMonth === 0) {
+                            setSelectedMonth(11);
+                            setSelectedYear(selectedYear - 1);
+                          } else {
+                            setSelectedMonth(selectedMonth - 1);
+                          }
+                        }}
+                        className="p-2 rounded text-slate-400 hover:text-slate-200"
                       >
-                        <option value={0}>January 2026</option>
-                        <option value={1}>February 2026</option>
-                        <option value={2}>March 2026</option>
-                        <option value={3}>April 2026</option>
-                        <option value={4}>May 2026</option>
-                        <option value={5}>June 2026</option>
-                        <option value={6}>July 2026</option>
-                        <option value={7}>August 2026</option>
-                        <option value={8}>September 2026</option>
-                        <option value={9}>October 2026</option>
-                        <option value={10}>November 2026</option>
-                        <option value={11}>December 2026</option>
-                      </select>
+                        <ChevronLeft className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (selectedMonth === 11) {
+                            setSelectedMonth(0);
+                            setSelectedYear(selectedYear + 1);
+                          } else {
+                            setSelectedMonth(selectedMonth + 1);
+                          }
+                        }}
+                        className="p-2 rounded text-slate-400 hover:text-slate-200"
+                      >
+                        <ChevronRight className="w-4 h-4" />
+                      </button>
                     </div>
                   </div>
                   
@@ -1878,14 +1765,7 @@ export default function FaithJourneyPage() {
                   <div className="flex flex-wrap gap-2">
                     {["Judaism", "Christianity", "Islam", "Hinduism", "Buddhism", "Bahá'í"].map((tradition) => {
                       const isActive = holidayFilters.has(tradition);
-                      const colors = {
-                        "Judaism": "#3B82F6",
-                        "Christianity": "#8B5CF6", 
-                        "Islam": "#10B981",
-                        "Hinduism": "#F59E0B",
-                        "Buddhism": "#EAB308",
-                        "Bahá'í": "#EC4899"
-                      };
+                      const colors = getTraditionColors();
                       const color = colors[tradition as keyof typeof colors];
                       return (
                         <button
@@ -1907,58 +1787,253 @@ export default function FaithJourneyPage() {
                   </div>
                 </div>
 
-                {/* Calendar Events */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {getFilteredHolidays()
-                    .filter(holiday => {
-                      const holidayDate = new Date(holiday.date);
-                      return holidayDate.getMonth() === selectedMonth;
-                    })
-                    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-                    .map((holiday, index) => {
-                      const isUpcoming = new Date(holiday.date) >= new Date();
+                {/* Calendar Grid */}
+                <div className="rounded-xl p-4 border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+                  {/* Days of week header */}
+                  <div className="grid grid-cols-7 gap-1 mb-2">
+                    {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
+                      <div key={day} className="p-2 text-center text-sm font-medium text-slate-400">
+                        {day}
+                      </div>
+                    ))}
+                  </div>
+                  
+                  {/* Calendar grid */}
+                  <div className="grid grid-cols-7 gap-1">
+                    {/* Empty cells for days before month starts */}
+                    {Array.from({ length: getFirstDayOfMonth(selectedYear, selectedMonth) }, (_, i) => (
+                      <div key={`empty-${i}`} className="p-2 h-16"></div>
+                    ))}
+                    
+                    {/* Days of the month */}
+                    {Array.from({ length: getDaysInMonth(selectedYear, selectedMonth) }, (_, i) => {
+                      const day = i + 1;
+                      const date = new Date(selectedYear, selectedMonth, day);
+                      const events = getEventsForDate(date);
+                      const isToday = date.toDateString() === new Date().toDateString();
+                      const isSelected = selectedDay?.toDateString() === date.toDateString();
+                      
                       return (
-                        <div key={index} 
-                             className={`rounded-lg p-4 border transition-all ${isUpcoming ? 'border-opacity-100' : 'border-opacity-50 opacity-75'}`}
-                             style={{ 
-                               backgroundColor: "#0B0B11", 
-                               borderColor: holiday.color + (isUpcoming ? "50" : "30")
-                             }}>
-                          <div className="flex items-center gap-2 mb-2">
-                            <span style={{ color: holiday.color, fontSize: "1.2rem" }}>●</span>
-                            <h3 className="font-semibold text-slate-200">{holiday.name}</h3>
-                          </div>
-                          <p className="text-xs px-2 py-1 rounded-lg border inline-block mb-2"
-                             style={{ 
-                               backgroundColor: `${holiday.color}20`, 
-                               borderColor: `${holiday.color}50`,
-                               color: holiday.color 
-                             }}>
-                            {holiday.tradition}
-                            {holiday.denomination && ` • ${holiday.denomination}`}
-                          </p>
-                          <p className="text-sm text-slate-400 mb-2">{holiday.description}</p>
-                          <div className="flex items-center justify-between text-xs">
-                            <span className="text-slate-500">{formatDate(holiday.date)}</span>
-                            {isUpcoming ? (
-                              <span className="text-emerald-400 font-medium">Upcoming</span>
-                            ) : (
-                              <span className="text-slate-600">Past</span>
+                        <div
+                          key={day}
+                          onClick={() => setSelectedDay(date)}
+                          className={`p-2 h-16 border cursor-pointer transition-all relative ${
+                            isSelected ? 'ring-2 ring-yellow-500' : 'hover:border-gray-500'
+                          }`}
+                          style={{ 
+                            backgroundColor: isToday ? "#1a1a2e" : "#0B0B11",
+                            borderColor: isSelected ? "#D4A020" : "#2A2A38"
+                          }}
+                        >
+                          <div className="text-sm text-slate-200 font-medium">
+                            {day}
+                            {isToday && (
+                              <div className="w-1 h-1 bg-yellow-500 rounded-full absolute top-1 right-1"></div>
                             )}
                           </div>
+                          
+                          {/* Event dots */}
+                          {events.holidays.length > 0 || events.lessons.length > 0 ? (
+                            <div className="flex gap-1 mt-1 flex-wrap">
+                              {events.holidays.map((holiday, idx) => (
+                                <div
+                                  key={`holiday-${idx}`}
+                                  className="w-2 h-2 rounded-full"
+                                  style={{ backgroundColor: holiday.color }}
+                                  title={holiday.name}
+                                ></div>
+                              ))}
+                              {events.lessons.map((lesson, idx) => (
+                                <div
+                                  key={`lesson-${idx}`}
+                                  className="w-2 h-2 rounded-full"
+                                  style={{ backgroundColor: "#D4A020" }}
+                                  title={lesson.title}
+                                ></div>
+                              ))}
+                            </div>
+                          ) : null}
                         </div>
                       );
                     })}
+                  </div>
                 </div>
-                
-                {getFilteredHolidays()
-                  .filter(holiday => new Date(holiday.date).getMonth() === selectedMonth)
-                  .length === 0 && (
-                  <EmptyState 
-                    icon={Calendar}
-                    title="No holidays this month"
-                    description="No religious holidays match your current filters for this month."
-                  />
+
+                {/* Day Detail Panel */}
+                {selectedDay && (
+                  <div className="rounded-xl p-4 border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-lg font-semibold text-slate-100">
+                        {selectedDay.toLocaleDateString('en-US', { 
+                          weekday: 'long', 
+                          month: 'long', 
+                          day: 'numeric',
+                          year: 'numeric'
+                        })}
+                      </h3>
+                      <button
+                        onClick={() => setSelectedDay(null)}
+                        className="text-slate-400 hover:text-slate-200"
+                      >
+                        <X className="w-5 h-5" />
+                      </button>
+                    </div>
+                    
+                    {(() => {
+                      const events = getEventsForDate(selectedDay);
+                      return (
+                        <div className="space-y-4">
+                          {/* Religious Events */}
+                          {events.holidays.length > 0 && (
+                            <div>
+                              <h4 className="text-md font-medium text-slate-200 mb-3 flex items-center gap-2">
+                                <Calendar className="w-4 h-4" style={{ color: "#D4A020" }} />
+                                Religious Events ({events.holidays.length})
+                              </h4>
+                              <div className="space-y-2">
+                                {events.holidays.map((holiday, idx) => (
+                                  <div
+                                    key={idx}
+                                    className="p-3 rounded-lg border"
+                                    style={{ 
+                                      backgroundColor: "#0B0B11", 
+                                      borderColor: holiday.color + "50"
+                                    }}
+                                  >
+                                    <div className="flex items-center gap-2 mb-1">
+                                      <span style={{ color: holiday.color }}>●</span>
+                                      <h5 className="font-medium text-slate-200">{holiday.name}</h5>
+                                      <span
+                                        className="text-xs px-2 py-1 rounded"
+                                        style={{
+                                          backgroundColor: `${holiday.color}20`,
+                                          color: holiday.color
+                                        }}
+                                      >
+                                        {holiday.tradition}
+                                      </span>
+                                    </div>
+                                    <p className="text-sm text-slate-400">{holiday.description}</p>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                          
+                          {/* Lessons */}
+                          {events.lessons.length > 0 && (
+                            <div>
+                              <h4 className="text-md font-medium text-slate-200 mb-3 flex items-center gap-2">
+                                <GraduationCap className="w-4 h-4" style={{ color: "#D4A020" }} />
+                                Lessons ({events.lessons.length})
+                              </h4>
+                              <div className="space-y-2">
+                                {events.lessons.map((lesson, idx) => (
+                                  <div
+                                    key={idx}
+                                    onClick={() => setSelectedLesson(lesson)}
+                                    className="p-3 rounded-lg border cursor-pointer hover:border-yellow-500"
+                                    style={{ 
+                                      backgroundColor: "#0B0B11", 
+                                      borderColor: "#2A2A38"
+                                    }}
+                                  >
+                                    <div className="flex items-center gap-2 mb-1">
+                                      <h5 className="font-medium text-slate-200">{lesson.title}</h5>
+                                      <span
+                                        className="text-xs px-2 py-1 rounded"
+                                        style={{
+                                          backgroundColor: "rgba(212, 160, 32, 0.2)",
+                                          color: "#D4A020"
+                                        }}
+                                      >
+                                        {lesson.tradition}
+                                      </span>
+                                    </div>
+                                    <p className="text-sm text-slate-400">
+                                      {lesson.content ? lesson.content.substring(0, 100) + '...' : 'Click to view lesson content'}
+                                    </p>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                          
+                          {events.holidays.length === 0 && events.lessons.length === 0 && (
+                            <div className="text-center py-8">
+                              <Calendar className="w-8 h-8 text-slate-600 mx-auto mb-3" />
+                              <p className="text-slate-400">No events or lessons for this day</p>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })()}
+                  </div>
+                )}
+
+                {/* Lesson Detail View */}
+                {selectedLesson && (
+                  <div className="rounded-xl p-4 border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-lg font-semibold text-slate-100">{selectedLesson.title}</h3>
+                      <button
+                        onClick={() => setSelectedLesson(null)}
+                        className="text-slate-400 hover:text-slate-200"
+                      >
+                        <ArrowLeft className="w-5 h-5" />
+                      </button>
+                    </div>
+                    
+                    <div className="space-y-4">
+                      {/* Lesson metadata */}
+                      <div className="flex flex-wrap gap-2">
+                        <span
+                          className="text-xs px-2 py-1 rounded"
+                          style={{
+                            backgroundColor: "rgba(212, 160, 32, 0.2)",
+                            color: "#D4A020"
+                          }}
+                        >
+                          {selectedLesson.tradition}
+                        </span>
+                        {selectedLesson.scripture_reference && (
+                          <span className="text-xs px-2 py-1 rounded bg-slate-800 text-slate-400">
+                            {selectedLesson.scripture_reference}
+                          </span>
+                        )}
+                        {selectedLesson.hebrew_date && (
+                          <span className="text-xs px-2 py-1 rounded bg-slate-800 text-slate-400">
+                            {selectedLesson.hebrew_date}
+                          </span>
+                        )}
+                        {selectedLesson.parsha && (
+                          <span className="text-xs px-2 py-1 rounded bg-slate-800 text-slate-400">
+                            Parsha: {selectedLesson.parsha}
+                          </span>
+                        )}
+                      </div>
+                      
+                      {/* Lesson content */}
+                      {selectedLesson.baseline_text && (
+                        <div className="p-4 rounded-lg" style={{ backgroundColor: "#0B0B11" }}>
+                          <h4 className="font-medium text-slate-200 mb-2">Lesson Content</h4>
+                          <div className="prose prose-invert prose-sm max-w-none">
+                            <p className="text-slate-300 leading-relaxed whitespace-pre-wrap">
+                              {selectedLesson.baseline_text}
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                      
+                      {/* Perspectives placeholder */}
+                      <div className="p-4 rounded-lg border" style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}>
+                        <h4 className="font-medium text-slate-200 mb-2">Tradition Perspectives</h4>
+                        <p className="text-slate-400 text-sm">
+                          Multiple tradition perspectives will be loaded here via the new API endpoint.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
                 )}
               </div>
             )}

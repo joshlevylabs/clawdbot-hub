@@ -41,7 +41,7 @@ import {
   Globe,
   Edit,
 } from "lucide-react";
-import { Show } from "@/app/api/marketing/shows/route";
+import { Show, ShowEpisode } from "@/app/api/marketing/shows/route";
 import { Newsletter, NewsletterActivity, NewsletterStats } from "@/lib/newsletter-types";
 import { StatCard } from "@/components/newsletter/StatCard";
 import { NewsletterCard } from "@/components/newsletter/NewsletterCard";
@@ -678,18 +678,89 @@ function PodcastDashboard() {
         </div>
       )}
 
+      {/* Episodes List */}
+      {selectedShow && selectedShow.episodes.length > 0 && (
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-semibold text-slate-100">
+              Episodes ({selectedShow.episodes.length})
+            </h3>
+          </div>
+          {[...selectedShow.episodes].reverse().map((ep) => (
+            <div
+              key={ep.number}
+              className="bg-slate-850 rounded-xl border border-slate-800 p-5 hover:border-slate-700 transition-colors"
+            >
+              <div className="flex items-start justify-between">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-3 mb-1">
+                    <span className="text-xs font-bold text-primary-500 bg-primary-500/10 px-2 py-0.5 rounded">
+                      EP {ep.number}
+                    </span>
+                    <span className={`text-xs px-2 py-0.5 rounded ${
+                      ep.status === 'published'
+                        ? 'bg-emerald-500/10 text-emerald-400'
+                        : ep.status === 'finalized'
+                        ? 'bg-blue-500/10 text-blue-400'
+                        : 'bg-slate-700 text-slate-400'
+                    }`}>
+                      {ep.status}
+                    </span>
+                    <span className="text-xs text-slate-600 capitalize">{ep.pillar}</span>
+                  </div>
+                  <h4 className="text-slate-100 font-medium">{ep.title}</h4>
+                  {ep.description && (
+                    <p className="text-slate-500 text-sm mt-1 line-clamp-2">{ep.description}</p>
+                  )}
+                  {ep.finalized && (
+                    <p className="text-slate-600 text-xs mt-2">{ep.finalized}</p>
+                  )}
+                </div>
+                {/* Platform links */}
+                {ep.links && (
+                  <div className="flex items-center gap-2 ml-4 flex-shrink-0">
+                    {ep.links.youtube && (
+                      <a href={ep.links.youtube} target="_blank" rel="noopener noreferrer"
+                        className="p-2 bg-red-500/10 text-red-400 hover:bg-red-500/20 rounded-lg transition-colors"
+                        title="YouTube">
+                        <Play className="w-4 h-4" />
+                      </a>
+                    )}
+                    {ep.links.spotify && (
+                      <a href={ep.links.spotify} target="_blank" rel="noopener noreferrer"
+                        className="p-2 bg-green-500/10 text-green-400 hover:bg-green-500/20 rounded-lg transition-colors"
+                        title="Spotify">
+                        <Headphones className="w-4 h-4" />
+                      </a>
+                    )}
+                    {ep.links.apple && (
+                      <a href={ep.links.apple} target="_blank" rel="noopener noreferrer"
+                        className="p-2 bg-purple-500/10 text-purple-400 hover:bg-purple-500/20 rounded-lg transition-colors"
+                        title="Apple Podcasts">
+                        <Globe className="w-4 h-4" />
+                      </a>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
       {/* Podcast Tools Notice */}
-      <div className="bg-slate-850 rounded-xl border border-slate-800 p-6">
-        <div className="text-center">
-          <Mic className="w-12 h-12 text-slate-600 mx-auto mb-3" />
-          <h3 className="text-slate-300 font-medium mb-2">Podcast Tools</h3>
-          <p className="text-slate-500 text-sm mb-4">
-            Full podcast functionality (teleprompter, speech recognition, episode management, analytics) 
-            is still available at the dedicated podcast page.
-          </p>
+      <div className="bg-slate-850 rounded-xl border border-slate-800 p-5">
+        <div className="flex items-center gap-4">
+          <Mic className="w-8 h-8 text-slate-600 flex-shrink-0" />
+          <div className="flex-1">
+            <h3 className="text-slate-300 font-medium text-sm">Podcast Tools</h3>
+            <p className="text-slate-500 text-xs">
+              Teleprompter, speech recognition, episode management, and analytics.
+            </p>
+          </div>
           <Link href="/podcast">
-            <button className="btn btn-primary text-sm">
-              Go to Full Podcast Dashboard
+            <button className="btn btn-primary text-xs px-3 py-1.5 whitespace-nowrap">
+              Full Dashboard →
             </button>
           </Link>
         </div>

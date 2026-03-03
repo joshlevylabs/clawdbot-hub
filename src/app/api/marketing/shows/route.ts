@@ -4,6 +4,22 @@ import path from 'path';
 
 const SHOWS_DATA_PATH = path.join(process.cwd(), 'public/data/marketing/shows.json');
 
+export interface ShowEpisode {
+  number: number;
+  title: string;
+  pillar: string;
+  status: string;
+  finalized?: string;
+  description?: string;
+  links?: {
+    youtube?: string;
+    spotify?: string;
+    apple?: string;
+    medium?: string;
+    beehiiv?: string;
+  };
+}
+
 export interface Show {
   id: string;
   name: string;
@@ -11,9 +27,9 @@ export interface Show {
   frequency: string;
   coverArt: string | null;
   platforms: string[];
-  episodeIndexPath: string;
+  episodeIndexPath?: string;
   createdAt: string;
-  episodes: any[];
+  episodes: ShowEpisode[];
 }
 
 export interface ShowsData {

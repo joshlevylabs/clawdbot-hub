@@ -112,7 +112,8 @@ export default function ChrisDailyActions() {
         if (cached) {
           const cachedData = JSON.parse(cached);
           const today = new Date().toISOString().split('T')[0];
-          if (cachedData.date === today && cachedData.market_assessment) {
+          // Only use cache if it has real analysis (not error fallback)
+          if (cachedData.date === today && cachedData.market_assessment && cachedData.pre_market_actions?.length > 0) {
             setData(cachedData);
             return; // Use cached, no loading spinner
           }

@@ -207,64 +207,20 @@ const wpsToSlider = (wps: number): number => {
 
 // Social Media Platform Component
 function SocialMediaDashboard() {
-  const [platforms, setPlatforms] = useState<SocialPlatform[]>([
-    {
-      name: "YouTube",
-      platform: "youtube",
-      url: "https://www.youtube.com/@joshualevy6759",
-      followers: 0,
-      views: 0,
-      engagement: 0,
-      lastUpdated: new Date().toISOString(),
-    },
-    {
-      name: "LinkedIn",
-      platform: "linkedin",
-      url: "https://www.linkedin.com/in/joshuasethlevy/",
-      followers: 0,
-      views: 0,
-      engagement: 0,
-      lastUpdated: new Date().toISOString(),
-    },
-    {
-      name: "TikTok",
-      platform: "tiktok",
-      url: "https://www.tiktok.com/@joshlevylabs",
-      followers: 0,
-      views: 0,
-      engagement: 0,
-      lastUpdated: new Date().toISOString(),
-    },
-    {
-      name: "Medium",
-      platform: "medium",
-      url: "https://medium.com/@joshualevy_38678",
-      followers: 0,
-      views: 0,
-      engagement: 0,
-      lastUpdated: new Date().toISOString(),
-    },
-    {
-      name: "Beehiiv",
-      platform: "beehiiv",
-      url: "https://the-builders-frequency.beehiiv.com/",
-      followers: 0,
-      views: 0,
-      engagement: 0,
-      lastUpdated: new Date().toISOString(),
-    },
-    {
-      name: "Twitter/X",
-      platform: "twitter",
-      url: "https://twitter.com/joshualevy",
-      followers: 0,
-      views: 0,
-      engagement: 0,
-      lastUpdated: new Date().toISOString(),
-    },
-  ]);
+  const [platforms, setPlatforms] = useState<SocialPlatform[]>([]);
+  const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<string | null>(null);
   const [editValues, setEditValues] = useState<Partial<SocialPlatform>>({});
+
+  useEffect(() => {
+    fetch('/api/marketing/social')
+      .then(r => r.json())
+      .then(data => {
+        if (data.platforms) setPlatforms(data.platforms);
+      })
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, []);
 
   const handleEdit = (platform: SocialPlatform) => {
     setEditing(platform.platform);
@@ -275,16 +231,26 @@ function SocialMediaDashboard() {
     });
   };
 
-  const handleSave = (platformId: string) => {
-    setPlatforms(prev => prev.map(p => 
-      p.platform === platformId 
-        ? { 
-            ...p, 
-            ...editValues, 
-            lastUpdated: new Date().toISOString() 
-          }
-        : p
-    ));
+  const handleSave = async (platformId: string) => {
+    try {
+      await fetch('/api/marketing/social', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          platform: platformId,
+          followers: editValues.followers,
+          views: editValues.views,
+          engagement: editValues.engagement,
+        }),
+      });
+      setPlatforms(prev => prev.map(p => 
+        p.platform === platformId 
+          ? { ...p, ...editValues, lastUpdated: new Date().toISOString() }
+          : p
+      ));
+    } catch (err) {
+      console.error('Failed to save:', err);
+    }
     setEditing(null);
     setEditValues({});
   };
@@ -293,6 +259,14 @@ function SocialMediaDashboard() {
     setEditing(null);
     setEditValues({});
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="w-6 h-6 text-slate-500 animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

@@ -1,6 +1,19 @@
 {
   "standups": [
     {
+      "date": "2026-03-03",
+      "time": "14:13",
+      "type": "adhoc-agent-hosting-deployment-platform-using-the-hub-to-host-manage-and-deploy-guide-agents-externally-making-faith-journey-guides-accessible-on-3rd-party-apps-and-platforms-hub-becomes-the-agent-management-layer",
+      "typeName": "Agent Hosting & Deployment Platform \u2014 Using the Hub to host, manage, and deploy guide agents externally. Making faith journey guides accessible on 3rd party apps and platforms. Hub becomes the agent management layer.",
+      "typeEmoji": "\ud83d\udccb",
+      "topic": "Agent Hosting & Deployment Platform \u2014 Using the Hub to host, manage, and deploy guide agents externally. Making faith journey guides accessible on 3rd party apps and platforms. Hub becomes the agent management layer. \u2014 Tuesday Mar 3",
+      "file": "2026-03-03-adhoc-agent-hosting-deployment-platform-using-the-hub-to-host-manage-and-deploy-guide-agents-externally-making-faith-journey-guides-accessible-on-3rd-party-apps-and-platforms-hub-becomes-the-agent-management-layer.json",
+      "tokenCost": 0.0403,
+      "verticals": [],
+      "initiatives": [],
+      "instanceKey": "STD-27"
+    },
+    {
       "date": "2026-03-02",
       "time": "21:42",
       "type": "adhoc-dlp230np-projection-lens-selection-for-hemisphere-poc-what-lens-do-we-actually-need-to-project-from-the-dlp230np-evm-onto-a-6-inch-hemisphere-dome-the-current-mar-010-ticket-incorrectly-lists-a-camera-fisheye-lens-we-need-the-team-especially-palmer-and-ive-to-identify-the-correct-optical-element-to-spread-bend-the-dlp-projected-image-onto-the-hemisphere-interior-consider-projection-specific-wide-angle-adapters-short-throw-conversion-lenses-concave-convex-mirrors-fresnel-lenses-or-custom-optics-must-be-purchasable-for-the-poc-budget",

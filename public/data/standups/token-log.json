@@ -229,12 +229,22 @@
       "estimatedCost": 0.0367,
       "model": "claude-sonnet-4-20250514",
       "duration": "44.1s"
+    },
+    {
+      "date": "2026-03-03",
+      "type": "adhoc-agent-hosting-deployment-platform-using-the-hub-to-host-manage-and-deploy-guide-agents-externally-making-faith-journey-guides-accessible-on-3rd-party-apps-and-platforms-hub-becomes-the-agent-management-layer",
+      "inputTokens": 2988,
+      "outputTokens": 2092,
+      "totalTokens": 5080,
+      "estimatedCost": 0.0403,
+      "model": "claude-sonnet-4-20250514",
+      "duration": "53.1s"
     }
   ],
   "totals": {
-    "today": 0.2438,
-    "week": 0.9332,
-    "month": 0.9332,
-    "standupCount": 23
+    "today": 0.0403,
+    "week": 0.9735,
+    "month": 0.9735,
+    "standupCount": 24
   }
 }

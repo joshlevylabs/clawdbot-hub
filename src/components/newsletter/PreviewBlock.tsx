@@ -9,6 +9,7 @@ import {
   Activity,
   AlertTriangle,
 } from "lucide-react";
+import PerformanceChart from "@/components/PerformanceChart";
 
 interface PreviewBlockProps {
   label: string;
@@ -127,96 +128,55 @@ function PctBadge({ value }: { value: number }) {
   );
 }
 
-function MiniChart({ performance }: { performance: Array<Record<string, unknown>> }) {
-  if (!performance || performance.length < 2) return null;
-  
-  const w = 320;
-  const h = 60;
-  const pad = 2;
-  
-  // Calculate normalized portfolio and SPY returns
-  const firstEquity = Number(performance[0].equity ?? 100000);
-  const firstSpy = Number(performance[0].spy_price ?? 1);
-  
-  const portfolioPoints = performance.map((p) => 
-    ((Number(p.equity ?? firstEquity) / firstEquity) - 1) * 100
-  );
-  const spyPoints = performance.map((p) => 
-    ((Number(p.spy_price ?? firstSpy) / firstSpy) - 1) * 100
-  );
-  
-  const allValues = [...portfolioPoints, ...spyPoints];
-  const minVal = Math.min(...allValues, 0);
-  const maxVal = Math.max(...allValues, 0);
-  const range = maxVal - minVal || 1;
-  
-  const toX = (i: number) => pad + (i / (performance.length - 1)) * (w - pad * 2);
-  const toY = (val: number) => pad + (1 - (val - minVal) / range) * (h - pad * 2);
-  
-  const makePath = (points: number[]) =>
-    points.map((v, i) => `${i === 0 ? 'M' : 'L'}${toX(i).toFixed(1)},${toY(v).toFixed(1)}`).join(' ');
-
-  const zeroY = toY(0);
-
-  return (
-    <svg viewBox={`0 0 ${w} ${h}`} className="w-full h-16 mt-1">
-      {/* Zero line */}
-      <line x1={pad} y1={zeroY} x2={w - pad} y2={zeroY} stroke="#334155" strokeWidth="0.5" strokeDasharray="3,3" />
-      {/* SPY line */}
-      <path d={makePath(spyPoints)} fill="none" stroke="#ef4444" strokeWidth="1.5" opacity="0.6" />
-      {/* Portfolio line */}
-      <path d={makePath(portfolioPoints)} fill="none" stroke="#22c55e" strokeWidth="2" />
-    </svg>
-  );
-}
-
 function PortfolioPerformance({ data }: { data: Record<string, unknown> }) {
-  const portfolioReturn = Number(data.portfolio_return_pct ?? 0);
-  const spyReturn = Number(data.spy_return_pct ?? 0);
-  const alpha = Number(data.alpha_pct ?? 0);
   const performance = (data.performance || []) as Array<Record<string, unknown>>;
-  
+
+  // Transform newsletter performance data into PerformanceChart snapshot format
+  const snapshots = performance.map((p) => ({
+    date: String(p.date || p.timestamp || ""),
+    equity: Number(p.equity || 0),
+    spy_price: p.spy_price != null ? Number(p.spy_price) : null,
+    spy_baseline: null as number | null,
+    cash: p.cash != null ? Number(p.cash) : undefined,
+  }));
+
+  // Separate intraday snapshots (contain "T" in date) for richer chart rendering
+  const dailySnapshots = snapshots.filter((s) => !s.date.includes("T"));
+  const intradaySnapshots = snapshots
+    .filter((s) => s.date.includes("T"))
+    .map((s) => ({
+      id: s.date,
+      timestamp: s.date,
+      equity: s.equity,
+      cash: s.cash ?? 0,
+      positions_value: 0,
+      daily_pnl: null as number | null,
+      daily_pnl_pct: null as number | null,
+      total_pnl: null as number | null,
+      total_pnl_pct: null as number | null,
+      spy_price: s.spy_price,
+      spy_baseline: null as number | null,
+      open_positions: null as number | null,
+    }));
+
+  const startingCapital =
+    snapshots.length > 0 ? snapshots[0].equity : 100000;
+
+  if (snapshots.length < 2) {
+    return (
+      <div className="text-xs text-slate-500 italic">
+        Not enough data points for chart ({snapshots.length} snapshot
+        {snapshots.length !== 1 ? "s" : ""})
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-2">
-      <div className="grid grid-cols-3 gap-3">
-        <div className="text-center p-2 bg-slate-900/50 rounded-lg">
-          <div className="text-[10px] text-slate-500 uppercase">Portfolio</div>
-          <div className="text-sm font-semibold mt-0.5">
-            <PctBadge value={portfolioReturn} />
-          </div>
-        </div>
-        <div className="text-center p-2 bg-slate-900/50 rounded-lg">
-          <div className="text-[10px] text-slate-500 uppercase">SPY</div>
-          <div className="text-sm font-semibold mt-0.5">
-            <PctBadge value={spyReturn} />
-          </div>
-        </div>
-        <div className="text-center p-2 bg-slate-900/50 rounded-lg">
-          <div className="text-[10px] text-slate-500 uppercase">Alpha</div>
-          <div className="text-sm font-semibold mt-0.5">
-            <PctBadge value={alpha} />
-          </div>
-        </div>
-      </div>
-      {performance.length >= 2 && (
-        <div>
-          <MiniChart performance={performance} />
-          <div className="flex justify-between text-[10px] text-slate-600 mt-0.5">
-            <span>
-              <span className="inline-block w-2 h-0.5 bg-emerald-500 mr-1 align-middle rounded" />
-              MRE
-            </span>
-            <span>
-              <span className="inline-block w-2 h-0.5 bg-red-500 mr-1 align-middle rounded opacity-60" />
-              SPY
-            </span>
-          </div>
-        </div>
-      )}
-      <div className="text-[11px] text-slate-500">
-        Range: {String(data.range || "all")} • {String(data.data_points || 0)} data points
-      </div>
-    </div>
+    <PerformanceChart
+      snapshots={dailySnapshots}
+      intradaySnapshots={intradaySnapshots}
+      startingCapital={startingCapital}
+    />
   );
 }
 

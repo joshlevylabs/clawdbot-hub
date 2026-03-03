@@ -2,6 +2,19 @@
   "standups": [
     {
       "date": "2026-03-02",
+      "time": "17:00",
+      "type": "marin-daily",
+      "typeName": "Marin Daily Standup",
+      "typeEmoji": "\ud83d\udd2e",
+      "topic": "Marin Daily Standup \u2014 Monday Mar 2",
+      "file": "2026-03-02-marin-daily.json",
+      "tokenCost": 0.0368,
+      "verticals": [],
+      "initiatives": [],
+      "instanceKey": "STD-24"
+    },
+    {
+      "date": "2026-03-02",
       "time": "12:53",
       "type": "adhoc-faith-journey-app-ai-religious-guide-builder",
       "typeName": "Faith Journey App \u2014 AI Religious Guide Builder",

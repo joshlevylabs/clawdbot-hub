@@ -199,12 +199,22 @@
       "estimatedCost": 0.0453,
       "model": "claude-sonnet-4-20250514",
       "duration": "60.1s"
+    },
+    {
+      "date": "2026-03-02",
+      "type": "marin-daily",
+      "inputTokens": 2787,
+      "outputTokens": 1895,
+      "totalTokens": 4682,
+      "estimatedCost": 0.0368,
+      "model": "claude-sonnet-4-20250514",
+      "duration": "46.8s"
     }
   ],
   "totals": {
-    "today": 0.1292,
-    "week": 0.8186,
-    "month": 0.8186,
-    "standupCount": 20
+    "today": 0.166,
+    "week": 0.8554,
+    "month": 0.8554,
+    "standupCount": 21
   }
 }

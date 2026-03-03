@@ -1,5 +1,5 @@
 {
-  "global_counter": 23,
+  "global_counter": 24,
   "counters": {
     "adhoc-hub-standup-system-overhaul": 1,
     "adhoc-lever-financial-app-separation": 1,
@@ -20,6 +20,7 @@
     "adhoc-mosaic-pipeline-audit": 1,
     "adhoc-marin-daily-component-sourcing-optical-stack-electrical-design-firmware-progress": 1,
     "adhoc-mosaic-ux-overhaul": 1,
-    "adhoc-faith-journey-app-ai-religious-guide-builder": 2
+    "adhoc-faith-journey-app-ai-religious-guide-builder": 2,
+    "marin-daily": 1
   }
 }

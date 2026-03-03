@@ -131,9 +131,9 @@ export default function ChrisDailyActions() {
         const errorData = await response.json();
         if (errorData.fallback) {
           setData(errorData.fallback);
-          setError('Analysis temporarily unavailable');
+          setError(errorData.detail || 'Analysis temporarily unavailable');
         } else {
-          throw new Error(errorData.error || 'Failed to fetch analysis');
+          throw new Error(errorData.detail || errorData.error || 'Failed to fetch analysis');
         }
       } else {
         const result = await response.json();

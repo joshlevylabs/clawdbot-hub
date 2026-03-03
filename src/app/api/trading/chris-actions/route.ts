@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from '@/lib/auth';
 import { paperSupabase, isPaperSupabaseConfigured, PaperPosition } from '@/lib/paper-supabase';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
 
@@ -130,35 +132,26 @@ export async function GET(request: NextRequest) {
   const refresh = searchParams.get('refresh') === 'true';
   const today = new Date().toISOString().split('T')[0];
 
-  // Determine base URL for fetching static data
-  const baseUrl = process.env.VERCEL_URL 
-    ? `https://${process.env.VERCEL_URL}` 
-    : process.env.NEXT_PUBLIC_VERCEL_URL 
-      ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
-      : 'http://localhost:3000';
-
-  // Check cache first (unless refresh requested) — stored in memory via static JSON
-  if (!refresh) {
-    try {
-      const cacheRes = await fetch(`${baseUrl}/data/trading/chris-daily-actions.json`, { cache: 'no-store' });
-      if (cacheRes.ok) {
-        const cachedData = await cacheRes.json();
-        if (cachedData.date === today) {
-          return NextResponse.json(cachedData);
-        }
-      }
-    } catch {
-      // Cache miss, continue to generate
-    }
-  }
-
   try {
-    // 1. Read MRE signals data via HTTP (public static file)
-    const signalsRes = await fetch(`${baseUrl}/data/trading/mre-signals-universe.json`, { cache: 'no-store' });
-    if (!signalsRes.ok) {
-      throw new Error(`Failed to fetch signal data: ${signalsRes.status}`);
+    // 1. Read MRE signals data from filesystem (bundled with serverless function)
+    let signalsData: MRESignalsData;
+    try {
+      const signalsPath = join(process.cwd(), 'public', 'data', 'trading', 'mre-signals-universe.json');
+      signalsData = JSON.parse(readFileSync(signalsPath, 'utf-8'));
+    } catch (fsErr) {
+      // Fallback: try relative to .next (Vercel bundles differently)
+      try {
+        const altPath = join(process.cwd(), '.next', 'server', 'app', 'data', 'trading', 'mre-signals-universe.json');
+        signalsData = JSON.parse(readFileSync(altPath, 'utf-8'));
+      } catch {
+        // Last resort: fetch via origin URL
+        const origin = request.headers.get('host');
+        const protocol = origin?.includes('localhost') ? 'http' : 'https';
+        const res = await fetch(`${protocol}://${origin}/data/trading/mre-signals-universe.json`);
+        if (!res.ok) throw new Error(`Signal data unavailable (${res.status})`);
+        signalsData = await res.json();
+      }
     }
-    const signalsData: MRESignalsData = await signalsRes.json();
 
     // 2. Fetch current positions from Supabase
     let positions: PaperPosition[] = [];
@@ -275,18 +268,19 @@ Today is ${today}. Provide your Chris Vermeulen analysis — be specific about p
 
   } catch (error) {
     console.error("Chris actions API error:", error);
+    const errMsg = error instanceof Error ? error.message : String(error);
     return NextResponse.json(
       { 
         error: "Failed to generate Chris's analysis", 
-        detail: String(error),
+        detail: errMsg,
         fallback: {
           date: today,
-          market_assessment: "Chris's analysis is currently unavailable due to a technical issue.",
+          market_assessment: `Analysis error: ${errMsg}`,
           pre_market_actions: [],
           market_hours_actions: [],
           positions_review: [],
           watchlist: [],
-          risk_warnings: ["Analysis service temporarily unavailable"]
+          risk_warnings: [`Error: ${errMsg}`]
         }
       },
       { status: 500 }

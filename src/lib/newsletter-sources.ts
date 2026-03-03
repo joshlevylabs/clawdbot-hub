@@ -342,6 +342,48 @@ const fetchers: Record<string, DataFetcher> = {
   },
 
   'current-positions': async () => {
+    // Try Alpaca API directly first (source of truth for live positions)
+    const alpacaKey = process.env.ALPACA_PAPER_API_KEY;
+    const alpacaSecret = process.env.ALPACA_PAPER_SECRET_KEY;
+    if (alpacaKey && alpacaSecret) {
+      try {
+        const headers = {
+          'APCA-API-KEY-ID': alpacaKey,
+          'APCA-API-SECRET-KEY': alpacaSecret,
+        };
+        const [posRes, acctRes] = await Promise.all([
+          fetch('https://paper-api.alpaca.markets/v2/positions', { headers }),
+          fetch('https://paper-api.alpaca.markets/v2/account', { headers }),
+        ]);
+        if (posRes.ok && acctRes.ok) {
+          const positions = await posRes.json() as Array<Record<string, string>>;
+          const account = await acctRes.json() as Record<string, string>;
+          return {
+            positions: positions.map((p) => ({
+              symbol: p.symbol,
+              side: p.side,
+              qty: Number(p.qty),
+              entry_price: Number(p.avg_entry_price),
+              current_price: Number(p.current_price),
+              market_value: Number(p.market_value),
+              unrealized_pnl: Number(p.unrealized_pl),
+              unrealized_pnl_pct: Number(p.unrealized_plpc) * 100,
+            })),
+            cash: Number(account.cash),
+            snapshot: {
+              equity: Number(account.equity),
+              positions_value: Number(account.long_market_value),
+              open_positions: positions.length,
+            },
+            source: 'alpaca-api',
+          };
+        }
+      } catch {
+        // Fall through to Supabase
+      }
+    }
+
+    // Fallback: Supabase paper_positions table
     if (isPaperSupabaseConfigured()) {
       const { data: positions } = await paperSupabase
         .from('paper_positions')
@@ -367,11 +409,11 @@ const fetchers: Record<string, DataFetcher> = {
           notes: p.notes,
         })),
         cash: config?.cash ?? 0,
-        source: 'alpaca',
+        source: 'supabase',
       };
     }
 
-    // Fallback to JSON files
+    // Last resort: JSON files
     const data = readDataFile('paper-portfolio.json') as Record<string, unknown> | null;
     return {
       positions: data?.positions || [],

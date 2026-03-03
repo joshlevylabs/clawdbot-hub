@@ -877,7 +877,7 @@ export default function PortfolioExitFlow({ universeData, coreData }: PortfolioE
 
       {/* Detail panel for clicked stages */}
       <PipelineDetailPanel
-        stageDetails={selectedStage}
+        stageDetails={selectedStage as any}
         onClose={handleModalClose}
       />
     </div>

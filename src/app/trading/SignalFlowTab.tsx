@@ -1996,7 +1996,7 @@ export default function SignalFlowTab() {
     if (tierStageMatch) {
       const [, stageName, voteCountStr] = tierStageMatch;
       const voteCount = parseInt(voteCountStr);
-      const stage = activePipelineData![stageName as keyof typeof activePipelineData] as any;
+      const stage = pipelineData![stageName as keyof typeof pipelineData] as any;
       if (!stage) return;
       
       // Get tier-specific data

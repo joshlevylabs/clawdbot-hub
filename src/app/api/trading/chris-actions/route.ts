@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from '@/lib/auth';
 import { paperSupabase, isPaperSupabaseConfigured, PaperPosition } from '@/lib/paper-supabase';
+import { CHRIS_SYSTEM_PROMPT } from '@/lib/chris-vermeulen-knowledge';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 
@@ -78,41 +79,89 @@ interface ChrisActionsResponse {
   risk_warnings: string[];
 }
 
-const CHRIS_VERMEULEN_PROMPT = `You are Chris Vermeulen, a veteran technical analyst and swing trader known for your disciplined, systematic approach to the markets. You specialize in mean reversion strategies, Fibonacci analysis, and reading market cycles. Your style is confident but measured — you always emphasize risk management and position sizing.
+async function loadSignalsData(request: NextRequest): Promise<MRESignalsData> {
+  // Try filesystem first (works in local dev and some Vercel deployments)
+  try {
+    const signalsPath = join(process.cwd(), 'public', 'data', 'trading', 'mre-signals-universe.json');
+    return JSON.parse(readFileSync(signalsPath, 'utf-8'));
+  } catch {
+    // Fallback: try .next bundled path
+    try {
+      const altPath = join(process.cwd(), '.next', 'server', 'app', 'data', 'trading', 'mre-signals-universe.json');
+      return JSON.parse(readFileSync(altPath, 'utf-8'));
+    } catch {
+      // Last resort: fetch via HTTP from the origin
+      const origin = request.headers.get('host');
+      const protocol = origin?.includes('localhost') ? 'http' : 'https';
+      const res = await fetch(`${protocol}://${origin}/data/trading/mre-signals-universe.json`, {
+        headers: { 'Cookie': request.headers.get('cookie') || '' }
+      });
+      if (!res.ok) throw new Error(`Signal data unavailable (${res.status})`);
+      return await res.json();
+    }
+  }
+}
 
-Analyze the following market data and provide specific, actionable trading advice for today. Be direct and specific — use ticker symbols, price levels, and percentages. No generic advice.
+function buildMarketContext(signalsData: MRESignalsData, positions: PaperPosition[], today: string): string {
+  // Extract top BUY signals
+  const buySignals = signalsData.signals.by_asset_class
+    .filter(signal => signal.signal === 'BUY')
+    .sort((a, b) => (b.signal_strength || 0) - (a.signal_strength || 0))
+    .slice(0, 10);
 
-Structure your response as JSON with this format:
-{
-  "date": "YYYY-MM-DD",
-  "market_assessment": "1-2 sentence market overview",
-  "pre_market_actions": [
-    {
-      "priority": "high" | "medium" | "low",
-      "action": "specific action description",
-      "ticker": "SYMBOL" (optional),
-      "rationale": "why this matters"
-    }
-  ],
-  "market_hours_actions": [
-    {
-      "priority": "high" | "medium" | "low",
-      "action": "specific action description", 
-      "ticker": "SYMBOL" (optional),
-      "price_level": "$XXX.XX" (optional),
-      "rationale": "why this matters"
-    }
-  ],
-  "positions_review": [
-    {
-      "ticker": "SYMBOL",
-      "current_assessment": "hold" | "watch" | "trim" | "exit",
-      "note": "specific observation about this position"
-    }
-  ],
-  "watchlist": ["SYMBOL1", "SYMBOL2"],
-  "risk_warnings": ["warning1", "warning2"]
-}`;
+  // Extract WATCH and SELL signals too — Chris cares about these
+  const watchSignals = signalsData.signals.by_asset_class
+    .filter(signal => signal.signal === 'WATCH' || signal.signal === 'HOLD')
+    .sort((a, b) => (b.signal_strength || 0) - (a.signal_strength || 0))
+    .slice(0, 5);
+
+  return `
+LIVE MRE SIGNAL DATA (as of ${signalsData.timestamp}):
+
+MARKET CONDITIONS:
+- Fear & Greed Index: ${signalsData.fear_greed.current.toFixed(1)} (${signalsData.fear_greed.rating.toUpperCase()})
+- Market Regime: ${signalsData.regime.global.toUpperCase()}
+- VIX: ${signalsData.regime.vix || 'N/A'}
+- Bear Market %: ${signalsData.regime.bear_pct || 'N/A'}%
+- Crash Mode: ${signalsData.regime.crash_mode?.active ? `ACTIVE (severity: ${signalsData.regime.crash_mode?.severity || 'unknown'}, score: ${signalsData.regime.crash_mode?.crash_score || 'N/A'})` : 'INACTIVE'}
+
+GLOBAL SIGNAL SUMMARY:
+- Total BUY signals: ${signalsData.signals.summary.total_buy}
+- Total HOLD signals: ${signalsData.signals.summary.total_hold}
+- Total WATCH signals: ${signalsData.signals.summary.total_watch}
+
+TOP BUY SIGNALS (${buySignals.length}):
+${buySignals.map(signal => 
+  `- ${signal.symbol}: Strength ${signal.signal_strength?.toFixed(1)}%, Accuracy ${signal.expected_accuracy?.toFixed(0)}%, Regime ${signal.regime}, F&G ${signal.current_fg?.toFixed(0)}, Source: ${signal.signal_source}, ${signal.strategies_agreeing}/8 strategies${signal.sector ? `, Sector: ${signal.sector}` : ''}${signal.price ? `, Price: $${signal.price.toFixed(2)}` : ''}${signal.rsi_14 ? `, RSI: ${signal.rsi_14.toFixed(1)}` : ''}${signal.momentum_20d ? `, Mom: ${signal.momentum_20d.toFixed(2)}%` : ''}`
+).join('\n')}
+
+WATCH/HOLD SIGNALS (${watchSignals.length}):
+${watchSignals.map(signal => 
+  `- ${signal.symbol}: ${signal.signal}, Strength ${signal.signal_strength?.toFixed(1)}%, Regime ${signal.regime}${signal.rsi_14 ? `, RSI: ${signal.rsi_14.toFixed(1)}` : ''}`
+).join('\n')}
+
+CURRENT PORTFOLIO POSITIONS (${positions.length} total):
+${positions.length > 0 ? positions.map(pos => {
+  const pnlPct = pos.current_price && pos.entry_price 
+    ? ((pos.current_price - pos.entry_price) / pos.entry_price * 100).toFixed(2)
+    : 'N/A';
+  const daysHeld = Math.floor((Date.now() - new Date(pos.opened_at).getTime()) / (1000 * 60 * 60 * 24));
+  const holdTarget = pos.hold_days || 10;
+  return `- ${pos.symbol}: ${pos.qty} shares, Entry $${pos.entry_price}, Current $${pos.current_price || 'N/A'}, P&L ${pnlPct}%, ${daysHeld}d held (target ${holdTarget}d), Stop $${pos.stop_loss || 'N/A'}, Target $${pos.take_profit || 'N/A'}, Regime at entry: ${pos.signal_regime || 'N/A'}`;
+}).join('\n') : 'No open positions.'}
+
+SIGNAL DATA FOR HELD POSITIONS:
+${positions.length > 0 ? positions.map(pos => {
+  const sig = signalsData.signals.by_asset_class.find(s => s.symbol === pos.symbol);
+  if (!sig) return `- ${pos.symbol}: NO SIGNAL DATA AVAILABLE (may have been delisted from universe)`;
+  return `- ${pos.symbol}: Current Signal=${sig.signal}, Strength=${sig.signal_strength?.toFixed(1)}%, Regime=${sig.regime}, RSI=${sig.rsi_14?.toFixed(1) || 'N/A'}, Momentum=${sig.momentum_20d?.toFixed(2) || 'N/A'}%, ${sig.strategies_agreeing}/8 strategies agreeing`;
+}).join('\n') : 'No positions to analyze.'}
+
+${signalsData.sector_fear_greed ? `SECTOR FEAR & GREED:
+${Object.entries(signalsData.sector_fear_greed).map(([sector, fg]) => `- ${sector}: ${typeof fg === 'number' ? fg.toFixed(0) : fg}`).join('\n')}` : ''}
+
+Today is ${today}. Provide your analysis now — be specific about price levels, position sizes, and timing. Stay consistent with your recent video analysis unless the data clearly contradicts it.`;
+}
 
 export async function GET(request: NextRequest) {
   // Check authentication
@@ -128,30 +177,11 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  const { searchParams } = new URL(request.url);
-  const refresh = searchParams.get('refresh') === 'true';
   const today = new Date().toISOString().split('T')[0];
 
   try {
-    // 1. Read MRE signals data from filesystem (bundled with serverless function)
-    let signalsData: MRESignalsData;
-    try {
-      const signalsPath = join(process.cwd(), 'public', 'data', 'trading', 'mre-signals-universe.json');
-      signalsData = JSON.parse(readFileSync(signalsPath, 'utf-8'));
-    } catch (fsErr) {
-      // Fallback: try relative to .next (Vercel bundles differently)
-      try {
-        const altPath = join(process.cwd(), '.next', 'server', 'app', 'data', 'trading', 'mre-signals-universe.json');
-        signalsData = JSON.parse(readFileSync(altPath, 'utf-8'));
-      } catch {
-        // Last resort: fetch via origin URL
-        const origin = request.headers.get('host');
-        const protocol = origin?.includes('localhost') ? 'http' : 'https';
-        const res = await fetch(`${protocol}://${origin}/data/trading/mre-signals-universe.json`);
-        if (!res.ok) throw new Error(`Signal data unavailable (${res.status})`);
-        signalsData = await res.json();
-      }
-    }
+    // 1. Load MRE signals data
+    const signalsData = await loadSignalsData(request);
 
     // 2. Fetch current positions from Supabase
     let positions: PaperPosition[] = [];
@@ -168,54 +198,10 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // 3. Extract top BUY signals
-    const buySignals = signalsData.signals.by_asset_class
-      .filter(signal => signal.signal === 'BUY')
-      .sort((a, b) => (b.signal_strength || 0) - (a.signal_strength || 0))
-      .slice(0, 10);
+    // 3. Build the full context
+    const marketContext = buildMarketContext(signalsData, positions, today);
 
-    // 4. Build market context prompt
-    const marketContext = `
-MARKET CONTEXT:
-- Fear & Greed Index: ${signalsData.fear_greed.current.toFixed(1)} (${signalsData.fear_greed.rating.toUpperCase()})
-- Market Regime: ${signalsData.regime.global.toUpperCase()}
-- VIX: ${signalsData.regime.vix || 'N/A'}
-- Bear Market %: ${signalsData.regime.bear_pct || 'N/A'}%
-- Crash Mode: ${signalsData.regime.crash_mode?.active ? 'ACTIVE' : 'INACTIVE'} (${signalsData.regime.crash_mode?.severity || 'none'})
-
-TODAY'S TOP BUY SIGNALS (${buySignals.length} total):
-${buySignals.map(signal => 
-  `- ${signal.symbol}: Strength ${signal.signal_strength?.toFixed(1)}%, Accuracy ${signal.expected_accuracy?.toFixed(0)}%, Regime ${signal.regime}, F&G ${signal.current_fg?.toFixed(0)}, Source: ${signal.signal_source}, ${signal.strategies_agreeing}/8 strategies${signal.sector ? `, Sector: ${signal.sector}` : ''}${signal.price ? `, Price: $${signal.price.toFixed(2)}` : ''}`
-).join('\n')}
-
-CURRENT POSITIONS (${positions.length} total):
-${positions.map(pos => {
-  const pnlPct = pos.current_price && pos.entry_price 
-    ? ((pos.current_price - pos.entry_price) / pos.entry_price * 100).toFixed(2)
-    : 'N/A';
-  const daysHeld = Math.floor((Date.now() - new Date(pos.opened_at).getTime()) / (1000 * 60 * 60 * 24));
-  const holdTarget = pos.hold_days || 10;
-  return `- ${pos.symbol}: ${pos.qty} shares, Entry $${pos.entry_price}, Current $${pos.current_price || 'N/A'}, P&L ${pnlPct}%, ${daysHeld}d held (target ${holdTarget}d), Stop $${pos.stop_loss || 'N/A'}, Target $${pos.take_profit || 'N/A'}, Regime at entry: ${pos.signal_regime || 'N/A'}`;
-}).join('\n')}
-
-GLOBAL SIGNAL SUMMARY:
-- Total BUY signals: ${signalsData.signals.summary.total_buy}
-- Total HOLD signals: ${signalsData.signals.summary.total_hold}
-- Total WATCH signals: ${signalsData.signals.summary.total_watch}
-${signalsData.sector_fear_greed ? `
-SECTOR FEAR & GREED:
-${Object.entries(signalsData.sector_fear_greed).map(([sector, fg]) => `- ${sector}: ${typeof fg === 'number' ? fg.toFixed(0) : fg}`).join('\n')}` : ''}
-
-SIGNAL DATA FOR HELD POSITIONS:
-${positions.map(pos => {
-  const sig = signalsData.signals.by_asset_class.find(s => s.symbol === pos.symbol);
-  if (!sig) return `- ${pos.symbol}: NO SIGNAL DATA AVAILABLE`;
-  return `- ${pos.symbol}: Current Signal=${sig.signal}, Strength=${sig.signal_strength?.toFixed(1)}%, Regime=${sig.regime}, RSI=${sig.rsi_14?.toFixed(1) || 'N/A'}, Momentum=${sig.momentum_20d?.toFixed(2) || 'N/A'}, ${sig.strategies_agreeing}/8 strategies agreeing`;
-}).join('\n')}
-
-Today is ${today}. Provide your Chris Vermeulen analysis — be specific about price levels, position sizes, and timing.`;
-
-    // 5. Call Anthropic API
+    // 4. Call Anthropic API with full Chris Vermeulen knowledge base
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: {
@@ -225,8 +211,8 @@ Today is ${today}. Provide your Chris Vermeulen analysis — be specific about p
       },
       body: JSON.stringify({
         model: "claude-sonnet-4-20250514",
-        max_tokens: 2000,
-        system: CHRIS_VERMEULEN_PROMPT,
+        max_tokens: 3000,
+        system: CHRIS_SYSTEM_PROMPT,
         messages: [
           {
             role: "user",
@@ -248,11 +234,16 @@ Today is ${today}. Provide your Chris Vermeulen analysis — be specific about p
     const data = await response.json();
     const text = data?.content?.[0]?.text || "";
 
-    // Extract JSON from response (handle markdown code blocks)
-    let jsonStr = text;
-    const jsonMatch = text.match(/```(?:json)?\s*([\s\S]*?)```/);
+    // Extract JSON from response (handle markdown code blocks if they sneak through)
+    let jsonStr = text.trim();
+    const jsonMatch = jsonStr.match(/```(?:json)?\s*([\s\S]*?)```/);
     if (jsonMatch) {
       jsonStr = jsonMatch[1].trim();
+    }
+    // Also handle case where response starts with text before JSON
+    const braceStart = jsonStr.indexOf('{');
+    if (braceStart > 0) {
+      jsonStr = jsonStr.slice(braceStart);
     }
 
     const analysisResult: ChrisActionsResponse = JSON.parse(jsonStr);
@@ -261,7 +252,8 @@ Today is ${today}. Provide your Chris Vermeulen analysis — be specific about p
     const responseData = {
       ...analysisResult,
       generated_at: new Date().toISOString(),
-      timestamp: signalsData.timestamp,
+      signal_timestamp: signalsData.timestamp,
+      knowledge_version: "chris-vermeulen-v2-10videos",
     };
 
     return NextResponse.json(responseData);

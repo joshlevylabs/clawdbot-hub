@@ -1,6 +1,6 @@
 {
-  "nextAgentId": 35,
-  "nextJoshuaId": 6,
+  "nextAgentId": 37,
+  "nextJoshuaId": 7,
   "tasks": [
     {
       "key": "A-001",
@@ -1009,6 +1009,75 @@
         "AI guide agent creation pipeline prototyped",
         "Portable export format (PSAEF v1.0) implementation started"
       ]
+    },
+    {
+      "key": "A-035",
+      "text": "Design embeddable faith guide widget framework",
+      "description": "Create a lightweight, embeddable widget system that allows faith journey guides to be deployed on external websites and platforms. This involves designing the user interface, interaction patterns, and integration methods that maintain spiritual depth while fitting into existing user workflows. The framework should prioritize user experience and meaningful engagement over mere functionality.",
+      "acceptanceCriteria": [
+        "Widget UI/UX design mockups with multiple size variations",
+        "JavaScript embed code generation system",
+        "Widget customization options for different platform contexts",
+        "Integration documentation for external developers"
+      ],
+      "tag": "AGENT",
+      "priority": "high",
+      "assignee": "Steve Jobs",
+      "status": "pending",
+      "sourceStandup": "2026-03-03-adhoc-agent-hosting-deployment-platform-using-the-hub-to-host-manage-and-deploy-guide-agents-externally-making-faith-journey-guides-accessible-on-3rd-party-apps-and-platforms-hub-becomes-the-agent-management-layer",
+      "sourceStandupType": "Agent Hosting & Deployment Platform \u2014 Using the Hub to host, manage, and deploy guide agents externally. Making faith journey guides accessible on 3rd party apps and platforms. Hub becomes the agent management layer.",
+      "sourceDate": "2026-03-03",
+      "createdAt": "2026-03-03T14:26:39.996120-08:00",
+      "updatedAt": "2026-03-03T14:26:39.996312-08:00",
+      "completedAt": null,
+      "approvedAt": "2026-03-03T14:26:39.996315-08:00",
+      "approvedBy": "joshua"
+    },
+    {
+      "key": "A-036",
+      "text": "Implement telemetry and monitoring for distributed agents",
+      "description": "Build comprehensive instrumentation system to track performance, engagement, and learning across deployed faith guide agents. This includes real-time monitoring of agent interactions, user engagement metrics, failure modes, and feedback aggregation back to Hub for continuous improvement. The system must balance detailed analytics with user privacy requirements.",
+      "acceptanceCriteria": [
+        "Real-time agent performance monitoring dashboard",
+        "User engagement tracking without privacy violations",
+        "Failure mode detection and alerting system",
+        "Data aggregation pipeline feeding insights back to Hub"
+      ],
+      "tag": "AGENT",
+      "priority": "medium",
+      "assignee": "James Truchard",
+      "status": "pending",
+      "sourceStandup": "2026-03-03-adhoc-agent-hosting-deployment-platform-using-the-hub-to-host-manage-and-deploy-guide-agents-externally-making-faith-journey-guides-accessible-on-3rd-party-apps-and-platforms-hub-becomes-the-agent-management-layer",
+      "sourceStandupType": "Agent Hosting & Deployment Platform \u2014 Using the Hub to host, manage, and deploy guide agents externally. Making faith journey guides accessible on 3rd party apps and platforms. Hub becomes the agent management layer.",
+      "sourceDate": "2026-03-03",
+      "createdAt": "2026-03-03T14:26:41.644059-08:00",
+      "updatedAt": "2026-03-03T14:26:41.644071-08:00",
+      "completedAt": null,
+      "approvedAt": "2026-03-03T14:26:41.644077-08:00",
+      "approvedBy": "joshua"
+    },
+    {
+      "key": "J-006",
+      "text": "Define external deployment monetization strategy",
+      "description": "Develop clear freemium model and conversion funnel strategy for widget-deployed faith guides. This involves defining which features remain free in external deployments versus premium features that require Lever app subscription. Strategy should optimize for customer acquisition while maintaining revenue potential through upgrade paths.",
+      "acceptanceCriteria": [
+        "Freemium feature matrix defining free vs premium capabilities",
+        "Conversion funnel design from external widgets to Lever subscriptions",
+        "Pricing strategy for different deployment tiers",
+        "Customer acquisition cost projections and revenue modeling"
+      ],
+      "tag": "JOSHUA",
+      "priority": "medium",
+      "assignee": "Dave Ramsey",
+      "status": "pending",
+      "sourceStandup": "2026-03-03-adhoc-agent-hosting-deployment-platform-using-the-hub-to-host-manage-and-deploy-guide-agents-externally-making-faith-journey-guides-accessible-on-3rd-party-apps-and-platforms-hub-becomes-the-agent-management-layer",
+      "sourceStandupType": "Agent Hosting & Deployment Platform \u2014 Using the Hub to host, manage, and deploy guide agents externally. Making faith journey guides accessible on 3rd party apps and platforms. Hub becomes the agent management layer.",
+      "sourceDate": "2026-03-03",
+      "createdAt": "2026-03-03T14:26:42.128444-08:00",
+      "updatedAt": "2026-03-03T14:26:42.128460-08:00",
+      "completedAt": null,
+      "approvedAt": "2026-03-03T14:26:42.128468-08:00",
+      "approvedBy": "joshua"
     }
   ]
 }

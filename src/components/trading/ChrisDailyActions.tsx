@@ -102,7 +102,7 @@ export default function ChrisDailyActions() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const CACHE_KEY = 'chris-daily-actions';
+  const CACHE_KEY = 'chris-daily-actions-v2'; // v2: knowledge base wired in
 
   const fetchAnalysis = async (refresh: boolean = false) => {
     // Check localStorage cache first (unless explicit refresh)
@@ -112,8 +112,9 @@ export default function ChrisDailyActions() {
         if (cached) {
           const cachedData = JSON.parse(cached);
           const today = new Date().toISOString().split('T')[0];
-          // Only use cache if it has real analysis (not error fallback)
-          if (cachedData.date === today && cachedData.market_assessment && cachedData.pre_market_actions?.length > 0) {
+          // Only use cache if it has real analysis (not error fallback) and matches current knowledge version
+          const CURRENT_KNOWLEDGE = 'chris-vermeulen-v2-10videos';
+          if (cachedData.date === today && cachedData.knowledge_version === CURRENT_KNOWLEDGE && cachedData.market_assessment && cachedData.pre_market_actions?.length > 0) {
             setData(cachedData);
             return; // Use cached, no loading spinner
           }

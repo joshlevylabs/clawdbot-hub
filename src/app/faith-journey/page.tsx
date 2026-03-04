@@ -1095,6 +1095,18 @@ function GuideChatModal({
   // Local state for properties editing
   const [editedGuide, setEditedGuide] = useState<DenominationAgent>(guide);
 
+  const [conversationId, setConversationId] = useState<string | null>(null);
+
+  // Generate or retrieve user ID
+  const getUserId = () => {
+    let userId = localStorage.getItem('faith-journey-user-id');
+    if (!userId) {
+      userId = `faith-user-${Math.random().toString(36).substring(2, 15)}`;
+      localStorage.setItem('faith-journey-user-id', userId);
+    }
+    return userId;
+  };
+
   const sendMessage = async () => {
     if (!newMessage.trim() || isLoading) return;
 
@@ -1110,25 +1122,59 @@ function GuideChatModal({
     setError(null);
 
     try {
-      const response = await fetch('/api/faith/guides/chat', {
+      // Map guide tradition to agent ID - use the tradition from the guide
+      // The agent_configs should have IDs matching the tradition IDs from faith-traditions.ts
+      const agentId = guide.tradition?.toLowerCase().replace(/\s+/g, '-') || 'spiritual-not-religious';
+      const userId = getUserId();
+
+      const response = await fetch(`/api/agents/${agentId}/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          guideName: guide.name,
-          denomination: guide.denomination,
-          tradition: guide.tradition,
-          focus: guide.focus,
-          description: guide.description,
           message: userMessage.content,
-          history: messages
+          userId: userId,
+          conversationId: conversationId
         })
       });
 
       if (!response.ok) {
-        throw new Error('Failed to get response');
+        // Fall back to old API if new one fails
+        const fallbackResponse = await fetch('/api/faith/guides/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            guideName: guide.name,
+            denomination: guide.denomination,
+            tradition: guide.tradition,
+            focus: guide.focus,
+            description: guide.description,
+            message: userMessage.content,
+            history: messages
+          })
+        });
+
+        if (!fallbackResponse.ok) {
+          throw new Error('Failed to get response');
+        }
+
+        const fallbackData = await fallbackResponse.json();
+        
+        const assistantMessage: ChatMessage = {
+          role: "assistant",
+          content: fallbackData.response,
+          timestamp: new Date().toISOString()
+        };
+
+        setMessages(prev => [...prev, assistantMessage]);
+        return;
       }
 
       const data = await response.json();
+      
+      // Store conversation ID for future messages
+      if (data.conversationId && !conversationId) {
+        setConversationId(data.conversationId);
+      }
       
       const assistantMessage: ChatMessage = {
         role: "assistant",

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { readFile, writeFile } from "fs/promises";
 import { join } from "path";
 import { upsertAgent } from "@/lib/supabase-agents";
+import { supabase } from "@/lib/supabase";
 
 const WORKSPACE = process.env.CLAWD_WORKSPACE || `${process.env.HOME}/clawd`;
 const AGENTS_DIR = join(WORKSPACE, "agents");
@@ -136,6 +137,172 @@ export async function PUT(
   } catch (error) {
     return NextResponse.json(
       { error: "Failed to update agent", detail: String(error) },
+      { status: 500 }
+    );
+  }
+}
+
+// GET: Return agent config (public fields only) - for Agent Runtime API
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ name: string }> }
+) {
+  try {
+    const { name } = await params;
+    const agentId = name;
+
+    const { data: agentConfig, error } = await supabase
+      .from('agent_configs')
+      .select(`
+        id,
+        name,
+        title,
+        emoji,
+        model,
+        department,
+        status,
+        description,
+        reports_to,
+        direct_reports,
+        temperature,
+        max_tokens,
+        knowledge_sources,
+        integrations,
+        endpoint_enabled,
+        updated_at
+      `)
+      .eq('id', agentId)
+      .single();
+
+    if (error || !agentConfig) {
+      return NextResponse.json(
+        { error: `Agent not found: ${agentId}` },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(agentConfig);
+
+  } catch (err) {
+    console.error("Get agent config error:", err);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
+  }
+}
+
+// PATCH: Update agent config fields - for Agent Runtime API
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: Promise<{ name: string }> }
+) {
+  try {
+    const { name } = await params;
+    const agentId = name;
+    const body = await request.json();
+
+    // Define allowed fields for updating
+    const allowedFields = [
+      'soul_prompt',
+      'temperature',
+      'max_tokens',
+      'knowledge_sources',
+      'integrations',
+      'endpoint_enabled',
+      'name',
+      'title',
+      'description',
+      'model'
+    ];
+
+    // Filter body to only allowed fields
+    const updateData: any = {};
+    for (const [key, value] of Object.entries(body)) {
+      if (allowedFields.includes(key)) {
+        updateData[key] = value;
+      }
+    }
+
+    // Validate some fields
+    if (updateData.temperature !== undefined) {
+      if (typeof updateData.temperature !== 'number' || updateData.temperature < 0 || updateData.temperature > 2) {
+        return NextResponse.json(
+          { error: "Temperature must be a number between 0 and 2" },
+          { status: 400 }
+        );
+      }
+    }
+
+    if (updateData.max_tokens !== undefined) {
+      if (typeof updateData.max_tokens !== 'number' || updateData.max_tokens < 1 || updateData.max_tokens > 8192) {
+        return NextResponse.json(
+          { error: "max_tokens must be a number between 1 and 8192" },
+          { status: 400 }
+        );
+      }
+    }
+
+    if (Object.keys(updateData).length === 0) {
+      return NextResponse.json(
+        { error: "No valid fields to update" },
+        { status: 400 }
+      );
+    }
+
+    // Check if agent exists
+    const { data: existingAgent, error: fetchError } = await supabase
+      .from('agent_configs')
+      .select('id')
+      .eq('id', agentId)
+      .single();
+
+    if (fetchError || !existingAgent) {
+      return NextResponse.json(
+        { error: `Agent not found: ${agentId}` },
+        { status: 404 }
+      );
+    }
+
+    // Update the agent config
+    const { data: updatedAgent, error: updateError } = await supabase
+      .from('agent_configs')
+      .update(updateData)
+      .eq('id', agentId)
+      .select(`
+        id,
+        name,
+        title,
+        emoji,
+        model,
+        department,
+        status,
+        description,
+        reports_to,
+        direct_reports,
+        temperature,
+        max_tokens,
+        knowledge_sources,
+        integrations,
+        endpoint_enabled,
+        updated_at
+      `)
+      .single();
+
+    if (updateError) {
+      console.error("Update agent config error:", updateError);
+      return NextResponse.json(
+        { error: "Failed to update agent config" },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json(updatedAgent);
+
+  } catch (err) {
+    console.error("Update agent config error:", err);
+    return NextResponse.json(
+      { error: "Internal server error" },
       { status: 500 }
     );
   }

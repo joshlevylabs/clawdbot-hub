@@ -3,16 +3,16 @@ import { supabase } from '@/lib/supabase';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { name: string } }
+  { params }: { params: Promise<{ name: string }> }
 ) {
   try {
-    const agentName = params.name;
+    const { name: agentId } = await params;
     
-    // First, find the agent config to get the agent ID
+    // Look up by ID (the URL param is the agent ID like "chris-vermeulen")
     const { data: config, error: configError } = await supabase
       .from('agent_configs')
       .select('*')
-      .eq('name', agentName)
+      .eq('id', agentId)
       .single();
 
     if (configError || !config) {
@@ -23,28 +23,20 @@ export async function GET(
     }
 
     // Fetch agent memories with count
-    const { data: memories, count: memoryCount, error: memoriesError } = await supabase
+    const { data: memories, count: memoryCount } = await supabase
       .from('agent_memories')
       .select('*', { count: 'exact' })
       .eq('agent_id', config.id)
       .order('created_at', { ascending: false })
       .limit(50);
 
-    if (memoriesError) {
-      console.error('Error fetching memories:', memoriesError);
-    }
-
     // Fetch agent conversations with message counts
-    const { data: conversations, count: conversationCount, error: conversationsError } = await supabase
+    const { data: conversations, count: conversationCount } = await supabase
       .from('agent_conversations')
       .select('*, agent_messages(count)', { count: 'exact' })
       .eq('agent_id', config.id)
       .order('updated_at', { ascending: false })
       .limit(20);
-
-    if (conversationsError) {
-      console.error('Error fetching conversations:', conversationsError);
-    }
 
     return NextResponse.json({
       config,

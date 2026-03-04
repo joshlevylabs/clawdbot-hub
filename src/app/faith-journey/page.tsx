@@ -1406,6 +1406,10 @@ export default function FaithJourneyPage() {
   const [selectedDay, setSelectedDay] = useState<Date | null>(null);
   const [selectedLesson, setSelectedLesson] = useState<any>(null);
   
+  // Calendar tab compact features
+  const [expandedContextTraditions, setExpandedContextTraditions] = useState<Set<string>>(new Set());
+  const [lessonTraditionFilters, setLessonTraditionFilters] = useState<Set<string>>(new Set(["Judaism", "Christianity", "Islam", "Hinduism", "Buddhism", "Other"]));
+  
   // Perspectives state
   const [perspectives, setPerspectives] = useState<Perspective[]>([]);
   const [perspectivesLoading, setPerspectivesLoading] = useState(false);
@@ -1504,6 +1508,63 @@ export default function FaithJourneyPage() {
       newFilters.add(tradition);
     }
     setHolidayFilters(newFilters);
+  };
+
+  // Helper functions for compact calendar features
+  const toggleContextTradition = (traditionKey: string) => {
+    const newExpanded = new Set(expandedContextTraditions);
+    if (newExpanded.has(traditionKey)) {
+      newExpanded.delete(traditionKey);
+    } else {
+      newExpanded.add(traditionKey);
+    }
+    setExpandedContextTraditions(newExpanded);
+  };
+
+  const toggleLessonTraditionFilter = (tradition: string) => {
+    const newFilters = new Set(lessonTraditionFilters);
+    if (newFilters.has(tradition)) {
+      newFilters.delete(tradition);
+    } else {
+      newFilters.add(tradition);
+    }
+    setLessonTraditionFilters(newFilters);
+  };
+
+  const groupCalendarContextByTradition = (panels: any[]) => {
+    const groups = {
+      "Judaism": { emoji: "✡️", panels: [] as any[] },
+      "Christianity": { emoji: "✝️", panels: [] as any[] },
+      "Islam": { emoji: "☪️", panels: [] as any[] },
+      "Hinduism": { emoji: "🕉️", panels: [] as any[] },
+      "Buddhism": { emoji: "☸️", panels: [] as any[] },
+      "Other": { emoji: "🌟", panels: [] as any[] }
+    };
+
+    panels.forEach(panel => {
+      if (panel.key.includes('judaism') || panel.key === 'jewish') {
+        groups.Judaism.panels.push(panel);
+      } else if (panel.key.includes('christian') || panel.key.includes('orthodox') || panel.key.includes('catholic') || panel.key.includes('protestant')) {
+        groups.Christianity.panels.push(panel);
+      } else if (panel.key.includes('islam') || panel.key.includes('sunni') || panel.key.includes('shia') || panel.key === 'islamic') {
+        groups.Islam.panels.push(panel);
+      } else if (panel.key.includes('vaishnav') || panel.key.includes('shaiv') || panel.key.includes('shakti') || panel.key.includes('hindu')) {
+        groups.Hinduism.panels.push(panel);
+      } else if (panel.key.includes('buddhism') || panel.key.includes('theravada') || panel.key.includes('mahayana') || panel.key.includes('vajrayana')) {
+        groups.Buddhism.panels.push(panel);
+      } else {
+        groups.Other.panels.push(panel);
+      }
+    });
+
+    return groups;
+  };
+
+  const goToToday = () => {
+    const today = new Date();
+    setSelectedMonth(today.getMonth());
+    setSelectedYear(today.getFullYear());
+    setSelectedDay(today);
   };
 
   // Calendar helper functions
@@ -2083,6 +2144,13 @@ export default function FaithJourneyPage() {
                         <ChevronLeft className="w-4 h-4" />
                       </button>
                       <button
+                        onClick={goToToday}
+                        className="px-3 py-1 rounded text-xs font-medium text-slate-300 hover:text-slate-100 border border-slate-600 hover:border-slate-400 transition-colors"
+                        title="Go to today"
+                      >
+                        Today
+                      </button>
+                      <button
                         onClick={() => {
                           if (selectedMonth === 11) {
                             setSelectedMonth(0);
@@ -2196,184 +2264,423 @@ export default function FaithJourneyPage() {
                   </div>
                 </div>
 
-                {/* Day Detail Panel */}
+                {/* Compact Day Detail Panel */}
                 {selectedDay && (
-                  <div className="rounded-xl p-3 sm:p-4 border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
-                    <div className="flex items-center justify-between mb-3 sm:mb-4">
-                      <h3 className="text-base sm:text-lg font-semibold text-slate-100">
-                        {selectedDay.toLocaleDateString('en-US', { 
-                          weekday: 'short', 
-                          month: 'long', 
-                          day: 'numeric',
-                          year: 'numeric'
-                        })}
-                      </h3>
-                      <button
-                        onClick={() => setSelectedDay(null)}
-                        className="text-slate-400 hover:text-slate-200 p-1"
-                      >
-                        <X className="w-5 h-5" />
-                      </button>
-                    </div>
-                    
-                    {(() => {
-                      const events = getEventsForDate(selectedDay);
-                      const firstLessonWithContext = events.lessons.find((l: any) => l.calendarContext);
-                      const calPanels = firstLessonWithContext ? parseCalendarContext((firstLessonWithContext as any).calendarContext) : [];
-                      const hebrewDate = events.lessons.find((l: any) => l.hebrewDate)?.hebrewDate as string | undefined;
-                      const parsha = events.lessons.find((l: any) => l.parsha)?.parsha as string | undefined;
+                  <div className="lg:flex lg:gap-6">
+                    {/* Desktop: Side-by-side layout */}
+                    <div className="lg:hidden">
+                      {/* Mobile: Below calendar */}
+                      <div className="rounded-xl p-2 border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+                        <div className="flex items-center justify-between mb-2">
+                          <h3 className="text-sm font-semibold text-slate-100">
+                            {selectedDay.toLocaleDateString('en-US', { 
+                              weekday: 'short', 
+                              month: 'short', 
+                              day: 'numeric'
+                            })}
+                          </h3>
+                          <button
+                            onClick={() => setSelectedDay(null)}
+                            className="text-slate-400 hover:text-slate-200 p-1"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
+                        </div>
+                        
+                        {(() => {
+                          const events = getEventsForDate(selectedDay);
+                          const firstLessonWithContext = events.lessons.find((l: any) => l.calendarContext);
+                          const calPanels = firstLessonWithContext ? parseCalendarContext((firstLessonWithContext as any).calendarContext) : [];
+                          const hebrewDate = events.lessons.find((l: any) => l.hebrewDate)?.hebrewDate as string | undefined;
+                          const parsha = events.lessons.find((l: any) => l.parsha)?.parsha as string | undefined;
 
-                      // Inject Hebrew date/parsha into the first Jewish panel if present
-                      const enrichedPanels = calPanels.map(p => {
-                        if ((p.key === 'jewish' || p.key === 'orthodox_judaism') && (hebrewDate || parsha)) {
-                          const prefix = [hebrewDate, parsha ? `Torah portion: ${parsha}` : ''].filter(Boolean).join('\n');
-                          return { ...p, text: prefix + (p.text ? '\n' + p.text : '') };
-                        }
-                        return p;
-                      });
-                      // If we have Hebrew date/parsha but no Jewish panel, prepend one
-                      if ((hebrewDate || parsha) && !enrichedPanels.some(p => p.key === 'jewish' || p.key === 'orthodox_judaism')) {
-                        const cfg = CALENDAR_TRADITION_CONFIG['jewish'];
-                        enrichedPanels.unshift({
-                          key: 'jewish', emoji: cfg.emoji, label: cfg.label, color: cfg.color,
-                          text: [hebrewDate, parsha ? `Torah portion: ${parsha}` : ''].filter(Boolean).join('\n')
-                        });
-                      }
+                          // Inject Hebrew date/parsha into the first Jewish panel if present
+                          const enrichedPanels = calPanels.map(p => {
+                            if ((p.key === 'jewish' || p.key === 'orthodox_judaism') && (hebrewDate || parsha)) {
+                              const prefix = [hebrewDate, parsha ? `Torah portion: ${parsha}` : ''].filter(Boolean).join('\n');
+                              return { ...p, text: prefix + (p.text ? '\n' + p.text : '') };
+                            }
+                            return p;
+                          });
+                          if ((hebrewDate || parsha) && !enrichedPanels.some(p => p.key === 'jewish' || p.key === 'orthodox_judaism')) {
+                            const cfg = CALENDAR_TRADITION_CONFIG['jewish'];
+                            enrichedPanels.unshift({
+                              key: 'jewish', emoji: cfg.emoji, label: cfg.label, color: cfg.color,
+                              text: [hebrewDate, parsha ? `Torah portion: ${parsha}` : ''].filter(Boolean).join('\n')
+                            });
+                          }
 
-                      return (
-                        <div className="space-y-4">
-                          {/* Religious Calendar Context from Lessons */}
-                          {enrichedPanels.length > 0 && (
-                            <div>
-                              <h4 className="text-sm sm:text-md font-medium text-slate-200 mb-2 sm:mb-3 flex items-center gap-2">
-                                <Globe className="w-4 h-4" style={{ color: "#D4A020" }} />
-                                Religious Calendar Context
-                                <span className="text-xs text-slate-500 font-normal">({enrichedPanels.length})</span>
-                              </h4>
-                              {/* Horizontal scroll on mobile, grid on desktop */}
-                              <div className="flex sm:hidden gap-2 overflow-x-auto pb-2 -mx-1 px-1 snap-x" style={{ WebkitOverflowScrolling: "touch" }}>
-                                {enrichedPanels.map((panel) => (
-                                  <div key={panel.key} className="p-2.5 rounded-lg border flex-shrink-0 w-[220px] snap-start" style={{ backgroundColor: "#0B0B11", borderColor: panel.color }}>
-                                    <div className="flex items-center gap-1.5 mb-1.5">
-                                      <span className="text-base">{panel.emoji}</span>
-                                      <h5 className="font-medium text-slate-200 text-xs">{panel.label}</h5>
-                                    </div>
-                                    {panel.text.split('\n').map((line, i) => (
-                                      <p key={i} className={`text-[11px] leading-relaxed ${i === 0 ? 'text-slate-300' : 'text-slate-400'}`}>{line}</p>
-                                    ))}
-                                  </div>
-                                ))}
-                              </div>
-                              {/* Grid on tablet/desktop */}
-                              <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                                {enrichedPanels.map((panel) => (
-                                  <div key={panel.key} className="p-3 rounded-lg border" style={{ backgroundColor: "#0B0B11", borderColor: panel.color }}>
-                                    <div className="flex items-center gap-2 mb-2">
-                                      <span className="text-lg">{panel.emoji}</span>
-                                      <h5 className="font-medium text-slate-200 text-sm">{panel.label}</h5>
-                                    </div>
-                                    {panel.text.split('\n').map((line, i) => (
-                                      <p key={i} className={`text-xs leading-relaxed ${i === 0 ? 'text-slate-300' : 'text-slate-400'}`}>{line}</p>
-                                    ))}
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                          )}
+                          const contextGroups = groupCalendarContextByTradition(enrichedPanels);
+                          const filteredLessons = events.lessons.filter((lesson: any) => lessonTraditionFilters.has(lesson.tradition || "Other"));
 
-                          {/* Religious Events */}
-                          {events.holidays.length > 0 && (
-                            <div>
-                              <h4 className="text-md font-medium text-slate-200 mb-3 flex items-center gap-2">
-                                <Calendar className="w-4 h-4" style={{ color: "#D4A020" }} />
-                                Religious Events ({events.holidays.length})
-                              </h4>
-                              <div className="space-y-2">
-                                {events.holidays.map((holiday, idx) => (
-                                  <div
-                                    key={idx}
-                                    className="p-3 rounded-lg border"
-                                    style={{ 
-                                      backgroundColor: "#0B0B11", 
-                                      borderColor: holiday.color + "50"
-                                    }}
-                                  >
-                                    <div className="flex items-center gap-2 mb-1">
-                                      <span style={{ color: holiday.color }}>●</span>
-                                      <h5 className="font-medium text-slate-200">{holiday.name}</h5>
-                                      <span
-                                        className="text-xs px-2 py-1 rounded"
-                                        style={{
-                                          backgroundColor: `${holiday.color}20`,
-                                          color: holiday.color
+                          return (
+                            <div className="space-y-3">
+                              {/* Religious Events */}
+                              {events.holidays.length > 0 && (
+                                <div>
+                                  <h4 className="text-xs font-medium text-slate-200 mb-1 flex items-center gap-1">
+                                    <Calendar className="w-3 h-3" style={{ color: "#D4A020" }} />
+                                    Events ({events.holidays.length})
+                                  </h4>
+                                  <div className="space-y-1">
+                                    {events.holidays.map((holiday, idx) => (
+                                      <div
+                                        key={idx}
+                                        className="p-2 rounded border"
+                                        style={{ 
+                                          backgroundColor: "#0B0B11", 
+                                          borderColor: holiday.color + "30"
                                         }}
                                       >
-                                        {holiday.tradition}
-                                      </span>
-                                    </div>
-                                    <p className="text-sm text-slate-400">{holiday.description}</p>
+                                        <div className="flex items-center gap-1 mb-0.5">
+                                          <span style={{ color: holiday.color, fontSize: "10px" }}>●</span>
+                                          <h5 className="font-medium text-slate-200 text-xs">{holiday.name}</h5>
+                                        </div>
+                                        <p className="text-xs text-slate-400 line-clamp-2">{holiday.description}</p>
+                                      </div>
+                                    ))}
                                   </div>
-                                ))}
-                              </div>
-                            </div>
-                          )}
-                          
-                          {/* Lessons */}
-                          {events.lessons.length > 0 && (
-                            <div>
-                              <h4 className="text-md font-medium text-slate-200 mb-3 flex items-center gap-2">
-                                <GraduationCap className="w-4 h-4" style={{ color: "#D4A020" }} />
-                                Lessons ({events.lessons.length})
-                              </h4>
-                              <div className="space-y-2">
-                                {events.lessons.map((lesson, idx) => (
-                                  <div
-                                    key={idx}
-                                    onClick={() => setSelectedLesson(lesson)}
-                                    className="p-3 rounded-lg border cursor-pointer hover:border-yellow-500"
-                                    style={{ 
-                                      backgroundColor: "#0B0B11", 
-                                      borderColor: "#2A2A38"
-                                    }}
-                                  >
-                                    <div className="flex items-center gap-2 mb-1 flex-wrap">
-                                      <h5 className="font-medium text-slate-200">{lesson.title}</h5>
-                                      {(lesson as any).calendarDisplayName && (
-                                        <span
-                                          className="text-xs px-2 py-1 rounded"
+                                </div>
+                              )}
+
+                              {/* Calendar Context Accordion */}
+                              {enrichedPanels.length > 0 && (
+                                <div>
+                                  <h4 className="text-xs font-medium text-slate-200 mb-1 flex items-center gap-1">
+                                    <Globe className="w-3 h-3" style={{ color: "#D4A020" }} />
+                                    Context ({enrichedPanels.length})
+                                  </h4>
+                                  <div className="space-y-1">
+                                    {Object.entries(contextGroups).map(([tradition, group]) => {
+                                      if (group.panels.length === 0) return null;
+                                      const isExpanded = expandedContextTraditions.has(tradition);
+                                      return (
+                                        <div key={tradition}>
+                                          <button
+                                            onClick={() => toggleContextTradition(tradition)}
+                                            className="w-full flex items-center justify-between p-1.5 rounded border text-xs font-medium text-slate-300 hover:text-slate-100 transition-colors"
+                                            style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}
+                                          >
+                                            <div className="flex items-center gap-1.5">
+                                              <span>{group.emoji}</span>
+                                              <span>{tradition}</span>
+                                              <span className="text-slate-500">({group.panels.length})</span>
+                                            </div>
+                                            {isExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                                          </button>
+                                          {isExpanded && (
+                                            <div className="ml-2 mt-1 space-y-1">
+                                              {group.panels.map((panel, idx) => (
+                                                <div key={idx} className="p-1.5 rounded border" style={{ backgroundColor: "#0B0B11", borderColor: panel.color }}>
+                                                  <h6 className="text-xs font-medium text-slate-200 mb-0.5">{panel.label}</h6>
+                                                  {panel.text.split('\n').map((line: string, i: number) => (
+                                                    <p key={i} className="text-xs text-slate-400 leading-relaxed">{line}</p>
+                                                  ))}
+                                                </div>
+                                              ))}
+                                            </div>
+                                          )}
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+                              )}
+                              
+                              {/* Compact Lessons */}
+                              {events.lessons.length > 0 && (
+                                <div>
+                                  {/* Tradition Filter Pills */}
+                                  <div className="flex items-center justify-between mb-1">
+                                    <h4 className="text-xs font-medium text-slate-200 flex items-center gap-1">
+                                      <GraduationCap className="w-3 h-3" style={{ color: "#D4A020" }} />
+                                      Lessons ({filteredLessons.length} of {events.lessons.length})
+                                    </h4>
+                                  </div>
+                                  <div className="flex flex-wrap gap-1 mb-2">
+                                    {["Judaism", "Christianity", "Islam", "Hinduism", "Buddhism", "Other"].map((tradition) => {
+                                      const isActive = lessonTraditionFilters.has(tradition);
+                                      const count = events.lessons.filter((l: any) => (l.tradition || "Other") === tradition).length;
+                                      if (count === 0) return null;
+                                      return (
+                                        <button
+                                          key={tradition}
+                                          onClick={() => toggleLessonTraditionFilter(tradition)}
+                                          className="text-xs px-2 py-1 rounded transition-colors"
                                           style={{
-                                            backgroundColor: (lesson as any).calendarSystem === 'hebrew' ? 'rgba(59, 130, 246, 0.15)' :
-                                              (lesson as any).calendarSystem === 'christian_liturgical' ? 'rgba(139, 92, 246, 0.15)' :
-                                              'rgba(16, 185, 129, 0.15)',
-                                            color: (lesson as any).calendarSystem === 'hebrew' ? '#3B82F6' :
-                                              (lesson as any).calendarSystem === 'christian_liturgical' ? '#8B5CF6' :
-                                              '#10B981'
+                                            backgroundColor: isActive ? "#D4A02020" : "#0B0B11",
+                                            borderColor: isActive ? "#D4A02050" : "#2A2A38",
+                                            color: isActive ? "#D4A020" : "#8B8B80",
+                                            border: "1px solid"
                                           }}
                                         >
-                                          {(lesson as any).calendarSystem === 'hebrew' ? '✡️' :
-                                           (lesson as any).calendarSystem === 'christian_liturgical' ? '✝️' : '☪️'}{' '}
-                                          {(lesson as any).calendarDisplayName}
-                                        </span>
-                                      )}
-                                    </div>
-                                    <p className="text-sm text-slate-400">
-                                      {lesson.content ? lesson.content.substring(0, 100) + '...' : 'Click to view lesson content'}
-                                    </p>
+                                          {tradition} ({count})
+                                        </button>
+                                      );
+                                    })}
                                   </div>
-                                ))}
-                              </div>
+                                  {/* Compact Lesson List */}
+                                  <div className="space-y-1">
+                                    {filteredLessons.map((lesson, idx) => (
+                                      <div
+                                        key={idx}
+                                        onClick={() => setSelectedLesson(lesson)}
+                                        className="p-1.5 rounded border cursor-pointer hover:border-yellow-500 transition-colors"
+                                        style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}
+                                      >
+                                        <div className="flex items-start gap-1.5">
+                                          <div className="flex-1 min-w-0">
+                                            <h5 className="font-medium text-slate-200 text-xs truncate">{lesson.title}</h5>
+                                            <p className="text-xs text-slate-400 line-clamp-1 mt-0.5">
+                                              {lesson.content ? lesson.content.substring(0, 80) + '...' : 'Click to view'}
+                                            </p>
+                                          </div>
+                                          <div className="flex gap-1 flex-shrink-0">
+                                            <span className="text-xs px-1.5 py-0.5 rounded" style={{
+                                              backgroundColor: "#D4A02020",
+                                              color: "#D4A020"
+                                            }}>
+                                              {lesson.tradition || "Other"}
+                                            </span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+                              
+                              {events.holidays.length === 0 && events.lessons.length === 0 && (
+                                <div className="text-center py-4">
+                                  <Calendar className="w-6 h-6 text-slate-600 mx-auto mb-2" />
+                                  <p className="text-slate-400 text-xs">No events or lessons</p>
+                                </div>
+                              )}
                             </div>
-                          )}
-                          
-                          {events.holidays.length === 0 && events.lessons.length === 0 && (
-                            <div className="text-center py-8">
-                              <Calendar className="w-8 h-8 text-slate-600 mx-auto mb-3" />
-                              <p className="text-slate-400">No events or lessons for this day</p>
-                            </div>
-                          )}
+                          );
+                        })()}
+                      </div>
+                    </div>
+                    
+                    {/* Desktop slide-in panel */}
+                    <div className="hidden lg:block lg:w-96 lg:flex-shrink-0">
+                      <div className="rounded-xl p-3 border max-h-[600px] overflow-y-auto" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+                        <div className="flex items-center justify-between mb-3">
+                          <h3 className="text-base font-semibold text-slate-100">
+                            {selectedDay.toLocaleDateString('en-US', { 
+                              weekday: 'long', 
+                              month: 'long', 
+                              day: 'numeric',
+                              year: 'numeric'
+                            })}
+                          </h3>
+                          <button
+                            onClick={() => setSelectedDay(null)}
+                            className="text-slate-400 hover:text-slate-200 p-1"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
                         </div>
-                      );
-                    })()}
+                        
+                        {(() => {
+                          const events = getEventsForDate(selectedDay);
+                          const firstLessonWithContext = events.lessons.find((l: any) => l.calendarContext);
+                          const calPanels = firstLessonWithContext ? parseCalendarContext((firstLessonWithContext as any).calendarContext) : [];
+                          const hebrewDate = events.lessons.find((l: any) => l.hebrewDate)?.hebrewDate as string | undefined;
+                          const parsha = events.lessons.find((l: any) => l.parsha)?.parsha as string | undefined;
+
+                          // Inject Hebrew date/parsha into the first Jewish panel if present
+                          const enrichedPanels = calPanels.map(p => {
+                            if ((p.key === 'jewish' || p.key === 'orthodox_judaism') && (hebrewDate || parsha)) {
+                              const prefix = [hebrewDate, parsha ? `Torah portion: ${parsha}` : ''].filter(Boolean).join('\n');
+                              return { ...p, text: prefix + (p.text ? '\n' + p.text : '') };
+                            }
+                            return p;
+                          });
+                          if ((hebrewDate || parsha) && !enrichedPanels.some(p => p.key === 'jewish' || p.key === 'orthodox_judaism')) {
+                            const cfg = CALENDAR_TRADITION_CONFIG['jewish'];
+                            enrichedPanels.unshift({
+                              key: 'jewish', emoji: cfg.emoji, label: cfg.label, color: cfg.color,
+                              text: [hebrewDate, parsha ? `Torah portion: ${parsha}` : ''].filter(Boolean).join('\n')
+                            });
+                          }
+
+                          const contextGroups = groupCalendarContextByTradition(enrichedPanels);
+                          const filteredLessons = events.lessons.filter((lesson: any) => lessonTraditionFilters.has(lesson.tradition || "Other"));
+
+                          return (
+                            <div className="space-y-4">
+                              {/* Religious Events */}
+                              {events.holidays.length > 0 && (
+                                <div>
+                                  <h4 className="text-sm font-medium text-slate-200 mb-2 flex items-center gap-2">
+                                    <Calendar className="w-4 h-4" style={{ color: "#D4A020" }} />
+                                    Religious Events ({events.holidays.length})
+                                  </h4>
+                                  <div className="space-y-2">
+                                    {events.holidays.map((holiday, idx) => (
+                                      <div
+                                        key={idx}
+                                        className="p-2 rounded-lg border"
+                                        style={{ 
+                                          backgroundColor: "#0B0B11", 
+                                          borderColor: holiday.color + "50"
+                                        }}
+                                      >
+                                        <div className="flex items-center gap-2 mb-1">
+                                          <span style={{ color: holiday.color }}>●</span>
+                                          <h5 className="font-medium text-slate-200 text-sm">{holiday.name}</h5>
+                                          <span
+                                            className="text-xs px-2 py-1 rounded"
+                                            style={{
+                                              backgroundColor: `${holiday.color}20`,
+                                              color: holiday.color
+                                            }}
+                                          >
+                                            {holiday.tradition}
+                                          </span>
+                                        </div>
+                                        <p className="text-xs text-slate-400">{holiday.description}</p>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+
+                              {/* Calendar Context Accordion */}
+                              {enrichedPanels.length > 0 && (
+                                <div>
+                                  <h4 className="text-sm font-medium text-slate-200 mb-2 flex items-center gap-2">
+                                    <Globe className="w-4 h-4" style={{ color: "#D4A020" }} />
+                                    Religious Calendar Context ({enrichedPanels.length})
+                                  </h4>
+                                  <div className="space-y-2">
+                                    {Object.entries(contextGroups).map(([tradition, group]) => {
+                                      if (group.panels.length === 0) return null;
+                                      const isExpanded = expandedContextTraditions.has(tradition);
+                                      return (
+                                        <div key={tradition}>
+                                          <button
+                                            onClick={() => toggleContextTradition(tradition)}
+                                            className="w-full flex items-center justify-between p-2 rounded border text-sm font-medium text-slate-300 hover:text-slate-100 transition-colors"
+                                            style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}
+                                          >
+                                            <div className="flex items-center gap-2">
+                                              <span>{group.emoji}</span>
+                                              <span>{tradition}</span>
+                                              <span className="text-slate-500">({group.panels.length})</span>
+                                            </div>
+                                            {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                                          </button>
+                                          {isExpanded && (
+                                            <div className="ml-3 mt-2 space-y-2">
+                                              {group.panels.map((panel, idx) => (
+                                                <div key={idx} className="p-2 rounded border" style={{ backgroundColor: "#0B0B11", borderColor: panel.color }}>
+                                                  <div className="flex items-center gap-1.5 mb-1">
+                                                    <span className="text-sm">{panel.emoji}</span>
+                                                    <h6 className="text-xs font-medium text-slate-200">{panel.label}</h6>
+                                                  </div>
+                                                  {panel.text.split('\n').map((line: string, i: number) => (
+                                                    <p key={i} className="text-xs text-slate-400 leading-relaxed">{line}</p>
+                                                  ))}
+                                                </div>
+                                              ))}
+                                            </div>
+                                          )}
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+                              )}
+                              
+                              {/* Compact Lessons */}
+                              {events.lessons.length > 0 && (
+                                <div>
+                                  {/* Tradition Filter Pills */}
+                                  <div className="flex items-center justify-between mb-2">
+                                    <h4 className="text-sm font-medium text-slate-200 flex items-center gap-2">
+                                      <GraduationCap className="w-4 h-4" style={{ color: "#D4A020" }} />
+                                      Lessons ({filteredLessons.length} of {events.lessons.length})
+                                    </h4>
+                                  </div>
+                                  <div className="flex flex-wrap gap-1.5 mb-3">
+                                    {["Judaism", "Christianity", "Islam", "Hinduism", "Buddhism", "Other"].map((tradition) => {
+                                      const isActive = lessonTraditionFilters.has(tradition);
+                                      const count = events.lessons.filter((l: any) => (l.tradition || "Other") === tradition).length;
+                                      if (count === 0) return null;
+                                      return (
+                                        <button
+                                          key={tradition}
+                                          onClick={() => toggleLessonTraditionFilter(tradition)}
+                                          className="text-xs px-2 py-1 rounded transition-colors"
+                                          style={{
+                                            backgroundColor: isActive ? "#D4A02020" : "#0B0B11",
+                                            borderColor: isActive ? "#D4A02050" : "#2A2A38",
+                                            color: isActive ? "#D4A020" : "#8B8B80",
+                                            border: "1px solid"
+                                          }}
+                                        >
+                                          {tradition} ({count})
+                                        </button>
+                                      );
+                                    })}
+                                  </div>
+                                  {/* Compact Lesson List */}
+                                  <div className="space-y-1.5">
+                                    {filteredLessons.map((lesson, idx) => (
+                                      <div
+                                        key={idx}
+                                        onClick={() => setSelectedLesson(lesson)}
+                                        className="p-2 rounded border cursor-pointer hover:border-yellow-500 transition-colors"
+                                        style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}
+                                      >
+                                        <div className="flex items-start gap-2">
+                                          <div className="flex-1 min-w-0">
+                                            <h5 className="font-medium text-slate-200 text-sm leading-tight">{lesson.title}</h5>
+                                            <p className="text-xs text-slate-400 mt-1 line-clamp-2">
+                                              {lesson.content ? lesson.content.substring(0, 120) + '...' : 'Click to view lesson content'}
+                                            </p>
+                                          </div>
+                                          <div className="flex flex-col gap-1 flex-shrink-0">
+                                            <span className="text-xs px-1.5 py-0.5 rounded" style={{
+                                              backgroundColor: "#D4A02020",
+                                              color: "#D4A020"
+                                            }}>
+                                              {lesson.tradition || "Other"}
+                                            </span>
+                                            {(lesson as any).calendarDisplayName && (
+                                              <span className="text-xs px-1.5 py-0.5 rounded" style={{
+                                                backgroundColor: (lesson as any).calendarSystem === 'hebrew' ? 'rgba(59, 130, 246, 0.15)' :
+                                                  (lesson as any).calendarSystem === 'christian_liturgical' ? 'rgba(139, 92, 246, 0.15)' :
+                                                  'rgba(16, 185, 129, 0.15)',
+                                                color: (lesson as any).calendarSystem === 'hebrew' ? '#3B82F6' :
+                                                  (lesson as any).calendarSystem === 'christian_liturgical' ? '#8B5CF6' :
+                                                  '#10B981'
+                                              }}>
+                                                {(lesson as any).calendarSystem === 'hebrew' ? '✡️' :
+                                                 (lesson as any).calendarSystem === 'christian_liturgical' ? '✝️' : '☪️'}
+                                              </span>
+                                            )}
+                                          </div>
+                                        </div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+                              
+                              {events.holidays.length === 0 && events.lessons.length === 0 && (
+                                <div className="text-center py-6">
+                                  <Calendar className="w-8 h-8 text-slate-600 mx-auto mb-3" />
+                                  <p className="text-slate-400">No events or lessons for this day</p>
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })()}
+                      </div>
+                    </div>
                   </div>
                 )}
 

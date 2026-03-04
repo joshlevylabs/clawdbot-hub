@@ -3,7 +3,7 @@ import { getSessionAny } from '@/lib/auth';
 import { paperSupabase, isPaperSupabaseConfigured } from '@/lib/paper-supabase';
 
 // Available models for the dropdown
-export const AVAILABLE_MODELS = [
+const AVAILABLE_MODELS = [
   { id: "claude-sonnet-4-5-20250414", label: "Claude Sonnet 4.5" },
   { id: "claude-sonnet-4-20250514", label: "Claude Sonnet 4" },
   { id: "claude-haiku-4-5-20250414", label: "Claude Haiku 4.5" },

@@ -239,12 +239,22 @@
       "estimatedCost": 0.0403,
       "model": "claude-sonnet-4-20250514",
       "duration": "53.1s"
+    },
+    {
+      "date": "2026-03-03",
+      "type": "adhoc-agent-registry-and-hosting-strategy-making-our-agents-available-for-3rd-party-use-hire-or-purchase",
+      "inputTokens": 2986,
+      "outputTokens": 2375,
+      "totalTokens": 5361,
+      "estimatedCost": 0.0446,
+      "model": "claude-sonnet-4-20250514",
+      "duration": "60.7s"
     }
   ],
   "totals": {
-    "today": 0.0403,
-    "week": 0.9735,
-    "month": 0.9735,
-    "standupCount": 24
+    "today": 0.0849,
+    "week": 1.0181,
+    "month": 1.0181,
+    "standupCount": 25
   }
 }

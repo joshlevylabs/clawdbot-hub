@@ -1,6 +1,6 @@
 {
   "date": "2026-03-03",
-  "generatedAt": "2026-03-03T14:13:45.321748-08:00",
+  "generatedAt": "2026-03-03T21:30:58.577114-08:00",
   "priorities": [
     {
       "text": "Submit current Lever build to App Store as planned",
@@ -10,21 +10,27 @@
     },
     {
       "text": "Finalize Lever App Store submission",
-      "source": "adhoc-agent-hosting-deployment-platform-using-the-hub-to-host-manage-and-deploy-guide-agents-externally-making-faith-journey-guides-accessible-on-3rd-party-apps-and-platforms-hub-becomes-the-agent-management-layer",
+      "source": "adhoc-agent-registry-and-hosting-strategy-making-our-agents-available-for-3rd-party-use-hire-or-purchase",
       "urgency": "high",
       "taskKey": "CVS-017"
     },
     {
       "text": "Upgrade Mac Mini RAM and diagnose build resource exhaustion",
-      "source": "adhoc-agent-hosting-deployment-platform-using-the-hub-to-host-manage-and-deploy-guide-agents-externally-making-faith-journey-guides-accessible-on-3rd-party-apps-and-platforms-hub-becomes-the-agent-management-layer",
+      "source": "adhoc-agent-registry-and-hosting-strategy-making-our-agents-available-for-3rd-party-use-hire-or-purchase",
       "urgency": "high",
       "taskKey": "J-004"
     },
     {
       "text": "Establish evangelical theological advisory relationships",
-      "source": "adhoc-agent-hosting-deployment-platform-using-the-hub-to-host-manage-and-deploy-guide-agents-externally-making-faith-journey-guides-accessible-on-3rd-party-apps-and-platforms-hub-becomes-the-agent-management-layer",
+      "source": "adhoc-agent-registry-and-hosting-strategy-making-our-agents-available-for-3rd-party-use-hire-or-purchase",
       "urgency": "high",
       "taskKey": "J-005"
+    },
+    {
+      "text": "Define external deployment monetization strategy",
+      "source": "Agent Hosting & Deployment Platform \u2014 Using the Hub to host, manage, and deploy guide agents externally. Making faith journey guides accessible on 3rd party apps and platforms. Hub becomes the agent management layer.",
+      "urgency": "medium",
+      "taskKey": "J-006"
     }
   ],
   "agentHandled": [
@@ -69,6 +75,18 @@
       "assignee": "Elon Musk",
       "status": "in-progress",
       "taskKey": "A-034"
+    },
+    {
+      "text": "Design embeddable faith guide widget framework",
+      "assignee": "Steve Jobs",
+      "status": "pending",
+      "taskKey": "A-035"
+    },
+    {
+      "text": "Implement telemetry and monitoring for distributed agents",
+      "assignee": "James Truchard",
+      "status": "pending",
+      "taskKey": "A-036"
     }
   ]
 }

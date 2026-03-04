@@ -2,6 +2,19 @@
   "standups": [
     {
       "date": "2026-03-03",
+      "time": "21:30",
+      "type": "adhoc-agent-registry-and-hosting-strategy-making-our-agents-available-for-3rd-party-use-hire-or-purchase",
+      "typeName": "Agent Registry and Hosting Strategy - Making our agents available for 3rd party use, hire, or purchase",
+      "typeEmoji": "\ud83d\udccb",
+      "topic": "Agent Registry and Hosting Strategy - Making our agents available for 3rd party use, hire, or purchase \u2014 Tuesday Mar 3",
+      "file": "2026-03-03-adhoc-agent-registry-and-hosting-strategy-making-our-agents-available-for-3rd-party-use-hire-or-purchase.json",
+      "tokenCost": 0.0446,
+      "verticals": [],
+      "initiatives": [],
+      "instanceKey": "STD-28"
+    },
+    {
+      "date": "2026-03-03",
       "time": "14:13",
       "type": "adhoc-agent-hosting-deployment-platform-using-the-hub-to-host-manage-and-deploy-guide-agents-externally-making-faith-journey-guides-accessible-on-3rd-party-apps-and-platforms-hub-becomes-the-agent-management-layer",
       "typeName": "Agent Hosting & Deployment Platform \u2014 Using the Hub to host, manage, and deploy guide agents externally. Making faith journey guides accessible on 3rd party apps and platforms. Hub becomes the agent management layer.",

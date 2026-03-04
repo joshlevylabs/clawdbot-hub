@@ -1622,7 +1622,7 @@ export default function FaithJourneyPage() {
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#0B0B11" }}>
       {/* Header */}
-      <div className="sticky top-0 z-10 border-b px-4 lg:px-6 py-4" 
+      <div className="sticky top-0 z-10 border-b px-3 sm:px-4 lg:px-6 py-3 sm:py-4" 
            style={{ 
              backgroundColor: "#0B0B11", 
              borderColor: "#2A2A38",
@@ -1664,14 +1664,14 @@ export default function FaithJourneyPage() {
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
-                className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium transition-all whitespace-nowrap"
+                className="flex items-center gap-1.5 sm:gap-2 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl text-xs sm:text-sm font-medium transition-all whitespace-nowrap"
                 style={{
                   backgroundColor: isActive ? "rgba(212, 160, 32, 0.15)" : "transparent",
                   color: isActive ? "#D4A020" : "#8B8B80",
                   border: isActive ? "1px solid rgba(212, 160, 32, 0.3)" : "1px solid transparent",
                 }}
               >
-                <tab.icon className="w-4 h-4" />
+                <tab.icon className="w-4 h-4 flex-shrink-0" />
                 {tab.label}
               </button>
             );
@@ -1680,7 +1680,7 @@ export default function FaithJourneyPage() {
       </div>
 
       {/* Content */}
-      <div className="p-4 lg:p-6">
+      <div className="p-2 sm:p-4 lg:p-6">
         {/* Loading State */}
         {loading && (
           <div className="flex items-center justify-center py-24">
@@ -1970,11 +1970,12 @@ export default function FaithJourneyPage() {
             {activeTab === "calendar" && (
               <div className="space-y-6">
                 {/* Calendar Header with Filters */}
-                <div className="rounded-xl p-4 border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
-                  <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-lg font-semibold text-slate-100 flex items-center gap-2">
-                      <Calendar className="w-5 h-5" style={{ color: "#D4A020" }} />
-                      Faith Calendar - {new Date(selectedYear, selectedMonth).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                <div className="rounded-xl p-3 sm:p-4 border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+                  <div className="flex items-center justify-between mb-3 sm:mb-4">
+                    <h2 className="text-base sm:text-lg font-semibold text-slate-100 flex items-center gap-2">
+                      <Calendar className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" style={{ color: "#D4A020" }} />
+                      <span className="sm:hidden">{new Date(selectedYear, selectedMonth).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</span>
+                      <span className="hidden sm:inline">Faith Calendar - {new Date(selectedYear, selectedMonth).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</span>
                     </h2>
                     <div className="flex items-center gap-2">
                       <button
@@ -2007,7 +2008,7 @@ export default function FaithJourneyPage() {
                   </div>
                   
                   {/* Tradition Filters */}
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-1.5 sm:gap-2">
                     {["Judaism", "Christianity", "Islam", "Hinduism", "Buddhism", "Bahá'í"].map((tradition) => {
                       const isActive = holidayFilters.has(tradition);
                       const colors = getTraditionColors();
@@ -2016,7 +2017,7 @@ export default function FaithJourneyPage() {
                         <button
                           key={tradition}
                           onClick={() => toggleHolidayFilter(tradition)}
-                          className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all"
+                          className="flex items-center gap-1 sm:gap-2 px-2 py-1.5 sm:px-3 sm:py-2 rounded-lg text-xs sm:text-sm transition-all"
                           style={{
                             backgroundColor: isActive ? `${color}20` : "#0B0B11",
                             borderColor: isActive ? `${color}50` : "#2A2A38",
@@ -2033,21 +2034,22 @@ export default function FaithJourneyPage() {
                 </div>
 
                 {/* Calendar Grid */}
-                <div className="rounded-xl p-4 border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+                <div className="rounded-xl p-2 sm:p-4 border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
                   {/* Days of week header */}
-                  <div className="grid grid-cols-7 gap-1 mb-2">
-                    {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
-                      <div key={day} className="p-2 text-center text-sm font-medium text-slate-400">
-                        {day}
+                  <div className="grid grid-cols-7 gap-px sm:gap-1 mb-1 sm:mb-2">
+                    {["S", "M", "T", "W", "T", "F", "S"].map((day, i) => (
+                      <div key={i} className="p-1 sm:p-2 text-center text-xs sm:text-sm font-medium text-slate-400">
+                        <span className="sm:hidden">{day}</span>
+                        <span className="hidden sm:inline">{["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][i]}</span>
                       </div>
                     ))}
                   </div>
                   
                   {/* Calendar grid */}
-                  <div className="grid grid-cols-7 gap-1">
+                  <div className="grid grid-cols-7 gap-px sm:gap-1">
                     {/* Empty cells for days before month starts */}
                     {Array.from({ length: getFirstDayOfMonth(selectedYear, selectedMonth) }, (_, i) => (
-                      <div key={`empty-${i}`} className="p-2 h-16"></div>
+                      <div key={`empty-${i}`} className="p-1 sm:p-2 h-10 sm:h-16"></div>
                     ))}
                     
                     {/* Days of the month */}
@@ -2062,7 +2064,7 @@ export default function FaithJourneyPage() {
                         <div
                           key={day}
                           onClick={() => setSelectedDay(date)}
-                          className={`p-2 h-16 border cursor-pointer transition-all relative ${
+                          className={`p-1 sm:p-2 h-10 sm:h-16 border rounded-sm cursor-pointer transition-all relative ${
                             isSelected ? 'ring-2 ring-yellow-500' : 'hover:border-gray-500'
                           }`}
                           style={{ 
@@ -2070,32 +2072,31 @@ export default function FaithJourneyPage() {
                             borderColor: isSelected ? "#D4A020" : "#2A2A38"
                           }}
                         >
-                          <div className="text-sm text-slate-200 font-medium">
+                          <div className="text-xs sm:text-sm text-slate-200 font-medium text-center sm:text-left">
                             {day}
                             {isToday && (
-                              <div className="w-1 h-1 bg-yellow-500 rounded-full absolute top-1 right-1"></div>
+                              <div className="w-1.5 h-1.5 sm:w-1 sm:h-1 bg-yellow-500 rounded-full absolute top-0.5 right-0.5 sm:top-1 sm:right-1"></div>
                             )}
                           </div>
                           
                           {/* Event dots */}
                           {events.holidays.length > 0 || events.lessons.length > 0 ? (
-                            <div className="flex gap-1 mt-1 flex-wrap">
-                              {events.holidays.map((holiday, idx) => (
+                            <div className="flex gap-0.5 sm:gap-1 mt-0.5 sm:mt-1 flex-wrap justify-center sm:justify-start">
+                              {events.holidays.slice(0, 3).map((holiday, idx) => (
                                 <div
                                   key={`holiday-${idx}`}
-                                  className="w-2 h-2 rounded-full"
+                                  className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full"
                                   style={{ backgroundColor: holiday.color }}
                                   title={holiday.name}
                                 ></div>
                               ))}
-                              {events.lessons.map((lesson, idx) => (
+                              {events.lessons.length > 0 && (
                                 <div
-                                  key={`lesson-${idx}`}
-                                  className="w-2 h-2 rounded-full"
+                                  className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full"
                                   style={{ backgroundColor: "#D4A020" }}
-                                  title={lesson.title}
+                                  title={`${events.lessons.length} lesson(s)`}
                                 ></div>
-                              ))}
+                              )}
                             </div>
                           ) : null}
                         </div>
@@ -2106,11 +2107,11 @@ export default function FaithJourneyPage() {
 
                 {/* Day Detail Panel */}
                 {selectedDay && (
-                  <div className="rounded-xl p-4 border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
-                    <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-lg font-semibold text-slate-100">
+                  <div className="rounded-xl p-3 sm:p-4 border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+                    <div className="flex items-center justify-between mb-3 sm:mb-4">
+                      <h3 className="text-base sm:text-lg font-semibold text-slate-100">
                         {selectedDay.toLocaleDateString('en-US', { 
-                          weekday: 'long', 
+                          weekday: 'short', 
                           month: 'long', 
                           day: 'numeric',
                           year: 'numeric'
@@ -2118,7 +2119,7 @@ export default function FaithJourneyPage() {
                       </h3>
                       <button
                         onClick={() => setSelectedDay(null)}
-                        className="text-slate-400 hover:text-slate-200"
+                        className="text-slate-400 hover:text-slate-200 p-1"
                       >
                         <X className="w-5 h-5" />
                       </button>
@@ -2153,11 +2154,27 @@ export default function FaithJourneyPage() {
                           {/* Religious Calendar Context from Lessons */}
                           {enrichedPanels.length > 0 && (
                             <div>
-                              <h4 className="text-md font-medium text-slate-200 mb-3 flex items-center gap-2">
+                              <h4 className="text-sm sm:text-md font-medium text-slate-200 mb-2 sm:mb-3 flex items-center gap-2">
                                 <Globe className="w-4 h-4" style={{ color: "#D4A020" }} />
                                 Religious Calendar Context
+                                <span className="text-xs text-slate-500 font-normal">({enrichedPanels.length})</span>
                               </h4>
-                              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                              {/* Horizontal scroll on mobile, grid on desktop */}
+                              <div className="flex sm:hidden gap-2 overflow-x-auto pb-2 -mx-1 px-1 snap-x" style={{ WebkitOverflowScrolling: "touch" }}>
+                                {enrichedPanels.map((panel) => (
+                                  <div key={panel.key} className="p-2.5 rounded-lg border flex-shrink-0 w-[220px] snap-start" style={{ backgroundColor: "#0B0B11", borderColor: panel.color }}>
+                                    <div className="flex items-center gap-1.5 mb-1.5">
+                                      <span className="text-base">{panel.emoji}</span>
+                                      <h5 className="font-medium text-slate-200 text-xs">{panel.label}</h5>
+                                    </div>
+                                    {panel.text.split('\n').map((line, i) => (
+                                      <p key={i} className={`text-[11px] leading-relaxed ${i === 0 ? 'text-slate-300' : 'text-slate-400'}`}>{line}</p>
+                                    ))}
+                                  </div>
+                                ))}
+                              </div>
+                              {/* Grid on tablet/desktop */}
+                              <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
                                 {enrichedPanels.map((panel) => (
                                   <div key={panel.key} className="p-3 rounded-lg border" style={{ backgroundColor: "#0B0B11", borderColor: panel.color }}>
                                     <div className="flex items-center gap-2 mb-2">
@@ -2271,12 +2288,12 @@ export default function FaithJourneyPage() {
 
                 {/* Lesson Detail View */}
                 {selectedLesson && (
-                  <div className="rounded-xl p-4 border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
-                    <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-lg font-semibold text-slate-100">{selectedLesson.title}</h3>
+                  <div className="rounded-xl p-3 sm:p-4 border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+                    <div className="flex items-center justify-between mb-3 sm:mb-4 gap-2">
+                      <h3 className="text-base sm:text-lg font-semibold text-slate-100 line-clamp-2">{selectedLesson.title}</h3>
                       <button
                         onClick={() => setSelectedLesson(null)}
-                        className="text-slate-400 hover:text-slate-200"
+                        className="text-slate-400 hover:text-slate-200 flex-shrink-0 p-1"
                       >
                         <ArrowLeft className="w-5 h-5" />
                       </button>
@@ -2351,26 +2368,43 @@ export default function FaithJourneyPage() {
                         }
                         if (enriched.length === 0) return null;
                         return (
-                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                            {enriched.map((panel) => (
-                              <div key={panel.key} className="p-3 rounded-lg border" style={{ backgroundColor: "#0B0B11", borderColor: panel.color }}>
-                                <div className="flex items-center gap-2 mb-1">
-                                  <span>{panel.emoji}</span>
-                                  <span className="font-medium text-slate-200 text-xs">{panel.label}</span>
+                          <>
+                            {/* Horizontal scroll on mobile */}
+                            <div className="flex sm:hidden gap-2 overflow-x-auto pb-2 -mx-1 px-1 snap-x" style={{ WebkitOverflowScrolling: "touch" }}>
+                              {enriched.map((panel) => (
+                                <div key={panel.key} className="p-2.5 rounded-lg border flex-shrink-0 w-[220px] snap-start" style={{ backgroundColor: "#0B0B11", borderColor: panel.color }}>
+                                  <div className="flex items-center gap-1.5 mb-1">
+                                    <span className="text-base">{panel.emoji}</span>
+                                    <span className="font-medium text-slate-200 text-xs">{panel.label}</span>
+                                  </div>
+                                  {panel.text.split('\n').map((line, i) => (
+                                    <p key={i} className={`text-[11px] leading-relaxed ${i === 0 ? 'text-slate-300' : 'text-slate-400'}`}>{line}</p>
+                                  ))}
                                 </div>
-                                {panel.text.split('\n').map((line, i) => (
-                                  <p key={i} className={`text-xs leading-relaxed ${i === 0 ? 'text-slate-300' : 'text-slate-400'}`}>{line}</p>
-                                ))}
-                              </div>
-                            ))}
-                          </div>
+                              ))}
+                            </div>
+                            {/* Grid on tablet/desktop */}
+                            <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                              {enriched.map((panel) => (
+                                <div key={panel.key} className="p-3 rounded-lg border" style={{ backgroundColor: "#0B0B11", borderColor: panel.color }}>
+                                  <div className="flex items-center gap-2 mb-1">
+                                    <span>{panel.emoji}</span>
+                                    <span className="font-medium text-slate-200 text-xs">{panel.label}</span>
+                                  </div>
+                                  {panel.text.split('\n').map((line, i) => (
+                                    <p key={i} className={`text-xs leading-relaxed ${i === 0 ? 'text-slate-300' : 'text-slate-400'}`}>{line}</p>
+                                  ))}
+                                </div>
+                              ))}
+                            </div>
+                          </>
                         );
                       })()}
                       
                       {/* Lesson content with markdown rendering */}
                       {(selectedLesson.baselineText || selectedLesson.content) && (
-                        <div className="p-4 rounded-lg" style={{ backgroundColor: "#0B0B11" }}>
-                          <h4 className="font-medium text-slate-200 mb-3">Lesson Content</h4>
+                        <div className="p-3 sm:p-4 rounded-lg" style={{ backgroundColor: "#0B0B11" }}>
+                          <h4 className="font-medium text-slate-200 mb-2 sm:mb-3 text-sm sm:text-base">Lesson Content</h4>
                           <div className="prose prose-invert prose-sm max-w-none">
                             {renderMarkdown(selectedLesson.baselineText || selectedLesson.content || '')}
                           </div>
@@ -2378,8 +2412,8 @@ export default function FaithJourneyPage() {
                       )}
                       
                       {/* Tradition Perspectives — fetched from API */}
-                      <div className="p-4 rounded-lg border" style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}>
-                        <h4 className="font-medium text-slate-200 mb-3 flex items-center gap-2">
+                      <div className="p-3 sm:p-4 rounded-lg border" style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}>
+                        <h4 className="font-medium text-slate-200 mb-2 sm:mb-3 flex items-center gap-2 text-sm sm:text-base">
                           <Users className="w-4 h-4" style={{ color: "#D4A020" }} />
                           Tradition Perspectives
                         </h4>
@@ -2418,7 +2452,7 @@ export default function FaithJourneyPage() {
                                       }
                                       setExpandedPerspectives(newSet);
                                     }}
-                                    className="w-full flex items-center justify-between p-3 text-left hover:bg-white/5 transition-colors"
+                                    className="w-full flex items-center justify-between p-2.5 sm:p-3 text-left hover:bg-white/5 transition-colors"
                                   >
                                     <div className="flex items-center gap-3">
                                       <span className="text-sm font-semibold px-2 py-1 rounded" style={{ backgroundColor: "rgba(212, 160, 32, 0.15)", color: "#D4A020" }}>
@@ -2437,7 +2471,7 @@ export default function FaithJourneyPage() {
                                   
                                   {/* Accordion body */}
                                   {isExpanded && (
-                                    <div className="px-4 pb-4 space-y-4">
+                                    <div className="px-3 pb-3 sm:px-4 sm:pb-4 space-y-3 sm:space-y-4">
                                       {/* Perspective text */}
                                       <div className="text-sm text-slate-300 leading-relaxed">
                                         {renderMarkdown(perspective.perspective_text || '')}
@@ -2465,18 +2499,18 @@ export default function FaithJourneyPage() {
                                           <h5 className="text-xs font-medium text-slate-400 mb-2 uppercase tracking-wide">Dimension Scores</h5>
                                           <div className="space-y-2">
                                             {Object.entries(perspective.dimension_scores).map(([dim, score]) => (
-                                              <div key={dim} className="flex items-center gap-2">
-                                                <span className="text-xs text-slate-400 w-40 truncate capitalize">{dim.replace(/-/g, ' ')}</span>
-                                                <div className="flex-1 bg-slate-700 rounded-full h-2">
+                                              <div key={dim} className="flex items-center gap-1.5 sm:gap-2">
+                                                <span className="text-[10px] sm:text-xs text-slate-400 w-20 sm:w-40 truncate capitalize">{dim.replace(/-/g, ' ')}</span>
+                                                <div className="flex-1 bg-slate-700 rounded-full h-1.5 sm:h-2">
                                                   <div 
-                                                    className="h-2 rounded-full transition-all"
+                                                    className="h-1.5 sm:h-2 rounded-full transition-all"
                                                     style={{ 
                                                       width: `${Math.min((score as number) * 10, 100)}%`,
                                                       backgroundColor: "#D4A020"
                                                     }}
                                                   />
                                                 </div>
-                                                <span className="text-xs text-slate-300 w-6 text-right">{score as number}</span>
+                                                <span className="text-[10px] sm:text-xs text-slate-300 w-5 sm:w-6 text-right">{score as number}</span>
                                               </div>
                                             ))}
                                           </div>

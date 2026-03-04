@@ -307,34 +307,37 @@ function AdvisorCard({
   return (
     <button
       onClick={onOpen}
-      className={`w-full bg-slate-800/50 border ${config.borderColor} ${config.hoverBorder} rounded-lg p-3 transition-all duration-200 hover:bg-slate-800/80 group text-left`}
+      className={`w-full bg-slate-800/50 border ${config.borderColor} ${config.hoverBorder} rounded-xl p-4 transition-all duration-200 hover:bg-slate-800/80 group text-left`}
     >
-      <div className="flex items-center gap-3">
+      {/* Top row: avatar + name + chevron */}
+      <div className="flex items-center gap-3 mb-2">
         <div className="flex-shrink-0">
-          <AdvisorAvatar config={config} size={40} />
+          <AdvisorAvatar config={config} size={36} />
         </div>
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-1.5">
-            <h3 className="text-xs font-semibold text-white truncate">{config.name}</h3>
-            {data?.signal_timestamp && !data._stale_guard && (
-              <SignalFreshnessBadge signalTimestamp={data.signal_timestamp} compact />
-            )}
-            {data?._stale_guard && (
-              <span className="px-1.5 py-0.5 text-[10px] rounded-full bg-red-900/30 text-red-400 border border-red-700/30">
-                Expired
-              </span>
-            )}
-          </div>
-          <p className="text-[10px] text-slate-500">{config.subtitle}</p>
-          <p className={`text-[10px] mt-0.5 ${data?._stale_guard ? 'text-red-400' : config.accentText}`}>
-            {loading ? (
-              <span className="flex items-center gap-1">
-                <RefreshCcw className="h-2.5 w-2.5 animate-spin" /> Analyzing...
-              </span>
-            ) : statusLine}
-          </p>
+          <h3 className="text-sm font-semibold text-white leading-tight">{config.name}</h3>
+          <p className="text-[11px] text-slate-500">{config.subtitle}</p>
         </div>
         <ChevronRight className="h-4 w-4 text-slate-600 group-hover:text-slate-400 transition-colors flex-shrink-0" />
+      </div>
+
+      {/* Status row */}
+      <div className="flex items-center justify-between">
+        <p className={`text-xs ${data?._stale_guard ? 'text-red-400' : config.accentText}`}>
+          {loading ? (
+            <span className="flex items-center gap-1">
+              <RefreshCcw className="h-3 w-3 animate-spin" /> Analyzing…
+            </span>
+          ) : statusLine}
+        </p>
+        {data?.signal_timestamp && !data._stale_guard && !loading && (
+          <SignalFreshnessBadge signalTimestamp={data.signal_timestamp} compact />
+        )}
+        {data?._stale_guard && (
+          <span className="px-1.5 py-0.5 text-[10px] rounded-full bg-red-900/30 text-red-400 border border-red-700/30">
+            Expired
+          </span>
+        )}
       </div>
     </button>
   );
@@ -636,7 +639,7 @@ export default function AdvisorCards() {
 
     try {
       const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 30000);
+      const timeout = setTimeout(() => controller.abort(), 45000); // 45s client timeout
       const r = await fetch(`${apiRoute}${refresh ? '?refresh=true' : ''}`, { signal: controller.signal });
       clearTimeout(timeout);
       const text = await r.text();
@@ -670,7 +673,7 @@ export default function AdvisorCards() {
   // Staggered fetch: load advisors 1s apart to avoid hammering Anthropic API
   useEffect(() => {
     ADVISORS.forEach((advisor, idx) => {
-      setTimeout(() => fetchAdvisor(advisor), idx * 1500);
+      setTimeout(() => fetchAdvisor(advisor), idx * 2000); // 2s stagger
     });
   }, [fetchAdvisor]);
 
@@ -678,21 +681,44 @@ export default function AdvisorCards() {
 
   return (
     <>
-      {/* 5 advisor cards in scrollable row on desktop, stack on mobile */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2">
-        {ADVISORS.map((advisor) => {
-          const state = advisorState[advisor.id];
-          return (
-            <AdvisorCard
-              key={advisor.id}
-              config={advisor}
-              data={state.data}
-              loading={state.loading}
-              error={state.error}
-              onOpen={() => setOpenModal(advisor.id)}
-            />
-          );
-        })}
+      {/* Section header */}
+      <div className="flex items-center gap-2 mb-1">
+        <span className="text-sm font-medium text-slate-400">AI Trading Desk</span>
+        <span className="text-xs text-slate-600">— {ADVISORS.length} advisors analyzing your portfolio</span>
+      </div>
+
+      {/* Advisor cards: row of 3 + row of 2 centered on desktop; 2-col on mobile */}
+      <div className="space-y-2">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+          {ADVISORS.slice(0, 3).map((advisor) => {
+            const state = advisorState[advisor.id];
+            return (
+              <AdvisorCard
+                key={advisor.id}
+                config={advisor}
+                data={state.data}
+                loading={state.loading}
+                error={state.error}
+                onOpen={() => setOpenModal(advisor.id)}
+              />
+            );
+          })}
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-2 gap-2 md:max-w-[66.666%] md:mx-auto">
+          {ADVISORS.slice(3).map((advisor) => {
+            const state = advisorState[advisor.id];
+            return (
+              <AdvisorCard
+                key={advisor.id}
+                config={advisor}
+                data={state.data}
+                loading={state.loading}
+                error={state.error}
+                onOpen={() => setOpenModal(advisor.id)}
+              />
+            );
+          })}
+        </div>
       </div>
 
       {/* Modal */}

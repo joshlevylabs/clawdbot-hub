@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Server,
   Globe,
@@ -41,6 +41,34 @@ interface Resource {
   details?: string;
   endpoint?: string;
   tools?: string[];
+}
+
+interface Agent {
+  id: string;
+  name: string;
+  title: string;
+  emoji: string;
+  model: string;
+  department: string;
+  status: string;
+  description: string;
+  temperature: number;
+  max_tokens: number;
+  endpoint_enabled: boolean;
+  updated_at: string;
+}
+
+interface AgentStats {
+  totalAgents: number;
+  totalConversations: number;
+  totalMessages: number;
+  totalMemories: number;
+  perAgent: Record<string, {
+    conversations: number;
+    messages: number;
+    memories: number;
+    lastActivity: string | null;
+  }>;
 }
 
 // ── Data ──────────────────────────────────────────────────────
@@ -377,6 +405,144 @@ function CopyBtn({ text }: { text: string }) {
   );
 }
 
+function AgentCard({ agent, stats }: { agent: Agent; stats?: { conversations: number; messages: number; memories: number; lastActivity: string | null } }) {
+  const [expanded, setExpanded] = useState(false);
+  
+  // Format model name (e.g., "anthropic/claude-sonnet-4" -> "Claude Sonnet 4")
+  const formatModel = (model: string) => {
+    const parts = model.split('/');
+    const modelName = parts[parts.length - 1];
+    return modelName
+      .split('-')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  };
+  
+  // Format last activity
+  const formatLastActivity = (dateStr: string | null) => {
+    if (!dateStr) return 'Never';
+    const date = new Date(dateStr);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    
+    if (diffDays > 0) return `${diffDays}d ago`;
+    if (diffHours > 0) return `${diffHours}h ago`;
+    return 'Recent';
+  };
+
+  return (
+    <div className="border-b last:border-b-0" style={{ borderColor: "#1A1A24" }}>
+      <button
+        onClick={() => setExpanded(!expanded)}
+        className="w-full flex items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-white/[0.02]"
+      >
+        <ChevronRight className={`w-3.5 h-3.5 transition-transform shrink-0 ${expanded ? "rotate-90" : ""}`} style={{ color: "#626259" }} />
+        
+        {/* Agent Identity */}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-lg">{agent.emoji}</span>
+            <span className="text-sm font-semibold" style={{ color: "#F5F5F0" }}>{agent.name}</span>
+            
+            {/* Deployment Status */}
+            <div className="flex items-center gap-1">
+              <div className={`w-2 h-2 rounded-full ${agent.endpoint_enabled ? 'bg-green-500' : 'bg-red-500'}`} />
+              <span className="text-[10px]" style={{ color: agent.endpoint_enabled ? "#10B981" : "#EF4444" }}>
+                {agent.endpoint_enabled ? "Live" : "Offline"}
+              </span>
+            </div>
+            
+            {/* Department Badge */}
+            <span className="px-1.5 py-0.5 rounded text-[10px] font-medium" style={{ backgroundColor: "#D4A02020", color: "#D4A020" }}>
+              {agent.department}
+            </span>
+          </div>
+          
+          <p className="text-xs mt-0.5" style={{ color: "#8B8B80" }}>{agent.title}</p>
+          
+          {/* Stats Summary */}
+          <div className="flex items-center gap-3 mt-1 text-[10px]" style={{ color: "#626259" }}>
+            <span>{formatModel(agent.model)}</span>
+            {stats && (
+              <>
+                <span>•</span>
+                <span>{stats.conversations} conversations</span>
+                <span>•</span>
+                <span>Last: {formatLastActivity(stats.lastActivity)}</span>
+              </>
+            )}
+          </div>
+        </div>
+        
+        {/* Endpoint */}
+        <div className="text-[10px] text-right shrink-0" style={{ color: "#626259" }}>
+          {agent.endpoint_enabled && (
+            <code>/api/agents/{agent.id}/chat</code>
+          )}
+        </div>
+      </button>
+      
+      {/* Expanded Details */}
+      {expanded && (
+        <div className="px-4 pb-3">
+          <div className="pl-6 border-l-2 border-white/10">
+            <div className="space-y-3 text-xs" style={{ color: "#B8B8AD" }}>
+              
+              {/* Model Configuration */}
+              <div>
+                <p className="font-semibold mb-1" style={{ color: "#8B8B80" }}>Model Configuration</p>
+                <div className="grid grid-cols-2 gap-2 text-[11px]">
+                  <div>Model: <span style={{ color: "#D4A020" }}>{formatModel(agent.model)}</span></div>
+                  <div>Temperature: <span style={{ color: "#D4A020" }}>{agent.temperature}</span></div>
+                  <div>Max Tokens: <span style={{ color: "#D4A020" }}>{agent.max_tokens}</span></div>
+                  <div>Status: <span style={{ color: "#D4A020" }}>{agent.status}</span></div>
+                </div>
+              </div>
+              
+              {/* Memory Stats */}
+              {stats && (
+                <div>
+                  <p className="font-semibold mb-1" style={{ color: "#8B8B80" }}>Memory & Usage</p>
+                  <div className="grid grid-cols-3 gap-2 text-[11px]">
+                    <div>{stats.conversations} <span style={{ color: "#626259" }}>conversations</span></div>
+                    <div>{stats.messages} <span style={{ color: "#626259" }}>messages</span></div>
+                    <div>{stats.memories} <span style={{ color: "#626259" }}>memories</span></div>
+                  </div>
+                </div>
+              )}
+              
+              {/* Soul Prompt Preview */}
+              <div>
+                <p className="font-semibold mb-1" style={{ color: "#8B8B80" }}>Soul Prompt</p>
+                <p className="text-[11px]" style={{ color: "#B8B8AD" }}>
+                  {agent.description.length > 100 
+                    ? `${agent.description.slice(0, 100)}...` 
+                    : agent.description}
+                </p>
+              </div>
+              
+              {/* Endpoint */}
+              {agent.endpoint_enabled && (
+                <div>
+                  <p className="font-semibold mb-1" style={{ color: "#8B8B80" }}>Endpoint</p>
+                  <div className="flex items-center gap-2">
+                    <code className="font-mono text-[11px] px-1.5 py-0.5 rounded" style={{ backgroundColor: "#1A1A24", color: "#D4A020" }}>
+                      /api/agents/{agent.id}/chat
+                    </code>
+                    <CopyBtn text={`/api/agents/${agent.id}/chat`} />
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function ResourceRow({ resource }: { resource: Resource }) {
   const [expanded, setExpanded] = useState(false);
   return (
@@ -439,9 +605,36 @@ function ResourceRow({ resource }: { resource: Resource }) {
 export default function RegistryPage() {
   const [activeTab, setActiveTab] = useState<TabId>("overview");
   const [search, setSearch] = useState("");
+  const [agents, setAgents] = useState<Agent[]>([]);
+  const [agentStats, setAgentStats] = useState<AgentStats | null>(null);
+  const [agentsLoading, setAgentsLoading] = useState(true);
+
+  // Fetch agents and stats data
+  useEffect(() => {
+    async function fetchAgentsData() {
+      try {
+        const [agentsRes, statsRes] = await Promise.all([
+          fetch('/api/agents'),
+          fetch('/api/agents/stats')
+        ]);
+
+        const agentsData = await agentsRes.json();
+        const statsData = await statsRes.json();
+
+        setAgents(agentsData.agents || []);
+        setAgentStats(statsData);
+      } catch (error) {
+        console.error('Failed to fetch agents data:', error);
+      } finally {
+        setAgentsLoading(false);
+      }
+    }
+
+    fetchAgentsData();
+  }, []);
 
   const totalAPIs = API_GROUPS.reduce((sum, g) => sum + g.apis.length, 0);
-  const totalAgents = AGENT_CATEGORIES.reduce((sum, g) => sum + g.agents.length, 0);
+  const totalAgents = agents.length;
 
   // Update counts
   TABS[2].count = totalAPIs;
@@ -715,28 +908,123 @@ export default function RegistryPage() {
       {/* ── AGENTS TAB ──────────────────────────────────── */}
       {activeTab === "agents" && (
         <>
-          <div className="p-4 rounded-xl border mb-4" style={{ backgroundColor: "rgba(99, 102, 241, 0.05)", borderColor: "rgba(99, 102, 241, 0.15)" }}>
-            <p className="text-xs" style={{ color: "#B8B8AD" }}>
-              Agent configs live in <code className="font-mono" style={{ color: "#6366F1" }}>~/clawd/agents/</code>. 
-              Each has IDENTITY.md, SOUL.md, and MEMORY.md. Sync with <code className="font-mono" style={{ color: "#6366F1" }}>sync-org.py</code>.
-            </p>
-          </div>
-          {AGENT_CATEGORIES.map((cat) => {
-            const filtered = filterResources(cat.agents);
-            if (filtered.length === 0) return null;
-            return (
-              <div key={cat.category} className="mb-4">
-                <h3 className="text-xs font-semibold mb-2 flex items-center gap-2 px-1" style={{ color: "#8B8B80" }}>
-                  <Bot className="w-3.5 h-3.5" style={{ color: "#D4A020" }} />
-                  {cat.category}
-                  <span className="text-[10px] px-1.5 py-0.5 rounded-md" style={{ backgroundColor: "#1A1A24" }}>{filtered.length}</span>
-                </h3>
-                <div className="rounded-xl border overflow-hidden" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
-                  {filtered.map((r) => <ResourceRow key={r.name} resource={r} />)}
+          {agentsLoading ? (
+            <div className="flex items-center justify-center p-8">
+              <div className="text-sm" style={{ color: "#8B8B80" }}>Loading agents...</div>
+            </div>
+          ) : (
+            <>
+              {/* Summary Stats */}
+              {agentStats && (
+                <div className="p-4 rounded-xl border mb-4" style={{ backgroundColor: "rgba(99, 102, 241, 0.05)", borderColor: "rgba(99, 102, 241, 0.15)" }}>
+                  <div className="flex flex-wrap items-center justify-between gap-4">
+                    <div>
+                      <p className="text-sm font-semibold" style={{ color: "#6366F1" }}>
+                        {agentStats.totalAgents} Agents Deployed
+                      </p>
+                      <p className="text-xs mt-1" style={{ color: "#B8B8AD" }}>
+                        {agentStats.totalConversations.toLocaleString()} Total Conversations • {agentStats.totalMessages.toLocaleString()} Total Messages • {agentStats.totalMemories.toLocaleString()} Memories
+                      </p>
+                    </div>
+                    <div className="text-xs" style={{ color: "#8B8B80" }}>
+                      Configs: <code className="font-mono" style={{ color: "#6366F1" }}>~/clawd/agents/</code>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              )}
+
+              {/* Group agents by department */}
+              {(() => {
+                // Filter agents first
+                const filteredAgents = agents.filter(agent => {
+                  if (!search) return true;
+                  const q = search.toLowerCase();
+                  return (
+                    agent.name.toLowerCase().includes(q) ||
+                    agent.title.toLowerCase().includes(q) ||
+                    agent.description.toLowerCase().includes(q) ||
+                    agent.department.toLowerCase().includes(q)
+                  );
+                });
+
+                // Group by department with desired ordering
+                const departmentOrder = [
+                  "the-trading-desk",
+                  "faith-journey-guides",
+                  "judaism", 
+                  "christianity",
+                  "islam", 
+                  "hinduism", 
+                  "buddhism",
+                  "other-traditions"
+                ];
+
+                const groupedAgents: Record<string, Agent[]> = {};
+                filteredAgents.forEach(agent => {
+                  const dept = agent.department || 'other';
+                  if (!groupedAgents[dept]) {
+                    groupedAgents[dept] = [];
+                  }
+                  groupedAgents[dept].push(agent);
+                });
+
+                // Sort departments by desired order, then alphabetically for others
+                const sortedDepartments = Object.keys(groupedAgents).sort((a, b) => {
+                  const aIndex = departmentOrder.indexOf(a);
+                  const bIndex = departmentOrder.indexOf(b);
+                  
+                  if (aIndex !== -1 && bIndex !== -1) {
+                    return aIndex - bIndex;
+                  } else if (aIndex !== -1) {
+                    return -1;
+                  } else if (bIndex !== -1) {
+                    return 1;
+                  } else {
+                    return a.localeCompare(b);
+                  }
+                });
+
+                // Format department names for display
+                const formatDepartmentName = (dept: string) => {
+                  const deptMap: Record<string, string> = {
+                    'the-trading-desk': '📈 The Trading Desk',
+                    'faith-journey-guides': '🕊️ Faith Journey Guides',
+                    'judaism': '🕊️ Faith Journey Guides — Judaism',
+                    'christianity': '🕊️ Faith Journey Guides — Christianity', 
+                    'islam': '🕊️ Faith Journey Guides — Islam',
+                    'hinduism': '🕊️ Faith Journey Guides — Hinduism',
+                    'buddhism': '🕊️ Faith Journey Guides — Buddhism',
+                    'other-traditions': '🕊️ Faith Journey Guides — Other Traditions'
+                  };
+                  return deptMap[dept] || `🤖 ${dept.charAt(0).toUpperCase() + dept.slice(1).replace(/-/g, ' ')}`;
+                };
+
+                return sortedDepartments.map(department => {
+                  const departmentAgents = groupedAgents[department];
+                  if (departmentAgents.length === 0) return null;
+
+                  return (
+                    <div key={department} className="mb-4">
+                      <h3 className="text-xs font-semibold mb-2 flex items-center gap-2 px-1" style={{ color: "#8B8B80" }}>
+                        <Bot className="w-3.5 h-3.5" style={{ color: "#D4A020" }} />
+                        {formatDepartmentName(department)}
+                        <span className="text-[10px] px-1.5 py-0.5 rounded-md" style={{ backgroundColor: "#1A1A24" }}>{departmentAgents.length}</span>
+                      </h3>
+                      <div className="rounded-xl border overflow-hidden" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+                        {departmentAgents.map((agent) => (
+                          <AgentCard 
+                            key={agent.id} 
+                            agent={agent} 
+                            stats={agentStats?.perAgent[agent.id]} 
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  );
+                });
+              })()}
+            </>
+          )}
         </>
       )}
 

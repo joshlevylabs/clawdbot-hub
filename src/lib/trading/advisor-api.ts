@@ -141,7 +141,7 @@ export interface AdvisorConfig {
   knowledgeVersion: string;
 }
 
-const DEFAULT_MODEL = "claude-sonnet-4-5-20250414";
+const DEFAULT_MODEL = "claude-sonnet-4-20250514";
 
 async function getAdvisorModel(supabaseId: string): Promise<string> {
   try {

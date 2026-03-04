@@ -343,10 +343,9 @@ function CopyBtn({ text }: { text: string }) {
 }
 
 const TRADING_DESK_MODELS = [
-  { id: "claude-sonnet-4-5-20250414", label: "Claude Sonnet 4.5" },
-  { id: "claude-sonnet-4-20250514", label: "Claude Sonnet 4" },
-  { id: "claude-haiku-4-5-20250414", label: "Claude Haiku 4.5" },
   { id: "claude-opus-4-6", label: "Claude Opus 4" },
+  { id: "claude-sonnet-4-20250514", label: "Claude Sonnet 4" },
+  { id: "claude-3-haiku-20240307", label: "Claude 3 Haiku" },
 ];
 
 function AgentCard({ agent, stats, onModelChange }: { agent: Agent; stats?: { conversations: number; messages: number; memories: number; lastActivity: string | null }; onModelChange?: (agentId: string, model: string) => void }) {

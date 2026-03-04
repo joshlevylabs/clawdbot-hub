@@ -111,6 +111,9 @@ export async function GET(request: NextRequest) {
         calendarContext: lesson.calendar_context || null,
         baselineTraditionId: lesson.baseline_tradition_id || null,
         baselineText: lesson.baseline_text || null,
+        calendarSystem: lesson.calendar_system || null,
+        calendarKey: lesson.calendar_key || null,
+        calendarDisplayName: lesson.calendar_display || null,
       };
     });
 

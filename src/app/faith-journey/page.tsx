@@ -98,6 +98,9 @@ interface DashboardData {
     calendarContext?: string | null;
     baselineTraditionId?: string | null;
     baselineText?: string | null;
+    calendarSystem?: string | null;
+    calendarKey?: string | null;
+    calendarDisplayName?: string | null;
   }>;
   texts: Array<{
     id: string;
@@ -2201,17 +2204,25 @@ export default function FaithJourneyPage() {
                                       borderColor: "#2A2A38"
                                     }}
                                   >
-                                    <div className="flex items-center gap-2 mb-1">
+                                    <div className="flex items-center gap-2 mb-1 flex-wrap">
                                       <h5 className="font-medium text-slate-200">{lesson.title}</h5>
-                                      <span
-                                        className="text-xs px-2 py-1 rounded"
-                                        style={{
-                                          backgroundColor: "rgba(212, 160, 32, 0.2)",
-                                          color: "#D4A020"
-                                        }}
-                                      >
-                                        {lesson.tradition}
-                                      </span>
+                                      {(lesson as any).calendarDisplayName && (
+                                        <span
+                                          className="text-xs px-2 py-1 rounded"
+                                          style={{
+                                            backgroundColor: (lesson as any).calendarSystem === 'hebrew' ? 'rgba(59, 130, 246, 0.15)' :
+                                              (lesson as any).calendarSystem === 'christian_liturgical' ? 'rgba(139, 92, 246, 0.15)' :
+                                              'rgba(16, 185, 129, 0.15)',
+                                            color: (lesson as any).calendarSystem === 'hebrew' ? '#3B82F6' :
+                                              (lesson as any).calendarSystem === 'christian_liturgical' ? '#8B5CF6' :
+                                              '#10B981'
+                                          }}
+                                        >
+                                          {(lesson as any).calendarSystem === 'hebrew' ? '✡️' :
+                                           (lesson as any).calendarSystem === 'christian_liturgical' ? '✝️' : '☪️'}{' '}
+                                          {(lesson as any).calendarDisplayName}
+                                        </span>
+                                      )}
                                     </div>
                                     <p className="text-sm text-slate-400">
                                       {lesson.content ? lesson.content.substring(0, 100) + '...' : 'Click to view lesson content'}
@@ -2280,6 +2291,18 @@ export default function FaithJourneyPage() {
                             color: TRADITION_MAP[selectedLesson.baselineTraditionId].color
                           }}>
                             {TRADITION_MAP[selectedLesson.baselineTraditionId].emoji} {TRADITION_MAP[selectedLesson.baselineTraditionId].name}
+                          </span>
+                        )}
+                        {selectedLesson.calendarDisplayName && (
+                          <span className="text-xs px-2 py-1 rounded" style={{
+                            backgroundColor: selectedLesson.calendarSystem === 'hebrew' ? 'rgba(59, 130, 246, 0.15)' :
+                              selectedLesson.calendarSystem === 'christian_liturgical' ? 'rgba(139, 92, 246, 0.15)' :
+                              'rgba(16, 185, 129, 0.15)',
+                            color: selectedLesson.calendarSystem === 'hebrew' ? '#3B82F6' :
+                              selectedLesson.calendarSystem === 'christian_liturgical' ? '#8B5CF6' :
+                              '#10B981'
+                          }}>
+                            🗓️ {selectedLesson.calendarDisplayName}
                           </span>
                         )}
                       </div>

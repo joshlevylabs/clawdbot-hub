@@ -120,22 +120,17 @@ const REGIME_ORDER: Record<string, number> = { bull: 0, sideways: 1, bear: 2 };
 
 const PAGE_SIZE = 50;
 
-// Major sectors for filter chips (grouped from the 24 unique sectors)
-const MAJOR_SECTORS = [
-  "Information Technology",
-  "Financials",
-  "Health Care",
-  "Industrials",
-  "Consumer Discretionary",
-  "Consumer Staples",
-  "Energy",
-  "Real Estate",
-  "Materials",
-  "Utilities",
-  "Communication Services",
-  "Fixed Income",
-  "ETF",
-  "International",
+// Sector groups for hierarchical filtering
+const SECTOR_GROUPS: { label: string; emoji: string; sectors: string[] }[] = [
+  { label: "Technology", emoji: "💻", sectors: ["Information Technology", "Communication Services"] },
+  { label: "Healthcare", emoji: "🏥", sectors: ["Health Care"] },
+  { label: "Financial", emoji: "🏦", sectors: ["Financials"] },
+  { label: "Industrial", emoji: "🏭", sectors: ["Industrials", "Materials"] },
+  { label: "Consumer", emoji: "🛒", sectors: ["Consumer Discretionary", "Consumer Staples"] },
+  { label: "Energy & Utilities", emoji: "⚡", sectors: ["Energy", "Utilities"] },
+  { label: "Real Estate", emoji: "🏠", sectors: ["Real Estate"] },
+  { label: "ETFs & Funds", emoji: "📦", sectors: ["ETF", "Broad Market", "Fixed Income", "International", "Leveraged", "Thematic", "Factor", "Dividend", "Commodities"] },
+  { label: "Other", emoji: "📋", sectors: ["Unknown", "Mid-Cap", "Small-Cap"] },
 ];
 
 function formatPrice(price: number): string {
@@ -262,11 +257,34 @@ export default function UniverseTable() {
     setPage(0);
   };
 
-  // Derived: unique sectors from data
-  const availableSectors = useMemo(() => {
-    if (!data) return MAJOR_SECTORS;
-    const sectors = new Set(data.signals.by_asset_class.map((s) => s.sector));
-    return MAJOR_SECTORS.filter((s) => sectors.has(s));
+  // Toggle an entire sector group (all sectors in the group)
+  const toggleSectorGroup = (group: { sectors: string[] }) => {
+    const activeSectors = group.sectors.filter((s) => (sectorCounts[s] || 0) > 0);
+    const allSelected = activeSectors.every((s) => sectorFilters.has(s));
+    const next = new Set(sectorFilters);
+    if (allSelected) {
+      // Deselect all in group
+      for (const s of activeSectors) next.delete(s);
+    } else {
+      // Select all in group
+      for (const s of activeSectors) next.add(s);
+    }
+    setSectorFilters(next);
+    setPage(0);
+  };
+
+  // Derived: sector counts + groups from data
+  const { sectorCounts, activeGroups } = useMemo(() => {
+    if (!data) return { sectorCounts: {} as Record<string, number>, activeGroups: SECTOR_GROUPS };
+    const counts: Record<string, number> = {};
+    for (const s of data.signals.by_asset_class) {
+      counts[s.sector] = (counts[s.sector] || 0) + 1;
+    }
+    // Only show groups that have at least one ticker in the data
+    const groups = SECTOR_GROUPS.filter((g) =>
+      g.sectors.some((sec) => (counts[sec] || 0) > 0)
+    );
+    return { sectorCounts: counts, activeGroups: groups };
   }, [data]);
 
   // Filtered + sorted
@@ -602,18 +620,48 @@ export default function UniverseTable() {
             </div>
           </div>
 
-          {/* Sectors */}
+          {/* Sectors — grouped */}
           <div>
             <div className="text-xs text-slate-500 uppercase tracking-wide mb-2">Sector</div>
-            <div className="flex flex-wrap gap-2">
-              {availableSectors.map((sector) => (
-                <FilterChip
-                  key={sector}
-                  label={sector}
-                  active={sectorFilters.has(sector)}
-                  onClick={() => toggleFilter(sectorFilters, sector, setSectorFilters)}
-                />
-              ))}
+            <div className="space-y-2">
+              {activeGroups.map((group) => {
+                const activeSectors = group.sectors.filter((s) => (sectorCounts[s] || 0) > 0);
+                const groupCount = activeSectors.reduce((sum, s) => sum + (sectorCounts[s] || 0), 0);
+                const allSelected = activeSectors.length > 0 && activeSectors.every((s) => sectorFilters.has(s));
+                const someSelected = activeSectors.some((s) => sectorFilters.has(s));
+
+                return (
+                  <div key={group.label} className="flex flex-wrap items-center gap-1.5">
+                    {/* Group header chip */}
+                    <button
+                      onClick={() => toggleSectorGroup(group)}
+                      className={`flex items-center gap-1.5 px-3 py-1 rounded-full border text-xs font-semibold transition-colors ${
+                        allSelected
+                          ? "bg-primary-600/30 text-primary-300 border-primary-500/50"
+                          : someSelected
+                          ? "bg-primary-600/15 text-primary-400 border-primary-500/30"
+                          : "bg-slate-800/80 text-slate-300 border-slate-600 hover:border-slate-400 hover:text-slate-200"
+                      }`}
+                    >
+                      <span>{group.emoji}</span>
+                      <span>{group.label}</span>
+                      <span className={`text-[10px] font-normal ${allSelected ? "text-primary-400" : "text-slate-500"}`}>
+                        {groupCount}
+                      </span>
+                    </button>
+
+                    {/* Individual sector chips (only show if group has >1 sector) */}
+                    {activeSectors.length > 1 && activeSectors.map((sector) => (
+                      <FilterChip
+                        key={sector}
+                        label={`${sector === "Unknown" ? "Unclassified" : sector} (${sectorCounts[sector] || 0})`}
+                        active={sectorFilters.has(sector)}
+                        onClick={() => toggleFilter(sectorFilters, sector, setSectorFilters)}
+                      />
+                    ))}
+                  </div>
+                );
+              })}
             </div>
           </div>
 

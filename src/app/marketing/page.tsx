@@ -41,7 +41,26 @@ import {
   Globe,
   Edit,
 } from "lucide-react";
-import { Show, ShowEpisode } from "@/app/api/marketing/shows/route";
+// Show types (embedded — no API dependency)
+interface ShowEpisode {
+  number: number;
+  title: string;
+  pillar: string;
+  status: string;
+  finalized?: string;
+  description?: string;
+  links?: { youtube?: string; spotify?: string; apple?: string; medium?: string; beehiiv?: string };
+}
+interface Show {
+  id: string;
+  name: string;
+  description: string;
+  frequency: string;
+  coverArt: string | null;
+  platforms: string[];
+  createdAt: string;
+  episodes: ShowEpisode[];
+}
 import { Newsletter, NewsletterActivity, NewsletterStats } from "@/lib/newsletter-types";
 import { StatCard } from "@/components/newsletter/StatCard";
 import { NewsletterCard } from "@/components/newsletter/NewsletterCard";
@@ -205,22 +224,96 @@ const wpsToSlider = (wps: number): number => {
   return 100 * Math.log(wps / MIN_WPS) / Math.log(MAX_WPS / MIN_WPS);
 };
 
+// Default social platforms with real data
+const DEFAULT_SOCIAL_PLATFORMS: SocialPlatform[] = [
+  {
+    name: "YouTube",
+    platform: "youtube",
+    url: "https://www.youtube.com/@joshualevy6759",
+    followers: 28,
+    views: 9530,
+    engagement: 3.2,
+    lastUpdated: "2026-03-03",
+  },
+  {
+    name: "Spotify",
+    platform: "spotify",
+    url: "https://open.spotify.com/show/5z2QfKh7MUhf8d6NDxFKTn",
+    followers: 0,
+    views: 0,
+    engagement: 0,
+    lastUpdated: "2026-03-03",
+  },
+  {
+    name: "Apple Podcasts",
+    platform: "apple",
+    url: "https://podcasts.apple.com/us/podcast/the-builders-frequency/id1874100721",
+    followers: 0,
+    views: 0,
+    engagement: 0,
+    lastUpdated: "2026-03-03",
+  },
+  {
+    name: "LinkedIn",
+    platform: "linkedin",
+    url: "https://www.linkedin.com/in/joshuasethlevy/",
+    followers: 0,
+    views: 0,
+    engagement: 0,
+    lastUpdated: "2026-03-03",
+  },
+  {
+    name: "TikTok",
+    platform: "tiktok",
+    url: "https://www.tiktok.com/@joshlevylabs",
+    followers: 0,
+    views: 0,
+    engagement: 0,
+    lastUpdated: "2026-03-03",
+  },
+  {
+    name: "Medium",
+    platform: "medium",
+    url: "https://medium.com/@joshualevy_38678",
+    followers: 0,
+    views: 0,
+    engagement: 0,
+    lastUpdated: "2026-03-03",
+  },
+  {
+    name: "Beehiiv",
+    platform: "beehiiv",
+    url: "https://the-builders-frequency.beehiiv.com/",
+    followers: 0,
+    views: 0,
+    engagement: 0,
+    lastUpdated: "2026-03-03",
+  },
+  {
+    name: "Twitter/X",
+    platform: "twitter",
+    url: "https://twitter.com/joshualevy",
+    followers: 0,
+    views: 0,
+    engagement: 0,
+    lastUpdated: "2026-03-03",
+  },
+];
+
 // Social Media Platform Component
 function SocialMediaDashboard() {
-  const [platforms, setPlatforms] = useState<SocialPlatform[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [platforms, setPlatforms] = useState<SocialPlatform[]>(() => {
+    // Try localStorage first, fall back to defaults
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('social-metrics');
+      if (saved) {
+        try { return JSON.parse(saved); } catch {}
+      }
+    }
+    return DEFAULT_SOCIAL_PLATFORMS;
+  });
   const [editing, setEditing] = useState<string | null>(null);
   const [editValues, setEditValues] = useState<Partial<SocialPlatform>>({});
-
-  useEffect(() => {
-    fetch('/api/marketing/social')
-      .then(r => r.json())
-      .then(data => {
-        if (data.platforms) setPlatforms(data.platforms);
-      })
-      .catch(console.error)
-      .finally(() => setLoading(false));
-  }, []);
 
   const handleEdit = (platform: SocialPlatform) => {
     setEditing(platform.platform);
@@ -231,25 +324,15 @@ function SocialMediaDashboard() {
     });
   };
 
-  const handleSave = async (platformId: string) => {
-    try {
-      await fetch('/api/marketing/social', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          platform: platformId,
-          followers: editValues.followers,
-          views: editValues.views,
-          engagement: editValues.engagement,
-        }),
-      });
-      setPlatforms(prev => prev.map(p => 
-        p.platform === platformId 
-          ? { ...p, ...editValues, lastUpdated: new Date().toISOString() }
-          : p
-      ));
-    } catch (err) {
-      console.error('Failed to save:', err);
+  const handleSave = (platformId: string) => {
+    const updated = platforms.map(p => 
+      p.platform === platformId 
+        ? { ...p, ...editValues, lastUpdated: new Date().toISOString().split('T')[0] }
+        : p
+    );
+    setPlatforms(updated);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('social-metrics', JSON.stringify(updated));
     }
     setEditing(null);
     setEditValues({});
@@ -259,14 +342,6 @@ function SocialMediaDashboard() {
     setEditing(null);
     setEditValues({});
   };
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <Loader2 className="w-6 h-6 text-slate-500 animate-spin" />
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-6">
@@ -540,59 +615,103 @@ function NewsletterDashboard() {
   );
 }
 
+// Default show data (embedded — no filesystem dependency)
+const DEFAULT_SHOWS: Show[] = [
+  {
+    id: "builders-frequency",
+    name: "The Builder's Frequency",
+    description: "Insights for builders creating while employed",
+    frequency: "weekly",
+    coverArt: null,
+    platforms: ["youtube", "spotify", "apple"],
+    createdAt: "2026-02-15",
+    episodes: [
+      {
+        number: 1,
+        title: "Why I Started The Builder's Frequency",
+        pillar: "all",
+        status: "published",
+        finalized: "2026-01-30",
+        description: "The origin story — why I'm building a podcast about creating while employed.",
+        links: { youtube: "https://www.youtube.com/watch?v=6m9cHX1riqE" },
+      },
+      {
+        number: 2,
+        title: "The Invisible Entrepreneur",
+        pillar: "side-business",
+        status: "published",
+        finalized: "2026-02-06",
+        description: "Building in the margins — the stealth entrepreneur's playbook.",
+        links: {
+          youtube: "https://youtu.be/drK1_xyZ7Yk",
+          spotify: "https://open.spotify.com/episode/4u6SCrXUmvc3WNYi1jpBTq",
+          apple: "https://podcasts.apple.com/us/podcast/invisible-entrepreneurs-and-building-in-the-margins/id1874100721?i=1000748578221",
+        },
+      },
+      {
+        number: 3,
+        title: "I Built an AI Trading Desk (And You Can Too)",
+        pillar: "ai",
+        status: "published",
+        finalized: "2026-02-15",
+        description: "How I built an automated AI trading desk with agents, and you can too.",
+        links: { youtube: "https://youtube.com/watch?v=ayxpkLdnztc" },
+      },
+      {
+        number: 4,
+        title: "Eight Employees, Zero Paychecks — Inside the AI Operation That Runs Itself",
+        pillar: "ai",
+        status: "published",
+        finalized: "2026-02-22",
+        description: "I have eight AI employees who never sleep, never complain, and cost me about forty dollars a month.",
+        links: {
+          youtube: "https://youtube.com/watch?v=WBnVSjGa4kM",
+          spotify: "https://open.spotify.com/episode/4pad7gR7OIzJqtq7f6xMXg",
+        },
+      },
+    ],
+  },
+];
+
 // Simplified Podcast Dashboard (main functionality moved to separate components)
 function PodcastDashboard() {
-  const [shows, setShows] = useState<Show[]>([]);
+  const [shows, setShows] = useState<Show[]>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('podcast-shows');
+      if (saved) {
+        try { return JSON.parse(saved); } catch {}
+      }
+    }
+    return DEFAULT_SHOWS;
+  });
   const [selectedShow, setSelectedShow] = useState<Show | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadShows();
-  }, []);
+    if (shows.length > 0 && !selectedShow) {
+      setSelectedShow(shows[0]);
+    }
+  }, [shows, selectedShow]);
 
-  const loadShows = async () => {
-    try {
-      const response = await fetch('/api/marketing/shows');
-      const data = await response.json();
-      setShows(data.shows || []);
-      if (data.shows?.length > 0 && !selectedShow) {
-        setSelectedShow(data.shows[0]);
-      }
-    } catch (error) {
-      console.error('Failed to load shows:', error);
-    } finally {
-      setLoading(false);
+  const createShow = (showData: Partial<Show>) => {
+    const newShow: Show = {
+      id: showData.name?.toLowerCase().replace(/\s+/g, '-') || `show-${Date.now()}`,
+      name: showData.name || 'Untitled Show',
+      description: showData.description || '',
+      frequency: showData.frequency || 'weekly',
+      coverArt: null,
+      platforms: showData.platforms || [],
+      createdAt: new Date().toISOString().split('T')[0],
+      episodes: [],
+    };
+    const updated = [...shows, newShow];
+    setShows(updated);
+    setSelectedShow(newShow);
+    setShowCreateModal(false);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('podcast-shows', JSON.stringify(updated));
     }
   };
-
-  const createShow = async (showData: Partial<Show>) => {
-    try {
-      const response = await fetch('/api/marketing/shows', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          action: 'createShow',
-          ...showData,
-        }),
-      });
-      const result = await response.json();
-      if (result.success) {
-        await loadShows();
-        setShowCreateModal(false);
-      }
-    } catch (error) {
-      console.error('Failed to create show:', error);
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <Loader2 className="w-6 h-6 text-slate-500 animate-spin" />
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-6">

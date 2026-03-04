@@ -145,7 +145,7 @@ export default function AgentDetailModal({ agent, onClose }: AgentDetailModalPro
         setLoading(true);
         setError(null);
         
-        const response = await fetch(`/api/agents/${agent.name}/details`);
+        const response = await fetch(`/api/agents/${agent.id}/details`);
         if (!response.ok) {
           throw new Error('Failed to fetch agent details');
         }
@@ -161,7 +161,7 @@ export default function AgentDetailModal({ agent, onClose }: AgentDetailModalPro
     };
 
     fetchDetails();
-  }, [agent.name]);
+  }, [agent.id]);
 
   // Handle ESC key
   useEffect(() => {
@@ -339,28 +339,110 @@ export default function AgentDetailModal({ agent, onClose }: AgentDetailModalPro
         );
 
       case "knowledge":
-        const knowledgeSources = data.config.knowledge_sources;
+        const knowledgeSources = data.config.knowledge_sources || [];
+        const sourcesByType: Record<string, any[]> = {};
+        if (Array.isArray(knowledgeSources)) {
+          knowledgeSources.forEach((src: any) => {
+            const t = src.type || 'other';
+            if (!sourcesByType[t]) sourcesByType[t] = [];
+            sourcesByType[t].push(src);
+          });
+        }
+        const typeLabels: Record<string, { label: string; emoji: string }> = {
+          'youtube_transcript': { label: 'YouTube Transcripts', emoji: '🎬' },
+          'youtube_summary': { label: 'YouTube Summaries', emoji: '📝' },
+          'youtube_index': { label: 'YouTube Index', emoji: '📋' },
+          'report': { label: 'Reports & Analysis', emoji: '📊' },
+          'letter': { label: 'Letters & Essays', emoji: '✉️' },
+          'speech': { label: 'Speeches', emoji: '🎤' },
+          'book': { label: 'Books', emoji: '📚' },
+          'document': { label: 'Documents', emoji: '📄' },
+          'data': { label: 'Data Files', emoji: '💾' },
+        };
         return (
           <div className="space-y-4">
-            <h3 className="text-sm font-semibold uppercase tracking-wider" style={{ color: "#8B8B80" }}>Knowledge Sources</h3>
-            <div className="p-4 rounded-xl border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
-              <pre className="text-sm whitespace-pre-wrap font-mono" style={{ color: "#B8B8AD" }}>
-                {knowledgeSources ? JSON.stringify(knowledgeSources, null, 2) : "No knowledge sources configured."}
-              </pre>
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-semibold uppercase tracking-wider" style={{ color: "#8B8B80" }}>
+                Knowledge Sources ({Array.isArray(knowledgeSources) ? knowledgeSources.length : 0})
+              </h3>
             </div>
+            {Object.keys(sourcesByType).length > 0 ? (
+              Object.entries(sourcesByType).map(([type, sources]) => {
+                const tl = typeLabels[type] || { label: type.replace(/_/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase()), emoji: '📎' };
+                return (
+                  <div key={type} className="space-y-2">
+                    <h4 className="text-xs font-semibold flex items-center gap-2" style={{ color: "#8B8B80" }}>
+                      <span>{tl.emoji}</span> {tl.label}
+                      <span className="text-[10px] px-1.5 py-0.5 rounded-md" style={{ backgroundColor: "#1A1A24", color: "#626259" }}>{sources.length}</span>
+                    </h4>
+                    <div className="space-y-1">
+                      {sources.map((src: any, idx: number) => (
+                        <div key={idx} className="flex items-center justify-between p-2.5 rounded-lg border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+                          <div className="flex items-center gap-2 min-w-0">
+                            <span className="text-xs" style={{ color: "#626259" }}>{tl.emoji}</span>
+                            <span className="text-sm truncate" style={{ color: "#F5F5F0" }}>{src.title || src.path}</span>
+                            {src.date && <span className="text-[10px] shrink-0" style={{ color: "#626259" }}>{src.date}</span>}
+                          </div>
+                          <div className="flex items-center gap-2 shrink-0 text-[10px]" style={{ color: "#626259" }}>
+                            {src.size_bytes && <span>{(src.size_bytes / 1024).toFixed(1)}KB</span>}
+                            {src.id && <code className="font-mono" style={{ color: "#D4A020" }}>{src.id}</code>}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })
+            ) : (
+              <div className="text-center p-6" style={{ color: "#626259" }}>
+                <BookOpen className="w-8 h-8 mx-auto mb-2" />
+                <p className="text-sm">No knowledge sources configured</p>
+              </div>
+            )}
           </div>
         );
 
       case "integrations":
-        const integrations = data.config.integrations;
+        const integrations = data.config.integrations || {};
+        const hasIntegrations = Object.keys(integrations).length > 0;
         return (
           <div className="space-y-4">
-            <h3 className="text-sm font-semibold uppercase tracking-wider" style={{ color: "#8B8B80" }}>Integrations</h3>
-            <div className="p-4 rounded-xl border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
-              <pre className="text-sm whitespace-pre-wrap font-mono" style={{ color: "#B8B8AD" }}>
-                {integrations ? JSON.stringify(integrations, null, 2) : "No integrations configured."}
-              </pre>
-            </div>
+            <h3 className="text-sm font-semibold uppercase tracking-wider" style={{ color: "#8B8B80" }}>Integrations & Tools</h3>
+            {hasIntegrations ? (
+              Object.entries(integrations).map(([key, value]) => (
+                <div key={key} className="p-3 rounded-lg border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+                  <h4 className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: "#D4A020" }}>
+                    {key.replace(/_/g, ' ')}
+                  </h4>
+                  {Array.isArray(value) ? (
+                    <div className="flex flex-wrap gap-2">
+                      {(value as string[]).map((item: string, idx: number) => (
+                        <span key={idx} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-mono" style={{ backgroundColor: "#1A1A24", color: "#B8B8AD" }}>
+                          <Settings className="w-3 h-3" style={{ color: "#626259" }} />
+                          {item}
+                        </span>
+                      ))}
+                    </div>
+                  ) : typeof value === 'object' && value !== null ? (
+                    <div className="space-y-1">
+                      {Object.entries(value as Record<string, unknown>).map(([k, v]) => (
+                        <div key={k} className="flex items-center gap-2 text-xs">
+                          <span style={{ color: "#8B8B80" }}>{k}:</span>
+                          <span className="font-mono" style={{ color: "#B8B8AD" }}>{String(v)}</span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <span className="text-xs font-mono" style={{ color: "#B8B8AD" }}>{String(value)}</span>
+                  )}
+                </div>
+              ))
+            ) : (
+              <div className="text-center p-6" style={{ color: "#626259" }}>
+                <Plug className="w-8 h-8 mx-auto mb-2" />
+                <p className="text-sm">No integrations configured</p>
+              </div>
+            )}
           </div>
         );
 

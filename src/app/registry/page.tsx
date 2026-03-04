@@ -58,7 +58,7 @@ const TABS: { id: TabId; label: string; icon: React.ElementType; count: number; 
   { id: "overview", label: "Overview", icon: Layers, count: 0 },
   { id: "mcps", label: "MCP Servers", icon: Server, count: 1, shortLabel: "MCPs" },
   { id: "apis", label: "API Endpoints", icon: Globe, count: 53, shortLabel: "APIs" },
-  { id: "agents", label: "AI Agents", icon: Bot, count: 27 },
+  { id: "agents", label: "AI Agents", icon: Bot, count: 30 },
   { id: "tools", label: "CLI Tools", icon: Wrench, count: 29, shortLabel: "Tools" },
   { id: "services", label: "External Services", icon: Plug, count: 8 },
   { id: "databases", label: "Databases", icon: Database, count: 2, shortLabel: "DBs" },
@@ -185,6 +185,9 @@ const AGENT_CATEGORIES: { category: string; agents: Resource[] }[] = [
     agents: [
       { name: "Chris Vermeulen", description: "Veteran technical analyst and swing trader. Founder of TheTechnicalTraders.com. Specializes in INNER-Market Analysis, cycle analysis, and risk management.", status: "active", location: "~/clawd/agents/chris-vermeulen/", consumers: ["hub", "lever"], tags: ["trading", "technical", "swing"] },
       { name: "Warren Buffett", description: "The Oracle of Omaha. Legendary value investor and CEO of Berkshire Hathaway. Focuses on intrinsic value, economic moats, and long-term capital allocation.", status: "active", location: "~/clawd/agents/warren-buffett/", consumers: ["hub", "lever"], tags: ["trading", "value", "investing"] },
+      { name: "Peter Schiff", description: "Austrian economist, gold bug, and contrarian macro investor. CEO of Euro Pacific Capital and SchiffGold. Predicted the 2008 crisis. Focuses on sound money, precious metals, and dollar collapse thesis.", status: "active", location: "~/clawd/agents/peter-schiff/", consumers: ["hub", "lever"], tags: ["trading", "macro", "gold", "austrian"] },
+      { name: "Raoul Pal", description: "Global macro strategist, founder of Real Vision and Global Macro Investor. Former Goldman Sachs. Architect of 'The Everything Code' framework — liquidity cycles, business cycles, and the Exponential Age thesis.", status: "active", location: "~/clawd/agents/raoul-pal/", consumers: ["hub", "lever"], tags: ["trading", "macro", "crypto", "liquidity"] },
+      { name: "Peter Lynch", description: "Legendary Fidelity Magellan Fund manager (1977-1990). Achieved 29.2% annual returns. Pioneer of GARP investing (Growth at a Reasonable Price), the PEG ratio, and 'invest in what you know' philosophy.", status: "active", location: "~/clawd/agents/peter-lynch/", consumers: ["hub", "lever"], tags: ["trading", "garp", "fundamental", "growth"] },
     ],
   },
   {

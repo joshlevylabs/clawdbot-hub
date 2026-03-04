@@ -614,23 +614,64 @@ function renderMarkdown(text: string): React.ReactNode {
 
 // ===== Calendar Context Parser =====
 
-function parseCalendarContext(calendarContext: string | null | undefined): { jewish: string | null; christian: string | null; islamic: string | null } {
-  if (!calendarContext) return { jewish: null, christian: null, islamic: null };
-  const parts = calendarContext.split('|').map(p => p.trim());
-  let jewish: string | null = null;
-  let christian: string | null = null;
-  let islamic: string | null = null;
+interface CalendarPanel {
+  key: string;
+  emoji: string;
+  label: string;
+  text: string;
+  color: string; // border color
+}
+
+// Tradition-level calendar panels with distinct info per tradition group
+const CALENDAR_TRADITION_CONFIG: Record<string, { emoji: string; label: string; color: string }> = {
+  'orthodox_judaism':         { emoji: '✡️', label: 'Orthodox Judaism', color: '#3B82F650' },
+  'conservative_judaism':     { emoji: '✡️', label: 'Conservative Judaism', color: '#3B82F650' },
+  'reform_judaism':           { emoji: '✡️', label: 'Reform Judaism', color: '#3B82F650' },
+  'reconstructionist_judaism':{ emoji: '✡️', label: 'Reconstructionist Judaism', color: '#3B82F650' },
+  'messianic_judaism':        { emoji: '✡️✝️', label: 'Messianic Judaism', color: '#6366F150' },
+  'catholicism':              { emoji: '✝️', label: 'Catholicism', color: '#8B5CF650' },
+  'eastern_orthodox':         { emoji: '☦️', label: 'Eastern Orthodox', color: '#A855F750' },
+  'evangelical_protestant':   { emoji: '✝️', label: 'Evangelical Protestant', color: '#8B5CF650' },
+  'sunni_islam':              { emoji: '☪️', label: 'Sunni Islam', color: '#10B98150' },
+  'shia_islam':               { emoji: '☪️', label: 'Shia Islam', color: '#14B8A650' },
+  // Legacy 3-family keys
+  'jewish':                   { emoji: '✡️', label: 'Jewish', color: '#3B82F650' },
+  'christian':                { emoji: '✝️', label: 'Christian', color: '#8B5CF650' },
+  'islamic':                  { emoji: '☪️', label: 'Islamic', color: '#10B98150' },
+};
+
+function parseCalendarContext(calendarContext: string | null | undefined): CalendarPanel[] {
+  if (!calendarContext) return [];
+  const parts = calendarContext.split('|').map(p => p.trim()).filter(Boolean);
+  const panels: CalendarPanel[] = [];
+
   for (const part of parts) {
+    // Try labeled format: [key]: text
+    const labelMatch = part.match(/^\[([^\]]+)\]:\s*(.+)$/s);
+    if (labelMatch) {
+      const key = labelMatch[1].toLowerCase().replace(/\s+/g, '_');
+      const text = labelMatch[2].trim();
+      const config = CALENDAR_TRADITION_CONFIG[key];
+      if (config && text) {
+        panels.push({ key, emoji: config.emoji, label: config.label, text, color: config.color });
+      }
+      continue;
+    }
+
+    // Legacy fallback: detect by content
     const lower = part.toLowerCase();
     if (lower.startsWith('torah portion') || lower.startsWith('jewish') || lower.startsWith('hebrew')) {
-      jewish = part;
+      const cfg = CALENDAR_TRADITION_CONFIG['jewish'];
+      panels.push({ key: 'jewish', emoji: cfg.emoji, label: cfg.label, text: part, color: cfg.color });
     } else if (lower.startsWith('christian') || lower.startsWith('liturgical')) {
-      christian = part;
+      const cfg = CALENDAR_TRADITION_CONFIG['christian'];
+      panels.push({ key: 'christian', emoji: cfg.emoji, label: cfg.label, text: part, color: cfg.color });
     } else if (lower.startsWith('islamic') || lower.startsWith('hijri')) {
-      islamic = part;
+      const cfg = CALENDAR_TRADITION_CONFIG['islamic'];
+      panels.push({ key: 'islamic', emoji: cfg.emoji, label: cfg.label, text: part, color: cfg.color });
     }
   }
-  return { jewish, christian, islamic };
+  return panels;
 }
 
 // ===== Shuffle helper =====
@@ -2086,65 +2127,48 @@ export default function FaithJourneyPage() {
                     {(() => {
                       const events = getEventsForDate(selectedDay);
                       const firstLessonWithContext = events.lessons.find((l: any) => l.calendarContext);
-                      const calCtx = firstLessonWithContext ? parseCalendarContext((firstLessonWithContext as any).calendarContext) : null;
+                      const calPanels = firstLessonWithContext ? parseCalendarContext((firstLessonWithContext as any).calendarContext) : [];
                       const hebrewDate = events.lessons.find((l: any) => l.hebrewDate)?.hebrewDate as string | undefined;
                       const parsha = events.lessons.find((l: any) => l.parsha)?.parsha as string | undefined;
+
+                      // Inject Hebrew date/parsha into the first Jewish panel if present
+                      const enrichedPanels = calPanels.map(p => {
+                        if ((p.key === 'jewish' || p.key === 'orthodox_judaism') && (hebrewDate || parsha)) {
+                          const prefix = [hebrewDate, parsha ? `Torah portion: ${parsha}` : ''].filter(Boolean).join('\n');
+                          return { ...p, text: prefix + (p.text ? '\n' + p.text : '') };
+                        }
+                        return p;
+                      });
+                      // If we have Hebrew date/parsha but no Jewish panel, prepend one
+                      if ((hebrewDate || parsha) && !enrichedPanels.some(p => p.key === 'jewish' || p.key === 'orthodox_judaism')) {
+                        const cfg = CALENDAR_TRADITION_CONFIG['jewish'];
+                        enrichedPanels.unshift({
+                          key: 'jewish', emoji: cfg.emoji, label: cfg.label, color: cfg.color,
+                          text: [hebrewDate, parsha ? `Torah portion: ${parsha}` : ''].filter(Boolean).join('\n')
+                        });
+                      }
 
                       return (
                         <div className="space-y-4">
                           {/* Religious Calendar Context from Lessons */}
-                          {(calCtx?.jewish || calCtx?.christian || calCtx?.islamic || hebrewDate || parsha) && (
+                          {enrichedPanels.length > 0 && (
                             <div>
                               <h4 className="text-md font-medium text-slate-200 mb-3 flex items-center gap-2">
                                 <Globe className="w-4 h-4" style={{ color: "#D4A020" }} />
                                 Religious Calendar Context
                               </h4>
-                              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                                {/* Jewish */}
-                                <div className="p-3 rounded-lg border" style={{ backgroundColor: "#0B0B11", borderColor: "#3B82F650" }}>
-                                  <div className="flex items-center gap-2 mb-2">
-                                    <span className="text-lg">✡️</span>
-                                    <h5 className="font-medium text-slate-200 text-sm">Jewish</h5>
+                              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                                {enrichedPanels.map((panel) => (
+                                  <div key={panel.key} className="p-3 rounded-lg border" style={{ backgroundColor: "#0B0B11", borderColor: panel.color }}>
+                                    <div className="flex items-center gap-2 mb-2">
+                                      <span className="text-lg">{panel.emoji}</span>
+                                      <h5 className="font-medium text-slate-200 text-sm">{panel.label}</h5>
+                                    </div>
+                                    {panel.text.split('\n').map((line, i) => (
+                                      <p key={i} className={`text-xs leading-relaxed ${i === 0 ? 'text-slate-300' : 'text-slate-400'}`}>{line}</p>
+                                    ))}
                                   </div>
-                                  {hebrewDate && (
-                                    <p className="text-xs text-slate-300 mb-1">{hebrewDate}</p>
-                                  )}
-                                  {parsha && (
-                                    <p className="text-xs text-slate-400 mb-1">Torah portion: {parsha}</p>
-                                  )}
-                                  {calCtx?.jewish && (
-                                    <p className="text-xs text-slate-400 leading-relaxed">{calCtx.jewish}</p>
-                                  )}
-                                  {!hebrewDate && !parsha && !calCtx?.jewish && (
-                                    <p className="text-xs text-slate-500 italic">No data available</p>
-                                  )}
-                                </div>
-
-                                {/* Christian */}
-                                <div className="p-3 rounded-lg border" style={{ backgroundColor: "#0B0B11", borderColor: "#8B5CF650" }}>
-                                  <div className="flex items-center gap-2 mb-2">
-                                    <span className="text-lg">✝️</span>
-                                    <h5 className="font-medium text-slate-200 text-sm">Christian</h5>
-                                  </div>
-                                  {calCtx?.christian ? (
-                                    <p className="text-xs text-slate-400 leading-relaxed">{calCtx.christian}</p>
-                                  ) : (
-                                    <p className="text-xs text-slate-500 italic">No data available</p>
-                                  )}
-                                </div>
-
-                                {/* Islamic */}
-                                <div className="p-3 rounded-lg border" style={{ backgroundColor: "#0B0B11", borderColor: "#10B98150" }}>
-                                  <div className="flex items-center gap-2 mb-2">
-                                    <span className="text-lg">☪️</span>
-                                    <h5 className="font-medium text-slate-200 text-sm">Islamic</h5>
-                                  </div>
-                                  {calCtx?.islamic ? (
-                                    <p className="text-xs text-slate-400 leading-relaxed">{calCtx.islamic}</p>
-                                  ) : (
-                                    <p className="text-xs text-slate-500 italic">No data available</p>
-                                  )}
-                                </div>
+                                ))}
                               </div>
                             </div>
                           )}
@@ -2309,34 +2333,36 @@ export default function FaithJourneyPage() {
 
                       {/* Religious Calendar Context for this lesson */}
                       {selectedLesson.calendarContext && (() => {
-                        const ctx = parseCalendarContext(selectedLesson.calendarContext);
+                        const lessonPanels = parseCalendarContext(selectedLesson.calendarContext);
+                        // Inject Hebrew date/parsha into first Jewish panel
+                        const enriched = lessonPanels.map(p => {
+                          if ((p.key === 'jewish' || p.key === 'orthodox_judaism') && (selectedLesson.hebrewDate || selectedLesson.parsha)) {
+                            const prefix = [selectedLesson.hebrewDate, selectedLesson.parsha ? `Torah: ${selectedLesson.parsha}` : ''].filter(Boolean).join('\n');
+                            return { ...p, text: prefix + (p.text ? '\n' + p.text : '') };
+                          }
+                          return p;
+                        });
+                        if ((selectedLesson.hebrewDate || selectedLesson.parsha) && !enriched.some(p => p.key === 'jewish' || p.key === 'orthodox_judaism')) {
+                          const cfg = CALENDAR_TRADITION_CONFIG['jewish'];
+                          enriched.unshift({
+                            key: 'jewish', emoji: cfg.emoji, label: cfg.label, color: cfg.color,
+                            text: [selectedLesson.hebrewDate, selectedLesson.parsha ? `Torah: ${selectedLesson.parsha}` : ''].filter(Boolean).join('\n')
+                          });
+                        }
+                        if (enriched.length === 0) return null;
                         return (
-                          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                            <div className="p-3 rounded-lg border" style={{ backgroundColor: "#0B0B11", borderColor: "#3B82F650" }}>
-                              <div className="flex items-center gap-2 mb-1">
-                                <span>✡️</span>
-                                <span className="font-medium text-slate-200 text-xs">Jewish</span>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                            {enriched.map((panel) => (
+                              <div key={panel.key} className="p-3 rounded-lg border" style={{ backgroundColor: "#0B0B11", borderColor: panel.color }}>
+                                <div className="flex items-center gap-2 mb-1">
+                                  <span>{panel.emoji}</span>
+                                  <span className="font-medium text-slate-200 text-xs">{panel.label}</span>
+                                </div>
+                                {panel.text.split('\n').map((line, i) => (
+                                  <p key={i} className={`text-xs leading-relaxed ${i === 0 ? 'text-slate-300' : 'text-slate-400'}`}>{line}</p>
+                                ))}
                               </div>
-                              <p className="text-xs text-slate-400 leading-relaxed">
-                                {selectedLesson.hebrewDate && <span className="block text-slate-300 mb-1">{selectedLesson.hebrewDate}</span>}
-                                {selectedLesson.parsha && <span className="block text-slate-300 mb-1">Torah: {selectedLesson.parsha}</span>}
-                                {ctx.jewish || 'No additional context'}
-                              </p>
-                            </div>
-                            <div className="p-3 rounded-lg border" style={{ backgroundColor: "#0B0B11", borderColor: "#8B5CF650" }}>
-                              <div className="flex items-center gap-2 mb-1">
-                                <span>✝️</span>
-                                <span className="font-medium text-slate-200 text-xs">Christian</span>
-                              </div>
-                              <p className="text-xs text-slate-400 leading-relaxed">{ctx.christian || 'No additional context'}</p>
-                            </div>
-                            <div className="p-3 rounded-lg border" style={{ backgroundColor: "#0B0B11", borderColor: "#10B98150" }}>
-                              <div className="flex items-center gap-2 mb-1">
-                                <span>☪️</span>
-                                <span className="font-medium text-slate-200 text-xs">Islamic</span>
-                              </div>
-                              <p className="text-xs text-slate-400 leading-relaxed">{ctx.islamic || 'No additional context'}</p>
-                            </div>
+                            ))}
                           </div>
                         );
                       })()}

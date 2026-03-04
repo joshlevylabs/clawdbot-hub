@@ -1,6 +1,6 @@
 {
-  "nextAgentId": 37,
-  "nextJoshuaId": 7,
+  "nextAgentId": 43,
+  "nextJoshuaId": 8,
   "tasks": [
     {
       "key": "A-001",
@@ -1078,6 +1078,90 @@
       "completedAt": null,
       "approvedAt": "2026-03-03T14:26:42.128468-08:00",
       "approvedBy": "joshua"
+    },
+    {
+      "key": "A-037",
+      "title": "Agent Registry Technical Architecture",
+      "assignee": "CTO (Chris Vermeulen)",
+      "persona": "chris vermeulen",
+      "type": "AGENT",
+      "status": "approved",
+      "description": "Design multi-tenant hosting platform with API gateway, billing, and ClawdHub integration",
+      "acceptanceCriteria": "Architecture doc covering: container runtime, API gateway, auth/billing, ClawdHub skill integration, SDK design",
+      "source": "STD-EVE (Evening Standup 2026-03-03)",
+      "approvedAt": "2026-03-03T21:37:00-08:00"
+    },
+    {
+      "key": "A-038",
+      "title": "Agent Monetization Strategy",
+      "assignee": "CRO (Alex Hormozi)",
+      "persona": "alex hormozi",
+      "type": "AGENT",
+      "status": "approved",
+      "description": "Define pricing tiers, freemium model, and enterprise white-label opportunities",
+      "acceptanceCriteria": "Pricing doc with Free/Pro/Enterprise tiers, unit economics, enterprise licensing model",
+      "source": "STD-EVE (Evening Standup 2026-03-03)",
+      "approvedAt": "2026-03-03T21:37:00-08:00"
+    },
+    {
+      "key": "A-039",
+      "title": "Agent Discovery Experience",
+      "assignee": "CMO (Steve Jobs)",
+      "persona": "steve jobs",
+      "type": "AGENT",
+      "status": "approved",
+      "description": "Design beautiful developer portal with one-click deployment and monitoring dashboard",
+      "acceptanceCriteria": "UX spec for agent marketplace/portal: discovery, deployment flow, monitoring dashboard",
+      "source": "STD-EVE (Evening Standup 2026-03-03)",
+      "approvedAt": "2026-03-03T21:37:00-08:00"
+    },
+    {
+      "key": "A-040",
+      "title": "Unit Economics Analysis",
+      "assignee": "CFTO (Dave Ramsey)",
+      "persona": "dave ramsey",
+      "type": "AGENT",
+      "status": "approved",
+      "description": "Model compute costs, pricing scenarios, and path to profitability",
+      "acceptanceCriteria": "Financial model with cost projections per agent tier, break-even analysis, margin targets",
+      "source": "STD-EVE (Evening Standup 2026-03-03)",
+      "approvedAt": "2026-03-03T21:37:00-08:00"
+    },
+    {
+      "key": "A-041",
+      "title": "Industrial Agent Capabilities",
+      "assignee": "CTIO (James Truchard)",
+      "persona": "james truchard",
+      "type": "AGENT",
+      "status": "approved",
+      "description": "Define specialized industrial/hardware integration features as key differentiator",
+      "acceptanceCriteria": "Capability spec for industrial agents: protocols, equipment types, integration patterns",
+      "source": "STD-EVE (Evening Standup 2026-03-03)",
+      "approvedAt": "2026-03-03T21:37:00-08:00"
+    },
+    {
+      "key": "A-042",
+      "title": "Agent Reliability Framework",
+      "assignee": "CPO (Jordan Peterson)",
+      "persona": "jordan peterson",
+      "type": "AGENT",
+      "status": "approved",
+      "description": "Create competence metrics and quality standards for registry agents",
+      "acceptanceCriteria": "Quality framework doc: reliability metrics, competence scoring, trust signals, review system",
+      "source": "STD-EVE (Evening Standup 2026-03-03)",
+      "approvedAt": "2026-03-03T21:37:00-08:00"
+    },
+    {
+      "key": "J-007",
+      "title": "ClawdHub Integration Planning",
+      "assignee": "CEO (Joshua)",
+      "persona": "joshua",
+      "type": "CEO",
+      "status": "approved",
+      "description": "Map how existing skill marketplace enhances agent capabilities",
+      "acceptanceCriteria": "Integration plan: how ClawdHub skills compose into hosted agents, API surface, developer workflow",
+      "source": "STD-EVE (Evening Standup 2026-03-03)",
+      "approvedAt": "2026-03-03T21:37:00-08:00"
     }
   ]
 }

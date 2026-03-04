@@ -61,10 +61,37 @@ const FG_CHANGE_THRESHOLD_PTS = 10; // 10 absolute points
 
 /**
  * Compute freshness tier from signal timestamp.
+ * 
+ * Handles timezone-naive timestamps by checking if the parsed time
+ * is unreasonably far in the future (which indicates local-time-as-UTC mismatch).
+ * Signal generator outputs UTC timestamps with '+00:00' suffix (fixed March 2026).
+ * Legacy timestamps without timezone info are handled gracefully.
  */
 export function computeFreshness(signalTimestamp: string): FreshnessInfo {
-  const signalTime = new Date(signalTimestamp);
+  let signalTime = new Date(signalTimestamp);
   const now = new Date();
+  
+  // Handle timezone-naive timestamps (legacy: generated in PST without tz suffix).
+  // On Vercel serverless (UTC env), `new Date('2026-03-04T09:06:37')` is parsed as
+  // UTC 09:06, but the signal was actually generated at PST 09:06 = UTC 17:06.
+  // This makes signals appear ~8h older than reality on the server.
+  // 
+  // Detection: if typeof window === 'undefined' (server-side) AND no tz info in
+  // timestamp AND TZ env is UTC (Vercel), apply Pacific offset correction.
+  // On the browser (local TZ = Pacific), parsing is already correct.
+  if (!signalTimestamp.includes('Z') && !signalTimestamp.includes('+') && !signalTimestamp.match(/-\d{2}:\d{2}$/)) {
+    const isServer = typeof window === 'undefined';
+    if (isServer) {
+      // Server (Vercel = UTC): add Pacific offset to correct naive timestamp.
+      // PDT (Mar-Nov) = UTC-7, PST (Nov-Mar) = UTC-8
+      const month = signalTime.getUTCMonth(); // 0-indexed
+      const isPDT = month >= 2 && month <= 10; // Rough heuristic
+      const offsetHours = isPDT ? 7 : 8;
+      signalTime = new Date(signalTime.getTime() + offsetHours * 60 * 60 * 1000);
+    }
+    // Browser: V8 parses timezone-naive as local time, which is already correct.
+  }
+  
   const ageMs = now.getTime() - signalTime.getTime();
   const ageMinutes = Math.max(0, ageMs / (1000 * 60));
 

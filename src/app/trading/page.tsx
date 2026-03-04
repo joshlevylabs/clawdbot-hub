@@ -33,6 +33,7 @@ import ActionsDashboard from "@/components/ActionsDashboard";
 import PerformanceChart from "@/components/PerformanceChart";
 import MREDashboard from "./MREDashboard";
 import AdvisorCards from "@/components/trading/AdvisorCards";
+import AgentPortfolios from "@/components/trading/AgentPortfolios";
 import SignalHealthBanner from "@/components/trading/SignalHealthBanner";
 import UniverseTable from "./UniverseTable";
 import MarketsOverview from "./MarketsOverview";
@@ -53,6 +54,7 @@ import CorrelationPanel from "@/components/CorrelationPanel";
 interface PaperPosition {
   id: string;
   user_id: string | null;
+  account_id: string | null;
   symbol: string;
   side: string;
   qty: number;
@@ -431,6 +433,9 @@ export default function TradingPage() {
 
   // Legacy: still support passing symbol to markets tab
   const [analyzeSymbol, setAnalyzeSymbol] = useState<string | null>(null);
+  
+  // Agent filter for positions
+  const [selectedAgentFilter, setSelectedAgentFilter] = useState<string>('all');
 
   const handleAnalyze = (symbol: string) => {
     setAnalyzeModalSymbol(symbol);
@@ -570,6 +575,13 @@ export default function TradingPage() {
   const avgWin = winningTrades.length > 0 ? winningTrades.reduce((s, t) => s + t.pnl, 0) / winningTrades.length : 0;
   const avgLoss = losingTrades.length > 0 ? Math.abs(losingTrades.reduce((s, t) => s + t.pnl, 0) / losingTrades.length) : 0;
   const profitFactor = avgLoss > 0 ? avgWin / avgLoss : avgWin > 0 ? Infinity : 0;
+
+  // Filter positions based on selected agent
+  const filteredPositions = positions.filter(position => {
+    if (selectedAgentFilter === 'all') return true;
+    if (selectedAgentFilter === 'user') return !position.account_id; // null account_id = user portfolio
+    return position.account_id === selectedAgentFilter;
+  });
 
   const isPortfolioTab = activeTab === "overview" || activeTab === "plays" || activeTab === "positions" || activeTab === "trades" || activeTab === "signals";
 
@@ -784,6 +796,9 @@ export default function TradingPage() {
               {/* AI Advisors — compact cards, click to open full modal */}
               <AdvisorCards />
 
+              {/* AI Trading Agents Portfolio Overview */}
+              <AgentPortfolios onAgentClick={setSelectedAgentFilter} />
+
               {/* Trade Performance Stats */}
               {trades.length > 0 && (
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -887,21 +902,39 @@ export default function TradingPage() {
           {activeTab === "positions" && !loading && !error && (
             <>
               {/* Position Charts */}
-              {positions.length > 0 && (
-                <PositionCharts positions={positions} />
+              {filteredPositions.length > 0 && (
+                <PositionCharts positions={filteredPositions} />
               )}
 
-              {positions.length === 0 ? (
+              {filteredPositions.length === 0 ? (
                 <div className="bg-slate-800/50 rounded-xl p-12 border border-slate-700/50 text-center">
                   <Database className="w-8 h-8 text-slate-600 mx-auto mb-3" />
                   <p className="text-slate-400">No open positions</p>
                 </div>
               ) : (
                 <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50">
-                  <h2 className="text-lg font-semibold text-slate-100 mb-4 flex items-center gap-2">
-                    <Activity className="w-5 h-5 text-primary-400" />
-                    Open Positions ({positions.length})
-                  </h2>
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-lg font-semibold text-slate-100 flex items-center gap-2">
+                      <Activity className="w-5 h-5 text-primary-400" />
+                      Open Positions ({filteredPositions.length})
+                    </h2>
+                    <div className="flex items-center gap-2">
+                      <label className="text-xs text-slate-400">Filter:</label>
+                      <select
+                        value={selectedAgentFilter}
+                        onChange={(e) => setSelectedAgentFilter(e.target.value)}
+                        className="bg-slate-700/50 border border-slate-600/30 rounded-md px-2 py-1 text-xs text-slate-100 focus:border-primary-400 focus:outline-none"
+                      >
+                        <option value="all">All Portfolios</option>
+                        <option value="user">My Portfolio</option>
+                        <option value="chris-vermeulen">Chris Vermeulen</option>
+                        <option value="warren-buffett">Warren Buffett</option>
+                        <option value="peter-schiff">Peter Schiff</option>
+                        <option value="raoul-pal">Raoul Pal</option>
+                        <option value="peter-lynch">Peter Lynch</option>
+                      </select>
+                    </div>
+                  </div>
                   <div className="overflow-x-auto">
                     <table className="w-full">
                       <thead>
@@ -924,7 +957,7 @@ export default function TradingPage() {
                         </tr>
                       </thead>
                       <tbody>
-                        {positions.map((pos) => {
+                        {filteredPositions.map((pos) => {
                           const currentPrice = pos.current_price || pos.entry_price;
                           const unrealizedPnl = pos.qty * (currentPrice - pos.entry_price);
                           const unrealizedPnlPct = ((currentPrice - pos.entry_price) / pos.entry_price) * 100;

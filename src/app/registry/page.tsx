@@ -26,7 +26,10 @@ import {
   Filter,
   ChevronDown,
   X,
+  Eye,
 } from "lucide-react";
+
+import AgentDetailModal from '@/components/AgentDetailModal';
 
 // ── Types ──────────────────────────────────────────────────────
 
@@ -348,166 +351,52 @@ const TRADING_DESK_MODELS = [
   { id: "claude-3-haiku-20240307", label: "Claude 3 Haiku" },
 ];
 
-function AgentCard({ agent, stats, onModelChange }: { agent: Agent; stats?: { conversations: number; messages: number; memories: number; lastActivity: string | null }; onModelChange?: (agentId: string, model: string) => void }) {
-  const [expanded, setExpanded] = useState(false);
-  const [saving, setSaving] = useState(false);
+// Helper functions for agent table
+function formatModelName(model: string): string {
+  const parts = model.split('/');
+  const modelName = parts[parts.length - 1];
+  return modelName
+    .split('-')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+}
+
+function formatTimeAgo(dateStr: string | null): string {
+  if (!dateStr) return 'Never';
+  const date = new Date(dateStr);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
   
-  // Format model name (e.g., "anthropic/claude-sonnet-4" -> "Claude Sonnet 4")
-  const formatModel = (model: string) => {
-    const parts = model.split('/');
-    const modelName = parts[parts.length - 1];
-    return modelName
-      .split('-')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ');
-  };
-  
-  // Format last activity
-  const formatLastActivity = (dateStr: string | null) => {
-    if (!dateStr) return 'Never';
-    const date = new Date(dateStr);
-    const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
-    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-    
-    if (diffDays > 0) return `${diffDays}d ago`;
-    if (diffHours > 0) return `${diffHours}h ago`;
-    return 'Recent';
+  if (diffDays > 0) return `${diffDays}d ago`;
+  if (diffHours > 0) return `${diffHours}h ago`;
+  return 'Recent';
+}
+
+function DepartmentBadge({ department }: { department: string }) {
+  const deptColors: Record<string, { bg: string; text: string }> = {
+    'the-trading-desk': { bg: 'bg-emerald-500/15', text: 'text-emerald-400' },
+    'faith-journey-guides': { bg: 'bg-purple-500/15', text: 'text-purple-400' },
+    'judaism': { bg: 'bg-blue-500/15', text: 'text-blue-400' },
+    'christianity': { bg: 'bg-red-500/15', text: 'text-red-400' },
+    'islam': { bg: 'bg-green-500/15', text: 'text-green-400' },
+    'hinduism': { bg: 'bg-orange-500/15', text: 'text-orange-400' },
+    'buddhism': { bg: 'bg-yellow-500/15', text: 'text-yellow-400' },
+    'other-traditions': { bg: 'bg-cyan-500/15', text: 'text-cyan-400' },
   };
 
+  const config = deptColors[department] || { bg: 'bg-slate-500/15', text: 'text-slate-400' };
+  const displayName = department.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+  
   return (
-    <div className="border-b last:border-b-0" style={{ borderColor: "#1A1A24" }}>
-      <button
-        onClick={() => setExpanded(!expanded)}
-        className="w-full flex items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-white/[0.02]"
-      >
-        <ChevronRight className={`w-3.5 h-3.5 transition-transform shrink-0 ${expanded ? "rotate-90" : ""}`} style={{ color: "#626259" }} />
-        
-        {/* Agent Identity */}
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-lg">{agent.emoji}</span>
-            <span className="text-sm font-semibold" style={{ color: "#F5F5F0" }}>{agent.name}</span>
-            
-            {/* Deployment Status */}
-            <div className="flex items-center gap-1">
-              <div className={`w-2 h-2 rounded-full ${agent.endpoint_enabled ? 'bg-green-500' : 'bg-red-500'}`} />
-              <span className="text-[10px]" style={{ color: agent.endpoint_enabled ? "#10B981" : "#EF4444" }}>
-                {agent.endpoint_enabled ? "Live" : "Offline"}
-              </span>
-            </div>
-            
-            {/* Department Badge */}
-            <span className="px-1.5 py-0.5 rounded text-[10px] font-medium" style={{ backgroundColor: "#D4A02020", color: "#D4A020" }}>
-              {agent.department}
-            </span>
-          </div>
-          
-          <p className="text-xs mt-0.5" style={{ color: "#8B8B80" }}>{agent.title}</p>
-          
-          {/* Stats Summary */}
-          <div className="flex items-center gap-3 mt-1 text-[10px]" style={{ color: "#626259" }}>
-            <span>{formatModel(agent.model)}</span>
-            {stats && (
-              <>
-                <span>•</span>
-                <span>{stats.conversations} conversations</span>
-                <span>•</span>
-                <span>Last: {formatLastActivity(stats.lastActivity)}</span>
-              </>
-            )}
-          </div>
-        </div>
-        
-        {/* Endpoint */}
-        <div className="text-[10px] text-right shrink-0" style={{ color: "#626259" }}>
-          {agent.endpoint_enabled && (
-            <code>/api/agents/{agent.id}/chat</code>
-          )}
-        </div>
-      </button>
-      
-      {/* Expanded Details */}
-      {expanded && (
-        <div className="px-4 pb-3">
-          <div className="pl-6 border-l-2 border-white/10">
-            <div className="space-y-3 text-xs" style={{ color: "#B8B8AD" }}>
-              
-              {/* Model Configuration */}
-              <div>
-                <p className="font-semibold mb-1" style={{ color: "#8B8B80" }}>Model Configuration</p>
-                <div className="grid grid-cols-2 gap-2 text-[11px]">
-                  <div className="flex items-center gap-2">
-                    <span>Model:</span>
-                    {agent.department === 'trading-desk' && onModelChange ? (
-                      <select
-                        value={agent.model}
-                        disabled={saving}
-                        onChange={async (e) => {
-                          setSaving(true);
-                          await onModelChange(agent.id, e.target.value);
-                          setSaving(false);
-                        }}
-                        className="px-2 py-0.5 rounded text-[11px] font-medium border cursor-pointer disabled:opacity-50"
-                        style={{ backgroundColor: "#0D0D14", borderColor: "#D4A02040", color: "#D4A020" }}
-                      >
-                        {TRADING_DESK_MODELS.map(m => (
-                          <option key={m.id} value={m.id}>{m.label}</option>
-                        ))}
-                      </select>
-                    ) : (
-                      <span style={{ color: "#D4A020" }}>{formatModel(agent.model)}</span>
-                    )}
-                    {saving && <span className="text-[10px]" style={{ color: "#626259" }}>Saving…</span>}
-                  </div>
-                  <div>Temperature: <span style={{ color: "#D4A020" }}>{agent.temperature}</span></div>
-                  <div>Max Tokens: <span style={{ color: "#D4A020" }}>{agent.max_tokens}</span></div>
-                  <div>Status: <span style={{ color: "#D4A020" }}>{agent.status}</span></div>
-                </div>
-              </div>
-              
-              {/* Memory Stats */}
-              {stats && (
-                <div>
-                  <p className="font-semibold mb-1" style={{ color: "#8B8B80" }}>Memory & Usage</p>
-                  <div className="grid grid-cols-3 gap-2 text-[11px]">
-                    <div>{stats.conversations} <span style={{ color: "#626259" }}>conversations</span></div>
-                    <div>{stats.messages} <span style={{ color: "#626259" }}>messages</span></div>
-                    <div>{stats.memories} <span style={{ color: "#626259" }}>memories</span></div>
-                  </div>
-                </div>
-              )}
-              
-              {/* Soul Prompt Preview */}
-              <div>
-                <p className="font-semibold mb-1" style={{ color: "#8B8B80" }}>Soul Prompt</p>
-                <p className="text-[11px]" style={{ color: "#B8B8AD" }}>
-                  {agent.description.length > 100 
-                    ? `${agent.description.slice(0, 100)}...` 
-                    : agent.description}
-                </p>
-              </div>
-              
-              {/* Endpoint */}
-              {agent.endpoint_enabled && (
-                <div>
-                  <p className="font-semibold mb-1" style={{ color: "#8B8B80" }}>Endpoint</p>
-                  <div className="flex items-center gap-2">
-                    <code className="font-mono text-[11px] px-1.5 py-0.5 rounded" style={{ backgroundColor: "#1A1A24", color: "#D4A020" }}>
-                      /api/agents/{agent.id}/chat
-                    </code>
-                    <CopyBtn text={`/api/agents/${agent.id}/chat`} />
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+    <span className={`inline-block px-2 py-0.5 rounded text-[11px] font-semibold border ${config.bg} ${config.text}`}>
+      {displayName}
+    </span>
   );
 }
+
+// AgentCard function removed - replaced with Jira-style table
 
 function ResourceRow({ resource }: { resource: Resource }) {
   const [expanded, setExpanded] = useState(false);
@@ -578,6 +467,7 @@ export default function RegistryPage() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [showDeptDropdown, setShowDeptDropdown] = useState(false);
   const [showStatusDropdown, setShowStatusDropdown] = useState(false);
+  const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
   const filterRef = useRef<HTMLDivElement>(null);
 
   // Close dropdowns on outside click
@@ -1056,7 +946,7 @@ export default function RegistryPage() {
                 );
               })()}
 
-              {/* Group agents by department */}
+              {/* Jira-style Agents Table */}
               {(() => {
                 // Filter agents by search, department, and status
                 const filteredAgents = agents.filter(agent => {
@@ -1078,82 +968,110 @@ export default function RegistryPage() {
                   );
                 });
 
-                // Group by department with desired ordering
-                const departmentOrder = [
-                  "the-trading-desk",
-                  "faith-journey-guides",
-                  "judaism", 
-                  "christianity",
-                  "islam", 
-                  "hinduism", 
-                  "buddhism",
-                  "other-traditions"
-                ];
-
-                const groupedAgents: Record<string, Agent[]> = {};
-                filteredAgents.forEach(agent => {
-                  const dept = agent.department || 'other';
-                  if (!groupedAgents[dept]) {
-                    groupedAgents[dept] = [];
-                  }
-                  groupedAgents[dept].push(agent);
-                });
-
-                // Sort departments by desired order, then alphabetically for others
-                const sortedDepartments = Object.keys(groupedAgents).sort((a, b) => {
-                  const aIndex = departmentOrder.indexOf(a);
-                  const bIndex = departmentOrder.indexOf(b);
-                  
-                  if (aIndex !== -1 && bIndex !== -1) {
-                    return aIndex - bIndex;
-                  } else if (aIndex !== -1) {
-                    return -1;
-                  } else if (bIndex !== -1) {
-                    return 1;
-                  } else {
-                    return a.localeCompare(b);
-                  }
-                });
-
-                // Format department names for display
-                const formatDepartmentName = (dept: string) => {
-                  const deptMap: Record<string, string> = {
-                    'the-trading-desk': '📈 The Trading Desk',
-                    'faith-journey-guides': '🕊️ Faith Journey Guides',
-                    'judaism': '🕊️ Faith Journey Guides — Judaism',
-                    'christianity': '🕊️ Faith Journey Guides — Christianity', 
-                    'islam': '🕊️ Faith Journey Guides — Islam',
-                    'hinduism': '🕊️ Faith Journey Guides — Hinduism',
-                    'buddhism': '🕊️ Faith Journey Guides — Buddhism',
-                    'other-traditions': '🕊️ Faith Journey Guides — Other Traditions'
-                  };
-                  return deptMap[dept] || `🤖 ${dept.charAt(0).toUpperCase() + dept.slice(1).replace(/-/g, ' ')}`;
-                };
-
-                return sortedDepartments.map(department => {
-                  const departmentAgents = groupedAgents[department];
-                  if (departmentAgents.length === 0) return null;
-
+                if (filteredAgents.length === 0) {
                   return (
-                    <div key={department} className="mb-4">
-                      <h3 className="text-xs font-semibold mb-2 flex items-center gap-2 px-1" style={{ color: "#8B8B80" }}>
-                        <Bot className="w-3.5 h-3.5" style={{ color: "#D4A020" }} />
-                        {formatDepartmentName(department)}
-                        <span className="text-[10px] px-1.5 py-0.5 rounded-md" style={{ backgroundColor: "#1A1A24" }}>{departmentAgents.length}</span>
-                      </h3>
-                      <div className="rounded-xl border overflow-hidden" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
-                        {departmentAgents.map((agent) => (
-                          <AgentCard 
-                            key={agent.id} 
-                            agent={agent} 
-                            stats={agentStats?.perAgent[agent.id]}
-                            onModelChange={handleModelChange}
-                          />
-                        ))}
-                      </div>
+                    <div className="text-center p-6">
+                      <Bot className="w-8 h-8 mx-auto mb-2" style={{ color: "#626259" }} />
+                      <p className="text-sm" style={{ color: "#626259" }}>No agents found matching your filters.</p>
                     </div>
                   );
-                });
+                }
+
+                return (
+                  <div className="bg-slate-900/50 rounded-xl border border-slate-800 overflow-hidden">
+                    <div className="overflow-x-auto">
+                      <table className="w-full table-fixed">
+                        <thead>
+                          <tr className="border-b border-slate-700/50">
+                            <th className="text-left px-3 py-2 text-[11px] font-semibold text-slate-400 uppercase tracking-wider w-[44px]">Action</th>
+                            <th className="text-left px-3 py-2 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Agent</th>
+                            <th className="text-left px-3 py-2 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Title</th>
+                            <th className="text-left px-3 py-2 text-[11px] font-semibold text-slate-400 uppercase tracking-wider w-[120px]">Department</th>
+                            <th className="text-left px-3 py-2 text-[11px] font-semibold text-slate-400 uppercase tracking-wider w-[120px]">Model</th>
+                            <th className="text-left px-3 py-2 text-[11px] font-semibold text-slate-400 uppercase tracking-wider w-[80px]">Conversations</th>
+                            <th className="text-left px-3 py-2 text-[11px] font-semibold text-slate-400 uppercase tracking-wider w-[80px]">Messages</th>
+                            <th className="text-left px-3 py-2 text-[11px] font-semibold text-slate-400 uppercase tracking-wider w-[90px]">Last Active</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {filteredAgents.map((agent, idx) => {
+                            const stats = agentStats?.perAgent[agent.id];
+                            return (
+                              <tr
+                                key={agent.id}
+                                className={`border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors ${
+                                  idx % 2 === 0 ? "bg-slate-900/20" : "bg-transparent"
+                                }`}
+                              >
+                                {/* Action Column */}
+                                <td className="px-3 py-1.5">
+                                  <button
+                                    onClick={() => setSelectedAgent(agent)}
+                                    className="p-1 text-slate-400 hover:text-primary-400 transition-colors"
+                                    title="View Details"
+                                  >
+                                    <Eye className="w-4 h-4" />
+                                  </button>
+                                </td>
+                                
+                                {/* Agent Column */}
+                                <td className="px-3 py-1.5">
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-lg">{agent.emoji}</span>
+                                    <div className="flex-1 min-w-0">
+                                      <div className="flex items-center gap-2">
+                                        <span className="text-sm font-semibold text-slate-200 truncate">{agent.name}</span>
+                                        <div className="flex items-center gap-1">
+                                          <div className={`w-2 h-2 rounded-full ${agent.endpoint_enabled ? 'bg-green-500' : 'bg-red-500'}`} />
+                                          <span className="text-[10px] font-medium" style={{ color: agent.endpoint_enabled ? "#10B981" : "#EF4444" }}>
+                                            {agent.endpoint_enabled ? "Live" : "Offline"}
+                                          </span>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </td>
+                                
+                                {/* Title Column */}
+                                <td className="px-3 py-1.5">
+                                  <p className="text-sm text-slate-300 truncate">{agent.title}</p>
+                                </td>
+                                
+                                {/* Department Column */}
+                                <td className="px-3 py-1.5">
+                                  <DepartmentBadge department={agent.department} />
+                                </td>
+                                
+                                {/* Model Column */}
+                                <td className="px-3 py-1.5">
+                                  <span className="text-sm text-slate-300">{formatModelName(agent.model)}</span>
+                                </td>
+                                
+                                {/* Conversations Column */}
+                                <td className="px-3 py-1.5">
+                                  <span className="text-sm text-slate-300">{stats?.conversations || 0}</span>
+                                </td>
+                                
+                                {/* Messages Column */}
+                                <td className="px-3 py-1.5">
+                                  <span className="text-sm text-slate-300">{stats?.messages || 0}</span>
+                                </td>
+                                
+                                {/* Last Active Column */}
+                                <td className="px-3 py-1.5">
+                                  <span className="text-sm text-slate-400">{formatTimeAgo(stats?.lastActivity || null)}</span>
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                      <div className="px-4 py-2 border-t border-slate-800/50 text-xs text-slate-500">
+                        {filteredAgents.length} of {agents.length} agents
+                      </div>
+                    </div>
+                  </div>
+                );
               })()}
             </>
           )}
@@ -1250,6 +1168,14 @@ export default function RegistryPage() {
           JoshOS Platform Registry — Build once, consume everywhere
         </p>
       </div>
+
+      {/* Agent Detail Modal */}
+      {selectedAgent && (
+        <AgentDetailModal
+          agent={selectedAgent}
+          onClose={() => setSelectedAgent(null)}
+        />
+      )}
     </div>
   );
 }

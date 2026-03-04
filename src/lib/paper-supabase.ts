@@ -21,6 +21,7 @@ export const isPaperSupabaseConfigured = () => Boolean(paperSupabaseUrl && paper
 export interface PaperPosition {
   id: string;
   user_id: string | null;
+  account_id: string | null; // Agent account identifier
   symbol: string;
   side: string; // 'long' | 'short'
   qty: number;
@@ -41,6 +42,7 @@ export interface PaperPosition {
 export interface PaperTrade {
   id: string;
   user_id: string | null;
+  account_id: string | null; // Agent account identifier
   position_id: string | null;
   symbol: string;
   side: string;
@@ -62,6 +64,7 @@ export interface PaperTrade {
 export interface PaperPortfolioSnapshot {
   id: string;
   user_id: string | null;
+  account_id: string | null; // Agent account identifier
   date: string;
   equity: number;
   cash: number;
@@ -74,6 +77,17 @@ export interface PaperPortfolioSnapshot {
   spy_baseline: number | null;
   open_positions: number | null;
   created_at: string | null;
+}
+
+export interface PaperAccount {
+  id: string;
+  user_id: string | null;
+  account_id: string; // Agent identifier (e.g., 'chris-vermeulen')
+  name: string;
+  cash_balance: number;
+  starting_capital: number;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface SignalHistoryRecord {

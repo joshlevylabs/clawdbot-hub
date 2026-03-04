@@ -158,6 +158,80 @@ async function getAdvisorModel(supabaseId: string): Promise<string> {
   }
 }
 
+interface TradeRecommendation {
+  action: 'buy' | 'sell';
+  symbol: string;
+  priority: 'high' | 'medium' | 'low';
+  rationale?: string;
+  suggested_qty?: number;
+  target_price?: number;
+  stop_loss?: number;
+  take_profit?: number;
+  signal_strength?: number;
+}
+
+function extractTradeRecommendations(
+  analysis: any,
+  signalLookup: { [symbol: string]: { price?: number; signal?: string; signal_strength?: number; regime?: string; strategies_agreeing?: number } }
+): TradeRecommendation[] {
+  const recommendations: TradeRecommendation[] = [];
+  
+  // Extract from pre_market_actions
+  if (analysis.pre_market_actions && Array.isArray(analysis.pre_market_actions)) {
+    for (const action of analysis.pre_market_actions) {
+      if (action.priority === 'high' && action.ticker) {
+        const signal = signalLookup[action.ticker];
+        recommendations.push({
+          action: action.action?.toLowerCase() === 'sell' ? 'sell' : 'buy',
+          symbol: action.ticker,
+          priority: 'high',
+          rationale: action.rationale || action.reasoning,
+          target_price: action.target_price || signal?.price,
+          stop_loss: action.stop_loss,
+          take_profit: action.take_profit,
+          signal_strength: signal?.signal_strength,
+        });
+      }
+    }
+  }
+  
+  // Extract from market_hours_actions  
+  if (analysis.market_hours_actions && Array.isArray(analysis.market_hours_actions)) {
+    for (const action of analysis.market_hours_actions) {
+      if (action.priority === 'high' && action.ticker) {
+        const signal = signalLookup[action.ticker];
+        recommendations.push({
+          action: action.action?.toLowerCase() === 'sell' ? 'sell' : 'buy',
+          symbol: action.ticker,
+          priority: 'high',
+          rationale: action.rationale || action.reasoning,
+          target_price: action.target_price || signal?.price,
+          stop_loss: action.stop_loss,
+          take_profit: action.take_profit,
+          signal_strength: signal?.signal_strength,
+        });
+      }
+    }
+  }
+  
+  // Extract from positions_review (for sells)
+  if (analysis.positions_review && Array.isArray(analysis.positions_review)) {
+    for (const review of analysis.positions_review) {
+      if (review.action?.toLowerCase() === 'sell' && review.priority === 'high' && review.symbol) {
+        recommendations.push({
+          action: 'sell',
+          symbol: review.symbol,
+          priority: 'high',
+          rationale: review.rationale || review.reasoning,
+          target_price: review.target_price,
+        });
+      }
+    }
+  }
+  
+  return recommendations;
+}
+
 export async function handleAdvisorRequest(
   request: NextRequest,
   config: AdvisorConfig,
@@ -262,8 +336,15 @@ export async function handleAdvisorRequest(
       analysisResult, signalLookup, positionLookup, knownTickers,
     );
 
+    // Extract trade recommendations from high-priority actions
+    const tradeRecommendations = extractTradeRecommendations(
+      validation.cleanedOutput,
+      signalLookup
+    );
+
     return NextResponse.json({
       ...validation.cleanedOutput,
+      trade_recommendations: tradeRecommendations,
       generated_at: new Date().toISOString(),
       signal_timestamp: signalsData.timestamp,
       signal_freshness: { tier: freshness.tier, ageLabel: freshness.ageLabel, isActionable: freshness.isActionable },

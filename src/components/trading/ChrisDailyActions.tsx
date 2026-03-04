@@ -26,6 +26,17 @@ interface PositionReview {
   note: string;
 }
 
+interface SignalFreshnessData {
+  tier: string;
+  ageLabel: string;
+  isActionable: boolean;
+}
+
+interface ValidationData {
+  warnings: string[];
+  errors: string[];
+}
+
 interface ChrisActionsData {
   date: string;
   market_assessment: string;
@@ -35,6 +46,9 @@ interface ChrisActionsData {
   watchlist: string[];
   risk_warnings: string[];
   generated_at?: string;
+  signal_freshness?: SignalFreshnessData;
+  disclaimer?: string;
+  validation?: ValidationData;
 }
 
 const getPriorityBadge = (priority: string) => {
@@ -212,9 +226,14 @@ export default function ChrisDailyActions() {
               <Target className="h-5 w-5 text-white" />
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-white">🎯 Chris's Actions For Today</h3>
+              <h3 className="text-lg font-semibold text-white">🎯 Chris&apos;s Actions For Today</h3>
               <p className="text-sm text-slate-400">
                 {data?.generated_at ? `Generated at ${formatTimestamp(data.generated_at)}` : 'Ready to analyze'}
+                {data?.signal_freshness && (
+                  <span className={`ml-2 ${data.signal_freshness.tier === 'fresh' ? 'text-emerald-400' : data.signal_freshness.tier === 'stale' ? 'text-red-400' : 'text-yellow-400'}`}>
+                    • Signals: {data.signal_freshness.ageLabel}
+                  </span>
+                )}
               </p>
             </div>
           </div>

@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSession } from '@/lib/auth';
 import { paperSupabase, isPaperSupabaseConfigured, PaperPosition } from '@/lib/paper-supabase';
 import { BUFFETT_SYSTEM_PROMPT } from '@/lib/warren-buffett-knowledge';
+import { computeFreshness } from '@/lib/trading/signal-freshness';
+import { buildLookups, validateAdvisorOutput, buildCitationInstructions, ADVISOR_DISCLAIMER } from '@/lib/trading/advisor-validation';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 
@@ -157,6 +159,14 @@ export async function GET(request: NextRequest) {
 
     const marketContext = buildMarketContext(signalsData, positions, today);
 
+    // Compute freshness + citation rules
+    const freshness = computeFreshness(signalsData.timestamp);
+    const citationRules = buildCitationInstructions(
+      signalsData.timestamp,
+      signalsData.regime.global,
+      `${freshness.emoji} ${freshness.ageLabel} (${freshness.tier})`
+    );
+
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: {
@@ -168,7 +178,7 @@ export async function GET(request: NextRequest) {
         model: "claude-sonnet-4-20250514",
         max_tokens: 3000,
         system: BUFFETT_SYSTEM_PROMPT,
-        messages: [{ role: "user", content: marketContext }],
+        messages: [{ role: "user", content: marketContext + "\n\n" + citationRules }],
       }),
     });
 
@@ -189,11 +199,34 @@ export async function GET(request: NextRequest) {
 
     const analysisResult = JSON.parse(jsonStr);
 
+    // Post-generation validation (P0-2)
+    const { signalLookup, positionLookup, knownTickers } = buildLookups(
+      signalsData.signals.by_asset_class,
+      positions.map(p => ({ symbol: p.symbol, current_price: p.current_price, entry_price: p.entry_price })),
+    );
+
+    const validation = validateAdvisorOutput(
+      analysisResult,
+      signalLookup,
+      positionLookup,
+      knownTickers,
+    );
+
     return NextResponse.json({
-      ...analysisResult,
+      ...validation.cleanedOutput,
       generated_at: new Date().toISOString(),
       signal_timestamp: signalsData.timestamp,
+      signal_freshness: {
+        tier: freshness.tier,
+        ageLabel: freshness.ageLabel,
+        isActionable: freshness.isActionable,
+      },
       knowledge_version: "warren-buffett-v1-portfolio-letters",
+      disclaimer: ADVISOR_DISCLAIMER,
+      validation: {
+        warnings: validation.warnings,
+        errors: validation.errors,
+      },
     });
 
   } catch (error) {

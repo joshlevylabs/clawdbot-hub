@@ -485,6 +485,7 @@ const sampleLessons = [
 // ===== Tradition Map =====
 
 const TRADITION_MAP: Record<string, { name: string; emoji: string; color: string }> = {
+  // Abrahamic (original 10)
   'c13ecfa9-a977-48ec-8b7a-637a21d7ff80': { name: 'Orthodox Judaism', emoji: '✡️', color: '#0047AB' },
   '621564b2-d131-4c24-ac64-281658481f15': { name: 'Conservative Judaism', emoji: '✡️', color: '#2E5CB8' },
   '95612ae9-a8e4-4824-8a88-440dc0862bf1': { name: 'Reform Judaism', emoji: '✡️', color: '#4A90D9' },
@@ -495,6 +496,19 @@ const TRADITION_MAP: Record<string, { name: string; emoji: string; color: string
   'e18e894d-011c-43a8-87c4-d95ca8e13394': { name: 'Evangelical Protestant', emoji: '📖', color: '#4169E1' },
   '7e4cebb8-8a43-4e21-a26d-a12d1f1f3f1c': { name: 'Sunni Islam', emoji: '☪️', color: '#006400' },
   '12e600a9-a55a-4952-ad8b-4fa2354ebb94': { name: 'Shia Islam', emoji: '☪️', color: '#228B22' },
+  // Hindu (3)
+  '8c2f4013-68db-463b-a562-662c36273948': { name: 'Vaishnavism', emoji: '🕉️', color: '#FF6B00' },
+  '79e853c3-89f6-4c85-ba0c-10f265fd6ea6': { name: 'Shaivism', emoji: '🕉️', color: '#E85D04' },
+  '4b7ca317-bc0f-4544-a656-4d59d3a12189': { name: 'Shaktism', emoji: '🕉️', color: '#DC2F02' },
+  // Buddhist (3)
+  '26bf9037-e1d8-4f80-85c5-a7b51cbe10a4': { name: 'Theravada Buddhism', emoji: '☸️', color: '#F59E0B' },
+  '6074fe56-2c15-46f7-86e6-fd0ffe4b1733': { name: 'Mahayana Buddhism', emoji: '☸️', color: '#D97706' },
+  'e0e6a849-5b1a-45a7-ae71-105657dbd6d5': { name: 'Vajrayana Buddhism', emoji: '☸️', color: '#B45309' },
+  // Other world religions (4)
+  '75089521-6139-4c54-8548-6aff1a94357d': { name: 'Sikhism', emoji: '🪯', color: '#1E40AF' },
+  '1f0d8d43-9e42-404b-a6e5-7ac7e6954abf': { name: "Bahá'í Faith", emoji: '✯', color: '#7C3AED' },
+  'bfffb7e8-6bf7-4d4a-b24b-a963879e86ec': { name: 'Jainism', emoji: '🙏', color: '#059669' },
+  '7cefcdfe-363f-45ad-b1f7-d7d562ef8ef7': { name: 'Zoroastrianism', emoji: '🔥', color: '#DC2626' },
 };
 
 // ===== Perspective Types =====
@@ -634,6 +648,19 @@ const CALENDAR_TRADITION_CONFIG: Record<string, { emoji: string; label: string; 
   'evangelical_protestant':   { emoji: '✝️', label: 'Evangelical Protestant', color: '#8B5CF650' },
   'sunni_islam':              { emoji: '☪️', label: 'Sunni Islam', color: '#10B98150' },
   'shia_islam':               { emoji: '☪️', label: 'Shia Islam', color: '#14B8A650' },
+  // Hindu
+  'vaishnavism':              { emoji: '🕉️', label: 'Vaishnavism', color: '#FF6B0050' },
+  'shaivism':                 { emoji: '🕉️', label: 'Shaivism', color: '#E85D0450' },
+  'shaktism':                 { emoji: '🕉️', label: 'Shaktism', color: '#DC2F0250' },
+  // Buddhist
+  'theravada_buddhism':       { emoji: '☸️', label: 'Theravada Buddhism', color: '#F59E0B50' },
+  'mahayana_buddhism':        { emoji: '☸️', label: 'Mahayana Buddhism', color: '#D9770650' },
+  'vajrayana_buddhism':       { emoji: '☸️', label: 'Vajrayana Buddhism', color: '#B4530950' },
+  // Other
+  'sikhism':                  { emoji: '🪯', label: 'Sikhism', color: '#1E40AF50' },
+  'bahai_faith':              { emoji: '✯', label: "Bahá'í Faith", color: '#7C3AED50' },
+  'jainism':                  { emoji: '🙏', label: 'Jainism', color: '#05966950' },
+  'zoroastrianism':           { emoji: '🔥', label: 'Zoroastrianism', color: '#DC262650' },
   // Legacy 3-family keys
   'jewish':                   { emoji: '✡️', label: 'Jewish', color: '#3B82F650' },
   'christian':                { emoji: '✝️', label: 'Christian', color: '#8B5CF650' },

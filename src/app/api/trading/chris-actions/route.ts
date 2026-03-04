@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSession } from '@/lib/auth';
 import { paperSupabase, isPaperSupabaseConfigured, PaperPosition } from '@/lib/paper-supabase';
 import { CHRIS_SYSTEM_PROMPT } from '@/lib/chris-vermeulen-knowledge';
+import { computeFreshness } from '@/lib/trading/signal-freshness';
+import { buildLookups, validateAdvisorOutput, buildCitationInstructions, ADVISOR_DISCLAIMER } from '@/lib/trading/advisor-validation';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 
@@ -164,17 +166,13 @@ Today is ${today}. Provide your analysis now — be specific about price levels,
 }
 
 export async function GET(request: NextRequest) {
-  // Check authentication
   const authenticated = await getSession();
   if (!authenticated) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   if (!ANTHROPIC_API_KEY) {
-    return NextResponse.json(
-      { error: "ANTHROPIC_API_KEY not configured" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "ANTHROPIC_API_KEY not configured" }, { status: 500 });
   }
 
   const today = new Date().toISOString().split('T')[0];
@@ -183,14 +181,16 @@ export async function GET(request: NextRequest) {
     // 1. Load MRE signals data
     const signalsData = await loadSignalsData(request);
 
-    // 2. Fetch current positions from Supabase
+    // 2. Compute signal freshness
+    const freshness = computeFreshness(signalsData.timestamp);
+
+    // 3. Fetch current positions from Supabase
     let positions: PaperPosition[] = [];
     if (isPaperSupabaseConfigured()) {
       const { data: positionsData, error } = await paperSupabase
         .from('paper_positions')
         .select('*')
         .order('opened_at', { ascending: false });
-      
       if (error) {
         console.error('Failed to fetch positions:', error);
       } else {
@@ -198,10 +198,15 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // 3. Build the full context
+    // 4. Build context with citation instructions
     const marketContext = buildMarketContext(signalsData, positions, today);
+    const citationRules = buildCitationInstructions(
+      signalsData.timestamp,
+      signalsData.regime.global,
+      `${freshness.emoji} ${freshness.ageLabel} (${freshness.tier})`
+    );
 
-    // 4. Call Anthropic API with full Chris Vermeulen knowledge base
+    // 5. Call Anthropic API with knowledge base + grounding rules
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: {
@@ -214,10 +219,7 @@ export async function GET(request: NextRequest) {
         max_tokens: 3000,
         system: CHRIS_SYSTEM_PROMPT,
         messages: [
-          {
-            role: "user",
-            content: marketContext,
-          },
+          { role: "user", content: marketContext + "\n\n" + citationRules },
         ],
       }),
     });
@@ -225,35 +227,50 @@ export async function GET(request: NextRequest) {
     if (!response.ok) {
       const errText = await response.text();
       console.error("Anthropic API error:", errText);
-      return NextResponse.json(
-        { error: "LLM API error", detail: errText },
-        { status: 502 }
-      );
+      return NextResponse.json({ error: "LLM API error", detail: errText }, { status: 502 });
     }
 
     const data = await response.json();
     const text = data?.content?.[0]?.text || "";
 
-    // Extract JSON from response (handle markdown code blocks if they sneak through)
+    // Extract JSON from response
     let jsonStr = text.trim();
     const jsonMatch = jsonStr.match(/```(?:json)?\s*([\s\S]*?)```/);
-    if (jsonMatch) {
-      jsonStr = jsonMatch[1].trim();
-    }
-    // Also handle case where response starts with text before JSON
+    if (jsonMatch) jsonStr = jsonMatch[1].trim();
     const braceStart = jsonStr.indexOf('{');
-    if (braceStart > 0) {
-      jsonStr = jsonStr.slice(braceStart);
-    }
+    if (braceStart > 0) jsonStr = jsonStr.slice(braceStart);
 
-    const analysisResult: ChrisActionsResponse = JSON.parse(jsonStr);
+    const analysisResult = JSON.parse(jsonStr) as ChrisActionsResponse;
 
-    // Add metadata to response
+    // 6. Post-generation validation (P0-2)
+    const { signalLookup, positionLookup, knownTickers } = buildLookups(
+      signalsData.signals.by_asset_class,
+      positions.map(p => ({ symbol: p.symbol, current_price: p.current_price, entry_price: p.entry_price })),
+    );
+
+    const validation = validateAdvisorOutput(
+      analysisResult,
+      signalLookup,
+      positionLookup,
+      knownTickers,
+    );
+
+    // Use cleaned output (with warnings annotated)
     const responseData = {
-      ...analysisResult,
+      ...validation.cleanedOutput,
       generated_at: new Date().toISOString(),
       signal_timestamp: signalsData.timestamp,
+      signal_freshness: {
+        tier: freshness.tier,
+        ageLabel: freshness.ageLabel,
+        isActionable: freshness.isActionable,
+      },
       knowledge_version: "chris-vermeulen-v2-10videos",
+      disclaimer: ADVISOR_DISCLAIMER,
+      validation: {
+        warnings: validation.warnings,
+        errors: validation.errors,
+      },
     };
 
     return NextResponse.json(responseData);
@@ -261,21 +278,18 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error("Chris actions API error:", error);
     const errMsg = error instanceof Error ? error.message : String(error);
-    return NextResponse.json(
-      { 
-        error: "Failed to generate Chris's analysis", 
-        detail: errMsg,
-        fallback: {
-          date: today,
-          market_assessment: `Analysis error: ${errMsg}`,
-          pre_market_actions: [],
-          market_hours_actions: [],
-          positions_review: [],
-          watchlist: [],
-          risk_warnings: [`Error: ${errMsg}`]
-        }
-      },
-      { status: 500 }
-    );
+    return NextResponse.json({
+      error: "Failed to generate Chris's analysis",
+      detail: errMsg,
+      fallback: {
+        date: today,
+        market_assessment: `Analysis error: ${errMsg}`,
+        pre_market_actions: [],
+        market_hours_actions: [],
+        positions_review: [],
+        watchlist: [],
+        risk_warnings: [`Error: ${errMsg}`],
+      }
+    }, { status: 500 });
   }
 }

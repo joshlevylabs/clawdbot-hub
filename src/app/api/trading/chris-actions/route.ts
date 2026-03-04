@@ -7,6 +7,9 @@ import { buildLookups, validateAdvisorOutput, buildCitationInstructions, ADVISOR
 import { readFileSync } from 'fs';
 import { join } from 'path';
 
+// Allow up to 60s for Anthropic API call (requires Vercel Pro; Hobby caps at 10s)
+export const maxDuration = 60;
+
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
 
 interface MRESignal {
@@ -242,8 +245,8 @@ export async function GET(request: NextRequest) {
         "anthropic-version": "2023-06-01",
       },
       body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: 3000,
+        model: "claude-3-5-haiku-20241022",
+        max_tokens: 2000,
         system: CHRIS_SYSTEM_PROMPT,
         messages: [
           { role: "user", content: marketContext + "\n\n" + citationRules },

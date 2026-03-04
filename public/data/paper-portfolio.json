@@ -6,7 +6,7 @@
     "starting_capital": 100000,
     "cash": 35211.19,
     "created_at": "2026-02-06T15:17:00-08:00",
-    "equity": 92792.82
+    "equity": 92817.02
   },
   "positions": [],
   "trades": [],
@@ -2758,9 +2758,9 @@
     },
     {
       "date": "2026-03-04",
-      "equity": 92792.82,
+      "equity": 92817.02,
       "cash": 35211.19,
-      "spy_price": 686.4,
+      "spy_price": 686.2,
       "spy_baseline": 690.62
     },
     {
@@ -3062,6 +3062,160 @@
       "equity": 92792.82,
       "cash": 35211.19,
       "spy_price": 686.4,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-03-04T10:45",
+      "equity": 92827.71,
+      "cash": 35211.19,
+      "spy_price": 686.4,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-03-04T10:50",
+      "equity": 92811.37,
+      "cash": 35211.19,
+      "spy_price": 686.35,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-03-04T10:55",
+      "equity": 92854.14,
+      "cash": 35211.19,
+      "spy_price": 686.35,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-03-04T11:00",
+      "equity": 92828.91,
+      "cash": 35211.19,
+      "spy_price": 686.35,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-03-04T11:05",
+      "equity": 92833.64,
+      "cash": 35211.19,
+      "spy_price": 686.7,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-03-04T11:10",
+      "equity": 92818.15,
+      "cash": 35211.19,
+      "spy_price": 686.7,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-03-04T11:15",
+      "equity": 92873.41,
+      "cash": 35211.19,
+      "spy_price": 686.7,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-03-04T11:20",
+      "equity": 92863.76,
+      "cash": 35211.19,
+      "spy_price": 686.84,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-03-04T11:25",
+      "equity": 92843.26,
+      "cash": 35211.19,
+      "spy_price": 686.84,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-03-04T11:30",
+      "equity": 92830.77,
+      "cash": 35211.19,
+      "spy_price": 686.84,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-03-04T11:35",
+      "equity": 92829.05,
+      "cash": 35211.19,
+      "spy_price": 686.8,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-03-04T11:40",
+      "equity": 92851.6,
+      "cash": 35211.19,
+      "spy_price": 686.8,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-03-04T11:45",
+      "equity": 92855.08,
+      "cash": 35211.19,
+      "spy_price": 686.8,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-03-04T11:50",
+      "equity": 92876.13,
+      "cash": 35211.19,
+      "spy_price": 686.62,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-03-04T11:55",
+      "equity": 92905.6,
+      "cash": 35211.19,
+      "spy_price": 686.62,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-03-04T12:00",
+      "equity": 92902.93,
+      "cash": 35211.19,
+      "spy_price": 686.62,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-03-04T12:05",
+      "equity": 92844.8,
+      "cash": 35211.19,
+      "spy_price": 686.93,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-03-04T12:10",
+      "equity": 92819.02,
+      "cash": 35211.19,
+      "spy_price": 686.93,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-03-04T12:15",
+      "equity": 92800.97,
+      "cash": 35211.19,
+      "spy_price": 686.93,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-03-04T12:20",
+      "equity": 92756.79,
+      "cash": 35211.19,
+      "spy_price": 686.2,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-03-04T12:25",
+      "equity": 92785.6,
+      "cash": 35211.19,
+      "spy_price": 686.2,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-03-04T12:30",
+      "equity": 92817.02,
+      "cash": 35211.19,
+      "spy_price": 686.2,
       "spy_baseline": 690.62
     }
   ],

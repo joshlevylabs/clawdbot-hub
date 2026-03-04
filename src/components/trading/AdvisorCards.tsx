@@ -551,16 +551,24 @@ export default function AdvisorCards() {
     setChrisLoading(true);
     setChrisError(null);
     try {
-      const r = await fetch(`/api/trading/chris-actions${refresh ? '?refresh=true' : ''}`);
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 30000); // 30s client timeout
+      const r = await fetch(`/api/trading/chris-actions${refresh ? '?refresh=true' : ''}`, { signal: controller.signal });
+      clearTimeout(timeout);
+      const text = await r.text();
+      let json: Record<string, unknown>;
+      try { json = JSON.parse(text); } catch { throw new Error(`API returned ${r.status} (non-JSON — possible timeout)`); }
       if (!r.ok) {
-        const err = await r.json();
-        if (err.fallback) { setChrisData(err.fallback); setChrisError(err.detail); }
-        else throw new Error(err.detail || err.error || 'Failed');
+        if (json.fallback) {
+          setChrisData(json.fallback as AdvisorData);
+          setChrisError(json.detail as string);
+        } else {
+          throw new Error((json.detail || json.error || 'Failed') as string);
+        }
       } else {
-        const d = await r.json();
-        setChrisData(d);
+        setChrisData(json as unknown as AdvisorData);
         setChrisError(null);
-        try { localStorage.setItem(CHRIS_CACHE, JSON.stringify(d)); } catch { /* quota */ }
+        try { localStorage.setItem(CHRIS_CACHE, JSON.stringify(json)); } catch { /* quota */ }
       }
     } catch (e) {
       setChrisError(e instanceof Error ? e.message : 'Unknown error');
@@ -584,16 +592,24 @@ export default function AdvisorCards() {
     setBuffettLoading(true);
     setBuffettError(null);
     try {
-      const r = await fetch(`/api/trading/buffett-actions${refresh ? '?refresh=true' : ''}`);
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 30000);
+      const r = await fetch(`/api/trading/buffett-actions${refresh ? '?refresh=true' : ''}`, { signal: controller.signal });
+      clearTimeout(timeout);
+      const text = await r.text();
+      let json: Record<string, unknown>;
+      try { json = JSON.parse(text); } catch { throw new Error(`API returned ${r.status} (non-JSON — possible timeout)`); }
       if (!r.ok) {
-        const err = await r.json();
-        if (err.fallback) { setBuffettData(err.fallback); setBuffettError(err.detail); }
-        else throw new Error(err.detail || err.error || 'Failed');
+        if (json.fallback) {
+          setBuffettData(json.fallback as AdvisorData);
+          setBuffettError(json.detail as string);
+        } else {
+          throw new Error((json.detail || json.error || 'Failed') as string);
+        }
       } else {
-        const d = await r.json();
-        setBuffettData(d);
+        setBuffettData(json as unknown as AdvisorData);
         setBuffettError(null);
-        try { localStorage.setItem(BUFFETT_CACHE, JSON.stringify(d)); } catch { /* quota */ }
+        try { localStorage.setItem(BUFFETT_CACHE, JSON.stringify(json)); } catch { /* quota */ }
       }
     } catch (e) {
       setBuffettError(e instanceof Error ? e.message : 'Unknown error');

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Server,
   Globe,
@@ -23,6 +23,9 @@ import {
   Smartphone,
   DollarSign,
   ArrowDown,
+  Filter,
+  ChevronDown,
+  X,
 } from "lucide-react";
 
 // ── Types ──────────────────────────────────────────────────────
@@ -572,6 +575,23 @@ export default function RegistryPage() {
   const [agents, setAgents] = useState<Agent[]>([]);
   const [agentStats, setAgentStats] = useState<AgentStats | null>(null);
   const [agentsLoading, setAgentsLoading] = useState(true);
+  const [departmentFilter, setDepartmentFilter] = useState<string>("all");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [showDeptDropdown, setShowDeptDropdown] = useState(false);
+  const [showStatusDropdown, setShowStatusDropdown] = useState(false);
+  const filterRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdowns on outside click
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (filterRef.current && !filterRef.current.contains(e.target as Node)) {
+        setShowDeptDropdown(false);
+        setShowStatusDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   // Fetch agents and stats data
   useEffect(() => {
@@ -914,10 +934,141 @@ export default function RegistryPage() {
                 </div>
               )}
 
+              {/* Filter Pills */}
+              {(() => {
+                // Derive unique departments and statuses from agents
+                const deptMap: Record<string, string> = {
+                  'the-trading-desk': '📈 Trading Desk',
+                  'faith-journey-guides': '🕊️ Faith Guides',
+                  'judaism': '✡️ Judaism',
+                  'christianity': '✝️ Christianity',
+                  'islam': '☪️ Islam',
+                  'hinduism': '🕉️ Hinduism',
+                  'buddhism': '☸️ Buddhism',
+                  'other-traditions': '🌍 Other Traditions',
+                };
+                const uniqueDepts = Array.from(new Set(agents.map(a => a.department || 'other')));
+                const uniqueStatuses = Array.from(new Set(agents.map(a => a.endpoint_enabled ? 'enabled' : 'disabled')));
+                const activeFilterCount = (departmentFilter !== 'all' ? 1 : 0) + (statusFilter !== 'all' ? 1 : 0);
+
+                return (
+                  <div ref={filterRef} className="flex flex-wrap items-center gap-2 mb-4">
+                    <Filter className="w-3.5 h-3.5" style={{ color: "#626259" }} />
+
+                    {/* Department Filter */}
+                    <div className="relative">
+                      <button
+                        onClick={() => { setShowDeptDropdown(!showDeptDropdown); setShowStatusDropdown(false); }}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all"
+                        style={{
+                          backgroundColor: departmentFilter !== 'all' ? "rgba(212, 160, 32, 0.12)" : "#1A1A24",
+                          color: departmentFilter !== 'all' ? "#D4A020" : "#8B8B80",
+                          border: departmentFilter !== 'all' ? "1px solid rgba(212, 160, 32, 0.3)" : "1px solid #2A2A38",
+                        }}
+                      >
+                        {departmentFilter === 'all' ? 'Department' : (deptMap[departmentFilter] || departmentFilter)}
+                        {departmentFilter !== 'all' ? (
+                          <X className="w-3 h-3 ml-0.5 hover:opacity-70" onClick={(e) => { e.stopPropagation(); setDepartmentFilter('all'); setShowDeptDropdown(false); }} />
+                        ) : (
+                          <ChevronDown className="w-3 h-3" />
+                        )}
+                      </button>
+                      {showDeptDropdown && (
+                        <div className="absolute top-full left-0 mt-1 z-50 min-w-[200px] rounded-xl border overflow-hidden shadow-xl" style={{ backgroundColor: "#1A1A24", borderColor: "#2A2A38" }}>
+                          <button
+                            onClick={() => { setDepartmentFilter('all'); setShowDeptDropdown(false); }}
+                            className="w-full text-left px-3 py-2 text-xs transition-colors hover:bg-white/5"
+                            style={{ color: departmentFilter === 'all' ? "#D4A020" : "#B8B8AD" }}
+                          >
+                            All Departments
+                          </button>
+                          {uniqueDepts.sort().map(dept => (
+                            <button
+                              key={dept}
+                              onClick={() => { setDepartmentFilter(dept); setShowDeptDropdown(false); }}
+                              className="w-full text-left px-3 py-2 text-xs transition-colors hover:bg-white/5"
+                              style={{ color: departmentFilter === dept ? "#D4A020" : "#B8B8AD" }}
+                            >
+                              {deptMap[dept] || dept.charAt(0).toUpperCase() + dept.slice(1).replace(/-/g, ' ')}
+                              <span className="ml-1.5 text-[10px]" style={{ color: "#626259" }}>
+                                ({agents.filter(a => (a.department || 'other') === dept).length})
+                              </span>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Status Filter */}
+                    <div className="relative">
+                      <button
+                        onClick={() => { setShowStatusDropdown(!showStatusDropdown); setShowDeptDropdown(false); }}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all"
+                        style={{
+                          backgroundColor: statusFilter !== 'all' ? "rgba(99, 102, 241, 0.12)" : "#1A1A24",
+                          color: statusFilter !== 'all' ? "#6366F1" : "#8B8B80",
+                          border: statusFilter !== 'all' ? "1px solid rgba(99, 102, 241, 0.3)" : "1px solid #2A2A38",
+                        }}
+                      >
+                        {statusFilter === 'all' ? 'Status' : (statusFilter === 'enabled' ? '🟢 Enabled' : '⏸️ Disabled')}
+                        {statusFilter !== 'all' ? (
+                          <X className="w-3 h-3 ml-0.5 hover:opacity-70" onClick={(e) => { e.stopPropagation(); setStatusFilter('all'); setShowStatusDropdown(false); }} />
+                        ) : (
+                          <ChevronDown className="w-3 h-3" />
+                        )}
+                      </button>
+                      {showStatusDropdown && (
+                        <div className="absolute top-full left-0 mt-1 z-50 min-w-[140px] rounded-xl border overflow-hidden shadow-xl" style={{ backgroundColor: "#1A1A24", borderColor: "#2A2A38" }}>
+                          <button
+                            onClick={() => { setStatusFilter('all'); setShowStatusDropdown(false); }}
+                            className="w-full text-left px-3 py-2 text-xs transition-colors hover:bg-white/5"
+                            style={{ color: statusFilter === 'all' ? "#D4A020" : "#B8B8AD" }}
+                          >
+                            All Statuses
+                          </button>
+                          {uniqueStatuses.map(status => (
+                            <button
+                              key={status}
+                              onClick={() => { setStatusFilter(status); setShowStatusDropdown(false); }}
+                              className="w-full text-left px-3 py-2 text-xs transition-colors hover:bg-white/5"
+                              style={{ color: statusFilter === status ? "#D4A020" : "#B8B8AD" }}
+                            >
+                              {status === 'enabled' ? '🟢 Enabled' : '⏸️ Disabled'}
+                              <span className="ml-1.5 text-[10px]" style={{ color: "#626259" }}>
+                                ({agents.filter(a => (a.endpoint_enabled ? 'enabled' : 'disabled') === status).length})
+                              </span>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Clear All */}
+                    {activeFilterCount > 0 && (
+                      <button
+                        onClick={() => { setDepartmentFilter('all'); setStatusFilter('all'); }}
+                        className="flex items-center gap-1 px-2 py-1.5 text-[10px] font-medium transition-colors hover:opacity-80"
+                        style={{ color: "#626259" }}
+                      >
+                        Clear filters ({activeFilterCount})
+                      </button>
+                    )}
+                  </div>
+                );
+              })()}
+
               {/* Group agents by department */}
               {(() => {
-                // Filter agents first
+                // Filter agents by search, department, and status
                 const filteredAgents = agents.filter(agent => {
+                  // Department filter
+                  if (departmentFilter !== 'all' && (agent.department || 'other') !== departmentFilter) return false;
+                  // Status filter
+                  if (statusFilter !== 'all') {
+                    const agentStatus = agent.endpoint_enabled ? 'enabled' : 'disabled';
+                    if (agentStatus !== statusFilter) return false;
+                  }
+                  // Search filter
                   if (!search) return true;
                   const q = search.toLowerCase();
                   return (

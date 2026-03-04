@@ -339,8 +339,16 @@ function CopyBtn({ text }: { text: string }) {
   );
 }
 
-function AgentCard({ agent, stats }: { agent: Agent; stats?: { conversations: number; messages: number; memories: number; lastActivity: string | null } }) {
+const TRADING_DESK_MODELS = [
+  { id: "claude-sonnet-4-5-20250414", label: "Claude Sonnet 4.5" },
+  { id: "claude-sonnet-4-20250514", label: "Claude Sonnet 4" },
+  { id: "claude-haiku-4-5-20250414", label: "Claude Haiku 4.5" },
+  { id: "claude-opus-4-6", label: "Claude Opus 4" },
+];
+
+function AgentCard({ agent, stats, onModelChange }: { agent: Agent; stats?: { conversations: number; messages: number; memories: number; lastActivity: string | null }; onModelChange?: (agentId: string, model: string) => void }) {
   const [expanded, setExpanded] = useState(false);
+  const [saving, setSaving] = useState(false);
   
   // Format model name (e.g., "anthropic/claude-sonnet-4" -> "Claude Sonnet 4")
   const formatModel = (model: string) => {
@@ -428,7 +436,29 @@ function AgentCard({ agent, stats }: { agent: Agent; stats?: { conversations: nu
               <div>
                 <p className="font-semibold mb-1" style={{ color: "#8B8B80" }}>Model Configuration</p>
                 <div className="grid grid-cols-2 gap-2 text-[11px]">
-                  <div>Model: <span style={{ color: "#D4A020" }}>{formatModel(agent.model)}</span></div>
+                  <div className="flex items-center gap-2">
+                    <span>Model:</span>
+                    {agent.department === 'trading-desk' && onModelChange ? (
+                      <select
+                        value={agent.model}
+                        disabled={saving}
+                        onChange={async (e) => {
+                          setSaving(true);
+                          await onModelChange(agent.id, e.target.value);
+                          setSaving(false);
+                        }}
+                        className="px-2 py-0.5 rounded text-[11px] font-medium border cursor-pointer disabled:opacity-50"
+                        style={{ backgroundColor: "#0D0D14", borderColor: "#D4A02040", color: "#D4A020" }}
+                      >
+                        {TRADING_DESK_MODELS.map(m => (
+                          <option key={m.id} value={m.id}>{m.label}</option>
+                        ))}
+                      </select>
+                    ) : (
+                      <span style={{ color: "#D4A020" }}>{formatModel(agent.model)}</span>
+                    )}
+                    {saving && <span className="text-[10px]" style={{ color: "#626259" }}>Saving…</span>}
+                  </div>
                   <div>Temperature: <span style={{ color: "#D4A020" }}>{agent.temperature}</span></div>
                   <div>Max Tokens: <span style={{ color: "#D4A020" }}>{agent.max_tokens}</span></div>
                   <div>Status: <span style={{ color: "#D4A020" }}>{agent.status}</span></div>
@@ -566,6 +596,23 @@ export default function RegistryPage() {
 
     fetchAgentsData();
   }, []);
+
+  // Handle model change for trading desk agents
+  const handleModelChange = async (agentId: string, model: string) => {
+    try {
+      const res = await fetch('/api/trading/advisor-config', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ advisor_id: agentId, model }),
+      });
+      if (res.ok) {
+        // Update local state
+        setAgents(prev => prev.map(a => a.id === agentId ? { ...a, model } : a));
+      }
+    } catch (e) {
+      console.error('Failed to update model:', e);
+    }
+  };
 
   const totalAPIs = API_GROUPS.reduce((sum, g) => sum + g.apis.length, 0);
   const totalAgents = agents.length;
@@ -949,7 +996,8 @@ export default function RegistryPage() {
                           <AgentCard 
                             key={agent.id} 
                             agent={agent} 
-                            stats={agentStats?.perAgent[agent.id]} 
+                            stats={agentStats?.perAgent[agent.id]}
+                            onModelChange={handleModelChange}
                           />
                         ))}
                       </div>

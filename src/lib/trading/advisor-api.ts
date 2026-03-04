@@ -136,8 +136,26 @@ Today is ${today}. Provide your analysis now — be specific about price levels,
 
 export interface AdvisorConfig {
   name: string;
+  supabaseId: string; // matches agent_configs.id in Supabase
   systemPrompt: string;
   knowledgeVersion: string;
+}
+
+const DEFAULT_MODEL = "claude-sonnet-4-5-20250414";
+
+async function getAdvisorModel(supabaseId: string): Promise<string> {
+  try {
+    if (!isPaperSupabaseConfigured()) return DEFAULT_MODEL;
+    const { data, error } = await paperSupabase
+      .from('agent_configs')
+      .select('model')
+      .eq('id', supabaseId)
+      .single();
+    if (error || !data?.model) return DEFAULT_MODEL;
+    return data.model;
+  } catch {
+    return DEFAULT_MODEL;
+  }
 }
 
 export async function handleAdvisorRequest(
@@ -198,6 +216,9 @@ export async function handleAdvisorRequest(
       `${freshness.emoji} ${freshness.ageLabel} (${freshness.tier})`
     );
 
+    // Fetch configured model from Supabase (falls back to default)
+    const model = await getAdvisorModel(config.supabaseId);
+
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: {
@@ -206,7 +227,7 @@ export async function handleAdvisorRequest(
         "anthropic-version": "2023-06-01",
       },
       body: JSON.stringify({
-        model: "claude-sonnet-4-5-20250414",
+        model,
         max_tokens: 2000,
         system: config.systemPrompt,
         messages: [

@@ -7,6 +7,7 @@ export const maxDuration = 60;
 export async function GET(request: NextRequest) {
   return handleAdvisorRequest(request, {
     name: 'Warren Buffett',
+    supabaseId: 'warren-buffett',
     systemPrompt: BUFFETT_SYSTEM_PROMPT,
     knowledgeVersion: 'warren-buffett-v1-portfolio-letters',
   });

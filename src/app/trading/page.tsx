@@ -34,6 +34,7 @@ import PerformanceChart from "@/components/PerformanceChart";
 import MREDashboard from "./MREDashboard";
 import ChrisDailyActions from "@/components/trading/ChrisDailyActions";
 import BuffettDailyActions from "@/components/trading/BuffettDailyActions";
+import SignalHealthBanner from "@/components/trading/SignalHealthBanner";
 import UniverseTable from "./UniverseTable";
 import MarketsOverview from "./MarketsOverview";
 import OptimizerResults from "./OptimizerResults";
@@ -386,6 +387,35 @@ export default function TradingPage() {
   const [dataSource, setDataSource] = useState<"supabase" | "static">("supabase");
   const [marketStatus] = useState(getMarketStatus());
 
+  // Signal health state (P0-1)
+  const [signalHealth, setSignalHealth] = useState<{
+    timestamp: string;
+    vix: number | null;
+    fearGreed: number;
+    totalSignals: number;
+    buySignals: number;
+    invalidated: number;
+  } | null>(null);
+
+  // Fetch signal health on mount
+  useEffect(() => {
+    fetch('/data/trading/mre-signals-universe.json')
+      .then(r => r.ok ? r.json() : null)
+      .then(d => {
+        if (d) {
+          setSignalHealth({
+            timestamp: d.timestamp,
+            vix: d.regime?.vix ?? null,
+            fearGreed: d.fear_greed?.current ?? 50,
+            totalSignals: d.signals?.by_asset_class?.length ?? 0,
+            buySignals: d.signals?.summary?.total_buy ?? 0,
+            invalidated: 0, // computed client-side if needed
+          });
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   // Analyze feature: open signal analysis modal
   const [analyzeModalSymbol, setAnalyzeModalSymbol] = useState<string | null>(null);
 
@@ -727,6 +757,18 @@ export default function TradingPage() {
                   trend="neutral"
                 />
               </div>
+
+              {/* Signal Health Banner (P0-1) */}
+              {signalHealth && (
+                <SignalHealthBanner
+                  signalTimestamp={signalHealth.timestamp}
+                  signalVix={signalHealth.vix}
+                  signalFearGreed={signalHealth.fearGreed}
+                  totalSignals={signalHealth.totalSignals}
+                  buySignals={signalHealth.buySignals}
+                  invalidatedCount={signalHealth.invalidated}
+                />
+              )}
 
               {/* Chris's Daily Actions */}
               <ChrisDailyActions />

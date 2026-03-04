@@ -674,7 +674,7 @@ function parseCalendarContext(calendarContext: string | null | undefined): Calen
 
   for (const part of parts) {
     // Try labeled format: [key]: text
-    const labelMatch = part.match(/^\[([^\]]+)\]:\s*(.+)$/s);
+    const labelMatch = part.match(/^\[([^\]]+)\]:\s*(.+)$/);
     if (labelMatch) {
       const key = labelMatch[1].toLowerCase().replace(/\s+/g, '_');
       const text = labelMatch[2].trim();

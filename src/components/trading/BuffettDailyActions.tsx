@@ -36,6 +36,9 @@ interface BuffettActionsData {
   risk_warnings: string[];
   generated_at?: string;
   knowledge_version?: string;
+  signal_freshness?: { tier: string; ageLabel: string; isActionable: boolean };
+  disclaimer?: string;
+  validation?: { warnings: string[]; errors: string[] };
 }
 
 const getPriorityBadge = (priority: string) => {
@@ -206,6 +209,11 @@ export default function BuffettDailyActions() {
               <h3 className="text-lg font-semibold text-white">🦉 Buffett&apos;s Value Assessment</h3>
               <p className="text-sm text-slate-400">
                 {data?.generated_at ? `Generated at ${formatTimestamp(data.generated_at)}` : 'Ready to analyze'}
+                {data?.signal_freshness && (
+                  <span className={`ml-2 ${data.signal_freshness.tier === 'fresh' ? 'text-emerald-400' : data.signal_freshness.tier === 'stale' ? 'text-red-400' : 'text-yellow-400'}`}>
+                    • Signals: {data.signal_freshness.ageLabel}
+                  </span>
+                )}
               </p>
             </div>
           </div>
@@ -343,6 +351,21 @@ export default function BuffettDailyActions() {
             </div>
           ) : null}
         </div>
+
+          {/* Validation warnings */}
+          {data?.validation?.warnings && data.validation.warnings.length > 0 && (
+            <div className="mt-4 p-2 bg-yellow-900/10 border border-yellow-800/20 rounded text-xs text-yellow-500">
+              ⚠️ {data.validation.warnings.length} validation note{data.validation.warnings.length > 1 ? 's' : ''}: {data.validation.warnings[0]}
+              {data.validation.warnings.length > 1 && ` (+${data.validation.warnings.length - 1} more)`}
+            </div>
+          )}
+
+          {/* Disclaimer footer (P0-2) */}
+          {data?.disclaimer && (
+            <p className="mt-4 pt-3 border-t border-slate-700/30 text-[10px] text-slate-600 leading-relaxed">
+              {data.disclaimer}
+            </p>
+          )}
       </div>
     </div>
   );

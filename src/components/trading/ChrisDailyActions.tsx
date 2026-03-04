@@ -375,6 +375,21 @@ export default function ChrisDailyActions() {
               </div>
             ) : null}
           </div>
+
+          {/* Validation warnings (if any) */}
+          {data?.validation?.warnings && data.validation.warnings.length > 0 && (
+            <div className="mt-4 p-2 bg-yellow-900/10 border border-yellow-800/20 rounded text-xs text-yellow-500">
+              ⚠️ {data.validation.warnings.length} validation note{data.validation.warnings.length > 1 ? 's' : ''}: {data.validation.warnings[0]}
+              {data.validation.warnings.length > 1 && ` (+${data.validation.warnings.length - 1} more)`}
+            </div>
+          )}
+
+          {/* Disclaimer footer (P0-2) */}
+          {data?.disclaimer && (
+            <p className="mt-4 pt-3 border-t border-slate-700/30 text-[10px] text-slate-600 leading-relaxed">
+              {data.disclaimer}
+            </p>
+          )}
         </div>
       </div>
     </div>

@@ -10,7 +10,7 @@ const AUTH_COOKIE = 'clawdbot-auth';
 const TV_AUTH_COOKIE = 'clawdbot-tv-auth';
 
 // Routes that don't require authentication
-const publicPaths = ['/login', '/tv-login', '/auth/recovery', '/api/auth/login', '/api/auth/tv-login', '/api/auth/logout', '/api/markets', '/api/price-history', '/api/faith/', '/api/agents/'];
+const publicPaths = ['/login', '/tv-login', '/auth/recovery', '/api/auth/login', '/api/auth/tv-login', '/api/auth/logout', '/api/markets', '/api/price-history', '/api/faith/', '/api/agents'];
 
 // API routes accessible with TV or Hub scope (TV dashboard needs these)
 const tvApiPaths = ['/api/trading/'];

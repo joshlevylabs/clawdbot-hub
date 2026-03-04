@@ -5,6 +5,9 @@ import {
   ResponsiveContainer,
   AreaChart,
   Area,
+  Line,
+  LineChart,
+  ComposedChart,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -45,6 +48,8 @@ interface PerformanceChartProps {
   snapshots: PortfolioSnapshot[];
   /** Intraday snapshots for fine-grained 1D/1W views */
   intradaySnapshots?: IntradaySnapshot[];
+  /** Agent portfolio snapshots for comparison lines */
+  agentSnapshots?: Record<string, Array<{ date: string; return: number }>>;
   /** Compact mode for embedding in smaller spaces */
   compact?: boolean;
   /** Starting capital for % calculations */
@@ -61,6 +66,11 @@ interface ChartDataPoint {
   portfolio: number;
   spy: number;
   alpha: number;
+  chris?: number;
+  buffett?: number;
+  schiff?: number;
+  pal?: number;
+  lynch?: number;
 }
 
 type TimeRange = "1D" | "1W" | "1M" | "3M" | "1Y";
@@ -81,6 +91,15 @@ const TIME_RANGE_LABELS: Record<TimeRange, string> = {
   "1Y": "1 year",
 };
 
+// Agent configuration with their theme colors
+const AGENT_CONFIG = {
+  chris: { key: 'chris', name: 'Chris', color: '#f59e0b' },
+  buffett: { key: 'buffett', name: 'Buffett', color: '#10b981' },
+  schiff: { key: 'schiff', name: 'Schiff', color: '#eab308' },
+  pal: { key: 'pal', name: 'Pal', color: '#06b6d4' },
+  lynch: { key: 'lynch', name: 'Lynch', color: '#8b5cf6' },
+} as const;
+
 function formatPercent(value: number): string {
   return `${value >= 0 ? "+" : ""}${value.toFixed(2)}%`;
 }
@@ -91,6 +110,20 @@ function CustomTooltip({ active, payload, label }: any) {
   const portfolio = payload.find((p: { dataKey: string }) => p.dataKey === "portfolio")?.value ?? 0;
   const spy = payload.find((p: { dataKey: string }) => p.dataKey === "spy")?.value ?? 0;
   const alpha = portfolio - spy;
+
+  // Find agent data in payload
+  const agentData: Array<{ key: string; name: string; value: number; color: string }> = [];
+  for (const [agentId, config] of Object.entries(AGENT_CONFIG)) {
+    const agentPayload = payload.find((p: { dataKey: string }) => p.dataKey === agentId);
+    if (agentPayload && typeof agentPayload.value === 'number') {
+      agentData.push({
+        key: agentId,
+        name: config.name,
+        value: agentPayload.value,
+        color: config.color,
+      });
+    }
+  }
 
   return (
     <div className="bg-slate-900 border border-slate-700 rounded-lg p-3 shadow-xl text-sm">
@@ -114,6 +147,25 @@ function CustomTooltip({ active, payload, label }: any) {
             {formatPercent(spy)}
           </span>
         </div>
+        
+        {/* Agent returns */}
+        {agentData.length > 0 && (
+          <>
+            <div className="border-t border-slate-700 pt-1 mt-1" />
+            {agentData.map((agent) => (
+              <div key={agent.key} className="flex items-center justify-between gap-4">
+                <span className="flex items-center gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: agent.color }} />
+                  {agent.name}
+                </span>
+                <span className={`font-mono text-xs ${agent.value >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+                  {formatPercent(agent.value)}
+                </span>
+              </div>
+            ))}
+          </>
+        )}
+
         <div className="border-t border-slate-700 pt-1 mt-1">
           <div className="flex items-center justify-between gap-4">
             <span className="text-slate-500">Alpha</span>
@@ -130,12 +182,20 @@ function CustomTooltip({ active, payload, label }: any) {
 export default function PerformanceChart({
   snapshots,
   intradaySnapshots = [],
+  agentSnapshots = {},
   compact = false,
   startingCapital = 100000,
   className = "",
   defaultTimeRange,
 }: PerformanceChartProps) {
   const [timeRange, setTimeRange] = useState<TimeRange>(defaultTimeRange || "1D");
+  const [visibleAgents, setVisibleAgents] = useState<Record<string, boolean>>({
+    chris: true,
+    buffett: true,
+    schiff: true,
+    pal: true,
+    lynch: true,
+  });
 
   // Convert intraday snapshots to PortfolioSnapshot format for unified processing
   const intradayAsPortfolio = useMemo<PortfolioSnapshot[]>(() => {
@@ -279,15 +339,45 @@ export default function PerformanceChart({
         });
       }
 
+      // Get agent returns for this date if available
+      const agentReturns: Partial<{ chris: number; buffett: number; schiff: number; pal: number; lynch: number }> = {};
+      
+      for (const [agentId, snapshots] of Object.entries(agentSnapshots)) {
+        const agentSnapshot = snapshots.find(snap => snap.date === s.date);
+        if (agentSnapshot) {
+          const agentKey = agentId === 'chris-vermeulen' ? 'chris' :
+                         agentId === 'warren-buffett' ? 'buffett' :
+                         agentId === 'peter-schiff' ? 'schiff' :
+                         agentId === 'raoul-pal' ? 'pal' :
+                         agentId === 'peter-lynch' ? 'lynch' : null;
+          
+          if (agentKey) {
+            agentReturns[agentKey] = agentSnapshot.return;
+          }
+        } else {
+          // If no data for this date, use 0% return
+          const agentKey = agentId === 'chris-vermeulen' ? 'chris' :
+                         agentId === 'warren-buffett' ? 'buffett' :
+                         agentId === 'peter-schiff' ? 'schiff' :
+                         agentId === 'raoul-pal' ? 'pal' :
+                         agentId === 'peter-lynch' ? 'lynch' : null;
+          
+          if (agentKey) {
+            agentReturns[agentKey] = 0;
+          }
+        }
+      }
+
       return {
         date: s.date,
         dateLabel,
         portfolio: Math.round(portfolioReturn * 100) / 100,
         spy: Math.round(spyReturn * 100) / 100,
         alpha: Math.round((portfolioReturn - spyReturn) * 100) / 100,
+        ...agentReturns,
       };
     });
-  }, [filteredSnapshots, startingCapital, timeRange]);
+  }, [filteredSnapshots, startingCapital, timeRange, agentSnapshots]);
 
   // Summary stats
   const latestData = chartData[chartData.length - 1];
@@ -387,10 +477,40 @@ export default function PerformanceChart({
         </div>
       </div>
 
+      {/* Agent Legend Toggle */}
+      {!compact && Object.keys(agentSnapshots).length > 0 && (
+        <div className="mb-3 flex items-center gap-2 flex-wrap">
+          <span className="text-xs text-slate-500">Agent Lines:</span>
+          {Object.entries(AGENT_CONFIG).map(([key, config]) => {
+            const hasData = agentSnapshots[`${key === 'chris' ? 'chris-vermeulen' : key === 'buffett' ? 'warren-buffett' : key === 'schiff' ? 'peter-schiff' : key === 'pal' ? 'raoul-pal' : 'peter-lynch'}`];
+            if (!hasData || hasData.length === 0) return null;
+            
+            return (
+              <button
+                key={key}
+                onClick={() => setVisibleAgents(prev => ({ ...prev, [key]: !prev[key] }))}
+                className={`px-2 py-1 rounded-md text-xs font-medium border transition-colors ${
+                  visibleAgents[key]
+                    ? 'bg-slate-700 text-slate-100 border-slate-600'
+                    : 'bg-slate-800/50 text-slate-500 border-slate-700'
+                }`}
+                style={{
+                  borderColor: visibleAgents[key] ? config.color : undefined,
+                  backgroundColor: visibleAgents[key] ? `${config.color}20` : undefined,
+                }}
+              >
+                <span className="inline-block w-2 h-2 rounded-full mr-1.5" style={{ backgroundColor: config.color }} />
+                {config.name}
+              </button>
+            );
+          })}
+        </div>
+      )}
+
       {/* Chart */}
       <div className={compact ? "h-40" : "h-64 lg:h-96"}>
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={chartData} margin={{ top: 5, right: 5, left: -15, bottom: 0 }}>
+          <ComposedChart data={chartData} margin={{ top: 5, right: 5, left: -15, bottom: 0 }}>
             <defs>
               <linearGradient id="portfolioGradient" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="#D4A020" stopOpacity={0.2} />
@@ -426,6 +546,8 @@ export default function PerformanceChart({
                 )}
               />
             )}
+            
+            {/* S&P 500 Area */}
             <Area
               type="monotone"
               dataKey="spy"
@@ -435,6 +557,8 @@ export default function PerformanceChart({
               fill="url(#spyGradient)"
               dot={false}
             />
+            
+            {/* Portfolio Area */}
             <Area
               type="monotone"
               dataKey="portfolio"
@@ -444,7 +568,32 @@ export default function PerformanceChart({
               fill="url(#portfolioGradient)"
               dot={false}
             />
-          </AreaChart>
+
+            {/* Agent Lines */}
+            {Object.entries(AGENT_CONFIG).map(([key, config]) => {
+              const agentId = key === 'chris' ? 'chris-vermeulen' :
+                            key === 'buffett' ? 'warren-buffett' :
+                            key === 'schiff' ? 'peter-schiff' :
+                            key === 'pal' ? 'raoul-pal' :
+                            'peter-lynch';
+              
+              const hasData = agentSnapshots[agentId] && agentSnapshots[agentId].length > 0;
+              if (!hasData || !visibleAgents[key]) return null;
+
+              return (
+                <Line
+                  key={key}
+                  type="monotone"
+                  dataKey={key}
+                  name={config.name}
+                  stroke={config.color}
+                  strokeWidth={1.5}
+                  dot={false}
+                  strokeOpacity={0.8}
+                />
+              );
+            })}
+          </ComposedChart>
         </ResponsiveContainer>
       </div>
 

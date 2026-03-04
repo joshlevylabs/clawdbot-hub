@@ -73,6 +73,21 @@ interface AdvisorConfig {
   knowledgeVersion: string;
 }
 
+interface AgentPortfolio {
+  id: string;
+  name: string;
+  emoji: string;
+  theme: string;
+  cashBalance: number;
+  positionsValue: number;
+  totalEquity: number;
+  positionCount: number;
+  dailyPnl: number;
+  totalPnl: number;
+  dailyPnlPct: number;
+  totalPnlPct: number;
+}
+
 const ADVISORS: AdvisorConfig[] = [
   {
     id: 'chris',
@@ -201,6 +216,20 @@ function formatTimestamp(ts?: string) {
   } catch { return ''; }
 }
 
+function formatCurrency(value: number): string {
+  if (Math.abs(value) >= 1000000) {
+    return `$${(value / 1000000).toFixed(1)}M`;
+  }
+  if (Math.abs(value) >= 1000) {
+    return `$${(value / 1000).toFixed(0)}K`;
+  }
+  return `$${value.toFixed(0)}`;
+}
+
+function formatPercentage(value: number): string {
+  return `${value >= 0 ? '+' : ''}${value.toFixed(2)}%`;
+}
+
 // ── Generic Advisor Avatar ──
 
 function AdvisorAvatar({ config, size = 48 }: { config: AdvisorConfig; size?: number }) {
@@ -281,13 +310,17 @@ function AdvisorCard({
   data,
   loading,
   error,
+  portfolio,
   onOpen,
+  onAgentClick,
 }: {
   config: AdvisorConfig;
   data: AdvisorData | null;
   loading: boolean;
   error: string | null;
+  portfolio?: AgentPortfolio;
   onOpen: () => void;
+  onAgentClick?: (agentId: string) => void;
 }) {
   const totalActions = (data?.pre_market_actions?.length || 0) + (data?.market_hours_actions?.length || 0);
   const highPriority = [
@@ -305,9 +338,8 @@ function AdvisorCard({
         : 'Loading...';
 
   return (
-    <button
-      onClick={onOpen}
-      className={`w-full bg-slate-800/50 border ${config.borderColor} ${config.hoverBorder} rounded-xl p-4 transition-all duration-200 hover:bg-slate-800/80 group text-left`}
+    <div
+      className={`w-full bg-slate-800/50 border ${config.borderColor} ${config.hoverBorder} rounded-xl p-4 transition-all duration-200 hover:bg-slate-800/80 group`}
     >
       {/* Top row: avatar + name + chevron */}
       <div className="flex items-center gap-3 mb-2">
@@ -318,11 +350,16 @@ function AdvisorCard({
           <h3 className="text-sm font-semibold text-white leading-tight">{config.name}</h3>
           <p className="text-[11px] text-slate-500">{config.subtitle}</p>
         </div>
-        <ChevronRight className="h-4 w-4 text-slate-600 group-hover:text-slate-400 transition-colors flex-shrink-0" />
+        <button
+          onClick={onOpen}
+          className="p-1 hover:bg-slate-700/50 rounded-md transition-colors"
+        >
+          <ChevronRight className="h-4 w-4 text-slate-600 group-hover:text-slate-400 transition-colors flex-shrink-0" />
+        </button>
       </div>
 
-      {/* Status row */}
-      <div className="flex items-center justify-between">
+      {/* Analysis status row */}
+      <div className="flex items-center justify-between mb-3">
         <p className={`text-xs ${data?._stale_guard ? 'text-red-400' : config.accentText}`}>
           {loading ? (
             <span className="flex items-center gap-1">
@@ -339,7 +376,62 @@ function AdvisorCard({
           </span>
         )}
       </div>
-    </button>
+
+      {/* Portfolio data */}
+      {portfolio && (
+        <div className="space-y-2">
+          {/* Portfolio equity */}
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-slate-400">Portfolio</span>
+            <div className="text-right">
+              <div className={`text-sm font-semibold ${config.accentText}`}>
+                {formatCurrency(portfolio.totalEquity)}
+              </div>
+              <div className="text-xs text-slate-500">
+                {portfolio.positionCount} positions
+              </div>
+            </div>
+          </div>
+
+          {/* P&L Performance */}
+          <div className="grid grid-cols-2 gap-2 text-xs">
+            <div className="text-center">
+              <div className="text-slate-500">Today</div>
+              <div className={`font-semibold ${portfolio.dailyPnlPct >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                {formatPercentage(portfolio.dailyPnlPct)}
+              </div>
+            </div>
+            <div className="text-center">
+              <div className="text-slate-500">Total</div>
+              <div className={`font-semibold ${portfolio.totalPnlPct >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                {formatPercentage(portfolio.totalPnlPct)}
+              </div>
+            </div>
+          </div>
+
+          {/* Action button */}
+          {onAgentClick && (
+            <button
+              onClick={() => onAgentClick(portfolio.id)}
+              className={`w-full mt-2 py-1.5 px-3 rounded-md text-xs font-medium transition-colors ${config.accentBg} ${config.accentText} hover:bg-opacity-80`}
+            >
+              View Positions
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* Loading portfolio */}
+      {!portfolio && (
+        <div className="animate-pulse">
+          <div className="h-3 bg-slate-700/30 rounded mb-2"></div>
+          <div className="flex gap-2">
+            <div className="h-8 bg-slate-700/30 rounded flex-1"></div>
+            <div className="h-8 bg-slate-700/30 rounded flex-1"></div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -605,7 +697,11 @@ function AdvisorModal({
 
 // ── Main Export ──
 
-export default function AdvisorCards() {
+interface AdvisorCardsProps {
+  onAgentClick?: (agentId: string) => void;
+}
+
+export default function AdvisorCards({ onAgentClick }: AdvisorCardsProps = {}) {
   // State for all advisors
   const [advisorState, setAdvisorState] = useState<Record<string, {
     data: AdvisorData | null;
@@ -615,7 +711,32 @@ export default function AdvisorCards() {
     Object.fromEntries(ADVISORS.map(a => [a.id, { data: null, loading: false, error: null }]))
   );
 
+  // State for portfolio data
+  const [portfolios, setPortfolios] = useState<AgentPortfolio[]>([]);
+  const [portfoliosLoading, setPortfoliosLoading] = useState(true);
+  const [portfoliosError, setPortfoliosError] = useState<string | null>(null);
+
   const [openModal, setOpenModal] = useState<string | null>(null);
+
+  const fetchPortfolios = useCallback(async () => {
+    try {
+      setPortfoliosLoading(true);
+      const response = await fetch('/api/trading/agent-portfolios');
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to fetch portfolios');
+      }
+      
+      setPortfolios(data.portfolios || []);
+      setPortfoliosError(null);
+    } catch (err) {
+      console.error('Error fetching agent portfolios:', err);
+      setPortfoliosError(err instanceof Error ? err.message : 'Failed to load portfolios');
+    } finally {
+      setPortfoliosLoading(false);
+    }
+  }, []);
 
   const fetchAdvisor = useCallback(async (config: AdvisorConfig, refresh = false) => {
     const { id, apiRoute, cacheKey, knowledgeVersion } = config;
@@ -672,19 +793,31 @@ export default function AdvisorCards() {
 
   // Staggered fetch: load advisors 1s apart to avoid hammering Anthropic API
   useEffect(() => {
+    fetchPortfolios(); // Fetch portfolios immediately
     ADVISORS.forEach((advisor, idx) => {
       setTimeout(() => fetchAdvisor(advisor), idx * 2000); // 2s stagger
     });
-  }, [fetchAdvisor]);
+  }, [fetchAdvisor, fetchPortfolios]);
 
   const openConfig = openModal ? ADVISORS.find(a => a.id === openModal) : null;
+
+  // Map portfolio data to advisor IDs
+  const getPortfolioForAdvisor = useCallback((advisorId: string) => {
+    const portfolioId = advisorId === 'chris' ? 'chris-vermeulen' :
+                      advisorId === 'buffett' ? 'warren-buffett' :
+                      advisorId === 'schiff' ? 'peter-schiff' :
+                      advisorId === 'pal' ? 'raoul-pal' :
+                      advisorId === 'lynch' ? 'peter-lynch' : null;
+    
+    return portfolioId ? portfolios.find(p => p.id === portfolioId) : undefined;
+  }, [portfolios]);
 
   return (
     <>
       {/* Section header */}
       <div className="flex items-center gap-2 mb-1">
         <span className="text-sm font-medium text-slate-400">AI Trading Desk</span>
-        <span className="text-xs text-slate-600">— {ADVISORS.length} advisors analyzing your portfolio</span>
+        <span className="text-xs text-slate-600">— {ADVISORS.length} advisors with live portfolios</span>
       </div>
 
       {/* Advisor cards: row of 3 + row of 2 centered on desktop; 2-col on mobile */}
@@ -692,6 +825,7 @@ export default function AdvisorCards() {
         <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
           {ADVISORS.slice(0, 3).map((advisor) => {
             const state = advisorState[advisor.id];
+            const portfolio = getPortfolioForAdvisor(advisor.id);
             return (
               <AdvisorCard
                 key={advisor.id}
@@ -699,7 +833,9 @@ export default function AdvisorCards() {
                 data={state.data}
                 loading={state.loading}
                 error={state.error}
+                portfolio={portfolio}
                 onOpen={() => setOpenModal(advisor.id)}
+                onAgentClick={onAgentClick}
               />
             );
           })}
@@ -707,6 +843,7 @@ export default function AdvisorCards() {
         <div className="grid grid-cols-2 md:grid-cols-2 gap-2 md:max-w-[66.666%] md:mx-auto">
           {ADVISORS.slice(3).map((advisor) => {
             const state = advisorState[advisor.id];
+            const portfolio = getPortfolioForAdvisor(advisor.id);
             return (
               <AdvisorCard
                 key={advisor.id}
@@ -714,12 +851,46 @@ export default function AdvisorCards() {
                 data={state.data}
                 loading={state.loading}
                 error={state.error}
+                portfolio={portfolio}
                 onOpen={() => setOpenModal(advisor.id)}
+                onAgentClick={onAgentClick}
               />
             );
           })}
         </div>
       </div>
+
+      {/* Summary Stats - taken from AgentPortfolios */}
+      {portfolios.length > 0 && !portfoliosLoading && (
+        <div className="mt-6 pt-4 border-t border-slate-700/50">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+            <div>
+              <div className="text-xs text-slate-400 mb-1">Total AUM</div>
+              <div className="text-sm font-semibold text-primary-400">
+                {formatCurrency(portfolios.reduce((sum, p) => sum + p.totalEquity, 0))}
+              </div>
+            </div>
+            <div>
+              <div className="text-xs text-slate-400 mb-1">Avg Return</div>
+              <div className="text-sm font-semibold text-slate-100">
+                {formatPercentage(portfolios.reduce((sum, p) => sum + p.totalPnlPct, 0) / portfolios.length)}
+              </div>
+            </div>
+            <div>
+              <div className="text-xs text-slate-400 mb-1">Best Performer</div>
+              <div className="text-sm font-semibold text-emerald-400">
+                {portfolios.reduce((best, p) => p.totalPnlPct > best.totalPnlPct ? p : best).name.split(' ')[0]}
+              </div>
+            </div>
+            <div>
+              <div className="text-xs text-slate-400 mb-1">Total Positions</div>
+              <div className="text-sm font-semibold text-slate-100">
+                {portfolios.reduce((sum, p) => sum + p.positionCount, 0)}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Modal */}
       {openConfig && (

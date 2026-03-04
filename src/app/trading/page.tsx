@@ -33,7 +33,6 @@ import ActionsDashboard from "@/components/ActionsDashboard";
 import PerformanceChart from "@/components/PerformanceChart";
 import MREDashboard from "./MREDashboard";
 import AdvisorCards from "@/components/trading/AdvisorCards";
-import AgentPortfolios from "@/components/trading/AgentPortfolios";
 import SignalHealthBanner from "@/components/trading/SignalHealthBanner";
 import UniverseTable from "./UniverseTable";
 import MarketsOverview from "./MarketsOverview";
@@ -436,6 +435,9 @@ export default function TradingPage() {
   
   // Agent filter for positions
   const [selectedAgentFilter, setSelectedAgentFilter] = useState<string>('all');
+  
+  // Agent snapshots for performance chart
+  const [agentSnapshots, setAgentSnapshots] = useState<Record<string, Array<{ date: string; return: number }>>>({});
 
   const handleAnalyze = (symbol: string) => {
     setAnalyzeModalSymbol(symbol);
@@ -448,6 +450,18 @@ export default function TradingPage() {
 
   // Legacy state for ActionsDashboard compatibility
   const [legacyPositions, setLegacyPositions] = useState<{ symbol: string; qty: number; entry_price: number }[]>([]);
+
+  const loadAgentSnapshots = useCallback(async () => {
+    try {
+      const res = await fetch("/api/trading/agent-snapshots");
+      if (res.ok) {
+        const json = await res.json();
+        setAgentSnapshots(json.agentSnapshots || {});
+      }
+    } catch (err) {
+      console.error("Failed to load agent snapshots:", err);
+    }
+  }, []);
 
   const loadFromSupabase = useCallback(async () => {
     try {
@@ -465,11 +479,14 @@ export default function TradingPage() {
           entry_price: p.entry_price,
         }))
       );
+
+      // Load agent snapshots for performance chart
+      await loadAgentSnapshots();
     } catch (err) {
       console.error("Supabase fetch failed, falling back to static:", err);
       await loadFromStatic();
     }
-  }, []);
+  }, [loadAgentSnapshots]);
 
   const loadFromStatic = useCallback(async () => {
     try {
@@ -793,11 +810,8 @@ export default function TradingPage() {
                 />
               )}
 
-              {/* AI Advisors — compact cards, click to open full modal */}
-              <AdvisorCards />
-
-              {/* AI Trading Agents Portfolio Overview */}
-              <AgentPortfolios onAgentClick={setSelectedAgentFilter} />
+              {/* AI Trading Desk - unified advisors + portfolios */}
+              <AdvisorCards onAgentClick={setSelectedAgentFilter} />
 
               {/* Trade Performance Stats */}
               {trades.length > 0 && (
@@ -837,6 +851,7 @@ export default function TradingPage() {
               <PerformanceChart
                 snapshots={snapshots}
                 intradaySnapshots={intradaySnapshots}
+                agentSnapshots={agentSnapshots}
                 startingCapital={startingCapital}
               />
 

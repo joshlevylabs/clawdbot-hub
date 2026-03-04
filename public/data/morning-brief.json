@@ -1,140 +1,90 @@
 {
-  "timestamp": "2026-03-03T06:00:00.000Z",
-  "date": "Tuesday, March 3rd, 2026",
-  "timezone": "America/Los_Angeles",
-  "sections": {
-    "prayer": {
-      "title": "🕊️ Morning Prayer",
-      "date": "Tuesday, March 03, 2026",
-      "hebrew_date": "3 Kislev",
-      "parsha": "Vayigash",
-      "parsha_theme": "reunion, forgiveness, revealing truth",
-      "modeh_ani": "מודה אני לפניך — I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
-      "blessing": "Blessed are You who releases the bound — free me from what holds me back.",
-      "psalm": "**Psalm 121:8**: \"The Lord will watch over your coming and going both now and forevermore.\"",
-      "proverb": "**Proverbs 16:9**: \"The heart of man plans his way, but the Lord establishes his steps.\"",
-      "intention": "Let today's small faithfulness lead to tomorrow's greater stewardship.",
-      "closing": "Baruch atah Adonai — Blessed are You, Lord, who renews creation daily with goodness."
-    },
-    "weather": {
-      "title": "🌤️ Weather",
-      "location": "Temecula, CA",
-      "forecast": "74°F / 48°F",
-      "feels_like": "67°F",
-      "wind": "6 mph from North",
-      "summary": "Pleasant spring weather with mild temperatures"
-    },
-    "calendar": {
-      "title": "📅 Calendar",
-      "status": "Authentication needed",
-      "message": "Calendar access requires configuration. Consider setting up gog authentication.",
-      "today": [],
-      "week": [],
-      "month": []
-    },
-    "email": {
-      "title": "📧 Email Highlights",
-      "status": "Setup needed",
-      "message": "Email access requires himalaya configuration for josh@joshlevylabs.com and joshua.seth.levy@gmail.com",
-      "highlights": []
-    },
-    "trading": {
-      "title": "📈 MRE Trading Signals",
-      "updated": "2026-03-03T03:33:27.396Z",
-      "fear_greed_index": {
-        "current": 34.6,
-        "rating": "Fear",
-        "summary": "Markets are fearful at 35. Sentiment is negative — watch for oversold bounces."
-      },
-      "regime": {
-        "spy": "sideways",
-        "qqq": "sideways", 
-        "summary": "SPY is sideways, QQQ is sideways. Momentum is weakening."
-      },
-      "signals": {
-        "total_buy": 0,
-        "total_hold": 24,
-        "total_watch": 0,
-        "summary": "All signals are HOLD. No active buy opportunities in current market conditions."
-      },
-      "key_levels": {
-        "spy": {
-          "price": 686.38,
-          "support": 686.3,
-          "resistance": 697.84
-        },
-        "qqq": {
-          "price": 608.09,
-          "support": 601.62,
-          "resistance": 608.3
-        }
-      }
-    },
-    "relationship": {
-      "title": "💖 Jillian Focus",
-      "status": "CRITICAL ATTENTION NEEDED",
-      "temperature": "Critical",
-      "trend": "Urgent",
-      "stats": {
-        "positive": 6,
-        "negative": 5,
-        "ratio": 1.2
-      },
-      "love_languages": {
-        "primary": "Quality Time",
-        "secondary": "Acts of Service"
-      },
-      "recommendations": [
-        "PRIORITY: Focus on repair. Acknowledge recent conflicts without defending.",
-        "Increase acts of service dramatically this week.",
-        "Create space for her to express frustrations without fixing."
-      ],
-      "action_required": "This requires immediate attention and intentional effort today."
-    },
-    "news": {
-      "world": {
-        "title": "🌍 World News (Israel Focus)",
-        "items": [
-          {
-            "headline": "Renewed rocket fire from Iran, Lebanon targets Israel",
-            "source": "Times of Israel",
-            "timeAgo": "4 hours ago",
-            "significance": "Ongoing security concerns in the region"
-          },
-          {
-            "headline": "Jewish politics shaping 2026 election map",
-            "source": "Pittsburgh Jewish Chronicle",
-            "significance": "Political developments affecting Jewish communities"
-          }
-        ]
-      },
-      "ai": {
-        "title": "🤖 AI News",
-        "items": [
-          {
-            "headline": "Weill Cornell Medicine launches 'AI to Advance Medicine' program",
-            "source": "Crescendo AI",
-            "significance": "AI integration into clinical care and research"
-          },
-          {
-            "headline": "LeCun leaves Meta to start $5B world model lab",
-            "source": "TechCrunch",
-            "significance": "Major industry movement toward world models"
-          },
-          {
-            "headline": "2026: AI moves from hype to pragmatism",
-            "source": "TechCrunch", 
-            "significance": "Industry maturation and practical applications"
-          }
-        ]
-      }
-    }
+  "date": "2026-03-04",
+  "timestamp": "2026-03-04T06:01:00.000Z",
+  "weather": {
+    "location": "Temecula, CA",
+    "today": "Sunny, high near 73°F. Light winds becoming southwest 10-15 mph with gusts to 20 mph.",
+    "tonight": "Patchy fog after 10pm, otherwise partly cloudy with low around 44°F.",
+    "week_outlook": "Sunny weather continues through week. Temps 72-77°F. Possible showers Sunday night."
   },
-  "summary": "Key focus areas for today: Critical relationship attention needed with Jillian (quality time + acts of service). Markets in fearful territory with all-hold signals. Pleasant weather for any outdoor time together. Torah theme of reunion and forgiveness is particularly relevant.",
-  "priorities": [
-    "🚨 Relationship repair with Jillian - quality time and acts of service",
-    "📈 Monitor market sentiment - oversold bounce potential", 
-    "🌤️ Take advantage of nice weather for family time",
-    "🕊️ Apply Torah theme of reunion/forgiveness in personal relationships"
+  "prayer": {
+    "date": "Wednesday, March 04, 2026",
+    "hebrew_date": "4 Kislev",
+    "parsha": "Vayigash",
+    "parsha_theme": "reunion, forgiveness, revealing truth",
+    "modeh_ani": "מודה אני לפניך — I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
+    "blessing": "Blessed are You who has provided me with all I need — I lack nothing essential.",
+    "psalm": "Psalm 37:5: \"Commit your way to the Lord; trust in Him and He will act.\"",
+    "proverb": "Proverbs 13:11: \"Wealth gained hastily will dwindle, but whoever gathers little by little will increase it.\"",
+    "intention": "Let today's small faithfulness lead to tomorrow's greater stewardship.",
+    "closing": "Go in peace. Build with purpose. Return with gratitude."
+  },
+  "calendar": {
+    "today": [],
+    "week": [],
+    "month": [],
+    "note": "Calendar access needs OAuth refresh"
+  },
+  "email_highlights": [
+    {
+      "subject": "Your receipt from Anthropic, PBC #2706-0682-0015",
+      "from": "Anthropic, PBC",
+      "priority": "high",
+      "note": "API usage billing"
+    },
+    {
+      "subject": "SNEAK PEEK: AI Test Script Generation is coming to TestRail",
+      "from": "TestRail Team", 
+      "priority": "medium",
+      "note": "AI automation tooling update"
+    }
+  ],
+  "mre_trading": {
+    "fear_greed_index": 32.43,
+    "rating": "fear",
+    "regime": "sideways",
+    "buy_signals": 0,
+    "portfolio_deployed": "70.8%",
+    "cash_available": "$29,339",
+    "diverged_pairs": 1,
+    "summary": "Markets are fearful at 32. Sentiment is negative — watch for oversold bounces."
+  },
+  "relationship_analysis": {
+    "temperature": "critical",
+    "trend": "urgent", 
+    "ratio": 1.2,
+    "recommendations": [
+      "PRIORITY: Focus on repair. Acknowledge recent conflicts without defending.",
+      "Increase acts of service dramatically this week.",
+      "Create space for her to express frustrations without fixing."
+    ]
+  },
+  "world_news": [
+    {
+      "headline": "Gaza ceasefire fragile as Iran tensions rise",
+      "source": "PBS News",
+      "impact": "medium",
+      "note": "Fear new Iran conflict could overshadow Gaza situation"
+    },
+    {
+      "headline": "Trump: Gaza war over, Hamas must disarm",
+      "source": "Times of Israel",
+      "impact": "high",
+      "note": "Board of Peace coordinating PA transition in Gaza"
+    }
+  ],
+  "ai_news": [
+    {
+      "headline": "AI moving from hype to pragmatism in 2026",
+      "source": "TechCrunch",
+      "impact": "high",
+      "note": "MCP becoming standard for AI agent integration"
+    },
+    {
+      "headline": "$1M federal AI consortium funding for West Michigan",
+      "source": "Crescendo AI",
+      "impact": "medium",
+      "note": "Academia-industry collaboration focus"
+    }
   ]
 }

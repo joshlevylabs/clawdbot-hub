@@ -2265,7 +2265,7 @@ export default function FaithJourneyPage() {
                 </div>
 
                 {/* Compact Day Detail Panel */}
-                {selectedDay && (
+                {selectedDay && !selectedLesson && (
                   <div className="lg:flex lg:gap-6">
                     {/* Desktop: Side-by-side layout */}
                     <div className="lg:hidden">

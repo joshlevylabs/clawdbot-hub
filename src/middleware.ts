@@ -63,7 +63,10 @@ export async function middleware(request: NextRequest) {
       if (scope === 'hub') return NextResponse.next();
     }
 
-    // No valid token, redirect to TV login
+    // No valid token — JSON 401 for API routes, redirect for pages
+    if (pathname.startsWith('/api/')) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
     const loginUrl = new URL('/tv-login', request.url);
     return NextResponse.redirect(loginUrl);
   }
@@ -72,6 +75,10 @@ export async function middleware(request: NextRequest) {
   const token = request.cookies.get(AUTH_COOKIE)?.value;
 
   if (!token) {
+    // JSON 401 for API routes, redirect for pages
+    if (pathname.startsWith('/api/')) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
     const loginUrl = new URL('/login', request.url);
     return NextResponse.redirect(loginUrl);
   }
@@ -79,6 +86,11 @@ export async function middleware(request: NextRequest) {
   const scope = await verifyToken(token);
 
   if (!scope) {
+    if (pathname.startsWith('/api/')) {
+      const response = NextResponse.json({ error: 'Unauthorized — invalid token' }, { status: 401 });
+      response.cookies.delete(AUTH_COOKIE);
+      return response;
+    }
     const loginUrl = new URL('/login', request.url);
     const response = NextResponse.redirect(loginUrl);
     response.cookies.delete(AUTH_COOKIE);
@@ -87,6 +99,9 @@ export async function middleware(request: NextRequest) {
 
   // TV-only tokens can't access the full Hub
   if (scope === 'tv') {
+    if (pathname.startsWith('/api/')) {
+      return NextResponse.json({ error: 'Insufficient scope — TV token cannot access Hub APIs' }, { status: 403 });
+    }
     const tvUrl = new URL('/tv', request.url);
     return NextResponse.redirect(tvUrl);
   }

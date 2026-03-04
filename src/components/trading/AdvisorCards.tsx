@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   RefreshCcw,
   Clock,
@@ -49,7 +49,112 @@ interface AdvisorData {
   _stale_guard?: boolean;
 }
 
-type AdvisorType = 'chris' | 'buffett';
+// ── Advisor Config ──
+
+interface AdvisorConfig {
+  id: string;
+  name: string;
+  subtitle: string;
+  emoji: string;
+  borderColor: string;
+  hoverBorder: string;
+  accentText: string;
+  accentBg: string;
+  spinnerBorder: string;
+  gradient: [string, string];
+  avatarColors: {
+    suit: string;
+    accent: string;
+    hair: string;
+    extra?: string;
+  };
+  apiRoute: string;
+  cacheKey: string;
+  knowledgeVersion: string;
+}
+
+const ADVISORS: AdvisorConfig[] = [
+  {
+    id: 'chris',
+    name: 'Chris Vermeulen',
+    subtitle: 'Technical Strategist',
+    emoji: '🎯',
+    borderColor: 'border-amber-500/30',
+    hoverBorder: 'hover:border-amber-400/50',
+    accentText: 'text-amber-400',
+    accentBg: 'bg-amber-600/20',
+    spinnerBorder: 'border-amber-400',
+    gradient: ['#f59e0b', '#d97706'],
+    avatarColors: { suit: '#d97706', accent: '#fbbf24', hair: '#92400e' },
+    apiRoute: '/api/trading/chris-actions',
+    cacheKey: 'chris-daily-actions-v2',
+    knowledgeVersion: 'chris-vermeulen-v2-10videos',
+  },
+  {
+    id: 'buffett',
+    name: 'Warren Buffett',
+    subtitle: 'Value Investor',
+    emoji: '🦉',
+    borderColor: 'border-emerald-500/30',
+    hoverBorder: 'hover:border-emerald-400/50',
+    accentText: 'text-emerald-400',
+    accentBg: 'bg-emerald-600/20',
+    spinnerBorder: 'border-emerald-400',
+    gradient: ['#10b981', '#065f46'],
+    avatarColors: { suit: '#065f46', accent: '#10b981', hair: '#e2e8f0' },
+    apiRoute: '/api/trading/buffett-actions',
+    cacheKey: 'buffett-daily-actions-v1',
+    knowledgeVersion: 'warren-buffett-v1-portfolio-letters',
+  },
+  {
+    id: 'schiff',
+    name: 'Peter Schiff',
+    subtitle: 'Austrian Economist',
+    emoji: '🥇',
+    borderColor: 'border-yellow-500/30',
+    hoverBorder: 'hover:border-yellow-400/50',
+    accentText: 'text-yellow-400',
+    accentBg: 'bg-yellow-600/20',
+    spinnerBorder: 'border-yellow-400',
+    gradient: ['#eab308', '#a16207'],
+    avatarColors: { suit: '#854d0e', accent: '#facc15', hair: '#44403c', extra: 'gold' },
+    apiRoute: '/api/trading/schiff-actions',
+    cacheKey: 'schiff-daily-actions-v1',
+    knowledgeVersion: 'peter-schiff-v1',
+  },
+  {
+    id: 'pal',
+    name: 'Raoul Pal',
+    subtitle: 'Global Macro',
+    emoji: '🌊',
+    borderColor: 'border-cyan-500/30',
+    hoverBorder: 'hover:border-cyan-400/50',
+    accentText: 'text-cyan-400',
+    accentBg: 'bg-cyan-600/20',
+    spinnerBorder: 'border-cyan-400',
+    gradient: ['#06b6d4', '#0e7490'],
+    avatarColors: { suit: '#0e7490', accent: '#22d3ee', hair: '#334155' },
+    apiRoute: '/api/trading/pal-actions',
+    cacheKey: 'pal-daily-actions-v1',
+    knowledgeVersion: 'raoul-pal-v1',
+  },
+  {
+    id: 'lynch',
+    name: 'Peter Lynch',
+    subtitle: 'GARP Investor',
+    emoji: '📈',
+    borderColor: 'border-violet-500/30',
+    hoverBorder: 'hover:border-violet-400/50',
+    accentText: 'text-violet-400',
+    accentBg: 'bg-violet-600/20',
+    spinnerBorder: 'border-violet-400',
+    gradient: ['#8b5cf6', '#6d28d9'],
+    avatarColors: { suit: '#5b21b6', accent: '#a78bfa', hair: '#78716c' },
+    apiRoute: '/api/trading/lynch-actions',
+    cacheKey: 'lynch-daily-actions-v1',
+    knowledgeVersion: 'peter-lynch-v1',
+  },
+];
 
 // ── Helpers ──
 
@@ -96,60 +201,73 @@ function formatTimestamp(ts?: string) {
   } catch { return ''; }
 }
 
-// ── Advisor Avatar SVG ──
+// ── Generic Advisor Avatar ──
 
-function ChrisAvatar({ size = 48 }: { size?: number }) {
+function AdvisorAvatar({ config, size = 48 }: { config: AdvisorConfig; size?: number }) {
+  const id = config.id;
+  const { suit, accent, hair } = config.avatarColors;
+  const [g1, g2] = config.gradient;
+
+  // Unique avatar detail per advisor
+  const detail = () => {
+    switch (id) {
+      case 'chris': // Chart icon
+        return <polyline points="18,36 21,34 24,37 27,33 30,35" stroke="#fff" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />;
+      case 'buffett': // Dollar sign
+        return <text x="24" y="39" textAnchor="middle" fill="#fff" fontSize="10" fontWeight="bold">$</text>;
+      case 'schiff': // Gold bar
+        return (<>
+          <rect x="19" y="33" width="10" height="6" rx="1" fill="#fbbf24" stroke="#a16207" strokeWidth="0.5" />
+          <text x="24" y="38" textAnchor="middle" fill="#854d0e" fontSize="5" fontWeight="bold">Au</text>
+        </>);
+      case 'pal': // Wave
+        return <path d="M16,36 C19,33 21,39 24,36 C27,33 29,39 32,36" stroke="#fff" strokeWidth="1.5" fill="none" strokeLinecap="round" />;
+      case 'lynch': // Bar chart
+        return (<>
+          <rect x="19" y="36" width="3" height="4" fill="#fff" rx="0.5" />
+          <rect x="23" y="33" width="3" height="7" fill="#fff" rx="0.5" />
+          <rect x="27" y="35" width="3" height="5" fill="#fff" rx="0.5" />
+        </>);
+      default:
+        return null;
+    }
+  };
+
+  // Hair style varies
+  const hairPath = id === 'buffett'
+    ? <path d="M14 16c1-4 4-8 10-8s9 4 10 8c0 0-2-4-10-3s-10 3-10 3z" fill={hair} /> // sparse
+    : id === 'schiff'
+    ? <path d="M14 18c0-6 4-11 10-11s10 5 10 11c0 0-3-7-10-7s-10 7-10 7z" fill={hair} /> // full
+    : id === 'pal'
+    ? <path d="M15 17c0-5 4-9 9-9s9 4 9 9c0 0-3-5-9-5s-9 5-9 5z" fill={hair} /> // slick
+    : id === 'lynch'
+    ? <path d="M14 18c0-5 3-10 10-10s10 5 10 10c-1-3-4-6-10-6s-9 3-10 6z" fill={hair} /> // classic
+    : <path d="M14 18c0-6 4-12 10-12s10 6 10 12c0 0-3-6-10-6s-10 6-10 6z" fill={hair} />; // chris
+
+  const hasGlasses = ['chris', 'buffett', 'schiff', 'lynch'].includes(id);
+
   return (
     <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="24" cy="24" r="24" fill="url(#chris-bg)" />
-      {/* Stylized face */}
+      <circle cx="24" cy="24" r="24" fill={`url(#${id}-bg)`} />
       <circle cx="24" cy="20" r="10" fill="#fde68a" opacity="0.9" />
-      {/* Hair */}
-      <path d="M14 18c0-6 4-12 10-12s10 6 10 12c0 0-3-6-10-6s-10 6-10 6z" fill="#92400e" />
-      {/* Glasses */}
-      <circle cx="20" cy="19" r="3" stroke="#451a03" strokeWidth="1.2" fill="none" />
-      <circle cx="28" cy="19" r="3" stroke="#451a03" strokeWidth="1.2" fill="none" />
-      <line x1="23" y1="19" x2="25" y2="19" stroke="#451a03" strokeWidth="1" />
-      {/* Smile */}
+      {hairPath}
+      {hasGlasses && <>
+        <circle cx="20" cy="19" r="3" stroke="#334155" strokeWidth="1.2" fill="none" />
+        <circle cx="28" cy="19" r="3" stroke="#334155" strokeWidth="1.2" fill="none" />
+        <line x1="23" y1="19" x2="25" y2="19" stroke="#334155" strokeWidth="1" />
+      </>}
+      {!hasGlasses && <>
+        <circle cx="21" cy="18.5" r="1.2" fill="#334155" />
+        <circle cx="27" cy="18.5" r="1.2" fill="#334155" />
+      </>}
       <path d="M21 23q3 2 6 0" stroke="#451a03" strokeWidth="1" fill="none" strokeLinecap="round" />
-      {/* Suit */}
-      <path d="M10 42c0-8 6-14 14-14s14 6 14 14" fill="#d97706" />
-      <path d="M20 28l4 6 4-6" fill="#fbbf24" />
-      {/* Chart icon on chest */}
-      <polyline points="18,36 21,34 24,37 27,33 30,35" stroke="#fff" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+      <path d={`M10 42c0-8 6-14 14-14s14 6 14 14`} fill={suit} />
+      <path d="M20 28l4 6 4-6" fill={accent} />
+      {detail()}
       <defs>
-        <linearGradient id="chris-bg" x1="0" y1="0" x2="48" y2="48">
-          <stop offset="0%" stopColor="#f59e0b" />
-          <stop offset="100%" stopColor="#d97706" />
-        </linearGradient>
-      </defs>
-    </svg>
-  );
-}
-
-function BuffettAvatar({ size = 48 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="24" cy="24" r="24" fill="url(#buffett-bg)" />
-      {/* Face */}
-      <circle cx="24" cy="20" r="10" fill="#fde68a" opacity="0.9" />
-      {/* Sparse white hair */}
-      <path d="M14 16c1-4 4-8 10-8s9 4 10 8c0 0-2-4-10-3s-10 3-10 3z" fill="#e2e8f0" />
-      {/* Glasses */}
-      <circle cx="20" cy="19" r="3.5" stroke="#334155" strokeWidth="1.5" fill="none" />
-      <circle cx="28" cy="19" r="3.5" stroke="#334155" strokeWidth="1.5" fill="none" />
-      <line x1="23.5" y1="19" x2="24.5" y2="19" stroke="#334155" strokeWidth="1.2" />
-      {/* Warm smile */}
-      <path d="M20 23q4 3 8 0" stroke="#451a03" strokeWidth="1" fill="none" strokeLinecap="round" />
-      {/* Suit */}
-      <path d="M10 42c0-8 6-14 14-14s14 6 14 14" fill="#065f46" />
-      <path d="M20 28l4 6 4-6" fill="#10b981" />
-      {/* Dollar sign on chest */}
-      <text x="24" y="39" textAnchor="middle" fill="#fff" fontSize="10" fontWeight="bold">$</text>
-      <defs>
-        <linearGradient id="buffett-bg" x1="0" y1="0" x2="48" y2="48">
-          <stop offset="0%" stopColor="#10b981" />
-          <stop offset="100%" stopColor="#065f46" />
+        <linearGradient id={`${id}-bg`} x1="0" y1="0" x2="48" y2="48">
+          <stop offset="0%" stopColor={g1} />
+          <stop offset="100%" stopColor={g2} />
         </linearGradient>
       </defs>
     </svg>
@@ -159,25 +277,18 @@ function BuffettAvatar({ size = 48 }: { size?: number }) {
 // ── Compact Card ──
 
 function AdvisorCard({
-  type,
+  config,
   data,
   loading,
   error,
   onOpen,
-  onRefresh,
 }: {
-  type: AdvisorType;
+  config: AdvisorConfig;
   data: AdvisorData | null;
   loading: boolean;
   error: string | null;
   onOpen: () => void;
-  onRefresh: () => void;
 }) {
-  const isChris = type === 'chris';
-  const borderColor = isChris ? 'border-amber-500/30' : 'border-emerald-500/30';
-  const hoverBorder = isChris ? 'hover:border-amber-400/50' : 'hover:border-emerald-400/50';
-  const accentText = isChris ? 'text-amber-400' : 'text-emerald-400';
-
   const totalActions = (data?.pre_market_actions?.length || 0) + (data?.market_hours_actions?.length || 0);
   const highPriority = [
     ...(data?.pre_market_actions || []),
@@ -186,53 +297,44 @@ function AdvisorCard({
   const exitPositions = (data?.positions_review || []).filter(p => p.current_assessment === 'exit' || p.current_assessment === 'trim').length;
 
   const statusLine = data?._stale_guard
-    ? 'Signal data expired — refresh needed'
+    ? 'Signal data expired'
     : data
-      ? `${totalActions} action${totalActions !== 1 ? 's' : ''}${highPriority > 0 ? ` · ${highPriority} high priority` : ''}${exitPositions > 0 ? ` · ${exitPositions} exit/trim` : ''}`
+      ? `${totalActions} action${totalActions !== 1 ? 's' : ''}${highPriority > 0 ? ` · ${highPriority} 🔴` : ''}${exitPositions > 0 ? ` · ${exitPositions} exit` : ''}`
       : error
-        ? 'Analysis unavailable'
+        ? 'Unavailable'
         : 'Loading...';
 
   return (
     <button
       onClick={onOpen}
-      className={`w-full bg-slate-800/50 border ${borderColor} ${hoverBorder} rounded-lg p-4 transition-all duration-200 hover:bg-slate-800/80 group text-left`}
+      className={`w-full bg-slate-800/50 border ${config.borderColor} ${config.hoverBorder} rounded-lg p-3 transition-all duration-200 hover:bg-slate-800/80 group text-left`}
     >
-      <div className="flex items-center gap-4">
-        {/* Avatar */}
+      <div className="flex items-center gap-3">
         <div className="flex-shrink-0">
-          {isChris ? <ChrisAvatar size={48} /> : <BuffettAvatar size={48} />}
+          <AdvisorAvatar config={config} size={40} />
         </div>
-
-        {/* Info */}
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
-            <h3 className="text-sm font-semibold text-white">
-              {isChris ? 'Chris Vermeulen' : 'Warren Buffett'}
-            </h3>
+          <div className="flex items-center gap-1.5">
+            <h3 className="text-xs font-semibold text-white truncate">{config.name}</h3>
             {data?.signal_timestamp && !data._stale_guard && (
               <SignalFreshnessBadge signalTimestamp={data.signal_timestamp} compact />
             )}
             {data?._stale_guard && (
-              <span className="px-2 py-0.5 text-xs rounded-full bg-red-900/30 text-red-400 border border-red-700/30">
+              <span className="px-1.5 py-0.5 text-[10px] rounded-full bg-red-900/30 text-red-400 border border-red-700/30">
                 Expired
               </span>
             )}
           </div>
-          <p className="text-xs text-slate-500 mt-0.5">
-            {isChris ? 'Technical Strategist' : 'Value Investor'}
-          </p>
-          <p className={`text-xs mt-1 ${data?._stale_guard ? 'text-red-400' : accentText}`}>
+          <p className="text-[10px] text-slate-500">{config.subtitle}</p>
+          <p className={`text-[10px] mt-0.5 ${data?._stale_guard ? 'text-red-400' : config.accentText}`}>
             {loading ? (
               <span className="flex items-center gap-1">
-                <RefreshCcw className="h-3 w-3 animate-spin" /> Analyzing...
+                <RefreshCcw className="h-2.5 w-2.5 animate-spin" /> Analyzing...
               </span>
             ) : statusLine}
           </p>
         </div>
-
-        {/* Arrow */}
-        <ChevronRight className="h-5 w-5 text-slate-600 group-hover:text-slate-400 transition-colors flex-shrink-0" />
+        <ChevronRight className="h-4 w-4 text-slate-600 group-hover:text-slate-400 transition-colors flex-shrink-0" />
       </div>
     </button>
   );
@@ -241,25 +343,22 @@ function AdvisorCard({
 // ── Full Modal Content ──
 
 function AdvisorModalContent({
-  type,
+  config,
   data,
   loading,
   error,
   onRefresh,
 }: {
-  type: AdvisorType;
+  config: AdvisorConfig;
   data: AdvisorData | null;
   loading: boolean;
   error: string | null;
   onRefresh: () => void;
 }) {
-  const isChris = type === 'chris';
-  const accentColor = isChris ? 'text-amber-400' : 'text-emerald-400';
-
   if (!data && loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className={`animate-spin rounded-full h-8 w-8 border-b-2 ${isChris ? 'border-amber-400' : 'border-emerald-400'}`} />
+        <div className={`animate-spin rounded-full h-8 w-8 border-b-2 ${config.spinnerBorder}`} />
         <span className="ml-3 text-slate-400">Loading analysis...</span>
       </div>
     );
@@ -298,7 +397,7 @@ function AdvisorModalContent({
       {data?.market_assessment && !data?._stale_guard && (
         <div className="p-4 bg-slate-700/30 rounded-lg border border-slate-600/30">
           <p className="text-slate-200 text-sm leading-relaxed">
-            {isChris ? `"${data.market_assessment}"` : `\u201c${data.market_assessment}\u201d`}
+            &ldquo;{data.market_assessment}&rdquo;
           </p>
         </div>
       )}
@@ -309,8 +408,8 @@ function AdvisorModalContent({
           {/* Pre-Market */}
           <div className="space-y-3">
             <h4 className="text-sm font-medium text-slate-300 flex items-center">
-              <Clock className={`h-4 w-4 mr-2 ${accentColor}`} />
-              {isChris ? 'Pre-Market Actions' : 'Pre-Market Considerations'}
+              <Clock className={`h-4 w-4 mr-2 ${config.accentText}`} />
+              Pre-Market Actions
             </h4>
             {data?.pre_market_actions?.length ? (
               <div className="space-y-2">
@@ -318,7 +417,7 @@ function AdvisorModalContent({
                   <div key={idx} className="p-3 bg-slate-700/20 rounded border border-slate-600/20">
                     <div className="flex items-start justify-between mb-2">
                       <span className="text-sm font-medium text-white">
-                        {action.ticker && <span className={accentColor}>{action.ticker}: </span>}
+                        {action.ticker && <span className={config.accentText}>{action.ticker}: </span>}
                         {action.action}
                       </span>
                       {getPriorityBadge(action.priority)}
@@ -335,7 +434,7 @@ function AdvisorModalContent({
           {/* Market Hours */}
           <div className="space-y-3">
             <h4 className="text-sm font-medium text-slate-300 flex items-center">
-              <TrendingUp className={`h-4 w-4 mr-2 ${isChris ? 'text-green-400' : accentColor}`} />
+              <TrendingUp className={`h-4 w-4 mr-2 ${config.accentText}`} />
               Market Hours Actions
             </h4>
             {data?.market_hours_actions?.length ? (
@@ -344,7 +443,7 @@ function AdvisorModalContent({
                   <div key={idx} className="p-3 bg-slate-700/20 rounded border border-slate-600/20">
                     <div className="flex items-start justify-between mb-2">
                       <span className="text-sm font-medium text-white">
-                        {action.ticker && <span className={accentColor}>{action.ticker}: </span>}
+                        {action.ticker && <span className={config.accentText}>{action.ticker}: </span>}
                         {action.action}
                         {action.price_level && <span className="text-green-400"> @ {action.price_level}</span>}
                       </span>
@@ -365,15 +464,15 @@ function AdvisorModalContent({
       {!data?._stale_guard && data?.positions_review?.length ? (
         <div className="space-y-3">
           <h4 className="text-sm font-medium text-slate-300 flex items-center">
-            <Shield className={`h-4 w-4 mr-2 ${accentColor}`} />
-            {isChris ? 'Positions Review' : "Positions Review \u2014 Business Owner\u2019s Perspective"}
+            <Shield className={`h-4 w-4 mr-2 ${config.accentText}`} />
+            Positions Review
           </h4>
           <div className="grid gap-2">
             {data.positions_review.map((pos, idx) => (
               <div key={idx} className="flex items-center justify-between p-3 bg-slate-700/20 rounded border border-slate-600/20">
                 <div className="flex items-center space-x-3">
                   {getAssessmentIcon(pos.current_assessment)}
-                  <span className={`text-sm font-medium ${accentColor}`}>{pos.ticker}</span>
+                  <span className={`text-sm font-medium ${config.accentText}`}>{pos.ticker}</span>
                   <span className={`text-sm font-medium capitalize ${getAssessmentColor(pos.current_assessment)}`}>
                     {pos.current_assessment}
                   </span>
@@ -391,16 +490,13 @@ function AdvisorModalContent({
           {data?.watchlist?.length ? (
             <div className="space-y-3">
               <h4 className="text-sm font-medium text-slate-300 flex items-center">
-                <Eye className={`h-4 w-4 mr-2 ${isChris ? 'text-cyan-400' : accentColor}`} />
+                <Eye className={`h-4 w-4 mr-2 ${config.accentText}`} />
                 Watchlist
               </h4>
               <div className="flex flex-wrap gap-2">
                 {data.watchlist.map((ticker, idx) => (
                   <span key={idx}
-                    className={`px-2 py-1 text-xs rounded-md font-medium ${isChris
-                      ? 'bg-cyan-600/20 text-cyan-300 border border-cyan-500/30'
-                      : 'bg-emerald-600/20 text-emerald-300 border border-emerald-500/30'
-                    }`}>
+                    className={`px-2 py-1 text-xs rounded-md font-medium ${config.accentBg} ${config.accentText} border ${config.borderColor}`}>
                     {ticker}
                   </span>
                 ))}
@@ -447,7 +543,7 @@ function AdvisorModalContent({
 // ── Modal Shell ──
 
 function AdvisorModal({
-  type,
+  config,
   data,
   loading,
   error,
@@ -455,7 +551,7 @@ function AdvisorModal({
   onClose,
   onRefresh,
 }: {
-  type: AdvisorType;
+  config: AdvisorConfig;
   data: AdvisorData | null;
   loading: boolean;
   error: string | null;
@@ -463,27 +559,23 @@ function AdvisorModal({
   onClose: () => void;
   onRefresh: () => void;
 }) {
-  const isChris = type === 'chris';
-
   if (!open) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center pt-8 pb-8 px-4">
-      {/* Backdrop */}
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-
-      {/* Modal */}
-      <div className={`relative w-full max-w-3xl max-h-[calc(100vh-4rem)] bg-slate-900 border-2 ${isChris ? 'border-amber-500/30' : 'border-emerald-500/30'} rounded-xl shadow-2xl overflow-hidden flex flex-col`}>
+      <div className={`relative w-full max-w-3xl max-h-[calc(100vh-4rem)] bg-slate-900 border-2 ${config.borderColor} rounded-xl shadow-2xl overflow-hidden flex flex-col`}>
         {/* Header */}
-        <div className={`flex items-center justify-between px-6 py-4 border-b ${isChris ? 'border-amber-500/20' : 'border-emerald-500/20'} bg-slate-900`}>
+        <div className={`flex items-center justify-between px-6 py-4 border-b ${config.borderColor} bg-slate-900`}>
           <div className="flex items-center gap-3">
-            {isChris ? <ChrisAvatar size={40} /> : <BuffettAvatar size={40} />}
+            <AdvisorAvatar config={config} size={40} />
             <div>
               <h2 className="text-lg font-semibold text-white">
-                {isChris ? '🎯 Chris\u2019s Actions For Today' : '🦉 Buffett\u2019s Value Assessment'}
+                {config.emoji} {config.name}&apos;s Analysis
               </h2>
               <div className="flex items-center gap-2 text-xs text-slate-400">
-                {data?.generated_at && <span>Generated at {formatTimestamp(data.generated_at)}</span>}
+                <span>{config.subtitle}</span>
+                {data?.generated_at && <span>· {formatTimestamp(data.generated_at)}</span>}
                 {data?.signal_timestamp && <SignalFreshnessBadge signalTimestamp={data.signal_timestamp} compact />}
               </div>
             </div>
@@ -500,16 +592,8 @@ function AdvisorModal({
             </button>
           </div>
         </div>
-
-        {/* Scrollable content */}
         <div className="flex-1 overflow-y-auto p-6">
-          <AdvisorModalContent
-            type={type}
-            data={data}
-            loading={loading}
-            error={error}
-            onRefresh={onRefresh}
-          />
+          <AdvisorModalContent config={config} data={data} loading={loading} error={error} onRefresh={onRefresh} />
         </div>
       </div>
     </div>
@@ -519,149 +603,110 @@ function AdvisorModal({
 // ── Main Export ──
 
 export default function AdvisorCards() {
-  const [chrisData, setChrisData] = useState<AdvisorData | null>(null);
-  const [chrisLoading, setChrisLoading] = useState(false);
-  const [chrisError, setChrisError] = useState<string | null>(null);
+  // State for all advisors
+  const [advisorState, setAdvisorState] = useState<Record<string, {
+    data: AdvisorData | null;
+    loading: boolean;
+    error: string | null;
+  }>>(
+    Object.fromEntries(ADVISORS.map(a => [a.id, { data: null, loading: false, error: null }]))
+  );
 
-  const [buffettData, setBuffettData] = useState<AdvisorData | null>(null);
-  const [buffettLoading, setBuffettLoading] = useState(false);
-  const [buffettError, setBuffettError] = useState<string | null>(null);
+  const [openModal, setOpenModal] = useState<string | null>(null);
 
-  const [openModal, setOpenModal] = useState<AdvisorType | null>(null);
+  const fetchAdvisor = useCallback(async (config: AdvisorConfig, refresh = false) => {
+    const { id, apiRoute, cacheKey, knowledgeVersion } = config;
 
-  const CHRIS_CACHE = 'chris-daily-actions-v2';
-  const BUFFETT_CACHE = 'buffett-daily-actions-v1';
-  const CHRIS_KNOWLEDGE = 'chris-vermeulen-v2-10videos';
-  const BUFFETT_KNOWLEDGE = 'warren-buffett-v1-portfolio-letters';
-
-  const fetchChris = async (refresh = false) => {
+    // Check cache first
     if (!refresh) {
       try {
-        const cached = localStorage.getItem(CHRIS_CACHE);
+        const cached = localStorage.getItem(cacheKey);
         if (cached) {
           const c = JSON.parse(cached);
           const today = new Date().toISOString().split('T')[0];
-          if (c.date === today && c.knowledge_version === CHRIS_KNOWLEDGE && c.market_assessment && (c.pre_market_actions?.length > 0 || c._stale_guard)) {
-            setChrisData(c);
+          if (c.date === today && c.knowledge_version === knowledgeVersion && c.market_assessment && (c.pre_market_actions?.length > 0 || c._stale_guard)) {
+            setAdvisorState(prev => ({ ...prev, [id]: { data: c, loading: false, error: null } }));
             return;
           }
         }
-      } catch { /* miss */ }
+      } catch { /* cache miss */ }
     }
-    setChrisLoading(true);
-    setChrisError(null);
-    try {
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 30000); // 30s client timeout
-      const r = await fetch(`/api/trading/chris-actions${refresh ? '?refresh=true' : ''}`, { signal: controller.signal });
-      clearTimeout(timeout);
-      const text = await r.text();
-      let json: Record<string, unknown>;
-      try { json = JSON.parse(text); } catch { throw new Error(`API returned ${r.status} (non-JSON — possible timeout)`); }
-      if (!r.ok) {
-        if (json.fallback) {
-          setChrisData(json.fallback as AdvisorData);
-          setChrisError(json.detail as string);
-        } else {
-          throw new Error((json.detail || json.error || 'Failed') as string);
-        }
-      } else {
-        setChrisData(json as unknown as AdvisorData);
-        setChrisError(null);
-        try { localStorage.setItem(CHRIS_CACHE, JSON.stringify(json)); } catch { /* quota */ }
-      }
-    } catch (e) {
-      setChrisError(e instanceof Error ? e.message : 'Unknown error');
-    } finally { setChrisLoading(false); }
-  };
 
-  const fetchBuffett = async (refresh = false) => {
-    if (!refresh) {
-      try {
-        const cached = localStorage.getItem(BUFFETT_CACHE);
-        if (cached) {
-          const c = JSON.parse(cached);
-          const today = new Date().toISOString().split('T')[0];
-          if (c.date === today && c.knowledge_version === BUFFETT_KNOWLEDGE && c.market_assessment && (c.pre_market_actions?.length > 0 || c._stale_guard)) {
-            setBuffettData(c);
-            return;
-          }
-        }
-      } catch { /* miss */ }
-    }
-    setBuffettLoading(true);
-    setBuffettError(null);
+    setAdvisorState(prev => ({ ...prev, [id]: { ...prev[id], loading: true, error: null } }));
+
     try {
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), 30000);
-      const r = await fetch(`/api/trading/buffett-actions${refresh ? '?refresh=true' : ''}`, { signal: controller.signal });
+      const r = await fetch(`${apiRoute}${refresh ? '?refresh=true' : ''}`, { signal: controller.signal });
       clearTimeout(timeout);
       const text = await r.text();
       let json: Record<string, unknown>;
-      try { json = JSON.parse(text); } catch { throw new Error(`API returned ${r.status} (non-JSON — possible timeout)`); }
+      try { json = JSON.parse(text); } catch { throw new Error(`API returned ${r.status} (non-JSON)`); }
+
       if (!r.ok) {
         if (json.fallback) {
-          setBuffettData(json.fallback as AdvisorData);
-          setBuffettError(json.detail as string);
+          setAdvisorState(prev => ({
+            ...prev,
+            [id]: { data: json.fallback as AdvisorData, loading: false, error: json.detail as string }
+          }));
         } else {
           throw new Error((json.detail || json.error || 'Failed') as string);
         }
       } else {
-        setBuffettData(json as unknown as AdvisorData);
-        setBuffettError(null);
-        try { localStorage.setItem(BUFFETT_CACHE, JSON.stringify(json)); } catch { /* quota */ }
+        setAdvisorState(prev => ({
+          ...prev,
+          [id]: { data: json as unknown as AdvisorData, loading: false, error: null }
+        }));
+        try { localStorage.setItem(cacheKey, JSON.stringify(json)); } catch { /* quota */ }
       }
     } catch (e) {
-      setBuffettError(e instanceof Error ? e.message : 'Unknown error');
-    } finally { setBuffettLoading(false); }
-  };
-
-  useEffect(() => {
-    fetchChris();
-    fetchBuffett();
+      setAdvisorState(prev => ({
+        ...prev,
+        [id]: { ...prev[id], loading: false, error: e instanceof Error ? e.message : 'Unknown error' }
+      }));
+    }
   }, []);
+
+  // Staggered fetch: load advisors 1s apart to avoid hammering Anthropic API
+  useEffect(() => {
+    ADVISORS.forEach((advisor, idx) => {
+      setTimeout(() => fetchAdvisor(advisor), idx * 1500);
+    });
+  }, [fetchAdvisor]);
+
+  const openConfig = openModal ? ADVISORS.find(a => a.id === openModal) : null;
 
   return (
     <>
-      {/* Compact cards side by side */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        <AdvisorCard
-          type="chris"
-          data={chrisData}
-          loading={chrisLoading}
-          error={chrisError}
-          onOpen={() => setOpenModal('chris')}
-          onRefresh={() => fetchChris(true)}
-        />
-        <AdvisorCard
-          type="buffett"
-          data={buffettData}
-          loading={buffettLoading}
-          error={buffettError}
-          onOpen={() => setOpenModal('buffett')}
-          onRefresh={() => fetchBuffett(true)}
-        />
+      {/* 5 advisor cards in scrollable row on desktop, stack on mobile */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2">
+        {ADVISORS.map((advisor) => {
+          const state = advisorState[advisor.id];
+          return (
+            <AdvisorCard
+              key={advisor.id}
+              config={advisor}
+              data={state.data}
+              loading={state.loading}
+              error={state.error}
+              onOpen={() => setOpenModal(advisor.id)}
+            />
+          );
+        })}
       </div>
 
-      {/* Modals */}
-      <AdvisorModal
-        type="chris"
-        data={chrisData}
-        loading={chrisLoading}
-        error={chrisError}
-        open={openModal === 'chris'}
-        onClose={() => setOpenModal(null)}
-        onRefresh={() => fetchChris(true)}
-      />
-      <AdvisorModal
-        type="buffett"
-        data={buffettData}
-        loading={buffettLoading}
-        error={buffettError}
-        open={openModal === 'buffett'}
-        onClose={() => setOpenModal(null)}
-        onRefresh={() => fetchBuffett(true)}
-      />
+      {/* Modal */}
+      {openConfig && (
+        <AdvisorModal
+          config={openConfig}
+          data={advisorState[openConfig.id].data}
+          loading={advisorState[openConfig.id].loading}
+          error={advisorState[openConfig.id].error}
+          open={!!openModal}
+          onClose={() => setOpenModal(null)}
+          onRefresh={() => fetchAdvisor(openConfig, true)}
+        />
+      )}
     </>
   );
 }

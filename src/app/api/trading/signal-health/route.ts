@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSession } from '@/lib/auth';
+import { getSessionAny } from '@/lib/auth';
 import { computeFreshness, detectRegimeChange, applyAutoInvalidation } from '@/lib/trading/signal-freshness';
 import { readFileSync } from 'fs';
 import { join } from 'path';
@@ -14,7 +14,7 @@ import { join } from 'path';
  * - Signal statistics
  */
 export async function GET(request: NextRequest) {
-  const authenticated = await getSession();
+  const authenticated = await getSessionAny();
   if (!authenticated) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }

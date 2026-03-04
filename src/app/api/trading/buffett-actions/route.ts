@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSession } from '@/lib/auth';
+import { getSessionAny } from '@/lib/auth';
 import { paperSupabase, isPaperSupabaseConfigured, PaperPosition } from '@/lib/paper-supabase';
 import { BUFFETT_SYSTEM_PROMPT } from '@/lib/warren-buffett-knowledge';
 import { computeFreshness } from '@/lib/trading/signal-freshness';
@@ -132,7 +132,7 @@ Today is ${today}. Analyze this portfolio and market from YOUR perspective — a
 }
 
 export async function GET(request: NextRequest) {
-  const authenticated = await getSession();
+  const authenticated = await getSessionAny();
   if (!authenticated) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }

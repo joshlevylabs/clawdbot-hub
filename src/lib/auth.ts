@@ -7,6 +7,7 @@ const secretKey = new TextEncoder().encode(
 );
 
 const AUTH_COOKIE = 'clawdbot-auth';
+const TV_AUTH_COOKIE = 'clawdbot-tv-auth';
 
 export type AuthScope = 'hub' | 'tv';
 
@@ -34,6 +35,21 @@ export async function getSession(): Promise<boolean> {
   const token = cookieStore.get(AUTH_COOKIE)?.value;
   if (!token) return false;
   return verifySession(token);
+}
+
+/**
+ * Check if request has any valid auth (hub OR tv scope).
+ * Use this for API routes that should be accessible from the TV dashboard.
+ */
+export async function getSessionAny(): Promise<boolean> {
+  const cookieStore = await cookies();
+  // Check hub cookie first
+  const hubToken = cookieStore.get(AUTH_COOKIE)?.value;
+  if (hubToken && await verifySession(hubToken)) return true;
+  // Check TV cookie
+  const tvToken = cookieStore.get(TV_AUTH_COOKIE)?.value;
+  if (tvToken && await verifySession(tvToken)) return true;
+  return false;
 }
 
 export async function isAuthenticated(request: NextRequest): Promise<boolean> {

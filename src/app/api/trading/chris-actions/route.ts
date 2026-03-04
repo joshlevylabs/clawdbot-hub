@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSession } from '@/lib/auth';
+import { getSessionAny } from '@/lib/auth';
 import { paperSupabase, isPaperSupabaseConfigured, PaperPosition } from '@/lib/paper-supabase';
 import { CHRIS_SYSTEM_PROMPT } from '@/lib/chris-vermeulen-knowledge';
 import { computeFreshness } from '@/lib/trading/signal-freshness';
@@ -169,7 +169,7 @@ Today is ${today}. Provide your analysis now — be specific about price levels,
 }
 
 export async function GET(request: NextRequest) {
-  const authenticated = await getSession();
+  const authenticated = await getSessionAny();
   if (!authenticated) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }

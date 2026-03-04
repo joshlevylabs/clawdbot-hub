@@ -12,6 +12,9 @@ const TV_AUTH_COOKIE = 'clawdbot-tv-auth';
 // Routes that don't require authentication
 const publicPaths = ['/login', '/tv-login', '/auth/recovery', '/api/auth/login', '/api/auth/tv-login', '/api/auth/logout', '/api/markets', '/api/price-history', '/api/faith/'];
 
+// API routes accessible with TV or Hub scope (TV dashboard needs these)
+const tvApiPaths = ['/api/trading/'];
+
 // Static assets that should always be accessible
 const staticPaths = ['/_next', '/favicon.ico', '/data/', '/audio/'];
 
@@ -40,8 +43,9 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Check if this is a TV route
-  const isTvRoute = tvPaths.some(path => pathname === path || pathname.startsWith(path + '/'));
+  // Check if this is a TV route or TV-accessible API
+  const isTvApiRoute = tvApiPaths.some(path => pathname.startsWith(path));
+  const isTvRoute = tvPaths.some(path => pathname === path || pathname.startsWith(path + '/')) || isTvApiRoute;
 
   if (isTvRoute) {
     // TV routes accept either TV token or Hub token

@@ -387,6 +387,58 @@ const denominationAgents: DenominationAgent[] = [
     description: "Interfaith mystic drawing wisdom from all traditions. Emphasizes direct spiritual experience and universal spiritual principles.",
     color: "#A855F7",
     coreTexts: ["Perennial Philosophy", "Mystical Texts", "Cross-Traditional Wisdom", "Universal Spiritual Principles"]
+  },
+  
+  // New guides for existing traditions
+  {
+    name: "Rabbi Leah",
+    denomination: "Reconstructionist",
+    tradition: "Judaism",
+    emoji: "🌱",
+    focus: "Judaism as evolving civilization",
+    description: "Reconstructionist rabbi viewing Judaism as an evolving religious civilization. Community-centered, democratic decision-making, creative reinterpretation.",
+    color: "#3B82F6",
+    coreTexts: ["Torah (Pentateuch)", "Tanakh", "Mishnah", "Kaplan's Writings", "Reconstructionist Liturgy"]
+  },
+  {
+    name: "Devi Lakshmi",
+    denomination: "Shaktism",
+    tradition: "Hinduism",
+    emoji: "🔥",
+    focus: "Sacred feminine, Shakti worship, tantra",
+    description: "Shakta priestess devoted to the Divine Mother in all her forms — Durga, Kali, Lakshmi, Saraswati. Expert in tantric philosophy and goddess worship.",
+    color: "#F59E0B",
+    coreTexts: ["Devi Mahatmya", "Devi Bhagavata Purana", "Lalita Sahasranama", "Soundarya Lahari", "Tantric Agamas"]
+  },
+  {
+    name: "Bhai Harpreet",
+    denomination: "Sikh",
+    tradition: "Sikhism",
+    emoji: "🪯",
+    focus: "Guru Granth Sahib, seva, equality",
+    description: "Devout Sikh scholar and granthi. Expert in Guru Granth Sahib, Sikh history, the lives of the ten Gurus, and the Khalsa tradition of service and justice.",
+    color: "#1E40AF",
+    coreTexts: ["Guru Granth Sahib", "Dasam Granth", "Janamsakhis", "Rehat Maryada", "Vars of Bhai Gurdas"]
+  },
+  {
+    name: "Acharya Pradeep",
+    denomination: "Jain",
+    tradition: "Jainism",
+    emoji: "🙏",
+    focus: "Ahimsa, asceticism, karma, liberation",
+    description: "Jain monk-scholar teaching the path of non-violence, self-discipline, and liberation. Expert in Jain philosophy, the lives of the Tirthankaras, and ethical practice.",
+    color: "#059669",
+    coreTexts: ["Tattvartha Sutra", "Kalpa Sutra", "Acharanga Sutra", "Uttaradhyayana Sutra", "Samayasara"]
+  },
+  {
+    name: "Mobed Cyrus",
+    denomination: "Zoroastrian",
+    tradition: "Zoroastrianism",
+    emoji: "🔥",
+    focus: "Sacred fire, good thoughts/words/deeds, cosmic dualism",
+    description: "Zoroastrian priest (mobed) with deep knowledge of the Avesta, Zarathustra's teachings, and the cosmic struggle between truth (asha) and falsehood (druj).",
+    color: "#DC2626",
+    coreTexts: ["Avesta", "Gathas", "Vendidad", "Yasna", "Bundahishn"]
   }
 ];
 
@@ -509,6 +561,12 @@ const TRADITION_MAP: Record<string, { name: string; emoji: string; color: string
   '1f0d8d43-9e42-404b-a6e5-7ac7e6954abf': { name: "Bahá'í Faith", emoji: '✯', color: '#7C3AED' },
   'bfffb7e8-6bf7-4d4a-b24b-a963879e86ec': { name: 'Jainism', emoji: '🙏', color: '#059669' },
   '7cefcdfe-363f-45ad-b1f7-d7d562ef8ef7': { name: 'Zoroastrianism', emoji: '🔥', color: '#DC2626' },
+  // New 5 (matching existing guides)
+  '5768728a-75b3-4e4c-a7b8-3107f903f339': { name: 'Sufi Islam', emoji: '🌀', color: '#047857' },
+  '57c9140c-03bc-466d-a06e-fe221b7a66fa': { name: 'Mainline Protestant', emoji: '🕊️', color: '#6366F1' },
+  'b2c0cdd8-ffb9-4b78-81f0-a4409109aac8': { name: 'Advaita Vedanta', emoji: '🕉️', color: '#CA8A04' },
+  'efd93870-4118-400a-93fe-25cd09cf3bd0': { name: 'Secular Humanism', emoji: '🌍', color: '#6B7280' },
+  '3ad57c60-b6be-419d-8bf3-3e5b1d5875a6': { name: 'Interfaith Mysticism', emoji: '✨', color: '#A855F7' },
 };
 
 // ===== Perspective Types =====
@@ -661,6 +719,12 @@ const CALENDAR_TRADITION_CONFIG: Record<string, { emoji: string; label: string; 
   'bahai_faith':              { emoji: '✯', label: "Bahá'í Faith", color: '#7C3AED50' },
   'jainism':                  { emoji: '🙏', label: 'Jainism', color: '#05966950' },
   'zoroastrianism':           { emoji: '🔥', label: 'Zoroastrianism', color: '#DC262650' },
+  // New 5
+  'sufi_islam':               { emoji: '🌀', label: 'Sufi Islam', color: '#04785750' },
+  'mainline_protestant':      { emoji: '🕊️', label: 'Mainline Protestant', color: '#6366F150' },
+  'advaita_vedanta':          { emoji: '🕉️', label: 'Advaita Vedanta', color: '#CA8A0450' },
+  'secular_humanism':         { emoji: '🌍', label: 'Secular Humanism', color: '#6B728050' },
+  'interfaith_mysticism':     { emoji: '✨', label: 'Interfaith Mysticism', color: '#A855F750' },
   // Legacy 3-family keys
   'jewish':                   { emoji: '✡️', label: 'Jewish', color: '#3B82F650' },
   'christian':                { emoji: '✝️', label: 'Christian', color: '#8B5CF650' },

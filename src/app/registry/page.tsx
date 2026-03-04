@@ -207,73 +207,7 @@ const API_GROUPS: { group: string; icon: React.ElementType; apis: Resource[] }[]
   },
 ];
 
-const AGENT_CATEGORIES: { category: string; agents: Resource[] }[] = [
-  {
-    category: "📈 The Trading Desk",
-    agents: [
-      { name: "Chris Vermeulen", description: "Veteran technical analyst and swing trader. Founder of TheTechnicalTraders.com. Specializes in INNER-Market Analysis, cycle analysis, and risk management.", status: "active", location: "~/clawd/agents/chris-vermeulen/", consumers: ["hub", "lever"], tags: ["trading", "technical", "swing"] },
-      { name: "Warren Buffett", description: "The Oracle of Omaha. Legendary value investor and CEO of Berkshire Hathaway. Focuses on intrinsic value, economic moats, and long-term capital allocation.", status: "active", location: "~/clawd/agents/warren-buffett/", consumers: ["hub", "lever"], tags: ["trading", "value", "investing"] },
-      { name: "Peter Schiff", description: "Austrian economist, gold bug, and contrarian macro investor. CEO of Euro Pacific Capital and SchiffGold. Predicted the 2008 crisis. Focuses on sound money, precious metals, and dollar collapse thesis.", status: "active", location: "~/clawd/agents/peter-schiff/", consumers: ["hub", "lever"], tags: ["trading", "macro", "gold", "austrian"] },
-      { name: "Raoul Pal", description: "Global macro strategist, founder of Real Vision and Global Macro Investor. Former Goldman Sachs. Architect of 'The Everything Code' framework — liquidity cycles, business cycles, and the Exponential Age thesis.", status: "active", location: "~/clawd/agents/raoul-pal/", consumers: ["hub", "lever"], tags: ["trading", "macro", "crypto", "liquidity"] },
-      { name: "Peter Lynch", description: "Legendary Fidelity Magellan Fund manager (1977-1990). Achieved 29.2% annual returns. Pioneer of GARP investing (Growth at a Reasonable Price), the PEG ratio, and 'invest in what you know' philosophy.", status: "active", location: "~/clawd/agents/peter-lynch/", consumers: ["hub", "lever"], tags: ["trading", "garp", "fundamental", "growth"] },
-    ],
-  },
-  {
-    category: "🕊️ Faith Journey Guides — Judaism (5)",
-    agents: [
-      { name: "Rabbi Moshe", description: "Orthodox Judaism — Deep expertise in traditional Jewish law and Talmudic interpretation. Guides through rigorous study of Torah and halakha.", status: "active", location: "faith-journey", consumers: ["lever"], tags: ["judaism", "orthodox"] },
-      { name: "Rabbi Sarah", description: "Conservative/Masorti — Balances reverence for tradition with thoughtful adaptation to contemporary life. Expert in Jewish history and progressive halakha.", status: "active", location: "faith-journey", consumers: ["lever"], tags: ["judaism", "conservative"] },
-      { name: "Rabbi David", description: "Reform — Emphasizes ethical teachings and social justice. Guides through liberal Jewish thought and community engagement.", status: "active", location: "faith-journey", consumers: ["lever"], tags: ["judaism", "reform"] },
-      { name: "Rabbi Yeshua", description: "Messianic — Bridges Jewish tradition with Messianic faith. Expert in Hebrew scriptures and Jewish cultural observance.", status: "active", location: "faith-journey", consumers: ["lever"], tags: ["judaism", "messianic"] },
-      { name: "Rabbi Leah", description: "Reconstructionist — Views Judaism as an evolving religious civilization. Community-centered, democratic decision-making, creative reinterpretation.", status: "active", location: "faith-journey", consumers: ["lever"], tags: ["judaism", "reconstructionist"] },
-    ],
-  },
-  {
-    category: "🕊️ Faith Journey Guides — Christianity (4)",
-    agents: [
-      { name: "Father Thomas", description: "Catholic — Deep knowledge of Catholic doctrine, sacraments, and 2,000 years of Church tradition. Spiritual director and theologian.", status: "active", location: "faith-journey", consumers: ["lever"], tags: ["christianity", "catholic"] },
-      { name: "Pastor James", description: "Protestant/Evangelical — Passionate about Biblical authority and personal relationship with Christ. Expert in Protestant theology.", status: "active", location: "faith-journey", consumers: ["lever"], tags: ["christianity", "protestant"] },
-      { name: "Father Alexei", description: "Orthodox Christian — Guides through Eastern Orthodox spirituality, mystical traditions, and the journey toward theosis.", status: "active", location: "faith-journey", consumers: ["lever"], tags: ["christianity", "orthodox"] },
-      { name: "Reverend Grace", description: "Mainline Protestant — Emphasizes Christ's call to social justice and inclusive community. Expert in progressive Christian thought.", status: "active", location: "faith-journey", consumers: ["lever"], tags: ["christianity", "mainline"] },
-    ],
-  },
-  {
-    category: "🕊️ Faith Journey Guides — Islam (3)",
-    agents: [
-      { name: "Sheikh Ahmad", description: "Sunni — Traditional Sunni scholar with expertise in Quran, Hadith, and Islamic jurisprudence. Guides through orthodox Islamic practice.", status: "active", location: "faith-journey", consumers: ["lever"], tags: ["islam", "sunni"] },
-      { name: "Ayatollah Hassan", description: "Shia — Deep knowledge of the Twelve Imams and the spiritual significance of Karbala and martyrdom.", status: "active", location: "faith-journey", consumers: ["lever"], tags: ["islam", "shia"] },
-      { name: "Sufi Master Rumi", description: "Sufi — Mystical teacher emphasizing inner purification, divine love, and the spiritual journey toward union with Allah.", status: "active", location: "faith-journey", consumers: ["lever"], tags: ["islam", "sufi"] },
-    ],
-  },
-  {
-    category: "🕊️ Faith Journey Guides — Hinduism (4)",
-    agents: [
-      { name: "Swami Vivekananda", description: "Vedanta — Teacher of Advaita Vedanta emphasizing the unity of all existence and the realization of the Self as Brahman.", status: "active", location: "faith-journey", consumers: ["lever"], tags: ["hinduism", "vedanta"] },
-      { name: "Pandit Krishna", description: "Vaishnavism — Devotional teacher emphasizing bhakti to Lord Krishna and the path of loving surrender to the Divine.", status: "active", location: "faith-journey", consumers: ["lever"], tags: ["hinduism", "vaishnavism"] },
-      { name: "Guru Shiva", description: "Shaivism — Tantric master teaching the path of Shiva through yoga, meditation, and spiritual integration.", status: "active", location: "faith-journey", consumers: ["lever"], tags: ["hinduism", "shaivism"] },
-      { name: "Devi Lakshmi", description: "Shaktism — Devotee of the Divine Feminine (Shakti/Devi), emphasizing the goddess as the supreme creative power.", status: "active", location: "faith-journey", consumers: ["lever"], tags: ["hinduism", "shaktism"] },
-    ],
-  },
-  {
-    category: "🕊️ Faith Journey Guides — Buddhism (3)",
-    agents: [
-      { name: "Thich Minh", description: "Theravada — Monk emphasizing the original Buddha's teachings, vipassana meditation, and the Four Noble Truths.", status: "active", location: "faith-journey", consumers: ["lever"], tags: ["buddhism", "theravada"] },
-      { name: "Roshi Kenji", description: "Zen/Mahayana — Zen master teaching the direct path to awakening through zazen, koan study, and sudden realization.", status: "active", location: "faith-journey", consumers: ["lever"], tags: ["buddhism", "zen"] },
-      { name: "Lama Tenzin", description: "Tibetan/Vajrayana — Tibetan Buddhist teacher emphasizing bodhisattva compassion, tantric visualization, and lineage teachings.", status: "active", location: "faith-journey", consumers: ["lever"], tags: ["buddhism", "tibetan"] },
-    ],
-  },
-  {
-    category: "🕊️ Faith Journey Guides — Other Traditions (6)",
-    agents: [
-      { name: "Bhai Harpreet", description: "Sikhism — Devout Sikh scholar and granthi. Expert in Guru Granth Sahib, Sikh history, and the Khalsa tradition of service and justice.", status: "active", location: "faith-journey", consumers: ["lever"], tags: ["sikhism"] },
-      { name: "Acharya Pradeep", description: "Jainism — Jain monk-scholar teaching non-violence, self-discipline, and liberation. Expert in the Tirthankaras and ethical practice.", status: "active", location: "faith-journey", consumers: ["lever"], tags: ["jainism"] },
-      { name: "Mobed Cyrus", description: "Zoroastrianism — Priest (mobed) with deep knowledge of the Avesta, Zarathustra's teachings, and the cosmic struggle between truth and falsehood.", status: "active", location: "faith-journey", consumers: ["lever"], tags: ["zoroastrianism"] },
-      { name: "Elder Miriam", description: "Bahá'í — Teacher emphasizing the unity of God, religions, and humanity. Expert in progressive revelation and social justice.", status: "active", location: "faith-journey", consumers: ["lever"], tags: ["bahai"] },
-      { name: "Professor Marcus", description: "Secular Humanism — Philosophical guide emphasizing human reason, ethics, and dignity without supernatural beliefs.", status: "active", location: "faith-journey", consumers: ["lever"], tags: ["secular", "humanism"] },
-      { name: "Mystic", description: "Interfaith/Spiritual — Draws wisdom from all traditions. Emphasizes direct spiritual experience and universal principles.", status: "active", location: "faith-journey", consumers: ["lever"], tags: ["interfaith", "spiritual"] },
-    ],
-  },
-];
+// Removed hardcoded AGENT_CATEGORIES - now using live data from /api/agents
 
 const CLI_TOOLS: Resource[] = [
   { name: "secrets.sh", description: "macOS Keychain secret retrieval for all services", status: "active", location: "~/clawd/tools/secrets.sh", consumers: ["all"], tags: ["secrets", "keychain"] },

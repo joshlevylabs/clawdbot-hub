@@ -184,6 +184,33 @@ export async function GET(request: NextRequest) {
     // 2. Compute signal freshness
     const freshness = computeFreshness(signalsData.timestamp);
 
+    // 2b. Gate on stale data — don't waste API calls on expired signals
+    if (!freshness.isActionable) {
+      return NextResponse.json({
+        date: today,
+        market_assessment: `⚠️ Signal data is ${freshness.ageLabel} and has been auto-invalidated. Chris cannot provide reliable analysis on stale data. Please refresh signals first.`,
+        pre_market_actions: [],
+        market_hours_actions: [],
+        positions_review: [],
+        watchlist: [],
+        risk_warnings: [
+          `Signal data expired (${freshness.ageLabel}). All BUY signals auto-downgraded to WATCH.`,
+          'Refresh signal data before requesting analysis.',
+        ],
+        generated_at: new Date().toISOString(),
+        signal_timestamp: signalsData.timestamp,
+        signal_freshness: {
+          tier: freshness.tier,
+          ageLabel: freshness.ageLabel,
+          isActionable: false,
+        },
+        knowledge_version: "chris-vermeulen-v2-10videos",
+        disclaimer: ADVISOR_DISCLAIMER,
+        validation: { warnings: ['Analysis skipped — signal data is stale'], errors: [] },
+        _stale_guard: true,
+      });
+    }
+
     // 3. Fetch current positions from Supabase
     let positions: PaperPosition[] = [];
     if (isPaperSupabaseConfigured()) {

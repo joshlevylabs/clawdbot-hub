@@ -398,23 +398,34 @@ export default function TradingPage() {
   } | null>(null);
 
   // Fetch signal health on mount
-  useEffect(() => {
+  const fetchSignalHealth = useCallback(() => {
     fetch('/data/trading/mre-signals-universe.json')
       .then(r => r.ok ? r.json() : null)
       .then(d => {
         if (d) {
+          // Compute auto-invalidation count client-side
+          const ageMs = Date.now() - new Date(d.timestamp).getTime();
+          const ageMinutes = ageMs / (1000 * 60);
+          const buyCount = d.signals?.summary?.total_buy ?? 0;
+          // If signals are > 8 hours old, all BUY signals are invalidated
+          const invalidated = ageMinutes >= 480 ? buyCount : 0;
+
           setSignalHealth({
             timestamp: d.timestamp,
             vix: d.regime?.vix ?? null,
             fearGreed: d.fear_greed?.current ?? 50,
             totalSignals: d.signals?.by_asset_class?.length ?? 0,
-            buySignals: d.signals?.summary?.total_buy ?? 0,
-            invalidated: 0, // computed client-side if needed
+            buySignals: buyCount,
+            invalidated,
           });
         }
       })
       .catch(() => {});
   }, []);
+
+  useEffect(() => {
+    fetchSignalHealth();
+  }, [fetchSignalHealth]);
 
   // Analyze feature: open signal analysis modal
   const [analyzeModalSymbol, setAnalyzeModalSymbol] = useState<string | null>(null);
@@ -767,6 +778,7 @@ export default function TradingPage() {
                   totalSignals={signalHealth.totalSignals}
                   buySignals={signalHealth.buySignals}
                   invalidatedCount={signalHealth.invalidated}
+                  onRefresh={fetchSignalHealth}
                 />
               )}
 

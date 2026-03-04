@@ -11,6 +11,7 @@ import {
   Eye,
   Activity
 } from 'lucide-react';
+import SignalFreshnessBadge from './SignalFreshnessBadge';
 
 interface ChrisAction {
   priority: "high" | "medium" | "low";
@@ -46,9 +47,11 @@ interface ChrisActionsData {
   watchlist: string[];
   risk_warnings: string[];
   generated_at?: string;
+  signal_timestamp?: string;
   signal_freshness?: SignalFreshnessData;
   disclaimer?: string;
   validation?: ValidationData;
+  _stale_guard?: boolean;
 }
 
 const getPriorityBadge = (priority: string) => {
@@ -227,14 +230,12 @@ export default function ChrisDailyActions() {
             </div>
             <div>
               <h3 className="text-lg font-semibold text-white">🎯 Chris&apos;s Actions For Today</h3>
-              <p className="text-sm text-slate-400">
-                {data?.generated_at ? `Generated at ${formatTimestamp(data.generated_at)}` : 'Ready to analyze'}
-                {data?.signal_freshness && (
-                  <span className={`ml-2 ${data.signal_freshness.tier === 'fresh' ? 'text-emerald-400' : data.signal_freshness.tier === 'stale' ? 'text-red-400' : 'text-yellow-400'}`}>
-                    • Signals: {data.signal_freshness.ageLabel}
-                  </span>
+              <div className="flex items-center gap-2 text-sm text-slate-400">
+                <span>{data?.generated_at ? `Generated at ${formatTimestamp(data.generated_at)}` : 'Ready to analyze'}</span>
+                {data?.signal_timestamp && (
+                  <SignalFreshnessBadge signalTimestamp={data.signal_timestamp} compact />
                 )}
-              </p>
+              </div>
             </div>
           </div>
           <button
@@ -249,8 +250,21 @@ export default function ChrisDailyActions() {
 
         {/* Content */}
         <div className="space-y-6">
+          {/* Stale data guard banner */}
+          {data?._stale_guard && (
+            <div className="p-4 bg-red-900/20 rounded-lg border border-red-700/40 flex items-start gap-3">
+              <AlertTriangle className="h-5 w-5 text-red-400 mt-0.5 flex-shrink-0" />
+              <div>
+                <p className="text-sm font-medium text-red-300">Signal Data Expired</p>
+                <p className="text-xs text-red-400/80 mt-1">
+                  Analysis was not generated because signal data is too old. Refresh signals to get a fresh read from Chris.
+                </p>
+              </div>
+            </div>
+          )}
+
           {/* Market Assessment */}
-          {data?.market_assessment && (
+          {data?.market_assessment && !data?._stale_guard && (
             <div className="p-4 bg-slate-700/30 rounded-lg border border-slate-600/30">
               <p className="text-slate-200 text-sm leading-relaxed">"{data.market_assessment}"</p>
             </div>

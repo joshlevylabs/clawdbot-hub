@@ -22,6 +22,8 @@ import {
   RefreshCw,
   DollarSign,
   Info,
+  Search,
+  X,
 } from "lucide-react";
 import PerformanceChart from "@/components/PerformanceChart";
 
@@ -794,6 +796,7 @@ export default function ActionsDashboard({
   const [groupBy, setGroupBy] = useState<GroupBy>("none");
   const [sortKey, setSortKey] = useState<SortKey>("signalStrength");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
+  const [searchQuery, setSearchQuery] = useState("");
   
   // Cascading filters
   const [regimeFilter, setRegimeFilter] = useState<"all" | "bull" | "sideways" | "bear">("all");
@@ -948,6 +951,17 @@ export default function ActionsDashboard({
       items = items.filter(a => a.confidence >= minConfidence);
     }
 
+    // Text search — matches symbol or rationale
+    if (searchQuery.trim()) {
+      const q = searchQuery.trim().toUpperCase();
+      items = items.filter(a =>
+        a.symbol.toUpperCase().includes(q) ||
+        a.rationale.toUpperCase().includes(q) ||
+        a.assetClass.toUpperCase().includes(q) ||
+        (a.category && a.category.toUpperCase().includes(q))
+      );
+    }
+
     items.sort((a, b) => {
       let cmp = 0;
       switch (sortKey) {
@@ -968,7 +982,7 @@ export default function ActionsDashboard({
     });
     return items;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [actionsWithPositions, signalFilter, sortKey, sortDir, positions, regimeFilter, alphaDecileFilter, minConfidence]);
+  }, [actionsWithPositions, signalFilter, sortKey, sortDir, positions, regimeFilter, alphaDecileFilter, minConfidence, searchQuery]);
 
   // Group
   const groupedActions = useMemo(() => {
@@ -1364,10 +1378,28 @@ export default function ActionsDashboard({
             <option value="regime">By Regime</option>
           </select>
 
+          {/* Ticker Search */}
+          <div className="relative md:ml-auto">
+            <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-slate-500 pointer-events-none" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              placeholder="Search ticker..."
+              className="w-28 md:w-36 pl-6 pr-6 py-1 text-[11px] rounded-lg bg-slate-800 text-slate-300 border border-slate-700 focus:border-primary-500/50 focus:outline-none placeholder:text-slate-600"
+            />
+            {searchQuery && (
+              <button onClick={() => setSearchQuery("")}
+                className="absolute right-1.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300">
+                <X className="w-3 h-3" />
+              </button>
+            )}
+          </div>
+
           {/* Clear — only shows when filters active */}
-          {(regimeFilter !== "all" || alphaDecileFilter !== "all" || minConfidence > 0) && (
+          {(regimeFilter !== "all" || alphaDecileFilter !== "all" || minConfidence > 0 || searchQuery) && (
             <button 
-              onClick={() => { setRegimeFilter("all"); setAlphaDecileFilter("all"); setMinConfidence(0); }}
+              onClick={() => { setRegimeFilter("all"); setAlphaDecileFilter("all"); setMinConfidence(0); setSearchQuery(""); }}
               className="px-1.5 py-1 text-[11px] rounded-lg font-medium text-red-400 bg-red-500/10 border border-red-500/30 hover:bg-red-500/20 transition-colors">
               ✕
             </button>

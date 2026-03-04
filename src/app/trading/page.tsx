@@ -32,8 +32,7 @@ import {
 import ActionsDashboard from "@/components/ActionsDashboard";
 import PerformanceChart from "@/components/PerformanceChart";
 import MREDashboard from "./MREDashboard";
-import ChrisDailyActions from "@/components/trading/ChrisDailyActions";
-import BuffettDailyActions from "@/components/trading/BuffettDailyActions";
+import AdvisorCards from "@/components/trading/AdvisorCards";
 import SignalHealthBanner from "@/components/trading/SignalHealthBanner";
 import UniverseTable from "./UniverseTable";
 import MarketsOverview from "./MarketsOverview";
@@ -782,11 +781,8 @@ export default function TradingPage() {
                 />
               )}
 
-              {/* Chris's Daily Actions */}
-              <ChrisDailyActions />
-
-              {/* Buffett's Value Assessment */}
-              <BuffettDailyActions />
+              {/* AI Advisors — compact cards, click to open full modal */}
+              <AdvisorCards />
 
               {/* Trade Performance Stats */}
               {trades.length > 0 && (

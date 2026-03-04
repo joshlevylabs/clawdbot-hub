@@ -83,9 +83,11 @@ export function computeFreshness(signalTimestamp: string): FreshnessInfo {
     const isServer = typeof window === 'undefined';
     if (isServer) {
       // Server (Vercel = UTC): add Pacific offset to correct naive timestamp.
-      // PDT (Mar-Nov) = UTC-7, PST (Nov-Mar) = UTC-8
+      // PST = UTC-8, PDT = UTC-7. DST: 2nd Sun Mar → 1st Sun Nov.
+      // Safe heuristic: Apr-Oct = PDT(7), Nov-Mar = PST(8). Edge months
+      // (early Mar, early Nov) off by at most 1h — acceptable for freshness.
       const month = signalTime.getUTCMonth(); // 0-indexed
-      const isPDT = month >= 2 && month <= 10; // Rough heuristic
+      const isPDT = month >= 3 && month <= 9; // Apr(3) through Oct(9)
       const offsetHours = isPDT ? 7 : 8;
       signalTime = new Date(signalTime.getTime() + offsetHours * 60 * 60 * 1000);
     }

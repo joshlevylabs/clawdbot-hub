@@ -1692,6 +1692,107 @@ function StrategyTechnicalOverview({ strategyName, tickers }: { strategyName: st
     );
   }
 
+  // Agent Analysis — 5 Trading Desk Agents
+  if (strategyName.includes('Agent Analysis') || strategyName.includes('Agent')) {
+    const agents = [
+      { emoji: '📊', name: 'Chris Vermeulen', role: 'Technical Analyst', specialty: 'Chart patterns, cycles, momentum, risk assessment', color: '#F59E0B', bg: 'rgba(245,158,11,0.08)', border: 'rgba(245,158,11,0.3)' },
+      { emoji: '📈', name: 'Warren Buffett', role: 'Value Investor', specialty: 'Intrinsic value, moats, margin of safety, long-term quality', color: '#10B981', bg: 'rgba(16,185,129,0.08)', border: 'rgba(16,185,129,0.3)' },
+      { emoji: '🥇', name: 'Peter Schiff', role: 'Austrian Economist', specialty: 'Monetary policy, gold, inflation hedges, macro risk', color: '#EAB308', bg: 'rgba(234,179,8,0.08)', border: 'rgba(234,179,8,0.3)' },
+      { emoji: '🌊', name: 'Raoul Pal', role: 'Global Macro', specialty: 'Liquidity cycles, crypto, exponential age, risk-on/off', color: '#06B6D4', bg: 'rgba(6,182,212,0.08)', border: 'rgba(6,182,212,0.3)' },
+      { emoji: '📉', name: 'Peter Lynch', role: 'GARP Investor', specialty: 'PEG ratios, stock categorization, two-minute drill', color: '#8B5CF6', bg: 'rgba(139,92,246,0.08)', border: 'rgba(139,92,246,0.3)' },
+    ];
+
+    return (
+      <div className="p-4 sm:p-6 border-b border-slate-700/50 bg-slate-800/30">
+        <div className="flex items-center gap-3 mb-4">
+          <Activity className="w-5 h-5 text-primary-400" />
+          <h3 className="text-base font-semibold text-slate-200">Trading Desk — Agent Analysis</h3>
+        </div>
+
+        {/* Agent Cards Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-6">
+          {agents.map((agent) => (
+            <div
+              key={agent.name}
+              className="rounded-lg p-3 border"
+              style={{ backgroundColor: agent.bg, borderColor: agent.border }}
+            >
+              <div className="flex items-center gap-2 mb-1.5">
+                <span className="text-lg">{agent.emoji}</span>
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm font-semibold text-slate-200 truncate">{agent.name}</div>
+                  <div className="text-[10px] font-medium" style={{ color: agent.color }}>{agent.role}</div>
+                </div>
+                <div className="w-2 h-2 rounded-full bg-green-500 flex-shrink-0" title="Active" />
+              </div>
+              <p className="text-[11px] text-slate-400 leading-tight">{agent.specialty}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Analysis Flow */}
+        <div className="bg-slate-900/50 rounded-lg p-4 border border-slate-700/30 mb-4">
+          <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">Analysis Flow</div>
+          <div className="flex items-center justify-center gap-2 flex-wrap">
+            <div className="bg-slate-800 rounded px-3 py-1.5 text-xs text-slate-300 border border-slate-700">
+              BUY Signal Input
+            </div>
+            <span className="text-slate-500">→</span>
+            <div className="flex gap-1">
+              {agents.map((a) => (
+                <span key={a.name} className="text-sm" title={a.name}>{a.emoji}</span>
+              ))}
+            </div>
+            <span className="text-slate-500">→</span>
+            <div className="bg-emerald-900/40 rounded px-3 py-1.5 text-xs text-emerald-300 border border-emerald-700/40">
+              Consensus View
+            </div>
+          </div>
+          <p className="text-[11px] text-slate-500 text-center mt-2">
+            Each agent independently analyzes every ticker through their unique lens. Divergences between agents highlight risk.
+          </p>
+        </div>
+
+        {/* Per-Ticker Breakdown */}
+        {tickers.length > 0 && (
+          <div>
+            <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+              Per-Ticker Agent Lens ({tickers.length} signals)
+            </div>
+            <div className="space-y-2 max-h-[300px] overflow-y-auto">
+              {tickers.slice(0, 20).map((ticker) => (
+                <div key={ticker.symbol} className="bg-slate-900/50 rounded-lg p-3 border border-slate-700/30">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-bold text-slate-200">{ticker.symbol}</span>
+                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-900/50 text-emerald-300 font-medium">BUY</span>
+                      {ticker.currentPrice && (
+                        <span className="text-xs text-slate-400">${ticker.currentPrice.toFixed(2)}</span>
+                      )}
+                    </div>
+                    <span className="text-[10px] text-slate-500">
+                      Str: {ticker.rawData?.signal_strength || ticker.rawData?.strategies_agreeing || '—'}
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-5 gap-1.5">
+                    {agents.map((agent) => (
+                      <div key={agent.name} className="text-center">
+                        <span className="text-xs">{agent.emoji}</span>
+                        <div className="text-[9px] truncate" style={{ color: agent.color }}>
+                          {agent.name.split(' ')[0]}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
   // Default for unknown strategies
   return (
     <div className="p-4 sm:p-6 border-b border-slate-700/50 bg-slate-800/30">

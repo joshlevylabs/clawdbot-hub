@@ -1,12 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { paperSupabase } from '@/lib/paper-supabase';
+import { createClient } from '@supabase/supabase-js';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
   try {
+    // Create a fresh Supabase client per request to avoid stale connection caching
+    const freshClient = createClient(
+      process.env.NEXT_PUBLIC_PAPER_SUPABASE_URL || '',
+      process.env.PAPER_SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_PAPER_SUPABASE_ANON_KEY || ''
+    );
+
     // Get agent portfolio snapshots from paper_portfolio_snapshots table
-    // These are the 5 agents that match the advisor IDs
     const agentAccountIds = [
       'chris-vermeulen',
       'warren-buffett', 
@@ -16,7 +21,7 @@ export async function GET(request: NextRequest) {
     ];
 
     // Fetch snapshots for all agents at once
-    const { data: snapshots, error } = await paperSupabase
+    const { data: snapshots, error } = await freshClient
       .from('paper_portfolio_snapshots')
       .select('account_id, date, equity, spy_price, spy_baseline')
       .in('account_id', agentAccountIds)

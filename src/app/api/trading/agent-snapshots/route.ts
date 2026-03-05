@@ -55,6 +55,11 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ 
       agentSnapshots,
       timestamp: new Date().toISOString()
+    }, {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate',
+        'CDN-Cache-Control': 'no-store',
+      }
     });
 
   } catch (error) {

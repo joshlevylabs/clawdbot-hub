@@ -30,6 +30,7 @@ interface WorkflowNodeProps {
   bypassLabel?: string;
   confidence?: number; // 0-100 accuracy/confidence score
   refreshFrequency?: string; // e.g. "Daily", "Real-time", "Weekly"
+  badges?: Array<{ emoji: string; label: string; color: string }>; // Small inline badges (e.g., agent icons)
 }
 
 const WorkflowNode = forwardRef<HTMLDivElement, WorkflowNodeProps>(({
@@ -49,6 +50,7 @@ const WorkflowNode = forwardRef<HTMLDivElement, WorkflowNodeProps>(({
   bypassLabel,
   confidence,
   refreshFrequency,
+  badges,
 }, ref) => {
   
   // Color schemes and icons based on node type
@@ -147,9 +149,23 @@ const WorkflowNode = forwardRef<HTMLDivElement, WorkflowNodeProps>(({
         <div className="absolute right-0 top-1/2 translate-x-1/2 -translate-y-1/2 w-3 h-3 bg-slate-600 border-2 border-slate-700 rounded-full" />
       )}
 
-      {/* Icon */}
-      <div className={`${config.iconBg} rounded-lg p-2 w-fit mb-3`}>
-        {config.icon}
+      {/* Icon + inline badges */}
+      <div className="flex items-center gap-2 mb-3">
+        <div className={`${config.iconBg} rounded-lg p-2 w-fit`}>
+          {config.icon}
+        </div>
+        {badges && badges.length > 0 && (
+          <div className="flex gap-0.5 flex-wrap">
+            {badges.map((b) => (
+              <span
+                key={b.label}
+                title={b.label}
+                className="text-[10px] leading-none cursor-default"
+                style={{ filter: `drop-shadow(0 0 2px ${b.color}40)` }}
+              >{b.emoji}</span>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Node title */}

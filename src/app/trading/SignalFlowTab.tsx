@@ -600,8 +600,47 @@ function calculatePipelineStages(signals: MRESignal[], dataType: 'core' | 'unive
   };
 
   // Step 10: Agent Analysis (final review by trading agents)
-  // Add per-tier data for agent analysis (same as fibonacci since it's pass-through)
-  const agentPerTierData: Record<number, { input: number, output: number, tickers: MRESignal[] }> = {};
+  // Each agent has style filters — a ticker passes only if ALL agents agree it's a BUY
+  const AGENT_STYLE_FILTERS = [
+    { id: 'chris-vermeulen', name: 'Chris Vermeulen', emoji: '📊', color: '#F59E0B', preferredSectors: ['*'], minSignalStrength: 40, minStrategiesAgreeing: 3, preferredRegimes: ['bull', 'recovery', 'sideways'] },
+    { id: 'warren-buffett', name: 'Warren Buffett', emoji: '📈', color: '#10B981', preferredSectors: ['Financials', 'Consumer Staples', 'Consumer Discretionary', 'Energy', 'Industrials', 'Healthcare'], minSignalStrength: 35, minStrategiesAgreeing: 3, preferredRegimes: ['bull', 'recovery', 'sideways', 'bear'] },
+    { id: 'peter-schiff', name: 'Peter Schiff', emoji: '🥇', color: '#EAB308', preferredSectors: ['Energy', 'Materials', 'Utilities', 'Real Estate'], minSignalStrength: 30, minStrategiesAgreeing: 2, preferredRegimes: ['bull', 'recovery', 'sideways', 'bear', 'crisis'] },
+    { id: 'raoul-pal', name: 'Raoul Pal', emoji: '🌊', color: '#06B6D4', preferredSectors: ['Technology', 'Communication Services', 'Financials'], minSignalStrength: 35, minStrategiesAgreeing: 3, preferredRegimes: ['bull', 'recovery'] },
+    { id: 'peter-lynch', name: 'Peter Lynch', emoji: '📉', color: '#8B5CF6', preferredSectors: ['*'], minSignalStrength: 30, minStrategiesAgreeing: 2, preferredRegimes: ['bull', 'recovery', 'sideways'] },
+  ];
+
+  // Use the most common regime from signals as global regime fallback
+  const regimeCounts: Record<string, number> = {};
+  finalPassed.forEach(s => { const r = (s.regime || '').toLowerCase(); if (r) regimeCounts[r] = (regimeCounts[r] || 0) + 1; });
+  const globalRegime = Object.entries(regimeCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || 'sideways';
+
+  // For each signal, determine which agents would approve it
+  const signalAgentApprovals = new Map<string, string[]>(); // symbol → agent ids that approve
+  finalPassed.forEach(sig => {
+    const approvals: string[] = [];
+    AGENT_STYLE_FILTERS.forEach(agent => {
+      // Signal strength check
+      if (sig.signal_strength < agent.minSignalStrength) return;
+      // Strategies agreeing check
+      if ((sig.strategies_agreeing || 0) < agent.minStrategiesAgreeing) return;
+      // Sector filter
+      if (!agent.preferredSectors.includes('*')) {
+        const sigSector = sig.sector || '';
+        if (!agent.preferredSectors.some(ps => sigSector.includes(ps))) return;
+      }
+      // Regime filter
+      const regime = (sig.regime || globalRegime || '').toLowerCase();
+      if (!agent.preferredRegimes.some(pr => regime.includes(pr))) return;
+      approvals.push(agent.id);
+    });
+    signalAgentApprovals.set(sig.symbol, approvals);
+  });
+
+  // Only tickers where ALL 5 agents agree pass through to output
+  const agentPassed = finalPassed.filter(s => (signalAgentApprovals.get(s.symbol) || []).length === 5);
+  const agentFiltered = finalPassed.filter(s => (signalAgentApprovals.get(s.symbol) || []).length < 5);
+
+  const agentPerTierData: Record<number, { input: number, output: number, filtered: number, tickers: MRESignal[], filteredTickers: MRESignal[] }> = {};
   for (let voteCount = 1; voteCount <= 8; voteCount++) {
     const tierTickers = finalPassed.filter(s => {
       const actualVoteCount = strategyNames.filter(({ key }) => didStrategyFire(s, key)).length;
@@ -609,23 +648,25 @@ function calculatePipelineStages(signals: MRESignal[], dataType: 'core' | 'unive
     });
     
     if (tierTickers.length > 0) {
+      const tierPassed = tierTickers.filter(s => (signalAgentApprovals.get(s.symbol) || []).length === 5);
+      const tierFiltered = tierTickers.filter(s => (signalAgentApprovals.get(s.symbol) || []).length < 5);
       agentPerTierData[voteCount] = {
         input: tierTickers.length,
-        output: tierTickers.length, // Pass-through
-        tickers: tierTickers
+        output: tierPassed.length,
+        filtered: tierFiltered.length,
+        tickers: tierPassed,
+        filteredTickers: tierFiltered,
       };
     }
   }
   
   const agentAnalysis = {
     inputCount: finalPassed.length,
-    outputCount: finalPassed.length,
-    passed: finalPassed,
-    filtered: [] as MRESignal[],
-    agents: [
-      { name: 'Chris Vermeullen', role: 'Technical Analysis', status: finalPassed.length > 0 ? 'reviewing' : 'idle' },
-      { name: 'Warren Buffett', role: 'Fundamental Analysis', status: 'pending' }, // Not yet active
-    ],
+    outputCount: agentPassed.length,
+    passed: agentPassed,
+    filtered: agentFiltered,
+    agentStyles: AGENT_STYLE_FILTERS,
+    signalAgentApprovals, // Map<symbol, agentId[]>
     perTierData: agentPerTierData
   };
 
@@ -1561,18 +1602,8 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
                     style={{ padding: '6px', minHeight: '70px' }}
                     confidence={PIPELINE_NODE_CONFIDENCE.agentAnalysis}
                     refreshFrequency="On demand"
+                    badges={TRADING_DESK_AGENTS.map(a => ({ emoji: a.emoji, label: a.name, color: a.color }))}
                   />
-                    {/* Agent badges */}
-                    <div className="flex justify-center gap-0.5 mt-1">
-                      {TRADING_DESK_AGENTS.map((agent) => (
-                        <span
-                          key={agent.name}
-                          title={agent.name}
-                          className="text-[9px] leading-none cursor-default"
-                          style={{ filter: 'drop-shadow(0 0 2px ' + agent.color + '40)' }}
-                        >{agent.emoji}</span>
-                      ))}
-                    </div>
                     </div>
                 );
               })}
@@ -2010,7 +2041,49 @@ export default function SignalFlowTab() {
       return;
     }
 
-    const tierStageMatch = stageKey.match(/^(signalGating|confidenceTuning|finalFilters|output|alphaRank|fibonacciLevels|agentAnalysis)_tier_(\d+)$/);
+    // Special handling for Agent Analysis tier clicks — uses pre-computed agent approval data
+    const agentTierMatch = stageKey.match(/^agentAnalysis_tier_(\d+)$/);
+    if (agentTierMatch) {
+      const voteCount = parseInt(agentTierMatch[1]);
+      const stage = pipelineData!.agentAnalysis as any;
+      const tierData = stage.perTierData?.[voteCount];
+      if (!tierData) return;
+
+      const agentApprovals = stage.signalAgentApprovals as Map<string, string[]>;
+      const agentStyles = stage.agentStyles || [];
+
+      setSelectedStage({
+        name: `Agent Analysis (${voteCount}/8)`,
+        description: 'Agent opinions on signals from this tier',
+        stageType: 'output',
+        inputCount: tierData.input,
+        outputCount: tierData.output,
+        filteredTickers: (tierData.filteredTickers || []).map((t: any) => {
+          const approvals = agentApprovals?.get(t.symbol) || [];
+          const missingAgents = agentStyles.filter((a: any) => !approvals.includes(a.id)).map((a: any) => a.name);
+          return {
+            symbol: t.symbol,
+            reason: `Rejected by: ${missingAgents.join(', ')}`,
+            signal: t.signal,
+            currentPrice: t.price,
+            rawData: { ...t, _agentApprovals: approvals, _agentStyles: agentStyles }
+          };
+        }),
+        passedTickers: (tierData.tickers || []).map((t: any) => {
+          const approvals = agentApprovals?.get(t.symbol) || [];
+          return {
+            symbol: t.symbol,
+            signal: t.signal,
+            signalStrength: t.signal_strength,
+            currentPrice: t.price,
+            rawData: { ...t, _agentApprovals: approvals, _agentStyles: agentStyles }
+          };
+        })
+      });
+      return;
+    }
+
+    const tierStageMatch = stageKey.match(/^(signalGating|confidenceTuning|finalFilters|output|alphaRank|fibonacciLevels)_tier_(\d+)$/);
     if (tierStageMatch) {
       const [, stageName, voteCountStr] = tierStageMatch;
       const voteCount = parseInt(voteCountStr);
@@ -2041,7 +2114,6 @@ export default function SignalFlowTab() {
         output: 'BUY Signals',
         alphaRank: 'Alpha Rank',
         fibonacciLevels: 'Fibonacci Levels',
-        agentAnalysis: 'Agent Analysis',
       };
       const stageDescriptions: Record<string, string> = {
         signalGating: 'Bear & sell suppression for this consensus tier',
@@ -2050,13 +2122,12 @@ export default function SignalFlowTab() {
         output: 'Final BUY signals from this consensus tier',
         alphaRank: 'Cross-sectional factor ranking — 5 factors (trend, momentum, mean reversion, vol compression, F&G divergence), sector-neutralized, regime-aware. ⭐ = Prime Trade (BUY + Top Decile)',
         fibonacciLevels: 'Fibonacci entry, stop loss, and profit target levels for this tier',
-        agentAnalysis: 'Agent opinions on signals from this tier',
       };
 
       setSelectedStage({
         name: `${stageNames[stageName]} (${tierLabel})`,
         description: stageDescriptions[stageName],
-        stageType: stageName === 'output' || stageName === 'agentAnalysis' ? 'output' : stageName === 'confidenceTuning' ? 'modifier' : 'filter',
+        stageType: stageName === 'output' ? 'output' : stageName === 'confidenceTuning' ? 'modifier' : 'filter',
         inputCount: tierData?.input ?? tierPassed.length + tierFiltered.length,
         outputCount: tierData?.output ?? tierPassed.length,
         filteredTickers: tierFiltered.map((t: any) => ({

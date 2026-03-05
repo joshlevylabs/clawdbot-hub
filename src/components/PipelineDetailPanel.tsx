@@ -1695,11 +1695,11 @@ function StrategyTechnicalOverview({ strategyName, tickers }: { strategyName: st
   // Agent Analysis — 5 Trading Desk Agents
   if (strategyName.includes('Agent Analysis') || strategyName.includes('Agent')) {
     const agents = [
-      { emoji: '📊', name: 'Chris Vermeulen', role: 'Technical Analyst', specialty: 'Chart patterns, cycles, momentum, risk assessment', color: '#F59E0B', bg: 'rgba(245,158,11,0.08)', border: 'rgba(245,158,11,0.3)' },
-      { emoji: '📈', name: 'Warren Buffett', role: 'Value Investor', specialty: 'Intrinsic value, moats, margin of safety, long-term quality', color: '#10B981', bg: 'rgba(16,185,129,0.08)', border: 'rgba(16,185,129,0.3)' },
-      { emoji: '🥇', name: 'Peter Schiff', role: 'Austrian Economist', specialty: 'Monetary policy, gold, inflation hedges, macro risk', color: '#EAB308', bg: 'rgba(234,179,8,0.08)', border: 'rgba(234,179,8,0.3)' },
-      { emoji: '🌊', name: 'Raoul Pal', role: 'Global Macro', specialty: 'Liquidity cycles, crypto, exponential age, risk-on/off', color: '#06B6D4', bg: 'rgba(6,182,212,0.08)', border: 'rgba(6,182,212,0.3)' },
-      { emoji: '📉', name: 'Peter Lynch', role: 'GARP Investor', specialty: 'PEG ratios, stock categorization, two-minute drill', color: '#8B5CF6', bg: 'rgba(139,92,246,0.08)', border: 'rgba(139,92,246,0.3)' },
+      { id: 'chris-vermeulen', emoji: '📊', name: 'Chris Vermeulen', role: 'Technical Analyst', specialty: 'Chart patterns, cycles, momentum, risk assessment', color: '#F59E0B', bg: 'rgba(245,158,11,0.08)', border: 'rgba(245,158,11,0.3)' },
+      { id: 'warren-buffett', emoji: '📈', name: 'Warren Buffett', role: 'Value Investor', specialty: 'Intrinsic value, moats, margin of safety, long-term quality', color: '#10B981', bg: 'rgba(16,185,129,0.08)', border: 'rgba(16,185,129,0.3)' },
+      { id: 'peter-schiff', emoji: '🥇', name: 'Peter Schiff', role: 'Austrian Economist', specialty: 'Monetary policy, gold, inflation hedges, macro risk', color: '#EAB308', bg: 'rgba(234,179,8,0.08)', border: 'rgba(234,179,8,0.3)' },
+      { id: 'raoul-pal', emoji: '🌊', name: 'Raoul Pal', role: 'Global Macro', specialty: 'Liquidity cycles, crypto, exponential age, risk-on/off', color: '#06B6D4', bg: 'rgba(6,182,212,0.08)', border: 'rgba(6,182,212,0.3)' },
+      { id: 'peter-lynch', emoji: '📉', name: 'Peter Lynch', role: 'GARP Investor', specialty: 'PEG ratios, stock categorization, two-minute drill', color: '#8B5CF6', bg: 'rgba(139,92,246,0.08)', border: 'rgba(139,92,246,0.3)' },
     ];
 
     return (
@@ -1731,8 +1731,8 @@ function StrategyTechnicalOverview({ strategyName, tickers }: { strategyName: st
         </div>
 
         {/* Analysis Flow */}
-        <div className="bg-slate-900/50 rounded-lg p-4 border border-slate-700/30 mb-4">
-          <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">Analysis Flow</div>
+        <div className="bg-slate-900/50 rounded-lg p-4 border border-slate-700/30">
+          <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">How It Works</div>
           <div className="flex items-center justify-center gap-2 flex-wrap">
             <div className="bg-slate-800 rounded px-3 py-1.5 text-xs text-slate-300 border border-slate-700">
               BUY Signal Input
@@ -1745,50 +1745,13 @@ function StrategyTechnicalOverview({ strategyName, tickers }: { strategyName: st
             </div>
             <span className="text-slate-500">→</span>
             <div className="bg-emerald-900/40 rounded px-3 py-1.5 text-xs text-emerald-300 border border-emerald-700/40">
-              Consensus View
+              Unanimous → Today&apos;s Plays
             </div>
           </div>
           <p className="text-[11px] text-slate-500 text-center mt-2">
-            Each agent independently analyzes every ticker through their unique lens. Divergences between agents highlight risk.
+            Each agent applies their style filters (sector, strength, regime). Only tickers where <strong className="text-slate-400">all 5 agents agree</strong> pass through to Today&apos;s Plays.
           </p>
         </div>
-
-        {/* Per-Ticker Breakdown */}
-        {tickers.length > 0 && (
-          <div>
-            <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
-              Per-Ticker Agent Lens ({tickers.length} signals)
-            </div>
-            <div className="space-y-2 max-h-[300px] overflow-y-auto">
-              {tickers.slice(0, 20).map((ticker) => (
-                <div key={ticker.symbol} className="bg-slate-900/50 rounded-lg p-3 border border-slate-700/30">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-bold text-slate-200">{ticker.symbol}</span>
-                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-900/50 text-emerald-300 font-medium">BUY</span>
-                      {ticker.currentPrice && (
-                        <span className="text-xs text-slate-400">${ticker.currentPrice.toFixed(2)}</span>
-                      )}
-                    </div>
-                    <span className="text-[10px] text-slate-500">
-                      Str: {ticker.rawData?.signal_strength || ticker.rawData?.strategies_agreeing || '—'}
-                    </span>
-                  </div>
-                  <div className="grid grid-cols-5 gap-1.5">
-                    {agents.map((agent) => (
-                      <div key={agent.name} className="text-center">
-                        <span className="text-xs">{agent.emoji}</span>
-                        <div className="text-[9px] truncate" style={{ color: agent.color }}>
-                          {agent.name.split(' ')[0]}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
     );
   }
@@ -2057,6 +2020,60 @@ function BlendedFGSectorOverview({ tickers }: { tickers: TickerDetail[] }) {
           </div>
         </details>
       </div>
+    </div>
+  );
+}
+
+// ============================================================
+// Agent Analysis Ticker Row — shows which agents approve/reject each ticker
+// ============================================================
+function AgentAnalysisTickerRow({ ticker, isFiltered }: { ticker: TickerDetail; isFiltered?: boolean }) {
+  const raw = ticker.rawData as Record<string, any>;
+  if (!raw) return null;
+
+  const approvals: string[] = (raw as any)._agentApprovals || [];
+  const agentStyles: Array<{ id: string; name: string; emoji: string; color: string }> = (raw as any)._agentStyles || [];
+  const approvalCount = approvals.length;
+  const totalAgents = agentStyles.length || 5;
+
+  return (
+    <div className={`rounded-lg p-3 border ${isFiltered ? 'bg-red-900/10 border-red-700/20' : 'bg-slate-800/50 border-slate-700/50'}`}>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <button className="text-slate-600 hover:text-slate-400 transition-colors text-xs">›</button>
+          <span className="font-mono font-semibold text-slate-200 text-sm">{raw.symbol}</span>
+          <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${
+            approvalCount === totalAgents 
+              ? 'bg-emerald-900/50 text-emerald-300' 
+              : approvalCount >= 3 
+                ? 'bg-amber-900/50 text-amber-300'
+                : 'bg-red-900/50 text-red-300'
+          }`}>
+            {approvalCount}/{totalAgents} agree
+          </span>
+          {raw.sector && (
+            <span className="text-[10px] text-slate-500">{raw.sector}</span>
+          )}
+        </div>
+        <div className="flex items-center gap-3">
+          {agentStyles.map((agent: { id: string; name: string; emoji: string; color: string }) => {
+            const approved = approvals.includes(agent.id);
+            return (
+              <span
+                key={agent.id}
+                title={`${agent.name}: ${approved ? 'BUY' : 'PASS'}`}
+                className={`text-sm transition-opacity ${approved ? 'opacity-100' : 'opacity-25 grayscale'}`}
+                style={approved ? { filter: `drop-shadow(0 0 3px ${agent.color}60)` } : undefined}
+              >{agent.emoji}</span>
+            );
+          })}
+        </div>
+      </div>
+      {isFiltered && (
+        <div className="mt-1.5 text-[10px] text-red-400/80">
+          {ticker.reason}
+        </div>
+      )}
     </div>
   );
 }
@@ -2833,7 +2850,7 @@ export default function PipelineDetailPanel({
                     activeTab === 'output' ? 'text-emerald-400 bg-slate-800/50' : 'text-slate-400 hover:text-slate-300 hover:bg-slate-800/30'
                   }`}
                 >
-                  Confirmed ({filteredOutput.length})
+                  {stageDetails.name.includes('Agent Analysis') ? 'Output' : 'Confirmed'} ({filteredOutput.length})
                   {activeTab === 'output' && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-400" />}
                 </button>
                 {hasPending && (
@@ -2864,7 +2881,9 @@ export default function PipelineDetailPanel({
                   <div className="space-y-2">
                     {filteredOutput.length > 0 ? (
                       filteredOutput.map((ticker, idx) => (
-                        stageDetails.name.includes('Signal Gating') ? (
+                        stageDetails.name.includes('Agent Analysis') ? (
+                          <AgentAnalysisTickerRow key={idx} ticker={ticker} />
+                        ) : stageDetails.name.includes('Signal Gating') ? (
                           <SignalGatingTickerRow key={idx} ticker={ticker} />
                         ) : (
                           <BlendedFGTickerRow key={idx} ticker={ticker} />
@@ -2872,7 +2891,7 @@ export default function PipelineDetailPanel({
                       ))
                     ) : (
                       <div className="text-center text-slate-400 py-8">
-                        {searchQuery ? `No tickers matching "${searchQuery}"` : 'No confirmed tickers yet — signals need 2 consecutive days to confirm'}
+                        {searchQuery ? `No tickers matching "${searchQuery}"` : stageDetails.name.includes('Agent Analysis') ? 'No tickers passed all 5 agent filters' : 'No confirmed tickers yet — signals need 2 consecutive days to confirm'}
                       </div>
                     )}
                   </div>
@@ -2881,7 +2900,9 @@ export default function PipelineDetailPanel({
                   <div className="space-y-2">
                     {filteredPending.length > 0 ? (
                       filteredPending.slice(0, 100).map((ticker, idx) => (
-                        stageDetails.name.includes('Signal Gating') ? (
+                        stageDetails.name.includes('Agent Analysis') ? (
+                          <AgentAnalysisTickerRow key={idx} ticker={ticker} />
+                        ) : stageDetails.name.includes('Signal Gating') ? (
                           <SignalGatingTickerRow key={idx} ticker={ticker} />
                         ) : (
                           <BlendedFGTickerRow key={idx} ticker={ticker} />
@@ -2898,7 +2919,9 @@ export default function PipelineDetailPanel({
                   <div className="space-y-2">
                     {filteredFiltered.length > 0 ? (
                       filteredFiltered.slice(0, 100).map((ticker, idx) => (
-                        stageDetails.name.includes('Signal Gating') ? (
+                        stageDetails.name.includes('Agent Analysis') ? (
+                          <AgentAnalysisTickerRow key={idx} ticker={ticker} isFiltered />
+                        ) : stageDetails.name.includes('Signal Gating') ? (
                           <SignalGatingTickerRow key={idx} ticker={ticker} />
                         ) : (
                           <BlendedFGTickerRow key={idx} ticker={ticker} />
@@ -2906,7 +2929,7 @@ export default function PipelineDetailPanel({
                       ))
                     ) : (
                       <div className="text-center text-slate-400 py-8">
-                        {searchQuery ? `No filtered tickers matching "${searchQuery}"` : 'No filtered tickers — signals that fail day-2 confirmation appear here'}
+                        {searchQuery ? `No filtered tickers matching "${searchQuery}"` : stageDetails.name.includes('Agent Analysis') ? 'All tickers passed — all agents agree on every signal' : 'No filtered tickers — signals that fail day-2 confirmation appear here'}
                       </div>
                     )}
                     {filteredFiltered.length > 100 && !searchQuery && (

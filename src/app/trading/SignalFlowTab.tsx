@@ -620,11 +620,13 @@ function calculatePipelineStages(signals: MRESignal[], dataType: 'core' | 'unive
   finalPassed.forEach(sig => {
     const approvals: string[] = [];
     const reasons: Record<string, { approved: boolean; reasons: string[] }> = {};
+    // Use pipeline's actual vote count (matches tier labels), not raw strategies_agreeing field
+    const pipelineVoteCount = strategyNames.filter(({ key }) => didStrategyFire(sig, key)).length;
     AGENT_STYLE_FILTERS.forEach(agent => {
       const agentReasons: string[] = [];
       let passed = true;
       const sigStrength = sig.signal_strength;
-      const sigStrategies = sig.strategies_agreeing || 0;
+      const sigStrategies = pipelineVoteCount;
       const sigSector = sig.sector || 'Unknown';
       const sigRegime = (sig.regime || globalRegime || '').toLowerCase();
 
@@ -637,10 +639,10 @@ function calculatePipelineStages(signals: MRESignal[], dataType: 'core' | 'unive
       }
       // Strategies agreeing check
       if (sigStrategies < agent.minStrategiesAgreeing) {
-        agentReasons.push(`Only ${sigStrategies} strategies agree (need ${agent.minStrategiesAgreeing}+)`);
+        agentReasons.push(`Only ${sigStrategies}/${strategyNames.length} strategies agree (need ${agent.minStrategiesAgreeing}+)`);
         passed = false;
       } else {
-        agentReasons.push(`✓ ${sigStrategies} strategies agree (need ${agent.minStrategiesAgreeing}+)`);
+        agentReasons.push(`✓ ${sigStrategies}/${strategyNames.length} strategies agree (need ${agent.minStrategiesAgreeing}+)`);
       }
       // Sector filter
       if (!agent.preferredSectors.includes('*')) {

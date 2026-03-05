@@ -676,11 +676,16 @@ export default function TradingPage() {
       const totalPnL = group.positions.reduce((sum, p) => sum + ((p.current_price || p.entry_price) - p.entry_price) * p.qty, 0) + 
                        group.trades.reduce((sum, t) => sum + t.pnl, 0);
       
+      // Use total equity from agentPortfolios API if available (includes cash + positions)
+      const portfolioData = group.accountId ? agentPortfolios[group.accountId] : null;
+      const totalEquity = portfolioData?.totalEquity || positionsValue;
+
       return {
         accountId: group.accountId,
         config,
         positionCount: group.positions.length,
         positionsValue,
+        totalEquity,
         totalPnL,
       };
     });
@@ -1029,7 +1034,7 @@ export default function TradingPage() {
                           </div>
                           <div className="flex justify-between">
                             <span className="text-slate-400">Value:</span>
-                            <span className="text-slate-300">${(agent.positionsValue / 1000).toFixed(0)}K</span>
+                            <span className="text-slate-300">${(agent.totalEquity / 1000).toFixed(0)}K</span>
                           </div>
                           <div className="flex justify-between">
                             <span className="text-slate-400">P&L:</span>

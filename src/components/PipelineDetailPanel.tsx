@@ -2026,21 +2026,37 @@ function BlendedFGSectorOverview({ tickers }: { tickers: TickerDetail[] }) {
 
 // ============================================================
 // Agent Analysis Ticker Row — shows which agents approve/reject each ticker
+// Expandable: click to see per-agent reasoning tabs
 // ============================================================
 function AgentAnalysisTickerRow({ ticker, isFiltered }: { ticker: TickerDetail; isFiltered?: boolean }) {
+  const [expanded, setExpanded] = useState(false);
+  const [activeAgent, setActiveAgent] = useState<string | null>(null);
   const raw = ticker.rawData as Record<string, any>;
   if (!raw) return null;
 
   const approvals: string[] = (raw as any)._agentApprovals || [];
   const agentStyles: Array<{ id: string; name: string; emoji: string; color: string }> = (raw as any)._agentStyles || [];
+  const agentReasons: Record<string, { approved: boolean; reasons: string[] }> = (raw as any)._agentReasons || {};
   const approvalCount = approvals.length;
   const totalAgents = agentStyles.length || 5;
 
+  // Auto-select first agent on expand
+  const handleExpand = () => {
+    setExpanded(!expanded);
+    if (!expanded && !activeAgent && agentStyles.length > 0) {
+      setActiveAgent(agentStyles[0].id);
+    }
+  };
+
   return (
-    <div className={`rounded-lg p-3 border ${isFiltered ? 'bg-red-900/10 border-red-700/20' : 'bg-slate-800/50 border-slate-700/50'}`}>
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <button className="text-slate-600 hover:text-slate-400 transition-colors text-xs">›</button>
+    <div className={`rounded-lg border overflow-hidden ${isFiltered ? 'bg-red-900/10 border-red-700/20' : 'bg-slate-800/50 border-slate-700/50'}`}>
+      {/* Collapsed row — symbol + agent icons only */}
+      <button
+        onClick={handleExpand}
+        className="w-full flex items-center justify-between p-3 hover:bg-slate-700/20 transition-colors"
+      >
+        <div className="flex items-center gap-2.5">
+          <span className={`text-xs transition-transform ${expanded ? 'rotate-90' : ''} text-slate-500`}>›</span>
           <span className="font-mono font-semibold text-slate-200 text-sm">{raw.symbol}</span>
           <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${
             approvalCount === totalAgents 
@@ -2049,29 +2065,90 @@ function AgentAnalysisTickerRow({ ticker, isFiltered }: { ticker: TickerDetail; 
                 ? 'bg-amber-900/50 text-amber-300'
                 : 'bg-red-900/50 text-red-300'
           }`}>
-            {approvalCount}/{totalAgents} agree
+            {approvalCount}/{totalAgents}
           </span>
-          {raw.sector && (
-            <span className="text-[10px] text-slate-500">{raw.sector}</span>
-          )}
         </div>
-        <div className="flex items-center gap-3">
-          {agentStyles.map((agent: { id: string; name: string; emoji: string; color: string }) => {
+        <div className="flex items-center gap-2">
+          {agentStyles.map((agent) => {
             const approved = approvals.includes(agent.id);
             return (
-              <span
-                key={agent.id}
-                title={`${agent.name}: ${approved ? 'BUY' : 'PASS'}`}
-                className={`text-sm transition-opacity ${approved ? 'opacity-100' : 'opacity-25 grayscale'}`}
-                style={approved ? { filter: `drop-shadow(0 0 3px ${agent.color}60)` } : undefined}
-              >{agent.emoji}</span>
+              <div key={agent.id} className="flex items-center gap-1" title={`${agent.name}: ${approved ? 'BUY' : 'PASS'}`}>
+                <span className={`text-sm ${approved ? 'opacity-100' : 'opacity-20 grayscale'}`}
+                  style={approved ? { filter: `drop-shadow(0 0 3px ${agent.color}60)` } : undefined}
+                >{agent.emoji}</span>
+                {approved ? (
+                  <span className="text-[9px] font-bold text-emerald-400">✓</span>
+                ) : (
+                  <span className="text-[9px] font-bold text-red-400">✗</span>
+                )}
+              </div>
             );
           })}
         </div>
-      </div>
-      {isFiltered && (
-        <div className="mt-1.5 text-[10px] text-red-400/80">
-          {ticker.reason}
+      </button>
+
+      {/* Expanded: per-agent tabs with reasoning */}
+      {expanded && (
+        <div className="border-t border-slate-700/30">
+          {/* Agent tabs */}
+          <div className="flex border-b border-slate-700/30 bg-slate-900/30 overflow-x-auto">
+            {agentStyles.map((agent) => {
+              const isActive = activeAgent === agent.id;
+              const approved = approvals.includes(agent.id);
+              return (
+                <button
+                  key={agent.id}
+                  onClick={() => setActiveAgent(agent.id)}
+                  className={`flex items-center gap-1.5 px-3 py-2 text-xs font-medium whitespace-nowrap transition-all relative ${
+                    isActive ? 'text-slate-200 bg-slate-800/50' : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800/30'
+                  }`}
+                >
+                  <span className="text-sm">{agent.emoji}</span>
+                  <span>{agent.name.split(' ')[1] || agent.name.split(' ')[0]}</span>
+                  {approved ? (
+                    <span className="text-[9px] font-bold text-emerald-400">BUY</span>
+                  ) : (
+                    <span className="text-[9px] font-bold text-red-400">PASS</span>
+                  )}
+                  {isActive && (
+                    <div className="absolute bottom-0 left-0 right-0 h-0.5" style={{ backgroundColor: agent.color }} />
+                  )}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Active agent reasoning */}
+          {activeAgent && (() => {
+            const agent = agentStyles.find(a => a.id === activeAgent);
+            const reasons = agentReasons[activeAgent];
+            if (!agent || !reasons) return null;
+            return (
+              <div className="p-3 space-y-2">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-lg">{agent.emoji}</span>
+                  <span className="text-sm font-semibold text-slate-200">{agent.name}</span>
+                  <span className={`text-[10px] px-1.5 py-0.5 rounded font-bold ${
+                    reasons.approved ? 'bg-emerald-900/50 text-emerald-300' : 'bg-red-900/50 text-red-300'
+                  }`}>
+                    {reasons.approved ? '✓ BUY' : '✗ PASS'}
+                  </span>
+                </div>
+                <div className="space-y-1">
+                  {reasons.reasons.map((reason, i) => {
+                    const isPass = reason.startsWith('✓');
+                    return (
+                      <div key={i} className={`text-xs px-2 py-1.5 rounded ${
+                        isPass ? 'bg-emerald-900/20 text-emerald-300/80' : 'bg-red-900/20 text-red-300/80'
+                      }`}>
+                        {reason}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })()}
         </div>
       )}
     </div>

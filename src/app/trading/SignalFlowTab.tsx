@@ -614,26 +614,58 @@ function calculatePipelineStages(signals: MRESignal[], dataType: 'core' | 'unive
   finalPassed.forEach(s => { const r = (s.regime || '').toLowerCase(); if (r) regimeCounts[r] = (regimeCounts[r] || 0) + 1; });
   const globalRegime = Object.entries(regimeCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || 'sideways';
 
-  // For each signal, determine which agents would approve it
+  // For each signal, determine which agents would approve it + per-agent reasoning
   const signalAgentApprovals = new Map<string, string[]>(); // symbol → agent ids that approve
+  const signalAgentReasons = new Map<string, Record<string, { approved: boolean; reasons: string[] }>>(); // symbol → { agentId: { approved, reasons[] } }
   finalPassed.forEach(sig => {
     const approvals: string[] = [];
+    const reasons: Record<string, { approved: boolean; reasons: string[] }> = {};
     AGENT_STYLE_FILTERS.forEach(agent => {
+      const agentReasons: string[] = [];
+      let passed = true;
+      const sigStrength = sig.signal_strength;
+      const sigStrategies = sig.strategies_agreeing || 0;
+      const sigSector = sig.sector || 'Unknown';
+      const sigRegime = (sig.regime || globalRegime || '').toLowerCase();
+
       // Signal strength check
-      if (sig.signal_strength < agent.minSignalStrength) return;
+      if (sigStrength < agent.minSignalStrength) {
+        agentReasons.push(`Signal strength ${sigStrength.toFixed(0)}% below minimum ${agent.minSignalStrength}%`);
+        passed = false;
+      } else {
+        agentReasons.push(`✓ Signal strength ${sigStrength.toFixed(0)}% meets ${agent.minSignalStrength}% threshold`);
+      }
       // Strategies agreeing check
-      if ((sig.strategies_agreeing || 0) < agent.minStrategiesAgreeing) return;
+      if (sigStrategies < agent.minStrategiesAgreeing) {
+        agentReasons.push(`Only ${sigStrategies} strategies agree (need ${agent.minStrategiesAgreeing}+)`);
+        passed = false;
+      } else {
+        agentReasons.push(`✓ ${sigStrategies} strategies agree (need ${agent.minStrategiesAgreeing}+)`);
+      }
       // Sector filter
       if (!agent.preferredSectors.includes('*')) {
-        const sigSector = sig.sector || '';
-        if (!agent.preferredSectors.some(ps => sigSector.includes(ps))) return;
+        if (!agent.preferredSectors.some(ps => sigSector.includes(ps))) {
+          agentReasons.push(`Sector "${sigSector}" not in preferred: ${agent.preferredSectors.join(', ')}`);
+          passed = false;
+        } else {
+          agentReasons.push(`✓ Sector "${sigSector}" matches preferred sectors`);
+        }
+      } else {
+        agentReasons.push('✓ All sectors accepted');
       }
       // Regime filter
-      const regime = (sig.regime || globalRegime || '').toLowerCase();
-      if (!agent.preferredRegimes.some(pr => regime.includes(pr))) return;
-      approvals.push(agent.id);
+      if (!agent.preferredRegimes.some(pr => sigRegime.includes(pr))) {
+        agentReasons.push(`Regime "${sigRegime}" not in preferred: ${agent.preferredRegimes.join(', ')}`);
+        passed = false;
+      } else {
+        agentReasons.push(`✓ Regime "${sigRegime}" is acceptable`);
+      }
+
+      if (passed) approvals.push(agent.id);
+      reasons[agent.id] = { approved: passed, reasons: agentReasons };
     });
     signalAgentApprovals.set(sig.symbol, approvals);
+    signalAgentReasons.set(sig.symbol, reasons);
   });
 
   // Only tickers where ALL 5 agents agree pass through to output
@@ -667,6 +699,7 @@ function calculatePipelineStages(signals: MRESignal[], dataType: 'core' | 'unive
     filtered: agentFiltered,
     agentStyles: AGENT_STYLE_FILTERS,
     signalAgentApprovals, // Map<symbol, agentId[]>
+    signalAgentReasons, // Map<symbol, Record<agentId, { approved, reasons[] }>>
     perTierData: agentPerTierData
   };
 
@@ -2050,6 +2083,7 @@ export default function SignalFlowTab() {
       if (!tierData) return;
 
       const agentApprovals = stage.signalAgentApprovals as Map<string, string[]>;
+      const agentReasons = stage.signalAgentReasons as Map<string, Record<string, { approved: boolean; reasons: string[] }>>;
       const agentStyles = stage.agentStyles || [];
 
       setSelectedStage({
@@ -2060,23 +2094,25 @@ export default function SignalFlowTab() {
         outputCount: tierData.output,
         filteredTickers: (tierData.filteredTickers || []).map((t: any) => {
           const approvals = agentApprovals?.get(t.symbol) || [];
+          const reasons = agentReasons?.get(t.symbol) || {};
           const missingAgents = agentStyles.filter((a: any) => !approvals.includes(a.id)).map((a: any) => a.name);
           return {
             symbol: t.symbol,
             reason: `Rejected by: ${missingAgents.join(', ')}`,
             signal: t.signal,
             currentPrice: t.price,
-            rawData: { ...t, _agentApprovals: approvals, _agentStyles: agentStyles }
+            rawData: { ...t, _agentApprovals: approvals, _agentStyles: agentStyles, _agentReasons: reasons }
           };
         }),
         passedTickers: (tierData.tickers || []).map((t: any) => {
           const approvals = agentApprovals?.get(t.symbol) || [];
+          const reasons = agentReasons?.get(t.symbol) || {};
           return {
             symbol: t.symbol,
             signal: t.signal,
             signalStrength: t.signal_strength,
             currentPrice: t.price,
-            rawData: { ...t, _agentApprovals: approvals, _agentStyles: agentStyles }
+            rawData: { ...t, _agentApprovals: approvals, _agentStyles: agentStyles, _agentReasons: reasons }
           };
         })
       });

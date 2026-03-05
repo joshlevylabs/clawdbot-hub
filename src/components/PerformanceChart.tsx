@@ -370,7 +370,7 @@ export default function PerformanceChart({
         
         // Carry forward: use last agent snapshot at or before this time
         if (!matched) {
-          let lastBefore: typeof agentSnaps[0] | null = null;
+          let lastBefore: typeof agentSnaps[0] | undefined = undefined;
           for (const snap of agentSnaps) {
             const snapTime = new Date(snap.date.includes("T") ? snap.date : snap.date + "T00:00").getTime();
             if (snapTime <= snapshotMs) {

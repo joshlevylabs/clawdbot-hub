@@ -1204,69 +1204,121 @@ export default function TradingPage() {
                             </tr>
                           );
                         })}
-                        {/* CASH row — only shown for single portfolio view (not "All Portfolios" which mixes cash from different accounts) */}
-                        {selectedAgentFilter !== 'all' && (() => {
-                          const cashValue = filteredCash;
-                          const filteredPosValue = filteredPositions.reduce((sum, p) => sum + p.qty * (p.current_price || p.entry_price), 0);
-                          const filteredEquity = cashValue + filteredPosValue;
-                          const cashPct = filteredEquity > 0 ? (cashValue / filteredEquity) * 100 : 0;
-                          return (
-                            <tr className="border-b border-slate-800 bg-amber-900/10">
-                              <td className="py-3 px-2">
-                                <span className="font-bold text-slate-100">💵 CASH</span>
-                                <p className="text-[10px] text-slate-600 mt-0.5">Money market ~3.5% APY</p>
-                              </td>
-                              <td className="py-3 px-2"><span className="text-xs text-slate-600">—</span></td>
-                              <td className="py-3 px-2 text-right font-mono text-slate-300">${formatCurrency(cashValue)}</td>
-                              <td className="py-3 px-2 text-right font-mono text-slate-600">—</td>
-                              <td className="py-3 px-2 text-right font-mono text-slate-600">—</td>
-                              <td className="py-3 px-2 text-right font-mono font-bold text-emerald-400">
-                                +${formatCurrency(interestEarned)}
-                              </td>
-                              <td className="py-3 px-2 text-right font-mono text-emerald-400">
-                                3.50% APY
-                              </td>
-                              <td className="py-3 px-2 text-right font-mono text-slate-300">${formatCurrency(cashValue)}</td>
-                              <td className="py-3 px-2 text-right font-mono text-slate-400">{cashPct.toFixed(1)}%</td>
-                              <td className="py-3 px-2 text-right"><span className="text-xs text-slate-600">—</span></td>
-                              <td className="py-3 px-2 text-right"><span className="text-xs text-slate-600">—</span></td>
-                              <td className="py-3 px-2 text-right font-mono text-slate-600">—</td>
-                              <td className="py-3 px-2 text-right font-mono text-slate-600">—</td>
-                              <td className="py-3 px-2 text-right text-sm text-slate-600">—</td>
-                              <td className="py-3 px-2 text-center"><span className="text-xs text-slate-600">—</span></td>
-                            </tr>
-                          );
-                        })()}
+                        {/* CASH rows — per-agent when "All Portfolios", single row otherwise */}
+                        {selectedAgentFilter === 'all' ? (
+                          /* Per-agent cash rows */
+                          (() => {
+                            const agentCashEntries = [
+                              { id: null, cash: cash, label: 'My Portfolio', showInterest: true },
+                              ...['chris-vermeulen', 'warren-buffett', 'peter-schiff', 'raoul-pal', 'peter-lynch'].map(id => ({
+                                id,
+                                cash: agentPortfolios[id]?.cashBalance ?? 0,
+                                label: getAgentConfig(id).name,
+                                showInterest: false,
+                              })),
+                            ];
+                            const allCash = agentCashEntries.reduce((s, e) => s + e.cash, 0);
+                            const allPosValue = filteredPositions.reduce((sum, p) => sum + p.qty * (p.current_price || p.entry_price), 0);
+                            const allEquity = allCash + allPosValue;
+                            return agentCashEntries.map(entry => {
+                              const config = getAgentConfig(entry.id);
+                              const pct = allEquity > 0 ? (entry.cash / allEquity) * 100 : 0;
+                              return (
+                                <tr key={`cash-${entry.id || 'user'}`} className="border-b border-slate-800 bg-amber-900/10">
+                                  <td className="py-2 px-2">
+                                    <span className="font-bold text-slate-100">💵 CASH</span>
+                                  </td>
+                                  <td className="py-2 px-2">
+                                    <span className={`text-xs ${config.textColor}`}>{config.emoji} {entry.label}</span>
+                                  </td>
+                                  <td className="py-2 px-2 text-right font-mono text-slate-300">${formatCurrency(entry.cash)}</td>
+                                  <td className="py-2 px-2 text-right font-mono text-slate-600">—</td>
+                                  <td className="py-2 px-2 text-right font-mono text-slate-600">—</td>
+                                  <td className="py-2 px-2 text-right font-mono text-slate-600">—</td>
+                                  <td className="py-2 px-2 text-right font-mono text-slate-600">
+                                    {entry.showInterest ? <span className="text-emerald-400">3.50% APY</span> : '—'}
+                                  </td>
+                                  <td className="py-2 px-2 text-right font-mono text-slate-300">${formatCurrency(entry.cash)}</td>
+                                  <td className="py-2 px-2 text-right font-mono text-slate-400">{pct.toFixed(1)}%</td>
+                                  <td className="py-2 px-2 text-right"><span className="text-xs text-slate-600">—</span></td>
+                                  <td className="py-2 px-2 text-right"><span className="text-xs text-slate-600">—</span></td>
+                                  <td className="py-2 px-2 text-right font-mono text-slate-600">—</td>
+                                  <td className="py-2 px-2 text-right font-mono text-slate-600">—</td>
+                                  <td className="py-2 px-2 text-right text-sm text-slate-600">—</td>
+                                  <td className="py-2 px-2 text-center"><span className="text-xs text-slate-600">—</span></td>
+                                </tr>
+                              );
+                            });
+                          })()
+                        ) : (
+                          /* Single portfolio cash row */
+                          (() => {
+                            const cashValue = filteredCash;
+                            const filteredPosValue = filteredPositions.reduce((sum, p) => sum + p.qty * (p.current_price || p.entry_price), 0);
+                            const filteredEquity = cashValue + filteredPosValue;
+                            const cashPct = filteredEquity > 0 ? (cashValue / filteredEquity) * 100 : 0;
+                            return (
+                              <tr className="border-b border-slate-800 bg-amber-900/10">
+                                <td className="py-3 px-2">
+                                  <span className="font-bold text-slate-100">💵 CASH</span>
+                                  <p className="text-[10px] text-slate-600 mt-0.5">Money market ~3.5% APY</p>
+                                </td>
+                                <td className="py-3 px-2"><span className="text-xs text-slate-600">—</span></td>
+                                <td className="py-3 px-2 text-right font-mono text-slate-300">${formatCurrency(cashValue)}</td>
+                                <td className="py-3 px-2 text-right font-mono text-slate-600">—</td>
+                                <td className="py-3 px-2 text-right font-mono text-slate-600">—</td>
+                                <td className="py-3 px-2 text-right font-mono font-bold text-emerald-400">
+                                  +${formatCurrency(interestEarned)}
+                                </td>
+                                <td className="py-3 px-2 text-right font-mono text-emerald-400">
+                                  3.50% APY
+                                </td>
+                                <td className="py-3 px-2 text-right font-mono text-slate-300">${formatCurrency(cashValue)}</td>
+                                <td className="py-3 px-2 text-right font-mono text-slate-400">{cashPct.toFixed(1)}%</td>
+                                <td className="py-3 px-2 text-right"><span className="text-xs text-slate-600">—</span></td>
+                                <td className="py-3 px-2 text-right"><span className="text-xs text-slate-600">—</span></td>
+                                <td className="py-3 px-2 text-right font-mono text-slate-600">—</td>
+                                <td className="py-3 px-2 text-right font-mono text-slate-600">—</td>
+                                <td className="py-3 px-2 text-right text-sm text-slate-600">—</td>
+                                <td className="py-3 px-2 text-center"><span className="text-xs text-slate-600">—</span></td>
+                              </tr>
+                            );
+                          })()
+                        )}
                       </tbody>
                       <tfoot>
                         {selectedAgentFilter === 'all' ? (
-                          /* "All Portfolios" view — show combined positions value only, no misleading total equity */
+                          /* "All Portfolios" view — show total AUM (all cash + all positions) */
                           (() => {
                             const fPosValue = filteredPositions.reduce((s, p) => s + (p.current_price || p.entry_price) * p.qty, 0);
                             const fCostBasis = filteredPositions.reduce((s, p) => s + p.entry_price * p.qty, 0);
-                            const fUnrealizedPnl = fPosValue - fCostBasis;
-                            const fUnrealizedPct = fCostBasis > 0 ? (fUnrealizedPnl / fCostBasis) * 100 : 0;
+                            const allCash = cash + ['chris-vermeulen', 'warren-buffett', 'peter-schiff', 'raoul-pal', 'peter-lynch']
+                              .reduce((s, id) => s + (agentPortfolios[id]?.cashBalance ?? 0), 0);
+                            const totalAUM = allCash + fPosValue;
+                            const totalStarting = 600000; // 6 portfolios × $100K
+                            const totalPnlAll = totalAUM - totalStarting;
+                            const totalPnlPctAll = (totalPnlAll / totalStarting) * 100;
                             return (
                               <tr className="border-t-2 border-slate-600 bg-slate-800/80 font-bold">
-                                <td className="py-3 px-2 text-slate-100">All Positions</td>
+                                <td className="py-3 px-2 text-slate-100">Grand Total</td>
                                 <td></td>
                                 <td></td>
                                 <td className="py-3 px-2 text-right font-mono text-slate-400">
                                   ${formatCurrency(fCostBasis)}
                                 </td>
                                 <td></td>
-                                <td className={`py-3 px-2 text-right font-mono ${fUnrealizedPnl >= 0 ? "text-emerald-400" : "text-red-400"}`}>
-                                  {fUnrealizedPnl >= 0 ? "+" : ""}${formatCurrency(fUnrealizedPnl)}
+                                <td className={`py-3 px-2 text-right font-mono ${totalPnlAll >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+                                  {totalPnlAll >= 0 ? "+" : ""}${formatCurrency(totalPnlAll)}
                                 </td>
-                                <td className={`py-3 px-2 text-right font-mono ${fUnrealizedPnl >= 0 ? "text-emerald-400" : "text-red-400"}`}>
-                                  {formatPercent(fUnrealizedPct)}
+                                <td className={`py-3 px-2 text-right font-mono ${totalPnlAll >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+                                  {formatPercent(totalPnlPctAll)}
                                 </td>
-                                <td className="py-3 px-2 text-right font-mono text-slate-200">${formatCurrency(fPosValue)}</td>
+                                <td className="py-3 px-2 text-right font-mono text-slate-200">${formatCurrency(totalAUM)}</td>
                                 <td className="py-3 px-2 text-right font-mono text-slate-400">
-                                  —
+                                  100%
                                 </td>
                                 <td colSpan={6} className="py-3 px-2 text-right text-sm text-slate-500">
-                                  {filteredPositions.length} positions across {agentSummaryData.length} portfolios · Select one for full breakdown
+                                  Positions: ${formatCurrency(fPosValue)} + Cash: ${formatCurrency(allCash)} · 6 portfolios × $100K = $600K AUM
                                 </td>
                               </tr>
                             );

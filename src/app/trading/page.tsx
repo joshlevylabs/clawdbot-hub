@@ -442,6 +442,9 @@ export default function TradingPage() {
   // Agent snapshots for performance chart
   const [agentSnapshots, setAgentSnapshots] = useState<Record<string, Array<{ date: string; return: number }>>>({});
 
+  // Agent portfolio data (cash balances, equity per agent)
+  const [agentPortfolios, setAgentPortfolios] = useState<Record<string, { cashBalance: number; totalEquity: number; positionsValue: number; startingCapital: number }>>({});
+
   const handleAnalyze = (symbol: string) => {
     setAnalyzeModalSymbol(symbol);
   };
@@ -466,6 +469,22 @@ export default function TradingPage() {
     }
   }, []);
 
+  const loadAgentPortfolios = useCallback(async () => {
+    try {
+      const res = await fetch("/api/trading/agent-portfolios");
+      if (res.ok) {
+        const json = await res.json();
+        const map: Record<string, { cashBalance: number; totalEquity: number; positionsValue: number; startingCapital: number }> = {};
+        for (const p of json.portfolios || []) {
+          map[p.id] = { cashBalance: p.cashBalance, totalEquity: p.totalEquity, positionsValue: p.positionsValue, startingCapital: 100000 };
+        }
+        setAgentPortfolios(map);
+      }
+    } catch (err) {
+      console.error("Failed to load agent portfolios:", err);
+    }
+  }, []);
+
   const loadFromSupabase = useCallback(async () => {
     try {
       const res = await fetch("/api/paper-trading");
@@ -483,13 +502,14 @@ export default function TradingPage() {
         }))
       );
 
-      // Load agent snapshots for performance chart
+      // Load agent snapshots for performance chart + agent portfolio data
       await loadAgentSnapshots();
+      await loadAgentPortfolios();
     } catch (err) {
       console.error("Supabase fetch failed, falling back to static:", err);
       await loadFromStatic();
     }
-  }, [loadAgentSnapshots]);
+  }, [loadAgentSnapshots, loadAgentPortfolios]);
 
   const loadFromStatic = useCallback(async () => {
     try {
@@ -599,6 +619,16 @@ export default function TradingPage() {
   const avgWin = winningTrades.length > 0 ? winningTrades.reduce((s, t) => s + t.pnl, 0) / winningTrades.length : 0;
   const avgLoss = losingTrades.length > 0 ? Math.abs(losingTrades.reduce((s, t) => s + t.pnl, 0) / losingTrades.length) : 0;
   const profitFactor = avgLoss > 0 ? avgWin / avgLoss : avgWin > 0 ? Infinity : 0;
+
+  // Context-aware cash/equity for the selected agent filter (used in positions table)
+  const filteredCash = (() => {
+    if (selectedAgentFilter === 'all' || selectedAgentFilter === 'user') return cash;
+    return agentPortfolios[selectedAgentFilter]?.cashBalance ?? 0;
+  })();
+  const filteredStartingCapital = (() => {
+    if (selectedAgentFilter === 'all' || selectedAgentFilter === 'user') return startingCapital;
+    return agentPortfolios[selectedAgentFilter]?.startingCapital ?? 100000;
+  })();
 
   // Filter positions based on selected agent
   const filteredPositions = positions.filter(position => {
@@ -1167,8 +1197,10 @@ export default function TradingPage() {
                         })}
                         {/* CASH row */}
                         {(() => {
-                          const cashValue = cash;
-                          const cashPct = equity > 0 ? (cashValue / equity) * 100 : 0;
+                          const cashValue = filteredCash;
+                          const filteredPosValue = filteredPositions.reduce((sum, p) => sum + p.qty * (p.current_price || p.entry_price), 0);
+                          const filteredEquity = cashValue + filteredPosValue;
+                          const cashPct = filteredEquity > 0 ? (cashValue / filteredEquity) * 100 : 0;
                           return (
                             <tr className="border-b border-slate-800 bg-amber-900/10">
                               <td className="py-3 px-2">
@@ -1198,28 +1230,40 @@ export default function TradingPage() {
                         })()}
                       </tbody>
                       <tfoot>
-                        <tr className="border-t-2 border-slate-600 bg-slate-800/80 font-bold">
-                          <td className="py-3 px-2 text-slate-100">Total</td>
-                          <td></td>
-                          <td></td>
-                          <td className="py-3 px-2 text-right font-mono text-slate-400">
-                            ${formatCurrency(positions.reduce((s, p) => s + p.entry_price * p.qty, 0))}
-                          </td>
-                          <td></td>
-                          <td className={`py-3 px-2 text-right font-mono ${totalPnl >= 0 ? "text-emerald-400" : "text-red-400"}`}>
-                            {totalPnl >= 0 ? "+" : ""}${formatCurrency(totalPnl)}
-                          </td>
-                          <td className={`py-3 px-2 text-right font-mono ${totalPnl >= 0 ? "text-emerald-400" : "text-red-400"}`}>
-                            {formatPercent(totalPnlPct)}
-                          </td>
-                          <td className="py-3 px-2 text-right font-mono text-slate-200">${formatCurrency(equity)}</td>
-                          <td className="py-3 px-2 text-right font-mono text-slate-400">
-                            100%
-                          </td>
-                          <td colSpan={6} className="py-3 px-2 text-right text-sm text-slate-500">
-                            Positions: ${formatCurrency(positionsValue)} + Cash: ${formatCurrency(cash)} + Interest: ${formatCurrency(interestEarned)}
-                          </td>
-                        </tr>
+                        {(() => {
+                          const fPosValue = filteredPositions.reduce((s, p) => s + (p.current_price || p.entry_price) * p.qty, 0);
+                          const fCostBasis = filteredPositions.reduce((s, p) => s + p.entry_price * p.qty, 0);
+                          const fEquity = filteredCash + fPosValue;
+                          const fPnl = fEquity - filteredStartingCapital;
+                          const fPnlPct = (fPnl / filteredStartingCapital) * 100;
+                          const isAgent = selectedAgentFilter !== 'all' && selectedAgentFilter !== 'user';
+                          const fInterest = isAgent ? 0 : interestEarned;
+                          const fTotalEquity = fEquity + fInterest;
+                          return (
+                            <tr className="border-t-2 border-slate-600 bg-slate-800/80 font-bold">
+                              <td className="py-3 px-2 text-slate-100">Total</td>
+                              <td></td>
+                              <td></td>
+                              <td className="py-3 px-2 text-right font-mono text-slate-400">
+                                ${formatCurrency(fCostBasis)}
+                              </td>
+                              <td></td>
+                              <td className={`py-3 px-2 text-right font-mono ${fPnl >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+                                {fPnl >= 0 ? "+" : ""}${formatCurrency(fPnl)}
+                              </td>
+                              <td className={`py-3 px-2 text-right font-mono ${fPnl >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+                                {formatPercent(fPnlPct)}
+                              </td>
+                              <td className="py-3 px-2 text-right font-mono text-slate-200">${formatCurrency(fTotalEquity)}</td>
+                              <td className="py-3 px-2 text-right font-mono text-slate-400">
+                                100%
+                              </td>
+                              <td colSpan={6} className="py-3 px-2 text-right text-sm text-slate-500">
+                                Positions: ${formatCurrency(fPosValue)} + Cash: ${formatCurrency(filteredCash)}{!isAgent && ` + Interest: $${formatCurrency(fInterest)}`}
+                              </td>
+                            </tr>
+                          );
+                        })()}
                       </tfoot>
                     </table>
                   </div>

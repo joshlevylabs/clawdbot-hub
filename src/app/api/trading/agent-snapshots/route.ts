@@ -32,19 +32,18 @@ export async function GET(request: NextRequest) {
       const agentData = snapshots.filter(s => s.account_id === accountId);
       
       if (agentData.length === 0) {
-        // Agent has no data, create a flat 0% line
         agentSnapshots[accountId] = [];
         continue;
       }
 
-      // Calculate returns based on starting equity (typically $100k)
-      const startingEquity = agentData[0]?.equity || 100000;
+      // Use $100K starting capital as baseline (consistent with portfolio chart)
+      const startingEquity = 100000;
       
       agentSnapshots[accountId] = agentData.map(snapshot => {
         const returnPct = ((snapshot.equity - startingEquity) / startingEquity) * 100;
         return {
           date: snapshot.date,
-          return: Math.round(returnPct * 100) / 100 // Round to 2 decimals
+          return: Math.round(returnPct * 100) / 100
         };
       });
     }

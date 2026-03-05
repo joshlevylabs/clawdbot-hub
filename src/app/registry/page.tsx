@@ -979,7 +979,46 @@ export default function RegistryPage() {
 
                 return (
                   <div className="bg-slate-900/50 rounded-xl border border-slate-800 overflow-hidden">
-                    <div className="overflow-x-auto">
+                    {/* Mobile Card Layout */}
+                    <div className="md:hidden divide-y divide-slate-800/50">
+                      {filteredAgents.map((agent, idx) => {
+                        const stats = agentStats?.perAgent[agent.id];
+                        return (
+                          <button
+                            key={agent.id}
+                            onClick={() => setSelectedAgent(agent)}
+                            className={`w-full text-left px-4 py-3 hover:bg-slate-800/30 transition-colors ${
+                              idx % 2 === 0 ? "bg-slate-900/20" : "bg-transparent"
+                            }`}
+                          >
+                            <div className="flex items-center gap-3">
+                              <span className="text-xl flex-shrink-0">{agent.emoji}</span>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-sm font-semibold text-slate-200 truncate">{agent.name}</span>
+                                  <div className={`w-2 h-2 rounded-full flex-shrink-0 ${agent.endpoint_enabled ? 'bg-green-500' : 'bg-red-500'}`} />
+                                </div>
+                                <p className="text-xs text-slate-400 truncate">{agent.title}</p>
+                                <div className="flex items-center gap-3 mt-1">
+                                  <DepartmentBadge department={agent.department} />
+                                  <span className="text-[10px] text-slate-500">{formatModelName(agent.model)}</span>
+                                  {(stats?.conversations || 0) > 0 && (
+                                    <span className="text-[10px] text-slate-500">{stats?.conversations} chats</span>
+                                  )}
+                                </div>
+                              </div>
+                              <Eye className="w-4 h-4 text-slate-500 flex-shrink-0" />
+                            </div>
+                          </button>
+                        );
+                      })}
+                      <div className="px-4 py-2 text-xs text-slate-500">
+                        {filteredAgents.length} of {agents.length} agents
+                      </div>
+                    </div>
+
+                    {/* Desktop Table Layout */}
+                    <div className="hidden md:block overflow-x-auto">
                       <table className="w-full table-fixed">
                         <thead>
                           <tr className="border-b border-slate-700/50">
@@ -1003,7 +1042,6 @@ export default function RegistryPage() {
                                   idx % 2 === 0 ? "bg-slate-900/20" : "bg-transparent"
                                 }`}
                               >
-                                {/* Action Column */}
                                 <td className="px-3 py-1.5">
                                   <button
                                     onClick={() => setSelectedAgent(agent)}
@@ -1013,8 +1051,6 @@ export default function RegistryPage() {
                                     <Eye className="w-4 h-4" />
                                   </button>
                                 </td>
-                                
-                                {/* Agent Column */}
                                 <td className="px-3 py-1.5">
                                   <div className="flex items-center gap-2">
                                     <span className="text-lg">{agent.emoji}</span>
@@ -1031,33 +1067,21 @@ export default function RegistryPage() {
                                     </div>
                                   </div>
                                 </td>
-                                
-                                {/* Title Column */}
                                 <td className="px-3 py-1.5">
                                   <p className="text-sm text-slate-300 truncate">{agent.title}</p>
                                 </td>
-                                
-                                {/* Department Column */}
                                 <td className="px-3 py-1.5">
                                   <DepartmentBadge department={agent.department} />
                                 </td>
-                                
-                                {/* Model Column */}
                                 <td className="px-3 py-1.5">
                                   <span className="text-sm text-slate-300">{formatModelName(agent.model)}</span>
                                 </td>
-                                
-                                {/* Conversations Column */}
                                 <td className="px-3 py-1.5">
                                   <span className="text-sm text-slate-300">{stats?.conversations || 0}</span>
                                 </td>
-                                
-                                {/* Messages Column */}
                                 <td className="px-3 py-1.5">
                                   <span className="text-sm text-slate-300">{stats?.messages || 0}</span>
                                 </td>
-                                
-                                {/* Last Active Column */}
                                 <td className="px-3 py-1.5">
                                   <span className="text-sm text-slate-400">{formatTimeAgo(stats?.lastActivity || null)}</span>
                                 </td>

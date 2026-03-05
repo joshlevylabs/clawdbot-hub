@@ -3373,6 +3373,44 @@ export default function PipelineDetailPanel({
                     filteredOutput
                       .sort((a, b) => (b.signalStrength || 0) - (a.signalStrength || 0))
                       .map((ticker, idx) => (
+                        stageDetails.name.includes('Agent Analysis') ? (
+                          <AgentAnalysisTickerRow key={idx} ticker={ticker} />
+                        ) : (
+                          <TickerTechnicalBreakdown
+                            key={idx}
+                            symbol={ticker.symbol}
+                            signal={ticker.signal}
+                            signalStrength={ticker.signalStrength}
+                            currentPrice={ticker.currentPrice}
+                            rawData={ticker.rawData}
+                            reason={ticker.reason}
+                            stageType={stageDetails.stageType}
+                            stageName={stageDetails.name}
+                          />
+                        )
+                      ))
+                  ) : (
+                    <div className="text-center text-slate-400 py-8">
+                      {searchQuery 
+                        ? `No tickers found matching "${searchQuery}"` 
+                        : stageDetails.name.includes('Vote Consensus')
+                          ? "No tickers currently reach this consensus level"
+                          : stageDetails.name.includes('Agent Analysis')
+                            ? "No tickers passed all 5 agent filters"
+                            : "No output tickers"
+                      }
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {activeTab === 'filtered' && (
+                <div className="space-y-3">
+                  {filteredFiltered.length > 0 ? (
+                    filteredFiltered.slice(0, 100).map((ticker, idx) => (
+                      stageDetails.name.includes('Agent Analysis') ? (
+                        <AgentAnalysisTickerRow key={idx} ticker={ticker} isFiltered />
+                      ) : (
                         <TickerTechnicalBreakdown
                           key={idx}
                           symbol={ticker.symbol}
@@ -3384,35 +3422,7 @@ export default function PipelineDetailPanel({
                           stageType={stageDetails.stageType}
                           stageName={stageDetails.name}
                         />
-                      ))
-                  ) : (
-                    <div className="text-center text-slate-400 py-8">
-                      {searchQuery 
-                        ? `No tickers found matching "${searchQuery}"` 
-                        : stageDetails.name.includes('Vote Consensus')
-                          ? "No tickers currently reach this consensus level"
-                          : "No output tickers"
-                      }
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {activeTab === 'filtered' && (
-                <div className="space-y-3">
-                  {filteredFiltered.length > 0 ? (
-                    filteredFiltered.slice(0, 100).map((ticker, idx) => (
-                      <TickerTechnicalBreakdown
-                        key={idx}
-                        symbol={ticker.symbol}
-                        signal={ticker.signal}
-                        signalStrength={ticker.signalStrength}
-                        currentPrice={ticker.currentPrice}
-                        rawData={ticker.rawData}
-                        reason={ticker.reason}
-                        stageType={stageDetails.stageType}
-                        stageName={stageDetails.name}
-                      />
+                      )
                     ))
                   ) : (
                     <div className="text-center text-slate-400 py-8">

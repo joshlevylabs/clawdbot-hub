@@ -25,8 +25,9 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to fetch agent snapshots' }, { status: 500 });
     }
 
-    // Group snapshots by agent and calculate returns
-    const agentSnapshots: Record<string, Array<{ date: string; return: number }>> = {};
+    // Group snapshots by agent — return raw equity so the chart can compute
+    // returns relative to the same baseline as the portfolio (start of visible range)
+    const agentSnapshots: Record<string, Array<{ date: string; return: number; equity: number }>> = {};
 
     for (const accountId of agentAccountIds) {
       const agentData = snapshots.filter(s => s.account_id === accountId);
@@ -36,13 +37,14 @@ export async function GET(request: NextRequest) {
         continue;
       }
 
-      // Use $100K starting capital as baseline (consistent with portfolio chart)
-      const startingEquity = 100000;
+      // Return both equity and a default return (chart will recompute)
+      const startingEquity = agentData[0]?.equity || 100000;
       
       agentSnapshots[accountId] = agentData.map(snapshot => {
         const returnPct = ((snapshot.equity - startingEquity) / startingEquity) * 100;
         return {
           date: snapshot.date,
+          equity: snapshot.equity,
           return: Math.round(returnPct * 100) / 100
         };
       });

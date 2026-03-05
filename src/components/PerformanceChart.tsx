@@ -49,7 +49,7 @@ interface PerformanceChartProps {
   /** Intraday snapshots for fine-grained 1D/1W views */
   intradaySnapshots?: IntradaySnapshot[];
   /** Agent portfolio snapshots for comparison lines */
-  agentSnapshots?: Record<string, Array<{ date: string; return: number }>>;
+  agentSnapshots?: Record<string, Array<{ date: string; return: number; equity?: number }>>;
   /** Compact mode for embedding in smaller spaces */
   compact?: boolean;
   /** Starting capital for % calculations */
@@ -317,6 +317,24 @@ export default function PerformanceChart({
     // Don't use spy_baseline — it resets on every intraday snapshot and causes incorrect returns.
     const startSpy = filteredSnapshots[0].spy_price || 1;
 
+    // Pre-compute each agent's starting equity for the visible range
+    // This ensures agent returns are relative to the same time window as the portfolio
+    const agentStartEquity: Record<string, number> = {};
+    const chartStartMs = new Date(filteredSnapshots[0].date.includes("T") ? filteredSnapshots[0].date : filteredSnapshots[0].date + "T00:00").getTime();
+    for (const [agentId, agentSnaps] of Object.entries(agentSnapshots)) {
+      // Find the agent's equity closest to (but not after) the chart start time
+      const FIVE_MIN = 5 * 60 * 1000;
+      let bestSnap: typeof agentSnaps[0] | undefined;
+      for (const snap of agentSnaps) {
+        if (!snap.equity) continue;
+        const snapMs = new Date(snap.date.includes("T") ? snap.date : snap.date + "T00:00").getTime();
+        if (snapMs <= chartStartMs + FIVE_MIN) {
+          bestSnap = snap;
+        }
+      }
+      agentStartEquity[agentId] = bestSnap?.equity || 100000;
+    }
+
     return filteredSnapshots.map((s) => {
       const portfolioReturn = ((s.equity - startEquity) / startEquity) * 100;
       const spyReturn = s.spy_price
@@ -380,7 +398,13 @@ export default function PerformanceChart({
           matched = lastBefore;
         }
         
-        agentReturns[agentKey] = matched ? matched.return : 0;
+        // Compute return relative to agent's start-of-range equity (same reference as portfolio)
+        if (matched?.equity) {
+          const startEq = agentStartEquity[agentId] || 100000;
+          agentReturns[agentKey] = Math.round(((matched.equity - startEq) / startEq) * 10000) / 100;
+        } else {
+          agentReturns[agentKey] = matched ? matched.return : 0;
+        }
       }
 
       return {

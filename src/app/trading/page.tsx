@@ -440,7 +440,7 @@ export default function TradingPage() {
   const [selectedAgentFilter, setSelectedAgentFilter] = useState<string>('all');
   
   // Agent snapshots for performance chart
-  const [agentSnapshots, setAgentSnapshots] = useState<Record<string, Array<{ date: string; return: number }>>>({});
+  const [agentSnapshots, setAgentSnapshots] = useState<Record<string, Array<{ date: string; return: number; equity?: number }>>>({});
 
   // Agent portfolio data (cash balances, equity per agent)
   const [agentPortfolios, setAgentPortfolios] = useState<Record<string, { cashBalance: number; totalEquity: number; positionsValue: number; startingCapital: number }>>({});

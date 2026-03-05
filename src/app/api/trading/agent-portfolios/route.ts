@@ -42,15 +42,21 @@ export async function GET(request: NextRequest) {
 
     const portfolios: AgentPortfolio[] = [];
 
+    // Get today's date and yesterday's date for daily P&L calculation
+    const now = new Date();
+    const today = now.toISOString().split('T')[0]; // YYYY-MM-DD
+    const yesterday = new Date(now.getTime() - 86400000).toISOString().split('T')[0];
+
     for (const agent of AGENTS) {
       // Get agent account info (cash balance)
       const { data: accountData, error: accountError } = await paperSupabase
         .from('paper_accounts')
-        .select('cash_balance')
+        .select('cash_balance, starting_capital')
         .eq('account_id', agent.id)
         .single();
 
-      const cashBalance = accountData?.cash_balance || 100000; // Default to starting $100k
+      const cashBalance = accountData?.cash_balance || 100000;
+      const startingCapital = accountData?.starting_capital || 100000;
 
       // Get current positions for this agent
       const { data: positions, error: positionsError } = await paperSupabase
@@ -65,20 +71,25 @@ export async function GET(request: NextRequest) {
       }, 0) || 0;
 
       const totalEquity = cashBalance + positionsValue;
+      const totalPnl = totalEquity - startingCapital;
+      const totalPnlPct = (totalPnl / startingCapital) * 100;
 
-      // Get latest portfolio snapshot for P&L calculations
-      const { data: latestSnapshot, error: snapshotError } = await paperSupabase
+      // Get previous day's closing snapshot for daily P&L calculation
+      // Look for most recent snapshot BEFORE today
+      const { data: prevSnapshot } = await paperSupabase
         .from('paper_portfolio_snapshots')
-        .select('daily_pnl, total_pnl, daily_pnl_pct, total_pnl_pct')
+        .select('equity, date')
         .eq('account_id', agent.id)
+        .lt('date', today)
         .order('date', { ascending: false })
         .limit(1)
         .single();
 
-      const dailyPnl = latestSnapshot?.daily_pnl || 0;
-      const totalPnl = latestSnapshot?.total_pnl || (totalEquity - 100000); // Calculate from starting capital
-      const dailyPnlPct = latestSnapshot?.daily_pnl_pct || 0;
-      const totalPnlPct = latestSnapshot?.total_pnl_pct || ((totalEquity - 100000) / 100000 * 100);
+      // Daily P&L = current equity - previous day's closing equity
+      // If no previous snapshot, use starting capital (agent just started)
+      const prevEquity = prevSnapshot?.equity || startingCapital;
+      const dailyPnl = totalEquity - prevEquity;
+      const dailyPnlPct = (dailyPnl / prevEquity) * 100;
 
       portfolios.push({
         id: agent.id,
@@ -89,10 +100,10 @@ export async function GET(request: NextRequest) {
         positionsValue,
         totalEquity,
         positionCount,
-        dailyPnl,
-        totalPnl,
-        dailyPnlPct,
-        totalPnlPct,
+        dailyPnl: Math.round(dailyPnl * 100) / 100,
+        totalPnl: Math.round(totalPnl * 100) / 100,
+        dailyPnlPct: Math.round(dailyPnlPct * 100) / 100,
+        totalPnlPct: Math.round(totalPnlPct * 100) / 100,
       });
     }
 

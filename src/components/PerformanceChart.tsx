@@ -339,33 +339,48 @@ export default function PerformanceChart({
         });
       }
 
-      // Get agent returns for this date if available
+      // Get agent returns for this date — fuzzy match within 5 min, then carry forward last known value
       const agentReturns: Partial<{ chris: number; buffett: number; schiff: number; pal: number; lynch: number }> = {};
+      const snapshotMs = new Date(s.date.includes("T") ? s.date : s.date + "T00:00").getTime();
+      const FIVE_MIN = 5 * 60 * 1000;
       
-      for (const [agentId, snapshots] of Object.entries(agentSnapshots)) {
-        const agentSnapshot = snapshots.find(snap => snap.date === s.date);
-        if (agentSnapshot) {
-          const agentKey = agentId === 'chris-vermeulen' ? 'chris' :
-                         agentId === 'warren-buffett' ? 'buffett' :
-                         agentId === 'peter-schiff' ? 'schiff' :
-                         agentId === 'raoul-pal' ? 'pal' :
-                         agentId === 'peter-lynch' ? 'lynch' : null;
-          
-          if (agentKey) {
-            agentReturns[agentKey] = agentSnapshot.return;
-          }
-        } else {
-          // If no data for this date, use 0% return
-          const agentKey = agentId === 'chris-vermeulen' ? 'chris' :
-                         agentId === 'warren-buffett' ? 'buffett' :
-                         agentId === 'peter-schiff' ? 'schiff' :
-                         agentId === 'raoul-pal' ? 'pal' :
-                         agentId === 'peter-lynch' ? 'lynch' : null;
-          
-          if (agentKey) {
-            agentReturns[agentKey] = 0;
+      for (const [agentId, agentSnaps] of Object.entries(agentSnapshots)) {
+        const agentKey = agentId === 'chris-vermeulen' ? 'chris' :
+                       agentId === 'warren-buffett' ? 'buffett' :
+                       agentId === 'peter-schiff' ? 'schiff' :
+                       agentId === 'raoul-pal' ? 'pal' :
+                       agentId === 'peter-lynch' ? 'lynch' : null;
+        if (!agentKey) continue;
+
+        // Try exact match first
+        let matched = agentSnaps.find(snap => snap.date === s.date);
+        
+        // Fuzzy: find closest within 5 minutes
+        if (!matched) {
+          let bestDiff = Infinity;
+          for (const snap of agentSnaps) {
+            const snapTime = new Date(snap.date.includes("T") ? snap.date : snap.date + "T00:00").getTime();
+            const diff = Math.abs(snapTime - snapshotMs);
+            if (diff <= FIVE_MIN && diff < bestDiff) {
+              bestDiff = diff;
+              matched = snap;
+            }
           }
         }
+        
+        // Carry forward: use last agent snapshot at or before this time
+        if (!matched) {
+          let lastBefore: typeof agentSnaps[0] | null = null;
+          for (const snap of agentSnaps) {
+            const snapTime = new Date(snap.date.includes("T") ? snap.date : snap.date + "T00:00").getTime();
+            if (snapTime <= snapshotMs) {
+              lastBefore = snap;
+            }
+          }
+          matched = lastBefore;
+        }
+        
+        agentReturns[agentKey] = matched ? matched.return : 0;
       }
 
       return {

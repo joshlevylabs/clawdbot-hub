@@ -1,90 +1,77 @@
 {
-  "date": "2026-03-04",
-  "timestamp": "2026-03-04T06:01:00.000Z",
-  "weather": {
-    "location": "Temecula, CA",
-    "today": "Sunny, high near 73°F. Light winds becoming southwest 10-15 mph with gusts to 20 mph.",
-    "tonight": "Patchy fog after 10pm, otherwise partly cloudy with low around 44°F.",
-    "week_outlook": "Sunny weather continues through week. Temps 72-77°F. Possible showers Sunday night."
-  },
+  "timestamp": "2026-03-05T06:00:00.000Z",
+  "date": "Thursday, March 5th, 2026",
+  "timezone": "America/Los_Angeles",
   "prayer": {
-    "date": "Wednesday, March 04, 2026",
-    "hebrew_date": "4 Kislev",
+    "date": "Thursday, March 05, 2026",
+    "hebrew_date": "5 Kislev",
     "parsha": "Vayigash",
     "parsha_theme": "reunion, forgiveness, revealing truth",
     "modeh_ani": "מודה אני לפניך — I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
-    "blessing": "Blessed are You who has provided me with all I need — I lack nothing essential.",
-    "psalm": "Psalm 37:5: \"Commit your way to the Lord; trust in Him and He will act.\"",
-    "proverb": "Proverbs 13:11: \"Wealth gained hastily will dwindle, but whoever gathers little by little will increase it.\"",
+    "blessing": "Blessed are You who opens the eyes of the blind — help me see opportunities today.",
+    "psalm": "**Psalm 112:5**: \"Good comes to those who lend freely, who conduct their affairs with justice.\"",
+    "proverb": "**Proverbs 22:29**: \"Do you see a man skilled in his work? He will stand before kings.\"",
     "intention": "Let today's small faithfulness lead to tomorrow's greater stewardship.",
-    "closing": "Go in peace. Build with purpose. Return with gratitude."
+    "closing": "Baruch atah Adonai — Blessed are You, Lord, who renews creation daily with goodness."
   },
-  "calendar": {
-    "today": [],
-    "week": [],
-    "month": [],
-    "note": "Calendar access needs OAuth refresh"
-  },
-  "email_highlights": [
-    {
-      "subject": "Your receipt from Anthropic, PBC #2706-0682-0015",
-      "from": "Anthropic, PBC",
-      "priority": "high",
-      "note": "API usage billing"
-    },
-    {
-      "subject": "SNEAK PEEK: AI Test Script Generation is coming to TestRail",
-      "from": "TestRail Team", 
-      "priority": "medium",
-      "note": "AI automation tooling update"
-    }
-  ],
-  "mre_trading": {
-    "fear_greed_index": 32.43,
-    "rating": "fear",
-    "regime": "sideways",
-    "buy_signals": 0,
-    "portfolio_deployed": "70.8%",
-    "cash_available": "$29,339",
-    "diverged_pairs": 1,
-    "summary": "Markets are fearful at 32. Sentiment is negative — watch for oversold bounces."
-  },
-  "relationship_analysis": {
-    "temperature": "critical",
+  "relationship": {
+    "status": "critical",
     "trend": "urgent", 
     "ratio": 1.2,
+    "total_interactions": 11,
+    "positive": 6,
+    "negative": 5,
+    "love_languages": {
+      "primary": "quality_time",
+      "secondary": "acts_of_service"
+    },
     "recommendations": [
       "PRIORITY: Focus on repair. Acknowledge recent conflicts without defending.",
       "Increase acts of service dramatically this week.",
       "Create space for her to express frustrations without fixing."
     ]
   },
-  "world_news": [
-    {
-      "headline": "Gaza ceasefire fragile as Iran tensions rise",
-      "source": "PBS News",
-      "impact": "medium",
-      "note": "Fear new Iran conflict could overshadow Gaza situation"
+  "weather": {
+    "location": "Temecula, CA",
+    "today": "Sunny, high near 74°F, mostly clear tonight with low around 46°F",
+    "outlook": "Sunny continuing with highs in the mid-70s"
+  },
+  "trading": {
+    "fear_greed_index": 38.5,
+    "market_sentiment": "fear",
+    "summary": "Markets are fearful at 38. Sentiment is negative — watch for oversold bounces.",
+    "regime": {
+      "spy": "sideways",
+      "qqq": "bull", 
+      "global": "sideways"
     },
-    {
-      "headline": "Trump: Gaza war over, Hamas must disarm",
-      "source": "Times of Israel",
-      "impact": "high",
-      "note": "Board of Peace coordinating PA transition in Gaza"
+    "signals": {
+      "total_buy": 0,
+      "total_hold": 24,
+      "total_watch": 0
     }
-  ],
-  "ai_news": [
-    {
-      "headline": "AI moving from hype to pragmatism in 2026",
-      "source": "TechCrunch",
-      "impact": "high",
-      "note": "MCP becoming standard for AI agent integration"
-    },
-    {
-      "headline": "$1M federal AI consortium funding for West Michigan",
-      "source": "Crescendo AI",
-      "impact": "medium",
-      "note": "Academia-industry collaboration focus"
-    }
-  ]
+  },
+  "calendar": {
+    "note": "Calendar data pending - check Google Calendar manually",
+    "today": [],
+    "week": [],
+    "month": []
+  },
+  "email": {
+    "note": "Email check pending - manually review josh@joshlevylabs.com and joshua.seth.levy@gmail.com"
+  },
+  "news": {
+    "israel": [
+      "PM Netanyahu to speak at CPAC Hungary 2026 this March",
+      "Kotel unity discussions ongoing as fighting continues"
+    ],
+    "ai": [
+      "Grand Valley State awarded $1M federal funding for AI consortium in West Michigan",
+      "AI startup funding shifting from hype to scale, precision, and value creation",
+      "2026 trend: AI moving from hype to pragmatism"
+    ]
+  },
+  "family_focus": {
+    "note": "Family data pending - check family.json and potency action manually"
+  }
 }

@@ -65,6 +65,31 @@ interface AgentConfig {
   updated_at: string;
 }
 
+interface SacredTextMatch {
+  id: string;
+  tradition: string;
+  tradition_group?: string;
+  title: string;
+  original_title?: string;
+  slug: string;
+  passage_count: number;
+  embedding_count: number;
+  ingestion_status: string;
+}
+
+interface KnowledgeData {
+  agentId: string;
+  localKnowledge: any[];
+  sacredTexts: SacredTextMatch[];
+  coreTexts?: string[];
+  embeddingStats: {
+    totalTexts: number;
+    totalPassages: number;
+    totalEmbeddings: number;
+    coverage: number;
+  } | null;
+}
+
 interface AgentDetailData {
   config: AgentConfig;
   memories: AgentMemory[];
@@ -138,6 +163,7 @@ export default function AgentDetailModal({ agent, onClose }: AgentDetailModalPro
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<AgentDetailData | null>(null);
+  const [knowledgeData, setKnowledgeData] = useState<KnowledgeData | null>(null);
 
   useEffect(() => {
     const fetchDetails = async () => {
@@ -145,13 +171,22 @@ export default function AgentDetailModal({ agent, onClose }: AgentDetailModalPro
         setLoading(true);
         setError(null);
         
-        const response = await fetch(`/api/agents/${agent.id}/details`);
-        if (!response.ok) {
+        const [detailsRes, knowledgeRes] = await Promise.all([
+          fetch(`/api/agents/${agent.id}/details`),
+          fetch(`/api/agents/${agent.id}/knowledge`),
+        ]);
+        
+        if (!detailsRes.ok) {
           throw new Error('Failed to fetch agent details');
         }
         
-        const result = await response.json();
+        const result = await detailsRes.json();
         setData(result);
+        
+        if (knowledgeRes.ok) {
+          const kd = await knowledgeRes.json();
+          setKnowledgeData(kd);
+        }
       } catch (err) {
         console.error('Error fetching agent details:', err);
         setError('Failed to load agent details');
@@ -339,7 +374,14 @@ export default function AgentDetailModal({ agent, onClose }: AgentDetailModalPro
         );
 
       case "knowledge":
-        const knowledgeSources = data.config.knowledge_sources || [];
+        const knowledgeSources = knowledgeData?.localKnowledge || data.config.knowledge_sources || [];
+        const sacredTexts = knowledgeData?.sacredTexts || [];
+        const embeddingStats = knowledgeData?.embeddingStats;
+        const coreTexts = knowledgeData?.coreTexts || [];
+        const hasLocalKnowledge = Array.isArray(knowledgeSources) && knowledgeSources.length > 0;
+        const hasSacredTexts = sacredTexts.length > 0;
+
+        // Group local knowledge by type
         const sourcesByType: Record<string, any[]> = {};
         if (Array.isArray(knowledgeSources)) {
           knowledgeSources.forEach((src: any) => {
@@ -359,41 +401,161 @@ export default function AgentDetailModal({ agent, onClose }: AgentDetailModalPro
           'document': { label: 'Documents', emoji: '📄' },
           'data': { label: 'Data Files', emoji: '💾' },
         };
+
         return (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-sm font-semibold uppercase tracking-wider" style={{ color: "#8B8B80" }}>
-                Knowledge Sources ({Array.isArray(knowledgeSources) ? knowledgeSources.length : 0})
-              </h3>
-            </div>
-            {Object.keys(sourcesByType).length > 0 ? (
-              Object.entries(sourcesByType).map(([type, sources]) => {
-                const tl = typeLabels[type] || { label: type.replace(/_/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase()), emoji: '📎' };
-                return (
-                  <div key={type} className="space-y-2">
-                    <h4 className="text-xs font-semibold flex items-center gap-2" style={{ color: "#8B8B80" }}>
-                      <span>{tl.emoji}</span> {tl.label}
-                      <span className="text-[10px] px-1.5 py-0.5 rounded-md" style={{ backgroundColor: "#1A1A24", color: "#626259" }}>{sources.length}</span>
-                    </h4>
-                    <div className="space-y-1">
-                      {sources.map((src: any, idx: number) => (
-                        <div key={idx} className="flex items-center justify-between p-2.5 rounded-lg border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
-                          <div className="flex items-center gap-2 min-w-0">
-                            <span className="text-xs" style={{ color: "#626259" }}>{tl.emoji}</span>
-                            <span className="text-sm truncate" style={{ color: "#F5F5F0" }}>{src.title || src.path}</span>
-                            {src.date && <span className="text-[10px] shrink-0" style={{ color: "#626259" }}>{src.date}</span>}
-                          </div>
-                          <div className="flex items-center gap-2 shrink-0 text-[10px]" style={{ color: "#626259" }}>
-                            {src.size_bytes && <span>{(src.size_bytes / 1024).toFixed(1)}KB</span>}
-                            {src.id && <code className="font-mono" style={{ color: "#D4A020" }}>{src.id}</code>}
-                          </div>
-                        </div>
-                      ))}
+          <div className="space-y-6">
+            {/* Sacred Text Embeddings (faith guides) */}
+            {embeddingStats && (
+              <>
+                {/* Coverage Banner */}
+                <div className="p-4 rounded-xl border" style={{ backgroundColor: "rgba(99, 102, 241, 0.05)", borderColor: "rgba(99, 102, 241, 0.15)" }}>
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-sm font-semibold" style={{ color: "#6366F1" }}>📖 Sacred Text Embeddings</h3>
+                    <span className="text-lg font-bold" style={{ color: embeddingStats.coverage >= 80 ? "#22C55E" : embeddingStats.coverage >= 50 ? "#EAB308" : "#EF4444" }}>
+                      {embeddingStats.coverage}%
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-3 gap-3 mb-3">
+                    <div className="text-center">
+                      <p className="text-lg font-bold" style={{ color: "#F5F5F0" }}>{embeddingStats.totalTexts}</p>
+                      <p className="text-[10px]" style={{ color: "#626259" }}>Texts Matched</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-lg font-bold" style={{ color: "#F5F5F0" }}>{embeddingStats.totalPassages.toLocaleString()}</p>
+                      <p className="text-[10px]" style={{ color: "#626259" }}>Total Passages</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-lg font-bold" style={{ color: "#F5F5F0" }}>{embeddingStats.totalEmbeddings.toLocaleString()}</p>
+                      <p className="text-[10px]" style={{ color: "#626259" }}>Embeddings</p>
                     </div>
                   </div>
-                );
-              })
-            ) : (
+                  {/* Coverage bar */}
+                  <div className="h-2 rounded-full" style={{ backgroundColor: "#1A1A24" }}>
+                    <div
+                      className="h-2 rounded-full transition-all"
+                      style={{
+                        width: `${Math.min(embeddingStats.coverage, 100)}%`,
+                        backgroundColor: embeddingStats.coverage >= 80 ? "#22C55E" : embeddingStats.coverage >= 50 ? "#EAB308" : "#EF4444",
+                      }}
+                    />
+                  </div>
+                  <p className="text-[10px] mt-1 text-right" style={{ color: "#626259" }}>
+                    {embeddingStats.totalEmbeddings.toLocaleString()} / {embeddingStats.totalPassages.toLocaleString()} passages embedded
+                  </p>
+                </div>
+
+                {/* Core Texts */}
+                {coreTexts.length > 0 && (
+                  <div>
+                    <h4 className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: "#8B8B80" }}>Core Texts ({coreTexts.length})</h4>
+                    <div className="space-y-1.5">
+                      {coreTexts.map((ct: string) => {
+                        const matched = sacredTexts.filter((st: SacredTextMatch) =>
+                          st.title.toLowerCase().includes(ct.toLowerCase()) ||
+                          (st.original_title && st.original_title.toLowerCase().includes(ct.toLowerCase()))
+                        );
+                        const totalP = matched.reduce((s: number, t: SacredTextMatch) => s + (t.passage_count || 0), 0);
+                        const totalE = matched.reduce((s: number, t: SacredTextMatch) => s + (t.embedding_count || 0), 0);
+                        const cov = totalP > 0 ? Math.round((totalE / totalP) * 100) : 0;
+                        const isIngested = matched.length > 0 && totalE > 0;
+                        return (
+                          <div key={ct} className="flex items-center justify-between p-2.5 rounded-lg border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm" style={{ color: "#F5F5F0" }}>{ct}</span>
+                              {matched.length > 0 && (
+                                <span className="text-[10px] px-1.5 py-0.5 rounded" style={{ backgroundColor: isIngested ? "rgba(34,197,94,0.15)" : "rgba(234,179,8,0.15)", color: isIngested ? "#22C55E" : "#EAB308" }}>
+                                  {isIngested ? '✅ Ingested' : '⏳ Pending'}
+                                </span>
+                              )}
+                              {matched.length === 0 && (
+                                <span className="text-[10px] px-1.5 py-0.5 rounded" style={{ backgroundColor: "rgba(239,68,68,0.15)", color: "#EF4444" }}>
+                                  Not Found
+                                </span>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-2 text-[10px]" style={{ color: "#626259" }}>
+                              {matched.length > 0 && <span>{totalE.toLocaleString()}/{totalP.toLocaleString()}</span>}
+                              {totalP > 0 && (
+                                <span style={{ color: cov >= 80 ? "#22C55E" : cov >= 50 ? "#EAB308" : "#EF4444" }}>
+                                  {cov}%
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* Matched Sacred Texts Detail */}
+                {hasSacredTexts && (
+                  <div>
+                    <h4 className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: "#8B8B80" }}>
+                      Matched Sacred Texts ({sacredTexts.length})
+                    </h4>
+                    <div className="space-y-1">
+                      {sacredTexts.map((text: SacredTextMatch) => {
+                        const cov = text.passage_count > 0 ? Math.round((text.embedding_count / text.passage_count) * 100) : 0;
+                        return (
+                          <div key={text.id} className="flex items-center justify-between p-2 rounded-lg border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+                            <div className="flex items-center gap-2 min-w-0">
+                              <span className="text-xs" style={{ color: "#626259" }}>📜</span>
+                              <span className="text-xs truncate" style={{ color: "#B8B8AD" }}>{text.title}</span>
+                            </div>
+                            <div className="flex items-center gap-3 shrink-0 text-[10px]">
+                              <span style={{ color: "#626259" }}>{text.passage_count.toLocaleString()} passages</span>
+                              <span className="font-medium" style={{ color: text.ingestion_status === 'ingested' ? "#22C55E" : "#EAB308" }}>
+                                {text.ingestion_status === 'ingested' ? `✅ ${text.embedding_count.toLocaleString()}` : '⏳ Pending'}
+                              </span>
+                              {cov > 0 && <span style={{ color: cov >= 80 ? "#22C55E" : "#EAB308" }}>{cov}%</span>}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+
+            {/* Local Knowledge Sources (trading desk agents, etc.) */}
+            {hasLocalKnowledge && (
+              <div>
+                <h3 className="text-sm font-semibold uppercase tracking-wider mb-3" style={{ color: "#8B8B80" }}>
+                  📁 Local Knowledge ({knowledgeSources.length} files)
+                </h3>
+                {Object.entries(sourcesByType).map(([type, sources]) => {
+                  const tl = typeLabels[type] || { label: type.replace(/_/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase()), emoji: '📎' };
+                  return (
+                    <div key={type} className="space-y-2 mb-3">
+                      <h4 className="text-xs font-semibold flex items-center gap-2" style={{ color: "#8B8B80" }}>
+                        <span>{tl.emoji}</span> {tl.label}
+                        <span className="text-[10px] px-1.5 py-0.5 rounded-md" style={{ backgroundColor: "#1A1A24", color: "#626259" }}>{sources.length}</span>
+                      </h4>
+                      <div className="space-y-1">
+                        {sources.map((src: any, idx: number) => (
+                          <div key={idx} className="flex items-center justify-between p-2.5 rounded-lg border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+                            <div className="flex items-center gap-2 min-w-0">
+                              <span className="text-xs" style={{ color: "#626259" }}>{tl.emoji}</span>
+                              <span className="text-sm truncate" style={{ color: "#F5F5F0" }}>{src.title || src.path}</span>
+                              {src.date && <span className="text-[10px] shrink-0" style={{ color: "#626259" }}>{src.date}</span>}
+                            </div>
+                            <div className="flex items-center gap-2 shrink-0 text-[10px]" style={{ color: "#626259" }}>
+                              {src.size_bytes && <span>{(src.size_bytes / 1024).toFixed(1)}KB</span>}
+                              {src.id && <code className="font-mono" style={{ color: "#D4A020" }}>{src.id}</code>}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Empty state */}
+            {!hasLocalKnowledge && !hasSacredTexts && !embeddingStats && (
               <div className="text-center p-6" style={{ color: "#626259" }}>
                 <BookOpen className="w-8 h-8 mx-auto mb-2" />
                 <p className="text-sm">No knowledge sources configured</p>

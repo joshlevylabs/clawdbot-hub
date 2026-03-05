@@ -562,7 +562,11 @@ export default function TradingPage() {
   const signalStats = data?.signalStats;
   const startingCapital = config?.starting_capital || 100000;
   const cash = config?.current_cash || 100000;
-  const positionsValue = positions.reduce((sum, p) => sum + p.qty * (p.current_price || p.entry_price), 0);
+
+  // User-only positions for overview stats (exclude agent portfolios)
+  const userPositions = positions.filter(p => !p.account_id);
+  const userTrades = trades.filter(t => !t.account_id);
+  const positionsValue = userPositions.reduce((sum, p) => sum + p.qty * (p.current_price || p.entry_price), 0);
 
   // Cash interest calculation (money market ~3.5% APY)
   const CASH_APY = 0.035;
@@ -587,11 +591,11 @@ export default function TradingPage() {
     return { pnl, pct };
   })();
 
-  // Trade stats
-  const winningTrades = trades.filter((t) => t.pnl > 0);
-  const losingTrades = trades.filter((t) => t.pnl < 0);
-  const winRate = trades.length > 0 ? (winningTrades.length / trades.length) * 100 : 0;
-  const totalRealizedPnl = trades.reduce((sum, t) => sum + t.pnl, 0);
+  // Trade stats (user-only for overview metrics)
+  const winningTrades = userTrades.filter((t) => t.pnl > 0);
+  const losingTrades = userTrades.filter((t) => t.pnl < 0);
+  const winRate = userTrades.length > 0 ? (winningTrades.length / userTrades.length) * 100 : 0;
+  const totalRealizedPnl = userTrades.reduce((sum, t) => sum + t.pnl, 0);
   const avgWin = winningTrades.length > 0 ? winningTrades.reduce((s, t) => s + t.pnl, 0) / winningTrades.length : 0;
   const avgLoss = losingTrades.length > 0 ? Math.abs(losingTrades.reduce((s, t) => s + t.pnl, 0) / losingTrades.length) : 0;
   const profitFactor = avgLoss > 0 ? avgWin / avgLoss : avgWin > 0 ? Infinity : 0;
@@ -843,7 +847,7 @@ export default function TradingPage() {
                 <StatCard
                   icon={Activity}
                   label="Open Positions"
-                  value={positions.length.toString()}
+                  value={userPositions.length.toString()}
                   subValue={`$${formatCurrency(positionsValue)} invested`}
                   trend="neutral"
                 />

@@ -7,79 +7,99 @@ const secretKey = new TextEncoder().encode(
 );
 
 const AUTH_COOKIE = 'clawdbot-auth';
-const TV_AUTH_COOKIE = 'clawdbot-tv-auth';
 
-export type AuthScope = 'hub' | 'tv';
+export type AuthScope = 'admin' | 'tv';
 
-export async function createSession(scope: AuthScope = 'hub') {
-  const token = await new SignJWT({ authenticated: true, scope })
+export interface AuthUser {
+  id: string;
+  name: string;
+  email: string;
+  scope: AuthScope;
+}
+
+// User registry — credentials from env vars
+function getUsers(): { email: string; password: string; user: AuthUser }[] {
+  return [
+    {
+      email: (process.env.ADMIN_EMAIL || 'joshua@joshlevylabs.com').toLowerCase(),
+      password: process.env.ADMIN_PASSWORD || '',
+      user: {
+        id: 'joshua',
+        name: 'Joshua',
+        email: (process.env.ADMIN_EMAIL || 'joshua@joshlevylabs.com').toLowerCase(),
+        scope: 'admin',
+      },
+    },
+    {
+      email: (process.env.TV_USER_EMAIL || '').toLowerCase(),
+      password: process.env.TV_USER_PASSWORD || '',
+      user: {
+        id: 'aaron',
+        name: 'Aaron',
+        email: (process.env.TV_USER_EMAIL || '').toLowerCase(),
+        scope: 'tv',
+      },
+    },
+  ];
+}
+
+export function authenticateUser(email: string, password: string): AuthUser | null {
+  if (!email || !password) return null;
+  const normalizedEmail = email.toLowerCase().trim();
+  
+  const users = getUsers();
+  const match = users.find(
+    (u) => u.email && u.password && u.email === normalizedEmail && u.password === password
+  );
+  
+  return match?.user || null;
+}
+
+export async function createSession(user: AuthUser) {
+  const token = await new SignJWT({
+    userId: user.id,
+    name: user.name,
+    email: user.email,
+    scope: user.scope,
+  })
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
     .setExpirationTime('7d')
     .sign(secretKey);
-  
+
   return token;
 }
 
-export async function verifySession(token: string): Promise<boolean> {
+export async function verifySession(token: string): Promise<{ valid: boolean; scope?: AuthScope; userId?: string }> {
   try {
-    await jwtVerify(token, secretKey);
-    return true;
+    const { payload } = await jwtVerify(token, secretKey);
+    return {
+      valid: true,
+      scope: payload.scope as AuthScope,
+      userId: payload.userId as string,
+    };
   } catch {
-    return false;
+    return { valid: false };
   }
 }
 
-export async function getSession(): Promise<boolean> {
+export async function getSession(): Promise<{ authenticated: boolean; scope?: AuthScope; userId?: string }> {
   const cookieStore = await cookies();
   const token = cookieStore.get(AUTH_COOKIE)?.value;
-  if (!token) return false;
-  return verifySession(token);
-}
-
-/**
- * Check if request has any valid auth (hub OR tv scope).
- * Use this for API routes that should be accessible from the TV dashboard.
- */
-export async function getSessionAny(): Promise<boolean> {
-  const cookieStore = await cookies();
-  // Check hub cookie first
-  const hubToken = cookieStore.get(AUTH_COOKIE)?.value;
-  if (hubToken && await verifySession(hubToken)) return true;
-  // Check TV cookie
-  const tvToken = cookieStore.get(TV_AUTH_COOKIE)?.value;
-  if (tvToken && await verifySession(tvToken)) return true;
-  return false;
+  if (!token) return { authenticated: false };
+  const result = await verifySession(token);
+  return { authenticated: result.valid, scope: result.scope, userId: result.userId };
 }
 
 export async function isAuthenticated(request: NextRequest): Promise<boolean> {
   const token = request.cookies.get(AUTH_COOKIE)?.value;
   if (!token) return false;
-  return verifySession(token);
+  const result = await verifySession(token);
+  return result.valid;
 }
 
-export function validatePassword(password: string, scope: AuthScope = 'hub'): boolean {
-  if (scope === 'tv') {
-    const tvPassword = process.env.TV_PASSWORD;
-    if (!tvPassword) {
-      console.error('TV_PASSWORD environment variable not set!');
-      return false;
-    }
-    return password === tvPassword;
-  }
-  const correctPassword = process.env.AUTH_PASSWORD;
-  if (!correctPassword) {
-    console.error('AUTH_PASSWORD environment variable not set!');
-    return false;
-  }
-  return password === correctPassword;
-}
-
-export async function getSessionScope(token: string): Promise<AuthScope | null> {
-  try {
-    const { payload } = await jwtVerify(token, secretKey);
-    return (payload.scope as AuthScope) || 'hub';
-  } catch {
-    return null;
-  }
+// Legacy compat — used by some API routes
+export async function getSessionAny(): Promise<boolean> {
+  const session = await getSession();
+  return session.authenticated;
 }

@@ -90,8 +90,8 @@ interface RealTimePortfolioData {
 
 export async function GET(request: NextRequest) {
   // Check authentication
-  const authenticated = await getSession();
-  if (!authenticated) {
+  const session = await getSession();
+  if (!session.authenticated) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 

@@ -7,24 +7,26 @@ const secretKey = new TextEncoder().encode(
 );
 
 const AUTH_COOKIE = 'clawdbot-auth';
-const TV_AUTH_COOKIE = 'clawdbot-tv-auth';
 
 // Routes that don't require authentication
-const publicPaths = ['/login', '/tv-login', '/auth/recovery', '/api/auth/login', '/api/auth/tv-login', '/api/auth/logout', '/api/markets', '/api/price-history', '/api/faith/', '/api/agents'];
-
-// API routes accessible with TV or Hub scope (TV dashboard needs these)
-const tvApiPaths = ['/api/trading/'];
+const publicPaths = ['/login', '/api/auth/login', '/api/auth/logout', '/api/markets', '/api/price-history', '/api/faith/', '/api/agents'];
 
 // Static assets that should always be accessible
 const staticPaths = ['/_next', '/favicon.ico', '/data/', '/audio/'];
 
-// TV routes — accessible with either hub or tv scope
+// TV routes — accessible with tv or admin scope
 const tvPaths = ['/tv'];
 
-async function verifyToken(token: string): Promise<string | null> {
+// TV-accessible API routes
+const tvApiPaths = ['/api/trading/'];
+
+async function getTokenScope(token: string): Promise<{ scope: string; userId: string } | null> {
   try {
     const { payload } = await jwtVerify(token, secretKey);
-    return (payload.scope as string) || 'hub';
+    return {
+      scope: (payload.scope as string) || 'admin',
+      userId: (payload.userId as string) || '',
+    };
   } catch {
     return null;
   }
@@ -43,80 +45,62 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Check if this is a TV route or TV-accessible API
-  const isTvApiRoute = tvApiPaths.some(path => pathname.startsWith(path));
-  const isTvRoute = tvPaths.some(path => pathname === path || pathname.startsWith(path + '/')) || isTvApiRoute;
-
-  if (isTvRoute) {
-    // TV routes accept either TV token or Hub token
-    const tvToken = request.cookies.get(TV_AUTH_COOKIE)?.value;
-    const hubToken = request.cookies.get(AUTH_COOKIE)?.value;
-
-    // Try TV token first
-    if (tvToken) {
-      const scope = await verifyToken(tvToken);
-      if (scope === 'tv' || scope === 'hub') return NextResponse.next();
-    }
-    // Fall back to Hub token (hub users can see everything)
-    if (hubToken) {
-      const scope = await verifyToken(hubToken);
-      if (scope === 'hub') return NextResponse.next();
-    }
-
-    // No valid token — JSON 401 for API routes, redirect for pages
-    if (pathname.startsWith('/api/')) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-    const loginUrl = new URL('/tv-login', request.url);
-    return NextResponse.redirect(loginUrl);
-  }
-
-  // Hub routes — require hub scope
+  // Get auth token
   const token = request.cookies.get(AUTH_COOKIE)?.value;
 
   if (!token) {
-    // JSON 401 for API routes, redirect for pages
     if (pathname.startsWith('/api/')) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-    const loginUrl = new URL('/login', request.url);
-    return NextResponse.redirect(loginUrl);
+    return NextResponse.redirect(new URL('/login', request.url));
   }
 
-  const scope = await verifyToken(token);
+  const auth = await getTokenScope(token);
 
-  if (!scope) {
+  if (!auth) {
+    // Invalid token — clear it and redirect to login
     if (pathname.startsWith('/api/')) {
       const response = NextResponse.json({ error: 'Unauthorized — invalid token' }, { status: 401 });
       response.cookies.delete(AUTH_COOKIE);
       return response;
     }
-    const loginUrl = new URL('/login', request.url);
-    const response = NextResponse.redirect(loginUrl);
+    const response = NextResponse.redirect(new URL('/login', request.url));
     response.cookies.delete(AUTH_COOKIE);
     return response;
   }
 
-  // TV-only tokens can't access the full Hub
-  if (scope === 'tv') {
-    if (pathname.startsWith('/api/')) {
-      return NextResponse.json({ error: 'Insufficient scope — TV token cannot access Hub APIs' }, { status: 403 });
-    }
-    const tvUrl = new URL('/tv', request.url);
-    return NextResponse.redirect(tvUrl);
+  const { scope } = auth;
+
+  // Admin scope — full access to everything
+  if (scope === 'admin') {
+    return NextResponse.next();
   }
 
-  return NextResponse.next();
+  // TV scope — only /tv routes and tv API paths
+  if (scope === 'tv') {
+    const isTvRoute = tvPaths.some(path => pathname === path || pathname.startsWith(path + '/'));
+    const isTvApi = tvApiPaths.some(path => pathname.startsWith(path));
+
+    if (isTvRoute || isTvApi) {
+      return NextResponse.next();
+    }
+
+    // TV user trying to access non-TV route → redirect to /tv
+    if (pathname.startsWith('/api/')) {
+      return NextResponse.json({ error: 'Access restricted to TV dashboard' }, { status: 403 });
+    }
+    return NextResponse.redirect(new URL('/tv', request.url));
+  }
+
+  // Unknown scope — deny
+  if (pathname.startsWith('/api/')) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  return NextResponse.redirect(new URL('/login', request.url));
 }
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     */
     '/((?!_next/static|_next/image|favicon.ico).*)',
   ],
 };

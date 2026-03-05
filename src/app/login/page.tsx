@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Lock, AlertCircle, Loader2 } from 'lucide-react';
 
 export default function LoginPage() {
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -19,15 +20,16 @@ export default function LoginPage() {
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password }),
+        body: JSON.stringify({ email, password }),
       });
 
-      if (res.ok) {
-        router.push('/');
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        router.push(data.redirect || '/');
         router.refresh();
       } else {
-        const data = await res.json();
-        setError(data.error || 'Invalid password');
+        setError(data.error || 'Invalid credentials');
       }
     } catch {
       setError('Something went wrong');
@@ -44,10 +46,23 @@ export default function LoginPage() {
             <Lock className="w-8 h-8 text-white" strokeWidth={1.5} />
           </div>
           <h1 className="text-2xl font-semibold text-slate-100">JoshOS Hub</h1>
-          <p className="text-slate-500 mt-2 text-sm">Enter password to continue</p>
+          <p className="text-slate-500 mt-2 text-sm">Sign in to continue</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Email"
+              className="w-full px-4 py-3 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-600 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all"
+              autoFocus
+              disabled={loading}
+              autoComplete="email"
+            />
+          </div>
+
           <div>
             <input
               type="password"
@@ -55,8 +70,8 @@ export default function LoginPage() {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Password"
               className="w-full px-4 py-3 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-600 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all"
-              autoFocus
               disabled={loading}
+              autoComplete="current-password"
             />
           </div>
 
@@ -69,13 +84,13 @@ export default function LoginPage() {
 
           <button
             type="submit"
-            disabled={loading || !password}
+            disabled={loading || !email || !password}
             className="w-full py-3 bg-gradient-to-r from-primary-600 to-accent-600 text-white font-medium rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {loading ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" strokeWidth={1.5} />
-                Authenticating...
+                Signing in...
               </>
             ) : (
               'Sign In'

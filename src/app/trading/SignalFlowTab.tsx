@@ -779,10 +779,18 @@ const PIPELINE_NODE_CONFIDENCE: Record<string, number> = {
   output: 95,          // Pass-through — minimal logic
   alphaRank: 72,       // New — Cross-sectional factor ranking (5 factors, sector-neutralized, regime-aware)
   fibonacciLevels: 60, // New — Fibonacci A/B/C retracement + extension system
-  agentAnalysis: 45,   // New — Agent opinions (Chris Vermeullen + Warren Buffett)
+  agentAnalysis: 65,   // 5 trading desk agents (Chris Vermeulen, Buffett, Schiff, Pal, Lynch)
 };
 
 function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, onStageClick }: WorkflowVisualizationProps) {
+  const TRADING_DESK_AGENTS = [
+    { emoji: '📊', name: 'Chris V.', color: '#F59E0B' },
+    { emoji: '📈', name: 'Buffett', color: '#10B981' },
+    { emoji: '🥇', name: 'Schiff', color: '#EAB308' },
+    { emoji: '🌊', name: 'Pal', color: '#06B6D4' },
+    { emoji: '📉', name: 'Lynch', color: '#8B5CF6' },
+  ];
+
   const containerRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const nodeRefs = useRef<Record<string, HTMLDivElement | null>>({});
@@ -1549,12 +1557,22 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
                     outputCount={outputCount}
                     onClick={() => onStageClick('agentAnalysis_tier_' + path.voteCount)}
                     nodeType="output"
-                    className={`max-w-[120px] border-2 ${path.voteCount >= 3 ? 'border-emerald-500/40' : path.voteCount >= 2 ? 'border-blue-400/40' : 'border-slate-500/40'}`}
+                    className={`max-w-[140px] border-2 ${path.voteCount >= 3 ? 'border-emerald-500/40' : path.voteCount >= 2 ? 'border-blue-400/40' : 'border-slate-500/40'}`}
                     style={{ padding: '6px', minHeight: '70px' }}
                     confidence={PIPELINE_NODE_CONFIDENCE.agentAnalysis}
                     refreshFrequency="On demand"
                   />
-                      
+                    {/* Agent badges */}
+                    <div className="flex justify-center gap-0.5 mt-1">
+                      {TRADING_DESK_AGENTS.map((agent) => (
+                        <span
+                          key={agent.name}
+                          title={agent.name}
+                          className="text-[9px] leading-none cursor-default"
+                          style={{ filter: 'drop-shadow(0 0 2px ' + agent.color + '40)' }}
+                        >{agent.emoji}</span>
+                      ))}
+                    </div>
                     </div>
                 );
               })}
@@ -2257,7 +2275,7 @@ export default function SignalFlowTab() {
       case 'agentAnalysis':
         stageDetails = {
           name: 'Agent Analysis',
-          description: 'Trading agents review final BUY signals and provide expert opinions. Chris Vermeullen (Technical Analysis) evaluates chart patterns, momentum, and technical setups. Warren Buffett (Fundamental Analysis — pending setup) will evaluate value metrics, moats, and long-term quality.',
+          description: 'Five AI trading agents review final BUY signals from independent perspectives: Chris Vermeulen (Technical Analysis — chart patterns, cycles, momentum), Warren Buffett (Fundamental Analysis — value, moats, margin of safety), Peter Schiff (Macro/Austrian Economics — monetary policy, gold, inflation), Raoul Pal (Global Macro — liquidity cycles, crypto, exponential age), Peter Lynch (GARP — PEG ratios, stock categorization, two-minute drill).',
           stageType: 'output',
           inputCount: pipelineData.agentAnalysis.inputCount,
           outputCount: pipelineData.agentAnalysis.outputCount,

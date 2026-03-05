@@ -1,23 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createSession, validatePassword } from '@/lib/auth';
+import { authenticateUser, createSession } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
   try {
-    const { password } = await request.json();
+    const { email, password } = await request.json();
 
-    if (!password) {
-      return NextResponse.json({ error: 'Password required' }, { status: 400 });
+    if (!email || !password) {
+      return NextResponse.json({ error: 'Email and password required' }, { status: 400 });
     }
 
-    if (!validatePassword(password)) {
-      // Add slight delay to prevent timing attacks
-      await new Promise(resolve => setTimeout(resolve, 500));
-      return NextResponse.json({ error: 'Invalid password' }, { status: 401 });
+    const user = authenticateUser(email, password);
+
+    if (!user) {
+      return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
     }
 
-    const token = await createSession();
-    
-    const response = NextResponse.json({ success: true });
+    const token = await createSession(user);
+
+    const response = NextResponse.json({
+      success: true,
+      user: { id: user.id, name: user.name, scope: user.scope },
+      redirect: user.scope === 'tv' ? '/tv' : '/',
+    });
+
     response.cookies.set('clawdbot-auth', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
@@ -29,6 +34,6 @@ export async function POST(request: NextRequest) {
     return response;
   } catch (error) {
     console.error('Login error:', error);
-    return NextResponse.json({ error: 'Server error' }, { status: 500 });
+    return NextResponse.json({ error: 'Login failed' }, { status: 500 });
   }
 }

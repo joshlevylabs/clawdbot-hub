@@ -4,9 +4,9 @@
   "_note": "Use Hub /trading dashboard or Supabase queries for current positions and performance data.",
   "account": {
     "starting_capital": 100000,
-    "cash": 101089.55,
+    "cash": 74145.56,
     "created_at": "2026-02-06T15:17:00-08:00",
-    "equity": 124939.03
+    "equity": 97968.83
   },
   "positions": [],
   "trades": [],
@@ -2716,8 +2716,8 @@
     },
     {
       "date": "2026-03-05",
-      "equity": 124939.03,
-      "cash": 101089.55,
+      "equity": 97968.83,
+      "cash": 74145.56,
       "spy_price": 681.3,
       "spy_baseline": 690.62
     },
@@ -2942,6 +2942,13 @@
       "date": "2026-03-05T09:10",
       "equity": 124939.03,
       "cash": 101089.55,
+      "spy_price": 681.3,
+      "spy_baseline": 690.62
+    },
+    {
+      "date": "2026-03-05T09:15",
+      "equity": 97968.83,
+      "cash": 74145.56,
       "spy_price": 681.3,
       "spy_baseline": 690.62
     }

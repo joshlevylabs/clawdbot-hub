@@ -37,10 +37,10 @@ export async function GET(request: NextRequest) {
         .limit(2000),
 
       // Intraday snapshots for fine-grained charting (1D/1W views)
+      // Note: intraday table has no account_id column — all rows are user data
       paperSupabase
         .from('paper_portfolio_snapshots_intraday')
         .select('*')
-        .is('account_id', null) // Keep snapshots user-only for now
         .order('timestamp', { ascending: true })
         .limit(2000),
 

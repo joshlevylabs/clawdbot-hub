@@ -138,11 +138,10 @@ export async function GET(request: NextRequest) {
         .limit(getSnapshotLimit(timeframe)),
 
       // Intraday snapshots for real-time charting
+      // Note: intraday table has no account_id column — all rows are user data
       paperSupabase
         .from('paper_portfolio_snapshots_intraday')
         .select('*')
-        .eq(userId ? 'user_id' : 'id', userId || '')
-        .is('account_id', null)
         .gte('timestamp', getIntradayStartTime(timeframe))
         .order('timestamp', { ascending: false })
         .limit(500),

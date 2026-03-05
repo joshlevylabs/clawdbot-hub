@@ -171,17 +171,41 @@ export default function AgentDetailModal({ agent, onClose }: AgentDetailModalPro
         setLoading(true);
         setError(null);
         
-        const [detailsRes, knowledgeRes] = await Promise.all([
-          fetch(`/api/agents/${agent.id}/details`),
+        // Fetch config from working single-agent route + memories/conversations from details
+        const [configRes, detailsRes, knowledgeRes] = await Promise.all([
+          fetch(`/api/agents/${agent.id}`),
+          fetch(`/api/agents/${agent.id}/details`).catch(() => null),
           fetch(`/api/agents/${agent.id}/knowledge`),
         ]);
         
-        if (!detailsRes.ok) {
-          throw new Error('Failed to fetch agent details');
+        if (!configRes.ok) {
+          throw new Error('Failed to fetch agent config');
         }
         
-        const result = await detailsRes.json();
-        setData(result);
+        const configData = await configRes.json();
+        
+        // Details route may 404 on Vercel — use config as fallback
+        let memories: any[] = [];
+        let memoryCount = 0;
+        let conversations: any[] = [];
+        let conversationCount = 0;
+        
+        if (detailsRes && detailsRes.ok) {
+          const detailsData = await detailsRes.json();
+          memories = detailsData.memories || [];
+          memoryCount = detailsData.memoryCount || 0;
+          conversations = detailsData.conversations || [];
+          conversationCount = detailsData.conversationCount || 0;
+          // Merge: prefer configData for config (it's always fresh)
+        }
+        
+        setData({
+          config: configData,
+          memories,
+          memoryCount,
+          conversations,
+          conversationCount,
+        });
         
         if (knowledgeRes.ok) {
           const kd = await knowledgeRes.json();

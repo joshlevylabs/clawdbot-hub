@@ -112,11 +112,12 @@ export async function GET(request: NextRequest) {
       intradaySnapshotsRes,
       configRes
     ] = await Promise.all([
-      // Current positions
+      // Current positions (user only — exclude agent portfolios)
       paperSupabase
         .from('paper_positions')
         .select('*')
         .eq(userId ? 'user_id' : 'id', userId || '')
+        .is('account_id', null)
         .order('opened_at', { ascending: false }),
 
       // Trade history
@@ -127,11 +128,12 @@ export async function GET(request: NextRequest) {
         .order('closed_at', { ascending: false })
         .limit(500),
 
-      // Daily portfolio snapshots
+      // Daily portfolio snapshots (user only — exclude agent snapshots)
       paperSupabase
         .from('paper_portfolio_snapshots')
         .select('*')
         .eq(userId ? 'user_id' : 'id', userId || '')
+        .is('account_id', null)
         .order('date', { ascending: false })
         .limit(getSnapshotLimit(timeframe)),
 
@@ -140,6 +142,7 @@ export async function GET(request: NextRequest) {
         .from('paper_portfolio_snapshots_intraday')
         .select('*')
         .eq(userId ? 'user_id' : 'id', userId || '')
+        .is('account_id', null)
         .gte('timestamp', getIntradayStartTime(timeframe))
         .order('timestamp', { ascending: false })
         .limit(500),

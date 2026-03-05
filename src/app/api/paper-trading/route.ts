@@ -40,6 +40,7 @@ export async function GET(request: NextRequest) {
       paperSupabase
         .from('paper_portfolio_snapshots_intraday')
         .select('*')
+        .is('account_id', null)
         .order('timestamp', { ascending: true })
         .limit(2000),
 

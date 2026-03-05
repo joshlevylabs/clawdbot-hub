@@ -267,12 +267,14 @@ export class RealTimeTradingEngine {
         paperSupabase
           .from('paper_positions')
           .select('*')
-          .eq('user_id', userId || ''),
+          .eq('user_id', userId || '')
+          .is('account_id', null),
 
         paperSupabase
           .from('paper_trades')
           .select('*')
           .eq('user_id', userId || '')
+          .is('account_id', null)
           .order('closed_at', { ascending: false })
           .limit(200),
 
@@ -280,6 +282,7 @@ export class RealTimeTradingEngine {
           .from('paper_portfolio_snapshots')
           .select('*')
           .eq('user_id', userId || '')
+          .is('account_id', null)
           .order('date', { ascending: true })
           .limit(365) // Last year of data
       ]);
@@ -491,6 +494,7 @@ export class RealTimeTradingEngine {
     const { data } = await paperSupabase
       .from('paper_portfolio_snapshots')
       .select('daily_pnl_pct')
+      .is('account_id', null)
       .not('daily_pnl_pct', 'is', null)
       .order('date', { ascending: false })
       .limit(252); // Last trading year

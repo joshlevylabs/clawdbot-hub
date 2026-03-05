@@ -11,29 +11,9 @@ export async function GET(
     const { name: agentId } = await params;
     
     // Look up by ID (the URL param is the agent ID like "chris-vermeulen")
-    // Use explicit columns — select('*') can return stale schema cache on Supabase PostgREST
     const { data: config, error: configError } = await supabase
       .from('agent_configs')
-      .select(`
-        id,
-        name,
-        title,
-        emoji,
-        model,
-        department,
-        status,
-        description,
-        reports_to,
-        direct_reports,
-        soul_prompt,
-        temperature,
-        max_tokens,
-        knowledge_sources,
-        integrations,
-        endpoint_enabled,
-        created_at,
-        updated_at
-      `)
+      .select('id,name,title,emoji,model,department,status,description,reports_to,direct_reports,soul_prompt,temperature,max_tokens,knowledge_sources,integrations,endpoint_enabled,created_at,updated_at')
       .eq('id', agentId)
       .single();
 
@@ -60,13 +40,15 @@ export async function GET(
       .order('updated_at', { ascending: false })
       .limit(20);
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       config,
       memories: memories || [],
       memoryCount: memoryCount || 0,
       conversations: conversations || [],
       conversationCount: conversationCount || 0,
     });
+    response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate');
+    return response;
 
   } catch (error) {
     console.error('Error fetching agent details:', error);

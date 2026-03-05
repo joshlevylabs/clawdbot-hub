@@ -11,9 +11,10 @@ export async function GET(
     const { name: agentId } = await params;
     
     // Look up by ID (the URL param is the agent ID like "chris-vermeulen")
+    // Note: explicit select instead of '*' — select('*') can return stale JSONB on Vercel edge
     const { data: config, error: configError } = await supabase
       .from('agent_configs')
-      .select('*')
+      .select('id, name, title, emoji, model, department, status, description, reports_to, direct_reports, soul_prompt, temperature, max_tokens, knowledge_sources, integrations, endpoint_enabled, created_at, updated_at')
       .eq('id', agentId)
       .single();
 

@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { readFile, writeFile } from "fs/promises";
 import { join } from "path";
+
+export const dynamic = 'force-dynamic';
 import { upsertAgent } from "@/lib/supabase-agents";
 import { supabase } from "@/lib/supabase";
 

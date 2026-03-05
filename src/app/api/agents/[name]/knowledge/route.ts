@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { faithSupabase, isFaithSupabaseConfigured } from '@/lib/faith-supabase';
 import { supabase } from '@/lib/supabase';
 
+export const dynamic = 'force-dynamic';
+
 // Map agent IDs to their core texts (same mapping as faith-journey page)
 const AGENT_CORE_TEXTS: Record<string, string[]> = {
   'rabbi-moshe': ["Torah (Pentateuch)", "Tanakh", "Talmud Bavli", "Talmud Yerushalmi", "Mishnah", "Shulchan Aruch"],

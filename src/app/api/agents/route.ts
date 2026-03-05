@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 
+export const dynamic = 'force-dynamic';
+
 // GET: List all agents with endpoint_enabled=true
 export async function GET(request: NextRequest) {
   try {

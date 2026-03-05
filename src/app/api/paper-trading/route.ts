@@ -14,22 +14,25 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    // Fetch all data in parallel — no user_id filter since this is admin-only Hub
+    // Fetch user portfolio data (account_id IS NULL) — agent portfolios are separate
     const [positionsRes, tradesRes, snapshotsRes, intradaySnapshotsRes, signalsRes, configRes] = await Promise.all([
       paperSupabase
         .from('paper_positions')
         .select('*')
+        .is('account_id', null)
         .order('opened_at', { ascending: false }),
 
       paperSupabase
         .from('paper_trades')
         .select('*')
+        .is('account_id', null)
         .order('closed_at', { ascending: false })
         .limit(100),
 
       paperSupabase
         .from('paper_portfolio_snapshots')
         .select('*')
+        .is('account_id', null)
         .order('date', { ascending: true })
         .limit(2000),
 
@@ -128,11 +131,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: true, trade: data, side: 'buy' });
 
     } else if (side === 'sell') {
-      // Close position — find position for this symbol (no status column — rows exist = open)
+      // Close position — find USER position for this symbol (exclude agent positions)
       const { data: position } = await paperSupabase
         .from('paper_positions')
         .select('*')
         .eq('symbol', symbol)
+        .is('account_id', null)
         .limit(1)
         .single();
 

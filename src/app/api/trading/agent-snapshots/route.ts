@@ -54,7 +54,13 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ 
       agentSnapshots,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      debug: {
+        supabaseUrl: process.env.NEXT_PUBLIC_PAPER_SUPABASE_URL?.slice(0, 30),
+        totalSnapshots: snapshots?.length || 0,
+        buffettCount: snapshots?.filter(s => s.account_id === 'warren-buffett').length || 0,
+        buffettFirst: snapshots?.find(s => s.account_id === 'warren-buffett')?.equity,
+      }
     }, {
       headers: {
         'Cache-Control': 'no-store, no-cache, must-revalidate',

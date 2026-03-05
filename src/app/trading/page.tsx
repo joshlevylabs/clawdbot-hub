@@ -1204,8 +1204,8 @@ export default function TradingPage() {
                             </tr>
                           );
                         })}
-                        {/* CASH row */}
-                        {(() => {
+                        {/* CASH row — only shown for single portfolio view (not "All Portfolios" which mixes cash from different accounts) */}
+                        {selectedAgentFilter !== 'all' && (() => {
                           const cashValue = filteredCash;
                           const filteredPosValue = filteredPositions.reduce((sum, p) => sum + p.qty * (p.current_price || p.entry_price), 0);
                           const filteredEquity = cashValue + filteredPosValue;
@@ -1239,40 +1239,75 @@ export default function TradingPage() {
                         })()}
                       </tbody>
                       <tfoot>
-                        {(() => {
-                          const fPosValue = filteredPositions.reduce((s, p) => s + (p.current_price || p.entry_price) * p.qty, 0);
-                          const fCostBasis = filteredPositions.reduce((s, p) => s + p.entry_price * p.qty, 0);
-                          const fEquity = filteredCash + fPosValue;
-                          const fPnl = fEquity - filteredStartingCapital;
-                          const fPnlPct = (fPnl / filteredStartingCapital) * 100;
-                          const isAgent = selectedAgentFilter !== 'all' && selectedAgentFilter !== 'user';
-                          const fInterest = isAgent ? 0 : interestEarned;
-                          const fTotalEquity = fEquity + fInterest;
-                          return (
-                            <tr className="border-t-2 border-slate-600 bg-slate-800/80 font-bold">
-                              <td className="py-3 px-2 text-slate-100">Total</td>
-                              <td></td>
-                              <td></td>
-                              <td className="py-3 px-2 text-right font-mono text-slate-400">
-                                ${formatCurrency(fCostBasis)}
-                              </td>
-                              <td></td>
-                              <td className={`py-3 px-2 text-right font-mono ${fPnl >= 0 ? "text-emerald-400" : "text-red-400"}`}>
-                                {fPnl >= 0 ? "+" : ""}${formatCurrency(fPnl)}
-                              </td>
-                              <td className={`py-3 px-2 text-right font-mono ${fPnl >= 0 ? "text-emerald-400" : "text-red-400"}`}>
-                                {formatPercent(fPnlPct)}
-                              </td>
-                              <td className="py-3 px-2 text-right font-mono text-slate-200">${formatCurrency(fTotalEquity)}</td>
-                              <td className="py-3 px-2 text-right font-mono text-slate-400">
-                                100%
-                              </td>
-                              <td colSpan={6} className="py-3 px-2 text-right text-sm text-slate-500">
-                                Positions: ${formatCurrency(fPosValue)} + Cash: ${formatCurrency(filteredCash)}{!isAgent && ` + Interest: $${formatCurrency(fInterest)}`}
-                              </td>
-                            </tr>
-                          );
-                        })()}
+                        {selectedAgentFilter === 'all' ? (
+                          /* "All Portfolios" view — show combined positions value only, no misleading total equity */
+                          (() => {
+                            const fPosValue = filteredPositions.reduce((s, p) => s + (p.current_price || p.entry_price) * p.qty, 0);
+                            const fCostBasis = filteredPositions.reduce((s, p) => s + p.entry_price * p.qty, 0);
+                            const fUnrealizedPnl = fPosValue - fCostBasis;
+                            const fUnrealizedPct = fCostBasis > 0 ? (fUnrealizedPnl / fCostBasis) * 100 : 0;
+                            return (
+                              <tr className="border-t-2 border-slate-600 bg-slate-800/80 font-bold">
+                                <td className="py-3 px-2 text-slate-100">All Positions</td>
+                                <td></td>
+                                <td></td>
+                                <td className="py-3 px-2 text-right font-mono text-slate-400">
+                                  ${formatCurrency(fCostBasis)}
+                                </td>
+                                <td></td>
+                                <td className={`py-3 px-2 text-right font-mono ${fUnrealizedPnl >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+                                  {fUnrealizedPnl >= 0 ? "+" : ""}${formatCurrency(fUnrealizedPnl)}
+                                </td>
+                                <td className={`py-3 px-2 text-right font-mono ${fUnrealizedPnl >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+                                  {formatPercent(fUnrealizedPct)}
+                                </td>
+                                <td className="py-3 px-2 text-right font-mono text-slate-200">${formatCurrency(fPosValue)}</td>
+                                <td className="py-3 px-2 text-right font-mono text-slate-400">
+                                  —
+                                </td>
+                                <td colSpan={6} className="py-3 px-2 text-right text-sm text-slate-500">
+                                  {filteredPositions.length} positions across {agentSummaryData.length} portfolios · Select one for full breakdown
+                                </td>
+                              </tr>
+                            );
+                          })()
+                        ) : (
+                          /* Single portfolio view — show full equity breakdown with cash + interest */
+                          (() => {
+                            const fPosValue = filteredPositions.reduce((s, p) => s + (p.current_price || p.entry_price) * p.qty, 0);
+                            const fCostBasis = filteredPositions.reduce((s, p) => s + p.entry_price * p.qty, 0);
+                            const fEquity = filteredCash + fPosValue;
+                            const fPnl = fEquity - filteredStartingCapital;
+                            const fPnlPct = (fPnl / filteredStartingCapital) * 100;
+                            const isAgent = selectedAgentFilter !== 'user';
+                            const fInterest = isAgent ? 0 : interestEarned;
+                            const fTotalEquity = fEquity + fInterest;
+                            return (
+                              <tr className="border-t-2 border-slate-600 bg-slate-800/80 font-bold">
+                                <td className="py-3 px-2 text-slate-100">Total</td>
+                                <td></td>
+                                <td></td>
+                                <td className="py-3 px-2 text-right font-mono text-slate-400">
+                                  ${formatCurrency(fCostBasis)}
+                                </td>
+                                <td></td>
+                                <td className={`py-3 px-2 text-right font-mono ${fPnl >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+                                  {fPnl >= 0 ? "+" : ""}${formatCurrency(fPnl)}
+                                </td>
+                                <td className={`py-3 px-2 text-right font-mono ${fPnl >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+                                  {formatPercent(fPnlPct)}
+                                </td>
+                                <td className="py-3 px-2 text-right font-mono text-slate-200">${formatCurrency(fTotalEquity)}</td>
+                                <td className="py-3 px-2 text-right font-mono text-slate-400">
+                                  100%
+                                </td>
+                                <td colSpan={6} className="py-3 px-2 text-right text-sm text-slate-500">
+                                  Positions: ${formatCurrency(fPosValue)} + Cash: ${formatCurrency(filteredCash)}{!isAgent && ` + Interest: $${formatCurrency(fInterest)}`}
+                                </td>
+                              </tr>
+                            );
+                          })()
+                        )}
                       </tfoot>
                     </table>
                   </div>

@@ -673,20 +673,24 @@ export default function TradingPage() {
     return Object.values(agentGroups).map(group => {
       const config = getAgentConfig(group.accountId);
       const positionsValue = group.positions.reduce((sum, p) => sum + (p.qty * (p.current_price || p.entry_price)), 0);
-      const totalPnL = group.positions.reduce((sum, p) => sum + ((p.current_price || p.entry_price) - p.entry_price) * p.qty, 0) + 
+      const agentPnL = group.positions.reduce((sum, p) => sum + ((p.current_price || p.entry_price) - p.entry_price) * p.qty, 0) + 
                        group.trades.reduce((sum, t) => sum + t.pnl, 0);
       
       // Use total equity from agentPortfolios API if available (includes cash + positions)
+      // For user portfolio (accountId=null), use page-level equity/pnl which includes cash + positions + interest
       const portfolioData = group.accountId ? agentPortfolios[group.accountId] : null;
-      const totalEquity = portfolioData?.totalEquity || positionsValue;
+      const computedTotalEquity = group.accountId 
+        ? (portfolioData?.totalEquity || positionsValue)
+        : equity; // user portfolio: use page-level equity (cash + positions + interest)
+      const computedTotalPnL = group.accountId ? agentPnL : totalPnl;
 
       return {
         accountId: group.accountId,
         config,
         positionCount: group.positions.length,
         positionsValue,
-        totalEquity,
-        totalPnL,
+        totalEquity: computedTotalEquity,
+        totalPnL: computedTotalPnL,
       };
     });
   })() : [];

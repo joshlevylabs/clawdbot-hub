@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { paperSupabase } from '@/lib/paper-supabase';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
   try {
     // Get agent portfolio snapshots from paper_portfolio_snapshots table

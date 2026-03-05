@@ -7,20 +7,74 @@ import { getSessionAny } from '@/lib/auth';
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60;
 
-// ── Agent Config ──
+// ── Agent Config with Investment Style Filters ──
 
-const AGENTS = [
-  { id: 'chris-vermeulen', name: 'Chris Vermeulen', apiRoute: '/api/trading/chris-actions' },
-  { id: 'warren-buffett', name: 'Warren Buffett', apiRoute: '/api/trading/buffett-actions' },
-  { id: 'peter-schiff', name: 'Peter Schiff', apiRoute: '/api/trading/schiff-actions' },
-  { id: 'raoul-pal', name: 'Raoul Pal', apiRoute: '/api/trading/pal-actions' },
-  { id: 'peter-lynch', name: 'Peter Lynch', apiRoute: '/api/trading/lynch-actions' },
-] as const;
+interface AgentStyle {
+  id: string;
+  name: string;
+  // Each agent has different criteria for which BUY signals to act on
+  preferredSectors: string[];     // Sectors this agent focuses on ('*' = all)
+  minSignalStrength: number;      // Minimum MRE signal strength (0-100)
+  minStrategiesAgreeing: number;  // Minimum strategy confirmations
+  preferredRegimes: string[];     // Market regimes they're comfortable in
+  maxPositions: number;           // Max open positions
+  positionSizePct: number;        // Max % of portfolio per position
+}
 
-// Scale factor: MRE sizes for ~$100K main portfolio, agent portfolios are also $100K
-// but we cap at 15% per position to ensure diversification across agents
-const MAX_POSITION_PCT = 0.15; // 15% of portfolio equity
-const MAX_POSITIONS = 8; // Max open positions per agent
+const AGENT_STYLES: AgentStyle[] = [
+  {
+    id: 'chris-vermeulen',
+    name: 'Chris Vermeulen',
+    preferredSectors: ['*'], // Technical trader — sector agnostic
+    minSignalStrength: 40,   // Wants strong signals
+    minStrategiesAgreeing: 3,
+    preferredRegimes: ['bull', 'recovery', 'sideways'],
+    maxPositions: 8,
+    positionSizePct: 0.12,
+  },
+  {
+    id: 'warren-buffett',
+    name: 'Warren Buffett',
+    preferredSectors: ['Financials', 'Consumer Staples', 'Consumer Discretionary', 'Energy', 'Industrials', 'Healthcare'],
+    minSignalStrength: 35,   // Value investor — lower strength OK for quality names
+    minStrategiesAgreeing: 3,
+    preferredRegimes: ['bull', 'recovery', 'sideways', 'bear'], // Buys in downturns
+    maxPositions: 6,         // Concentrated portfolio
+    positionSizePct: 0.15,   // Bigger positions
+  },
+  {
+    id: 'peter-schiff',
+    name: 'Peter Schiff',
+    preferredSectors: ['Energy', 'Materials', 'Utilities', 'Real Estate'],
+    minSignalStrength: 30,   // Gold/commodity focused
+    minStrategiesAgreeing: 2,
+    preferredRegimes: ['bull', 'recovery', 'sideways', 'bear', 'crisis'], // Always active
+    maxPositions: 8,
+    positionSizePct: 0.12,
+  },
+  {
+    id: 'raoul-pal',
+    name: 'Raoul Pal',
+    preferredSectors: ['Technology', 'Communication Services', 'Financials'],
+    minSignalStrength: 35,   // Macro momentum
+    minStrategiesAgreeing: 3,
+    preferredRegimes: ['bull', 'recovery'],  // Only bullish regimes
+    maxPositions: 8,
+    positionSizePct: 0.12,
+  },
+  {
+    id: 'peter-lynch',
+    name: 'Peter Lynch',
+    preferredSectors: ['*'], // GARP — any sector with growth at reasonable price
+    minSignalStrength: 30,   // Casts wide net
+    minStrategiesAgreeing: 2,
+    preferredRegimes: ['bull', 'recovery', 'sideways'],
+    maxPositions: 10,        // Diversified
+    positionSizePct: 0.10,   // Smaller positions, more names
+  },
+];
+
+// ── Signal Types ──
 
 interface MRESignal {
   symbol: string;
@@ -28,19 +82,20 @@ interface MRESignal {
   signal_strength: number;
   price: number;
   vol_adjusted_size: number;
+  strategies_agreeing: number;
+  sector?: string;
+  regime?: string;
+  expected_accuracy?: number;
   fibonacci?: {
     nearest_support: number;
     profit_targets: number[];
     entry_zone: string;
   };
-  sector?: string;
-  regime?: string;
-  expected_accuracy?: number;
-  strategies_agreeing?: number;
 }
 
-interface TradeExecution {
+interface TradeProposal {
   agent: string;
+  agentId: string;
   action: 'buy' | 'sell';
   symbol: string;
   qty: number;
@@ -48,101 +103,102 @@ interface TradeExecution {
   stop_loss: number | null;
   take_profit: number | null;
   rationale: string;
-  status: 'executed' | 'skipped' | 'error';
+  signal_strength: number;
+  strategies_agreeing: number;
+  status: 'proposed' | 'executed' | 'skipped' | 'error';
   error?: string;
 }
 
-function loadSignals(): MRESignal[] {
+// ── Helpers ──
+
+function loadSignals(): { signals: MRESignal[]; timestamp: string; regime: string } {
   try {
     const signalsPath = join(process.cwd(), 'public', 'data', 'trading', 'mre-signals-universe.json');
     const data = JSON.parse(readFileSync(signalsPath, 'utf-8'));
-    return data.signals.by_asset_class || [];
+    return {
+      signals: data.signals.by_asset_class || [],
+      timestamp: data.timestamp || '',
+      regime: data.regime?.global || 'unknown',
+    };
   } catch {
     try {
       const altPath = join(process.cwd(), '.next', 'server', 'app', 'data', 'trading', 'mre-signals-universe.json');
       const data = JSON.parse(readFileSync(altPath, 'utf-8'));
-      return data.signals.by_asset_class || [];
+      return {
+        signals: data.signals.by_asset_class || [],
+        timestamp: data.timestamp || '',
+        regime: data.regime?.global || 'unknown',
+      };
     } catch {
-      return [];
+      return { signals: [], timestamp: '', regime: 'unknown' };
     }
   }
 }
 
-function calculatePositionSize(
+function filterSignalsForAgent(
+  buySignals: MRESignal[],
+  style: AgentStyle,
+  globalRegime: string,
+  heldSymbols: Set<string>,
+): MRESignal[] {
+  return buySignals
+    .filter(sig => {
+      // Don't double up on existing positions
+      if (heldSymbols.has(sig.symbol)) return false;
+      
+      // Minimum signal strength
+      if (sig.signal_strength < style.minSignalStrength) return false;
+      
+      // Minimum strategies agreeing
+      if ((sig.strategies_agreeing || 0) < style.minStrategiesAgreeing) return false;
+      
+      // Sector filter (skip if agent is sector-agnostic)
+      if (!style.preferredSectors.includes('*')) {
+        const sigSector = sig.sector || '';
+        if (!style.preferredSectors.some(ps => sigSector.includes(ps))) return false;
+      }
+      
+      // Regime filter
+      const regime = (sig.regime || globalRegime || '').toLowerCase();
+      if (!style.preferredRegimes.some(pr => regime.includes(pr))) return false;
+      
+      return true;
+    })
+    // Sort by signal strength (strongest first)
+    .sort((a, b) => b.signal_strength - a.signal_strength);
+}
+
+function calculateQty(
   signal: MRESignal,
   cashBalance: number,
   totalEquity: number,
-): { qty: number; positionValue: number } {
-  // Use MRE's vol_adjusted_size but scale to agent portfolio size
-  // MRE sizes assume ~$100K portfolio, so scale proportionally
+  style: AgentStyle,
+): number {
+  // Use MRE vol_adjusted_size scaled to agent portfolio
   const mrePortfolioSize = 100000;
   const scaleFactor = totalEquity / mrePortfolioSize;
-  
   let rawQty = Math.floor(signal.vol_adjusted_size * scaleFactor);
   let positionValue = rawQty * signal.price;
   
-  // Cap at MAX_POSITION_PCT of equity
-  const maxValue = totalEquity * MAX_POSITION_PCT;
+  // Cap at agent's max position size
+  const maxValue = totalEquity * style.positionSizePct;
   if (positionValue > maxValue) {
     rawQty = Math.floor(maxValue / signal.price);
     positionValue = rawQty * signal.price;
   }
   
-  // Don't exceed available cash
-  if (positionValue > cashBalance * 0.95) { // Keep 5% cash buffer
+  // Keep 5% cash buffer
+  if (positionValue > cashBalance * 0.95) {
     rawQty = Math.floor((cashBalance * 0.95) / signal.price);
-    positionValue = rawQty * signal.price;
   }
   
-  // Minimum 1 share
-  if (rawQty < 1) rawQty = 0;
-  
-  return { qty: rawQty, positionValue: rawQty * signal.price };
+  return Math.max(rawQty, 0);
 }
 
-async function executeAgentTrade(
-  agentId: string,
-  action: 'buy' | 'sell',
-  symbol: string,
-  qty: number,
-  price: number,
-  stopLoss: number | null,
-  takeProfit: number | null,
-  rationale: string,
-  request: NextRequest,
-): Promise<{ success: boolean; error?: string }> {
-  const origin = request.headers.get('host');
-  const protocol = origin?.includes('localhost') ? 'http' : 'https';
-  const cookie = request.headers.get('cookie') || '';
-  
-  const res = await fetch(`${protocol}://${origin}/api/trading/agent-trade`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Cookie': cookie,
-    },
-    body: JSON.stringify({
-      agent_id: agentId,
-      action,
-      symbol,
-      qty,
-      price,
-      stop_loss: stopLoss,
-      take_profit: takeProfit,
-      rationale,
-    }),
-  });
-  
-  const data = await res.json();
-  if (!res.ok) {
-    return { success: false, error: data.error || `HTTP ${res.status}` };
-  }
-  return { success: true };
-}
+// ── Route Handler ──
 
 export async function POST(request: NextRequest) {
   try {
-    // Auth check
     const session = await getSessionAny();
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -153,49 +209,43 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json().catch(() => ({}));
-    const mode = body.mode || 'propose'; // 'propose' = dry run, 'execute' = live
-    const agentFilter = body.agent_id; // Optional: only run for one agent
+    const mode: 'propose' | 'execute' = body.mode || 'propose';
+    const agentFilter: string | undefined = body.agent_id;
 
     // Load MRE signals
-    const allSignals = loadSignals();
+    const { signals: allSignals, timestamp, regime: globalRegime } = loadSignals();
     const buySignals = allSignals.filter(s => s.signal === 'BUY');
-    
+
     if (buySignals.length === 0) {
-      return NextResponse.json({ 
+      return NextResponse.json({
         message: 'No BUY signals in MRE universe',
-        executions: [],
-        summary: { total: 0, executed: 0, skipped: 0, errors: 0 }
+        proposals: [],
+        summary: { total: 0, executed: 0, skipped: 0, errors: 0, mode },
+        signal_timestamp: timestamp,
       });
     }
 
-    // Build signal lookup
-    const signalLookup = new Map<string, MRESignal>();
-    for (const sig of buySignals) {
-      signalLookup.set(sig.symbol, sig);
-    }
+    const agentsToRun = agentFilter
+      ? AGENT_STYLES.filter(a => a.id === agentFilter)
+      : [...AGENT_STYLES];
 
-    const agentsToRun = agentFilter 
-      ? AGENTS.filter(a => a.id === agentFilter)
-      : [...AGENTS];
+    const allProposals: TradeProposal[] = [];
 
-    const allExecutions: TradeExecution[] = [];
-
-    for (const agent of agentsToRun) {
+    for (const style of agentsToRun) {
       // Get agent's current state
       const { data: accountData } = await paperSupabase
         .from('paper_accounts')
         .select('cash_balance, starting_capital')
-        .eq('account_id', agent.id)
+        .eq('account_id', style.id)
         .single();
 
       const cashBalance = accountData?.cash_balance || 100000;
-      const startingCapital = accountData?.starting_capital || 100000;
 
       // Get existing positions
       const { data: positions } = await paperSupabase
         .from('paper_positions')
         .select('symbol, qty, entry_price, current_price')
-        .eq('account_id', agent.id);
+        .eq('account_id', style.id);
 
       const existingPositions = positions || [];
       const positionCount = existingPositions.length;
@@ -203,166 +253,148 @@ export async function POST(request: NextRequest) {
         (sum, p) => sum + (p.qty * (p.current_price || p.entry_price)), 0
       );
       const totalEquity = cashBalance + positionsValue;
-      
-      // Get symbols already held
       const heldSymbols = new Set(existingPositions.map(p => p.symbol));
 
       // Skip if at max positions
-      if (positionCount >= MAX_POSITIONS) {
-        allExecutions.push({
-          agent: agent.name,
+      if (positionCount >= style.maxPositions) {
+        allProposals.push({
+          agent: style.name,
+          agentId: style.id,
           action: 'buy',
           symbol: 'N/A',
           qty: 0,
           price: 0,
           stop_loss: null,
           take_profit: null,
-          rationale: `At max positions (${MAX_POSITIONS})`,
+          rationale: `At max positions (${style.maxPositions}/${style.maxPositions})`,
+          signal_strength: 0,
+          strategies_agreeing: 0,
           status: 'skipped',
         });
         continue;
       }
 
-      // Call advisor API to get recommendations
-      const origin = request.headers.get('host');
-      const protocol = origin?.includes('localhost') ? 'http' : 'https';
-      const cookie = request.headers.get('cookie') || '';
+      // Filter signals matching this agent's style
+      const slotsAvailable = style.maxPositions - positionCount;
+      const matchingSignals = filterSignalsForAgent(buySignals, style, globalRegime, heldSymbols);
 
-      let advisorRecs: Array<{
-        action: string;
-        symbol: string;
-        priority: string;
-        rationale?: string;
-        suggested_qty?: number;
-        stop_loss?: number;
-        take_profit?: number;
-      }> = [];
-
-      try {
-        const advisorRes = await fetch(`${protocol}://${origin}${agent.apiRoute}`, {
-          headers: { 'Cookie': cookie },
+      if (matchingSignals.length === 0) {
+        allProposals.push({
+          agent: style.name,
+          agentId: style.id,
+          action: 'buy',
+          symbol: 'N/A',
+          qty: 0,
+          price: 0,
+          stop_loss: null,
+          take_profit: null,
+          rationale: `No signals match ${style.name}'s criteria (min strength ${style.minSignalStrength}%, ${style.minStrategiesAgreeing}+ strategies, preferred sectors)`,
+          signal_strength: 0,
+          strategies_agreeing: 0,
+          status: 'skipped',
         });
-        if (advisorRes.ok) {
-          const advisorData = await advisorRes.json();
-          advisorRecs = advisorData.trade_recommendations || [];
-        }
-      } catch (err) {
-        console.error(`Failed to get advisor recs for ${agent.name}:`, err);
+        continue;
       }
 
-      // Filter: only BUY recommendations that match MRE BUY signals
-      const validBuys = advisorRecs.filter(rec => {
-        if (rec.action !== 'buy') return false;
-        if (!signalLookup.has(rec.symbol)) return false; // Must have MRE BUY signal
-        if (heldSymbols.has(rec.symbol)) return false; // Don't double up
-        return true;
-      });
+      // Take top signals up to available slots
+      let remainingCash = cashBalance;
+      for (const signal of matchingSignals.slice(0, slotsAvailable)) {
+        const qty = calculateQty(signal, remainingCash, totalEquity, style);
 
-      // Also consider: top MRE BUY signals even if advisor didn't explicitly recommend
-      // (some advisors may not list every ticker in their response)
-      const slotsAvailable = MAX_POSITIONS - positionCount;
-      
-      // Process advisor-recommended buys first
-      for (const rec of validBuys.slice(0, slotsAvailable)) {
-        const signal = signalLookup.get(rec.symbol)!;
-        const { qty, positionValue } = calculatePositionSize(signal, cashBalance, totalEquity);
-        
-        if (qty === 0 || positionValue < 100) {
-          allExecutions.push({
-            agent: agent.name,
+        if (qty === 0) {
+          allProposals.push({
+            agent: style.name,
+            agentId: style.id,
             action: 'buy',
-            symbol: rec.symbol,
+            symbol: signal.symbol,
             qty: 0,
             price: signal.price,
             stop_loss: null,
             take_profit: null,
             rationale: 'Insufficient cash for minimum position',
+            signal_strength: signal.signal_strength,
+            strategies_agreeing: signal.strategies_agreeing,
             status: 'skipped',
           });
           continue;
         }
 
-        // Use MRE Fibonacci levels for stop loss and take profit
+        // Use Fibonacci levels for stop loss and take profit
         const fib = signal.fibonacci;
         const stopLoss = fib?.nearest_support || null;
         const takeProfit = fib?.profit_targets?.[0] || null;
 
-        const execution: TradeExecution = {
-          agent: agent.name,
+        const proposal: TradeProposal = {
+          agent: style.name,
+          agentId: style.id,
           action: 'buy',
-          symbol: rec.symbol,
+          symbol: signal.symbol,
           qty,
           price: signal.price,
           stop_loss: stopLoss,
           take_profit: takeProfit,
-          rationale: rec.rationale || `MRE BUY signal (strength ${signal.signal_strength}%, ${signal.strategies_agreeing || 0} strategies)`,
-          status: 'skipped',
+          rationale: `MRE BUY: ${signal.signal_strength.toFixed(1)}% strength, ${signal.strategies_agreeing} strategies, ${signal.sector || 'Unknown'} sector, ${signal.regime || globalRegime} regime`,
+          signal_strength: signal.signal_strength,
+          strategies_agreeing: signal.strategies_agreeing,
+          status: mode === 'execute' ? 'proposed' : 'proposed',
         };
 
         if (mode === 'execute') {
-          const result = await executeAgentTrade(
-            agent.id, 'buy', rec.symbol, qty, signal.price,
-            stopLoss, takeProfit,
-            execution.rationale, request
-          );
-          execution.status = result.success ? 'executed' : 'error';
-          execution.error = result.error;
-        } else {
-          execution.status = 'skipped'; // Propose mode = dry run
+          // Execute the trade
+          const { data: position, error: posError } = await paperSupabase
+            .from('paper_positions')
+            .insert({
+              account_id: style.id,
+              symbol: signal.symbol,
+              side: 'long',
+              qty,
+              entry_price: signal.price,
+              current_price: signal.price,
+              stop_loss: stopLoss,
+              take_profit: takeProfit,
+              signal_confidence: signal.signal_strength,
+              signal_regime: signal.regime || globalRegime,
+              opened_at: new Date().toISOString(),
+              hold_days: 20, // MRE default hold target
+              notes: proposal.rationale,
+            })
+            .select()
+            .single();
+
+          if (posError) {
+            proposal.status = 'error';
+            proposal.error = posError.message;
+          } else {
+            // Update cash balance
+            const newCash = remainingCash - (qty * signal.price);
+            await paperSupabase
+              .from('paper_accounts')
+              .update({ cash_balance: newCash, updated_at: new Date().toISOString() })
+              .eq('account_id', style.id);
+            
+            remainingCash = newCash;
+            proposal.status = 'executed';
+          }
         }
 
-        allExecutions.push(execution);
-      }
-
-      // Process SELL recommendations for existing positions
-      const sellRecs = advisorRecs.filter(rec => {
-        if (rec.action !== 'sell') return false;
-        if (!heldSymbols.has(rec.symbol)) return false;
-        return true;
-      });
-
-      for (const rec of sellRecs) {
-        const position = existingPositions.find(p => p.symbol === rec.symbol);
-        if (!position) continue;
-
-        const execution: TradeExecution = {
-          agent: agent.name,
-          action: 'sell',
-          symbol: rec.symbol,
-          qty: rec.suggested_qty || position.qty,
-          price: position.current_price || position.entry_price,
-          stop_loss: null,
-          take_profit: null,
-          rationale: rec.rationale || 'Advisor recommends exit',
-          status: 'skipped',
-        };
-
-        if (mode === 'execute') {
-          const result = await executeAgentTrade(
-            agent.id, 'sell', rec.symbol,
-            execution.qty, execution.price,
-            null, null,
-            execution.rationale, request
-          );
-          execution.status = result.success ? 'executed' : 'error';
-          execution.error = result.error;
-        }
-
-        allExecutions.push(execution);
+        allProposals.push(proposal);
       }
     }
 
     const summary = {
-      total: allExecutions.length,
-      executed: allExecutions.filter(e => e.status === 'executed').length,
-      skipped: allExecutions.filter(e => e.status === 'skipped').length,
-      errors: allExecutions.filter(e => e.status === 'error').length,
+      total: allProposals.length,
+      executed: allProposals.filter(p => p.status === 'executed').length,
+      proposed: allProposals.filter(p => p.status === 'proposed').length,
+      skipped: allProposals.filter(p => p.status === 'skipped').length,
+      errors: allProposals.filter(p => p.status === 'error').length,
       mode,
       buy_signals_available: buySignals.length,
+      global_regime: globalRegime,
+      signal_timestamp: timestamp,
     };
 
     return NextResponse.json({
-      executions: allExecutions,
+      proposals: allProposals,
       summary,
       timestamp: new Date().toISOString(),
     });
@@ -376,7 +408,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// GET: Simple status check
+// GET: Status check
 export async function GET(request: NextRequest) {
   const session = await getSessionAny();
   if (!session) {
@@ -385,11 +417,13 @@ export async function GET(request: NextRequest) {
 
   return NextResponse.json({
     status: 'ready',
-    agents: AGENTS.map(a => a.id),
-    config: {
-      max_position_pct: MAX_POSITION_PCT,
-      max_positions: MAX_POSITIONS,
-    },
+    agents: AGENT_STYLES.map(a => ({
+      id: a.id,
+      name: a.name,
+      sectors: a.preferredSectors,
+      minStrength: a.minSignalStrength,
+      maxPositions: a.maxPositions,
+    })),
     usage: 'POST with { mode: "propose" | "execute", agent_id?: string }',
   });
 }

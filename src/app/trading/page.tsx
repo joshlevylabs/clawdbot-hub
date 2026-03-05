@@ -47,6 +47,8 @@ import RealTimePnLDashboard from "@/components/trading/RealTimePnLDashboard";
 import RealTimePositionsTable from "@/components/trading/RealTimePositionsTable";
 import BrierCalibrationCard from "@/components/BrierCalibrationCard";
 import CorrelationPanel from "@/components/CorrelationPanel";
+import { getAgentConfig, getAgentDisplayName, AGENT_CONFIGS } from "@/lib/agent-config";
+import { AgentBadge } from "@/components/AgentBadge";
 
 // ===== Types =====
 
@@ -71,6 +73,7 @@ interface PaperPosition {
 
 interface PaperTrade {
   id: string;
+  account_id: string | null; // Agent account identifier
   symbol: string;
   side: string;
   qty: number;
@@ -600,6 +603,55 @@ export default function TradingPage() {
     return position.account_id === selectedAgentFilter;
   });
 
+  // Filter trades based on selected agent (same logic as positions)
+  const filteredTrades = trades.filter(trade => {
+    if (selectedAgentFilter === 'all') return true;
+    if (selectedAgentFilter === 'user') return !trade.account_id; // null account_id = user portfolio
+    return trade.account_id === selectedAgentFilter;
+  });
+
+  // Generate summary data for all agents when "all" filter is selected
+  const agentSummaryData = selectedAgentFilter === 'all' ? (() => {
+    const agentGroups: Record<string, { 
+      accountId: string | null; 
+      positions: any[]; 
+      trades: any[];
+    }> = {};
+    
+    // Group positions by agent
+    positions.forEach(pos => {
+      const key = pos.account_id || 'user';
+      if (!agentGroups[key]) {
+        agentGroups[key] = { accountId: pos.account_id, positions: [], trades: [] };
+      }
+      agentGroups[key].positions.push(pos);
+    });
+
+    // Group trades by agent  
+    trades.forEach(trade => {
+      const key = trade.account_id || 'user';
+      if (!agentGroups[key]) {
+        agentGroups[key] = { accountId: trade.account_id, positions: [], trades: [] };
+      }
+      agentGroups[key].trades.push(trade);
+    });
+
+    return Object.values(agentGroups).map(group => {
+      const config = getAgentConfig(group.accountId);
+      const positionsValue = group.positions.reduce((sum, p) => sum + (p.qty * (p.current_price || p.entry_price)), 0);
+      const totalPnL = group.positions.reduce((sum, p) => sum + ((p.current_price || p.entry_price) - p.entry_price) * p.qty, 0) + 
+                       group.trades.reduce((sum, t) => sum + t.pnl, 0);
+      
+      return {
+        accountId: group.accountId,
+        config,
+        positionCount: group.positions.length,
+        positionsValue,
+        totalPnL,
+      };
+    });
+  })() : [];
+
   const isPortfolioTab = activeTab === "overview" || activeTab === "plays" || activeTab === "positions" || activeTab === "trades" || activeTab === "signals";
 
   // Primary tabs — the main trading views
@@ -916,6 +968,48 @@ export default function TradingPage() {
           {/* ===== POSITIONS TAB ===== */}
           {activeTab === "positions" && !loading && !error && (
             <>
+              {/* All Agents Summary - shown when "All Portfolios" is selected */}
+              {selectedAgentFilter === 'all' && agentSummaryData.length > 0 && (
+                <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50 mb-4">
+                  <h2 className="text-lg font-semibold text-slate-100 mb-3 flex items-center gap-2">
+                    <Activity className="w-5 h-5 text-primary-400" />
+                    All Agents Portfolio Overview
+                  </h2>
+                  <div className="flex gap-3 overflow-x-auto pb-2">
+                    {agentSummaryData.map((agent) => (
+                      <button
+                        key={agent.accountId || 'user'}
+                        onClick={() => setSelectedAgentFilter(agent.accountId || 'user')}
+                        className={`flex-shrink-0 bg-slate-700/30 border rounded-lg p-3 min-w-[200px] hover:bg-slate-700/50 transition-colors ${agent.config.borderColor}/30 hover:${agent.config.borderColor}/50`}
+                      >
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="text-lg">{agent.config.emoji}</span>
+                          <span className={`text-sm font-medium ${agent.config.textColor}`}>
+                            {agent.config.name}
+                          </span>
+                        </div>
+                        <div className="space-y-1 text-xs">
+                          <div className="flex justify-between">
+                            <span className="text-slate-400">Positions:</span>
+                            <span className="text-slate-300">{agent.positionCount}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-slate-400">Value:</span>
+                            <span className="text-slate-300">${(agent.positionsValue / 1000).toFixed(0)}K</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-slate-400">P&L:</span>
+                            <span className={`font-medium ${agent.totalPnL >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                              {agent.totalPnL >= 0 ? '+' : ''}${(agent.totalPnL / 1000).toFixed(1)}K
+                            </span>
+                          </div>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* Position Charts */}
               {filteredPositions.length > 0 && (
                 <PositionCharts positions={filteredPositions} />
@@ -955,6 +1049,7 @@ export default function TradingPage() {
                       <thead>
                         <tr className="text-xs text-slate-500 uppercase border-b border-slate-700">
                           <th className="text-left py-2 px-2">Symbol</th>
+                          <th className="text-left py-2 px-2">Agent</th>
                           <th className="text-left py-2 px-2">Regime</th>
                           <th className="text-right py-2 px-2">Qty</th>
                           <th className="text-right py-2 px-2">Entry</th>
@@ -986,6 +1081,9 @@ export default function TradingPage() {
                               <td className="py-3 px-2">
                                 <span className="font-bold text-slate-100">{pos.symbol}</span>
                                 {pos.notes && <p className="text-[10px] text-slate-600 mt-0.5 truncate max-w-[120px]">{pos.notes}</p>}
+                              </td>
+                              <td className="py-3 px-2">
+                                <AgentBadge accountId={pos.account_id} compact />
                               </td>
                               <td className="py-3 px-2">
                                 {pos.signal_regime && (
@@ -1130,18 +1228,37 @@ export default function TradingPage() {
           {activeTab === "trades" && !loading && !error && (
             <>
               {/* Active Trades (from open positions) */}
-              {positions.length > 0 && (
+              {filteredPositions.length > 0 && (
                 <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50 mb-4">
-                  <h2 className="text-lg font-semibold text-slate-100 mb-4 flex items-center gap-2">
-                    <TrendingUp className="w-5 h-5 text-emerald-400" />
-                    Active Trades ({positions.length})
-                  </h2>
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-lg font-semibold text-slate-100 flex items-center gap-2">
+                      <TrendingUp className="w-5 h-5 text-emerald-400" />
+                      Active Trades ({filteredPositions.length})
+                    </h2>
+                    <div className="flex items-center gap-2">
+                      <label className="text-xs text-slate-400">Filter:</label>
+                      <select
+                        value={selectedAgentFilter}
+                        onChange={(e) => setSelectedAgentFilter(e.target.value)}
+                        className="bg-slate-700/50 border border-slate-600/30 rounded-md px-2 py-1 text-xs text-slate-100 focus:border-primary-400 focus:outline-none"
+                      >
+                        <option value="all">All Portfolios</option>
+                        <option value="user">My Portfolio</option>
+                        <option value="chris-vermeulen">Chris Vermeulen</option>
+                        <option value="warren-buffett">Warren Buffett</option>
+                        <option value="peter-schiff">Peter Schiff</option>
+                        <option value="raoul-pal">Raoul Pal</option>
+                        <option value="peter-lynch">Peter Lynch</option>
+                      </select>
+                    </div>
+                  </div>
                   <div className="overflow-x-auto">
                     <table className="w-full">
                       <thead>
                         <tr className="text-xs text-slate-500 uppercase border-b border-slate-700">
                           <th className="text-left py-2 px-2">Opened</th>
                           <th className="text-left py-2 px-2">Symbol</th>
+                          <th className="text-left py-2 px-2">Agent</th>
                           <th className="text-right py-2 px-2">Qty</th>
                           <th className="text-right py-2 px-2">Entry</th>
                           <th className="text-right py-2 px-2">Current</th>
@@ -1153,7 +1270,7 @@ export default function TradingPage() {
                         </tr>
                       </thead>
                       <tbody>
-                        {positions
+                        {filteredPositions
                           .sort((a, b) => {
                             const pnlA = ((a.current_price || a.entry_price) - a.entry_price) * a.qty;
                             const pnlB = ((b.current_price || b.entry_price) - b.entry_price) * b.qty;
@@ -1174,6 +1291,9 @@ export default function TradingPage() {
                               <tr key={pos.id} className="border-b border-slate-800 hover:bg-slate-800/50">
                                 <td className="py-2 px-2 text-sm text-slate-400">{formatDate(pos.opened_at)}</td>
                                 <td className="py-2 px-2 font-medium text-slate-200">{pos.symbol}</td>
+                                <td className="py-2 px-2">
+                                  <AgentBadge accountId={pos.account_id} compact />
+                                </td>
                                 <td className="py-2 px-2 text-right font-mono text-slate-300">{pos.qty}</td>
                                 <td className="py-2 px-2 text-right font-mono text-slate-400">${formatCurrency(pos.entry_price)}</td>
                                 <td className="py-2 px-2 text-right font-mono text-slate-300">${formatCurrency(curPrice)}</td>
@@ -1217,28 +1337,28 @@ export default function TradingPage() {
                     <div>
                       <span className="text-slate-500">Total Unrealized:</span>
                       <span className={`ml-2 font-mono font-bold ${
-                        positions.reduce((s, p) => s + ((p.current_price || p.entry_price) - p.entry_price) * p.qty, 0) >= 0
+                        filteredPositions.reduce((s, p) => s + ((p.current_price || p.entry_price) - p.entry_price) * p.qty, 0) >= 0
                           ? "text-emerald-400" : "text-red-400"
                       }`}>
-                        {positions.reduce((s, p) => s + ((p.current_price || p.entry_price) - p.entry_price) * p.qty, 0) >= 0 ? "+" : ""}
-                        ${formatCurrency(positions.reduce((s, p) => s + ((p.current_price || p.entry_price) - p.entry_price) * p.qty, 0))}
+                        {filteredPositions.reduce((s, p) => s + ((p.current_price || p.entry_price) - p.entry_price) * p.qty, 0) >= 0 ? "+" : ""}
+                        ${formatCurrency(filteredPositions.reduce((s, p) => s + ((p.current_price || p.entry_price) - p.entry_price) * p.qty, 0))}
                       </span>
                     </div>
                     <div>
                       <span className="text-slate-500">Deployed:</span>
                       <span className="ml-2 font-mono text-slate-300">
-                        ${formatCurrency(positions.reduce((s, p) => s + p.entry_price * p.qty, 0))}
+                        ${formatCurrency(filteredPositions.reduce((s, p) => s + p.entry_price * p.qty, 0))}
                       </span>
                     </div>
                     <div>
                       <span className="text-slate-500">Winners:</span>
                       <span className="ml-2 font-mono text-emerald-400">
-                        {positions.filter(p => (p.current_price || p.entry_price) >= p.entry_price).length}
+                        {filteredPositions.filter(p => (p.current_price || p.entry_price) >= p.entry_price).length}
                       </span>
                       <span className="text-slate-600 mx-1">/</span>
                       <span className="text-slate-500">Losers:</span>
                       <span className="ml-2 font-mono text-red-400">
-                        {positions.filter(p => (p.current_price || 0) < p.entry_price).length}
+                        {filteredPositions.filter(p => (p.current_price || 0) < p.entry_price).length}
                       </span>
                     </div>
                   </div>
@@ -1246,23 +1366,42 @@ export default function TradingPage() {
               )}
 
               {/* Closed Trade History */}
-              {trades.length === 0 ? (
+              {filteredTrades.length === 0 ? (
                 <div className="bg-slate-800/50 rounded-xl p-8 border border-slate-700/50 text-center">
                   <Clock className="w-8 h-8 text-slate-600 mx-auto mb-2" />
                   <p className="text-slate-500 text-sm">No closed trades yet — positions will move here when sold</p>
                 </div>
               ) : (
                 <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50">
-                  <h2 className="text-lg font-semibold text-slate-100 mb-4 flex items-center gap-2">
-                    <Clock className="w-5 h-5 text-cyan-400" />
-                    Trade History ({trades.length})
-                  </h2>
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-lg font-semibold text-slate-100 flex items-center gap-2">
+                      <Clock className="w-5 h-5 text-cyan-400" />
+                      Trade History ({filteredTrades.length})
+                    </h2>
+                    <div className="flex items-center gap-2">
+                      <label className="text-xs text-slate-400">Filter:</label>
+                      <select
+                        value={selectedAgentFilter}
+                        onChange={(e) => setSelectedAgentFilter(e.target.value)}
+                        className="bg-slate-700/50 border border-slate-600/30 rounded-md px-2 py-1 text-xs text-slate-100 focus:border-primary-400 focus:outline-none"
+                      >
+                        <option value="all">All Portfolios</option>
+                        <option value="user">My Portfolio</option>
+                        <option value="chris-vermeulen">Chris Vermeulen</option>
+                        <option value="warren-buffett">Warren Buffett</option>
+                        <option value="peter-schiff">Peter Schiff</option>
+                        <option value="raoul-pal">Raoul Pal</option>
+                        <option value="peter-lynch">Peter Lynch</option>
+                      </select>
+                    </div>
+                  </div>
                   <div className="overflow-x-auto">
                     <table className="w-full">
                       <thead>
                         <tr className="text-xs text-slate-500 uppercase border-b border-slate-700">
                           <th className="text-left py-2 px-2">Closed</th>
                           <th className="text-left py-2 px-2">Symbol</th>
+                          <th className="text-left py-2 px-2">Agent</th>
                           <th className="text-left py-2 px-2">Side</th>
                           <th className="text-right py-2 px-2">Qty</th>
                           <th className="text-right py-2 px-2">Entry</th>
@@ -1274,12 +1413,15 @@ export default function TradingPage() {
                         </tr>
                       </thead>
                       <tbody>
-                        {trades.map((trade) => {
+                        {filteredTrades.map((trade) => {
                           const isProfit = trade.pnl >= 0;
                           return (
                             <tr key={trade.id} className="border-b border-slate-800 hover:bg-slate-800/50">
                               <td className="py-2 px-2 text-sm text-slate-400">{formatDate(trade.closed_at)}</td>
                               <td className="py-2 px-2 font-medium text-slate-200">{trade.symbol}</td>
+                              <td className="py-2 px-2">
+                                <AgentBadge accountId={trade.account_id} compact />
+                              </td>
                               <td className="py-2 px-2">
                                 <span className={`px-2 py-0.5 rounded text-xs font-medium ${
                                   trade.side === "long" ? "bg-emerald-900/50 text-emerald-400" : "bg-red-900/50 text-red-400"

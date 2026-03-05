@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
 import { paperSupabase, isPaperSupabaseConfigured } from '@/lib/paper-supabase';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
   // Check Hub auth (JETT2025 password system)
   const authenticated = await getSession();
@@ -14,25 +16,23 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    // Fetch user portfolio data (account_id IS NULL) — agent portfolios are separate
+    // Fetch ALL portfolio data (including agents) — frontend will filter by account_id
     const [positionsRes, tradesRes, snapshotsRes, intradaySnapshotsRes, signalsRes, configRes] = await Promise.all([
       paperSupabase
         .from('paper_positions')
         .select('*')
-        .is('account_id', null)
         .order('opened_at', { ascending: false }),
 
       paperSupabase
         .from('paper_trades')
         .select('*')
-        .is('account_id', null)
         .order('closed_at', { ascending: false })
-        .limit(100),
+        .limit(500), // Increased limit to include all agent trades
 
       paperSupabase
         .from('paper_portfolio_snapshots')
         .select('*')
-        .is('account_id', null)
+        .is('account_id', null) // Keep snapshots user-only for now
         .order('date', { ascending: true })
         .limit(2000),
 
@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
       paperSupabase
         .from('paper_portfolio_snapshots_intraday')
         .select('*')
-        .is('account_id', null)
+        .is('account_id', null) // Keep snapshots user-only for now
         .order('timestamp', { ascending: true })
         .limit(2000),
 

@@ -61,4 +61,4 @@ export async function GET(request: NextRequest) {
       { status: 500 }
     );
   }
-}
+}// RLS disabled Thu Mar  5 10:34:49 PST 2026

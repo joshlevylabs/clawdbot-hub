@@ -1,15 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
   try {
-    // Create a fresh Supabase client per request to avoid stale connection caching
-    const freshClient = createClient(
-      process.env.NEXT_PUBLIC_PAPER_SUPABASE_URL || '',
-      process.env.PAPER_SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_PAPER_SUPABASE_ANON_KEY || ''
-    );
+    const supabaseUrl = process.env.NEXT_PUBLIC_PAPER_SUPABASE_URL || '';
+    const supabaseKey = process.env.PAPER_SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_PAPER_SUPABASE_ANON_KEY || '';
 
     // Get agent portfolio snapshots from paper_portfolio_snapshots table
     const agentAccountIds = [
@@ -20,12 +16,19 @@ export async function GET(request: NextRequest) {
       'peter-lynch'
     ];
 
-    // Fetch snapshots for all agents at once
-    const { data: snapshots, error } = await freshClient
-      .from('paper_portfolio_snapshots')
-      .select('account_id, date, equity, spy_price, spy_baseline')
-      .in('account_id', agentAccountIds)
-      .order('date', { ascending: true });
+    // Use raw fetch to bypass any Supabase JS client caching
+    const agentFilter = agentAccountIds.map(id => `"${id}"`).join(',');
+    const fetchUrl = `${supabaseUrl}/rest/v1/paper_portfolio_snapshots?account_id=in.(${agentAccountIds.join(',')})&select=account_id,date,equity,spy_price,spy_baseline&order=date.asc&limit=2000`;
+    const resp = await fetch(fetchUrl, {
+      headers: {
+        'apikey': supabaseKey,
+        'Authorization': `Bearer ${supabaseKey}`,
+      },
+      cache: 'no-store',
+    });
+    
+    const snapshots = await resp.json();
+    const error = resp.ok ? null : { message: `HTTP ${resp.status}` };
 
     if (error) {
       console.error('Error fetching agent snapshots:', error);

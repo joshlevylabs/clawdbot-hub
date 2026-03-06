@@ -1695,11 +1695,11 @@ function StrategyTechnicalOverview({ strategyName, tickers }: { strategyName: st
   // Agent Analysis — 5 Trading Desk Agents
   if (strategyName.includes('Agent Analysis') || strategyName.includes('Agent')) {
     const agents = [
-      { id: 'chris-vermeulen', emoji: '📊', name: 'Chris Vermeulen', role: 'Technical Analyst', specialty: 'Chart patterns, cycles, momentum, risk assessment', color: '#F59E0B', bg: 'rgba(245,158,11,0.08)', border: 'rgba(245,158,11,0.3)' },
-      { id: 'warren-buffett', emoji: '📈', name: 'Warren Buffett', role: 'Value Investor', specialty: 'Intrinsic value, moats, margin of safety, long-term quality', color: '#10B981', bg: 'rgba(16,185,129,0.08)', border: 'rgba(16,185,129,0.3)' },
-      { id: 'peter-schiff', emoji: '🥇', name: 'Peter Schiff', role: 'Austrian Economist', specialty: 'Monetary policy, gold, inflation hedges, macro risk', color: '#EAB308', bg: 'rgba(234,179,8,0.08)', border: 'rgba(234,179,8,0.3)' },
-      { id: 'raoul-pal', emoji: '🌊', name: 'Raoul Pal', role: 'Global Macro', specialty: 'Liquidity cycles, crypto, exponential age, risk-on/off', color: '#06B6D4', bg: 'rgba(6,182,212,0.08)', border: 'rgba(6,182,212,0.3)' },
-      { id: 'peter-lynch', emoji: '📉', name: 'Peter Lynch', role: 'GARP Investor', specialty: 'PEG ratios, stock categorization, two-minute drill', color: '#8B5CF6', bg: 'rgba(139,92,246,0.08)', border: 'rgba(139,92,246,0.3)' },
+      { id: 'chris-vermeulen', emoji: '📊', name: 'Chris Vermeulen', role: 'Technical Analyst', specialty: 'Chart patterns, cycles, momentum, risk assessment', color: '#F59E0B', bg: 'rgba(245,158,11,0.08)', border: 'rgba(245,158,11,0.3)', minStrength: 40, minStrategies: 3, sectors: 'All', regimes: 'Bull, Recovery, Sideways' },
+      { id: 'warren-buffett', emoji: '📈', name: 'Warren Buffett', role: 'Value Investor', specialty: 'Intrinsic value, moats, margin of safety, long-term quality', color: '#10B981', bg: 'rgba(16,185,129,0.08)', border: 'rgba(16,185,129,0.3)', minStrength: 35, minStrategies: 3, sectors: 'Financials, Staples, Energy, Industrials, Healthcare', regimes: 'All (incl. Bear)' },
+      { id: 'peter-schiff', emoji: '🥇', name: 'Peter Schiff', role: 'Austrian Economist', specialty: 'Monetary policy, gold, inflation hedges, macro risk', color: '#EAB308', bg: 'rgba(234,179,8,0.08)', border: 'rgba(234,179,8,0.3)', minStrength: 30, minStrategies: 2, sectors: 'Energy, Materials, Utilities, Real Estate', regimes: 'All (incl. Crisis)' },
+      { id: 'raoul-pal', emoji: '🌊', name: 'Raoul Pal', role: 'Global Macro', specialty: 'Liquidity cycles, crypto, exponential age, risk-on/off', color: '#06B6D4', bg: 'rgba(6,182,212,0.08)', border: 'rgba(6,182,212,0.3)', minStrength: 35, minStrategies: 3, sectors: 'Tech, Comms, Financials', regimes: 'Bull, Recovery only' },
+      { id: 'peter-lynch', emoji: '📉', name: 'Peter Lynch', role: 'GARP Investor', specialty: 'PEG ratios, stock categorization, two-minute drill', color: '#8B5CF6', bg: 'rgba(139,92,246,0.08)', border: 'rgba(139,92,246,0.3)', minStrength: 30, minStrategies: 2, sectors: 'All', regimes: 'Bull, Recovery, Sideways' },
     ];
 
     return (
@@ -1709,7 +1709,7 @@ function StrategyTechnicalOverview({ strategyName, tickers }: { strategyName: st
           <h3 className="text-base font-semibold text-slate-200">Trading Desk — Agent Analysis</h3>
         </div>
 
-        {/* Agent Cards Grid */}
+        {/* Agent Cards Grid — with filter criteria */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-6">
           {agents.map((agent) => (
             <div
@@ -1725,7 +1725,24 @@ function StrategyTechnicalOverview({ strategyName, tickers }: { strategyName: st
                 </div>
                 <div className="w-2 h-2 rounded-full bg-green-500 flex-shrink-0" title="Active" />
               </div>
-              <p className="text-[11px] text-slate-400 leading-tight">{agent.specialty}</p>
+              <div className="mt-2 space-y-1 text-[10px]">
+                <div className="flex justify-between">
+                  <span className="text-slate-500">Min Strength:</span>
+                  <span className="text-slate-300 font-mono">{agent.minStrength}%</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-500">Min Strategies:</span>
+                  <span className="text-slate-300 font-mono">{agent.minStrategies}+</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-500">Sectors:</span>
+                  <span className="text-slate-300 truncate ml-2 text-right" title={agent.sectors}>{agent.sectors}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-500">Regimes:</span>
+                  <span className="text-slate-300 truncate ml-2 text-right" title={agent.regimes}>{agent.regimes}</span>
+                </div>
+              </div>
             </div>
           ))}
         </div>
@@ -2050,7 +2067,7 @@ function AgentAnalysisTickerRow({ ticker, isFiltered }: { ticker: TickerDetail; 
 
   return (
     <div className={`rounded-lg border overflow-hidden ${isFiltered ? 'bg-red-900/10 border-red-700/20' : 'bg-slate-800/50 border-slate-700/50'}`}>
-      {/* Collapsed row — symbol + agent icons only */}
+      {/* Collapsed row — symbol + signal strength + agent icons */}
       <button
         onClick={handleExpand}
         className="w-full flex items-center justify-between p-3 hover:bg-slate-700/20 transition-colors"
@@ -2067,6 +2084,15 @@ function AgentAnalysisTickerRow({ ticker, isFiltered }: { ticker: TickerDetail; 
           }`}>
             {approvalCount}/{totalAgents}
           </span>
+          {raw.signal_strength != null && (
+            <span className={`text-[10px] px-1.5 py-0.5 rounded font-mono ${
+              raw.signal_strength >= 40 ? 'bg-emerald-900/30 text-emerald-400' 
+              : raw.signal_strength >= 30 ? 'bg-amber-900/30 text-amber-400' 
+              : 'bg-red-900/30 text-red-400'
+            }`}>
+              Str: {typeof raw.signal_strength === 'number' ? raw.signal_strength.toFixed(0) : raw.signal_strength}%
+            </span>
+          )}
         </div>
         <div className="flex items-center gap-2">
           {agentStyles.map((agent) => {

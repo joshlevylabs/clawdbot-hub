@@ -522,6 +522,47 @@ export default function PortfolioExitFlow({ universeData, coreData }: PortfolioE
       return;
     }
 
+    if (stageKey === 'exit-gating') {
+      setSelectedStage({
+        name: 'Exit Gating',
+        description: 'Risk management layer that applies urgency multipliers based on combined P&L and exit signal analysis.\n\n**Urgency rules:**\n• Base urgency: 1.0× for all positions\n• Negative P&L + ≥2 exit signals → 1.5× urgency (losing positions need faster attention)\n• Positive P&L + Fibonacci target hit → 1.2× urgency (profit-taking opportunity)\n\nAll positions pass through — gating modifies priority, not signal direction.',
+        stageType: 'modifier',
+        inputCount: positionsWithSignals.length,
+        outputCount: positionsWithSignals.length,
+        filteredTickers: [],
+        passedTickers: positionsWithSignals.map(pos => ({
+          symbol: pos.symbol,
+          signal: pos.signalData?.signal || 'N/A',
+          currentPrice: pos.current_price || pos.entry_price,
+          reason: `${pos.exitSignals.length} exit signals`,
+          rawData: pos.signalData
+        }))
+      });
+      return;
+    }
+
+    if (stageKey.startsWith('exit-count-')) {
+      const count = parseInt(stageKey.replace('exit-count-', ''));
+      const positions = pipelineData.exitSignalCounts[count] || [];
+      
+      setSelectedStage({
+        name: `${count} Exit Signals`,
+        description: `Positions where exactly ${count} of the 8 exit strategies flagged a concern.\n\n${count <= 2 ? '**Low risk** — these positions have strong thesis support and minimal exit pressure.' : count <= 4 ? '**Moderate risk** — multiple strategies are flagging concerns. Monitor closely for further deterioration.' : count <= 6 ? '**High risk** — more than half of exit strategies triggered. Consider trimming position size.' : '**Critical risk** — nearly all exit strategies agree this position should be closed.'}`,
+        stageType: 'filter',
+        inputCount: positionsWithSignals.length,
+        outputCount: positions.length,
+        filteredTickers: [],
+        passedTickers: positions.map(pos => ({
+          symbol: pos.symbol,
+          signal: pos.signalData?.signal || 'N/A',
+          currentPrice: pos.current_price || pos.entry_price,
+          reason: pos.exitSignals.join(', '),
+          rawData: pos.signalData
+        }))
+      });
+      return;
+    }
+
     if (stageKey.startsWith('recommendation-')) {
       const recType = stageKey.replace('recommendation-', '') as keyof typeof pipelineData.exitRecommendations;
       const positions = pipelineData.exitRecommendations[recType];
@@ -749,9 +790,9 @@ export default function PortfolioExitFlow({ universeData, coreData }: PortfolioE
                         ref={(el) => { nodeRefs.current[`exit-count-${count}`] = el; }}
                         name={`${count} Exit Signals`}
                         description={`${positions.length} positions`}
-                        inputCount={0}
+                        inputCount={positionsWithSignals.length}
                         outputCount={positions.length}
-                        onClick={() => {/* TODO: implement */}}
+                        onClick={() => handleStageClick(`exit-count-${count}`)}
                         nodeType="consensus"
                         className={`max-w-[140px] border-2 ${urgencyColor}`}
                         confidence={85}
@@ -795,7 +836,7 @@ export default function PortfolioExitFlow({ universeData, coreData }: PortfolioE
                         ref={(el) => { nodeRefs.current[`recommendation-${recType}`] = el; }}
                         name={recType}
                         description={`${positions.length} positions`}
-                        inputCount={0}
+                        inputCount={positionsWithSignals.length}
                         outputCount={positions.length}
                         onClick={() => handleStageClick(`recommendation-${recType}`)}
                         nodeType="output"

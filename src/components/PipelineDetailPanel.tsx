@@ -223,6 +223,21 @@ const STRATEGY_DESCRIPTIONS: Record<string, string> = {
   'Signal Gating': "A pass-through filter that operates on persistence-confirmed signals only. Applies defensive logic to reduce risk without modifying signal scores.\n\n**Bear Regime Suppression:**\n• Converts BUY signals to HOLD when a ticker's regime is bearish (price below key moving averages)\n• Prevents buying into downtrends regardless of strategy consensus strength\n\n**Sell Suppression:**\n• Converts SELL signals to HOLD to prevent panic selling during uncertain market conditions\n• Maintains defensive positioning rather than actively shorting\n\n**Pass-Through Design:**\n• No score modification — only signal suppression (BUY→HOLD, SELL→HOLD)\n• Operates exclusively on signals that have already passed 2-day persistence confirmation\n• Consensus tier structure is preserved through gating",
   'Confidence Tuning': "Assigns each ticker a confidence score (0-100%) based on multiple contextual factors, then filters signals based on confidence thresholds.\n\n**How confidence is calculated:**\n• Each ticker starts with a base confidence score from the raw signal strength\n• **Regime weight modifier:** Bull regime multiplies confidence by 1.2×, sideways by 1.0×, bear by 0.6×\n• **Sector rotation modifier:** Sectors in favorable rotation phase get boosted (>1.0×), unfavorable get penalized (<1.0×)\n• **Asset role consideration:** Core positions (All-Weather) vs Satellite positions are treated differently in the calculation\n• **Sideways penalty:** Range-bound markets get confidence reduced to account for lower trend reliability\n• **Kalshi adjustment:** When prediction market data is available, incorporates market-implied probabilities\n\n**Final filtering by confidence:**\n• **High confidence (≥70%):** Signal passes through unchanged\n• **Medium confidence (40-70%):** Signal may be moderated but generally passes\n• **Low confidence (<40%):** Signal gets filtered to HOLD to prevent weak entries\n\nThis ensures only signals with sufficient contextual support reach the portfolio, filtering out trades that may look good in isolation but lack broader market confirmation.",
   'Final Filters': "Last-pass filters that enforce portfolio construction rules and risk management.\n\n**Filters:**\n• Cluster limit: max 2 BUY signals per sector (prevents over-concentration)\n• Asset confidence threshold: minimum confidence required to pass\n• Crash mode protection: suppresses all BUY signals during market crashes (VIX spike + broad decline)\n• Multiplier caps: limits maximum position sizing multipliers",
+  // === Portfolio Exit Strategies ===
+  'Stop Loss Proximity': "Evaluates how close each position's current price is to its stop loss level.\n\n**Logic:**\n• Calculates distance: |current_price − stop_loss| / current_price\n• Triggers when distance < 10% — the position is dangerously close to the stop\n• Positions without a stop loss set are excluded (no trigger)\n\n**Why it matters:** Positions approaching their stop loss have already moved significantly against the thesis. Even if not yet stopped out, proximity signals deteriorating conviction and rising risk.",
+  'Strategy Consensus': "Checks whether the strategy vote consensus that supported the original entry has decayed since the position was opened.\n\n**Logic:**\n• Retrieves entry-time signal confidence from the position record\n• Converts to estimated entry votes: round(confidence / 100 × 8 strategies)\n• Counts current active strategy votes for the ticker\n• Triggers when current votes < entry votes — consensus has weakened\n\n**Why it matters:** If the strategies that agreed to buy no longer agree, the original thesis may be breaking down. Decaying consensus is an early warning before price fully reflects the change.",
+  'Momentum Reversal': "Detects when 20-day price momentum has turned negative for a held position.\n\n**Logic:**\n• Reads the ticker's `momentum_20d` value from the MRE signal data\n• Triggers when momentum_20d < 0 — the 20-day trend has flipped negative\n\n**Why it matters:** Negative 20-day momentum means the medium-term trend is reversing. Holding through a momentum reversal increases drawdown risk. Combined with other exit signals, this is a strong indicator to reduce exposure.",
+  'Sector Sentiment': "Flags positions in sectors showing extreme greed on the Fear & Greed composite.\n\n**Logic:**\n• Reads sector-specific F&G score (falls back to effective F&G → global F&G)\n• Triggers when sector F&G > 70 — the sector is in extreme greed territory\n\n**Why it matters:** Extreme sector greed historically precedes sector rotations and pullbacks. Positions in overheated sectors carry elevated mean-reversion risk. This is the Portfolio flow's counterpart to the Pipeline's fear-based buy logic.",
+  'Regime Check': "Detects when the market regime has changed since the position was opened.\n\n**Logic:**\n• Stores the regime at entry time on each position record (bull/sideways/bear)\n• Compares entry regime to the ticker's current regime from MRE signal data\n• Triggers when entry_regime ≠ current_regime — the environment has shifted\n\n**Why it matters:** A position entered during a bull regime may not be appropriate in a sideways or bear regime. Regime shifts invalidate the original entry context and signal that position sizing and thesis should be re-evaluated.",
+  'RSI Overbought': "Identifies positions where the RSI(14) has climbed above 70, signaling overbought conditions.\n\n**Logic:**\n• Reads the ticker's `rsi_14` value from MRE signal data\n• Triggers when RSI(14) > 70 — standard overbought threshold\n\n**Why it matters:** RSI above 70 historically signals that a pullback is likely. For existing positions, this is a profit-taking signal — especially when combined with other exit signals like Fibonacci targets or momentum reversal.",
+  'Fibonacci Target': "Checks whether the position's current price has reached Fibonacci extension targets.\n\n**Logic:**\n• Reads Fibonacci profit targets from the MRE signal data\n• Calculates distance to the nearest extension target\n• Triggers when price is within 5% of a Fibonacci extension level\n\n**Why it matters:** Fibonacci extensions are natural resistance levels where profit-taking pressure increases. Positions near their targets have realized most of their expected move. Combined with RSI or momentum signals, this is a strong sell trigger.",
+  'Hold Time Analysis': "Evaluates whether a position has been held longer than its target hold period.\n\n**Logic:**\n• Calculates actual hold days: (now − opened_at) in days\n• Compares to the position's target hold period (default: 10 days if not set)\n• Triggers when hold_days ≥ target — the position has exceeded its intended timeframe\n\n**Why it matters:** Positions held beyond their target period often reflect thesis drift — the original catalyst may have passed. Time decay of edge is real: the longer you hold beyond the target, the more likely the position is drifting without conviction.",
+  'Portfolio Input': "All open positions in the paper trading portfolio, loaded from the portfolio API. Each position includes entry price, current price, stop loss, take profit, entry regime, signal confidence, and hold duration.\n\nThis is the starting point of the exit pipeline — every position gets evaluated by all 8 exit strategies.",
+  'Exit Gating': "Risk management layer that applies urgency multipliers to exit recommendations based on combined signals.\n\n**Logic:**\n• Base urgency: 1.0× for all positions\n• **Negative P&L + multiple exit signals:** Urgency increases to 1.5× — losing positions with multiple exit flags need faster attention\n• **Positive P&L + Fibonacci target hit:** Urgency set to 1.2× — profit-taking opportunity\n• Positions pass through with their urgency score attached\n\n**Why it matters:** Not all exit signals are equally urgent. A profitable position near a Fibonacci target is a different situation than a losing position with decaying consensus and regime change. The gating layer prioritizes which exits need immediate attention.",
+  'HOLD Recommendation': "Positions with 0–2 exit signals. Low risk — maintain current position.\n\nThese positions still have strong thesis support: regime hasn't changed, strategy consensus is intact, momentum is positive, and they're not near stop loss or overbought levels.",
+  'WATCH Recommendation': "Positions with 3–4 exit signals. Elevated risk — monitor closely.\n\nMultiple exit strategies are flagging concerns. The position isn't urgent enough to exit immediately, but conditions are deteriorating. Review at next daily check.",
+  'TRIM Recommendation': "Positions with 5–6 exit signals. High risk — reduce position size.\n\nMore than half of exit strategies are flagging. The thesis is significantly weakened. Reduce exposure by selling a portion to lock in gains or limit losses.",
+  'EXIT Recommendation': "Positions with 7+ exit signals. Critical risk — close position.\n\nNearly all exit strategies agree: the position should be closed. The original thesis has broken down across momentum, regime, sentiment, and technical levels.",
 };
 
 // Helper function to check if this is an individual strategy stage
@@ -1781,6 +1796,95 @@ function StrategyTechnicalOverview({ strategyName, tickers }: { strategyName: st
           <p className="text-[11px] text-slate-500 text-center mt-2">
             Each agent applies their style filters (sector, strength, regime). Only tickers where <strong className="text-slate-400">all 5 agents agree</strong> pass through to Today&apos;s Plays.
           </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Portfolio Exit Strategies — visual breakdown
+  const EXIT_STRATEGY_KEYS = ['Stop Loss Proximity', 'Strategy Consensus', 'Momentum Reversal', 'Sector Sentiment', 'Regime Check', 'RSI Overbought', 'Fibonacci Target', 'Hold Time Analysis', 'Exit Gating', 'Portfolio Input'];
+  const EXIT_REC_KEYS = ['HOLD Recommendation', 'WATCH Recommendation', 'TRIM Recommendation', 'EXIT Recommendation', 'HOLD', 'WATCH', 'TRIM', 'EXIT'];
+  if (EXIT_STRATEGY_KEYS.includes(strategyName) || EXIT_REC_KEYS.includes(strategyName)) {
+    const exitColors: Record<string, string> = {
+      'Stop Loss Proximity': 'text-red-400',
+      'Strategy Consensus': 'text-amber-400',
+      'Momentum Reversal': 'text-orange-400',
+      'Sector Sentiment': 'text-purple-400',
+      'Regime Check': 'text-cyan-400',
+      'RSI Overbought': 'text-pink-400',
+      'Fibonacci Target': 'text-emerald-400',
+      'Hold Time Analysis': 'text-blue-400',
+      'Exit Gating': 'text-yellow-400',
+      'Portfolio Input': 'text-slate-300',
+    };
+    const exitIcons: Record<string, string> = {
+      'Stop Loss Proximity': '🛑',
+      'Strategy Consensus': '📊',
+      'Momentum Reversal': '↩️',
+      'Sector Sentiment': '🌡️',
+      'Regime Check': '🔄',
+      'RSI Overbought': '📈',
+      'Fibonacci Target': '🎯',
+      'Hold Time Analysis': '⏱️',
+      'Exit Gating': '🚦',
+      'Portfolio Input': '📂',
+      'HOLD': '🟢', 'HOLD Recommendation': '🟢',
+      'WATCH': '👀', 'WATCH Recommendation': '👀',
+      'TRIM': '✂️', 'TRIM Recommendation': '✂️',
+      'EXIT': '🚪', 'EXIT Recommendation': '🚪',
+    };
+    const icon = exitIcons[strategyName] || '📋';
+    const color = exitColors[strategyName] || 'text-slate-300';
+    
+    // Show position details for exit strategies
+    const positionStats = tickers.length > 0 ? {
+      total: tickers.length,
+      withPrice: tickers.filter(t => t.currentPrice && t.currentPrice > 0).length,
+      avgPrice: tickers.reduce((sum, t) => sum + (t.currentPrice || 0), 0) / Math.max(1, tickers.length),
+    } : null;
+
+    return (
+      <div className="p-4 sm:p-6 border-b border-slate-700/50 bg-slate-800/30">
+        <div className="flex items-center gap-3 mb-4">
+          <span className="text-xl">{icon}</span>
+          <h3 className={`text-base font-semibold ${color}`}>Exit Strategy Analysis</h3>
+        </div>
+        <div className="space-y-3">
+          {/* Pipeline position in exit flow */}
+          <div className="bg-slate-900/50 rounded-lg p-3 border border-slate-700/30">
+            <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Exit Pipeline Flow</div>
+            <div className="flex items-center justify-center gap-1 flex-wrap text-xs">
+              <span className={`px-2 py-1 rounded ${strategyName === 'Portfolio Input' ? 'bg-primary-900/40 text-primary-300 border border-primary-700/40' : 'bg-slate-800 text-slate-500 border border-slate-700'}`}>Input</span>
+              <span className="text-slate-600">→</span>
+              <span className={`px-2 py-1 rounded ${EXIT_STRATEGY_KEYS.slice(0, 8).includes(strategyName) ? 'bg-red-900/40 text-red-300 border border-red-700/40' : 'bg-slate-800 text-slate-500 border border-slate-700'}`}>8 Evaluations</span>
+              <span className="text-slate-600">→</span>
+              <span className="px-2 py-1 rounded bg-slate-800 text-slate-500 border border-slate-700">Signal Count</span>
+              <span className="text-slate-600">→</span>
+              <span className={`px-2 py-1 rounded ${strategyName === 'Exit Gating' ? 'bg-yellow-900/40 text-yellow-300 border border-yellow-700/40' : 'bg-slate-800 text-slate-500 border border-slate-700'}`}>Gating</span>
+              <span className="text-slate-600">→</span>
+              <span className={`px-2 py-1 rounded ${EXIT_REC_KEYS.includes(strategyName) ? 'bg-emerald-900/40 text-emerald-300 border border-emerald-700/40' : 'bg-slate-800 text-slate-500 border border-slate-700'}`}>Recommendation</span>
+            </div>
+          </div>
+          {/* Position statistics */}
+          {positionStats && positionStats.total > 0 && (
+            <div className="bg-slate-900/50 rounded-lg p-3 border border-slate-700/30">
+              <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Position Overview</div>
+              <div className="grid grid-cols-3 gap-3 text-center">
+                <div>
+                  <div className="text-lg font-bold text-slate-200">{positionStats.total}</div>
+                  <div className="text-xs text-slate-500">Positions Evaluated</div>
+                </div>
+                <div>
+                  <div className="text-lg font-bold text-slate-200">{positionStats.withPrice}</div>
+                  <div className="text-xs text-slate-500">With Live Prices</div>
+                </div>
+                <div>
+                  <div className="text-lg font-bold text-slate-200">${positionStats.avgPrice.toFixed(2)}</div>
+                  <div className="text-xs text-slate-500">Avg Price</div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     );

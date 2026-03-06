@@ -313,9 +313,10 @@ export async function handleAdvisorRequest(
       body: JSON.stringify({
         model,
         max_tokens: 2000,
-        system: config.systemPrompt,
+        system: config.systemPrompt + "\n\nCRITICAL OUTPUT RULE: You MUST respond with ONLY a valid JSON object. No markdown, no commentary, no preamble. Your entire response must be parseable JSON matching this schema: {market_assessment, pre_market_actions[], market_hours_actions[], positions_review[], watchlist[], risk_warnings[]}",
         messages: [
           { role: "user", content: marketContext + "\n\n" + citationRules },
+          { role: "assistant", content: "{" },
         ],
       }),
     });
@@ -329,11 +330,16 @@ export async function handleAdvisorRequest(
     const data = await response.json();
     const text = data?.content?.[0]?.text || "";
 
-    let jsonStr = text.trim();
+    // Prepend "{" since we used assistant prefill
+    let jsonStr = ("{" + text).trim();
     const jsonMatch = jsonStr.match(/```(?:json)?\s*([\s\S]*?)```/);
     if (jsonMatch) jsonStr = jsonMatch[1].trim();
+    // Find the outermost JSON object
     const braceStart = jsonStr.indexOf('{');
     if (braceStart > 0) jsonStr = jsonStr.slice(braceStart);
+    // Trim any trailing text after the JSON object
+    const lastBrace = jsonStr.lastIndexOf('}');
+    if (lastBrace > 0) jsonStr = jsonStr.slice(0, lastBrace + 1);
 
     const analysisResult = JSON.parse(jsonStr);
 

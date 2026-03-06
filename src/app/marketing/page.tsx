@@ -689,7 +689,22 @@ function PodcastDashboard() {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('podcast-shows');
       if (saved) {
-        try { return JSON.parse(saved); } catch {}
+        try {
+          const parsed: Show[] = JSON.parse(saved);
+          // Merge new episodes from defaults that don't exist in saved data
+          const merged = parsed.map(show => {
+            const defaultShow = DEFAULT_SHOWS.find(d => d.id === show.id);
+            if (defaultShow) {
+              const savedNums = new Set(show.episodes.map(e => e.number));
+              const newEps = defaultShow.episodes.filter(e => !savedNums.has(e.number));
+              if (newEps.length > 0) {
+                return { ...show, episodes: [...show.episodes, ...newEps] };
+              }
+            }
+            return show;
+          });
+          return merged;
+        } catch {}
       }
     }
     return DEFAULT_SHOWS;

@@ -652,6 +652,14 @@ export default function TradingPage() {
       trades: any[];
     }> = {};
     
+    // Seed all known agents so they always appear (even with 0 positions)
+    const allAgentIds = ['chris-vermeulen', 'warren-buffett', 'peter-schiff', 'raoul-pal', 'peter-lynch', 'ray-dalio'];
+    // User portfolio
+    agentGroups['user'] = { accountId: null, positions: [], trades: [] };
+    for (const id of allAgentIds) {
+      agentGroups[id] = { accountId: id, positions: [], trades: [] };
+    }
+
     // Group positions by agent
     positions.forEach(pos => {
       const key = pos.account_id || 'user';

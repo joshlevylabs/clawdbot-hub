@@ -15,10 +15,10 @@ const publicPaths = ['/login', '/forgot-password', '/reset-password', '/api/auth
 const staticPaths = ['/_next', '/favicon.ico', '/data/', '/audio/'];
 
 // TV routes — accessible with tv or admin scope
-const tvPaths = ['/tv'];
+const tvPaths = ['/tv', '/trading'];
 
 // TV-accessible API routes
-const tvApiPaths = ['/api/trading/'];
+const tvApiPaths = ['/api/trading/', '/api/paper-trading', '/api/real-time-trading', '/api/alpaca-validation'];
 
 async function getTokenScope(token: string): Promise<{ scope: string; userId: string } | null> {
   try {

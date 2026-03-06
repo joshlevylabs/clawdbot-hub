@@ -71,6 +71,7 @@ interface ChartDataPoint {
   schiff?: number;
   pal?: number;
   lynch?: number;
+  dalio?: number;
 }
 
 type TimeRange = "1D" | "1W" | "1M" | "3M" | "1Y";
@@ -98,6 +99,7 @@ const AGENT_CONFIG = {
   schiff: { key: 'schiff', name: 'Schiff', color: '#eab308' },
   pal: { key: 'pal', name: 'Pal', color: '#06b6d4' },
   lynch: { key: 'lynch', name: 'Lynch', color: '#8b5cf6' },
+  dalio: { key: 'dalio', name: 'Dalio', color: '#f97316' },
 } as const;
 
 function formatPercent(value: number): string {
@@ -195,6 +197,7 @@ export default function PerformanceChart({
     schiff: true,
     pal: true,
     lynch: true,
+    dalio: true,
   });
 
   // Convert intraday snapshots to PortfolioSnapshot format for unified processing
@@ -358,7 +361,7 @@ export default function PerformanceChart({
       }
 
       // Get agent returns for this date — fuzzy match within 5 min, then carry forward last known value
-      const agentReturns: Partial<{ chris: number; buffett: number; schiff: number; pal: number; lynch: number }> = {};
+      const agentReturns: Partial<{ chris: number; buffett: number; schiff: number; pal: number; lynch: number; dalio: number }> = {};
       const snapshotMs = new Date(s.date.includes("T") ? s.date : s.date + "T00:00").getTime();
       const FIVE_MIN = 5 * 60 * 1000;
       
@@ -367,7 +370,8 @@ export default function PerformanceChart({
                        agentId === 'warren-buffett' ? 'buffett' :
                        agentId === 'peter-schiff' ? 'schiff' :
                        agentId === 'raoul-pal' ? 'pal' :
-                       agentId === 'peter-lynch' ? 'lynch' : null;
+                       agentId === 'peter-lynch' ? 'lynch' :
+                       agentId === 'ray-dalio' ? 'dalio' : null;
         if (!agentKey) continue;
 
         // Try exact match first
@@ -521,7 +525,7 @@ export default function PerformanceChart({
         <div className="mb-3 flex items-center gap-2 flex-wrap">
           <span className="text-xs text-slate-500">Agent Lines:</span>
           {Object.entries(AGENT_CONFIG).map(([key, config]) => {
-            const hasData = agentSnapshots[`${key === 'chris' ? 'chris-vermeulen' : key === 'buffett' ? 'warren-buffett' : key === 'schiff' ? 'peter-schiff' : key === 'pal' ? 'raoul-pal' : 'peter-lynch'}`];
+            const hasData = agentSnapshots[`${key === 'chris' ? 'chris-vermeulen' : key === 'buffett' ? 'warren-buffett' : key === 'schiff' ? 'peter-schiff' : key === 'pal' ? 'raoul-pal' : key === 'lynch' ? 'peter-lynch' : 'ray-dalio'}`];
             if (!hasData || hasData.length === 0) return null;
             
             return (
@@ -614,7 +618,8 @@ export default function PerformanceChart({
                             key === 'buffett' ? 'warren-buffett' :
                             key === 'schiff' ? 'peter-schiff' :
                             key === 'pal' ? 'raoul-pal' :
-                            'peter-lynch';
+                            key === 'lynch' ? 'peter-lynch' :
+                            'ray-dalio';
               
               const hasData = agentSnapshots[agentId] && agentSnapshots[agentId].length > 0;
               if (!hasData || !visibleAgents[key]) return null;

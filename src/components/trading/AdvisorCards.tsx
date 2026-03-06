@@ -169,6 +169,22 @@ const ADVISORS: AdvisorConfig[] = [
     cacheKey: 'lynch-daily-actions-v1',
     knowledgeVersion: 'peter-lynch-v1',
   },
+  {
+    id: 'dalio',
+    name: 'Ray Dalio',
+    subtitle: 'All Weather Strategist',
+    emoji: '⚖️',
+    borderColor: 'border-orange-500/30',
+    hoverBorder: 'hover:border-orange-400/50',
+    accentText: 'text-orange-400',
+    accentBg: 'bg-orange-600/20',
+    spinnerBorder: 'border-orange-400',
+    gradient: ['#f97316', '#ea580c'],
+    avatarColors: { suit: '#c2410c', accent: '#fb923c', hair: '#9ca3af' },
+    apiRoute: '/api/trading/dalio-actions',
+    cacheKey: 'dalio-daily-actions-v1',
+    knowledgeVersion: 'ray-dalio-v1',
+  },
 ];
 
 // ── Helpers ──
@@ -807,7 +823,8 @@ export default function AdvisorCards({ onAgentClick }: AdvisorCardsProps = {}) {
                       advisorId === 'buffett' ? 'warren-buffett' :
                       advisorId === 'schiff' ? 'peter-schiff' :
                       advisorId === 'pal' ? 'raoul-pal' :
-                      advisorId === 'lynch' ? 'peter-lynch' : null;
+                      advisorId === 'lynch' ? 'peter-lynch' :
+                      advisorId === 'dalio' ? 'ray-dalio' : null;
     
     return portfolioId ? portfolios.find(p => p.id === portfolioId) : undefined;
   }, [portfolios]);

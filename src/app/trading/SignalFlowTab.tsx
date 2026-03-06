@@ -607,6 +607,7 @@ function calculatePipelineStages(signals: MRESignal[], dataType: 'core' | 'unive
     { id: 'peter-schiff', name: 'Peter Schiff', emoji: '🥇', color: '#EAB308', preferredSectors: ['Energy', 'Materials', 'Utilities', 'Real Estate'], minSignalStrength: 30, minStrategiesAgreeing: 2, preferredRegimes: ['bull', 'recovery', 'sideways', 'bear', 'crisis'] },
     { id: 'raoul-pal', name: 'Raoul Pal', emoji: '🌊', color: '#06B6D4', preferredSectors: ['Technology', 'Communication Services', 'Financials'], minSignalStrength: 35, minStrategiesAgreeing: 3, preferredRegimes: ['bull', 'recovery'] },
     { id: 'peter-lynch', name: 'Peter Lynch', emoji: '📉', color: '#8B5CF6', preferredSectors: ['*'], minSignalStrength: 30, minStrategiesAgreeing: 2, preferredRegimes: ['bull', 'recovery', 'sideways'] },
+    { id: 'ray-dalio', name: 'Ray Dalio', emoji: '⚖️', color: '#F97316', preferredSectors: ['*'], minSignalStrength: 35, minStrategiesAgreeing: 3, preferredRegimes: ['bull', 'recovery', 'sideways', 'bear'] },
   ];
 
   // Use the most common regime from signals as global regime fallback
@@ -865,6 +866,7 @@ function WorkflowVisualization({ pipelineData, mreVersions, strategyVersions, on
     { emoji: '🥇', name: 'Schiff', color: '#EAB308' },
     { emoji: '🌊', name: 'Pal', color: '#06B6D4' },
     { emoji: '📉', name: 'Lynch', color: '#8B5CF6' },
+    { emoji: '⚖️', name: 'Dalio', color: '#F97316' },
   ];
 
   const containerRef = useRef<HTMLDivElement>(null);

@@ -1700,6 +1700,7 @@ function StrategyTechnicalOverview({ strategyName, tickers }: { strategyName: st
       { id: 'peter-schiff', emoji: '🥇', name: 'Peter Schiff', role: 'Austrian Economist', specialty: 'Monetary policy, gold, inflation hedges, macro risk', color: '#EAB308', bg: 'rgba(234,179,8,0.08)', border: 'rgba(234,179,8,0.3)', minStrength: 30, minStrategies: 2, sectors: 'Energy, Materials, Utilities, Real Estate', regimes: 'All (incl. Crisis)' },
       { id: 'raoul-pal', emoji: '🌊', name: 'Raoul Pal', role: 'Global Macro', specialty: 'Liquidity cycles, crypto, exponential age, risk-on/off', color: '#06B6D4', bg: 'rgba(6,182,212,0.08)', border: 'rgba(6,182,212,0.3)', minStrength: 35, minStrategies: 3, sectors: 'Tech, Comms, Financials', regimes: 'Bull, Recovery only' },
       { id: 'peter-lynch', emoji: '📉', name: 'Peter Lynch', role: 'GARP Investor', specialty: 'PEG ratios, stock categorization, two-minute drill', color: '#8B5CF6', bg: 'rgba(139,92,246,0.08)', border: 'rgba(139,92,246,0.3)', minStrength: 30, minStrategies: 2, sectors: 'All', regimes: 'Bull, Recovery, Sideways' },
+      { id: 'ray-dalio', emoji: '⚖️', name: 'Ray Dalio', role: 'All Weather Strategist', specialty: 'Risk parity, macro regimes, all-weather allocation, debt cycles', color: '#F97316', bg: 'rgba(249,115,22,0.08)', border: 'rgba(249,115,22,0.3)', minStrength: 35, minStrategies: 3, sectors: 'All (risk parity)', regimes: 'All (All Weather)' },
     ];
 
     return (

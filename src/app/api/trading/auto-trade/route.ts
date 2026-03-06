@@ -72,6 +72,16 @@ const AGENT_STYLES: AgentStyle[] = [
     maxPositions: 10,        // Diversified
     positionSizePct: 0.10,   // Smaller positions, more names
   },
+  {
+    id: 'ray-dalio',
+    name: 'Ray Dalio',
+    preferredSectors: ['*'], // All Weather = all sectors, risk parity
+    minSignalStrength: 35,
+    minStrategiesAgreeing: 3,
+    preferredRegimes: ['bull', 'recovery', 'sideways', 'bear'], // All Weather = all regimes
+    maxPositions: 8,
+    positionSizePct: 0.12,
+  },
 ];
 
 // ── Signal Types ──

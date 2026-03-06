@@ -1084,6 +1084,7 @@ export default function TradingPage() {
                         <option value="peter-schiff">Peter Schiff</option>
                         <option value="raoul-pal">Raoul Pal</option>
                         <option value="peter-lynch">Peter Lynch</option>
+                        <option value="ray-dalio">Ray Dalio</option>
                       </select>
                     </div>
                   </div>
@@ -1210,7 +1211,7 @@ export default function TradingPage() {
                           (() => {
                             const agentCashEntries = [
                               { id: null, cash: cash, label: 'My Portfolio', showInterest: true },
-                              ...['chris-vermeulen', 'warren-buffett', 'peter-schiff', 'raoul-pal', 'peter-lynch'].map(id => ({
+                              ...['chris-vermeulen', 'warren-buffett', 'peter-schiff', 'raoul-pal', 'peter-lynch', 'ray-dalio'].map(id => ({
                                 id,
                                 cash: agentPortfolios[id]?.cashBalance ?? 0,
                                 label: getAgentConfig(id).name,
@@ -1292,10 +1293,10 @@ export default function TradingPage() {
                           (() => {
                             const fPosValue = filteredPositions.reduce((s, p) => s + (p.current_price || p.entry_price) * p.qty, 0);
                             const fCostBasis = filteredPositions.reduce((s, p) => s + p.entry_price * p.qty, 0);
-                            const allCash = cash + ['chris-vermeulen', 'warren-buffett', 'peter-schiff', 'raoul-pal', 'peter-lynch']
+                            const allCash = cash + ['chris-vermeulen', 'warren-buffett', 'peter-schiff', 'raoul-pal', 'peter-lynch', 'ray-dalio']
                               .reduce((s, id) => s + (agentPortfolios[id]?.cashBalance ?? 0), 0);
                             const totalAUM = allCash + fPosValue;
-                            const totalStarting = 600000; // 6 portfolios × $100K
+                            const totalStarting = 700000; // 7 portfolios × $100K
                             const totalPnlAll = totalAUM - totalStarting;
                             const totalPnlPctAll = (totalPnlAll / totalStarting) * 100;
                             return (
@@ -1318,7 +1319,7 @@ export default function TradingPage() {
                                   100%
                                 </td>
                                 <td colSpan={6} className="py-3 px-2 text-right text-sm text-slate-500">
-                                  Positions: ${formatCurrency(fPosValue)} + Cash: ${formatCurrency(allCash)} · 6 portfolios × $100K = $600K AUM
+                                  Positions: ${formatCurrency(fPosValue)} + Cash: ${formatCurrency(allCash)} · 7 portfolios × $100K = $700K AUM
                                 </td>
                               </tr>
                             );
@@ -1393,6 +1394,7 @@ export default function TradingPage() {
                         <option value="peter-schiff">Peter Schiff</option>
                         <option value="raoul-pal">Raoul Pal</option>
                         <option value="peter-lynch">Peter Lynch</option>
+                        <option value="ray-dalio">Ray Dalio</option>
                       </select>
                     </div>
                   </div>
@@ -1536,6 +1538,7 @@ export default function TradingPage() {
                         <option value="peter-schiff">Peter Schiff</option>
                         <option value="raoul-pal">Raoul Pal</option>
                         <option value="peter-lynch">Peter Lynch</option>
+                        <option value="ray-dalio">Ray Dalio</option>
                       </select>
                     </div>
                   </div>

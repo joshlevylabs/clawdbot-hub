@@ -51,6 +51,14 @@ export const AGENT_CONFIGS: Record<string, AgentConfig> = {
     textColor: 'text-violet-400',
     bgColor: 'bg-violet-600/20',
   },
+  'ray-dalio': {
+    id: 'ray-dalio',
+    name: 'Ray Dalio',
+    emoji: '⚖️',
+    borderColor: 'border-orange-500',
+    textColor: 'text-orange-400',
+    bgColor: 'bg-orange-600/20',
+  },
   'user': {
     id: 'user',
     name: 'My Portfolio',

@@ -2310,8 +2310,10 @@ export default function FaithJourneyPage() {
                   </div>
                 </div>
 
+                {/* Day Detail + Lesson Side Panel Container */}
+                <div className={selectedLesson ? "lg:grid lg:grid-cols-2 lg:gap-4" : ""}>
                 {/* Compact Day Detail Panel */}
-                {selectedDay && !selectedLesson && (
+                {selectedDay && (
                   <div className="lg:flex lg:gap-6">
                     {/* Desktop: Side-by-side layout */}
                     <div className="lg:hidden">
@@ -2444,7 +2446,7 @@ export default function FaithJourneyPage() {
                                     </h4>
                                   </div>
                                   <div className="flex flex-wrap gap-1 mb-2">
-                                    {["Judaism", "Christianity", "Islam", "Hinduism", "Buddhism", "Other"].map((tradition) => {
+                                    {["Judaism", "Christianity", "Islam", "Hinduism", "Buddhism", "Bahá'í", "Other"].map((tradition) => {
                                       const isActive = lessonTraditionFilters.has(tradition);
                                       const count = events.lessons.filter((l: any) => (l.tradition || "Other") === tradition).length;
                                       if (count === 0) return null;
@@ -2593,52 +2595,81 @@ export default function FaithJourneyPage() {
                                 </div>
                               )}
 
-                              {/* Calendar Context Accordion */}
-                              {enrichedPanels.length > 0 && (
-                                <div>
-                                  <h4 className="text-sm font-medium text-slate-200 mb-2 flex items-center gap-2">
-                                    <Globe className="w-4 h-4" style={{ color: "#D4A020" }} />
-                                    Religious Calendar Context ({enrichedPanels.length})
-                                  </h4>
-                                  <div className="space-y-2">
-                                    {Object.entries(contextGroups).map(([tradition, group]) => {
-                                      if (group.panels.length === 0) return null;
-                                      const isExpanded = expandedContextTraditions.has(tradition);
-                                      return (
-                                        <div key={tradition}>
-                                          <button
-                                            onClick={() => toggleContextTradition(tradition)}
-                                            className="w-full flex items-center justify-between p-2 rounded border text-sm font-medium text-slate-300 hover:text-slate-100 transition-colors"
-                                            style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}
-                                          >
-                                            <div className="flex items-center gap-2">
-                                              <span>{group.emoji}</span>
-                                              <span>{tradition}</span>
-                                              <span className="text-slate-500">({group.panels.length})</span>
+                              {/* Calendar Context — inline when only 1 tradition, accordion when multiple */}
+                              {enrichedPanels.length > 0 && (() => {
+                                const activeGroups = Object.entries(contextGroups).filter(([, group]) => group.panels.length > 0);
+                                // Single tradition: show inline without accordion
+                                if (activeGroups.length === 1) {
+                                  const [tradition, group] = activeGroups[0];
+                                  return (
+                                    <div>
+                                      <div className="flex items-center gap-2 mb-2">
+                                        <Globe className="w-4 h-4 flex-shrink-0" style={{ color: "#D4A020" }} />
+                                        <span className="text-sm">{group.emoji}</span>
+                                        <span className="text-sm font-medium text-slate-200">{tradition}</span>
+                                      </div>
+                                      <div className="space-y-2">
+                                        {group.panels.map((panel, idx) => (
+                                          <div key={idx} className="p-2 rounded border" style={{ backgroundColor: "#0B0B11", borderColor: panel.color }}>
+                                            <div className="flex items-center gap-1.5 mb-1">
+                                              <span className="text-sm">{panel.emoji}</span>
+                                              <h6 className="text-xs font-medium text-slate-200">{panel.label}</h6>
                                             </div>
-                                            {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                                          </button>
-                                          {isExpanded && (
-                                            <div className="ml-3 mt-2 space-y-2">
-                                              {group.panels.map((panel, idx) => (
-                                                <div key={idx} className="p-2 rounded border" style={{ backgroundColor: "#0B0B11", borderColor: panel.color }}>
-                                                  <div className="flex items-center gap-1.5 mb-1">
-                                                    <span className="text-sm">{panel.emoji}</span>
-                                                    <h6 className="text-xs font-medium text-slate-200">{panel.label}</h6>
+                                            {panel.text.split('\n').map((line: string, i: number) => (
+                                              <p key={i} className="text-xs text-slate-400 leading-relaxed">{line}</p>
+                                            ))}
+                                          </div>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  );
+                                }
+                                // Multiple traditions: keep accordion
+                                return (
+                                  <div>
+                                    <h4 className="text-sm font-medium text-slate-200 mb-2 flex items-center gap-2">
+                                      <Globe className="w-4 h-4" style={{ color: "#D4A020" }} />
+                                      Calendar Context ({enrichedPanels.length})
+                                    </h4>
+                                    <div className="space-y-2">
+                                      {activeGroups.map(([tradition, group]) => {
+                                        const isExpanded = expandedContextTraditions.has(tradition);
+                                        return (
+                                          <div key={tradition}>
+                                            <button
+                                              onClick={() => toggleContextTradition(tradition)}
+                                              className="w-full flex items-center justify-between p-2 rounded border text-sm font-medium text-slate-300 hover:text-slate-100 transition-colors"
+                                              style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}
+                                            >
+                                              <div className="flex items-center gap-2">
+                                                <span>{group.emoji}</span>
+                                                <span>{tradition}</span>
+                                                <span className="text-slate-500">({group.panels.length})</span>
+                                              </div>
+                                              {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                                            </button>
+                                            {isExpanded && (
+                                              <div className="ml-3 mt-2 space-y-2">
+                                                {group.panels.map((panel, idx) => (
+                                                  <div key={idx} className="p-2 rounded border" style={{ backgroundColor: "#0B0B11", borderColor: panel.color }}>
+                                                    <div className="flex items-center gap-1.5 mb-1">
+                                                      <span className="text-sm">{panel.emoji}</span>
+                                                      <h6 className="text-xs font-medium text-slate-200">{panel.label}</h6>
+                                                    </div>
+                                                    {panel.text.split('\n').map((line: string, i: number) => (
+                                                      <p key={i} className="text-xs text-slate-400 leading-relaxed">{line}</p>
+                                                    ))}
                                                   </div>
-                                                  {panel.text.split('\n').map((line: string, i: number) => (
-                                                    <p key={i} className="text-xs text-slate-400 leading-relaxed">{line}</p>
-                                                  ))}
-                                                </div>
-                                              ))}
-                                            </div>
-                                          )}
-                                        </div>
-                                      );
-                                    })}
+                                                ))}
+                                              </div>
+                                            )}
+                                          </div>
+                                        );
+                                      })}
+                                    </div>
                                   </div>
-                                </div>
-                              )}
+                                );
+                              })()}
                               
                               {/* Compact Lessons */}
                               {events.lessons.length > 0 && (
@@ -2651,7 +2682,7 @@ export default function FaithJourneyPage() {
                                     </h4>
                                   </div>
                                   <div className="flex flex-wrap gap-1.5 mb-3">
-                                    {["Judaism", "Christianity", "Islam", "Hinduism", "Buddhism", "Other"].map((tradition) => {
+                                    {["Judaism", "Christianity", "Islam", "Hinduism", "Buddhism", "Bahá'í", "Other"].map((tradition) => {
                                       const isActive = lessonTraditionFilters.has(tradition);
                                       const count = events.lessons.filter((l: any) => (l.tradition || "Other") === tradition).length;
                                       if (count === 0) return null;
@@ -2730,7 +2761,7 @@ export default function FaithJourneyPage() {
                   </div>
                 )}
 
-                {/* Lesson Detail View */}
+                {/* Lesson Detail View — Side panel on desktop, below on mobile */}
                 {selectedLesson && (
                   <div className="rounded-xl p-3 sm:p-4 border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
                     <div className="flex items-center justify-between mb-3 sm:mb-4 gap-2">
@@ -2739,7 +2770,7 @@ export default function FaithJourneyPage() {
                         onClick={() => setSelectedLesson(null)}
                         className="text-slate-400 hover:text-slate-200 flex-shrink-0 p-1"
                       >
-                        <ArrowLeft className="w-5 h-5" />
+                        <X className="w-5 h-5" />
                       </button>
                     </div>
                     
@@ -2992,6 +3023,7 @@ export default function FaithJourneyPage() {
                     </div>
                   </div>
                 )}
+                </div>{/* End Day Detail + Lesson Side Panel Container */}
               </div>
             )}
 

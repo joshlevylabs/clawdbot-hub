@@ -131,7 +131,17 @@ ${positions.length > 0 ? positions.map(pos => {
 ${signalsData.sector_fear_greed ? `SECTOR FEAR & GREED:
 ${Object.entries(signalsData.sector_fear_greed).map(([sector, fg]) => `- ${sector}: ${typeof fg === 'number' ? fg.toFixed(0) : fg}`).join('\n')}` : ''}
 
-Today is ${today}. Provide your analysis now — be specific about price levels, position sizes, and timing.`;
+Today is ${today}. Provide your analysis now — be specific about price levels, position sizes, and timing.
+
+RESPOND IN THIS EXACT JSON FORMAT (no markdown, no explanation outside JSON):
+{
+  "market_assessment": "Your overall market view as a concise paragraph",
+  "pre_market_actions": [{"title": "Action title", "priority": "high|medium|low", "detail": "Specific details with price levels"}],
+  "market_hours_actions": [{"title": "Action title", "priority": "high|medium|low", "detail": "Specific details"}],
+  "positions_review": [{"ticker": "SYM", "assessment": "bullish|bearish|neutral", "note": "Specific analysis with data references"}],
+  "watchlist": [{"ticker": "SYM", "note": "Why watching, specific trigger levels"}],
+  "risk_warnings": ["Specific risk warning with data"]
+}`;
 }
 
 export interface AdvisorConfig {

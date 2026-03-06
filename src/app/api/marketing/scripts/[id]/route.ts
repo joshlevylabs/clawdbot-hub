@@ -3,20 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 
-async function supabaseFetch(path: string, options: RequestInit = {}) {
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
-    ...options,
-    headers: {
-      'apikey': SUPABASE_KEY,
-      'Authorization': `Bearer ${SUPABASE_KEY}`,
-      'Content-Type': 'application/json',
-      ...(options.headers || {}),
-    },
-  });
-  return res;
-}
-
-// GET /api/marketing/scripts/[id] — fetch script
+// GET /api/marketing/scripts/[id] — fetch script from Supabase
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
@@ -24,7 +11,16 @@ export async function GET(
   const { id } = params;
 
   try {
-    const res = await supabaseFetch(`podcast_scripts?id=eq.${id}&select=*`);
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/podcast_scripts?id=eq.${id}&select=*`,
+      {
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
+        },
+        cache: 'no-store',
+      }
+    );
     const data = await res.json();
 
     if (!data || data.length === 0) {
@@ -44,7 +40,7 @@ export async function GET(
   }
 }
 
-// PUT /api/marketing/scripts/[id] — update script
+// PUT /api/marketing/scripts/[id] — save script to Supabase (upsert)
 export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } }
@@ -55,49 +51,45 @@ export async function PUT(
     const body = await request.json();
     const { script, title } = body;
 
-    if (!script) {
+    if (typeof script !== 'string') {
       return NextResponse.json({ error: 'Script content required' }, { status: 400 });
     }
 
-    const updateData: Record<string, unknown> = {
-      script,
-      updated_at: new Date().toISOString(),
-    };
-    if (title) updateData.title = title;
+    const episodeNumber = parseInt(id, 10) || 0;
 
-    const res = await supabaseFetch(`podcast_scripts?id=eq.${id}`, {
-      method: 'PATCH',
-      headers: { 'Prefer': 'return=representation' },
-      body: JSON.stringify(updateData),
-    });
-
-    const data = await res.json();
-
-    if (!data || data.length === 0) {
-      // Script doesn't exist yet — create it
-      const episodeNumber = parseInt(id, 10) || 0;
-      const createRes = await supabaseFetch('podcast_scripts', {
+    // Upsert: insert or update on conflict
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/podcast_scripts?on_conflict=id`,
+      {
         method: 'POST',
-        headers: { 'Prefer': 'return=representation' },
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'resolution=merge-duplicates,return=representation',
+        },
         body: JSON.stringify({
           id,
           episode_number: episodeNumber,
           title: title || `Episode ${episodeNumber}`,
           script,
+          updated_at: new Date().toISOString(),
         }),
-      });
-      const created = await createRes.json();
-      return NextResponse.json({
-        success: true,
-        id,
-        updatedAt: created[0]?.updated_at,
-      });
+      }
+    );
+
+    if (!res.ok) {
+      const errText = await res.text();
+      console.error('Supabase upsert error:', errText);
+      return NextResponse.json({ error: 'Failed to save' }, { status: 500 });
     }
+
+    const data = await res.json();
 
     return NextResponse.json({
       success: true,
       id,
-      updatedAt: data[0]?.updated_at,
+      updatedAt: data[0]?.updated_at || new Date().toISOString(),
     });
   } catch (error) {
     console.error('Failed to save script:', error);

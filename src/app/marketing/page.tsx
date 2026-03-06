@@ -827,9 +827,11 @@ function PodcastDashboard() {
                         ? 'bg-emerald-500/10 text-emerald-400'
                         : ep.status === 'finalized'
                         ? 'bg-blue-500/10 text-blue-400'
+                        : ep.status === 'script-ready'
+                        ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
                         : 'bg-slate-700 text-slate-400'
                     }`}>
-                      {ep.status}
+                      {ep.status === 'script-ready' ? '✏️ draft' : ep.status}
                     </span>
                     <span className="text-xs text-slate-600 capitalize">{ep.pillar}</span>
                   </div>

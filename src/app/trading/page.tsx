@@ -1380,31 +1380,40 @@ export default function TradingPage() {
           {/* ===== TRADES TAB ===== */}
           {activeTab === "trades" && !loading && !error && (
             <>
+              {/* Agent filter — always visible */}
+              <div className="flex items-center justify-end mb-4">
+                <div className="flex items-center gap-2">
+                  <label className="text-xs text-slate-400">Filter:</label>
+                  <select
+                    value={selectedAgentFilter}
+                    onChange={(e) => setSelectedAgentFilter(e.target.value)}
+                    className="bg-slate-700/50 border border-slate-600/30 rounded-md px-2 py-1 text-xs text-slate-100 focus:border-primary-400 focus:outline-none"
+                  >
+                    <option value="all">All Portfolios</option>
+                    <option value="user">My Portfolio</option>
+                    <option value="chris-vermeulen">Chris Vermeulen</option>
+                    <option value="warren-buffett">Warren Buffett</option>
+                    <option value="peter-schiff">Peter Schiff</option>
+                    <option value="raoul-pal">Raoul Pal</option>
+                    <option value="peter-lynch">Peter Lynch</option>
+                    <option value="ray-dalio">Ray Dalio</option>
+                  </select>
+                </div>
+              </div>
+
               {/* Active Trades (from open positions) */}
-              {filteredPositions.length > 0 && (
+              {filteredPositions.length === 0 ? (
+                <div className="bg-slate-800/50 rounded-xl p-8 border border-slate-700/50 mb-4 text-center">
+                  <TrendingUp className="w-8 h-8 text-slate-600 mx-auto mb-2" />
+                  <p className="text-slate-500 text-sm">No active positions for this portfolio</p>
+                </div>
+              ) : (
                 <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50 mb-4">
                   <div className="flex items-center justify-between mb-4">
                     <h2 className="text-lg font-semibold text-slate-100 flex items-center gap-2">
                       <TrendingUp className="w-5 h-5 text-emerald-400" />
                       Active Trades ({filteredPositions.length})
                     </h2>
-                    <div className="flex items-center gap-2">
-                      <label className="text-xs text-slate-400">Filter:</label>
-                      <select
-                        value={selectedAgentFilter}
-                        onChange={(e) => setSelectedAgentFilter(e.target.value)}
-                        className="bg-slate-700/50 border border-slate-600/30 rounded-md px-2 py-1 text-xs text-slate-100 focus:border-primary-400 focus:outline-none"
-                      >
-                        <option value="all">All Portfolios</option>
-                        <option value="user">My Portfolio</option>
-                        <option value="chris-vermeulen">Chris Vermeulen</option>
-                        <option value="warren-buffett">Warren Buffett</option>
-                        <option value="peter-schiff">Peter Schiff</option>
-                        <option value="raoul-pal">Raoul Pal</option>
-                        <option value="peter-lynch">Peter Lynch</option>
-                        <option value="ray-dalio">Ray Dalio</option>
-                      </select>
-                    </div>
                   </div>
                   <div className="overflow-x-auto">
                     <table className="w-full">
@@ -1532,23 +1541,6 @@ export default function TradingPage() {
                       <Clock className="w-5 h-5 text-cyan-400" />
                       Trade History ({filteredTrades.length})
                     </h2>
-                    <div className="flex items-center gap-2">
-                      <label className="text-xs text-slate-400">Filter:</label>
-                      <select
-                        value={selectedAgentFilter}
-                        onChange={(e) => setSelectedAgentFilter(e.target.value)}
-                        className="bg-slate-700/50 border border-slate-600/30 rounded-md px-2 py-1 text-xs text-slate-100 focus:border-primary-400 focus:outline-none"
-                      >
-                        <option value="all">All Portfolios</option>
-                        <option value="user">My Portfolio</option>
-                        <option value="chris-vermeulen">Chris Vermeulen</option>
-                        <option value="warren-buffett">Warren Buffett</option>
-                        <option value="peter-schiff">Peter Schiff</option>
-                        <option value="raoul-pal">Raoul Pal</option>
-                        <option value="peter-lynch">Peter Lynch</option>
-                        <option value="ray-dalio">Ray Dalio</option>
-                      </select>
-                    </div>
                   </div>
                   <div className="overflow-x-auto">
                     <table className="w-full">

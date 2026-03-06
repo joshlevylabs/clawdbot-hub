@@ -333,7 +333,7 @@ const denominationAgents: DenominationAgent[] = [
     emoji: "🧘",
     focus: "Original teachings, mindfulness, Pali canon",
     description: "Theravada monk emphasizing the original Buddha's teachings, vipassana meditation, and the Four Noble Truths.",
-    color: "#EAB308",
+    color: "#06B6D4",
     coreTexts: ["Pali Canon (Tipitaka)", "Vinaya Pitaka", "Sutta Pitaka", "Abhidhamma Pitaka"]
   },
   {
@@ -343,7 +343,7 @@ const denominationAgents: DenominationAgent[] = [
     emoji: "⚫",
     focus: "Zazen, koans, sudden enlightenment",
     description: "Zen master teaching the direct path to awakening through seated meditation, koan study, and sudden realization.",
-    color: "#EAB308",
+    color: "#0891B2",
     coreTexts: ["Heart Sutra", "Diamond Sutra", "Lotus Sutra", "Zen Koans", "Platform Sutra"]
   },
   {
@@ -353,7 +353,7 @@ const denominationAgents: DenominationAgent[] = [
     emoji: "🏔️",
     focus: "Tantric practices, compassion",
     description: "Tibetan Buddhist teacher emphasizing bodhisattva compassion, tantric visualization, and the Dalai Lama's lineage.",
-    color: "#EAB308",
+    color: "#0E7490",
     coreTexts: ["Lotus Sutra", "Tibetan Book of the Dead", "Tantric Texts", "Lamrim", "Madhyamaka Texts"]
   },
   
@@ -485,11 +485,11 @@ const religiousHolidays: HolidayEvent[] = [
   { name: "Diwali", date: "2026-11-08", tradition: "Hinduism", description: "Festival of Lights", color: "#F59E0B" },
 
   // Buddhist Holidays 2026 (approximate)
-  { name: "Magha Puja", date: "2026-02-11", tradition: "Buddhism", description: "Sangha Day", color: "#EAB308" },
-  { name: "Vesak", date: "2026-05-15", tradition: "Buddhism", description: "Buddha's birth, enlightenment, and passing", color: "#EAB308" },
-  { name: "Dharma Day", date: "2026-07-09", tradition: "Buddhism", description: "Buddha's first teaching", color: "#EAB308" },
-  { name: "Kathina", date: "2026-10-15", tradition: "Buddhism", description: "Robe-offering ceremony", color: "#EAB308" },
-  { name: "Losar", date: "2026-02-19", tradition: "Buddhism", denomination: "Tibetan", description: "Tibetan New Year", color: "#EAB308" },
+  { name: "Magha Puja", date: "2026-02-11", tradition: "Buddhism", description: "Sangha Day", color: "#06B6D4" },
+  { name: "Vesak", date: "2026-05-15", tradition: "Buddhism", description: "Buddha's birth, enlightenment, and passing", color: "#06B6D4" },
+  { name: "Dharma Day", date: "2026-07-09", tradition: "Buddhism", description: "Buddha's first teaching", color: "#06B6D4" },
+  { name: "Kathina", date: "2026-10-15", tradition: "Buddhism", description: "Robe-offering ceremony", color: "#06B6D4" },
+  { name: "Losar", date: "2026-02-19", tradition: "Buddhism", denomination: "Tibetan", description: "Tibetan New Year", color: "#06B6D4" },
 
   // Other Religious Holidays
   { name: "Ridván", date: "2026-04-21", tradition: "Bahá'í", description: "Most holy Bahá'í festival", color: "#EC4899" },
@@ -553,9 +553,9 @@ const TRADITION_MAP: Record<string, { name: string; emoji: string; color: string
   '79e853c3-89f6-4c85-ba0c-10f265fd6ea6': { name: 'Shaivism', emoji: '🕉️', color: '#E85D04' },
   '4b7ca317-bc0f-4544-a656-4d59d3a12189': { name: 'Shaktism', emoji: '🕉️', color: '#DC2F02' },
   // Buddhist (3)
-  '26bf9037-e1d8-4f80-85c5-a7b51cbe10a4': { name: 'Theravada Buddhism', emoji: '☸️', color: '#F59E0B' },
-  '6074fe56-2c15-46f7-86e6-fd0ffe4b1733': { name: 'Mahayana Buddhism', emoji: '☸️', color: '#D97706' },
-  'e0e6a849-5b1a-45a7-ae71-105657dbd6d5': { name: 'Vajrayana Buddhism', emoji: '☸️', color: '#B45309' },
+  '26bf9037-e1d8-4f80-85c5-a7b51cbe10a4': { name: 'Theravada Buddhism', emoji: '☸️', color: '#06B6D4' },
+  '6074fe56-2c15-46f7-86e6-fd0ffe4b1733': { name: 'Mahayana Buddhism', emoji: '☸️', color: '#0891B2' },
+  'e0e6a849-5b1a-45a7-ae71-105657dbd6d5': { name: 'Vajrayana Buddhism', emoji: '☸️', color: '#0E7490' },
   // Other world religions (4)
   '75089521-6139-4c54-8548-6aff1a94357d': { name: 'Sikhism', emoji: '🪯', color: '#1E40AF' },
   '1f0d8d43-9e42-404b-a6e5-7ac7e6954abf': { name: "Bahá'í Faith", emoji: '✯', color: '#7C3AED' },
@@ -711,9 +711,9 @@ const CALENDAR_TRADITION_CONFIG: Record<string, { emoji: string; label: string; 
   'shaivism':                 { emoji: '🕉️', label: 'Shaivism', color: '#E85D0450' },
   'shaktism':                 { emoji: '🕉️', label: 'Shaktism', color: '#DC2F0250' },
   // Buddhist
-  'theravada_buddhism':       { emoji: '☸️', label: 'Theravada Buddhism', color: '#F59E0B50' },
-  'mahayana_buddhism':        { emoji: '☸️', label: 'Mahayana Buddhism', color: '#D9770650' },
-  'vajrayana_buddhism':       { emoji: '☸️', label: 'Vajrayana Buddhism', color: '#B4530950' },
+  'theravada_buddhism':       { emoji: '☸️', label: 'Theravada Buddhism', color: '#06B6D450' },
+  'mahayana_buddhism':        { emoji: '☸️', label: 'Mahayana Buddhism', color: '#0891B250' },
+  'vajrayana_buddhism':       { emoji: '☸️', label: 'Vajrayana Buddhism', color: '#0E749050' },
   // Other
   'sikhism':                  { emoji: '🪯', label: 'Sikhism', color: '#1E40AF50' },
   'bahai_faith':              { emoji: '✯', label: "Bahá'í Faith", color: '#7C3AED50' },
@@ -1450,6 +1450,7 @@ export default function FaithJourneyPage() {
   const [selectedMonth, setSelectedMonth] = useState<number>(new Date().getMonth());
   const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
   const [selectedDay, setSelectedDay] = useState<Date | null>(null);
+  const [selectedReligion, setSelectedReligion] = useState<string | null>(null);
   const [selectedLesson, setSelectedLesson] = useState<any>(null);
   
   // Calendar tab compact features
@@ -1584,8 +1585,9 @@ export default function FaithJourneyPage() {
       "Islam": { emoji: "☪️", panels: [] as any[] },
       "Hinduism": { emoji: "🕉️", panels: [] as any[] },
       "Buddhism": { emoji: "☸️", panels: [] as any[] },
+      "Bahá'í": { emoji: "✴️", panels: [] as any[] },
       "Other": { emoji: "🌟", panels: [] as any[] }
-    };
+    } as Record<string, { emoji: string; panels: any[] }>;
 
     panels.forEach(panel => {
       if (panel.key.includes('judaism') || panel.key === 'jewish') {
@@ -1598,6 +1600,8 @@ export default function FaithJourneyPage() {
         groups.Hinduism.panels.push(panel);
       } else if (panel.key.includes('buddhism') || panel.key.includes('theravada') || panel.key.includes('mahayana') || panel.key.includes('vajrayana')) {
         groups.Buddhism.panels.push(panel);
+      } else if (panel.key.includes('bahai') || panel.key.includes("bahá'í")) {
+        groups["Bahá'í"].panels.push(panel);
       } else {
         groups.Other.panels.push(panel);
       }
@@ -1611,6 +1615,7 @@ export default function FaithJourneyPage() {
     setSelectedMonth(today.getMonth());
     setSelectedYear(today.getFullYear());
     setSelectedDay(today);
+    setSelectedReligion(null);
   };
 
   // Calendar helper functions
@@ -1620,6 +1625,23 @@ export default function FaithJourneyPage() {
 
   const getFirstDayOfMonth = (year: number, month: number) => {
     return new Date(year, month, 1).getDay();
+  };
+
+  // Cross-calendar date conversion using Intl.DateTimeFormat
+  const getCrossCalendarDates = (date: Date) => {
+    const formatCalendar = (calendar: string) => {
+      try {
+        return new Intl.DateTimeFormat('en-u-ca-' + calendar, {
+          day: 'numeric', month: 'long', year: 'numeric'
+        }).format(date);
+      } catch { return ''; }
+    };
+    
+    return {
+      hebrew: formatCalendar('hebrew'),
+      islamic: formatCalendar('islamic'),
+      indian: formatCalendar('indian'), // Saka/Indian National Calendar
+    };
   };
 
   const getEventsForDate = (date: Date) => {
@@ -1634,7 +1656,7 @@ export default function FaithJourneyPage() {
     "Christianity": "#8B5CF6", 
     "Islam": "#10B981",
     "Hinduism": "#F59E0B",
-    "Buddhism": "#EAB308",
+    "Buddhism": "#06B6D4",
     "Bahá'í": "#EC4899"
   });
 
@@ -2184,6 +2206,7 @@ export default function FaithJourneyPage() {
                           } else {
                             setSelectedMonth(selectedMonth - 1);
                           }
+                          setSelectedReligion(null);
                         }}
                         className="p-2 rounded text-slate-400 hover:text-slate-200"
                       >
@@ -2204,6 +2227,7 @@ export default function FaithJourneyPage() {
                           } else {
                             setSelectedMonth(selectedMonth + 1);
                           }
+                          setSelectedReligion(null);
                         }}
                         className="p-2 rounded text-slate-400 hover:text-slate-200"
                       >
@@ -2268,7 +2292,7 @@ export default function FaithJourneyPage() {
                       return (
                         <div
                           key={day}
-                          onClick={() => setSelectedDay(date)}
+                          onClick={() => { setSelectedDay(date); setSelectedReligion(null); }}
                           className={`p-1 sm:p-2 h-10 sm:h-16 border rounded-sm cursor-pointer transition-all relative ${
                             isSelected ? 'ring-2 ring-yellow-500' : 'hover:border-gray-500'
                           }`}
@@ -2295,13 +2319,18 @@ export default function FaithJourneyPage() {
                                   title={holiday.name}
                                 ></div>
                               ))}
-                              {events.lessons.length > 0 && (
-                                <div
-                                  className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full"
-                                  style={{ backgroundColor: "#D4A020" }}
-                                  title={`${events.lessons.length} lesson(s)`}
-                                ></div>
-                              )}
+                              {(() => {
+                                // Group lessons by tradition and show one dot per tradition
+                                const traditionSet = new Set(events.lessons.map((l: any) => l.tradition || "Other"));
+                                const colors = getTraditionColors();
+                                return Array.from(traditionSet).slice(0, 3).map((tradition, idx) => (
+                                  <div key={`lesson-${idx}`}
+                                    className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full ring-1 ring-black/20"
+                                    style={{ backgroundColor: colors[tradition as keyof typeof colors] || "#D4A020" }}
+                                    title={`${tradition} lesson`}
+                                  ></div>
+                                ));
+                              })()}
                             </div>
                           ) : null}
                         </div>
@@ -2328,7 +2357,7 @@ export default function FaithJourneyPage() {
                             })}
                           </h3>
                           <button
-                            onClick={() => setSelectedDay(null)}
+                            onClick={() => { setSelectedDay(null); setSelectedReligion(null); }}
                             className="text-slate-400 hover:text-slate-200 p-1"
                           >
                             <X className="w-4 h-4" />
@@ -2523,239 +2552,278 @@ export default function FaithJourneyPage() {
                             })}
                           </h3>
                           <button
-                            onClick={() => setSelectedDay(null)}
+                            onClick={() => { setSelectedDay(null); setSelectedReligion(null); }}
                             className="text-slate-400 hover:text-slate-200 p-1"
                           >
                             <X className="w-4 h-4" />
                           </button>
                         </div>
                         
-                        {(() => {
-                          const events = getEventsForDate(selectedDay);
-                          const firstLessonWithContext = events.lessons.find((l: any) => l.calendarContext);
-                          const calPanels = firstLessonWithContext ? parseCalendarContext((firstLessonWithContext as any).calendarContext) : [];
-                          const hebrewDate = events.lessons.find((l: any) => l.hebrewDate)?.hebrewDate as string | undefined;
-                          const parsha = events.lessons.find((l: any) => l.parsha)?.parsha as string | undefined;
-
-                          // Inject Hebrew date/parsha into the first Jewish panel if present
-                          const enrichedPanels = calPanels.map(p => {
-                            if ((p.key === 'jewish' || p.key === 'orthodox_judaism') && (hebrewDate || parsha)) {
-                              const prefix = [hebrewDate, parsha ? `Torah portion: ${parsha}` : ''].filter(Boolean).join('\n');
-                              return { ...p, text: prefix + (p.text ? '\n' + p.text : '') };
-                            }
-                            return p;
-                          });
-                          if ((hebrewDate || parsha) && !enrichedPanels.some(p => p.key === 'jewish' || p.key === 'orthodox_judaism')) {
-                            const cfg = CALENDAR_TRADITION_CONFIG['jewish'];
-                            enrichedPanels.unshift({
-                              key: 'jewish', emoji: cfg.emoji, label: cfg.label, color: cfg.color,
-                              text: [hebrewDate, parsha ? `Torah portion: ${parsha}` : ''].filter(Boolean).join('\n')
-                            });
-                          }
-
-                          const contextGroups = groupCalendarContextByTradition(enrichedPanels);
-                          const filteredLessons = events.lessons.filter((lesson: any) => lessonTraditionFilters.has(lesson.tradition || "Other"));
-
-                          return (
-                            <div className="space-y-4">
-                              {/* Religious Events */}
-                              {events.holidays.length > 0 && (
-                                <div>
-                                  <h4 className="text-sm font-medium text-slate-200 mb-2 flex items-center gap-2">
-                                    <Calendar className="w-4 h-4" style={{ color: "#D4A020" }} />
-                                    Religious Events ({events.holidays.length})
-                                  </h4>
-                                  <div className="space-y-2">
-                                    {events.holidays.map((holiday, idx) => (
-                                      <div
-                                        key={idx}
-                                        className="p-2 rounded-lg border"
-                                        style={{ 
-                                          backgroundColor: "#0B0B11", 
-                                          borderColor: holiday.color + "50"
-                                        }}
-                                      >
-                                        <div className="flex items-center gap-2 mb-1">
-                                          <span style={{ color: holiday.color }}>●</span>
-                                          <h5 className="font-medium text-slate-200 text-sm">{holiday.name}</h5>
-                                          <span
-                                            className="text-xs px-2 py-1 rounded"
-                                            style={{
-                                              backgroundColor: `${holiday.color}20`,
-                                              color: holiday.color
-                                            }}
-                                          >
-                                            {holiday.tradition}
-                                          </span>
-                                        </div>
-                                        <p className="text-xs text-slate-400">{holiday.description}</p>
-                                      </div>
-                                    ))}
-                                  </div>
+                        {!selectedReligion ? (
+                          // === LAYER 2: Day Overview ===
+                          <>
+                            {/* Cross-Calendar Dates */}
+                            {(() => {
+                              const crossDates = getCrossCalendarDates(selectedDay);
+                              return (
+                                <div className="mb-4 p-2.5 rounded-lg border space-y-1.5" style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}>
+                                  <h4 className="text-xs font-medium text-slate-400 uppercase tracking-wide mb-1">This Day Across Calendars</h4>
+                                  {crossDates.hebrew && (
+                                    <div className="flex items-center gap-2 text-sm">
+                                      <span>✡️</span>
+                                      <span className="text-slate-300">{crossDates.hebrew}</span>
+                                    </div>
+                                  )}
+                                  {crossDates.islamic && (
+                                    <div className="flex items-center gap-2 text-sm">
+                                      <span>☪️</span>
+                                      <span className="text-slate-300">{crossDates.islamic}</span>
+                                    </div>
+                                  )}
+                                  {crossDates.indian && (
+                                    <div className="flex items-center gap-2 text-sm">
+                                      <span>🕉️</span>
+                                      <span className="text-slate-300">{crossDates.indian}</span>
+                                    </div>
+                                  )}
                                 </div>
-                              )}
-
-                              {/* Calendar Context — inline when only 1 tradition, accordion when multiple */}
-                              {enrichedPanels.length > 0 && (() => {
-                                const activeGroups = Object.entries(contextGroups).filter(([, group]) => group.panels.length > 0);
-                                // Single tradition: show inline without accordion
-                                if (activeGroups.length === 1) {
-                                  const [tradition, group] = activeGroups[0];
-                                  return (
-                                    <div>
-                                      <div className="flex items-center gap-2 mb-2">
-                                        <Globe className="w-4 h-4 flex-shrink-0" style={{ color: "#D4A020" }} />
-                                        <span className="text-sm">{group.emoji}</span>
-                                        <span className="text-sm font-medium text-slate-200">{tradition}</span>
-                                      </div>
-                                      <div className="space-y-2">
-                                        {group.panels.map((panel, idx) => (
-                                          <div key={idx} className="p-2 rounded border" style={{ backgroundColor: "#0B0B11", borderColor: panel.color }}>
-                                            <div className="flex items-center gap-1.5 mb-1">
-                                              <span className="text-sm">{panel.emoji}</span>
-                                              <h6 className="text-xs font-medium text-slate-200">{panel.label}</h6>
+                              );
+                            })()}
+                            
+                            {/* Religious Events */}
+                            {(() => {
+                              const events = getEventsForDate(selectedDay);
+                              return (
+                                <>
+                                  {events.holidays.length > 0 && (
+                                    <div className="mb-4">
+                                      <h4 className="text-sm font-medium text-slate-200 mb-2 flex items-center gap-2">
+                                        <Calendar className="w-4 h-4" style={{ color: "#D4A020" }} />
+                                        Religious Events ({events.holidays.length})
+                                      </h4>
+                                      <div className="space-y-1.5">
+                                        {events.holidays.map((holiday, idx) => (
+                                          <div key={idx} className="p-2 rounded-lg border cursor-pointer hover:border-slate-500 transition-colors"
+                                            style={{ backgroundColor: "#0B0B11", borderColor: holiday.color + "50" }}
+                                            onClick={() => setSelectedReligion(holiday.tradition)}
+                                          >
+                                            <div className="flex items-center gap-2">
+                                              <span style={{ color: holiday.color }}>●</span>
+                                              <span className="text-sm font-medium text-slate-200">{holiday.name}</span>
+                                              <span className="text-xs px-1.5 py-0.5 rounded ml-auto" style={{ backgroundColor: `${holiday.color}20`, color: holiday.color }}>
+                                                {holiday.tradition}
+                                              </span>
                                             </div>
-                                            {panel.text.split('\n').map((line: string, i: number) => (
-                                              <p key={i} className="text-xs text-slate-400 leading-relaxed">{line}</p>
-                                            ))}
+                                            <p className="text-xs text-slate-400 mt-1 ml-4">{holiday.description}</p>
                                           </div>
                                         ))}
                                       </div>
                                     </div>
-                                  );
-                                }
-                                // Multiple traditions: keep accordion
-                                return (
+                                  )}
+                                  
+                                  {/* Explore by Tradition */}
                                   <div>
                                     <h4 className="text-sm font-medium text-slate-200 mb-2 flex items-center gap-2">
                                       <Globe className="w-4 h-4" style={{ color: "#D4A020" }} />
-                                      Calendar Context ({enrichedPanels.length})
+                                      Explore by Tradition
                                     </h4>
-                                    <div className="space-y-2">
-                                      {activeGroups.map(([tradition, group]) => {
-                                        const isExpanded = expandedContextTraditions.has(tradition);
+                                    <div className="grid grid-cols-2 gap-2">
+                                      {(["Judaism", "Christianity", "Islam", "Hinduism", "Buddhism", "Bahá'í"] as const).map((tradition) => {
+                                        const colors = getTraditionColors();
+                                        const color = colors[tradition as keyof typeof colors];
+                                        const traditionHolidays = events.holidays.filter(h => h.tradition === tradition);
+                                        const traditionLessons = events.lessons.filter((l: any) => (l.tradition || "Other") === tradition);
+                                        const totalContent = traditionHolidays.length + traditionLessons.length;
+                                        
+                                        // Get the calendar context panels for this tradition
+                                        const firstLessonWithContext = events.lessons.find((l: any) => l.calendarContext);
+                                        const calPanels = firstLessonWithContext ? parseCalendarContext((firstLessonWithContext as any).calendarContext) : [];
+                                        const contextGroups = groupCalendarContextByTradition(calPanels);
+                                        const hasContext = contextGroups[tradition]?.panels?.length > 0;
+                                        
+                                        if (totalContent === 0 && !hasContext) return null;
+                                        
+                                        const emojis: Record<string, string> = { "Judaism": "✡️", "Christianity": "✝️", "Islam": "☪️", "Hinduism": "🕉️", "Buddhism": "☸️", "Bahá'í": "✴️" };
+                                        
                                         return (
-                                          <div key={tradition}>
-                                            <button
-                                              onClick={() => toggleContextTradition(tradition)}
-                                              className="w-full flex items-center justify-between p-2 rounded border text-sm font-medium text-slate-300 hover:text-slate-100 transition-colors"
-                                              style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}
-                                            >
-                                              <div className="flex items-center gap-2">
-                                                <span>{group.emoji}</span>
-                                                <span>{tradition}</span>
-                                                <span className="text-slate-500">({group.panels.length})</span>
-                                              </div>
-                                              {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                                            </button>
-                                            {isExpanded && (
-                                              <div className="ml-3 mt-2 space-y-2">
-                                                {group.panels.map((panel, idx) => (
-                                                  <div key={idx} className="p-2 rounded border" style={{ backgroundColor: "#0B0B11", borderColor: panel.color }}>
-                                                    <div className="flex items-center gap-1.5 mb-1">
-                                                      <span className="text-sm">{panel.emoji}</span>
-                                                      <h6 className="text-xs font-medium text-slate-200">{panel.label}</h6>
-                                                    </div>
-                                                    {panel.text.split('\n').map((line: string, i: number) => (
-                                                      <p key={i} className="text-xs text-slate-400 leading-relaxed">{line}</p>
-                                                    ))}
-                                                  </div>
-                                                ))}
-                                              </div>
-                                            )}
-                                          </div>
+                                          <button
+                                            key={tradition}
+                                            onClick={() => setSelectedReligion(tradition)}
+                                            className="p-3 rounded-lg border text-left hover:border-slate-500 transition-all group"
+                                            style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38", borderLeftColor: color, borderLeftWidth: "3px" }}
+                                          >
+                                            <div className="flex items-center gap-2 mb-1">
+                                              <span className="text-base">{emojis[tradition]}</span>
+                                              <span className="text-sm font-medium text-slate-200 group-hover:text-white">{tradition}</span>
+                                            </div>
+                                            <div className="flex gap-2 text-xs text-slate-400">
+                                              {traditionHolidays.length > 0 && <span>{traditionHolidays.length} event{traditionHolidays.length !== 1 ? 's' : ''}</span>}
+                                              {traditionLessons.length > 0 && <span>{traditionLessons.length} lesson{traditionLessons.length !== 1 ? 's' : ''}</span>}
+                                              {hasContext && traditionHolidays.length === 0 && traditionLessons.length === 0 && <span>Calendar context</span>}
+                                            </div>
+                                          </button>
                                         );
                                       })}
                                     </div>
-                                  </div>
-                                );
-                              })()}
-                              
-                              {/* Compact Lessons */}
-                              {events.lessons.length > 0 && (
-                                <div>
-                                  {/* Tradition Filter Pills */}
-                                  <div className="flex items-center justify-between mb-2">
-                                    <h4 className="text-sm font-medium text-slate-200 flex items-center gap-2">
-                                      <GraduationCap className="w-4 h-4" style={{ color: "#D4A020" }} />
-                                      Lessons ({filteredLessons.length} of {events.lessons.length})
-                                    </h4>
-                                  </div>
-                                  <div className="flex flex-wrap gap-1.5 mb-3">
-                                    {["Judaism", "Christianity", "Islam", "Hinduism", "Buddhism", "Bahá'í", "Other"].map((tradition) => {
-                                      const isActive = lessonTraditionFilters.has(tradition);
-                                      const count = events.lessons.filter((l: any) => (l.tradition || "Other") === tradition).length;
-                                      if (count === 0) return null;
-                                      return (
-                                        <button
-                                          key={tradition}
-                                          onClick={() => toggleLessonTraditionFilter(tradition)}
-                                          className="text-xs px-2 py-1 rounded transition-colors"
-                                          style={{
-                                            backgroundColor: isActive ? "#D4A02020" : "#0B0B11",
-                                            borderColor: isActive ? "#D4A02050" : "#2A2A38",
-                                            color: isActive ? "#D4A020" : "#8B8B80",
-                                            border: "1px solid"
-                                          }}
-                                        >
-                                          {tradition} ({count})
-                                        </button>
-                                      );
-                                    })}
-                                  </div>
-                                  {/* Compact Lesson List */}
-                                  <div className="space-y-1.5">
-                                    {filteredLessons.map((lesson, idx) => (
-                                      <div
-                                        key={idx}
-                                        onClick={() => setSelectedLesson(lesson)}
-                                        className="p-2 rounded border cursor-pointer hover:border-yellow-500 transition-colors"
-                                        style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}
-                                      >
-                                        <div className="flex items-start gap-2">
-                                          <div className="flex-1 min-w-0">
-                                            <h5 className="font-medium text-slate-200 text-sm leading-tight">{lesson.title}</h5>
-                                            <p className="text-xs text-slate-400 mt-1 line-clamp-2">
-                                              {lesson.content ? lesson.content.substring(0, 120) + '...' : 'Click to view lesson content'}
-                                            </p>
-                                          </div>
-                                          <div className="flex flex-col gap-1 flex-shrink-0">
-                                            <span className="text-xs px-1.5 py-0.5 rounded" style={{
-                                              backgroundColor: "#D4A02020",
-                                              color: "#D4A020"
-                                            }}>
-                                              {lesson.tradition || "Other"}
-                                            </span>
-                                            {(lesson as any).calendarDisplayName && (
-                                              <span className="text-xs px-1.5 py-0.5 rounded" style={{
-                                                backgroundColor: (lesson as any).calendarSystem === 'hebrew' ? 'rgba(59, 130, 246, 0.15)' :
-                                                  (lesson as any).calendarSystem === 'christian_liturgical' ? 'rgba(139, 92, 246, 0.15)' :
-                                                  'rgba(16, 185, 129, 0.15)',
-                                                color: (lesson as any).calendarSystem === 'hebrew' ? '#3B82F6' :
-                                                  (lesson as any).calendarSystem === 'christian_liturgical' ? '#8B5CF6' :
-                                                  '#10B981'
-                                              }}>
-                                                {(lesson as any).calendarSystem === 'hebrew' ? '✡️' :
-                                                 (lesson as any).calendarSystem === 'christian_liturgical' ? '✝️' : '☪️'}
-                                              </span>
-                                            )}
-                                          </div>
-                                        </div>
+                                    
+                                    {/* Show message if no content at all */}
+                                    {events.holidays.length === 0 && events.lessons.length === 0 && (
+                                      <div className="text-center py-4 mt-2">
+                                        <Calendar className="w-6 h-6 text-slate-600 mx-auto mb-2" />
+                                        <p className="text-slate-500 text-sm">No religious events or lessons for this day</p>
                                       </div>
-                                    ))}
+                                    )}
                                   </div>
+                                </>
+                              );
+                            })()}
+                          </>
+                        ) : (
+                          // === LAYER 3: Religion Detail ===
+                          (() => {
+                            const events = getEventsForDate(selectedDay);
+                            const colors = getTraditionColors();
+                            const color = colors[selectedReligion as keyof typeof colors] || "#D4A020";
+                            const emojis: Record<string, string> = { "Judaism": "✡️", "Christianity": "✝️", "Islam": "☪️", "Hinduism": "🕉️", "Buddhism": "☸️", "Bahá'í": "✴️" };
+                            const emoji = emojis[selectedReligion] || "🌍";
+                            
+                            const traditionHolidays = events.holidays.filter(h => h.tradition === selectedReligion);
+                            const traditionLessons = events.lessons.filter((l: any) => (l.tradition || "Other") === selectedReligion);
+                            
+                            // Get cross-calendar date specific to this religion
+                            const crossDates = getCrossCalendarDates(selectedDay);
+                            const religionDate = selectedReligion === "Judaism" ? crossDates.hebrew :
+                                              selectedReligion === "Islam" ? crossDates.islamic :
+                                              selectedReligion === "Hinduism" ? crossDates.indian : null;
+                            
+                            // Get calendar context panels filtered to this religion
+                            const firstLessonWithContext = events.lessons.find((l: any) => l.calendarContext);
+                            const calPanels = firstLessonWithContext ? parseCalendarContext((firstLessonWithContext as any).calendarContext) : [];
+                            const hebrewDate = events.lessons.find((l: any) => l.hebrewDate)?.hebrewDate as string | undefined;
+                            const parsha = events.lessons.find((l: any) => l.parsha)?.parsha as string | undefined;
+                            
+                            // Enrich panels
+                            const enrichedPanels = calPanels.map(p => {
+                              if ((p.key === 'jewish' || p.key === 'orthodox_judaism') && (hebrewDate || parsha)) {
+                                const prefix = [hebrewDate, parsha ? `Torah portion: ${parsha}` : ''].filter(Boolean).join('\n');
+                                return { ...p, text: prefix + (p.text ? '\n' + p.text : '') };
+                              }
+                              return p;
+                            });
+                            if ((hebrewDate || parsha) && !enrichedPanels.some(p => p.key === 'jewish' || p.key === 'orthodox_judaism')) {
+                              const cfg = CALENDAR_TRADITION_CONFIG['jewish'];
+                              if (cfg) {
+                                enrichedPanels.unshift({
+                                  key: 'jewish', emoji: cfg.emoji, label: cfg.label, color: cfg.color,
+                                  text: [hebrewDate, parsha ? `Torah portion: ${parsha}` : ''].filter(Boolean).join('\n')
+                                });
+                              }
+                            }
+                            
+                            const contextGroups = groupCalendarContextByTradition(enrichedPanels);
+                            const religionContextPanels = contextGroups[selectedReligion]?.panels || [];
+                            
+                            return (
+                              <>
+                                {/* Header with back button */}
+                                <div className="flex items-center gap-3 mb-3">
+                                  <button onClick={() => setSelectedReligion(null)} className="text-slate-400 hover:text-slate-200 p-1">
+                                    <ArrowLeft className="w-4 h-4" />
+                                  </button>
+                                  <div className="flex items-center gap-2 flex-1">
+                                    <span className="text-xl">{emoji}</span>
+                                    <h3 className="text-base font-semibold" style={{ color }}>{selectedReligion}</h3>
+                                  </div>
+                                  <button onClick={() => { setSelectedDay(null); setSelectedReligion(null); }} className="text-slate-400 hover:text-slate-200 p-1">
+                                    <X className="w-4 h-4" />
+                                  </button>
                                 </div>
-                              )}
-                              
-                              {events.holidays.length === 0 && events.lessons.length === 0 && (
-                                <div className="text-center py-6">
-                                  <Calendar className="w-8 h-8 text-slate-600 mx-auto mb-3" />
-                                  <p className="text-slate-400">No events or lessons for this day</p>
-                                </div>
-                              )}
-                            </div>
-                          );
-                        })()}
+                                
+                                {/* Religion-specific calendar date */}
+                                {religionDate && (
+                                  <div className="mb-3 p-2 rounded-lg border flex items-center gap-2" style={{ backgroundColor: `${color}10`, borderColor: `${color}30` }}>
+                                    <span>{emoji}</span>
+                                    <span className="text-sm font-medium" style={{ color }}>{religionDate}</span>
+                                  </div>
+                                )}
+                                
+                                {/* Calendar Context */}
+                                {religionContextPanels.length > 0 && (
+                                  <div className="mb-3">
+                                    <h4 className="text-sm font-medium text-slate-200 mb-2 flex items-center gap-2">
+                                      <Globe className="w-4 h-4" style={{ color }} />
+                                      Calendar Context
+                                    </h4>
+                                    <div className="space-y-2">
+                                      {religionContextPanels.map((panel: any, idx: number) => (
+                                        <div key={idx} className="p-2 rounded border" style={{ backgroundColor: "#0B0B11", borderColor: panel.color || `${color}50` }}>
+                                          <div className="flex items-center gap-1.5 mb-1">
+                                            <span className="text-sm">{panel.emoji}</span>
+                                            <h6 className="text-xs font-medium text-slate-200">{panel.label}</h6>
+                                          </div>
+                                          {panel.text.split('\n').map((line: string, i: number) => (
+                                            <p key={i} className="text-xs text-slate-400 leading-relaxed">{line}</p>
+                                          ))}
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                )}
+                                
+                                {/* Religious Events */}
+                                {traditionHolidays.length > 0 && (
+                                  <div className="mb-3">
+                                    <h4 className="text-sm font-medium text-slate-200 mb-2 flex items-center gap-2">
+                                      <Calendar className="w-4 h-4" style={{ color }} />
+                                      Events ({traditionHolidays.length})
+                                    </h4>
+                                    <div className="space-y-1.5">
+                                      {traditionHolidays.map((holiday, idx) => (
+                                        <div key={idx} className="p-2 rounded-lg border" style={{ backgroundColor: "#0B0B11", borderColor: `${color}50` }}>
+                                          <h5 className="font-medium text-slate-200 text-sm">{holiday.name}</h5>
+                                          <p className="text-xs text-slate-400 mt-1">{holiday.description}</p>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                )}
+                                
+                                {/* Lessons */}
+                                {traditionLessons.length > 0 && (
+                                  <div>
+                                    <h4 className="text-sm font-medium text-slate-200 mb-2 flex items-center gap-2">
+                                      <GraduationCap className="w-4 h-4" style={{ color }} />
+                                      Lessons ({traditionLessons.length})
+                                    </h4>
+                                    <div className="space-y-1.5">
+                                      {traditionLessons.map((lesson: any, idx: number) => (
+                                        <div
+                                          key={idx}
+                                          onClick={() => setSelectedLesson(lesson)}
+                                          className="p-2 rounded border cursor-pointer hover:border-yellow-500 transition-colors"
+                                          style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}
+                                        >
+                                          <h5 className="font-medium text-slate-200 text-sm leading-tight">{lesson.title}</h5>
+                                          <p className="text-xs text-slate-400 mt-1 line-clamp-2">
+                                            {lesson.content ? lesson.content.substring(0, 120) + '...' : 'Click to view lesson content'}
+                                          </p>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                )}
+                                
+                                {/* Empty state */}
+                                {traditionHolidays.length === 0 && traditionLessons.length === 0 && religionContextPanels.length === 0 && (
+                                  <div className="text-center py-6">
+                                    <span className="text-3xl mb-2 block">{emoji}</span>
+                                    <p className="text-slate-400 text-sm">No content for {selectedReligion} on this day</p>
+                                  </div>
+                                )}
+                              </>
+                            );
+                          })()
+                        )}
                       </div>
                     </div>
                   </div>
@@ -3332,7 +3400,7 @@ export default function FaithJourneyPage() {
                       "Christianity": "#8B5CF6", 
                       "Islam": "#10B981",
                       "Hinduism": "#F59E0B",
-                      "Buddhism": "#EAB308",
+                      "Buddhism": "#06B6D4",
                       "Bahá'í": "#EC4899",
                       "Other": "#6B7280"
                     };

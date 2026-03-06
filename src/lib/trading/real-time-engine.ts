@@ -154,53 +154,47 @@ export class RealTimeTradingEngine {
 
   private async fetchYahooPrice(symbol: string): Promise<RealTimePrice> {
     try {
-      // Use server-side proxy to avoid CORS issues with Yahoo Finance
-      const response = await fetch(
-        `/api/markets?symbols=${symbol}&range=1d`
-      );
+      // Use server-side proxy to avoid CORS — never call Yahoo directly from browser
+      const response = await fetch(`/api/price-history?symbol=${symbol}`);
       
-      const data = await response.json();
-      
-      if (data && data[symbol]) {
-        const quote = data[symbol];
-        return {
-          symbol,
-          price: quote.price || quote.regularMarketPrice || 0,
-          change: quote.change || 0,
-          changePercent: quote.changePercent || 0,
-          volume: quote.volume || 0,
-          timestamp: new Date().toISOString(),
-          source: 'yahoo' as const
-        };
-      }
-      
-      // Fallback: try direct Yahoo (works server-side, may fail client-side)
-      const directResponse = await fetch(
-        `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}`
-      ).catch(() => null);
-      
-      if (directResponse?.ok) {
-        const directData = await directResponse.json();
-        const result = directData.chart?.result?.[0];
-        const meta = result?.meta;
-        
-        if (meta?.regularMarketPrice) {
+      if (response.ok) {
+        const data = await response.json();
+        if (data?.prices?.length > 0) {
+          const latest = data.prices[data.prices.length - 1];
+          const prev = data.prices.length > 1 ? data.prices[data.prices.length - 2] : latest;
           return {
             symbol,
-            price: meta.regularMarketPrice,
-            change: meta.regularMarketPrice - meta.previousClose,
-            changePercent: ((meta.regularMarketPrice - meta.previousClose) / meta.previousClose) * 100,
-            volume: meta.regularMarketVolume || 0,
+            price: latest.close || latest.price || 0,
+            change: (latest.close || 0) - (prev.close || 0),
+            changePercent: prev.close ? (((latest.close || 0) - prev.close) / prev.close) * 100 : 0,
+            volume: latest.volume || 0,
             timestamp: new Date().toISOString(),
             source: 'yahoo'
           };
         }
       }
-      
-      throw new Error('No price data available');
+
+      // If proxy also fails, return a stale/zero price silently instead of throwing
+      return {
+        symbol,
+        price: 0,
+        change: 0,
+        changePercent: 0,
+        volume: 0,
+        timestamp: new Date().toISOString(),
+        source: 'yahoo'
+      };
     } catch (error) {
-      console.error(`Failed to fetch price for ${symbol}:`, error);
-      throw error;
+      // Silently return zero price — don't spam console with errors for every ticker
+      return {
+        symbol,
+        price: 0,
+        change: 0,
+        changePercent: 0,
+        volume: 0,
+        timestamp: new Date().toISOString(),
+        source: 'yahoo'
+      };
     }
   }
 

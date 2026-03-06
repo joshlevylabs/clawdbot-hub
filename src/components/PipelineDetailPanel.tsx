@@ -1351,7 +1351,7 @@ function StrategyTechnicalOverview({ strategyName, tickers }: { strategyName: st
                     </div>
                   )}
                   {fib.profit_targets && fib.profit_targets.length > 0 && (() => {
-                    const price = tickerData?.rawData?.price || fib.current_price || 0;
+                    const price = fib.current_price || 0;
                     const validTargets = fib.profit_targets.filter(t => t > price);
                     const allInverted = validTargets.length === 0;
                     return allInverted ? (

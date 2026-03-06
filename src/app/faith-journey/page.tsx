@@ -1451,6 +1451,7 @@ export default function FaithJourneyPage() {
   const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
   const [selectedDay, setSelectedDay] = useState<Date | null>(null);
   const [selectedReligion, setSelectedReligion] = useState<string | null>(null);
+  const [selectedDenomination, setSelectedDenomination] = useState<string | null>(null);
   const [selectedLesson, setSelectedLesson] = useState<any>(null);
   
   // Calendar tab compact features
@@ -1615,7 +1616,7 @@ export default function FaithJourneyPage() {
     setSelectedMonth(today.getMonth());
     setSelectedYear(today.getFullYear());
     setSelectedDay(today);
-    setSelectedReligion(null);
+    setSelectedReligion(null); setSelectedDenomination(null);
   };
 
   // Calendar helper functions
@@ -2206,7 +2207,7 @@ export default function FaithJourneyPage() {
                           } else {
                             setSelectedMonth(selectedMonth - 1);
                           }
-                          setSelectedReligion(null);
+                          setSelectedReligion(null); setSelectedDenomination(null);
                         }}
                         className="p-2 rounded text-slate-400 hover:text-slate-200"
                       >
@@ -2227,7 +2228,7 @@ export default function FaithJourneyPage() {
                           } else {
                             setSelectedMonth(selectedMonth + 1);
                           }
-                          setSelectedReligion(null);
+                          setSelectedReligion(null); setSelectedDenomination(null);
                         }}
                         className="p-2 rounded text-slate-400 hover:text-slate-200"
                       >
@@ -2292,7 +2293,7 @@ export default function FaithJourneyPage() {
                       return (
                         <div
                           key={day}
-                          onClick={() => { setSelectedDay(date); setSelectedReligion(null); }}
+                          onClick={() => { setSelectedDay(date); setSelectedReligion(null); setSelectedDenomination(null); }}
                           className={`p-1 sm:p-2 h-10 sm:h-16 border rounded-sm cursor-pointer transition-all relative ${
                             isSelected ? 'ring-2 ring-yellow-500' : 'hover:border-gray-500'
                           }`}
@@ -2357,7 +2358,7 @@ export default function FaithJourneyPage() {
                             })}
                           </h3>
                           <button
-                            onClick={() => { setSelectedDay(null); setSelectedReligion(null); }}
+                            onClick={() => { setSelectedDay(null); setSelectedReligion(null); setSelectedDenomination(null); }}
                             className="text-slate-400 hover:text-slate-200 p-1"
                           >
                             <X className="w-4 h-4" />
@@ -2552,7 +2553,7 @@ export default function FaithJourneyPage() {
                             })}
                           </h3>
                           <button
-                            onClick={() => { setSelectedDay(null); setSelectedReligion(null); }}
+                            onClick={() => { setSelectedDay(null); setSelectedReligion(null); setSelectedDenomination(null); }}
                             className="text-slate-400 hover:text-slate-200 p-1"
                           >
                             <X className="w-4 h-4" />
@@ -2605,7 +2606,7 @@ export default function FaithJourneyPage() {
                                         {events.holidays.map((holiday, idx) => (
                                           <div key={idx} className="p-2 rounded-lg border cursor-pointer hover:border-slate-500 transition-colors"
                                             style={{ backgroundColor: "#0B0B11", borderColor: holiday.color + "50" }}
-                                            onClick={() => setSelectedReligion(holiday.tradition)}
+                                            onClick={() => { setSelectedReligion(holiday.tradition); setSelectedDenomination(null); }}
                                           >
                                             <div className="flex items-center gap-2">
                                               <span style={{ color: holiday.color }}>●</span>
@@ -2628,9 +2629,9 @@ export default function FaithJourneyPage() {
                                       Explore by Tradition
                                     </h4>
                                     <div className="grid grid-cols-2 gap-2">
-                                      {(["Judaism", "Christianity", "Islam", "Hinduism", "Buddhism", "Bahá'í"] as const).map((tradition) => {
+                                      {(["Judaism", "Christianity", "Islam", "Hinduism", "Buddhism", "Bahá'í", "Other"] as const).map((tradition) => {
                                         const colors = getTraditionColors();
-                                        const color = colors[tradition as keyof typeof colors];
+                                        const color = (colors as any)[tradition] || "#94A3B8";
                                         const traditionHolidays = events.holidays.filter(h => h.tradition === tradition);
                                         const traditionLessons = events.lessons.filter((l: any) => (l.tradition || "Other") === tradition);
                                         const totalContent = traditionHolidays.length + traditionLessons.length;
@@ -2643,12 +2644,12 @@ export default function FaithJourneyPage() {
                                         
                                         if (totalContent === 0 && !hasContext) return null;
                                         
-                                        const emojis: Record<string, string> = { "Judaism": "✡️", "Christianity": "✝️", "Islam": "☪️", "Hinduism": "🕉️", "Buddhism": "☸️", "Bahá'í": "✴️" };
+                                        const emojis: Record<string, string> = { "Judaism": "✡️", "Christianity": "✝️", "Islam": "☪️", "Hinduism": "🕉️", "Buddhism": "☸️", "Bahá'í": "✴️", "Other": "🌍" };
                                         
                                         return (
                                           <button
                                             key={tradition}
-                                            onClick={() => setSelectedReligion(tradition)}
+                                            onClick={() => { setSelectedReligion(tradition); setSelectedDenomination(null); }}
                                             className="p-3 rounded-lg border text-left hover:border-slate-500 transition-all group"
                                             style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38", borderLeftColor: color, borderLeftWidth: "3px" }}
                                           >
@@ -2723,18 +2724,43 @@ export default function FaithJourneyPage() {
                             const contextGroups = groupCalendarContextByTradition(enrichedPanels);
                             const religionContextPanels = contextGroups[selectedReligion]?.panels || [];
                             
+                            // Find lessons matching selected denomination by baselineTraditionId
+                            const getDenominationLessons = (denomKey: string) => {
+                              // Match lessons whose baselineTraditionId maps to this denomination
+                              return traditionLessons.filter((lesson: any) => {
+                                if (!lesson.baselineTraditionId) return false;
+                                const trad = TRADITION_MAP[lesson.baselineTraditionId];
+                                if (!trad) return false;
+                                // Match by checking if the tradition name contains the denomination label or vice versa
+                                const denomLabel = CALENDAR_TRADITION_CONFIG[denomKey]?.label || denomKey;
+                                return trad.name.toLowerCase().includes(denomLabel.toLowerCase().split(' ')[0]) ||
+                                       denomLabel.toLowerCase().includes(trad.name.toLowerCase().split(' ')[0]);
+                              });
+                            };
+                            
                             return (
                               <>
                                 {/* Header with back button */}
                                 <div className="flex items-center gap-3 mb-3">
-                                  <button onClick={() => setSelectedReligion(null)} className="text-slate-400 hover:text-slate-200 p-1">
+                                  <button onClick={() => {
+                                    if (selectedDenomination) {
+                                      setSelectedDenomination(null);
+                                    } else {
+                                      setSelectedReligion(null); setSelectedDenomination(null);
+                                    }
+                                  }} className="text-slate-400 hover:text-slate-200 p-1">
                                     <ArrowLeft className="w-4 h-4" />
                                   </button>
-                                  <div className="flex items-center gap-2 flex-1">
+                                  <div className="flex items-center gap-2 flex-1 min-w-0">
                                     <span className="text-xl">{emoji}</span>
-                                    <h3 className="text-base font-semibold" style={{ color }}>{selectedReligion}</h3>
+                                    <h3 className="text-base font-semibold truncate" style={{ color }}>
+                                      {selectedReligion}
+                                      {selectedDenomination && (
+                                        <span className="text-slate-400 font-normal text-sm"> › {CALENDAR_TRADITION_CONFIG[selectedDenomination]?.label || selectedDenomination}</span>
+                                      )}
+                                    </h3>
                                   </div>
-                                  <button onClick={() => { setSelectedDay(null); setSelectedReligion(null); }} className="text-slate-400 hover:text-slate-200 p-1">
+                                  <button onClick={() => { setSelectedDay(null); setSelectedReligion(null); setSelectedDenomination(null); }} className="text-slate-400 hover:text-slate-200 p-1">
                                     <X className="w-4 h-4" />
                                   </button>
                                 </div>
@@ -2747,78 +2773,157 @@ export default function FaithJourneyPage() {
                                   </div>
                                 )}
                                 
-                                {/* Calendar Context */}
-                                {religionContextPanels.length > 0 && (
-                                  <div className="mb-3">
-                                    <h4 className="text-sm font-medium text-slate-200 mb-2 flex items-center gap-2">
-                                      <Globe className="w-4 h-4" style={{ color }} />
-                                      Calendar Context
-                                    </h4>
-                                    <div className="space-y-2">
-                                      {religionContextPanels.map((panel: any, idx: number) => (
-                                        <div key={idx} className="p-2 rounded border" style={{ backgroundColor: "#0B0B11", borderColor: panel.color || `${color}50` }}>
-                                          <div className="flex items-center gap-1.5 mb-1">
-                                            <span className="text-sm">{panel.emoji}</span>
-                                            <h6 className="text-xs font-medium text-slate-200">{panel.label}</h6>
-                                          </div>
-                                          {panel.text.split('\n').map((line: string, i: number) => (
-                                            <p key={i} className="text-xs text-slate-400 leading-relaxed">{line}</p>
+                                {!selectedDenomination ? (
+                                  // === LAYER 3a: Denomination list (no lessons yet) ===
+                                  <>
+                                    {/* Religious Events */}
+                                    {traditionHolidays.length > 0 && (
+                                      <div className="mb-3">
+                                        <h4 className="text-sm font-medium text-slate-200 mb-2 flex items-center gap-2">
+                                          <Calendar className="w-4 h-4" style={{ color }} />
+                                          Events ({traditionHolidays.length})
+                                        </h4>
+                                        <div className="space-y-1.5">
+                                          {traditionHolidays.map((holiday, idx) => (
+                                            <div key={idx} className="p-2 rounded-lg border" style={{ backgroundColor: "#0B0B11", borderColor: `${color}50` }}>
+                                              <h5 className="font-medium text-slate-200 text-sm">{holiday.name}</h5>
+                                              <p className="text-xs text-slate-400 mt-1">{holiday.description}</p>
+                                            </div>
                                           ))}
                                         </div>
-                                      ))}
-                                    </div>
-                                  </div>
-                                )}
-                                
-                                {/* Religious Events */}
-                                {traditionHolidays.length > 0 && (
-                                  <div className="mb-3">
-                                    <h4 className="text-sm font-medium text-slate-200 mb-2 flex items-center gap-2">
-                                      <Calendar className="w-4 h-4" style={{ color }} />
-                                      Events ({traditionHolidays.length})
-                                    </h4>
-                                    <div className="space-y-1.5">
-                                      {traditionHolidays.map((holiday, idx) => (
-                                        <div key={idx} className="p-2 rounded-lg border" style={{ backgroundColor: "#0B0B11", borderColor: `${color}50` }}>
-                                          <h5 className="font-medium text-slate-200 text-sm">{holiday.name}</h5>
-                                          <p className="text-xs text-slate-400 mt-1">{holiday.description}</p>
+                                      </div>
+                                    )}
+                                    
+                                    {/* Denomination Cards (clickable → shows lessons) */}
+                                    {religionContextPanels.length > 0 && (
+                                      <div className="mb-3">
+                                        <h4 className="text-sm font-medium text-slate-200 mb-2 flex items-center gap-2">
+                                          <Globe className="w-4 h-4" style={{ color }} />
+                                          Denominations ({religionContextPanels.length})
+                                        </h4>
+                                        <div className="space-y-2">
+                                          {religionContextPanels.map((panel: any, idx: number) => {
+                                            const denomLessons = getDenominationLessons(panel.key);
+                                            return (
+                                              <button
+                                                key={idx}
+                                                onClick={() => setSelectedDenomination(panel.key)}
+                                                className="w-full p-2 rounded border text-left hover:border-slate-500 transition-colors group"
+                                                style={{ backgroundColor: "#0B0B11", borderColor: panel.color || `${color}50` }}
+                                              >
+                                                <div className="flex items-center justify-between mb-0.5">
+                                                  <div className="flex items-center gap-1.5">
+                                                    <span className="text-sm">{panel.emoji}</span>
+                                                    <h6 className="text-xs font-medium text-slate-200 group-hover:text-white">{panel.label}</h6>
+                                                  </div>
+                                                  <div className="flex items-center gap-1.5">
+                                                    {denomLessons.length > 0 && (
+                                                      <span className="text-xs px-1.5 py-0.5 rounded" style={{ backgroundColor: `${color}20`, color }}>
+                                                        {denomLessons.length} lesson{denomLessons.length !== 1 ? 's' : ''}
+                                                      </span>
+                                                    )}
+                                                    <ChevronRight className="w-3 h-3 text-slate-500 group-hover:text-slate-300" />
+                                                  </div>
+                                                </div>
+                                                <p className="text-xs text-slate-400 line-clamp-1 ml-5">
+                                                  {panel.text.split('\n')[0]}
+                                                </p>
+                                              </button>
+                                            );
+                                          })}
                                         </div>
-                                      ))}
-                                    </div>
-                                  </div>
-                                )}
-                                
-                                {/* Lessons */}
-                                {traditionLessons.length > 0 && (
-                                  <div>
-                                    <h4 className="text-sm font-medium text-slate-200 mb-2 flex items-center gap-2">
-                                      <GraduationCap className="w-4 h-4" style={{ color }} />
-                                      Lessons ({traditionLessons.length})
-                                    </h4>
-                                    <div className="space-y-1.5">
-                                      {traditionLessons.map((lesson: any, idx: number) => (
-                                        <div
-                                          key={idx}
-                                          onClick={() => setSelectedLesson(lesson)}
-                                          className="p-2 rounded border cursor-pointer hover:border-yellow-500 transition-colors"
-                                          style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}
-                                        >
-                                          <h5 className="font-medium text-slate-200 text-sm leading-tight">{lesson.title}</h5>
-                                          <p className="text-xs text-slate-400 mt-1 line-clamp-2">
-                                            {lesson.content ? lesson.content.substring(0, 120) + '...' : 'Click to view lesson content'}
-                                          </p>
+                                      </div>
+                                    )}
+                                    
+                                    {/* If no denominations but has lessons, show "All Lessons" button */}
+                                    {religionContextPanels.length === 0 && traditionLessons.length > 0 && (
+                                      <div>
+                                        <h4 className="text-sm font-medium text-slate-200 mb-2 flex items-center gap-2">
+                                          <GraduationCap className="w-4 h-4" style={{ color }} />
+                                          Lessons ({traditionLessons.length})
+                                        </h4>
+                                        <div className="space-y-1.5">
+                                          {traditionLessons.map((lesson: any, idx: number) => (
+                                            <div
+                                              key={idx}
+                                              onClick={() => setSelectedLesson(lesson)}
+                                              className="p-2 rounded border cursor-pointer hover:border-yellow-500 transition-colors"
+                                              style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}
+                                            >
+                                              <h5 className="font-medium text-slate-200 text-sm leading-tight">{lesson.title}</h5>
+                                              <p className="text-xs text-slate-400 mt-1 line-clamp-2">
+                                                {lesson.content ? lesson.content.substring(0, 120) + '...' : 'Click to view lesson content'}
+                                              </p>
+                                            </div>
+                                          ))}
                                         </div>
-                                      ))}
-                                    </div>
-                                  </div>
-                                )}
-                                
-                                {/* Empty state */}
-                                {traditionHolidays.length === 0 && traditionLessons.length === 0 && religionContextPanels.length === 0 && (
-                                  <div className="text-center py-6">
-                                    <span className="text-3xl mb-2 block">{emoji}</span>
-                                    <p className="text-slate-400 text-sm">No content for {selectedReligion} on this day</p>
-                                  </div>
+                                      </div>
+                                    )}
+                                    
+                                    {/* Empty state */}
+                                    {traditionHolidays.length === 0 && traditionLessons.length === 0 && religionContextPanels.length === 0 && (
+                                      <div className="text-center py-6">
+                                        <span className="text-3xl mb-2 block">{emoji}</span>
+                                        <p className="text-slate-400 text-sm">No content for {selectedReligion} on this day</p>
+                                      </div>
+                                    )}
+                                  </>
+                                ) : (
+                                  // === LAYER 3b: Denomination detail + lessons ===
+                                  (() => {
+                                    const denomPanel = religionContextPanels.find((p: any) => p.key === selectedDenomination);
+                                    const denomLessons = getDenominationLessons(selectedDenomination);
+                                    // Fallback: if no lessons match denomination, show all tradition lessons
+                                    const displayLessons = denomLessons.length > 0 ? denomLessons : traditionLessons;
+                                    
+                                    return (
+                                      <>
+                                        {/* Denomination Calendar Context (expanded) */}
+                                        {denomPanel && (
+                                          <div className="mb-3 p-3 rounded-lg border" style={{ backgroundColor: "#0B0B11", borderColor: denomPanel.color || `${color}50` }}>
+                                            <div className="flex items-center gap-2 mb-2">
+                                              <span className="text-base">{denomPanel.emoji}</span>
+                                              <h5 className="text-sm font-medium text-slate-200">{denomPanel.label}</h5>
+                                            </div>
+                                            {denomPanel.text.split('\n').map((line: string, i: number) => (
+                                              <p key={i} className="text-xs text-slate-400 leading-relaxed">{line}</p>
+                                            ))}
+                                          </div>
+                                        )}
+                                        
+                                        {/* Lessons for this denomination */}
+                                        {displayLessons.length > 0 && (
+                                          <div>
+                                            <h4 className="text-sm font-medium text-slate-200 mb-2 flex items-center gap-2">
+                                              <GraduationCap className="w-4 h-4" style={{ color }} />
+                                              Lessons ({displayLessons.length})
+                                            </h4>
+                                            <div className="space-y-1.5">
+                                              {displayLessons.map((lesson: any, idx: number) => (
+                                                <div
+                                                  key={idx}
+                                                  onClick={() => setSelectedLesson(lesson)}
+                                                  className="p-2 rounded border cursor-pointer hover:border-yellow-500 transition-colors"
+                                                  style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}
+                                                >
+                                                  <h5 className="font-medium text-slate-200 text-sm leading-tight">{lesson.title}</h5>
+                                                  <p className="text-xs text-slate-400 mt-1 line-clamp-2">
+                                                    {lesson.content ? lesson.content.substring(0, 120) + '...' : 'Click to view lesson content'}
+                                                  </p>
+                                                </div>
+                                              ))}
+                                            </div>
+                                          </div>
+                                        )}
+                                        
+                                        {displayLessons.length === 0 && !denomPanel && (
+                                          <div className="text-center py-4">
+                                            <p className="text-slate-500 text-sm">No lessons for this denomination yet</p>
+                                          </div>
+                                        )}
+                                      </>
+                                    );
+                                  })()
                                 )}
                               </>
                             );

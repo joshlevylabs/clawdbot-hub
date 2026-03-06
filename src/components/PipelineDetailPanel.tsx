@@ -2303,7 +2303,40 @@ function AgentAnalysisTickerRow({ ticker, isFiltered }: { ticker: TickerDetail; 
 // ============================================================
 function BlendedFGTickerRow({ ticker }: { ticker: TickerDetail }) {
   const raw = ticker.rawData;
-  if (!raw) return null;
+
+  // Detect agent badge from reason field (portfolio exit flow tags agent positions)
+  const agentMatch = ticker.reason?.match(/(📊|🏦|🥇|🚀|🎯|⚖️|🤖)\s*(\w[\w\s]*)/);
+  const agentBadge = agentMatch ? agentMatch[0].trim() : null;
+  const isAgentPosition = !!agentBadge;
+
+  if (!raw) {
+    // Minimal row for positions without full signal data (common in portfolio exit flow)
+    return (
+      <div className="bg-slate-800/50 rounded-lg p-3 border border-slate-700/50">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="font-mono font-semibold text-slate-200 text-sm">{ticker.symbol}</span>
+            {ticker.signal && (
+              <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${
+                ticker.signal === 'BUY' ? 'bg-emerald-900/50 text-emerald-400' :
+                ticker.signal === 'SELL' ? 'bg-red-900/50 text-red-400' :
+                'bg-slate-700/50 text-slate-400'
+              }`}>{ticker.signal}</span>
+            )}
+            {isAgentPosition && (
+              <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-indigo-900/50 text-indigo-300 border border-indigo-700/30">
+                {agentBadge}
+              </span>
+            )}
+          </div>
+          <div className="flex items-center gap-3">
+            {ticker.reason && !isAgentPosition && <span className="text-xs text-slate-500">{ticker.reason}</span>}
+            {ticker.currentPrice && <span className="text-sm text-slate-300 font-mono">${ticker.currentPrice.toFixed(2)}</span>}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const sectorFG = raw.sector_fg ?? raw.current_fg ?? 0;
   const globalFG = raw.global_fg ?? raw.current_fg ?? 0;
@@ -2409,6 +2442,11 @@ function BlendedFGTickerRow({ ticker }: { ticker: TickerDetail }) {
         <div className="flex items-center gap-2">
           <span className="font-mono font-semibold text-slate-200 text-sm">{raw.symbol}</span>
           <span className="text-[10px] text-slate-500 capitalize">{raw.asset_class?.replace('_', ' ')}</span>
+          {isAgentPosition && (
+            <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-indigo-900/50 text-indigo-300 border border-indigo-700/30">
+              {agentBadge}
+            </span>
+          )}
         </div>
         <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${
           effectiveTriggered 

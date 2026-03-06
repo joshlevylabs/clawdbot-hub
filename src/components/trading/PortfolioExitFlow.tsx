@@ -307,7 +307,7 @@ export default function PortfolioExitFlow({ universeData, coreData }: PortfolioE
   const [error, setError] = useState<string | null>(null);
   const [selectedStage, setSelectedStage] = useState<StageDetails | null>(null);
   const [scale, setScale] = useState(1);
-  const [viewMode, setViewMode] = useState<'user' | 'all'>('user');
+  const [viewMode, setViewMode] = useState<'all' | 'user'>('all');
   const [connections, setConnections] = useState<{ from: string; to: string; fromPos: { x: number; y: number }; toPos: { x: number; y: number } }[]>([]);
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -481,6 +481,28 @@ export default function PortfolioExitFlow({ universeData, coreData }: PortfolioE
     };
   }, [updateConnections]);
 
+  // Agent name mapping (account_id → display label with emoji)
+  const AGENT_NAMES: Record<string, string> = {
+    'chris-vermeulen': '📊 Technician',
+    'warren-buffett': '🏦 Oracle',
+    'peter-schiff': '🥇 Contrarian',
+    'raoul-pal': '🚀 Macro Man',
+    'peter-lynch': '🎯 Scout',
+    'ray-dalio': '⚖️ Architect',
+  };
+
+  const posToTickerDetail = (pos: PositionWithSignal, extraReason?: string): TickerDetail => {
+    const agentTag = pos.account_id ? (AGENT_NAMES[pos.account_id] || `🤖 ${pos.account_id}`) : undefined;
+    const reasons = [extraReason, agentTag].filter(Boolean).join(' · ');
+    return {
+      symbol: pos.symbol,
+      signal: pos.signalData?.signal || 'N/A',
+      currentPrice: pos.current_price || pos.entry_price,
+      reason: reasons || undefined,
+      rawData: pos.signalData,
+    };
+  };
+
   // Handle stage clicks
   const handleStageClick = (stageKey: string) => {
     if (!pipelineData) return;
@@ -493,12 +515,7 @@ export default function PortfolioExitFlow({ universeData, coreData }: PortfolioE
         inputCount: pipelineData.portfolioInput.inputCount,
         outputCount: pipelineData.portfolioInput.outputCount,
         filteredTickers: [],
-        passedTickers: pipelineData.portfolioInput.passed.map(pos => ({
-          symbol: pos.symbol,
-          signal: pos.signalData?.signal || 'N/A',
-          currentPrice: pos.current_price || pos.entry_price,
-          rawData: pos.signalData
-        }))
+        passedTickers: pipelineData.portfolioInput.passed.map(pos => posToTickerDetail(pos))
       });
       return;
     }
@@ -515,19 +532,8 @@ export default function PortfolioExitFlow({ universeData, coreData }: PortfolioE
           stageType: 'filter',
           inputCount: evaluation.inputCount,
           outputCount: evaluation.outputCount,
-          filteredTickers: evaluation.filtered.map(pos => ({
-            symbol: pos.symbol,
-            reason: `No ${strategy.name.toLowerCase()} signal`,
-            signal: pos.signalData?.signal || 'N/A',
-            currentPrice: pos.current_price || pos.entry_price,
-            rawData: pos.signalData
-          })),
-          passedTickers: evaluation.passed.map(pos => ({
-            symbol: pos.symbol,
-            signal: pos.signalData?.signal || 'N/A',
-            currentPrice: pos.current_price || pos.entry_price,
-            rawData: pos.signalData
-          }))
+          filteredTickers: evaluation.filtered.map(pos => posToTickerDetail(pos, `No ${strategy.name.toLowerCase()} signal`)),
+          passedTickers: evaluation.passed.map(pos => posToTickerDetail(pos))
         });
       }
       return;
@@ -541,13 +547,7 @@ export default function PortfolioExitFlow({ universeData, coreData }: PortfolioE
         inputCount: positionsWithSignals.length,
         outputCount: positionsWithSignals.length,
         filteredTickers: [],
-        passedTickers: positionsWithSignals.map(pos => ({
-          symbol: pos.symbol,
-          signal: pos.signalData?.signal || 'N/A',
-          currentPrice: pos.current_price || pos.entry_price,
-          reason: `${pos.exitSignals.length} exit signals`,
-          rawData: pos.signalData
-        }))
+        passedTickers: positionsWithSignals.map(pos => posToTickerDetail(pos, `${pos.exitSignals.length} exit signals`))
       });
       return;
     }
@@ -563,13 +563,7 @@ export default function PortfolioExitFlow({ universeData, coreData }: PortfolioE
         inputCount: positionsWithSignals.length,
         outputCount: positions.length,
         filteredTickers: [],
-        passedTickers: positions.map(pos => ({
-          symbol: pos.symbol,
-          signal: pos.signalData?.signal || 'N/A',
-          currentPrice: pos.current_price || pos.entry_price,
-          reason: pos.exitSignals.join(', '),
-          rawData: pos.signalData
-        }))
+        passedTickers: positions.map(pos => posToTickerDetail(pos, pos.exitSignals.join(', ')))
       });
       return;
     }
@@ -585,12 +579,7 @@ export default function PortfolioExitFlow({ universeData, coreData }: PortfolioE
         inputCount: positionsWithSignals.length,
         outputCount: positions.length,
         filteredTickers: [],
-        passedTickers: positions.map(pos => ({
-          symbol: pos.symbol,
-          signal: pos.signalData?.signal || 'N/A',
-          currentPrice: pos.current_price || pos.entry_price,
-          rawData: pos.signalData
-        }))
+        passedTickers: positions.map(pos => posToTickerDetail(pos))
       });
       return;
     }
@@ -778,7 +767,7 @@ export default function PortfolioExitFlow({ universeData, coreData }: PortfolioE
                 <WorkflowNode
                   ref={(el) => { nodeRefs.current['portfolio-input'] = el; }}
                   name="Portfolio Input" 
-                  description={`${pipelineData.portfolioInput.inputCount} open positions`}
+                  description={`${pipelineData.portfolioInput.inputCount} positions${viewMode === 'all' && agentCount > 0 ? ` (${userCount} yours · ${agentCount} agents)` : ''}`}
                   inputCount={0}
                   outputCount={pipelineData.portfolioInput.outputCount}
                   onClick={() => handleStageClick('portfolio-input')}

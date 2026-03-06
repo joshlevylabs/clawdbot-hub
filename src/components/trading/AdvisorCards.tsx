@@ -811,7 +811,7 @@ export default function AdvisorCards({ onAgentClick }: AdvisorCardsProps = {}) {
   useEffect(() => {
     fetchPortfolios(); // Fetch portfolios immediately
     ADVISORS.forEach((advisor, idx) => {
-      setTimeout(() => fetchAdvisor(advisor), idx * 2000); // 2s stagger
+      setTimeout(() => fetchAdvisor(advisor), idx * 4000); // 4s stagger — 6 advisors × ~70KB prompts, avoid Anthropic rate limits
     });
   }, [fetchAdvisor, fetchPortfolios]);
 

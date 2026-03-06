@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { searchScriptures, formatScriptureContext } from "@/lib/scripture-rag";
 
 export async function POST(request: NextRequest) {
   try {
@@ -20,10 +21,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Search for relevant scripture passages (RAG)
+    const passages = await searchScriptures(message, tradition || denomination, {
+      matchCount: 5,
+      matchThreshold: 0.65,
+      includeCrossTradition: false,
+    });
+    const scriptureContext = formatScriptureContext(passages);
+
     // Build system prompt from guide information
     const systemPrompt = `You are ${guideName}, a ${denomination} ${tradition} guide. ${description}. Your focus: ${focus}.
 
-You provide thoughtful, compassionate guidance rooted in your tradition while being respectful of others' beliefs. Keep responses concise but meaningful, typically 2-3 paragraphs. Draw from your tradition's wisdom while being accessible to people at all levels of understanding.`;
+You provide thoughtful, compassionate guidance rooted in your tradition while being respectful of others' beliefs. Keep responses concise but meaningful, typically 2-3 paragraphs. Draw from your tradition's wisdom while being accessible to people at all levels of understanding.${scriptureContext}`;
 
     // Build message history for context
     const messages = [];

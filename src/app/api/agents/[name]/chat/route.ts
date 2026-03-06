@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
+import { searchScriptures, formatScriptureContext } from "@/lib/scripture-rag";
 
 // Model mapping from agent_configs.model to Anthropic API model names
 const modelMapping: { [key: string]: string } = {
@@ -131,6 +132,24 @@ export async function POST(
       memories.forEach((memory) => {
         systemPrompt += `- [${memory.memory_type}] ${memory.content}\n`;
       });
+    }
+
+    // RAG: Search for relevant scripture passages (faith guides only)
+    const isFaithGuide = agentConfig.integrations?.tradition || 
+      agentConfig.integrations?.denomination ||
+      (agentConfig.name && !['Chris Vermeulen', 'Warren Buffett', 'Peter Schiff', 'Raoul Pal', 'Peter Lynch'].includes(agentConfig.name));
+    
+    if (isFaithGuide) {
+      const tradition = agentConfig.integrations?.tradition || agentConfig.integrations?.denomination || "";
+      const passages = await searchScriptures(message, tradition, {
+        matchCount: 5,
+        matchThreshold: 0.65,
+        includeCrossTradition: false,
+      });
+      const scriptureContext = formatScriptureContext(passages);
+      if (scriptureContext) {
+        systemPrompt += scriptureContext;
+      }
     }
 
     // Step 5: Build message history for Anthropic API

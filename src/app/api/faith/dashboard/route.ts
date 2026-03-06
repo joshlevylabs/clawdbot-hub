@@ -2,6 +2,18 @@ import { NextRequest, NextResponse } from 'next/server';
 import { faithSupabase, isFaithSupabaseConfigured } from '@/lib/faith-supabase';
 import { FAITH_TRADITIONS } from '@/lib/faith-traditions';
 
+// Map tradition slugs/names to calendar filter categories
+function getTraditionCategory(traditionName: string): string {
+  const name = traditionName.toLowerCase();
+  if (name.includes('judaism') || name.includes('messianic')) return 'Judaism';
+  if (name.includes('christian') || name.includes('catholic') || name.includes('orthodox') && !name.includes('judaism') || name.includes('protestant') || name.includes('evangelical') || name.includes('mainline')) return 'Christianity';
+  if (name.includes('islam') || name.includes('sunni') || name.includes('shia') || name.includes('sufi')) return 'Islam';
+  if (name.includes('hindu') || name.includes('vaishna') || name.includes('shaiv') || name.includes('shakti') || name.includes('vedanta')) return 'Hinduism';
+  if (name.includes('buddhi') || name.includes('theravada') || name.includes('mahayana') || name.includes('vajrayana')) return 'Buddhism';
+  if (name.includes('baha') || name.includes("bahá'í")) return "Bahá'í";
+  return 'Other';
+}
+
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
@@ -20,6 +32,7 @@ export async function GET(request: NextRequest) {
       dailyPrayersRes,
       messagesRes,
       lessonProgressRes,
+      traditionsRes,
     ] = await Promise.all([
       faithSupabase.from('fj_user_profiles').select('*'),
       faithSupabase.from('fj_conversations').select('*'),
@@ -28,6 +41,7 @@ export async function GET(request: NextRequest) {
       faithSupabase.from('faith_daily_prayers').select('*'),
       faithSupabase.from('fj_messages').select('*'),
       faithSupabase.from('fj_lesson_progress').select('*'),
+      faithSupabase.from('faith_traditions').select('id,name,slug'),
     ]);
 
     // Check for errors
@@ -38,6 +52,14 @@ export async function GET(request: NextRequest) {
     if (dailyPrayersRes.error) console.error('Daily prayers fetch error:', dailyPrayersRes.error);
     if (messagesRes.error) console.error('Messages fetch error:', messagesRes.error);
     if (lessonProgressRes.error) console.error('Lesson progress fetch error:', lessonProgressRes.error);
+    if (traditionsRes.error) console.error('Traditions fetch error:', traditionsRes.error);
+
+    // Build tradition lookup map (id -> category name)
+    const traditions = traditionsRes.data || [];
+    const traditionMap = new Map<string, string>();
+    for (const t of traditions) {
+      traditionMap.set(t.id, getTraditionCategory(t.name));
+    }
 
     // Get the data (handle potential nulls)
     const users = usersRes.data || [];
@@ -98,7 +120,7 @@ export async function GET(request: NextRequest) {
       return {
         id: lesson.id,
         title: lesson.topic || lesson.title || `Lesson ${lesson.id}`,
-        tradition: lesson.tradition || 'General',
+        tradition: lesson.tradition || (lesson.baseline_tradition_id ? traditionMap.get(lesson.baseline_tradition_id) : null) || 'Other',
         difficulty: lesson.difficulty || 'medium',
         completionCount: completions.length,
         date: lesson.date || lesson.created_at,

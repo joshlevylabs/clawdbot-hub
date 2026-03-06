@@ -288,7 +288,7 @@
     },
     {
       "date": "2026-03-06",
-      "global_fg": 27.3,
+      "global_fg": 26.8,
       "sectors": {
         "broad_market": 45.2,
         "technology": 47.1,
@@ -301,15 +301,15 @@
         "commodities": 60.5
       },
       "divergences": {
-        "broad_market": 17.9,
-        "technology": 19.8,
-        "healthcare": 19.6,
-        "financials": 10.9,
-        "real_estate": 41.8,
-        "energy": 43.3,
-        "bonds": 32.9,
-        "international": 12.3,
-        "commodities": 33.2
+        "broad_market": 18.4,
+        "technology": 20.3,
+        "healthcare": 20.1,
+        "financials": 11.4,
+        "real_estate": 42.3,
+        "energy": 43.8,
+        "bonds": 33.4,
+        "international": 12.8,
+        "commodities": 33.7
       }
     }
   ],
@@ -321,32 +321,32 @@
       "confidence": "low"
     },
     "technology": {
-      "mean_div": 9.1,
-      "std_div": 5.5,
+      "mean_div": 9.2,
+      "std_div": 5.6,
       "data_points": 12,
       "confidence": "low"
     },
     "healthcare": {
       "mean_div": 25.5,
-      "std_div": 4.9,
+      "std_div": 4.8,
       "data_points": 12,
       "confidence": "low"
     },
     "financials": {
       "mean_div": 5.9,
-      "std_div": 4.9,
+      "std_div": 5.0,
       "data_points": 12,
       "confidence": "low"
     },
     "real_estate": {
       "mean_div": 31.8,
-      "std_div": 5.2,
+      "std_div": 5.3,
       "data_points": 12,
       "confidence": "low"
     },
     "energy": {
-      "mean_div": 34.7,
-      "std_div": 4.7,
+      "mean_div": 34.8,
+      "std_div": 4.8,
       "data_points": 12,
       "confidence": "low"
     },
@@ -358,16 +358,16 @@
     },
     "international": {
       "mean_div": 18.9,
-      "std_div": 5.4,
+      "std_div": 5.3,
       "data_points": 12,
       "confidence": "low"
     },
     "commodities": {
       "mean_div": 14.8,
-      "std_div": 9.0,
+      "std_div": 9.1,
       "data_points": 12,
       "confidence": "low"
     }
   },
-  "last_updated": "2026-03-06T12:33:45.026044"
+  "last_updated": "2026-03-06T13:02:59.705488"
 }

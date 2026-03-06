@@ -1454,7 +1454,7 @@ export default function FaithJourneyPage() {
   
   // Calendar tab compact features
   const [expandedContextTraditions, setExpandedContextTraditions] = useState<Set<string>>(new Set());
-  const [lessonTraditionFilters, setLessonTraditionFilters] = useState<Set<string>>(new Set(["Judaism", "Christianity", "Islam", "Hinduism", "Buddhism", "Other"]));
+  const [lessonTraditionFilters, setLessonTraditionFilters] = useState<Set<string>>(new Set(["Judaism", "Christianity", "Islam", "Hinduism", "Buddhism", "Bahá'í", "Other"]));
   
   // Perspectives state
   const [perspectives, setPerspectives] = useState<Perspective[]>([]);

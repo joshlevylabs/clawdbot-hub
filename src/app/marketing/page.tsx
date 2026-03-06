@@ -714,6 +714,10 @@ function PodcastDashboard() {
   const [expandedScript, setExpandedScript] = useState<number | null>(null);
   const [scriptContent, setScriptContent] = useState<string | null>(null);
   const [scriptLoading, setScriptLoading] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [editContent, setEditContent] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saved' | 'error'>('idle');
 
   useEffect(() => {
     if (shows.length > 0 && !selectedShow) {
@@ -891,7 +895,7 @@ function PodcastDashboard() {
                   )}
                 </div>
               </div>
-              {/* Expanded Script Viewer */}
+              {/* Expanded Script Viewer/Editor */}
               {expandedScript === ep.number && (
                 <div className="mt-4 border-t border-slate-800 pt-4">
                   {scriptLoading ? (
@@ -900,34 +904,114 @@ function PodcastDashboard() {
                       Loading script...
                     </div>
                   ) : scriptContent ? (
-                    <div className="bg-slate-900/50 rounded-lg p-5 max-h-[70vh] overflow-y-auto">
-                      <div className="prose prose-invert prose-sm max-w-none
-                        prose-headings:text-slate-200 prose-headings:font-semibold
-                        prose-h1:text-xl prose-h1:border-b prose-h1:border-slate-800 prose-h1:pb-3 prose-h1:mb-4
-                        prose-h2:text-lg prose-h2:text-primary-400 prose-h2:mt-6
-                        prose-h3:text-base prose-h3:text-amber-400
-                        prose-p:text-slate-400 prose-p:leading-relaxed
-                        prose-blockquote:border-l-primary-500 prose-blockquote:text-slate-300 prose-blockquote:bg-slate-800/30 prose-blockquote:py-1 prose-blockquote:px-4 prose-blockquote:rounded-r-lg prose-blockquote:not-italic
-                        prose-strong:text-slate-200
-                        prose-em:text-slate-400
-                        prose-hr:border-slate-800
-                        prose-li:text-slate-400
-                      ">
-                        {scriptContent.split('\n').map((line, i) => {
-                          if (line.startsWith('# ')) return <h1 key={i}>{line.slice(2)}</h1>;
-                          if (line.startsWith('## ')) return <h2 key={i}>{line.slice(3)}</h2>;
-                          if (line.startsWith('### ')) return <h3 key={i}>{line.slice(4)}</h3>;
-                          if (line.startsWith('> ')) return <blockquote key={i}><p>{line.slice(2)}</p></blockquote>;
-                          if (line.startsWith('---')) return <hr key={i} />;
-                          if (line.startsWith('**') && line.endsWith('**')) return <p key={i}><strong>{line.slice(2, -2)}</strong></p>;
-                          if (line.trim() === '') return <br key={i} />;
-                          // Handle inline formatting
-                          const formatted = line
-                            .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-                            .replace(/\*(.+?)\*/g, '<em>$1</em>');
-                          return <p key={i} dangerouslySetInnerHTML={{ __html: formatted }} />;
-                        })}
+                    <div>
+                      {/* Toolbar */}
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => {
+                              if (editMode) {
+                                setEditMode(false);
+                              } else {
+                                setEditContent(scriptContent);
+                                setEditMode(true);
+                                setSaveStatus('idle');
+                              }
+                            }}
+                            className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors flex items-center gap-1.5 ${
+                              editMode
+                                ? 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+                                : 'bg-primary-500/10 text-primary-400 hover:bg-primary-500/20'
+                            }`}
+                          >
+                            <Edit3 className="w-3.5 h-3.5" />
+                            {editMode ? 'Cancel' : 'Edit Script'}
+                          </button>
+                          {editMode && (
+                            <button
+                              onClick={async () => {
+                                setSaving(true);
+                                setSaveStatus('idle');
+                                try {
+                                  const res = await fetch(`/api/marketing/scripts/${ep.scriptId}`, {
+                                    method: 'PUT',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ script: editContent }),
+                                  });
+                                  if (res.ok) {
+                                    setScriptContent(editContent);
+                                    setSaveStatus('saved');
+                                    setTimeout(() => setSaveStatus('idle'), 3000);
+                                  } else {
+                                    setSaveStatus('error');
+                                  }
+                                } catch {
+                                  setSaveStatus('error');
+                                }
+                                setSaving(false);
+                              }}
+                              disabled={saving}
+                              className="px-3 py-1.5 text-xs font-medium rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 transition-colors flex items-center gap-1.5 disabled:opacity-50"
+                            >
+                              {saving ? (
+                                <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Saving...</>
+                              ) : (
+                                <><Save className="w-3.5 h-3.5" /> Save to Database</>
+                              )}
+                            </button>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {saveStatus === 'saved' && (
+                            <span className="text-xs text-emerald-400 flex items-center gap-1">
+                              <Check className="w-3.5 h-3.5" /> Saved
+                            </span>
+                          )}
+                          {saveStatus === 'error' && (
+                            <span className="text-xs text-red-400">Save failed</span>
+                          )}
+                        </div>
                       </div>
+
+                      {editMode ? (
+                        /* Edit Mode — Markdown textarea */
+                        <textarea
+                          value={editContent}
+                          onChange={(e) => setEditContent(e.target.value)}
+                          className="w-full h-[70vh] bg-slate-900/80 border border-slate-700 rounded-lg p-5 text-slate-300 text-sm font-mono leading-relaxed resize-y focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500/20"
+                          spellCheck={false}
+                        />
+                      ) : (
+                        /* Read Mode — Rendered markdown */
+                        <div className="bg-slate-900/50 rounded-lg p-5 max-h-[70vh] overflow-y-auto">
+                          <div className="prose prose-invert prose-sm max-w-none
+                            prose-headings:text-slate-200 prose-headings:font-semibold
+                            prose-h1:text-xl prose-h1:border-b prose-h1:border-slate-800 prose-h1:pb-3 prose-h1:mb-4
+                            prose-h2:text-lg prose-h2:text-primary-400 prose-h2:mt-6
+                            prose-h3:text-base prose-h3:text-amber-400
+                            prose-p:text-slate-400 prose-p:leading-relaxed
+                            prose-blockquote:border-l-primary-500 prose-blockquote:text-slate-300 prose-blockquote:bg-slate-800/30 prose-blockquote:py-1 prose-blockquote:px-4 prose-blockquote:rounded-r-lg prose-blockquote:not-italic
+                            prose-strong:text-slate-200
+                            prose-em:text-slate-400
+                            prose-hr:border-slate-800
+                            prose-li:text-slate-400
+                          ">
+                            {scriptContent.split('\n').map((line, i) => {
+                              if (line.startsWith('# ')) return <h1 key={i}>{line.slice(2)}</h1>;
+                              if (line.startsWith('## ')) return <h2 key={i}>{line.slice(3)}</h2>;
+                              if (line.startsWith('### ')) return <h3 key={i}>{line.slice(4)}</h3>;
+                              if (line.startsWith('> ')) return <blockquote key={i}><p>{line.slice(2)}</p></blockquote>;
+                              if (line.startsWith('---')) return <hr key={i} />;
+                              if (line.startsWith('**') && line.endsWith('**')) return <p key={i}><strong>{line.slice(2, -2)}</strong></p>;
+                              if (line.trim() === '') return <br key={i} />;
+                              const formatted = line
+                                .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+                                .replace(/\*(.+?)\*/g, '<em>$1</em>');
+                              return <p key={i} dangerouslySetInnerHTML={{ __html: formatted }} />;
+                            })}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   ) : null}
                 </div>

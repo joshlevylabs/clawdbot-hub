@@ -33,6 +33,7 @@ interface PaperPosition {
   hold_days: number | null;
   notes: string | null;
   auto_tracked: boolean | null;
+  account_id: string | null;
 }
 
 // MRE Signal interface from SignalFlowTab.tsx
@@ -306,6 +307,7 @@ export default function PortfolioExitFlow({ universeData, coreData }: PortfolioE
   const [error, setError] = useState<string | null>(null);
   const [selectedStage, setSelectedStage] = useState<StageDetails | null>(null);
   const [scale, setScale] = useState(1);
+  const [viewMode, setViewMode] = useState<'user' | 'all'>('user');
   const [connections, setConnections] = useState<{ from: string; to: string; fromPos: { x: number; y: number }; toPos: { x: number; y: number } }[]>([]);
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -333,19 +335,28 @@ export default function PortfolioExitFlow({ universeData, coreData }: PortfolioE
     fetchPositions();
   }, []);
 
+  // Filter positions by view mode
+  const filteredPositions = useMemo(() => {
+    if (viewMode === 'user') return positions.filter(p => !p.account_id);
+    return positions;
+  }, [positions, viewMode]);
+
+  const agentCount = useMemo(() => positions.filter(p => p.account_id).length, [positions]);
+  const userCount = useMemo(() => positions.filter(p => !p.account_id).length, [positions]);
+
   // Merge positions with signal data and calculate exit signals
   const positionsWithSignals = useMemo((): PositionWithSignal[] => {
-    if (!positions.length) return [];
+    if (!filteredPositions.length) return [];
 
     const signalsData = universeData || coreData;
-    if (!signalsData?.signals?.by_asset_class) return positions.map(p => ({ ...p, exitSignals: [] }));
+    if (!signalsData?.signals?.by_asset_class) return filteredPositions.map(p => ({ ...p, exitSignals: [] }));
 
     const signalMap = new Map<string, MRESignal>();
     signalsData.signals.by_asset_class.forEach(signal => {
       signalMap.set(signal.symbol, signal);
     });
 
-    return positions.map(position => {
+    return filteredPositions.map(position => {
       const signalData = signalMap.get(position.symbol);
       const exitSignals = calculateExitSignals(position, signalData);
       
@@ -355,7 +366,7 @@ export default function PortfolioExitFlow({ universeData, coreData }: PortfolioE
         exitSignals
       };
     });
-  }, [positions, universeData, coreData]);
+  }, [filteredPositions, universeData, coreData]);
 
   // Pipeline data calculation
   const pipelineData = useMemo(() => {
@@ -640,6 +651,33 @@ export default function PortfolioExitFlow({ universeData, coreData }: PortfolioE
       className="bg-slate-900/80 rounded-xl border border-slate-700/50 p-4 md:p-8 relative overflow-hidden"
       style={{ touchAction: 'none' }}
     >
+      {/* View mode toggle */}
+      <div className="flex items-center gap-2 absolute top-3 left-3 z-30">
+        <button
+          onClick={() => setViewMode('user')}
+          className={`px-3 py-1.5 rounded text-xs font-medium transition-all ${
+            viewMode === 'user'
+              ? 'bg-primary-600 text-white'
+              : 'bg-slate-800 text-slate-400 hover:text-slate-300 border border-slate-700'
+          }`}
+        >
+          My Positions ({userCount})
+        </button>
+        <button
+          onClick={() => setViewMode('all')}
+          className={`px-3 py-1.5 rounded text-xs font-medium transition-all ${
+            viewMode === 'all'
+              ? 'bg-primary-600 text-white'
+              : 'bg-slate-800 text-slate-400 hover:text-slate-300 border border-slate-700'
+          }`}
+        >
+          All ({positions.length})
+        </button>
+        {viewMode === 'all' && agentCount > 0 && (
+          <span className="text-[10px] text-slate-500">incl. {agentCount} agent positions</span>
+        )}
+      </div>
+
       {/* Desktop zoom controls */}
       <div className="hidden lg:flex items-center gap-1.5 absolute top-3 right-3 z-30">
         <button

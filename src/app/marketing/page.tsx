@@ -49,6 +49,7 @@ interface ShowEpisode {
   status: string;
   finalized?: string;
   description?: string;
+  scriptId?: string;
   links?: { youtube?: string; spotify?: string; apple?: string; medium?: string; beehiiv?: string };
 }
 interface Show {
@@ -669,6 +670,15 @@ const DEFAULT_SHOWS: Show[] = [
           spotify: "https://open.spotify.com/episode/4pad7gR7OIzJqtq7f6xMXg",
         },
       },
+      {
+        number: 5,
+        title: "Three Signal Flows, Six Agents, One Trading Desk — How the MRE Actually Makes Decisions",
+        pillar: "ai",
+        status: "script-ready",
+        description: "Deep dive into the MRE's signal flow architecture: three independent signal flows (Buy Scanner, Sell Signal Generator, Agent Decision Layer) feeding a dynamic daily signal map, with six AI agents modeled after legendary traders.",
+        scriptId: "005",
+        links: {},
+      },
     ],
   },
 ];
@@ -686,6 +696,9 @@ function PodcastDashboard() {
   });
   const [selectedShow, setSelectedShow] = useState<Show | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [expandedScript, setExpandedScript] = useState<number | null>(null);
+  const [scriptContent, setScriptContent] = useState<string | null>(null);
+  const [scriptLoading, setScriptLoading] = useState(false);
 
   useEffect(() => {
     if (shows.length > 0 && !selectedShow) {
@@ -809,33 +822,101 @@ function PodcastDashboard() {
                     <p className="text-slate-600 text-xs mt-2">{ep.finalized}</p>
                   )}
                 </div>
-                {/* Platform links */}
-                {ep.links && (
-                  <div className="flex items-center gap-2 ml-4 flex-shrink-0">
-                    {ep.links.youtube && (
-                      <a href={ep.links.youtube} target="_blank" rel="noopener noreferrer"
-                        className="p-2 bg-red-500/10 text-red-400 hover:bg-red-500/20 rounded-lg transition-colors"
-                        title="YouTube">
-                        <Play className="w-4 h-4" />
-                      </a>
-                    )}
-                    {ep.links.spotify && (
-                      <a href={ep.links.spotify} target="_blank" rel="noopener noreferrer"
-                        className="p-2 bg-green-500/10 text-green-400 hover:bg-green-500/20 rounded-lg transition-colors"
-                        title="Spotify">
-                        <Headphones className="w-4 h-4" />
-                      </a>
-                    )}
-                    {ep.links.apple && (
-                      <a href={ep.links.apple} target="_blank" rel="noopener noreferrer"
-                        className="p-2 bg-purple-500/10 text-purple-400 hover:bg-purple-500/20 rounded-lg transition-colors"
-                        title="Apple Podcasts">
-                        <Globe className="w-4 h-4" />
-                      </a>
-                    )}
-                  </div>
-                )}
+                {/* Platform links + Script button */}
+                <div className="flex items-center gap-2 ml-4 flex-shrink-0">
+                  {ep.scriptId && (
+                    <button
+                      onClick={async () => {
+                        if (expandedScript === ep.number) {
+                          setExpandedScript(null);
+                          setScriptContent(null);
+                          return;
+                        }
+                        setExpandedScript(ep.number);
+                        setScriptLoading(true);
+                        try {
+                          const res = await fetch(`/api/marketing/scripts/${ep.scriptId}`);
+                          const data = await res.json();
+                          setScriptContent(data.script || 'Script not found');
+                        } catch {
+                          setScriptContent('Failed to load script');
+                        }
+                        setScriptLoading(false);
+                      }}
+                      className={`p-2 rounded-lg transition-colors ${
+                        expandedScript === ep.number
+                          ? 'bg-primary-500/20 text-primary-400'
+                          : 'bg-amber-500/10 text-amber-400 hover:bg-amber-500/20'
+                      }`}
+                      title={expandedScript === ep.number ? 'Hide Script' : 'View Script'}
+                    >
+                      <FileText className="w-4 h-4" />
+                    </button>
+                  )}
+                  {ep.links?.youtube && (
+                    <a href={ep.links.youtube} target="_blank" rel="noopener noreferrer"
+                      className="p-2 bg-red-500/10 text-red-400 hover:bg-red-500/20 rounded-lg transition-colors"
+                      title="YouTube">
+                      <Play className="w-4 h-4" />
+                    </a>
+                  )}
+                  {ep.links?.spotify && (
+                    <a href={ep.links.spotify} target="_blank" rel="noopener noreferrer"
+                      className="p-2 bg-green-500/10 text-green-400 hover:bg-green-500/20 rounded-lg transition-colors"
+                      title="Spotify">
+                      <Headphones className="w-4 h-4" />
+                    </a>
+                  )}
+                  {ep.links?.apple && (
+                    <a href={ep.links.apple} target="_blank" rel="noopener noreferrer"
+                      className="p-2 bg-purple-500/10 text-purple-400 hover:bg-purple-500/20 rounded-lg transition-colors"
+                      title="Apple Podcasts">
+                      <Globe className="w-4 h-4" />
+                    </a>
+                  )}
+                </div>
               </div>
+              {/* Expanded Script Viewer */}
+              {expandedScript === ep.number && (
+                <div className="mt-4 border-t border-slate-800 pt-4">
+                  {scriptLoading ? (
+                    <div className="flex items-center gap-2 text-slate-500">
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Loading script...
+                    </div>
+                  ) : scriptContent ? (
+                    <div className="bg-slate-900/50 rounded-lg p-5 max-h-[70vh] overflow-y-auto">
+                      <div className="prose prose-invert prose-sm max-w-none
+                        prose-headings:text-slate-200 prose-headings:font-semibold
+                        prose-h1:text-xl prose-h1:border-b prose-h1:border-slate-800 prose-h1:pb-3 prose-h1:mb-4
+                        prose-h2:text-lg prose-h2:text-primary-400 prose-h2:mt-6
+                        prose-h3:text-base prose-h3:text-amber-400
+                        prose-p:text-slate-400 prose-p:leading-relaxed
+                        prose-blockquote:border-l-primary-500 prose-blockquote:text-slate-300 prose-blockquote:bg-slate-800/30 prose-blockquote:py-1 prose-blockquote:px-4 prose-blockquote:rounded-r-lg prose-blockquote:not-italic
+                        prose-strong:text-slate-200
+                        prose-em:text-slate-400
+                        prose-hr:border-slate-800
+                        prose-li:text-slate-400
+                      ">
+                        {scriptContent.split('\n').map((line, i) => {
+                          if (line.startsWith('# ')) return <h1 key={i}>{line.slice(2)}</h1>;
+                          if (line.startsWith('## ')) return <h2 key={i}>{line.slice(3)}</h2>;
+                          if (line.startsWith('### ')) return <h3 key={i}>{line.slice(4)}</h3>;
+                          if (line.startsWith('> ')) return <blockquote key={i}><p>{line.slice(2)}</p></blockquote>;
+                          if (line.startsWith('---')) return <hr key={i} />;
+                          if (line.startsWith('**') && line.endsWith('**')) return <p key={i}><strong>{line.slice(2, -2)}</strong></p>;
+                          if (line.trim() === '') return <br key={i} />;
+                          // Handle inline formatting
+                          const formatted = line
+                            .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+                            .replace(/\*(.+?)\*/g, '<em>$1</em>');
+                          return <p key={i} dangerouslySetInnerHTML={{ __html: formatted }} />;
+                        })}
+                      </div>
+                    </div>
+                  ) : null}
+                </div>
+              )}
             </div>
           ))}
         </div>

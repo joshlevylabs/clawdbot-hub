@@ -55,6 +55,16 @@
             "youtube": "https://youtube.com/watch?v=WBnVSjGa4kM",
             "spotify": "https://open.spotify.com/episode/4pad7gR7OIzJqtq7f6xMXg"
           }
+        },
+        {
+          "number": 5,
+          "title": "Three Signal Flows, Six Agents, One Trading Desk — How the MRE Actually Makes Decisions",
+          "pillar": "ai",
+          "status": "script-ready",
+          "finalized": null,
+          "description": "Deep dive into the MRE's signal flow architecture: three independent signal flows (Buy Scanner, Sell Signal Generator, Agent Decision Layer) feeding a dynamic daily signal map, with six AI agents modeled after legendary traders.",
+          "scriptId": "005",
+          "links": {}
         }
       ]
     }

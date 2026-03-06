@@ -154,27 +154,50 @@ export class RealTimeTradingEngine {
 
   private async fetchYahooPrice(symbol: string): Promise<RealTimePrice> {
     try {
+      // Use server-side proxy to avoid CORS issues with Yahoo Finance
       const response = await fetch(
-        `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}`
+        `/api/markets?symbols=${symbol}&range=1d`
       );
       
       const data = await response.json();
-      const result = data.chart.result[0];
-      const meta = result.meta;
       
-      if (meta && meta.regularMarketPrice) {
+      if (data && data[symbol]) {
+        const quote = data[symbol];
         return {
           symbol,
-          price: meta.regularMarketPrice,
-          change: meta.regularMarketPrice - meta.previousClose,
-          changePercent: ((meta.regularMarketPrice - meta.previousClose) / meta.previousClose) * 100,
-          volume: meta.regularMarketVolume || 0,
+          price: quote.price || quote.regularMarketPrice || 0,
+          change: quote.change || 0,
+          changePercent: quote.changePercent || 0,
+          volume: quote.volume || 0,
           timestamp: new Date().toISOString(),
-          source: 'yahoo'
+          source: 'yahoo' as const
         };
       }
       
-      throw new Error('Invalid Yahoo Finance response');
+      // Fallback: try direct Yahoo (works server-side, may fail client-side)
+      const directResponse = await fetch(
+        `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}`
+      ).catch(() => null);
+      
+      if (directResponse?.ok) {
+        const directData = await directResponse.json();
+        const result = directData.chart?.result?.[0];
+        const meta = result?.meta;
+        
+        if (meta?.regularMarketPrice) {
+          return {
+            symbol,
+            price: meta.regularMarketPrice,
+            change: meta.regularMarketPrice - meta.previousClose,
+            changePercent: ((meta.regularMarketPrice - meta.previousClose) / meta.previousClose) * 100,
+            volume: meta.regularMarketVolume || 0,
+            timestamp: new Date().toISOString(),
+            source: 'yahoo'
+          };
+        }
+      }
+      
+      throw new Error('No price data available');
     } catch (error) {
       console.error(`Failed to fetch price for ${symbol}:`, error);
       throw error;

@@ -1350,14 +1350,26 @@ function StrategyTechnicalOverview({ strategyName, tickers }: { strategyName: st
                       <span className="text-xs font-mono text-slate-300">${formatCurr(fib.nearest_resistance!)}</span>
                     </div>
                   )}
-                  {fib.profit_targets && fib.profit_targets.length > 0 && (
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-cyan-400">💰 Profit Targets</span>
-                      <span className="text-xs font-mono text-slate-300">
-                        {fib.profit_targets.map(t => `$${formatCurr(t)}`).join(', ')}
-                      </span>
-                    </div>
-                  )}
+                  {fib.profit_targets && fib.profit_targets.length > 0 && (() => {
+                    const price = tickerData?.rawData?.price || fib.current_price || 0;
+                    const validTargets = fib.profit_targets.filter(t => t > price);
+                    const allInverted = validTargets.length === 0;
+                    return allInverted ? (
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-red-400">⚠️ Targets Stale</span>
+                        <span className="text-xs font-mono text-red-300/70">
+                          Below entry — use resistance ${fib.nearest_resistance ? `$${formatCurr(fib.nearest_resistance)}` : 'N/A'}
+                        </span>
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-cyan-400">💰 Profit Targets</span>
+                        <span className="text-xs font-mono text-slate-300">
+                          {validTargets.map(t => `$${formatCurr(t)}`).join(', ')}
+                        </span>
+                      </div>
+                    );
+                  })()}
                 </div>
               </div>
 

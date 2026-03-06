@@ -1727,19 +1727,35 @@ function FibonacciTab({ rawData }: { rawData: MRESignal }) {
       </div>
 
       {/* Profit Targets - FIXED: now expects number[] not {level, price}[] */}
-      {fib.profit_targets && fib.profit_targets.length > 0 && (
-        <div className="bg-slate-900/50 rounded-lg p-4">
-          <h5 className="text-sm font-medium text-slate-300 mb-3">Profit Targets</h5>
-          <div className="space-y-2">
-            {fib.profit_targets.slice(0, 3).map((target, idx) => (
-              <div key={idx} className="flex justify-between text-sm">
-                <span>Target {idx + 1}:</span>
-                <span className="text-emerald-400">${target.toFixed(2)}</span>
+      {fib.profit_targets && fib.profit_targets.length > 0 && (() => {
+        const validTargets = fib.profit_targets.filter(t => t > currentPrice);
+        const invertedTargets = fib.profit_targets.filter(t => t <= currentPrice);
+        return (
+          <div className="bg-slate-900/50 rounded-lg p-4">
+            <h5 className="text-sm font-medium text-slate-300 mb-3">Profit Targets</h5>
+            {invertedTargets.length > 0 && validTargets.length === 0 && (
+              <div className="bg-red-900/30 border border-red-500/30 rounded-md px-3 py-2 mb-3">
+                <span className="text-xs text-red-400">⚠️ Fibonacci targets below current price (${currentPrice.toFixed(2)}) — stale swing data from {fib.swing_high_date || 'old period'}. Use nearest resistance (${fib.nearest_resistance?.toFixed(2) || 'N/A'}) as target instead.</span>
               </div>
-            ))}
+            )}
+            <div className="space-y-2">
+              {validTargets.length > 0 ? validTargets.slice(0, 3).map((target, idx) => (
+                <div key={idx} className="flex justify-between text-sm">
+                  <span>Target {idx + 1}:</span>
+                  <span className="text-emerald-400">${target.toFixed(2)}</span>
+                </div>
+              )) : fib.nearest_resistance && fib.nearest_resistance > currentPrice ? (
+                <div className="flex justify-between text-sm">
+                  <span>Target (resistance):</span>
+                  <span className="text-amber-400">${fib.nearest_resistance.toFixed(2)}</span>
+                </div>
+              ) : (
+                <div className="text-xs text-slate-500">No valid targets above current price</div>
+              )}
+            </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
     </div>
   );
 }

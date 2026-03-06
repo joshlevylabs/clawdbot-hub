@@ -330,9 +330,11 @@ export async function POST(request: NextRequest) {
         }
 
         // Use Fibonacci levels for stop loss and take profit
+        // Guard: only use targets that are ABOVE current price (inverted targets = stale swing data)
         const fib = signal.fibonacci;
-        const stopLoss = fib?.nearest_support || null;
-        const takeProfit = fib?.profit_targets?.[0] || null;
+        const stopLoss = fib?.nearest_support && fib.nearest_support < signal.price ? fib.nearest_support : null;
+        const validTargets = fib?.profit_targets?.filter(t => t > signal.price) || [];
+        const takeProfit = validTargets[0] || (fib?.nearest_resistance && fib.nearest_resistance > signal.price ? fib.nearest_resistance : null);
 
         const proposal: TradeProposal = {
           agent: style.name,

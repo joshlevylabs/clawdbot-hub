@@ -288,7 +288,7 @@
     },
     {
       "date": "2026-03-06",
-      "global_fg": 28.3,
+      "global_fg": 27.8,
       "sectors": {
         "broad_market": 45.2,
         "technology": 47.1,
@@ -301,15 +301,15 @@
         "commodities": 60.5
       },
       "divergences": {
-        "broad_market": 16.9,
-        "technology": 18.8,
-        "healthcare": 18.6,
-        "financials": 9.9,
-        "real_estate": 40.8,
-        "energy": 42.3,
-        "bonds": 31.9,
-        "international": 11.3,
-        "commodities": 32.2
+        "broad_market": 17.4,
+        "technology": 19.3,
+        "healthcare": 19.1,
+        "financials": 10.4,
+        "real_estate": 41.3,
+        "energy": 42.8,
+        "bonds": 32.4,
+        "international": 11.8,
+        "commodities": 32.7
       }
     }
   ],
@@ -322,31 +322,31 @@
     },
     "technology": {
       "mean_div": 9.1,
-      "std_div": 5.3,
+      "std_div": 5.4,
       "data_points": 12,
       "confidence": "low"
     },
     "healthcare": {
-      "mean_div": 25.4,
-      "std_div": 5.0,
+      "mean_div": 25.5,
+      "std_div": 4.9,
       "data_points": 12,
       "confidence": "low"
     },
     "financials": {
       "mean_div": 5.8,
-      "std_div": 4.8,
+      "std_div": 4.9,
       "data_points": 12,
       "confidence": "low"
     },
     "real_estate": {
       "mean_div": 31.7,
-      "std_div": 5.0,
+      "std_div": 5.1,
       "data_points": 12,
       "confidence": "low"
     },
     "energy": {
       "mean_div": 34.7,
-      "std_div": 4.5,
+      "std_div": 4.6,
       "data_points": 12,
       "confidence": "low"
     },
@@ -358,16 +358,16 @@
     },
     "international": {
       "mean_div": 18.8,
-      "std_div": 5.5,
+      "std_div": 5.4,
       "data_points": 12,
       "confidence": "low"
     },
     "commodities": {
       "mean_div": 14.7,
-      "std_div": 8.8,
+      "std_div": 8.9,
       "data_points": 12,
       "confidence": "low"
     }
   },
-  "last_updated": "2026-03-06T10:34:04.916819"
+  "last_updated": "2026-03-06T10:48:36.707993"
 }

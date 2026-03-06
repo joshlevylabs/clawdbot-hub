@@ -846,33 +846,44 @@ function PodcastDashboard() {
                 {/* Platform links + Script button */}
                 <div className="flex items-center gap-2 ml-4 flex-shrink-0">
                   {ep.scriptId && (
-                    <button
-                      onClick={async () => {
-                        if (expandedScript === ep.number) {
-                          setExpandedScript(null);
-                          setScriptContent(null);
-                          return;
-                        }
-                        setExpandedScript(ep.number);
-                        setScriptLoading(true);
-                        try {
-                          const res = await fetch(`/api/marketing/scripts/${ep.scriptId}`);
-                          const data = await res.json();
-                          setScriptContent(data.script || 'Script not found');
-                        } catch {
-                          setScriptContent('Failed to load script');
-                        }
-                        setScriptLoading(false);
-                      }}
-                      className={`p-2 rounded-lg transition-colors ${
-                        expandedScript === ep.number
-                          ? 'bg-primary-500/20 text-primary-400'
-                          : 'bg-amber-500/10 text-amber-400 hover:bg-amber-500/20'
-                      }`}
-                      title={expandedScript === ep.number ? 'Hide Script' : 'View Script'}
-                    >
-                      <FileText className="w-4 h-4" />
-                    </button>
+                    <>
+                      <a
+                        href={`/teleprompter?script=${ep.scriptId}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2 bg-cyan-500/10 text-cyan-400 hover:bg-cyan-500/20 rounded-lg transition-colors"
+                        title="Open Teleprompter"
+                      >
+                        <Monitor className="w-4 h-4" />
+                      </a>
+                      <button
+                        onClick={async () => {
+                          if (expandedScript === ep.number) {
+                            setExpandedScript(null);
+                            setScriptContent(null);
+                            return;
+                          }
+                          setExpandedScript(ep.number);
+                          setScriptLoading(true);
+                          try {
+                            const res = await fetch(`/api/marketing/scripts/${ep.scriptId}`);
+                            const data = await res.json();
+                            setScriptContent(data.script || 'Script not found');
+                          } catch {
+                            setScriptContent('Failed to load script');
+                          }
+                          setScriptLoading(false);
+                        }}
+                        className={`p-2 rounded-lg transition-colors ${
+                          expandedScript === ep.number
+                            ? 'bg-primary-500/20 text-primary-400'
+                            : 'bg-amber-500/10 text-amber-400 hover:bg-amber-500/20'
+                        }`}
+                        title={expandedScript === ep.number ? 'Hide Script' : 'View Script'}
+                      >
+                        <FileText className="w-4 h-4" />
+                      </button>
+                    </>
                   )}
                   {ep.links?.youtube && (
                     <a href={ep.links.youtube} target="_blank" rel="noopener noreferrer"

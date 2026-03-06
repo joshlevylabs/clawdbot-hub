@@ -398,34 +398,41 @@ export default function PortfolioExitFlow({ universeData, coreData }: PortfolioE
       });
     }
 
-    // Connect exit strategies to signal aggregation
-    EXIT_STRATEGIES.forEach(strategy => {
-      const stratNode = nodeRefs.current[`exit-strategy-${strategy.key}`];
-      const aggNode = nodeRefs.current['signal-aggregation'];
-      if (stratNode && aggNode) {
-        const fromPos = getRight(stratNode);
-        const toPos = getLeft(aggNode);
-        newConnections.push({
-          from: `exit-strategy-${strategy.key}`,
-          to: 'signal-aggregation',
-          fromPos,
-          toPos
-        });
-      }
-    });
+    // Connect each exit strategy to the center of the exit-count column
+    // Find all rendered exit-count nodes to compute the vertical midpoint
+    const exitCountNodes: { key: string; node: HTMLDivElement }[] = [];
+    for (let i = 0; i <= 8; i++) {
+      const countNode = nodeRefs.current[`exit-count-${i}`];
+      if (countNode) exitCountNodes.push({ key: `exit-count-${i}`, node: countNode });
+    }
 
-    // Connect signal aggregation to exit gating
-    const aggNode = nodeRefs.current['signal-aggregation'];
-    const gatingNode = nodeRefs.current['exit-gating'];
-    if (aggNode && gatingNode) {
-      const fromPos = getRight(aggNode);
-      const toPos = getLeft(gatingNode);
-      newConnections.push({
-        from: 'signal-aggregation',
-        to: 'exit-gating',
-        fromPos,
-        toPos
+    if (exitCountNodes.length > 0) {
+      // Each strategy connects to the nearest exit-count node by vertical distance
+      EXIT_STRATEGIES.forEach(strategy => {
+        const stratNode = nodeRefs.current[`exit-strategy-${strategy.key}`];
+        if (!stratNode) return;
+        const fromPos = getRight(stratNode);
+        // Find the closest exit-count node
+        let bestDist = Infinity;
+        let bestTo = exitCountNodes[0];
+        for (const ec of exitCountNodes) {
+          const ecPos = getLeft(ec.node);
+          const dist = Math.abs(ecPos.y - fromPos.y);
+          if (dist < bestDist) { bestDist = dist; bestTo = ec; }
+        }
+        const toPos = getLeft(bestTo.node);
+        newConnections.push({ from: `exit-strategy-${strategy.key}`, to: bestTo.key, fromPos, toPos });
       });
+    }
+
+    // Connect exit signal count nodes to exit gating
+    const gatingNode = nodeRefs.current['exit-gating'];
+    for (const ec of exitCountNodes) {
+      if (gatingNode) {
+        const fromPos = getRight(ec.node);
+        const toPos = getLeft(gatingNode);
+        newConnections.push({ from: ec.key, to: 'exit-gating', fromPos, toPos });
+      }
     }
 
     // Connect exit gating to recommendations

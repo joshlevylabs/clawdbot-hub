@@ -98,6 +98,7 @@ interface MRESignal {
   expected_accuracy?: number;
   fibonacci?: {
     nearest_support: number;
+    nearest_resistance?: number;
     profit_targets: number[];
     entry_zone: string;
   };

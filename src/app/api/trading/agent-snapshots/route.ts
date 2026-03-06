@@ -12,13 +12,14 @@ export async function GET(request: NextRequest) {
       'warren-buffett', 
       'peter-schiff',
       'raoul-pal',
-      'peter-lynch'
+      'peter-lynch',
+      'ray-dalio'
     ];
 
     // Fetch snapshots — add explicit limit to avoid default truncation
-    const { data: snapshots, error, count } = await paperSupabase
+    const { data: snapshots, error } = await paperSupabase
       .from('paper_portfolio_snapshots')
-      .select('account_id, date, equity, spy_price, spy_baseline', { count: 'exact' })
+      .select('account_id, date, equity, spy_price, spy_baseline')
       .in('account_id', agentAccountIds)
       .order('date', { ascending: true })
       .limit(5000);
@@ -51,23 +52,9 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    // Debug: show raw first Buffett snapshot
-    const buffettRaw = (snapshots || []).filter((s: any) => s.account_id === 'warren-buffett');
-
     return NextResponse.json({ 
       agentSnapshots,
       timestamp: new Date().toISOString(),
-      debug: {
-        supabaseUrl: process.env.NEXT_PUBLIC_PAPER_SUPABASE_URL?.slice(0, 40),
-        keyType: process.env.PAPER_SUPABASE_SERVICE_ROLE_KEY ? 'service' : 'anon',
-        totalCount: count,
-        totalReturned: snapshots?.length || 0,
-        buffettCount: buffettRaw.length,
-        buffettFirstDate: buffettRaw[0]?.date,
-        buffettFirstEquity: buffettRaw[0]?.equity,
-        buffettLastDate: buffettRaw[buffettRaw.length - 1]?.date,
-        buffettLastEquity: buffettRaw[buffettRaw.length - 1]?.equity,
-      }
     }, {
       headers: {
         'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',

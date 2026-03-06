@@ -11,6 +11,7 @@ const AGENTS = [
   { id: 'peter-schiff', name: 'Peter Schiff', emoji: '🥇', theme: 'yellow' },
   { id: 'raoul-pal', name: 'Raoul Pal', emoji: '🚀', theme: 'cyan' },
   { id: 'peter-lynch', name: 'Peter Lynch', emoji: '🎯', theme: 'violet' },
+  { id: 'ray-dalio', name: 'Ray Dalio', emoji: '⚖️', theme: 'orange' },
 ] as const;
 
 interface AgentPortfolio {

@@ -2471,112 +2471,156 @@ export default function FaithJourneyPage() {
                                 </div>
                               )}
 
-                              {/* Calendar Context Accordion */}
-                              {enrichedPanels.length > 0 && (
-                                <div>
-                                  <h4 className="text-xs font-medium text-slate-200 mb-1 flex items-center gap-1">
-                                    <Globe className="w-3 h-3" style={{ color: "#D4A020" }} />
-                                    Context ({enrichedPanels.length})
-                                  </h4>
-                                  <div className="space-y-1">
-                                    {Object.entries(contextGroups).map(([tradition, group]) => {
-                                      if (group.panels.length === 0) return null;
-                                      const isExpanded = expandedContextTraditions.has(tradition);
-                                      return (
-                                        <div key={tradition}>
-                                          <button
-                                            onClick={() => toggleContextTradition(tradition)}
-                                            className="w-full flex items-center justify-between p-1.5 rounded border text-xs font-medium text-slate-300 hover:text-slate-100 transition-colors"
-                                            style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}
-                                          >
-                                            <div className="flex items-center gap-1.5">
-                                              <span>{group.emoji}</span>
-                                              <span>{tradition}</span>
-                                              <span className="text-slate-500">({group.panels.length})</span>
-                                            </div>
-                                            {isExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
-                                          </button>
-                                          {isExpanded && (
-                                            <div className="ml-2 mt-1 space-y-1">
-                                              {group.panels.map((panel, idx) => (
-                                                <div key={idx} className="p-1.5 rounded border" style={{ backgroundColor: "#0B0B11", borderColor: panel.color }}>
-                                                  <h6 className="text-xs font-medium text-slate-200 mb-0.5">{panel.label}</h6>
-                                                  {panel.text.split('\n').map((line: string, i: number) => (
-                                                    <p key={i} className="text-xs text-slate-400 leading-relaxed">{line}</p>
-                                                  ))}
-                                                </div>
-                                              ))}
-                                            </div>
-                                          )}
-                                        </div>
-                                      );
-                                    })}
-                                  </div>
-                                </div>
-                              )}
-                              
-                              {/* Compact Lessons */}
-                              {events.lessons.length > 0 && (
-                                <div>
-                                  {/* Tradition Filter Pills */}
-                                  <div className="flex items-center justify-between mb-1">
-                                    <h4 className="text-xs font-medium text-slate-200 flex items-center gap-1">
-                                      <GraduationCap className="w-3 h-3" style={{ color: "#D4A020" }} />
-                                      Lessons ({filteredLessons.length} of {events.lessons.length})
+                              {/* Religion Accordion → Denomination Names → Lessons */}
+                              {(() => {
+                                // Helper: get lessons for a specific denomination key
+                                const getMobileDenomLessons = (denomKey: string) => {
+                                  return events.lessons.filter((lesson: any) => {
+                                    if (!lesson.baselineTraditionId) return false;
+                                    const trad = TRADITION_MAP[lesson.baselineTraditionId];
+                                    if (!trad) return false;
+                                    const normalizedName = trad.name.toLowerCase()
+                                      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+                                      .replace(/['']/g, '')
+                                      .replace(/[^a-z0-9]+/g, '_')
+                                      .replace(/(^_|_$)/g, '');
+                                    return normalizedName === denomKey;
+                                  });
+                                };
+
+                                const religionsWithContent = Object.entries(contextGroups).filter(([, group]) => group.panels.length > 0);
+                                
+                                // Also find religions that have lessons but no context panels
+                                const religionsFromLessons = ["Judaism", "Christianity", "Islam", "Hinduism", "Buddhism", "Bahá'í", "Other"].filter(tradition => {
+                                  const hasLessons = events.lessons.some((l: any) => (l.tradition || "Other") === tradition);
+                                  const hasContext = contextGroups[tradition]?.panels?.length > 0;
+                                  return hasLessons && !hasContext;
+                                });
+
+                                const allReligions = [
+                                  ...religionsWithContent.map(([name, group]) => ({ name, emoji: group.emoji, panels: group.panels })),
+                                  ...religionsFromLessons.map(name => {
+                                    const emojiMap: Record<string, string> = { Judaism: "✡️", Christianity: "✝️", Islam: "☪️", Hinduism: "🕉️", Buddhism: "☸️", "Bahá'í": "✴️", Other: "🌍" };
+                                    return { name, emoji: emojiMap[name] || "🌍", panels: [] as any[] };
+                                  })
+                                ];
+
+                                if (allReligions.length === 0 && events.lessons.length === 0) return null;
+
+                                return (
+                                  <div>
+                                    <h4 className="text-xs font-medium text-slate-200 mb-1 flex items-center gap-1">
+                                      <Globe className="w-3 h-3" style={{ color: "#D4A020" }} />
+                                      Religion ({allReligions.length})
                                     </h4>
-                                  </div>
-                                  <div className="flex flex-wrap gap-1 mb-2">
-                                    {["Judaism", "Christianity", "Islam", "Hinduism", "Buddhism", "Bahá'í", "Other"].map((tradition) => {
-                                      const isActive = lessonTraditionFilters.has(tradition);
-                                      const count = events.lessons.filter((l: any) => (l.tradition || "Other") === tradition).length;
-                                      if (count === 0) return null;
-                                      return (
-                                        <button
-                                          key={tradition}
-                                          onClick={() => toggleLessonTraditionFilter(tradition)}
-                                          className="text-xs px-2 py-1 rounded transition-colors"
-                                          style={{
-                                            backgroundColor: isActive ? "#D4A02020" : "#0B0B11",
-                                            borderColor: isActive ? "#D4A02050" : "#2A2A38",
-                                            color: isActive ? "#D4A020" : "#8B8B80",
-                                            border: "1px solid"
-                                          }}
-                                        >
-                                          {tradition} ({count})
-                                        </button>
-                                      );
-                                    })}
-                                  </div>
-                                  {/* Compact Lesson List */}
-                                  <div className="space-y-1">
-                                    {filteredLessons.map((lesson, idx) => (
-                                      <div
-                                        key={idx}
-                                        onClick={() => setSelectedLesson(lesson)}
-                                        className="p-1.5 rounded border cursor-pointer hover:border-yellow-500 transition-colors"
-                                        style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}
-                                      >
-                                        <div className="flex items-start gap-1.5">
-                                          <div className="flex-1 min-w-0">
-                                            <h5 className="font-medium text-slate-200 text-xs truncate">{lesson.title}</h5>
-                                            <p className="text-xs text-slate-400 line-clamp-1 mt-0.5">
-                                              {lesson.content ? lesson.content.substring(0, 80) + '...' : 'Click to view'}
-                                            </p>
+                                    <div className="space-y-1">
+                                      {allReligions.map(({ name: tradition, emoji, panels: traditionPanels }) => {
+                                        const isExpanded = expandedContextTraditions.has(tradition);
+                                        const traditionLessonCount = events.lessons.filter((l: any) => (l.tradition || "Other") === tradition).length;
+                                        
+                                        return (
+                                          <div key={tradition}>
+                                            {/* Religion row */}
+                                            <button
+                                              onClick={() => toggleContextTradition(tradition)}
+                                              className="w-full flex items-center justify-between p-1.5 rounded border text-xs font-medium text-slate-300 hover:text-slate-100 transition-colors"
+                                              style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}
+                                            >
+                                              <div className="flex items-center gap-1.5">
+                                                <span>{emoji}</span>
+                                                <span>{tradition}</span>
+                                                {traditionLessonCount > 0 && (
+                                                  <span className="text-slate-500">({traditionLessonCount})</span>
+                                                )}
+                                              </div>
+                                              {isExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                                            </button>
+                                            
+                                            {/* Expanded: show denomination NAMES only (clickable) */}
+                                            {isExpanded && (
+                                              <div className="ml-2 mt-1 space-y-1">
+                                                {traditionPanels.map((panel: any, idx: number) => {
+                                                  const denomLessons = getMobileDenomLessons(panel.key);
+                                                  const isSelected = selectedDenomination === panel.key;
+                                                  
+                                                  return (
+                                                    <div key={idx}>
+                                                      {/* Denomination name button */}
+                                                      <button
+                                                        onClick={() => setSelectedDenomination(isSelected ? null : panel.key)}
+                                                        className="w-full flex items-center justify-between p-1.5 rounded border text-xs transition-colors"
+                                                        style={{
+                                                          backgroundColor: isSelected ? `${panel.color}10` : "#0B0B11",
+                                                          borderColor: isSelected ? panel.color : "#2A2A38"
+                                                        }}
+                                                      >
+                                                        <div className="flex items-center gap-1.5">
+                                                          <span className="text-xs">{panel.emoji}</span>
+                                                          <span className="font-medium text-slate-200">{panel.label}</span>
+                                                        </div>
+                                                        <div className="flex items-center gap-1">
+                                                          {denomLessons.length > 0 && (
+                                                            <span className="text-xs px-1 py-0.5 rounded" style={{ backgroundColor: `${panel.color}20`, color: panel.color }}>
+                                                              {denomLessons.length}
+                                                            </span>
+                                                          )}
+                                                          <ChevronRight className={`w-3 h-3 text-slate-500 transition-transform ${isSelected ? 'rotate-90' : ''}`} />
+                                                        </div>
+                                                      </button>
+                                                      
+                                                      {/* Selected denomination: show lessons */}
+                                                      {isSelected && (
+                                                        <div className="ml-2 mt-1 space-y-1">
+                                                          {denomLessons.length > 0 ? denomLessons.map((lesson: any, lIdx: number) => (
+                                                            <div
+                                                              key={lIdx}
+                                                              onClick={() => setSelectedLesson(lesson)}
+                                                              className="p-1.5 rounded border cursor-pointer hover:border-yellow-500 transition-colors"
+                                                              style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}
+                                                            >
+                                                              <h5 className="font-medium text-slate-200 text-xs truncate">{lesson.title}</h5>
+                                                              <p className="text-xs text-slate-400 line-clamp-1 mt-0.5">
+                                                                {lesson.content ? lesson.content.substring(0, 80) + '...' : 'Click to view'}
+                                                              </p>
+                                                            </div>
+                                                          )) : (
+                                                            <p className="text-xs text-slate-500 p-1.5">No lessons for this denomination</p>
+                                                          )}
+                                                        </div>
+                                                      )}
+                                                    </div>
+                                                  );
+                                                })}
+                                                
+                                                {/* If no denomination panels but has lessons, show them directly */}
+                                                {traditionPanels.length === 0 && (
+                                                  <div className="space-y-1">
+                                                    {events.lessons
+                                                      .filter((l: any) => (l.tradition || "Other") === tradition)
+                                                      .map((lesson: any, lIdx: number) => (
+                                                        <div
+                                                          key={lIdx}
+                                                          onClick={() => setSelectedLesson(lesson)}
+                                                          className="p-1.5 rounded border cursor-pointer hover:border-yellow-500 transition-colors"
+                                                          style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}
+                                                        >
+                                                          <h5 className="font-medium text-slate-200 text-xs truncate">{lesson.title}</h5>
+                                                          <p className="text-xs text-slate-400 line-clamp-1 mt-0.5">
+                                                            {lesson.content ? lesson.content.substring(0, 80) + '...' : 'Click to view'}
+                                                          </p>
+                                                        </div>
+                                                      ))}
+                                                  </div>
+                                                )}
+                                              </div>
+                                            )}
                                           </div>
-                                          <div className="flex gap-1 flex-shrink-0">
-                                            <span className="text-xs px-1.5 py-0.5 rounded" style={{
-                                              backgroundColor: "#D4A02020",
-                                              color: "#D4A020"
-                                            }}>
-                                              {lesson.tradition || "Other"}
-                                            </span>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    ))}
+                                        );
+                                      })}
+                                    </div>
                                   </div>
-                                </div>
-                              )}
+                                );
+                              })()}
                               
                               {events.holidays.length === 0 && events.lessons.length === 0 && (
                                 <div className="text-center py-4">

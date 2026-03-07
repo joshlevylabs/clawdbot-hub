@@ -733,6 +733,39 @@ const CALENDAR_TRADITION_CONFIG: Record<string, { emoji: string; label: string; 
 
 function parseCalendarContext(calendarContext: string | null | undefined): CalendarPanel[] {
   if (!calendarContext) return [];
+  
+  // Try JSON format first (new generation format)
+  try {
+    const parsed = JSON.parse(calendarContext);
+    if (parsed && typeof parsed === 'object' && parsed.tradition_slug) {
+      const slug = parsed.tradition_slug as string;
+      // Normalize slug to config key: "orthodox-judaism" → "orthodox_judaism"
+      const key = slug.replace(/-/g, '_');
+      const config = CALENDAR_TRADITION_CONFIG[key];
+      const text = parsed.calendar_context_text || '';
+      // Build rich text from available fields
+      const lines: string[] = [];
+      if (parsed.calendar_date) lines.push(`${parsed.calendar_date}`);
+      if (parsed.season && parsed.season !== 'Ordinary Time') lines.push(`Season: ${parsed.season}`);
+      if (parsed.parsha) lines.push(`Torah portion: ${typeof parsed.parsha === 'string' ? parsed.parsha : JSON.stringify(parsed.parsha)}`);
+      if (parsed.observances?.length > 0) lines.push(`Observances: ${parsed.observances.join(', ')}`);
+      if (text && !lines.some(l => l === text)) lines.push(text);
+      
+      const displayText = lines.join('\n');
+      if (config && displayText) {
+        return [{ key, emoji: config.emoji, label: config.label, text: displayText, color: config.color }];
+      }
+      // Fallback: use tradition_name for label
+      if (displayText) {
+        const name = parsed.tradition_name || slug;
+        return [{ key, emoji: '📖', label: name, text: displayText, color: '#94A3B8' }];
+      }
+      return [];
+    }
+  } catch {
+    // Not JSON — fall through to pipe/legacy parsing
+  }
+  
   const parts = calendarContext.split('|').map(p => p.trim()).filter(Boolean);
   const panels: CalendarPanel[] = [];
 
@@ -763,6 +796,24 @@ function parseCalendarContext(calendarContext: string | null | undefined): Calen
     }
   }
   return panels;
+}
+
+// Collect calendar context panels from ALL lessons (not just the first one)
+function collectAllCalendarContexts(lessons: any[]): CalendarPanel[] {
+  const seen = new Set<string>();
+  const allPanels: CalendarPanel[] = [];
+  for (const lesson of lessons) {
+    if (!lesson.calendarContext) continue;
+    const panels = parseCalendarContext(lesson.calendarContext);
+    for (const panel of panels) {
+      // Deduplicate by key
+      if (!seen.has(panel.key)) {
+        seen.add(panel.key);
+        allPanels.push(panel);
+      }
+    }
+  }
+  return allPanels;
 }
 
 // ===== Shuffle helper =====
@@ -1591,13 +1642,13 @@ export default function FaithJourneyPage() {
     } as Record<string, { emoji: string; panels: any[] }>;
 
     panels.forEach(panel => {
-      if (panel.key.includes('judaism') || panel.key === 'jewish') {
+      if (panel.key.includes('judaism') || panel.key === 'jewish' || panel.key.includes('messianic')) {
         groups.Judaism.panels.push(panel);
-      } else if (panel.key.includes('christian') || panel.key.includes('orthodox') || panel.key.includes('catholic') || panel.key.includes('protestant')) {
+      } else if (panel.key.includes('christian') || panel.key.includes('catholic') || panel.key.includes('protestant') || panel.key.includes('evangelical') || panel.key.includes('mainline') || panel.key === 'eastern_orthodox') {
         groups.Christianity.panels.push(panel);
-      } else if (panel.key.includes('islam') || panel.key.includes('sunni') || panel.key.includes('shia') || panel.key === 'islamic') {
+      } else if (panel.key.includes('islam') || panel.key.includes('sunni') || panel.key.includes('shia') || panel.key.includes('sufi') || panel.key === 'islamic') {
         groups.Islam.panels.push(panel);
-      } else if (panel.key.includes('vaishnav') || panel.key.includes('shaiv') || panel.key.includes('shakti') || panel.key.includes('hindu')) {
+      } else if (panel.key.includes('vaishnav') || panel.key.includes('shaiv') || panel.key.includes('shakti') || panel.key.includes('hindu') || panel.key.includes('advaita') || panel.key.includes('vedanta')) {
         groups.Hinduism.panels.push(panel);
       } else if (panel.key.includes('buddhism') || panel.key.includes('theravada') || panel.key.includes('mahayana') || panel.key.includes('vajrayana')) {
         groups.Buddhism.panels.push(panel);
@@ -2367,8 +2418,7 @@ export default function FaithJourneyPage() {
                         
                         {(() => {
                           const events = getEventsForDate(selectedDay);
-                          const firstLessonWithContext = events.lessons.find((l: any) => l.calendarContext);
-                          const calPanels = firstLessonWithContext ? parseCalendarContext((firstLessonWithContext as any).calendarContext) : [];
+                          const calPanels = collectAllCalendarContexts(events.lessons);
                           const hebrewDate = events.lessons.find((l: any) => l.hebrewDate)?.hebrewDate as string | undefined;
                           const parsha = events.lessons.find((l: any) => l.parsha)?.parsha as string | undefined;
 
@@ -2637,8 +2687,7 @@ export default function FaithJourneyPage() {
                                         const totalContent = traditionHolidays.length + traditionLessons.length;
                                         
                                         // Get the calendar context panels for this tradition
-                                        const firstLessonWithContext = events.lessons.find((l: any) => l.calendarContext);
-                                        const calPanels = firstLessonWithContext ? parseCalendarContext((firstLessonWithContext as any).calendarContext) : [];
+                                        const calPanels = collectAllCalendarContexts(events.lessons);
                                         const contextGroups = groupCalendarContextByTradition(calPanels);
                                         const hasContext = contextGroups[tradition]?.panels?.length > 0;
                                         
@@ -2697,9 +2746,8 @@ export default function FaithJourneyPage() {
                                               selectedReligion === "Islam" ? crossDates.islamic :
                                               selectedReligion === "Hinduism" ? crossDates.indian : null;
                             
-                            // Get calendar context panels filtered to this religion
-                            const firstLessonWithContext = events.lessons.find((l: any) => l.calendarContext);
-                            const calPanels = firstLessonWithContext ? parseCalendarContext((firstLessonWithContext as any).calendarContext) : [];
+                            // Get calendar context panels from ALL lessons for this day
+                            const calPanels = collectAllCalendarContexts(events.lessons);
                             const hebrewDate = events.lessons.find((l: any) => l.hebrewDate)?.hebrewDate as string | undefined;
                             const parsha = events.lessons.find((l: any) => l.parsha)?.parsha as string | undefined;
                             

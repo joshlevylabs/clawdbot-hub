@@ -1,166 +1,117 @@
 {
-  "date": "2026-03-06",
-  "generated_at": "2026-03-06T06:00:27.580488",
+  "date": "2026-03-07T06:00:00.000Z",
+  "day": "Saturday",
+  "formatted_date": "Saturday, March 7th, 2026",
+  "time_generated": "6:00 AM PT",
   "prayer": {
-    "title": "🕐️ Morning Prayer",
-    "date": "Friday, March 06, 2026",
-    "hebrew_date": "6 Kislev",
+    "date": "Saturday, March 07, 2026",
+    "hebrew_date": "7 Kislev",
     "parsha": "Vayigash",
     "parsha_theme": "reunion, forgiveness, revealing truth",
     "modeh_ani": "מודה אני לפניך — I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
-    "blessing": "Thank You for returning my soul to me with compassion — great is Your faithfulness.",
-    "psalm": "**Psalm 90:17**: \"May the favor of the Lord our God rest on us; establish the work of our hands.\"",
-    "proverb": "**Proverbs 16:3**: \"Commit your work to the Lord, and your plans will be established.\"",
-    "intention": "Let my work today compound into something that outlasts me.",
+    "blessing": "Blessed are You who guides the steps of man — direct my path today.",
+    "psalm": "Psalm 118:25: 'Lord, save us! Lord, grant us success!'",
+    "proverb": "Proverbs 27:23: 'Know well the condition of your flocks, and give attention to your herds.'",
+    "intention": "Give me courage to take the risks You've called me to take.",
     "closing": "Go in peace. Build with purpose. Return with gratitude."
   },
-  "trading": {
-    "title": "📈 Markets & Trading Signals",
-    "market_status": "OPEN",
-    "spy_price": 681.31,
-    "spy_change": -0.56,
-    "vix": 26.72,
-    "volatility": "HIGH",
-    "sentiment": "NEUTRAL",
-    "fear_greed_index": 31.03,
-    "fear_greed_rating": "fear",
-    "overview": [
-      {
-        "symbol": "SPY",
-        "price": 681.31,
-        "change_pct": -0.56,
-        "trend": "BEARISH"
-      },
-      {
-        "symbol": "QQQ",
-        "price": 608.91,
-        "change_pct": -0.3,
-        "trend": "NEUTRAL"
-      },
-      {
-        "symbol": "IWM",
-        "price": 256.76,
-        "change_pct": -1.91,
-        "trend": "BEARISH"
-      },
-      {
-        "symbol": "DIA",
-        "price": 479.84,
-        "change_pct": -1.62,
-        "trend": "BEARISH"
-      }
-    ],
-    "signals": [
-      {
-        "type": "SELL",
-        "symbol": "USO",
-        "price": 96.31,
-        "entry": 96.31,
-        "stop": 102.34,
-        "target": 87.26,
-        "confidence": "MEDIUM",
-        "rationale": "RSI overbought (83.5) | High volume (3.1x avg) | Price near BB resistance"
-      }
-    ]
+  "weather": {
+    "location": "Temecula, CA",
+    "description": "Partly cloudy",
+    "temperature": "18°C (64°F)",
+    "note": "Pleasant Saturday weather"
   },
   "calendar": {
-    "title": "📅 Calendar",
-    "today": [
-      {
-        "time": "All Day",
-        "title": "Brendon Schmidt's birthday",
-        "type": "birthday"
-      }
-    ],
-    "week": [
-      {
-        "date": "2026-03-06",
-        "time": "All Day",
-        "title": "Brendon Schmidt's birthday"
-      }
-    ],
-    "month": [
-      {
-        "date": "2026-03-06",
-        "title": "Brendon Schmidt's birthday"
-      }
-    ]
+    "today": [],
+    "week": [],
+    "month": [],
+    "note": "No events scheduled across all accounts"
   },
-  "email": {
-    "title": "📧 Email Highlights",
-    "recent_unread": [
-      {
-        "from": "Supabase",
-        "subject": "Upcoming change to OpenAPI spec access for your Supabase projects",
-        "date": "2026-03-05 23:14"
-      },
-      {
-        "from": "Vercel",
-        "subject": "Weekly Usage Summary for joshlevylabs' projects",
-        "date": "2026-03-05 22:06"
-      },
-      {
-        "from": "joshlevylabs",
-        "subject": "[Dana-Innovations/Athena] Run cancelled: Stale - main",
-        "date": "2026-03-05 20:55"
-      },
-      {
-        "from": "Bluevine",
-        "subject": "Your automatic transfer was successful",
-        "date": "2026-03-05 20:14"
-      },
-      {
-        "from": "LinkedIn",
-        "subject": "You have 1 new message",
-        "date": "2026-03-05 19:17"
-      }
-    ]
+  "email_highlights": [
+    {
+      "subject": "Payroll on AutoPilot for Josh Levy Labs will automatically run your payroll tomorrow",
+      "from": "Gusto",
+      "date": "2026-03-07 05:21",
+      "priority": "high"
+    },
+    {
+      "subject": "Your receipt from Anthropic, PBC #2280-7224-6330",
+      "from": "Anthropic, PBC",
+      "date": "2026-03-06 15:16",
+      "priority": "medium"
+    },
+    {
+      "subject": "[Action Required] Amazon RDS PostgreSQL minor versions deprecating on May 31, 2026",
+      "from": "Amazon Web Services",
+      "date": "2026-03-06 14:16",
+      "priority": "medium"
+    }
+  ],
+  "trading": {
+    "fear_greed_index": {
+      "current": 26.7,
+      "rating": "fear",
+      "summary": "Markets are fearful at 27. Sentiment is negative — watch for oversold bounces."
+    },
+    "regime": {
+      "spy": "sideways",
+      "qqq": "sideways",
+      "global": "sideways",
+      "summary": "SPY is sideways, QQQ is sideways. Momentum is weakening."
+    },
+    "signals": {
+      "total_buy": 2,
+      "total_hold": 22,
+      "total_watch": 0,
+      "notable_buys": ["EFA (International)"]
+    }
   },
-  "family": {
-    "title": "❤️ Family Focus",
-    "relationship_temperature": "critical",
+  "world_news": [
+    {
+      "headline": "Iran launches missiles at Israel as Israeli military hits Lebanon",
+      "source": "AP News",
+      "summary": "Iran is launching more missiles at Israel as attacks in the Middle East commence for a sixth day.",
+      "relevance": "Major geopolitical development affecting Israel"
+    },
+    {
+      "headline": "Senate Republicans Block War Powers Limits as Mideast Crisis Widens",
+      "source": "The New York Times",
+      "summary": "Congressional action on war powers as Middle East conflict escalates with U.S. and Israeli coordination",
+      "relevance": "U.S. policy and Israel relations"
+    }
+  ],
+  "ai_news": [
+    {
+      "headline": "Apple announces completely reimagined, AI-powered version of Siri set to debut in 2026",
+      "source": "Crescendo AI",
+      "summary": "Siri will transition into a context-aware assistant capable of 'on-screen awareness'",
+      "relevance": "Major AI consumer product development"
+    },
+    {
+      "headline": "Broadcom rises as $100 billion AI forecast signals gains in Nvidia-dominated market",
+      "source": "Reuters",
+      "summary": "Broadcom's AI revenue forecast shows market expansion beyond Nvidia",
+      "relevance": "AI hardware market diversification"
+    }
+  ],
+  "relationship_analysis": {
+    "temperature": "critical",
     "trend": "urgent",
-    "stats": {
-      "total_interactions": 11,
-      "positive": 6,
-      "negative": 5,
-      "ratio": 1.2
-    },
-    "love_languages": {
-      "primary": "quality_time",
-      "secondary": "acts_of_service"
-    },
     "recommendations": [
       "PRIORITY: Focus on repair. Acknowledge recent conflicts without defending.",
       "Increase acts of service dramatically this week.",
       "Create space for her to express frustrations without fixing."
-    ]
-  },
-  "weather": {
-    "title": "🌤️ Weather",
-    "location": "Temecula, CA",
-    "note": "Weather data temporarily unavailable"
-  },
-  "news": {
-    "title": "📰 News",
-    "israel": [
-      {
-        "source": "Times of Israel",
-        "headline": "Israel reportedly aids defense of US allies in region",
-        "url": "https://www.timesofisrael.com/"
-      }
     ],
-    "ai": [
-      {
-        "source": "TechCrunch",
-        "headline": "AI News & Artificial Intelligence coverage",
-        "url": "https://techcrunch.com/category/artificial-intelligence/"
-      },
-      {
-        "source": "AI Insider",
-        "headline": "Vega Security raises $120M Series B for AI cybersecurity",
-        "url": "https://theaiinsider.tech/"
-      }
-    ]
-  }
+    "love_languages": {
+      "primary": "quality_time",
+      "secondary": "acts_of_service"
+    }
+  },
+  "key_focus": [
+    "🚨 Relationship requires immediate attention - critical status",
+    "💰 Payroll runs tomorrow (Saturday) - Gusto automation active",
+    "🌍 Middle East conflict escalating - Iran/Israel tensions",
+    "📈 Markets in fear territory but sideways regime continues",
+    "🤖 AI developments in consumer products (Apple Siri)"
+  ]
 }

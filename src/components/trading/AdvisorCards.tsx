@@ -837,44 +837,24 @@ export default function AdvisorCards({ onAgentClick }: AdvisorCardsProps = {}) {
         <span className="text-xs text-slate-600">— {ADVISORS.length} advisors with live portfolios</span>
       </div>
 
-      {/* Advisor cards: row of 3 + row of 2 centered on desktop; 2-col on mobile */}
-      <div className="space-y-2">
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-          {ADVISORS.slice(0, 3).map((advisor) => {
-            const state = advisorState[advisor.id];
-            const portfolio = getPortfolioForAdvisor(advisor.id);
-            return (
-              <AdvisorCard
-                key={advisor.id}
-                config={advisor}
-                data={state.data}
-                loading={state.loading}
-                error={state.error}
-                portfolio={portfolio}
-                onOpen={() => setOpenModal(advisor.id)}
-                onAgentClick={onAgentClick}
-              />
-            );
-          })}
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-2 gap-2 md:max-w-[66.666%] md:mx-auto">
-          {ADVISORS.slice(3).map((advisor) => {
-            const state = advisorState[advisor.id];
-            const portfolio = getPortfolioForAdvisor(advisor.id);
-            return (
-              <AdvisorCard
-                key={advisor.id}
-                config={advisor}
-                data={state.data}
-                loading={state.loading}
-                error={state.error}
-                portfolio={portfolio}
-                onOpen={() => setOpenModal(advisor.id)}
-                onAgentClick={onAgentClick}
-              />
-            );
-          })}
-        </div>
+      {/* Advisor cards: 2-col on mobile, 3-col on desktop */}
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+        {ADVISORS.map((advisor) => {
+          const state = advisorState[advisor.id];
+          const portfolio = getPortfolioForAdvisor(advisor.id);
+          return (
+            <AdvisorCard
+              key={advisor.id}
+              config={advisor}
+              data={state.data}
+              loading={state.loading}
+              error={state.error}
+              portfolio={portfolio}
+              onOpen={() => setOpenModal(advisor.id)}
+              onAgentClick={onAgentClick}
+            />
+          );
+        })}
       </div>
 
       {/* Summary Stats - taken from AgentPortfolios */}

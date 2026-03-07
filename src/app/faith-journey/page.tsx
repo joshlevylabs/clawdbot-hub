@@ -2726,15 +2726,19 @@ export default function FaithJourneyPage() {
                             
                             // Find lessons matching selected denomination by baselineTraditionId
                             const getDenominationLessons = (denomKey: string) => {
-                              // Match lessons whose baselineTraditionId maps to this denomination
+                              // Match lessons whose baselineTraditionId maps exactly to this denomination
                               return traditionLessons.filter((lesson: any) => {
                                 if (!lesson.baselineTraditionId) return false;
                                 const trad = TRADITION_MAP[lesson.baselineTraditionId];
                                 if (!trad) return false;
-                                // Match by checking if the tradition name contains the denomination label or vice versa
-                                const denomLabel = CALENDAR_TRADITION_CONFIG[denomKey]?.label || denomKey;
-                                return trad.name.toLowerCase().includes(denomLabel.toLowerCase().split(' ')[0]) ||
-                                       denomLabel.toLowerCase().includes(trad.name.toLowerCase().split(' ')[0]);
+                                // Normalize tradition name to match calendar config key format
+                                // e.g., "Orthodox Judaism" → "orthodox_judaism", "Bahá'í Faith" → "bahai_faith"
+                                const normalizedName = trad.name.toLowerCase()
+                                  .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // strip diacritics
+                                  .replace(/['']/g, '') // strip apostrophes
+                                  .replace(/[^a-z0-9]+/g, '_') // non-alphanumeric → underscore
+                                  .replace(/(^_|_$)/g, ''); // trim leading/trailing underscores
+                                return normalizedName === denomKey;
                               });
                             };
                             

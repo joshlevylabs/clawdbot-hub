@@ -11,7 +11,17 @@ export async function POST(req: NextRequest) {
     const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
     if (!serviceKey || !authHeader || authHeader !== `Bearer ${serviceKey}`) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      // Debug: show key length mismatch info (no secrets leaked)
+      return NextResponse.json({
+        error: 'Unauthorized',
+        debug: {
+          hasServiceKey: !!serviceKey,
+          serviceKeyLen: serviceKey?.length || 0,
+          authHeaderLen: authHeader?.length || 0,
+          expectedPrefix: authHeader?.startsWith('Bearer ey') || false,
+          keyPrefix: serviceKey?.substring(0, 10) || 'none',
+        }
+      }, { status: 401 })
     }
 
     const { query } = await req.json()

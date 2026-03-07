@@ -1,18 +1,18 @@
 {
   "current": {
-    "power": 1.14,
+    "power": 1.5,
     "safety": 1.0,
     "quadrant": "topRight",
     "quadrantName": "Secure Leadership",
     "inIdealZone": false,
-    "count": 7,
-    "calculatedAt": "2026-03-06T06:00:41.578200"
+    "count": 2,
+    "calculatedAt": "2026-03-07T06:00:19.283621"
   },
   "trend": {
-    "power": 0.0,
+    "power": 0.36,
     "safety": 0.0
   },
-  "recentCount": 7,
+  "recentCount": 2,
   "totalCount": 11,
   "quadrants": {
     "topRight": {

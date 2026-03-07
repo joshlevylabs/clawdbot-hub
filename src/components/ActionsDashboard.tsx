@@ -297,19 +297,24 @@ function generateActions(data: MREData): ActionItem[] {
       parseFloat(fibonacci.entry_zone.split(" - ")[0]) : 
       price * 0.98; // Default to 2% below current price
 
+    // Helper: find first valid profit target above current price
+    const validProfitTarget = fibonacci?.profit_targets?.filter((t: number) => t > price)?.[0] || null;
+    const fallbackTarget = fibonacci?.nearest_resistance && fibonacci.nearest_resistance > price 
+      ? fibonacci.nearest_resistance : null;
+
     if (signal === "BUY") {
       action = "BUY";
       entry = price;
       entryDisplay = `$${price.toFixed(2)}`;
       // Stop: nearest support or 78.6% retrace (whichever is closer to price but below)
       const fibStop = fibonacci?.nearest_support || fibonacci?.retracements?.["78.6"];
-      stop = fibStop || price * 0.85;
+      stop = fibStop && fibStop < price ? fibStop : price * 0.85;
       stopDisplay = `$${stop.toFixed(2)}`;
-      // Target: first extension above current price, or profit_targets[0]
+      // Target: first extension above current price, then valid profit target, then resistance, then 15% markup
       const ext127 = fibonacci?.extensions?.["127.2"];
       const ext161 = fibonacci?.extensions?.["161.8"];
       const firstExtAbove = ext127 && ext127 > price ? ext127 : ext161 && ext161 > price ? ext161 : null;
-      target = firstExtAbove || fibonacci?.profit_targets?.[0] || price * 1.15;
+      target = firstExtAbove || validProfitTarget || fallbackTarget || price * 1.15;
       targetDisplay = `$${target.toFixed(2)}`;
       rationale = asset.signal_source ? 
         `${asset.signal_source} BUY signal. Fear at ${fg.toFixed(0)}, ${regime} regime.` :
@@ -321,7 +326,7 @@ function generateActions(data: MREData): ActionItem[] {
       entryDisplay = `>$${entry.toFixed(2)}`;
       stop = fibonacci?.retracements?.["61.8"] || price * 0.90;
       stopDisplay = `$${stop.toFixed(2)}`;
-      target = fibonacci?.profit_targets?.[0] || price * 1.15;
+      target = validProfitTarget || fallbackTarget || price * 1.15;
       targetDisplay = `$${target.toFixed(2)}`;
       rationale = `Consolidating. Buy breakout above resistance.`;
       priority = 2;
@@ -333,7 +338,7 @@ function generateActions(data: MREData): ActionItem[] {
       action = "HOLD";
       entry = entryHigh;
       entryDisplay = `$${entryHigh.toFixed(2)} (dip)`;
-      target = fibonacci?.profit_targets?.[0] || price * 1.10;
+      target = validProfitTarget || fallbackTarget || price * 1.10;
       targetDisplay = `$${target.toFixed(2)}`;
       rationale = `${regime} regime, ${confidence}% confidence. F&G ${fg.toFixed(0)}.`;
       priority = 3;

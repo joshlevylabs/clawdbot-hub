@@ -50,6 +50,9 @@ interface ShowEpisode {
   finalized?: string;
   description?: string;
   scriptId?: string;
+  filename?: string;
+  created?: string;
+  links?: { youtube?: string; spotify?: string; apple?: string; medium?: string; linkedin?: string; tiktok?: string };
 }
 interface Show {
   id: string;
@@ -135,6 +138,7 @@ interface Episode {
   created: string;
   finalized?: string;
   status: string;
+  description?: string;
   links?: EpisodeLinks;
 }
 
@@ -277,7 +281,6 @@ const DEFAULT_SOCIAL_PLATFORMS: SocialPlatform[] = [
     engagement: 0,
     lastUpdated: "2026-03-03",
   },
-  {
   {
     name: "Twitter/X",
     platform: "twitter",
@@ -728,7 +731,7 @@ function PodcastDashboard() {
   const [editContent, setEditContent] = useState('');
   const [saving, setSaving] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saved' | 'error'>('idle');
-  const [editingEpisode, setEditingEpisode] = useState<Episode | null>(null);
+  const [editingEpisode, setEditingEpisode] = useState<(Episode | ShowEpisode) | null>(null);
   const [editEpForm, setEditEpForm] = useState({ status: '', youtube: '', spotify: '', apple: '', description: '' });
 
   useEffect(() => {
@@ -757,7 +760,7 @@ function PodcastDashboard() {
     }
   };
 
-  const openEditEpisode = (ep: Episode) => {
+  const openEditEpisode = (ep: Episode | ShowEpisode) => {
     setEditingEpisode(ep);
     setEditEpForm({
       status: ep.status,

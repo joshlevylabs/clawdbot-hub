@@ -51,7 +51,7 @@ export function SendConfirmModal({
         )}
 
         <p className="text-xs text-slate-600 mb-4">
-          Note: Actual email delivery is not yet connected. This marks the issue as &quot;sent&quot; in the system.
+          Emails will be delivered via SMTP to all active subscribers.
         </p>
 
         <div className="flex items-center justify-end gap-3">

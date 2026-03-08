@@ -694,15 +694,34 @@ function PodcastDashboard() {
       if (saved) {
         try {
           const parsed: Show[] = JSON.parse(saved);
-          // Merge new episodes from defaults that don't exist in saved data
+          // Merge episodes from defaults: add new ones AND update status/links from defaults
           const merged = parsed.map(show => {
             const defaultShow = DEFAULT_SHOWS.find(d => d.id === show.id);
             if (defaultShow) {
               const savedNums = new Set(show.episodes.map(e => e.number));
               const newEps = defaultShow.episodes.filter(e => !savedNums.has(e.number));
-              if (newEps.length > 0) {
-                return { ...show, episodes: [...show.episodes, ...newEps] };
-              }
+              // Update existing episodes with newer status/links from defaults
+              const updatedEpisodes = show.episodes.map(savedEp => {
+                const defaultEp = defaultShow.episodes.find(d => d.number === savedEp.number);
+                if (defaultEp) {
+                  // If default has published status and saved doesn't, update
+                  const shouldUpdateStatus = defaultEp.status === 'published' && savedEp.status !== 'published';
+                  // Merge links (default wins for any new links)
+                  const mergedLinks = { ...savedEp.links, ...defaultEp.links };
+                  const hasNewLinks = JSON.stringify(mergedLinks) !== JSON.stringify(savedEp.links);
+                  if (shouldUpdateStatus || hasNewLinks) {
+                    return {
+                      ...savedEp,
+                      status: shouldUpdateStatus ? defaultEp.status : savedEp.status,
+                      finalized: shouldUpdateStatus && defaultEp.finalized ? defaultEp.finalized : savedEp.finalized,
+                      description: defaultEp.description || savedEp.description,
+                      links: mergedLinks,
+                    };
+                  }
+                }
+                return savedEp;
+              });
+              return { ...show, episodes: [...updatedEpisodes, ...newEps] };
             }
             return show;
           });
@@ -721,6 +740,8 @@ function PodcastDashboard() {
   const [editContent, setEditContent] = useState('');
   const [saving, setSaving] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saved' | 'error'>('idle');
+  const [editingEpisode, setEditingEpisode] = useState<Episode | null>(null);
+  const [editEpForm, setEditEpForm] = useState({ status: '', youtube: '', spotify: '', apple: '', description: '' });
 
   useEffect(() => {
     if (shows.length > 0 && !selectedShow) {
@@ -745,6 +766,51 @@ function PodcastDashboard() {
     setShowCreateModal(false);
     if (typeof window !== 'undefined') {
       localStorage.setItem('podcast-shows', JSON.stringify(updated));
+    }
+  };
+
+  const openEditEpisode = (ep: Episode) => {
+    setEditingEpisode(ep);
+    setEditEpForm({
+      status: ep.status,
+      youtube: ep.links?.youtube || '',
+      spotify: ep.links?.spotify || '',
+      apple: ep.links?.apple || '',
+      description: ep.description || '',
+    });
+  };
+
+  const saveEpisode = () => {
+    if (!editingEpisode || !selectedShow) return;
+    const updatedShows = shows.map(show => {
+      if (show.id !== selectedShow.id) return show;
+      return {
+        ...show,
+        episodes: show.episodes.map(ep => {
+          if (ep.number !== editingEpisode.number) return ep;
+          return {
+            ...ep,
+            status: editEpForm.status as Episode['status'],
+            description: editEpForm.description || ep.description,
+            finalized: editEpForm.status === 'published' && !ep.finalized
+              ? new Date().toISOString().split('T')[0]
+              : ep.finalized,
+            links: {
+              ...ep.links,
+              youtube: editEpForm.youtube || undefined,
+              spotify: editEpForm.spotify || undefined,
+              apple: editEpForm.apple || undefined,
+            },
+          };
+        }),
+      };
+    });
+    setShows(updatedShows);
+    const updatedShow = updatedShows.find(s => s.id === selectedShow.id);
+    if (updatedShow) setSelectedShow(updatedShow);
+    setEditingEpisode(null);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('podcast-shows', JSON.stringify(updatedShows));
     }
   };
 
@@ -888,6 +954,13 @@ function PodcastDashboard() {
                       </button>
                     </>
                   )}
+                  <button
+                    onClick={() => openEditEpisode(ep)}
+                    className="p-2 bg-slate-700/50 text-slate-400 hover:bg-slate-700 hover:text-slate-200 rounded-lg transition-colors"
+                    title="Edit Episode"
+                  >
+                    <Edit3 className="w-4 h-4" />
+                  </button>
                   {ep.links?.youtube && (
                     <a href={ep.links.youtube} target="_blank" rel="noopener noreferrer"
                       className="p-2 bg-red-500/10 text-red-400 hover:bg-red-500/20 rounded-lg transition-colors"
@@ -1129,6 +1202,100 @@ function PodcastDashboard() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Episode Edit Modal */}
+      {editingEpisode && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+          <div className="bg-slate-900 border border-slate-700 rounded-xl p-6 max-w-lg w-full">
+            <div className="flex items-center justify-between mb-5">
+              <h3 className="text-lg font-semibold text-slate-100">
+                Edit EP {editingEpisode.number}
+              </h3>
+              <button onClick={() => setEditingEpisode(null)} className="text-slate-500 hover:text-slate-300">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="space-y-4">
+              {/* Status */}
+              <div>
+                <label className="block text-sm text-slate-400 mb-1">Status</label>
+                <select
+                  value={editEpForm.status}
+                  onChange={e => setEditEpForm(f => ({ ...f, status: e.target.value }))}
+                  className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 text-sm focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
+                >
+                  <option value="draft">Draft</option>
+                  <option value="script-ready">Script Ready</option>
+                  <option value="recording">Recording</option>
+                  <option value="finalized">Finalized</option>
+                  <option value="published">Published</option>
+                </select>
+              </div>
+              {/* Description */}
+              <div>
+                <label className="block text-sm text-slate-400 mb-1">Description</label>
+                <textarea
+                  value={editEpForm.description}
+                  onChange={e => setEditEpForm(f => ({ ...f, description: e.target.value }))}
+                  rows={2}
+                  className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 text-sm focus:ring-1 focus:ring-primary-500 focus:border-primary-500 resize-none"
+                />
+              </div>
+              {/* Platform Links */}
+              <div>
+                <label className="block text-sm text-slate-400 mb-2">Platform Links</label>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-red-400 w-6 text-center"><Play className="w-4 h-4" /></span>
+                    <input
+                      type="url"
+                      placeholder="YouTube URL"
+                      value={editEpForm.youtube}
+                      onChange={e => setEditEpForm(f => ({ ...f, youtube: e.target.value }))}
+                      className="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-slate-200 text-sm placeholder:text-slate-600 focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
+                    />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-green-400 w-6 text-center"><Headphones className="w-4 h-4" /></span>
+                    <input
+                      type="url"
+                      placeholder="Spotify URL"
+                      value={editEpForm.spotify}
+                      onChange={e => setEditEpForm(f => ({ ...f, spotify: e.target.value }))}
+                      className="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-slate-200 text-sm placeholder:text-slate-600 focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
+                    />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-purple-400 w-6 text-center"><Globe className="w-4 h-4" /></span>
+                    <input
+                      type="url"
+                      placeholder="Apple Podcasts URL"
+                      value={editEpForm.apple}
+                      onChange={e => setEditEpForm(f => ({ ...f, apple: e.target.value }))}
+                      className="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-slate-200 text-sm placeholder:text-slate-600 focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="flex justify-end gap-3 mt-6">
+              <button
+                onClick={() => setEditingEpisode(null)}
+                className="px-4 py-2 text-sm text-slate-400 hover:text-slate-200 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={saveEpisode}
+                className="px-4 py-2 text-sm bg-primary-500 text-black font-medium rounded-lg hover:bg-primary-400 transition-colors flex items-center gap-2"
+              >
+                <Save className="w-4 h-4" />
+                Save Changes
+              </button>
+            </div>
           </div>
         </div>
       )}

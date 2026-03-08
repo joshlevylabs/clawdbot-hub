@@ -606,9 +606,13 @@ const fetchers: Record<string, DataFetcher> = {
   'podcast-latest': (params) => {
     const data = readDataFile('podcast/index.json') as Record<string, unknown> | null;
     if (!data) return { error: 'No podcast data available' };
-    const episodes = ((data as Record<string, unknown>).episodes || data) as unknown[];
+    const allEpisodes = ((data as Record<string, unknown>).episodes || data) as Array<Record<string, unknown>>;
     const count = Number(params.count) || 1;
-    const latest = Array.isArray(episodes) ? episodes.slice(-count).reverse() : [];
+    // Only include published/finalized episodes (not drafts or script-ready)
+    const published = Array.isArray(allEpisodes)
+      ? allEpisodes.filter(ep => ep.status === 'published' || ep.status === 'finalized')
+      : [];
+    const latest = published.slice(-count).reverse();
     return { episodes: latest };
   },
 

@@ -38,6 +38,7 @@ import {
   ChevronLeft,
   ChevronRight,
   ArrowLeft,
+  ImageIcon,
 } from "lucide-react";
 
 // ===== Types =====
@@ -172,7 +173,25 @@ interface ChatMessage {
   timestamp: string;
 }
 
-type ActiveTab = "overview" | "guides" | "calendar" | "audio" | "texts" | "conversations";
+type ActiveTab = "overview" | "guides" | "calendar" | "audio" | "texts" | "conversations" | "images";
+
+interface FaithImage {
+  id: string;
+  date: string;
+  tradition_family: string;
+  image_url: string;
+  prompt: string;
+  description: string;
+  tags: string[];
+  subject: string;
+  style: string;
+  model: string;
+  guide_name: string;
+  guide_reflection: string;
+  embedding_text: string;
+  reused_from: string | null;
+  created_at: string;
+}
 
 // ===== Data =====
 
@@ -1523,6 +1542,13 @@ export default function FaithJourneyPage() {
   // Guide chat modal
   const [selectedGuide, setSelectedGuide] = useState<DenominationAgent | null>(null);
 
+  // Images tab state
+  const [images, setImages] = useState<FaithImage[]>([]);
+  const [imagesLoading, setImagesLoading] = useState(false);
+  const [imageFilter, setImageFilter] = useState<string>("all");
+  const [imageSearch, setImageSearch] = useState("");
+  const [imageDate, setImageDate] = useState<string>("all");
+
   // Fetch perspectives when a lesson is selected
   useEffect(() => {
     if (!selectedLesson || selectedLesson.id?.startsWith('sample-')) {
@@ -1586,6 +1612,7 @@ export default function FaithJourneyPage() {
     { key: "calendar", label: "Calendar", icon: Calendar },
     { key: "audio", label: "Audio", icon: Volume2 },
     { key: "texts", label: "Texts", icon: Scroll },
+    { key: "images", label: "Images", icon: ImageIcon },
     { key: "conversations", label: "Conversations", icon: MessageCircle },
   ];
 
@@ -1890,6 +1917,42 @@ export default function FaithJourneyPage() {
   const overallCoverage = overallGuideStats.totalPassages > 0 
     ? Math.round((overallGuideStats.totalEmbeddings / overallGuideStats.totalPassages) * 100) 
     : 0;
+
+  // Fetch images function
+  const fetchImages = async () => {
+    if (imagesLoading) return;
+    
+    setImagesLoading(true);
+    try {
+      const response = await fetch(
+        "https://atldnpjaxaeqzgtqbrpy.supabase.co/rest/v1/faith_daily_images?select=*&order=date.desc,tradition_family.asc",
+        {
+          headers: {
+            'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF0bGRucGpheGFlcXpndHFicnB5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk0Nzc0MDYsImV4cCI6MjA4NTA1MzQwNn0.40LmcgShkiG18aa6aF7vk6wT_Ft5ohWeUtRAG_reizs',
+            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF0bGRucGpheGFlcXpndHFicnB5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk0Nzc0MDYsImV4cCI6MjA4NTA1MzQwNn0.40LmcgShkiG18aa6aF7vk6wT_Ft5ohWeUtRAG_reizs'
+          }
+        }
+      );
+      
+      if (response.ok) {
+        const data = await response.json();
+        setImages(data);
+      } else {
+        console.error('Failed to fetch images');
+      }
+    } catch (error) {
+      console.error('Error fetching images:', error);
+    } finally {
+      setImagesLoading(false);
+    }
+  };
+
+  // Lazy load images when tab is selected
+  useEffect(() => {
+    if (activeTab === "images" && images.length === 0) {
+      fetchImages();
+    }
+  }, [activeTab]);
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#0B0B11" }}>
@@ -3764,6 +3827,237 @@ export default function FaithJourneyPage() {
                     </table>
                   </div>
                 )}
+              </div>
+            )}
+
+            {/* Images Tab */}
+            {activeTab === "images" && (
+              <div className="space-y-6">
+                {/* Stats Header */}
+                <div className="rounded-xl p-4 border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+                  <h2 className="text-lg font-semibold text-slate-100 mb-4 flex items-center gap-2">
+                    <ImageIcon className="w-5 h-5" style={{ color: "#D4A020" }} />
+                    Image Library
+                  </h2>
+                  {imagesLoading ? (
+                    <div className="text-center py-8">
+                      <Loader className="w-6 h-6 animate-spin mx-auto mb-2 text-slate-400" />
+                      <p className="text-slate-400">Loading images...</p>
+                    </div>
+                  ) : (
+                    <>
+                      {/* Stats */}
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                        <div className="text-center">
+                          <div className="text-2xl font-bold text-slate-100">{images.length}</div>
+                          <div className="text-sm text-slate-400">Total Images</div>
+                        </div>
+                        <div className="text-center">
+                          <div className="text-2xl font-bold text-slate-100">
+                            {images.filter(img => img.reused_from !== null).length}
+                          </div>
+                          <div className="text-sm text-slate-400">Reused Images ♻️</div>
+                        </div>
+                        <div className="text-center">
+                          <div className="text-2xl font-bold" style={{ color: "#D4A020" }}>
+                            ${((images.length - images.filter(img => img.reused_from !== null).length) * 0.07).toFixed(2)}
+                          </div>
+                          <div className="text-sm text-slate-400">Generation Cost</div>
+                        </div>
+                      </div>
+
+                      {/* Filters */}
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                        {/* Search */}
+                        <div className="relative">
+                          <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500" />
+                          <input
+                            type="text"
+                            placeholder="Search by description or tags..."
+                            value={imageSearch}
+                            onChange={(e) => setImageSearch(e.target.value)}
+                            className="w-full pl-10 pr-3 py-2 rounded-lg border text-sm"
+                            style={{ 
+                              backgroundColor: "#13131B", 
+                              borderColor: "#2A2A38", 
+                              color: "#F1F5F9" 
+                            }}
+                          />
+                        </div>
+
+                        {/* Family Filter */}
+                        <select
+                          value={imageFilter}
+                          onChange={(e) => setImageFilter(e.target.value)}
+                          className="px-3 py-2 rounded-lg border text-sm"
+                          style={{ 
+                            backgroundColor: "#13131B", 
+                            borderColor: "#2A2A38", 
+                            color: "#F1F5F9" 
+                          }}
+                        >
+                          <option value="all">All Traditions</option>
+                          <option value="Judaism">Judaism</option>
+                          <option value="Christianity">Christianity</option>
+                          <option value="Islam">Islam</option>
+                          <option value="Hinduism">Hinduism</option>
+                          <option value="Buddhism">Buddhism</option>
+                          <option value="Other">Other</option>
+                        </select>
+
+                        {/* Date Filter */}
+                        <select
+                          value={imageDate}
+                          onChange={(e) => setImageDate(e.target.value)}
+                          className="px-3 py-2 rounded-lg border text-sm"
+                          style={{ 
+                            backgroundColor: "#13131B", 
+                            borderColor: "#2A2A38", 
+                            color: "#F1F5F9" 
+                          }}
+                        >
+                          <option value="all">All Dates</option>
+                          {Array.from(new Set(images.map(img => img.date))).sort().reverse().map(date => (
+                            <option key={date} value={date}>{date}</option>
+                          ))}
+                        </select>
+                      </div>
+
+                      {/* Images Grid */}
+                      {(() => {
+                        const filteredImages = images.filter(image => {
+                          const matchesSearch = imageSearch === "" || 
+                            image.description.toLowerCase().includes(imageSearch.toLowerCase()) ||
+                            image.tags.some(tag => tag.toLowerCase().includes(imageSearch.toLowerCase()));
+                          const matchesFamily = imageFilter === "all" || image.tradition_family === imageFilter;
+                          const matchesDate = imageDate === "all" || image.date === imageDate;
+                          return matchesSearch && matchesFamily && matchesDate;
+                        });
+
+                        if (filteredImages.length === 0) {
+                          return (
+                            <EmptyState 
+                              icon={ImageIcon}
+                              title="No images found"
+                              description="Try adjusting your search or filters to find images."
+                            />
+                          );
+                        }
+
+                        // Group by date
+                        const imagesByDate = filteredImages.reduce((acc, image) => {
+                          if (!acc[image.date]) acc[image.date] = [];
+                          acc[image.date].push(image);
+                          return acc;
+                        }, {} as Record<string, FaithImage[]>);
+
+                        return (
+                          <div className="space-y-8">
+                            {Object.entries(imagesByDate)
+                              .sort(([a], [b]) => b.localeCompare(a))
+                              .map(([date, dateImages]) => (
+                                <div key={date}>
+                                  <h3 className="text-lg font-semibold text-slate-100 mb-4 sticky top-20 z-10 p-2 rounded-lg" style={{ backgroundColor: "#0B0B13" }}>
+                                    {new Date(date + 'T00:00:00').toLocaleDateString('en-US', { 
+                                      weekday: 'long', 
+                                      year: 'numeric', 
+                                      month: 'long', 
+                                      day: 'numeric' 
+                                    })}
+                                    <span className="ml-2 text-sm text-slate-400">({dateImages.length} image{dateImages.length !== 1 ? 's' : ''})</span>
+                                  </h3>
+                                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                    {dateImages.map((image) => {
+                                      const traditionEmojis: Record<string, string> = {
+                                        "Judaism": "✡️",
+                                        "Christianity": "✝️", 
+                                        "Islam": "☪️",
+                                        "Hinduism": "🕉️",
+                                        "Buddhism": "☸️",
+                                        "Other": "🌍"
+                                      };
+
+                                      return (
+                                        <div 
+                                          key={image.id}
+                                          className="rounded-xl p-4 border transition-all hover:border-opacity-50"
+                                          style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}
+                                        >
+                                          {/* Image */}
+                                          <div className="relative mb-4 rounded-lg overflow-hidden">
+                                            <img 
+                                              src={image.image_url.startsWith('/data/') 
+                                                ? image.image_url 
+                                                : image.image_url
+                                              }
+                                              alt={image.description}
+                                              className="w-full h-48 object-cover"
+                                              onError={(e) => {
+                                                (e.target as HTMLImageElement).style.display = 'none';
+                                              }}
+                                            />
+                                            {image.reused_from && (
+                                              <div className="absolute top-2 right-2 bg-black bg-opacity-70 text-white text-xs px-2 py-1 rounded-lg">
+                                                ♻️ Reused
+                                              </div>
+                                            )}
+                                          </div>
+
+                                          {/* Content */}
+                                          <div className="space-y-3">
+                                            {/* Tradition */}
+                                            <div className="flex items-center gap-2">
+                                              <span className="text-lg">{traditionEmojis[image.tradition_family] || "🌍"}</span>
+                                              <span className="text-sm font-medium text-slate-300">{image.tradition_family}</span>
+                                            </div>
+
+                                            {/* Guide & Reflection */}
+                                            <div>
+                                              <div className="text-sm font-medium text-slate-200 mb-1">{image.guide_name}</div>
+                                              <div className="text-xs text-slate-400 line-clamp-2">{image.guide_reflection}</div>
+                                            </div>
+
+                                            {/* Description */}
+                                            <div className="text-sm text-slate-300">{image.description}</div>
+
+                                            {/* Tags */}
+                                            {image.tags && image.tags.length > 0 && (
+                                              <div className="flex flex-wrap gap-1">
+                                                {image.tags.slice(0, 3).map((tag, idx) => (
+                                                  <span 
+                                                    key={idx}
+                                                    className="text-xs px-2 py-1 rounded-full"
+                                                    style={{ 
+                                                      backgroundColor: "rgba(212, 160, 32, 0.1)", 
+                                                      color: "#D4A020" 
+                                                    }}
+                                                  >
+                                                    {tag}
+                                                  </span>
+                                                ))}
+                                                {image.tags.length > 3 && (
+                                                  <span className="text-xs text-slate-500">+{image.tags.length - 3} more</span>
+                                                )}
+                                              </div>
+                                            )}
+
+                                            {/* Model info */}
+                                            <div className="text-xs text-slate-500 pt-2 border-t border-slate-700">
+                                              Model: {image.model} • Style: {image.style}
+                                            </div>
+                                          </div>
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+                              ))}
+                          </div>
+                        );
+                      })()}
+                    </>
+                  )}
+                </div>
               </div>
             )}
 

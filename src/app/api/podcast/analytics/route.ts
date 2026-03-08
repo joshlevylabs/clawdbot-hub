@@ -156,7 +156,6 @@ export async function GET(request: NextRequest) {
   
   const results: {
     youtube?: { channel: PlatformMetrics; videos: VideoMetric[] };
-    beehiiv?: PlatformMetrics;
     manual?: PlatformMetrics[];
   } = {};
   
@@ -185,9 +184,7 @@ export async function GET(request: NextRequest) {
   
   if (!platform || platform === 'beehiiv') {
     if (beehiivApiKey && beehiivPubId) {
-      results.beehiiv = await fetchBeehiivMetrics(beehiivApiKey, beehiivPubId);
     } else {
-      results.beehiiv = {
         platform: 'beehiiv',
         lastUpdated: new Date().toISOString(),
         error: 'Beehiiv API not configured. Add BEEHIIV_API_KEY and BEEHIIV_PUBLICATION_ID to environment.',

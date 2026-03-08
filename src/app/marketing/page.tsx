@@ -50,7 +50,6 @@ interface ShowEpisode {
   finalized?: string;
   description?: string;
   scriptId?: string;
-  links?: { youtube?: string; spotify?: string; apple?: string; medium?: string; beehiiv?: string };
 }
 interface Show {
   id: string;
@@ -126,7 +125,6 @@ interface EpisodeLinks {
   linkedin?: string;
   tiktok?: string;
   medium?: string;
-  beehiiv?: string;
 }
 
 interface Episode {
@@ -181,7 +179,6 @@ interface VideoMetric {
 
 interface AnalyticsData {
   youtube?: { channel: PlatformMetrics; videos: VideoMetric[] };
-  beehiiv?: PlatformMetrics;
   manual?: PlatformMetrics[];
 }
 
@@ -208,7 +205,6 @@ const PLATFORM_LINKS = [
   { name: "LinkedIn", url: "https://www.linkedin.com/in/joshuasethlevy/", icon: "💼" },
   { name: "TikTok", url: "https://www.tiktok.com/@joshlevylabs", icon: "🎵" },
   { name: "Medium", url: "https://medium.com/@joshualevy_38678", icon: "✍️" },
-  { name: "Beehiiv Newsletter", url: "https://the-builders-frequency.beehiiv.com/", icon: "📧" },
   { name: "Spotify Podcasters", url: "https://podcasters.spotify.com/", icon: "🎧" },
   { name: "Opus Pro", url: "https://app.opus.pro/", icon: "✂️" },
   { name: "Riverside.fm", url: "https://riverside.fm/", icon: "🎬" },
@@ -282,14 +278,6 @@ const DEFAULT_SOCIAL_PLATFORMS: SocialPlatform[] = [
     lastUpdated: "2026-03-03",
   },
   {
-    name: "Beehiiv",
-    platform: "beehiiv",
-    url: "https://the-builders-frequency.beehiiv.com/",
-    followers: 0,
-    views: 0,
-    engagement: 0,
-    lastUpdated: "2026-03-03",
-  },
   {
     name: "Twitter/X",
     platform: "twitter",

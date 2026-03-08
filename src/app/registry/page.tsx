@@ -239,7 +239,6 @@ const CLI_TOOLS: Resource[] = [
   { name: "sync-podcast-episodes.sh", description: "Sync podcast episodes from platforms", status: "active", location: "~/clawd/tools/sync-podcast-episodes.sh", consumers: ["hub"], tags: ["podcast", "sync"] },
   { name: "sync-podcast-content.py", description: "Podcast content sync and metadata", status: "active", location: "~/clawd/tools/sync-podcast-content.py", consumers: ["hub"], tags: ["podcast", "sync"] },
   { name: "youtubeuploader/", description: "YouTube video upload automation", status: "active", location: "~/clawd/tools/youtubeuploader/", consumers: ["hub", "frequency"], tags: ["youtube", "upload"] },
-  { name: "beehiiv/", description: "Beehiiv newsletter platform integration", status: "active", location: "~/clawd/tools/beehiiv/", consumers: ["hub", "frequency"], tags: ["beehiiv", "newsletter"] },
   { name: "sync-content.sh", description: "Content sync across platforms", status: "active", location: "~/clawd/tools/sync-content.sh", consumers: ["hub"], tags: ["content", "sync"] },
   { name: "moondev-algos/", description: "MoonDev algorithmic trading strategies", status: "active", location: "~/clawd/tools/moondev-algos/", consumers: ["hub"], tags: ["trading", "algos"] },
   { name: "auto-router.sh", description: "Automatic message routing for agents", status: "active", location: "~/clawd/tools/auto-router.sh", consumers: ["hub"], tags: ["agents", "routing"] },

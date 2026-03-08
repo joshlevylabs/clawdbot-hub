@@ -222,7 +222,6 @@
       "Geographic location (for timing optimization)"
     ],
     "integration_points": [
-      "Email service provider (Beehiiv) for delivery",
       "Analytics platform for behavior tracking",
       "App database for user activity sync",
       "Content management system for dynamic insertion"

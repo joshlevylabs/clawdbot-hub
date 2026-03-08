@@ -16,7 +16,6 @@ export interface ShowEpisode {
     spotify?: string;
     apple?: string;
     medium?: string;
-    beehiiv?: string;
   };
 }
 

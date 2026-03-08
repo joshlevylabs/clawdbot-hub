@@ -1546,8 +1546,47 @@ export default function FaithJourneyPage() {
   const [images, setImages] = useState<FaithImage[]>([]);
   const [imagesLoading, setImagesLoading] = useState(false);
   const [imageFilter, setImageFilter] = useState<string>("all");
+  const [selectedTraditions, setSelectedTraditions] = useState<Set<string>>(new Set(["all"]));
   const [imageSearch, setImageSearch] = useState("");
   const [imageDate, setImageDate] = useState<string>("all");
+
+  // Tradition families configuration for badge filters
+  const traditionFamilies = [
+    { id: "all", name: "All", emoji: "🌟", color: "#6366F1" },
+    { id: "Judaism", name: "Judaism", emoji: "✡️", color: "#EAB308" },
+    { id: "Christianity", name: "Christianity", emoji: "✝️", color: "#3B82F6" },
+    { id: "Islam", name: "Islam", emoji: "☪️", color: "#10B981" },
+    { id: "Hinduism", name: "Hinduism", emoji: "🕉️", color: "#F97316" },
+    { id: "Buddhism", name: "Buddhism", emoji: "☸️", color: "#8B5CF6" },
+    { id: "Other", name: "Other", emoji: "🔯", color: "#6B7280" },
+  ];
+
+  // Toggle tradition selection
+  const toggleTradition = (traditionId: string) => {
+    setSelectedTraditions(prev => {
+      const newSet = new Set(prev);
+      
+      if (traditionId === "all") {
+        // If "all" is selected, clear everything and select only "all"
+        return new Set(["all"]);
+      } else {
+        // Remove "all" if it's selected
+        newSet.delete("all");
+        
+        if (newSet.has(traditionId)) {
+          newSet.delete(traditionId);
+          // If no traditions are selected, default back to "all"
+          if (newSet.size === 0) {
+            newSet.add("all");
+          }
+        } else {
+          newSet.add(traditionId);
+        }
+      }
+      
+      return newSet;
+    });
+  };
 
   // Fetch perspectives when a lesson is selected
   useEffect(() => {
@@ -3867,60 +3906,71 @@ export default function FaithJourneyPage() {
                       </div>
 
                       {/* Filters */}
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                        {/* Search */}
-                        <div className="relative">
-                          <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500" />
-                          <input
-                            type="text"
-                            placeholder="Search by description or tags..."
-                            value={imageSearch}
-                            onChange={(e) => setImageSearch(e.target.value)}
-                            className="w-full pl-10 pr-3 py-2 rounded-lg border text-sm"
+                      <div className="space-y-4 mb-6">
+                        {/* Tradition Badge Filters */}
+                        <div className="space-y-2">
+                          <label className="text-xs font-medium text-slate-400">Filter by Tradition</label>
+                          <div className="flex flex-wrap gap-2">
+                            {traditionFamilies.map(tradition => {
+                              const isSelected = selectedTraditions.has(tradition.id);
+                              return (
+                                <button
+                                  key={tradition.id}
+                                  onClick={() => toggleTradition(tradition.id)}
+                                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 border ${
+                                    isSelected 
+                                      ? 'border-opacity-60 text-white shadow-lg transform scale-105' 
+                                      : 'border-slate-600 text-slate-300 hover:border-slate-500 hover:text-slate-200'
+                                  }`}
+                                  style={{
+                                    backgroundColor: isSelected ? tradition.color : "#1A1A2E",
+                                    borderColor: isSelected ? tradition.color : "#2A2A38",
+                                  }}
+                                >
+                                  <span>{tradition.emoji}</span>
+                                  <span>{tradition.name}</span>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                        
+                        {/* Search and Date Filters Row */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {/* Search */}
+                          <div className="relative">
+                            <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500" />
+                            <input
+                              type="text"
+                              placeholder="Search by description or tags..."
+                              value={imageSearch}
+                              onChange={(e) => setImageSearch(e.target.value)}
+                              className="w-full pl-10 pr-3 py-2 rounded-lg border text-sm"
+                              style={{ 
+                                backgroundColor: "#13131B", 
+                                borderColor: "#2A2A38", 
+                                color: "#F1F5F9" 
+                              }}
+                            />
+                          </div>
+
+                          {/* Date Filter */}
+                          <select
+                            value={imageDate}
+                            onChange={(e) => setImageDate(e.target.value)}
+                            className="px-3 py-2 rounded-lg border text-sm"
                             style={{ 
                               backgroundColor: "#13131B", 
                               borderColor: "#2A2A38", 
                               color: "#F1F5F9" 
                             }}
-                          />
+                          >
+                            <option value="all">All Dates</option>
+                            {Array.from(new Set(images.map(img => img.date))).sort().reverse().map(date => (
+                              <option key={date} value={date}>{date}</option>
+                            ))}
+                          </select>
                         </div>
-
-                        {/* Family Filter */}
-                        <select
-                          value={imageFilter}
-                          onChange={(e) => setImageFilter(e.target.value)}
-                          className="px-3 py-2 rounded-lg border text-sm"
-                          style={{ 
-                            backgroundColor: "#13131B", 
-                            borderColor: "#2A2A38", 
-                            color: "#F1F5F9" 
-                          }}
-                        >
-                          <option value="all">All Traditions</option>
-                          <option value="Judaism">Judaism</option>
-                          <option value="Christianity">Christianity</option>
-                          <option value="Islam">Islam</option>
-                          <option value="Hinduism">Hinduism</option>
-                          <option value="Buddhism">Buddhism</option>
-                          <option value="Other">Other</option>
-                        </select>
-
-                        {/* Date Filter */}
-                        <select
-                          value={imageDate}
-                          onChange={(e) => setImageDate(e.target.value)}
-                          className="px-3 py-2 rounded-lg border text-sm"
-                          style={{ 
-                            backgroundColor: "#13131B", 
-                            borderColor: "#2A2A38", 
-                            color: "#F1F5F9" 
-                          }}
-                        >
-                          <option value="all">All Dates</option>
-                          {Array.from(new Set(images.map(img => img.date))).sort().reverse().map(date => (
-                            <option key={date} value={date}>{date}</option>
-                          ))}
-                        </select>
                       </div>
 
                       {/* Images Grid */}
@@ -3929,7 +3979,7 @@ export default function FaithJourneyPage() {
                           const matchesSearch = imageSearch === "" || 
                             image.description.toLowerCase().includes(imageSearch.toLowerCase()) ||
                             image.tags.some(tag => tag.toLowerCase().includes(imageSearch.toLowerCase()));
-                          const matchesFamily = imageFilter === "all" || image.tradition_family === imageFilter;
+                          const matchesFamily = selectedTraditions.has("all") || selectedTraditions.has(image.tradition_family);
                           const matchesDate = imageDate === "all" || image.date === imageDate;
                           return matchesSearch && matchesFamily && matchesDate;
                         });

@@ -1,117 +1,148 @@
 {
-  "date": "2026-03-07T06:00:00.000Z",
-  "day": "Saturday",
-  "formatted_date": "Saturday, March 7th, 2026",
-  "time_generated": "6:00 AM PT",
+  "date": "2026-03-08",
+  "dayOfWeek": "Sunday",
+  "timestamp": "2026-03-08T06:00:00-08:00",
   "prayer": {
-    "date": "Saturday, March 07, 2026",
-    "hebrew_date": "7 Kislev",
+    "hebrew_date": "8 Kislev",
     "parsha": "Vayigash",
     "parsha_theme": "reunion, forgiveness, revealing truth",
     "modeh_ani": "מודה אני לפניך — I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
-    "blessing": "Blessed are You who guides the steps of man — direct my path today.",
-    "psalm": "Psalm 118:25: 'Lord, save us! Lord, grant us success!'",
-    "proverb": "Proverbs 27:23: 'Know well the condition of your flocks, and give attention to your herds.'",
-    "intention": "Give me courage to take the risks You've called me to take.",
-    "closing": "Go in peace. Build with purpose. Return with gratitude."
+    "blessing": "Blessed are You who spreads the earth upon the waters — ground me in stability.",
+    "psalm": "Psalm 37:5: \"Commit your way to the Lord; trust in Him and He will act.\"",
+    "proverb": "Proverbs 3:5-6: \"Trust in the Lord with all your heart; lean not on your own understanding.\"",
+    "intention": "Help me see people as You see them — partners, not obstacles."
   },
   "weather": {
     "location": "Temecula, CA",
-    "description": "Partly cloudy",
-    "temperature": "18°C (64°F)",
-    "note": "Pleasant Saturday weather"
+    "current": {
+      "temp": 54,
+      "feels_like": 53,
+      "condition": "Clear",
+      "humidity": 32,
+      "wind": "NE 4 mph"
+    },
+    "today": {
+      "high": 84,
+      "low": 52,
+      "condition": "Abundant sunshine"
+    },
+    "week_outlook": [
+      {
+        "date": "Mon 3/9",
+        "high": 71,
+        "low": 48,
+        "condition": "Partly cloudy",
+        "precip_chance": "4%"
+      },
+      {
+        "date": "Tue 3/10", 
+        "high": 70,
+        "low": 48,
+        "condition": "Mix of sun and clouds",
+        "precip_chance": "20%"
+      },
+      {
+        "date": "Wed 3/11",
+        "high": 83,
+        "low": 50,
+        "condition": "Mix of sun and clouds"
+      },
+      {
+        "date": "Thu 3/12",
+        "high": 93,
+        "low": 55,
+        "condition": "Mainly sunny"
+      },
+      {
+        "date": "Fri 3/13",
+        "high": 93,
+        "low": 58,
+        "condition": "Abundant sunshine"
+      }
+    ]
   },
   "calendar": {
     "today": [],
     "week": [],
     "month": [],
-    "note": "No events scheduled across all accounts"
+    "note": "Calendar authentication needs refresh"
   },
   "email_highlights": [
     {
-      "subject": "Payroll on AutoPilot for Josh Levy Labs will automatically run your payroll tomorrow",
-      "from": "Gusto",
-      "date": "2026-03-07 05:21",
+      "from": "Indeed",
+      "subject": "1 new acoustic engineer job in Tempe, AZ",
+      "time": "Mar 7, 22:31",
+      "priority": "low"
+    },
+    {
+      "from": "xAI, LLC",
+      "subject": "Your xAI, LLC receipt [#1141-1410]",
+      "time": "Mar 7, 21:26",
+      "priority": "medium"
+    },
+    {
+      "from": "Vercel",
+      "subject": "Failed production deployment on team 'joshlevylabs' projects",
+      "time": "Mar 7, 22:33",
       "priority": "high"
     },
     {
-      "subject": "Your receipt from Anthropic, PBC #2280-7224-6330",
-      "from": "Anthropic, PBC",
-      "date": "2026-03-06 15:16",
-      "priority": "medium"
-    },
-    {
-      "subject": "[Action Required] Amazon RDS PostgreSQL minor versions deprecating on May 31, 2026",
-      "from": "Amazon Web Services",
-      "date": "2026-03-06 14:16",
+      "from": "IONOS Customer Service", 
+      "subject": "A Message About Your Domain",
+      "time": "Mar 7, 15:17",
       "priority": "medium"
     }
   ],
-  "trading": {
-    "fear_greed_index": {
-      "current": 26.7,
-      "rating": "fear",
-      "summary": "Markets are fearful at 27. Sentiment is negative — watch for oversold bounces."
-    },
-    "regime": {
-      "spy": "sideways",
-      "qqq": "sideways",
-      "global": "sideways",
-      "summary": "SPY is sideways, QQQ is sideways. Momentum is weakening."
-    },
-    "signals": {
-      "total_buy": 2,
-      "total_hold": 22,
-      "total_watch": 0,
-      "notable_buys": ["EFA (International)"]
-    }
+  "mre_trading": {
+    "fear_greed_index": 27,
+    "rating": "fear",
+    "vix": 29.5,
+    "regime": "sideways",
+    "signals_summary": "Markets fearful at 27. Sentiment negative — watch for oversold bounces.",
+    "buy_signals": 2,
+    "hold_signals": 22,
+    "watch_signals": 0
   },
-  "world_news": [
-    {
-      "headline": "Iran launches missiles at Israel as Israeli military hits Lebanon",
-      "source": "AP News",
-      "summary": "Iran is launching more missiles at Israel as attacks in the Middle East commence for a sixth day.",
-      "relevance": "Major geopolitical development affecting Israel"
-    },
-    {
-      "headline": "Senate Republicans Block War Powers Limits as Mideast Crisis Widens",
-      "source": "The New York Times",
-      "summary": "Congressional action on war powers as Middle East conflict escalates with U.S. and Israeli coordination",
-      "relevance": "U.S. policy and Israel relations"
-    }
-  ],
-  "ai_news": [
-    {
-      "headline": "Apple announces completely reimagined, AI-powered version of Siri set to debut in 2026",
-      "source": "Crescendo AI",
-      "summary": "Siri will transition into a context-aware assistant capable of 'on-screen awareness'",
-      "relevance": "Major AI consumer product development"
-    },
-    {
-      "headline": "Broadcom rises as $100 billion AI forecast signals gains in Nvidia-dominated market",
-      "source": "Reuters",
-      "summary": "Broadcom's AI revenue forecast shows market expansion beyond Nvidia",
-      "relevance": "AI hardware market diversification"
-    }
-  ],
   "relationship_analysis": {
-    "temperature": "critical",
+    "status": "critical",
     "trend": "urgent",
+    "ratio": 1.2,
     "recommendations": [
       "PRIORITY: Focus on repair. Acknowledge recent conflicts without defending.",
       "Increase acts of service dramatically this week.",
       "Create space for her to express frustrations without fixing."
-    ],
-    "love_languages": {
-      "primary": "quality_time",
-      "secondary": "acts_of_service"
-    }
+    ]
   },
-  "key_focus": [
-    "🚨 Relationship requires immediate attention - critical status",
-    "💰 Payroll runs tomorrow (Saturday) - Gusto automation active",
-    "🌍 Middle East conflict escalating - Iran/Israel tensions",
-    "📈 Markets in fear territory but sideways regime continues",
-    "🤖 AI developments in consumer products (Apple Siri)"
+  "world_news": [
+    {
+      "source": "Jerusalem Post",
+      "headline": "Tucker Carlson visits Israel for sit-down with Mike Huckabee",
+      "summary": "Conservative media personality Tucker Carlson visited Israel for filmed interview with US Ambassador Mike Huckabee, focused on Christian treatment in region"
+    },
+    {
+      "source": "Jerusalem Post",
+      "headline": "New report examines Israel's possible future strategies",
+      "summary": "As Israel enters 2026, discussions continue about next moves - potential confrontations in Middle East, ongoing operations in Gaza, Lebanon"
+    }
+  ],
+  "ai_news": [
+    {
+      "headline": "Grand Valley State University receives $1M federal AI funding",
+      "summary": "Federal grant establishes new AI consortium in West Michigan, fostering academia-industry collaboration"
+    },
+    {
+      "headline": "AI moving from hype to pragmatism in 2026",
+      "summary": "Expected developments: new architectures, smaller models, world models, reliable agents, physical AI, real-world products"
+    },
+    {
+      "headline": "K-12 AI Infrastructure Program launches",
+      "summary": "RFPs will fund teams to produce datasets, benchmarks, and models as public goods for K-12 education applications"
+    }
+  ],
+  "focus_areas": [
+    "Relationship repair with Jillian - acts of service priority",
+    "Address Vercel deployment failure", 
+    "Review domain message from IONOS",
+    "Monitor market fear sentiment for opportunities"
   ]
 }

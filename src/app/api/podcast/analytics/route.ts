@@ -97,41 +97,6 @@ async function fetchYouTubeMetrics(apiKey: string, channelId: string): Promise<{
   }
 }
 
-// Beehiiv API - fetch publication stats
-async function fetchBeehiivMetrics(apiKey: string, publicationId: string): Promise<PlatformMetrics> {
-  try {
-    const res = await fetch(
-      `https://api.beehiiv.com/v2/publications/${publicationId}`,
-      {
-        headers: {
-          'Authorization': `Bearer ${apiKey}`,
-        },
-      }
-    );
-    
-    if (!res.ok) {
-      throw new Error(`Beehiiv API error: ${res.status}`);
-    }
-    
-    const data = await res.json();
-    const pub = data.data;
-    
-    return {
-      platform: 'beehiiv',
-      subscribers: pub.stats?.total_subscribers || 0,
-      openRate: pub.stats?.average_open_rate || 0,
-      clickRate: pub.stats?.average_click_rate || 0,
-      posts: pub.stats?.total_posts || 0,
-      lastUpdated: new Date().toISOString(),
-    };
-  } catch (error) {
-    return {
-      platform: 'beehiiv',
-      lastUpdated: new Date().toISOString(),
-      error: error instanceof Error ? error.message : 'Failed to fetch Beehiiv data',
-    };
-  }
-}
 
 // Manual metrics from local JSON (for platforms without APIs)
 async function fetchManualMetrics(): Promise<PlatformMetrics[]> {
@@ -178,19 +143,6 @@ export async function GET(request: NextRequest) {
     }
   }
   
-  // Beehiiv
-  const beehiivApiKey = process.env.BEEHIIV_API_KEY;
-  const beehiivPubId = process.env.BEEHIIV_PUBLICATION_ID;
-  
-  if (!platform || platform === 'beehiiv') {
-    if (beehiivApiKey && beehiivPubId) {
-    } else {
-        platform: 'beehiiv',
-        lastUpdated: new Date().toISOString(),
-        error: 'Beehiiv API not configured. Add BEEHIIV_API_KEY and BEEHIIV_PUBLICATION_ID to environment.',
-      };
-    }
-  }
   
   // Manual metrics (LinkedIn, TikTok, Medium)
   if (!platform || platform === 'manual') {

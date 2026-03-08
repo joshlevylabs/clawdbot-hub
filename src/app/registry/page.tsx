@@ -300,7 +300,6 @@ const REVENUE_STREAMS: { stream: string; platform: string; status: string; poten
   { stream: "Today's Plays Subscription", platform: "Website + App", status: "built", potential: "$10-50/mo × subscribers" },
   { stream: "Watt Purchases", platform: "App", status: "built", potential: "Microtransactions" },
   { stream: "Marriage Compass Premium", platform: "Website + App", status: "built", potential: "Bundled" },
-  { stream: "Newsletter Sponsorships", platform: "Beehiiv", status: "planned", potential: "$50-500/issue" },
   { stream: "Podcast Sponsorships", platform: "Spotify/YouTube", status: "planned", potential: "$100-1000/ep" },
   { stream: "Consulting", platform: "Website", status: "planned", potential: "$200-500/hr" },
 ];

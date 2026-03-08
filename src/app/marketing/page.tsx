@@ -673,6 +673,15 @@ const DEFAULT_SHOWS: Show[] = [
           spotify: "https://open.spotify.com/episode/5f7AZ8zElDIfmlaQXkWkbK",
         },
       },
+      {
+        number: 6,
+        title: "The Hole in Every AI — And What I Built to Fill It",
+        pillar: "faith",
+        status: "script-ready",
+        description: "Why the most powerful technology humanity has ever built has nothing to say about the most important questions we'll ever ask — and the Faith Journey app I built to fix that.",
+        scriptId: "6",
+        links: {},
+      },
     ],
   },
 ];

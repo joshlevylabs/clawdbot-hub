@@ -1,148 +1,157 @@
 {
-  "date": "2026-03-08",
-  "dayOfWeek": "Sunday",
-  "timestamp": "2026-03-08T06:00:00-08:00",
+  "date": "2026-03-09",
+  "time": "06:00 AM",
+  "timezone": "America/Los_Angeles",
+  "generated_at": "2026-03-09T06:00:00-08:00",
   "prayer": {
-    "hebrew_date": "8 Kislev",
-    "parsha": "Vayigash",
-    "parsha_theme": "reunion, forgiveness, revealing truth",
+    "date": "Monday, March 09, 2026",
+    "hebrew_date": "9 Kislev",
+    "parsha": "Vayechi",
+    "parsha_theme": "blessing children, final words, lasting impact",
     "modeh_ani": "מודה אני לפניך — I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
-    "blessing": "Blessed are You who spreads the earth upon the waters — ground me in stability.",
-    "psalm": "Psalm 37:5: \"Commit your way to the Lord; trust in Him and He will act.\"",
-    "proverb": "Proverbs 3:5-6: \"Trust in the Lord with all your heart; lean not on your own understanding.\"",
-    "intention": "Help me see people as You see them — partners, not obstacles."
+    "blessing": "Blessed are You who raises the lowly — lift me to accomplish Your purposes.",
+    "psalm": "Psalm 20:4: \"May He give you the desire of your heart and make all your plans succeed.\"",
+    "proverb": "Proverbs 16:9: \"The heart of man plans his way, but the Lord establishes his steps.\"",
+    "intention": "Protect my family while I work. Guard their hearts and minds.",
+    "closing": "May your work today be a pleasing offering. May your rest tonight be deep and restorative."
   },
   "weather": {
     "location": "Temecula, CA",
-    "current": {
-      "temp": 54,
-      "feels_like": 53,
-      "condition": "Clear",
-      "humidity": 32,
-      "wind": "NE 4 mph"
-    },
-    "today": {
-      "high": 84,
-      "low": 52,
-      "condition": "Abundant sunshine"
-    },
-    "week_outlook": [
-      {
-        "date": "Mon 3/9",
-        "high": 71,
-        "low": 48,
-        "condition": "Partly cloudy",
-        "precip_chance": "4%"
-      },
-      {
-        "date": "Tue 3/10", 
-        "high": 70,
-        "low": 48,
-        "condition": "Mix of sun and clouds",
-        "precip_chance": "20%"
-      },
-      {
-        "date": "Wed 3/11",
-        "high": 83,
-        "low": 50,
-        "condition": "Mix of sun and clouds"
-      },
-      {
-        "date": "Thu 3/12",
-        "high": 93,
-        "low": 55,
-        "condition": "Mainly sunny"
-      },
-      {
-        "date": "Fri 3/13",
-        "high": 93,
-        "low": 58,
-        "condition": "Abundant sunshine"
-      }
-    ]
+    "status": "unavailable",
+    "message": "Weather service temporarily unavailable"
   },
   "calendar": {
-    "today": [],
-    "week": [],
-    "month": [],
-    "note": "Calendar authentication needs refresh"
+    "status": "error",
+    "message": "OAuth tokens expired - need re-authentication",
+    "today_events": [],
+    "week_events": [],
+    "month_events": []
   },
-  "email_highlights": [
-    {
-      "from": "Indeed",
-      "subject": "1 new acoustic engineer job in Tempe, AZ",
-      "time": "Mar 7, 22:31",
-      "priority": "low"
-    },
-    {
-      "from": "xAI, LLC",
-      "subject": "Your xAI, LLC receipt [#1141-1410]",
-      "time": "Mar 7, 21:26",
-      "priority": "medium"
-    },
-    {
-      "from": "Vercel",
-      "subject": "Failed production deployment on team 'joshlevylabs' projects",
-      "time": "Mar 7, 22:33",
-      "priority": "high"
-    },
-    {
-      "from": "IONOS Customer Service", 
-      "subject": "A Message About Your Domain",
-      "time": "Mar 7, 15:17",
-      "priority": "medium"
+  "email_highlights": {
+    "josh@joshlevylabs.com": [
+      {
+        "from": "Dropbox",
+        "subject": "Final reminder: Manage storage so files aren't deleted tomorrow",
+        "date": "2026-03-09 05:58",
+        "priority": "high"
+      },
+      {
+        "from": "noreply@dmarc.yahoo.com",
+        "subject": "Report Domain: joshlevylabs.com Submitter: yahoo.com",
+        "date": "2026-03-09 01:31",
+        "priority": "low"
+      },
+      {
+        "from": "noreply-dmarc-support@google.com",
+        "subject": "Report domain: joshlevylabs.com Submitter: google.com",
+        "date": "2026-03-08 16:59",
+        "priority": "low"
+      },
+      {
+        "from": "Indeed",
+        "subject": "1 new acoustic engineer job in Tempe, AZ",
+        "date": "2026-03-08 16:57",
+        "priority": "low"
+      }
+    ],
+    "joshua.seth.levy@gmail.com": {
+      "status": "error",
+      "message": "OAuth token expired"
     }
-  ],
-  "mre_trading": {
-    "fear_greed_index": 27,
-    "rating": "fear",
-    "vix": 29.5,
+  },
+  "trading_signals": {
+    "market_status": "OPEN",
+    "sentiment": "BEARISH",
+    "vix": 31.56,
+    "volatility": "HIGH",
+    "spy": {
+      "price": 672.38,
+      "change_pct": -1.31
+    },
+    "fear_greed_index": 26.7,
+    "fear_greed_rating": "fear",
+    "key_signals": [
+      {
+        "type": "BUY",
+        "symbol": "UNG",
+        "price": 12.75,
+        "target": 14.79,
+        "stop": 11.39,
+        "confidence": "MEDIUM",
+        "rationale": "Trend: BULLISH | High volume (2.2x avg) | Price near BB resistance"
+      },
+      {
+        "type": "BUY",
+        "symbol": "EFA",
+        "price": 98.28,
+        "confidence": "HIGH",
+        "rationale": "International equities opportunity - sideways regime with strong signals"
+      },
+      {
+        "type": "SELL",
+        "symbol": "IWM",
+        "price": 250.89,
+        "target": 233.83,
+        "stop": 262.27,
+        "confidence": "MEDIUM",
+        "rationale": "Trend: BEARISH | High volume (1.5x avg) | Price near BB support"
+      },
+      {
+        "type": "SELL",
+        "symbol": "USO",
+        "price": 108.77,
+        "target": 97.44,
+        "stop": 116.32,
+        "confidence": "MEDIUM", 
+        "rationale": "RSI overbought (89.3) | High volume (3.7x avg) | Price near BB resistance"
+      }
+    ],
     "regime": "sideways",
-    "signals_summary": "Markets fearful at 27. Sentiment negative — watch for oversold bounces.",
-    "buy_signals": 2,
-    "hold_signals": 22,
-    "watch_signals": 0
+    "summary": "Markets are fearful at 27. Sentiment is negative — watch for oversold bounces."
   },
   "relationship_analysis": {
-    "status": "critical",
+    "status": "CRITICAL",
+    "temperature": "critical",
     "trend": "urgent",
     "ratio": 1.2,
+    "stats": {
+      "total": 11,
+      "positive": 6,
+      "negative": 5
+    },
     "recommendations": [
       "PRIORITY: Focus on repair. Acknowledge recent conflicts without defending.",
       "Increase acts of service dramatically this week.",
       "Create space for her to express frustrations without fixing."
-    ]
+    ],
+    "love_languages": {
+      "primary": "quality_time",
+      "secondary": "acts_of_service"
+    }
   },
-  "world_news": [
-    {
-      "source": "Jerusalem Post",
-      "headline": "Tucker Carlson visits Israel for sit-down with Mike Huckabee",
-      "summary": "Conservative media personality Tucker Carlson visited Israel for filmed interview with US Ambassador Mike Huckabee, focused on Christian treatment in region"
-    },
-    {
-      "source": "Jerusalem Post",
-      "headline": "New report examines Israel's possible future strategies",
-      "summary": "As Israel enters 2026, discussions continue about next moves - potential confrontations in Middle East, ongoing operations in Gaza, Lebanon"
+  "world_news": {
+    "middle_east": {
+      "headline": "Iran-Israel Conflict Escalates",
+      "summary": "IDF launches extensive airstrikes in Iran. Mojtaba Khamenei named as successor to supreme leader. Fighting escalates across Middle East including Hezbollah involvement.",
+      "priority": "urgent",
+      "conservative_perspective": "Regional instability requires strong US support for Israel and containment of Iranian expansion."
     }
-  ],
-  "ai_news": [
-    {
-      "headline": "Grand Valley State University receives $1M federal AI funding",
-      "summary": "Federal grant establishes new AI consortium in West Michigan, fostering academia-industry collaboration"
+  },
+  "ai_news": {
+    "manufacturing": {
+      "headline": "SageX Introduces AI Data Transformation for Manufacturing",
+      "summary": "New AI-powered automation platform eliminates manual ERP data entry for manufacturing companies.",
+      "relevance": "Practical AI application in industrial sector - relevant to Lyceum positioning"
     },
-    {
-      "headline": "AI moving from hype to pragmatism in 2026",
-      "summary": "Expected developments: new architectures, smaller models, world models, reliable agents, physical AI, real-world products"
-    },
-    {
-      "headline": "K-12 AI Infrastructure Program launches",
-      "summary": "RFPs will fund teams to produce datasets, benchmarks, and models as public goods for K-12 education applications"
+    "research": {
+      "headline": "AI Societies Taking Shape",
+      "summary": "Scientists studying social interactions between AI agents - exploring new forms of AI sociology.",
+      "relevance": "Fundamental AI research with potential implications for multi-agent systems"
     }
-  ],
-  "focus_areas": [
-    "Relationship repair with Jillian - acts of service priority",
-    "Address Vercel deployment failure", 
-    "Review domain message from IONOS",
-    "Monitor market fear sentiment for opportunities"
-  ]
+  },
+  "family_focus": {
+    "status": "unavailable",
+    "message": "Family data file not found"
+  },
+  "summary": "Critical day ahead. Relationship requires immediate attention with focus on repair and acts of service. Markets showing fear with selective opportunities in UNG and international equities (EFA). Major geopolitical developments in Middle East require monitoring. Dropbox storage issue needs attention."
 }

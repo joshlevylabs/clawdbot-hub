@@ -13,15 +13,13 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const agent_id = searchParams.get('agent_id');
 
-    let baseQuery = supabase.from('agent_memories');
+    let query = supabase.from('agent_memories').select('*');
     
     if (agent_id) {
-      baseQuery = baseQuery.select('*').eq('agent_id', agent_id);
-    } else {
-      baseQuery = baseQuery.select('*');
+      query = query.eq('agent_id', agent_id);
     }
 
-    const { data: memories, error } = await baseQuery;
+    const { data: memories, error } = await query;
 
     if (error) {
       console.error('Error fetching agent memories for stats:', error);

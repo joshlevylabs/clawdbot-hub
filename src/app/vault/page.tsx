@@ -589,11 +589,11 @@ export default function VaultPage() {
             gross_revenue: 198752,
             net_profit: 84884,
             federal_tax_owed: -3024,
-            state_tax_owed: null,
+            state_tax_owed: 847,
             total_paid: 37648,
             refund_amount: 3024,
             accountant_estimate: null,
-            notes: "S-Corp gross receipts $198,752, officer compensation $63,333, received federal refund",
+            notes: "S-Corp gross receipts $198,752, officer compensation $63,333, federal refund $3,024, CA owed $847",
             created_at: "2024-04-15T00:00:00Z"
           },
           {
@@ -603,11 +603,11 @@ export default function VaultPage() {
             gross_revenue: 207784,
             net_profit: 75460,
             federal_tax_owed: 2870,
-            state_tax_owed: null,
+            state_tax_owed: -2576,
             total_paid: 20689,
             refund_amount: null,
             accountant_estimate: null,
-            notes: "S-Corp gross receipts $207,784, officer compensation $54,415, owed $2,870 to IRS",
+            notes: "S-Corp gross receipts $207,784, officer compensation $54,415, owed $2,870 federal, CA refund $2,576",
             created_at: "2023-04-15T00:00:00Z"
           },
           {
@@ -617,11 +617,11 @@ export default function VaultPage() {
             gross_revenue: 272297,
             net_profit: 91953,
             federal_tax_owed: 17764,
-            state_tax_owed: null,
+            state_tax_owed: 5919,
             total_paid: null,
             refund_amount: null,
             accountant_estimate: null,
-            notes: "S-Corp gross receipts $272,297, officer compensation $12,000, owed $17,764 to IRS",
+            notes: "S-Corp gross receipts $272,297, officer compensation $12,000, owed $17,764 federal, CA owed $5,919",
             created_at: "2022-04-15T00:00:00Z"
           }
         ],

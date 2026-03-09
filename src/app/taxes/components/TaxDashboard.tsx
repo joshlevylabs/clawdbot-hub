@@ -108,6 +108,9 @@ export default function TaxDashboard({ data }: TaxDashboardProps) {
       taxableIncome: 214896,
       totalTax: 37648,
       federalRefund: 3024, // They received a refund
+      caStateTax: 13512, // CA Form 540 total tax
+      caStateWithheld: 12665, // CA income tax withheld
+      caStateOwed: 847, // $13,512 - $12,665 = $847 owed
     }
   };
 
@@ -260,7 +263,7 @@ export default function TaxDashboard({ data }: TaxDashboardProps) {
                 isPositive={true}
                 size="large"
               />
-              <MoneyFlowCard label="CA State" amount={0} />
+              <MoneyFlowCard label="CA State Owed" amount={realTaxData.personal2024.caStateOwed} isPositive={false} />
             </div>
           </div>
         </div>
@@ -343,8 +346,8 @@ export default function TaxDashboard({ data }: TaxDashboardProps) {
               </div>
               <div className="text-center p-3 bg-slate-900/50 rounded-lg">
                 <p className="text-xs text-slate-500 mb-1">CA State Owed</p>
-                <p className="text-lg font-bold text-slate-400">
-                  $0
+                <p className="text-lg font-bold text-red-400">
+                  {formatCurrency(realTaxData.personal2024.caStateOwed)}
                 </p>
               </div>
             </div>

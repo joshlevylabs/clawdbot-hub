@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
+import { useSearchParams } from "next/navigation";
 import {
   Lock,
   Unlock,
@@ -25,8 +26,83 @@ import {
   FolderOpen,
   Palette,
   Loader2,
+  RefreshCw,
+  Calendar,
+  Calculator,
+  ExternalLink,
+  History,
+  Receipt,
 } from "lucide-react";
 import { encrypt, decrypt } from "@/lib/vault-crypto";
+
+// Tax components and types
+import TaxDashboard from "../taxes/components/TaxDashboard";
+import TaxEstimator from "../taxes/components/TaxEstimator";
+import ImportantLinks from "../taxes/components/ImportantLinks";
+import TaxHistory from "../taxes/components/TaxHistory";
+import { formatCurrency, formatDate as formatTaxDate, daysSince, daysUntil } from "../taxes/utils";
+
+// Tax types
+interface TaxEstimate {
+  id: string;
+  year: number;
+  quarter: number | null;
+  type: 'federal' | 'state';
+  estimated_amount: number | null;
+  actual_amount: number | null;
+  paid_date: string | null;
+  due_date: string;
+  status: 'pending' | 'paid' | 'overdue';
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+interface TaxContact {
+  id: string;
+  name: string;
+  role: string;
+  company: string | null;
+  email: string | null;
+  phone: string | null;
+  address: string | null;
+  notes: string | null;
+  created_at: string;
+}
+
+interface TaxDeadline {
+  id: string;
+  year: number;
+  form_type: string;
+  description: string;
+  due_date: string;
+  status: 'upcoming' | 'filed' | 'extended';
+  notes: string | null;
+  created_at: string;
+}
+
+interface TaxHistoryRecord {
+  id: string;
+  year: number;
+  filing_type: 'personal' | 's-corp';
+  gross_revenue: number | null;
+  net_profit: number | null;
+  federal_tax_owed: number | null;
+  state_tax_owed: number | null;
+  total_paid: number | null;
+  refund_amount: number | null;
+  accountant_estimate: number | null;
+  notes: string | null;
+  created_at: string;
+}
+
+interface TaxData {
+  estimates: TaxEstimate[];
+  contacts: TaxContact[];
+  deadlines: TaxDeadline[];
+  history: TaxHistoryRecord[];
+  timestamp: string;
+}
 
 /* ─── Types ─── */
 interface Secret {
@@ -137,6 +213,9 @@ interface TOTPStatus {
 
 /* ─── Main Component ─── */
 export default function VaultPage() {
+  const searchParams = useSearchParams();
+  const tabParam = searchParams.get("tab");
+  
   // TOTP state
   const [totpLoading, setTotpLoading] = useState(true);
   const [totpStatus, setTotpStatus] = useState<TOTPStatus | null>(null);
@@ -203,6 +282,17 @@ export default function VaultPage() {
 
   // Auto-lock timer
   const idleTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Tax state
+  const [taxData, setTaxData] = useState<TaxData | null>(null);
+  const [taxLoading, setTaxLoading] = useState(false);
+  const [taxError, setTaxError] = useState<string | null>(null);
+  const [activeTaxTab, setActiveTaxTab] = useState<"dashboard" | "estimator" | "links" | "history">("dashboard");
+
+  // Top-level tab state - check URL parameter
+  const [activeMainTab, setActiveMainTab] = useState<"secrets" | "taxes">(
+    tabParam === "taxes" ? "taxes" : "secrets"
+  );
 
   const toast = useCallback((message: string, type: "success" | "error" | "info" = "success") => {
     const id = ++toastId.current;
@@ -369,6 +459,13 @@ export default function VaultPage() {
     };
   }, [masterPassword, resetIdleTimer]);
 
+  // Load tax data when taxes tab is opened for the first time
+  useEffect(() => {
+    if (activeMainTab === "taxes" && !taxData && !taxLoading && !taxError) {
+      loadTaxData();
+    }
+  }, [activeMainTab, taxData, taxLoading, taxError]);
+
   // Fetch secrets
   const fetchSecrets = useCallback(async () => {
     setLoading(true);
@@ -389,6 +486,117 @@ export default function VaultPage() {
       setLoading(false);
     }
   }, [toast]);
+
+  // Load tax data
+  const loadTaxData = async () => {
+    setTaxLoading(true);
+    setTaxError(null);
+    
+    try {
+      // For now, use fallback mock data (same as original taxes page)
+      const mockData: TaxData = {
+        estimates: [
+          {
+            id: "1",
+            year: 2025,
+            quarter: 1,
+            type: "federal",
+            estimated_amount: 15000,
+            actual_amount: null,
+            paid_date: null,
+            due_date: "2025-04-15",
+            status: "pending",
+            notes: "Q1 2025 estimated payment",
+            created_at: "2025-01-01T00:00:00Z",
+            updated_at: "2025-01-01T00:00:00Z"
+          },
+          {
+            id: "2",
+            year: 2025,
+            quarter: 1,
+            type: "state",
+            estimated_amount: 5000,
+            actual_amount: null,
+            paid_date: null,
+            due_date: "2025-04-15",
+            status: "pending",
+            notes: "CA Q1 2025 estimated payment",
+            created_at: "2025-01-01T00:00:00Z",
+            updated_at: "2025-01-01T00:00:00Z"
+          }
+        ],
+        contacts: [
+          {
+            id: "1",
+            name: "Nick Jackson",
+            role: "accountant",
+            company: "Trusted Tax Services LLC",
+            email: "nick@trustedtaxservicesllc.com",
+            phone: "(619) 514-4262",
+            address: "7777 Alvarado Rd., Suite 202, La Mesa, CA 91942",
+            notes: "Primary accountant for Josh Levy Labs Inc S-Corp filings",
+            created_at: "2025-01-01T00:00:00Z"
+          }
+        ],
+        deadlines: [
+          {
+            id: "1",
+            year: 2025,
+            form_type: "1120-S",
+            description: "S-Corp Tax Return (Josh Levy Labs Inc)",
+            due_date: "2025-03-15",
+            status: "upcoming",
+            notes: null,
+            created_at: "2025-01-01T00:00:00Z"
+          },
+          {
+            id: "2",
+            year: 2025,
+            form_type: "1040",
+            description: "Personal Tax Return",
+            due_date: "2025-04-15",
+            status: "upcoming",
+            notes: null,
+            created_at: "2025-01-01T00:00:00Z"
+          },
+          {
+            id: "3",
+            year: 2025,
+            form_type: "quarterly-estimate",
+            description: "Q1 Estimated Tax Payments",
+            due_date: "2025-04-15",
+            status: "upcoming",
+            notes: "Federal and CA state quarterly estimates",
+            created_at: "2025-01-01T00:00:00Z"
+          }
+        ],
+        history: [
+          {
+            id: "1",
+            year: 2024,
+            filing_type: "s-corp",
+            gross_revenue: 500000,
+            net_profit: 75000,
+            federal_tax_owed: 800,
+            state_tax_owed: -1200,
+            total_paid: 3024,
+            refund_amount: 1200,
+            accountant_estimate: 1000,
+            notes: "Owed less than $1K to IRS, CA state refund, $3,024 in estimated payments",
+            created_at: "2024-04-15T00:00:00Z"
+          }
+        ],
+        timestamp: new Date().toISOString()
+      };
+
+      setTaxData(mockData);
+    } catch (err) {
+      console.error("Error loading tax data:", err);
+      setTaxError("Failed to load tax data");
+    } finally {
+      setTaxLoading(false);
+    }
+  };
 
   // On unlock
   const handleUnlock = async () => {
@@ -1028,9 +1236,12 @@ export default function VaultPage() {
             <Unlock className="w-5 h-5 text-blue-400" strokeWidth={1.5} />
           </div>
           <div>
-            <h1 className="text-2xl font-semibold text-slate-100">🔐 Secret Vault</h1>
+            <h1 className="text-2xl font-semibold text-slate-100">🔐 Secure Vault</h1>
             <p className="text-slate-500 text-sm">
-              {secrets.length} secret{secrets.length !== 1 ? "s" : ""} • {projects.length} project{projects.length !== 1 ? "s" : ""} • Auto-locks in 5 min
+              {activeMainTab === "secrets" 
+                ? `${secrets.length} secret${secrets.length !== 1 ? "s" : ""} • ${projects.length} project${projects.length !== 1 ? "s" : ""}`
+                : "Tax & financial data management"
+              } • Auto-locks in 5 min
             </p>
           </div>
         </div>
@@ -1065,13 +1276,15 @@ export default function VaultPage() {
               2FA Off
             </button>
           )}
-          <button
-            onClick={openAddModal}
-            className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-500 rounded-lg transition-colors text-white text-sm font-medium"
-          >
-            <Plus className="w-4 h-4" />
-            Add Secret
-          </button>
+          {activeMainTab === "secrets" && (
+            <button
+              onClick={openAddModal}
+              className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-500 rounded-lg transition-colors text-white text-sm font-medium"
+            >
+              <Plus className="w-4 h-4" />
+              Add Secret
+            </button>
+          )}
           <button
             onClick={handleLock}
             className="flex items-center gap-2 px-4 py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg transition-colors text-slate-300 text-sm font-medium"
@@ -1082,8 +1295,37 @@ export default function VaultPage() {
         </div>
       </div>
 
-      {/* Search & Filter Bar */}
-      <div className="flex items-center gap-3 flex-wrap">
+      {/* Top-Level Tab Navigation */}
+      <div className="flex items-center gap-2">
+        <button
+          onClick={() => setActiveMainTab("secrets")}
+          className={`flex items-center gap-2 px-6 py-3 rounded-xl transition-all text-sm font-medium ${
+            activeMainTab === "secrets"
+              ? "bg-[#D4A020]/15 border border-[#D4A020]/30 text-[#D4A020]"
+              : "bg-slate-900/50 border border-slate-800 text-slate-400 hover:text-slate-200 hover:border-slate-700"
+          }`}
+        >
+          <Lock className="w-4 h-4" />
+          🔐 Secrets
+        </button>
+        <button
+          onClick={() => setActiveMainTab("taxes")}
+          className={`flex items-center gap-2 px-6 py-3 rounded-xl transition-all text-sm font-medium ${
+            activeMainTab === "taxes"
+              ? "bg-[#D4A020]/15 border border-[#D4A020]/30 text-[#D4A020]"
+              : "bg-slate-900/50 border border-slate-800 text-slate-400 hover:text-slate-200 hover:border-slate-700"
+          }`}
+        >
+          <div className="w-4 h-4 flex items-center justify-center">📊</div>
+          Taxes
+        </button>
+      </div>
+
+      {/* Content based on active tab */}
+      {activeMainTab === "secrets" && (
+        <>
+          {/* Search & Filter Bar */}
+          <div className="flex items-center gap-3 flex-wrap">
         {/* Search */}
         <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
@@ -1846,6 +2088,109 @@ export default function VaultPage() {
               </div>
             </div>
           </div>
+        </div>
+      )}
+        </>
+      )}
+
+      {/* Taxes Content */}
+      {activeMainTab === "taxes" && (
+        <div className="space-y-6">
+          {/* Tax Header Info */}
+          <div className="flex items-center justify-between flex-wrap gap-4">
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
+                <span className="text-xs px-2 py-0.5 rounded-full bg-[#D4A020]/20 text-[#D4A020] flex items-center gap-1">
+                  <div className="w-3 h-3 flex items-center justify-center">🏢</div>
+                  Josh Levy Labs Inc (S-Corp)
+                </span>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => {
+                  loadTaxData();
+                }}
+                disabled={taxLoading}
+                className="flex items-center gap-2 px-3 py-1.5 bg-[#D4A020] hover:bg-[#D4A020]/80 rounded-lg transition-colors disabled:opacity-50 text-sm text-slate-900 font-medium"
+              >
+                <div className={`w-3.5 h-3.5 ${taxLoading ? "animate-spin" : ""}`}>🔄</div>
+                Refresh
+              </button>
+            </div>
+          </div>
+
+          {/* Tax Sub-Tab Navigation */}
+          <div className="flex gap-1 overflow-x-auto pb-1">
+            {[
+              { key: "dashboard", label: "Dashboard", icon: "📅" },
+              { key: "estimator", label: "Tax Estimator", icon: "🧮" },
+              { key: "links", label: "Links & Contacts", icon: "🔗" },
+              { key: "history", label: "History", icon: "📜" },
+            ].map((tab) => {
+              const isActive = activeTaxTab === tab.key;
+              return (
+                <button
+                  key={tab.key}
+                  onClick={() => setActiveTaxTab(tab.key as any)}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all whitespace-nowrap shrink-0 ${
+                    isActive
+                      ? "bg-[#D4A020]/15 text-[#D4A020] border border-[#D4A020]/30"
+                      : "bg-transparent text-slate-500 border border-transparent hover:text-slate-300"
+                  }`}
+                >
+                  <span className="text-sm">{tab.icon}</span>
+                  {tab.label}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Tax Content */}
+          {taxLoading && (
+            <div className="flex items-center justify-center py-24">
+              <div className="w-8 h-8 text-[#D4A020] animate-spin">🔄</div>
+            </div>
+          )}
+
+          {!taxLoading && taxError && (
+            <div className="flex items-center justify-center py-24">
+              <div className="bg-red-900/20 border border-red-500/30 rounded-xl p-6 max-w-md text-center">
+                <div className="w-8 h-8 mx-auto mb-3 text-red-400">⚠️</div>
+                <p className="text-red-300">{taxError}</p>
+                <button onClick={loadTaxData} className="mt-4 px-4 py-2 bg-[#D4A020] rounded-lg text-sm text-slate-900 font-medium">
+                  Retry
+                </button>
+              </div>
+            </div>
+          )}
+
+          {!taxLoading && !taxError && taxData && (
+            <div className="space-y-6">
+              {activeTaxTab === "dashboard" && <TaxDashboard data={taxData} />}
+              {activeTaxTab === "estimator" && <TaxEstimator data={taxData} />}
+              {activeTaxTab === "links" && <ImportantLinks data={taxData} />}
+              {activeTaxTab === "history" && <TaxHistory data={taxData} />}
+            </div>
+          )}
+
+          {!taxLoading && !taxError && !taxData && (
+            <div className="text-center py-16 text-slate-500">
+              <div className="w-16 h-16 mx-auto bg-slate-800/50 rounded-2xl flex items-center justify-center mb-4">
+                <div className="text-2xl">📊</div>
+              </div>
+              <h3 className="text-slate-400 font-medium">No Tax Data</h3>
+              <p className="text-slate-600 text-sm mt-1">
+                Click Refresh to load tax information
+              </p>
+              <button
+                onClick={loadTaxData}
+                className="mt-4 px-4 py-2 bg-[#D4A020] hover:bg-[#D4A020]/80 rounded-lg text-sm text-slate-900 font-medium"
+              >
+                Load Tax Data
+              </button>
+            </div>
+          )}
         </div>
       )}
 

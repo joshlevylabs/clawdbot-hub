@@ -21,6 +21,7 @@ import {
   Palette,
   Package,
   BookOpen,
+  Receipt,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -35,7 +36,7 @@ const navItems = [
   { href: "/faith-journey", icon: BookOpen, label: "Faith Journey" },
   { href: "/registry", icon: Package, label: "Registry" },
   { href: "/brand", icon: Palette, label: "Brand" },
-  { href: "/vault", icon: Lock, label: "Vault" },
+  { href: "/vault", icon: Lock, label: "Secure Vault" },
   { href: "/settings", icon: Settings, label: "Settings" },
 ];
 

@@ -101,6 +101,11 @@ interface MRESignal {
     nearest_resistance?: number;
     profit_targets: number[];
     entry_zone: string;
+    fibonacci_stale?: boolean;
+  };
+  price_data?: {
+    low_20d?: number;
+    high_20d?: number;
   };
 }
 
@@ -477,3 +482,4 @@ export async function GET(request: NextRequest) {
     usage: 'POST with { mode: "propose" | "execute", agent_id?: string }',
   });
 }
+// build 1773100482

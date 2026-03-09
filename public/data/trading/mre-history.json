@@ -446,5 +446,12 @@
     "regime": "sideways",
     "buy_signals": 2,
     "diverged_pairs": 3
+  },
+  {
+    "timestamp": "2026-03-09T09:57:03.546643",
+    "fg_score": 24.9218045112782,
+    "regime": "sideways",
+    "buy_signals": 2,
+    "diverged_pairs": 4
   }
 ]

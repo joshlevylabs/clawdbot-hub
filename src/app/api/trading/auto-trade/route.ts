@@ -332,10 +332,29 @@ export async function POST(request: NextRequest) {
 
         // Use Fibonacci levels for stop loss and take profit
         // Guard: only use targets that are ABOVE current price (inverted targets = stale swing data)
+        // Fibonacci-based stop loss and take profit with strict validation
         const fib = signal.fibonacci;
-        const stopLoss = fib?.nearest_support && fib.nearest_support < signal.price ? fib.nearest_support : null;
-        const validTargets = fib?.profit_targets?.filter(t => t > signal.price) || [];
-        const takeProfit = validTargets[0] || (fib?.nearest_resistance && fib.nearest_resistance > signal.price ? fib.nearest_resistance : null);
+        let stopLoss = fib?.nearest_support && fib.nearest_support < signal.price ? fib.nearest_support : null;
+        const validTargets = fib?.profit_targets?.filter((t: number) => t > signal.price) || [];
+        let takeProfit = validTargets[0] || (fib?.nearest_resistance && fib.nearest_resistance > signal.price ? fib.nearest_resistance : null);
+
+        // SAFETY: If SL/TP are still inverted after Fibonacci lookup, fall back to percentage-based defaults
+        // SL must be BELOW entry, TP must be ABOVE entry for long positions
+        if (stopLoss && stopLoss >= signal.price) {
+          console.warn(`[auto-trade] ${signal.symbol}: SL ${stopLoss} >= entry ${signal.price}, falling back to -5%`);
+          stopLoss = Math.round(signal.price * 0.95 * 100) / 100;
+        }
+        if (takeProfit && takeProfit <= signal.price) {
+          console.warn(`[auto-trade] ${signal.symbol}: TP ${takeProfit} <= entry ${signal.price}, falling back to +10%`);
+          takeProfit = Math.round(signal.price * 1.10 * 100) / 100;
+        }
+        // If no SL/TP from Fibonacci at all, use sensible defaults
+        if (!stopLoss) {
+          stopLoss = Math.round(signal.price * 0.95 * 100) / 100; // -5% default
+        }
+        if (!takeProfit) {
+          takeProfit = Math.round(signal.price * 1.10 * 100) / 100; // +10% default
+        }
 
         const proposal: TradeProposal = {
           agent: style.name,

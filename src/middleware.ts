@@ -9,7 +9,7 @@ const secretKey = new TextEncoder().encode(
 const AUTH_COOKIE = 'clawdbot-auth';
 
 // Routes that don't require authentication
-const publicPaths = ['/login', '/forgot-password', '/reset-password', '/api/auth/', '/api/markets', '/api/price-history', '/api/faith/', '/api/agents', '/api/trading/signals', '/legal'];
+const publicPaths = ['/login', '/forgot-password', '/reset-password', '/api/auth/', '/api/markets', '/api/price-history', '/api/faith/', '/api/agents', '/api/trading/signals', '/api/trading/agent-snapshots', '/api/trading/agent-portfolios', '/api/paper-trading', '/legal'];
 
 // Static assets that should always be accessible
 const staticPaths = ['/_next', '/favicon.ico', '/data/', '/audio/'];

@@ -1549,6 +1549,7 @@ export default function FaithJourneyPage() {
   const [selectedTraditions, setSelectedTraditions] = useState<Set<string>>(new Set(["all"]));
   const [imageSearch, setImageSearch] = useState("");
   const [imageDate, setImageDate] = useState<string>("all");
+  const [expandedTraditions, setExpandedTraditions] = useState<Set<string>>(new Set());
 
   // Tradition families configuration for badge filters
   const traditionFamilies = [
@@ -4025,89 +4026,112 @@ export default function FaithJourneyPage() {
                               .filter(tradition => imagesByTradition[tradition]?.length > 0)
                               .map(tradition => {
                                 const traditionImages = imagesByTradition[tradition];
+                                const isExpanded = expandedTraditions.has(tradition);
+                                const traditionColor = traditionFamilies.find(t => t.name === tradition)?.color || "#6366F1";
+                                const latestDate = traditionImages[0]?.date;
+                                const latestDateFormatted = latestDate 
+                                  ? new Date(latestDate + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+                                  : '';
+
                                 return (
-                                <div key={tradition}>
-                                  <h3 className="text-lg font-semibold text-slate-100 mb-4 sticky top-20 z-10 p-2 rounded-lg flex items-center gap-2" style={{ backgroundColor: "#0B0B13" }}>
-                                    <span className="text-xl">{traditionEmojisMap[tradition] || "🌍"}</span>
-                                    {tradition}
-                                    <span className="ml-2 text-sm text-slate-400">({traditionImages.length} image{traditionImages.length !== 1 ? 's' : ''})</span>
-                                  </h3>
-                                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                    {traditionImages.map((image) => {
-                                      return (
-                                        <div 
-                                          key={image.id}
-                                          className="rounded-xl p-4 border transition-all hover:border-opacity-50"
-                                          style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}
-                                        >
-                                          {/* Image */}
-                                          <div className="relative mb-4 rounded-lg overflow-hidden">
-                                            <img 
-                                              src={image.image_url.startsWith('/data/') 
-                                                ? image.image_url 
-                                                : image.image_url
-                                              }
-                                              alt={image.description}
-                                              className="w-full h-48 object-cover"
-                                              onError={(e) => {
-                                                (e.target as HTMLImageElement).style.display = 'none';
-                                              }}
-                                            />
-                                            {image.reused_from && (
-                                              <div className="absolute top-2 right-2 bg-black bg-opacity-70 text-white text-xs px-2 py-1 rounded-lg">
-                                                ♻️ Reused
-                                              </div>
-                                            )}
-                                          </div>
-
-                                          {/* Content */}
-                                          <div className="space-y-3">
-                                            {/* Date */}
-                                            <div className="flex items-center gap-2">
-                                              <span className="text-xs font-medium px-2 py-1 rounded-full" style={{ backgroundColor: "rgba(212, 160, 32, 0.15)", color: "#D4A020" }}>
-                                                {new Date(image.date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                                              </span>
-                                            </div>
-
-                                            {/* Guide & Reflection */}
-                                            <div>
-                                              <div className="text-sm font-medium text-slate-200 mb-1">{image.guide_name}</div>
-                                              <div className="text-xs text-slate-400 line-clamp-2">{image.guide_reflection}</div>
-                                            </div>
-
-                                            {/* Description */}
-                                            <div className="text-sm text-slate-300">{image.description}</div>
-
-                                            {/* Tags */}
-                                            {image.tags && image.tags.length > 0 && (
-                                              <div className="flex flex-wrap gap-1">
-                                                {image.tags.slice(0, 3).map((tag, idx) => (
-                                                  <span 
-                                                    key={idx}
-                                                    className="text-xs px-2 py-1 rounded-full"
-                                                    style={{ 
-                                                      backgroundColor: "rgba(212, 160, 32, 0.1)", 
-                                                      color: "#D4A020" 
-                                                    }}
-                                                  >
-                                                    {tag}
-                                                  </span>
-                                                ))}
-                                                {image.tags.length > 3 && (
-                                                  <span className="text-xs text-slate-500">+{image.tags.length - 3} more</span>
-                                                )}
-                                              </div>
-                                            )}
-
-                                            {/* Model info */}
-                                            <div className="text-xs text-slate-500 pt-2 border-t border-slate-700">
-                                              Model: {image.model} • Style: {image.style}
-                                            </div>
-                                          </div>
-                                        </div>
-                                      );
+                                <div key={tradition} className="rounded-xl border overflow-hidden" style={{ backgroundColor: "#13131B", borderColor: isExpanded ? traditionColor : "#2A2A38" }}>
+                                  {/* Accordion Header */}
+                                  <button
+                                    onClick={() => setExpandedTraditions(prev => {
+                                      const next = new Set(prev);
+                                      if (next.has(tradition)) next.delete(tradition);
+                                      else next.add(tradition);
+                                      return next;
                                     })}
-                                  </div>
+                                    className="w-full flex items-center justify-between p-4 hover:bg-white hover:bg-opacity-5 transition-colors"
+                                  >
+                                    <div className="flex items-center gap-3">
+                                      <span className="text-2xl">{traditionEmojisMap[tradition] || "🌍"}</span>
+                                      <div className="text-left">
+                                        <div className="text-base font-semibold text-slate-100">{tradition}</div>
+                                        <div className="text-xs text-slate-400">
+                                          {traditionImages.length} image{traditionImages.length !== 1 ? 's' : ''} · Latest: {latestDateFormatted}
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div className="flex items-center gap-3">
+                                      {/* Thumbnail previews when collapsed */}
+                                      {!isExpanded && (
+                                        <div className="hidden sm:flex items-center gap-1">
+                                          {traditionImages.slice(0, 4).map((img, idx) => (
+                                            <img
+                                              key={idx}
+                                              src={img.image_url}
+                                              alt=""
+                                              className="w-8 h-8 rounded object-cover opacity-70"
+                                              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                                            />
+                                          ))}
+                                          {traditionImages.length > 4 && (
+                                            <span className="text-xs text-slate-500 ml-1">+{traditionImages.length - 4}</span>
+                                          )}
+                                        </div>
+                                      )}
+                                      <ChevronDown 
+                                        className={`w-5 h-5 text-slate-400 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`} 
+                                      />
+                                    </div>
+                                  </button>
+
+                                  {/* Expanded Content */}
+                                  {isExpanded && (
+                                    <div className="px-4 pb-4 pt-2 border-t" style={{ borderColor: "#2A2A38" }}>
+                                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                        {traditionImages.map((image) => (
+                                          <div 
+                                            key={image.id}
+                                            className="rounded-lg p-3 border transition-all hover:border-opacity-50"
+                                            style={{ backgroundColor: "#0B0B13", borderColor: "#2A2A38" }}
+                                          >
+                                            {/* Image */}
+                                            <div className="relative mb-3 rounded-lg overflow-hidden">
+                                              <img 
+                                                src={image.image_url}
+                                                alt={image.description}
+                                                className="w-full h-44 object-cover"
+                                                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                                              />
+                                              {image.reused_from && (
+                                                <div className="absolute top-2 right-2 bg-black bg-opacity-70 text-white text-xs px-2 py-1 rounded-lg">
+                                                  ♻️ Reused
+                                                </div>
+                                              )}
+                                            </div>
+
+                                            {/* Content */}
+                                            <div className="space-y-2">
+                                              <div className="flex items-center gap-2">
+                                                <span className="text-xs font-medium px-2 py-0.5 rounded-full" style={{ backgroundColor: "rgba(212, 160, 32, 0.15)", color: "#D4A020" }}>
+                                                  {new Date(image.date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                                                </span>
+                                              </div>
+                                              <div>
+                                                <div className="text-sm font-medium text-slate-200">{image.guide_name}</div>
+                                                <div className="text-xs text-slate-400 line-clamp-2">{image.guide_reflection}</div>
+                                              </div>
+                                              <div className="text-xs text-slate-300 line-clamp-2">{image.description}</div>
+                                              {image.tags && image.tags.length > 0 && (
+                                                <div className="flex flex-wrap gap-1">
+                                                  {image.tags.slice(0, 3).map((tag, idx) => (
+                                                    <span key={idx} className="text-xs px-1.5 py-0.5 rounded-full" style={{ backgroundColor: "rgba(212, 160, 32, 0.1)", color: "#D4A020" }}>{tag}</span>
+                                                  ))}
+                                                  {image.tags.length > 3 && <span className="text-xs text-slate-500">+{image.tags.length - 3}</span>}
+                                                </div>
+                                              )}
+                                              <div className="text-xs text-slate-500 pt-1 border-t border-slate-700">
+                                                {image.model} • {image.style}
+                                              </div>
+                                            </div>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  )}
                                 </div>
                                 );
                               })}

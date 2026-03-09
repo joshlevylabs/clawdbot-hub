@@ -16,13 +16,16 @@ export async function GET(request: NextRequest) {
       'ray-dalio'
     ];
 
-    // Fetch snapshots — add explicit limit to avoid default truncation
+    // Fetch snapshots — filter to last 30 days to stay under Supabase row limits
+    // Supabase REST API returns max 1000 rows by default regardless of limit()
+    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
     const { data: snapshots, error } = await paperSupabase
       .from('paper_portfolio_snapshots')
       .select('account_id, date, equity, spy_price, spy_baseline')
       .in('account_id', agentAccountIds)
+      .gte('date', thirtyDaysAgo)
       .order('date', { ascending: true })
-      .limit(5000);
+      .range(0, 4999);
 
     if (error) {
       console.error('Error fetching agent snapshots:', error);

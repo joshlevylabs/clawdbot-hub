@@ -16,28 +16,34 @@ export async function GET(request: NextRequest) {
       'ray-dalio'
     ];
 
-    // Fetch snapshots — filter to last 30 days to stay under Supabase row limits
-    // Supabase REST API returns max 1000 rows by default regardless of limit()
-    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
-    const { data: snapshots, error } = await paperSupabase
-      .from('paper_portfolio_snapshots')
-      .select('account_id, date, equity, spy_price, spy_baseline')
-      .in('account_id', agentAccountIds)
-      .gte('date', thirtyDaysAgo)
-      .order('date', { ascending: true })
-      .range(0, 4999);
-
-    if (error) {
-      console.error('Error fetching agent snapshots:', error);
-      return NextResponse.json({ error: 'Failed to fetch agent snapshots', details: error.message }, { status: 500 });
-    }
-
-    // Group snapshots by agent — return raw equity
+    // Fetch snapshots per agent to avoid Supabase 1000-row default limit
+    // When using .in() across 6 agents, the 1000-row cap means later dates get truncated
     const agentSnapshots: Record<string, Array<{ date: string; return: number; equity: number }>> = {};
 
-    for (const accountId of agentAccountIds) {
-      const agentData = (snapshots || []).filter((s: any) => s.account_id === accountId);
+    const results = await Promise.all(
+      agentAccountIds.map(accountId =>
+        paperSupabase
+          .from('paper_portfolio_snapshots')
+          .select('account_id, date, equity')
+          .eq('account_id', accountId)
+          .order('date', { ascending: true })
+          .limit(1000)
+      )
+    );
+
+    let fetchError: string | null = null;
+    for (let i = 0; i < agentAccountIds.length; i++) {
+      const accountId = agentAccountIds[i];
+      const { data, error: err } = results[i];
       
+      if (err) {
+        console.error(`Error fetching ${accountId}:`, err);
+        fetchError = err.message;
+        agentSnapshots[accountId] = [];
+        continue;
+      }
+
+      const agentData = data || [];
       if (agentData.length === 0) {
         agentSnapshots[accountId] = [];
         continue;
@@ -54,6 +60,8 @@ export async function GET(request: NextRequest) {
         };
       });
     }
+
+    const error = fetchError;
 
     return NextResponse.json({ 
       agentSnapshots,

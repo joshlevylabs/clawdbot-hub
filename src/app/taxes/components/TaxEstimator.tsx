@@ -133,13 +133,13 @@ function calculateSCorpTaxes(inputs: SCORPInputs): TaxCalculation {
 }
 
 export default function TaxEstimator({ data }: TaxEstimatorProps) {
-  // Pre-populate with reasonable S-Corp defaults for Josh Levy Labs' profile
+  // Pre-populate with actual 2024 Josh Levy Labs S-Corp numbers
   const [inputs, setInputs] = useState<SCORPInputs>({
-    grossRevenue: 500000,
-    officerSalary: 120000,
-    businessExpenses: 350000,
-    depreciation: 10000,
-    businessDeductions: 15000,
+    grossRevenue: 198752,
+    officerSalary: 63333,
+    businessExpenses: 85000, // Approximate based on 2024 deductions
+    depreciation: 8000,
+    businessDeductions: 13009, // Remaining from total deductions of 106009
     personalDeductions: 29200, // Standard deduction for married filing jointly 2025
   });
   

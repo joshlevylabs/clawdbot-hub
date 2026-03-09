@@ -536,6 +536,17 @@ export default function VaultPage() {
             address: "7777 Alvarado Rd., Suite 202, La Mesa, CA 91942",
             notes: "Primary accountant for Josh Levy Labs Inc S-Corp filings",
             created_at: "2025-01-01T00:00:00Z"
+          },
+          {
+            id: "2",
+            name: "Robin Frey",
+            role: "bookkeeper",
+            company: "La Mesa Bookkeeping LLC",
+            email: "robin@lamesabookkeepingllc.com",
+            phone: null,
+            address: null,
+            notes: "Monthly bookkeeping services for Josh Levy Labs Inc",
+            created_at: "2025-01-01T00:00:00Z"
           }
         ],
         deadlines: [
@@ -572,18 +583,46 @@ export default function VaultPage() {
         ],
         history: [
           {
-            id: "1",
+            id: "3",
             year: 2024,
             filing_type: "s-corp",
-            gross_revenue: 500000,
-            net_profit: 75000,
-            federal_tax_owed: 800,
-            state_tax_owed: -1200,
-            total_paid: 3024,
-            refund_amount: 1200,
-            accountant_estimate: 1000,
-            notes: "Owed less than $1K to IRS, CA state refund, $3,024 in estimated payments",
+            gross_revenue: 198752,
+            net_profit: 84884,
+            federal_tax_owed: -3024,
+            state_tax_owed: null,
+            total_paid: 37648,
+            refund_amount: 3024,
+            accountant_estimate: null,
+            notes: "S-Corp gross receipts $198,752, officer compensation $63,333, received federal refund",
             created_at: "2024-04-15T00:00:00Z"
+          },
+          {
+            id: "2",
+            year: 2023,
+            filing_type: "s-corp",
+            gross_revenue: 207784,
+            net_profit: 75460,
+            federal_tax_owed: 2870,
+            state_tax_owed: null,
+            total_paid: 20689,
+            refund_amount: null,
+            accountant_estimate: null,
+            notes: "S-Corp gross receipts $207,784, officer compensation $54,415, owed $2,870 to IRS",
+            created_at: "2023-04-15T00:00:00Z"
+          },
+          {
+            id: "1",
+            year: 2022,
+            filing_type: "s-corp",
+            gross_revenue: 272297,
+            net_profit: 91953,
+            federal_tax_owed: 17764,
+            state_tax_owed: null,
+            total_paid: null,
+            refund_amount: null,
+            accountant_estimate: null,
+            notes: "S-Corp gross receipts $272,297, officer compensation $12,000, owed $17,764 to IRS",
+            created_at: "2022-04-15T00:00:00Z"
           }
         ],
         timestamp: new Date().toISOString()

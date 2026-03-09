@@ -2,6 +2,19 @@
   "standups": [
     {
       "date": "2026-03-08",
+      "time": "22:30",
+      "type": "night-wrap",
+      "typeName": "Night Wrap",
+      "typeEmoji": "\ud83c\udf19",
+      "topic": "Night Wrap \u2014 Sunday Mar 8",
+      "file": "2026-03-08-night-wrap.json",
+      "tokenCost": 0.0365,
+      "verticals": [],
+      "initiatives": [],
+      "instanceKey": "STD-32"
+    },
+    {
+      "date": "2026-03-08",
       "time": "17:00",
       "type": "adhoc-marin-daily-component-sourcing-optical-stack-electrical-design-firmware-progress",
       "typeName": "Marin Daily: Component sourcing, optical stack, electrical design, firmware progress",

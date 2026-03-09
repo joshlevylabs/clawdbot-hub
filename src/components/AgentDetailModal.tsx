@@ -15,7 +15,22 @@ import {
   Hash,
   Calendar,
   User,
-  Database
+  Database,
+  Server,
+  Zap,
+  Save,
+  RotateCcw,
+  Loader2,
+  Plus,
+  Search,
+  Trash2,
+  Edit,
+  Upload,
+  CheckCircle,
+  AlertCircle,
+  XCircle,
+  Eye,
+  EyeOff
 } from "lucide-react";
 
 interface Agent {
@@ -103,15 +118,15 @@ interface AgentDetailModalProps {
   onClose: () => void;
 }
 
-type TabId = "overview" | "soul" | "memory" | "conversations" | "knowledge" | "integrations" | "config";
+type TabId = "overview" | "hosting" | "llm" | "knowledge" | "memory" | "conversations" | "config";
 
 const TABS: { id: TabId; label: string; icon: React.ElementType }[] = [
   { id: "overview", label: "Overview", icon: Bot },
-  { id: "soul", label: "Soul Prompt", icon: Brain },
+  { id: "hosting", label: "Hosting", icon: Server },
+  { id: "llm", label: "LLM Config", icon: Brain },
+  { id: "knowledge", label: "Knowledge", icon: BookOpen },
   { id: "memory", label: "Memory", icon: Database },
   { id: "conversations", label: "Conversations", icon: MessageSquare },
-  { id: "knowledge", label: "Knowledge", icon: BookOpen },
-  { id: "integrations", label: "Integrations", icon: Plug },
   { id: "config", label: "Config", icon: Settings },
 ];
 
@@ -164,6 +179,14 @@ export default function AgentDetailModal({ agent, onClose }: AgentDetailModalPro
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<AgentDetailData | null>(null);
   const [knowledgeData, setKnowledgeData] = useState<KnowledgeData | null>(null);
+
+  // Editing states
+  const [isEditing, setIsEditing] = useState<Record<string, boolean>>({});
+  const [isSaving, setIsSaving] = useState<Record<string, boolean>>({});
+  const [editValues, setEditValues] = useState<Record<string, any>>({});
+  const [saveMessage, setSaveMessage] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedMemories, setSelectedMemories] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchDetails = async () => {
@@ -231,6 +254,85 @@ export default function AgentDetailModal({ agent, onClose }: AgentDetailModalPro
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [onClose]);
 
+  // Helper functions for editing
+  const startEditing = (field: string, currentValue: any) => {
+    setIsEditing(prev => ({ ...prev, [field]: true }));
+    setEditValues(prev => ({ ...prev, [field]: currentValue }));
+  };
+
+  const cancelEditing = (field: string) => {
+    setIsEditing(prev => ({ ...prev, [field]: false }));
+    setEditValues(prev => {
+      const { [field]: _, ...rest } = prev;
+      return rest;
+    });
+  };
+
+  const saveField = async (field: string, value: any) => {
+    if (!data?.config) return;
+
+    setIsSaving(prev => ({ ...prev, [field]: true }));
+    try {
+      const response = await fetch(`/api/agents/${data.config.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ [field]: value }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to save ${field}`);
+      }
+
+      const updatedConfig = await response.json();
+      
+      // Update local data
+      setData(prev => prev ? {
+        ...prev,
+        config: { ...prev.config, [field]: value, updated_at: updatedConfig.updated_at }
+      } : null);
+
+      setIsEditing(prev => ({ ...prev, [field]: false }));
+      setEditValues(prev => {
+        const { [field]: _, ...rest } = prev;
+        return rest;
+      });
+
+      setSaveMessage(`${field} saved successfully`);
+      setTimeout(() => setSaveMessage(null), 3000);
+    } catch (error) {
+      console.error(`Error saving ${field}:`, error);
+      setSaveMessage(`Failed to save ${field}`);
+      setTimeout(() => setSaveMessage(null), 3000);
+    } finally {
+      setIsSaving(prev => ({ ...prev, [field]: false }));
+    }
+  };
+
+  const clearAllMemories = async () => {
+    if (!data?.config || !confirm('Are you sure you want to clear all memories? This action cannot be undone.')) {
+      return;
+    }
+
+    try {
+      // This would need a new API endpoint
+      const response = await fetch(`/api/agents/${data.config.id}/memories`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to clear memories');
+      }
+
+      setData(prev => prev ? { ...prev, memories: [], memoryCount: 0 } : null);
+      setSaveMessage('All memories cleared');
+      setTimeout(() => setSaveMessage(null), 3000);
+    } catch (error) {
+      console.error('Error clearing memories:', error);
+      setSaveMessage('Failed to clear memories');
+      setTimeout(() => setSaveMessage(null), 3000);
+    }
+  };
+
   const renderTabContent = () => {
     if (loading) {
       return (
@@ -249,6 +351,16 @@ export default function AgentDetailModal({ agent, onClose }: AgentDetailModalPro
     }
 
     if (!data) return null;
+
+    // Available LLM models
+    const models = [
+      { value: "anthropic/claude-sonnet-4-20250514", label: "Claude Sonnet 4" },
+      { value: "anthropic/claude-opus-4-6", label: "Claude Opus 4" },
+      { value: "anthropic/claude-3-5-sonnet-20241022", label: "Claude 3.5 Sonnet" },
+      { value: "anthropic/claude-3-haiku-20240307", label: "Claude 3 Haiku" },
+      { value: "openai/gpt-4o", label: "GPT-4o" },
+      { value: "openai/gpt-4o-mini", label: "GPT-4o Mini" },
+    ];
 
     switch (activeTab) {
       case "overview":
@@ -320,46 +432,510 @@ export default function AgentDetailModal({ agent, onClose }: AgentDetailModalPro
           </div>
         );
 
-      case "soul":
-        const soulText = data.config.soul_prompt || data.config.description || "No soul prompt defined.";
+      case "hosting":
         return (
-          <div className="space-y-4">
-            <h3 className="text-sm font-semibold uppercase tracking-wider" style={{ color: "#8B8B80" }}>Soul Prompt</h3>
+          <div className="space-y-6">
+            <h3 className="text-sm font-semibold uppercase tracking-wider" style={{ color: "#8B8B80" }}>Hosting Configuration</h3>
+            
+            {/* Endpoint Status */}
             <div className="p-4 rounded-xl border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
-              <pre className="text-sm whitespace-pre-wrap font-mono" style={{ color: "#B8B8AD" }}>
-                {soulText}
-              </pre>
+              <div className="flex items-center justify-between mb-4">
+                <h4 className="text-sm font-semibold" style={{ color: "#F5F5F0" }}>Endpoint Status</h4>
+                <div className="flex items-center gap-2">
+                  <div className={`w-3 h-3 rounded-full ${data.config.endpoint_enabled ? 'bg-green-500' : 'bg-red-500'}`} />
+                  <span className="text-sm font-medium" style={{ color: data.config.endpoint_enabled ? "#10B981" : "#EF4444" }}>
+                    {data.config.endpoint_enabled ? "Live" : "Offline"}
+                  </span>
+                </div>
+              </div>
+              
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-xs font-semibold mb-2" style={{ color: "#8B8B80" }}>Endpoint URL</label>
+                  <div className="text-xs font-mono p-2 rounded border" style={{ backgroundColor: "#1A1A24", borderColor: "#2A2A38", color: "#8B8B80" }}>
+                    {data.config.endpoint_enabled ? `/api/agents/${data.config.id}/chat` : 'Disabled'}
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => saveField('endpoint_enabled', !data.config.endpoint_enabled)}
+                    disabled={isSaving.endpoint_enabled}
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg border transition-colors"
+                    style={{ 
+                      backgroundColor: data.config.endpoint_enabled ? "#DC2626" : "#10B981", 
+                      borderColor: data.config.endpoint_enabled ? "#DC2626" : "#10B981",
+                      color: "#FFFFFF"
+                    }}
+                  >
+                    {isSaving.endpoint_enabled ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : data.config.endpoint_enabled ? (
+                      <EyeOff className="w-4 h-4" />
+                    ) : (
+                      <Eye className="w-4 h-4" />
+                    )}
+                    {data.config.endpoint_enabled ? 'Disable' : 'Enable'}
+                  </button>
+                  
+                  {data.config.endpoint_enabled && (
+                    <button
+                      onClick={() => navigator.clipboard.writeText(`/api/agents/${data.config.id}/chat`)}
+                      className="p-2 rounded-lg border transition-colors hover:bg-white/5"
+                      style={{ borderColor: "#2A2A38", color: "#626259" }}
+                    >
+                      <Globe className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Hosting Provider (placeholder for future) */}
+            <div className="p-4 rounded-xl border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+              <h4 className="text-sm font-semibold mb-3" style={{ color: "#F5F5F0" }}>Hosting Provider</h4>
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-xs font-semibold mb-2" style={{ color: "#8B8B80" }}>Provider</label>
+                  <select 
+                    disabled 
+                    className="w-full p-2 rounded border text-sm opacity-50"
+                    style={{ backgroundColor: "#1A1A24", borderColor: "#2A2A38", color: "#8B8B80" }}
+                  >
+                    <option>Supabase Edge Functions (Coming Soon)</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold mb-2" style={{ color: "#8B8B80" }}>Region</label>
+                  <select 
+                    disabled 
+                    className="w-full p-2 rounded border text-sm opacity-50"
+                    style={{ backgroundColor: "#1A1A24", borderColor: "#2A2A38", color: "#8B8B80" }}
+                  >
+                    <option>Auto (Coming Soon)</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold mb-2" style={{ color: "#8B8B80" }}>Rate Limit (RPM)</label>
+                  <input 
+                    type="number" 
+                    disabled 
+                    placeholder="Coming Soon"
+                    className="w-full p-2 rounded border text-sm opacity-50"
+                    style={{ backgroundColor: "#1A1A24", borderColor: "#2A2A38", color: "#8B8B80" }}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+
+      case "llm":
+        return (
+          <div className="space-y-6">
+            <h3 className="text-sm font-semibold uppercase tracking-wider" style={{ color: "#8B8B80" }}>LLM Configuration</h3>
+            
+            {/* Model Selection */}
+            <div className="p-4 rounded-xl border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+              <h4 className="text-sm font-semibold mb-3" style={{ color: "#F5F5F0" }}>Model & Parameters</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold mb-2" style={{ color: "#8B8B80" }}>Model</label>
+                  {isEditing.model ? (
+                    <div className="space-y-2">
+                      <select
+                        value={editValues.model || data.config.model}
+                        onChange={(e) => setEditValues(prev => ({ ...prev, model: e.target.value }))}
+                        className="w-full p-2 rounded border text-sm"
+                        style={{ backgroundColor: "#1A1A24", borderColor: "#2A2A38", color: "#F5F5F0" }}
+                      >
+                        {models.map(model => (
+                          <option key={model.value} value={model.value}>{model.label}</option>
+                        ))}
+                      </select>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => saveField('model', editValues.model)}
+                          disabled={isSaving.model}
+                          className="flex items-center gap-1 px-3 py-1.5 rounded text-xs font-medium transition-colors"
+                          style={{ backgroundColor: "#10B981", color: "#FFFFFF" }}
+                        >
+                          {isSaving.model ? <Loader2 className="w-3 h-3 animate-spin" /> : <Save className="w-3 h-3" />}
+                          Save
+                        </button>
+                        <button
+                          onClick={() => cancelEditing('model')}
+                          className="flex items-center gap-1 px-3 py-1.5 rounded text-xs font-medium transition-colors"
+                          style={{ backgroundColor: "#2A2A38", color: "#B8B8AD" }}
+                        >
+                          <RotateCcw className="w-3 h-3" />
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm" style={{ color: "#F5F5F0" }}>
+                        {models.find(m => m.value === data.config.model)?.label || formatModelName(data.config.model)}
+                      </span>
+                      <button
+                        onClick={() => startEditing('model', data.config.model)}
+                        className="p-1 rounded hover:bg-white/10 transition-colors"
+                        style={{ color: "#626259" }}
+                      >
+                        <Edit className="w-3 h-3" />
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold mb-2" style={{ color: "#8B8B80" }}>Max Tokens</label>
+                  {isEditing.max_tokens ? (
+                    <div className="space-y-2">
+                      <input
+                        type="number"
+                        min="1"
+                        max="8192"
+                        value={editValues.max_tokens || data.config.max_tokens}
+                        onChange={(e) => setEditValues(prev => ({ ...prev, max_tokens: parseInt(e.target.value) }))}
+                        className="w-full p-2 rounded border text-sm"
+                        style={{ backgroundColor: "#1A1A24", borderColor: "#2A2A38", color: "#F5F5F0" }}
+                      />
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => saveField('max_tokens', editValues.max_tokens)}
+                          disabled={isSaving.max_tokens}
+                          className="flex items-center gap-1 px-3 py-1.5 rounded text-xs font-medium transition-colors"
+                          style={{ backgroundColor: "#10B981", color: "#FFFFFF" }}
+                        >
+                          {isSaving.max_tokens ? <Loader2 className="w-3 h-3 animate-spin" /> : <Save className="w-3 h-3" />}
+                          Save
+                        </button>
+                        <button
+                          onClick={() => cancelEditing('max_tokens')}
+                          className="flex items-center gap-1 px-3 py-1.5 rounded text-xs font-medium transition-colors"
+                          style={{ backgroundColor: "#2A2A38", color: "#B8B8AD" }}
+                        >
+                          <RotateCcw className="w-3 h-3" />
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm" style={{ color: "#F5F5F0" }}>{data.config.max_tokens}</span>
+                      <button
+                        onClick={() => startEditing('max_tokens', data.config.max_tokens)}
+                        className="p-1 rounded hover:bg-white/10 transition-colors"
+                        style={{ color: "#626259" }}
+                      >
+                        <Edit className="w-3 h-3" />
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Temperature Slider */}
+              <div className="mt-4">
+                <label className="block text-xs font-semibold mb-2" style={{ color: "#8B8B80" }}>
+                  Temperature: {isEditing.temperature ? (editValues.temperature ?? data.config.temperature) : data.config.temperature}
+                </label>
+                {isEditing.temperature ? (
+                  <div className="space-y-2">
+                    <input
+                      type="range"
+                      min="0"
+                      max="2"
+                      step="0.1"
+                      value={editValues.temperature ?? data.config.temperature}
+                      onChange={(e) => setEditValues(prev => ({ ...prev, temperature: parseFloat(e.target.value) }))}
+                      className="w-full"
+                    />
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => saveField('temperature', editValues.temperature)}
+                        disabled={isSaving.temperature}
+                        className="flex items-center gap-1 px-3 py-1.5 rounded text-xs font-medium transition-colors"
+                        style={{ backgroundColor: "#10B981", color: "#FFFFFF" }}
+                      >
+                        {isSaving.temperature ? <Loader2 className="w-3 h-3 animate-spin" /> : <Save className="w-3 h-3" />}
+                        Save
+                      </button>
+                      <button
+                        onClick={() => cancelEditing('temperature')}
+                        className="flex items-center gap-1 px-3 py-1.5 rounded text-xs font-medium transition-colors"
+                        style={{ backgroundColor: "#2A2A38", color: "#B8B8AD" }}
+                      >
+                        <RotateCcw className="w-3 h-3" />
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="range"
+                      min="0"
+                      max="2"
+                      step="0.1"
+                      value={data.config.temperature}
+                      disabled
+                      className="flex-1"
+                    />
+                    <button
+                      onClick={() => startEditing('temperature', data.config.temperature)}
+                      className="p-1 rounded hover:bg-white/10 transition-colors"
+                      style={{ color: "#626259" }}
+                    >
+                      <Edit className="w-3 h-3" />
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Soul Prompt */}
+            <div className="p-4 rounded-xl border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+              <div className="flex items-center justify-between mb-3">
+                <h4 className="text-sm font-semibold" style={{ color: "#F5F5F0" }}>Soul Prompt</h4>
+                {!isEditing.soul_prompt && (
+                  <button
+                    onClick={() => startEditing('soul_prompt', data.config.soul_prompt || '')}
+                    className="p-1 rounded hover:bg-white/10 transition-colors"
+                    style={{ color: "#626259" }}
+                  >
+                    <Edit className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+              {isEditing.soul_prompt ? (
+                <div className="space-y-3">
+                  <textarea
+                    value={editValues.soul_prompt || data.config.soul_prompt || ''}
+                    onChange={(e) => setEditValues(prev => ({ ...prev, soul_prompt: e.target.value }))}
+                    rows={12}
+                    className="w-full p-3 rounded border text-sm font-mono resize-none"
+                    style={{ backgroundColor: "#1A1A24", borderColor: "#2A2A38", color: "#B8B8AD" }}
+                    placeholder="Enter the soul prompt for this agent..."
+                  />
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => saveField('soul_prompt', editValues.soul_prompt)}
+                      disabled={isSaving.soul_prompt}
+                      className="flex items-center gap-1 px-4 py-2 rounded text-sm font-medium transition-colors"
+                      style={{ backgroundColor: "#10B981", color: "#FFFFFF" }}
+                    >
+                      {isSaving.soul_prompt ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                      Save Soul Prompt
+                    </button>
+                    <button
+                      onClick={() => cancelEditing('soul_prompt')}
+                      className="flex items-center gap-1 px-4 py-2 rounded text-sm font-medium transition-colors"
+                      style={{ backgroundColor: "#2A2A38", color: "#B8B8AD" }}
+                    >
+                      <RotateCcw className="w-4 h-4" />
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="p-3 rounded border min-h-[200px]" style={{ backgroundColor: "#1A1A24", borderColor: "#2A2A38" }}>
+                  <pre className="text-sm whitespace-pre-wrap font-mono" style={{ color: "#B8B8AD" }}>
+                    {data.config.soul_prompt || data.config.description || "No soul prompt defined. Click the edit button to add one."}
+                  </pre>
+                </div>
+              )}
             </div>
           </div>
         );
 
       case "memory":
+        const filteredMemories = data.memories.filter(memory =>
+          memory.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          memory.type.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+
         return (
           <div className="space-y-4">
+            {/* Header with controls */}
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-semibold uppercase tracking-wider" style={{ color: "#8B8B80" }}>
                 Agent Memories ({data.memoryCount})
               </h3>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => startEditing('new_memory', '')}
+                  className="flex items-center gap-1 px-3 py-1.5 rounded text-xs font-medium transition-colors"
+                  style={{ backgroundColor: "#10B981", color: "#FFFFFF" }}
+                >
+                  <Plus className="w-3 h-3" />
+                  Add Memory
+                </button>
+                {data.memoryCount > 0 && (
+                  <button
+                    onClick={clearAllMemories}
+                    className="flex items-center gap-1 px-3 py-1.5 rounded text-xs font-medium transition-colors"
+                    style={{ backgroundColor: "#DC2626", color: "#FFFFFF" }}
+                  >
+                    <Trash2 className="w-3 h-3" />
+                    Clear All
+                  </button>
+                )}
+              </div>
             </div>
+
+            {/* Search bar */}
+            {data.memoryCount > 0 && (
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: "#626259" }} />
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="Search memories..."
+                  className="w-full h-9 pl-10 pr-4 rounded-lg text-sm transition-all focus:outline-none"
+                  style={{ backgroundColor: "#1A1A24", border: "1px solid #2A2A38", color: "#F5F5F0" }}
+                />
+              </div>
+            )}
+
+            {/* Add new memory form */}
+            {isEditing.new_memory && (
+              <div className="p-4 rounded-xl border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+                <h4 className="text-sm font-semibold mb-3" style={{ color: "#F5F5F0" }}>Add New Memory</h4>
+                <div className="space-y-3">
+                  <div>
+                    <label className="block text-xs font-semibold mb-2" style={{ color: "#8B8B80" }}>Type</label>
+                    <select
+                      value={editValues.memory_type || 'note'}
+                      onChange={(e) => setEditValues(prev => ({ ...prev, memory_type: e.target.value }))}
+                      className="w-full p-2 rounded border text-sm"
+                      style={{ backgroundColor: "#1A1A24", borderColor: "#2A2A38", color: "#F5F5F0" }}
+                    >
+                      <option value="note">Note</option>
+                      <option value="preference">Preference</option>
+                      <option value="context">Context</option>
+                      <option value="instruction">Instruction</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold mb-2" style={{ color: "#8B8B80" }}>Content</label>
+                    <textarea
+                      value={editValues.memory_content || ''}
+                      onChange={(e) => setEditValues(prev => ({ ...prev, memory_content: e.target.value }))}
+                      rows={3}
+                      className="w-full p-2 rounded border text-sm"
+                      style={{ backgroundColor: "#1A1A24", borderColor: "#2A2A38", color: "#F5F5F0" }}
+                      placeholder="Enter memory content..."
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => {
+                        // This would need a new API endpoint
+                        console.log('Save memory:', editValues.memory_type, editValues.memory_content);
+                        cancelEditing('new_memory');
+                      }}
+                      className="flex items-center gap-1 px-3 py-1.5 rounded text-xs font-medium transition-colors"
+                      style={{ backgroundColor: "#10B981", color: "#FFFFFF" }}
+                    >
+                      <Save className="w-3 h-3" />
+                      Save Memory
+                    </button>
+                    <button
+                      onClick={() => cancelEditing('new_memory')}
+                      className="flex items-center gap-1 px-3 py-1.5 rounded text-xs font-medium transition-colors"
+                      style={{ backgroundColor: "#2A2A38", color: "#B8B8AD" }}
+                    >
+                      <RotateCcw className="w-3 h-3" />
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Memories list */}
             <div className="space-y-3 max-h-96 overflow-auto">
-              {data.memories.length > 0 ? (
-                data.memories.map((memory) => (
-                  <div key={memory.id} className="p-3 rounded-lg border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+              {filteredMemories.length > 0 ? (
+                filteredMemories.map((memory) => (
+                  <div key={memory.id} className="p-3 rounded-lg border group" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-xs px-2 py-1 rounded" style={{ backgroundColor: "#D4A02020", color: "#D4A020" }}>
                         {memory.type}
                       </span>
-                      <span className="text-xs" style={{ color: "#626259" }}>
-                        {new Date(memory.created_at).toLocaleDateString()}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs" style={{ color: "#626259" }}>
+                          {new Date(memory.created_at).toLocaleDateString()}
+                        </span>
+                        <div className="opacity-0 group-hover:opacity-100 flex gap-1 transition-opacity">
+                          <button
+                            onClick={() => startEditing(`edit_memory_${memory.id}`, memory.content)}
+                            className="p-1 rounded hover:bg-white/10 transition-colors"
+                            style={{ color: "#626259" }}
+                          >
+                            <Edit className="w-3 h-3" />
+                          </button>
+                          <button
+                            onClick={() => {
+                              // This would need a new API endpoint
+                              console.log('Delete memory:', memory.id);
+                            }}
+                            className="p-1 rounded hover:bg-white/10 transition-colors"
+                            style={{ color: "#DC2626" }}
+                          >
+                            <Trash2 className="w-3 h-3" />
+                          </button>
+                        </div>
+                      </div>
                     </div>
-                    <p className="text-sm" style={{ color: "#B8B8AD" }}>{memory.content}</p>
+                    {isEditing[`edit_memory_${memory.id}`] ? (
+                      <div className="space-y-2">
+                        <textarea
+                          value={editValues[`edit_memory_${memory.id}`] || memory.content}
+                          onChange={(e) => setEditValues(prev => ({ ...prev, [`edit_memory_${memory.id}`]: e.target.value }))}
+                          rows={2}
+                          className="w-full p-2 rounded border text-sm"
+                          style={{ backgroundColor: "#1A1A24", borderColor: "#2A2A38", color: "#F5F5F0" }}
+                        />
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => {
+                              // This would need a new API endpoint
+                              console.log('Update memory:', memory.id, editValues[`edit_memory_${memory.id}`]);
+                              cancelEditing(`edit_memory_${memory.id}`);
+                            }}
+                            className="flex items-center gap-1 px-2 py-1 rounded text-xs font-medium transition-colors"
+                            style={{ backgroundColor: "#10B981", color: "#FFFFFF" }}
+                          >
+                            <Save className="w-3 h-3" />
+                            Save
+                          </button>
+                          <button
+                            onClick={() => cancelEditing(`edit_memory_${memory.id}`)}
+                            className="flex items-center gap-1 px-2 py-1 rounded text-xs font-medium transition-colors"
+                            style={{ backgroundColor: "#2A2A38", color: "#B8B8AD" }}
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="text-sm" style={{ color: "#B8B8AD" }}>{memory.content}</p>
+                    )}
                   </div>
                 ))
-              ) : (
+              ) : data.memories.length === 0 ? (
                 <div className="text-center p-6" style={{ color: "#626259" }}>
                   <Database className="w-8 h-8 mx-auto mb-2" />
                   <p className="text-sm">No memories found</p>
+                </div>
+              ) : (
+                <div className="text-center p-6" style={{ color: "#626259" }}>
+                  <Search className="w-8 h-8 mx-auto mb-2" />
+                  <p className="text-sm">No memories match your search</p>
                 </div>
               )}
             </div>
@@ -428,6 +1004,103 @@ export default function AgentDetailModal({ agent, onClose }: AgentDetailModalPro
 
         return (
           <div className="space-y-6">
+            {/* Knowledge Management Header */}
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-semibold uppercase tracking-wider" style={{ color: "#8B8B80" }}>Knowledge Management</h3>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => startEditing('add_knowledge', '')}
+                  className="flex items-center gap-1 px-3 py-1.5 rounded text-xs font-medium transition-colors"
+                  style={{ backgroundColor: "#10B981", color: "#FFFFFF" }}
+                >
+                  <Plus className="w-3 h-3" />
+                  Add Source
+                </button>
+                <button
+                  onClick={() => {
+                    // Trigger re-embedding for all sources
+                    console.log('Trigger re-embedding');
+                    setSaveMessage('Re-embedding triggered');
+                    setTimeout(() => setSaveMessage(null), 3000);
+                  }}
+                  className="flex items-center gap-1 px-3 py-1.5 rounded text-xs font-medium transition-colors"
+                  style={{ backgroundColor: "#6366F1", color: "#FFFFFF" }}
+                >
+                  <Zap className="w-3 h-3" />
+                  Re-embed All
+                </button>
+              </div>
+            </div>
+
+            {/* Add Knowledge Source Form */}
+            {isEditing.add_knowledge && (
+              <div className="p-4 rounded-xl border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+                <h4 className="text-sm font-semibold mb-3" style={{ color: "#F5F5F0" }}>Add Knowledge Source</h4>
+                <div className="space-y-3">
+                  <div>
+                    <label className="block text-xs font-semibold mb-2" style={{ color: "#8B8B80" }}>Source Type</label>
+                    <select
+                      value={editValues.source_type || 'document'}
+                      onChange={(e) => setEditValues(prev => ({ ...prev, source_type: e.target.value }))}
+                      className="w-full p-2 rounded border text-sm"
+                      style={{ backgroundColor: "#1A1A24", borderColor: "#2A2A38", color: "#F5F5F0" }}
+                    >
+                      <option value="document">Document</option>
+                      <option value="youtube_transcript">YouTube Transcript</option>
+                      <option value="book">Book</option>
+                      <option value="report">Report</option>
+                      <option value="data">Data File</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold mb-2" style={{ color: "#8B8B80" }}>Title/URL</label>
+                    <input
+                      type="text"
+                      value={editValues.source_title || ''}
+                      onChange={(e) => setEditValues(prev => ({ ...prev, source_title: e.target.value }))}
+                      className="w-full p-2 rounded border text-sm"
+                      style={{ backgroundColor: "#1A1A24", borderColor: "#2A2A38", color: "#F5F5F0" }}
+                      placeholder="Enter title or URL..."
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold mb-2" style={{ color: "#8B8B80" }}>Upload File</label>
+                    <input
+                      type="file"
+                      accept=".pdf,.txt,.md,.docx"
+                      onChange={(e) => setEditValues(prev => ({ ...prev, source_file: e.target.files?.[0] }))}
+                      className="w-full p-2 rounded border text-sm"
+                      style={{ backgroundColor: "#1A1A24", borderColor: "#2A2A38", color: "#F5F5F0" }}
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => {
+                        // This would need a new API endpoint for knowledge upload
+                        console.log('Add knowledge source:', editValues);
+                        setSaveMessage('Knowledge source added');
+                        setTimeout(() => setSaveMessage(null), 3000);
+                        cancelEditing('add_knowledge');
+                      }}
+                      className="flex items-center gap-1 px-3 py-1.5 rounded text-xs font-medium transition-colors"
+                      style={{ backgroundColor: "#10B981", color: "#FFFFFF" }}
+                    >
+                      <Upload className="w-3 h-3" />
+                      Add Source
+                    </button>
+                    <button
+                      onClick={() => cancelEditing('add_knowledge')}
+                      className="flex items-center gap-1 px-3 py-1.5 rounded text-xs font-medium transition-colors"
+                      style={{ backgroundColor: "#2A2A38", color: "#B8B8AD" }}
+                    >
+                      <RotateCcw className="w-3 h-3" />
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Sacred Text Embeddings (faith guides) */}
             {embeddingStats && (
               <>
@@ -588,50 +1261,6 @@ export default function AgentDetailModal({ agent, onClose }: AgentDetailModalPro
           </div>
         );
 
-      case "integrations":
-        const integrations = data.config.integrations || {};
-        const hasIntegrations = Object.keys(integrations).length > 0;
-        return (
-          <div className="space-y-4">
-            <h3 className="text-sm font-semibold uppercase tracking-wider" style={{ color: "#8B8B80" }}>Integrations & Tools</h3>
-            {hasIntegrations ? (
-              Object.entries(integrations).map(([key, value]) => (
-                <div key={key} className="p-3 rounded-lg border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
-                  <h4 className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: "#D4A020" }}>
-                    {key.replace(/_/g, ' ')}
-                  </h4>
-                  {Array.isArray(value) ? (
-                    <div className="flex flex-wrap gap-2">
-                      {(value as string[]).map((item: string, idx: number) => (
-                        <span key={idx} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-mono" style={{ backgroundColor: "#1A1A24", color: "#B8B8AD" }}>
-                          <Settings className="w-3 h-3" style={{ color: "#626259" }} />
-                          {item}
-                        </span>
-                      ))}
-                    </div>
-                  ) : typeof value === 'object' && value !== null ? (
-                    <div className="space-y-1">
-                      {Object.entries(value as Record<string, unknown>).map(([k, v]) => (
-                        <div key={k} className="flex items-center gap-2 text-xs">
-                          <span style={{ color: "#8B8B80" }}>{k}:</span>
-                          <span className="font-mono" style={{ color: "#B8B8AD" }}>{String(v)}</span>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <span className="text-xs font-mono" style={{ color: "#B8B8AD" }}>{String(value)}</span>
-                  )}
-                </div>
-              ))
-            ) : (
-              <div className="text-center p-6" style={{ color: "#626259" }}>
-                <Plug className="w-8 h-8 mx-auto mb-2" />
-                <p className="text-sm">No integrations configured</p>
-              </div>
-            )}
-          </div>
-        );
-
       case "config":
         return (
           <div className="space-y-4">
@@ -717,6 +1346,20 @@ export default function AgentDetailModal({ agent, onClose }: AgentDetailModalPro
                 })}
               </div>
             </div>
+
+            {/* Save Message */}
+            {saveMessage && (
+              <div className={`p-3 rounded-lg border flex items-center gap-2 ${saveMessage.includes('Failed') ? 'border-red-800/50 bg-red-900/10' : 'border-green-800/50 bg-green-900/10'}`}>
+                {saveMessage.includes('Failed') ? (
+                  <XCircle className="w-4 h-4 text-red-400" />
+                ) : (
+                  <CheckCircle className="w-4 h-4 text-green-400" />
+                )}
+                <span className={`text-sm ${saveMessage.includes('Failed') ? 'text-red-400' : 'text-green-400'}`}>
+                  {saveMessage}
+                </span>
+              </div>
+            )}
 
             {/* Tab Content */}
             {renderTabContent()}

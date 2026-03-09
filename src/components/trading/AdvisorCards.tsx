@@ -764,7 +764,7 @@ export default function AdvisorCards({ onAgentClick }: AdvisorCardsProps = {}) {
         if (cached) {
           const c = JSON.parse(cached);
           const today = new Date().toISOString().split('T')[0];
-          if (c.date === today && c.knowledge_version === knowledgeVersion && c.market_assessment && (c.pre_market_actions?.length > 0 || c._stale_guard)) {
+          if (c.date === today && c.knowledge_version === knowledgeVersion && c.market_assessment && c.pre_market_actions?.length > 0 && !c._stale_guard) {
             setAdvisorState(prev => ({ ...prev, [id]: { data: c, loading: false, error: null } }));
             return;
           }

@@ -3994,39 +3994,46 @@ export default function FaithJourneyPage() {
                           );
                         }
 
-                        // Group by date
-                        const imagesByDate = filteredImages.reduce((acc, image) => {
-                          if (!acc[image.date]) acc[image.date] = [];
-                          acc[image.date].push(image);
+                        const traditionEmojisMap: Record<string, string> = {
+                          "judaism": "✡️", "Judaism": "✡️",
+                          "christianity": "✝️", "Christianity": "✝️",
+                          "islam": "☪️", "Islam": "☪️",
+                          "hinduism": "🕉️", "Hinduism": "🕉️",
+                          "buddhism": "☸️", "Buddhism": "☸️",
+                          "other": "🌍", "Other": "🌍",
+                        };
+
+                        // Tradition display order
+                        const traditionOrder = ["Judaism", "Christianity", "Islam", "Hinduism", "Buddhism", "Other"];
+
+                        // Group by tradition family
+                        const imagesByTradition = filteredImages.reduce((acc, image) => {
+                          const family = image.tradition_family.charAt(0).toUpperCase() + image.tradition_family.slice(1).toLowerCase();
+                          if (!acc[family]) acc[family] = [];
+                          acc[family].push(image);
                           return acc;
                         }, {} as Record<string, FaithImage[]>);
 
+                        // Sort images within each tradition by date (latest first)
+                        Object.values(imagesByTradition).forEach(imgs => 
+                          imgs.sort((a, b) => b.date.localeCompare(a.date))
+                        );
+
                         return (
                           <div className="space-y-8">
-                            {Object.entries(imagesByDate)
-                              .sort(([a], [b]) => b.localeCompare(a))
-                              .map(([date, dateImages]) => (
-                                <div key={date}>
-                                  <h3 className="text-lg font-semibold text-slate-100 mb-4 sticky top-20 z-10 p-2 rounded-lg" style={{ backgroundColor: "#0B0B13" }}>
-                                    {new Date(date + 'T00:00:00').toLocaleDateString('en-US', { 
-                                      weekday: 'long', 
-                                      year: 'numeric', 
-                                      month: 'long', 
-                                      day: 'numeric' 
-                                    })}
-                                    <span className="ml-2 text-sm text-slate-400">({dateImages.length} image{dateImages.length !== 1 ? 's' : ''})</span>
+                            {traditionOrder
+                              .filter(tradition => imagesByTradition[tradition]?.length > 0)
+                              .map(tradition => {
+                                const traditionImages = imagesByTradition[tradition];
+                                return (
+                                <div key={tradition}>
+                                  <h3 className="text-lg font-semibold text-slate-100 mb-4 sticky top-20 z-10 p-2 rounded-lg flex items-center gap-2" style={{ backgroundColor: "#0B0B13" }}>
+                                    <span className="text-xl">{traditionEmojisMap[tradition] || "🌍"}</span>
+                                    {tradition}
+                                    <span className="ml-2 text-sm text-slate-400">({traditionImages.length} image{traditionImages.length !== 1 ? 's' : ''})</span>
                                   </h3>
                                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                    {dateImages.map((image) => {
-                                      const traditionEmojis: Record<string, string> = {
-                                        "Judaism": "✡️",
-                                        "Christianity": "✝️", 
-                                        "Islam": "☪️",
-                                        "Hinduism": "🕉️",
-                                        "Buddhism": "☸️",
-                                        "Other": "🌍"
-                                      };
-
+                                    {traditionImages.map((image) => {
                                       return (
                                         <div 
                                           key={image.id}
@@ -4055,10 +4062,11 @@ export default function FaithJourneyPage() {
 
                                           {/* Content */}
                                           <div className="space-y-3">
-                                            {/* Tradition */}
+                                            {/* Date */}
                                             <div className="flex items-center gap-2">
-                                              <span className="text-lg">{traditionEmojis[image.tradition_family] || "🌍"}</span>
-                                              <span className="text-sm font-medium text-slate-300">{image.tradition_family}</span>
+                                              <span className="text-xs font-medium px-2 py-1 rounded-full" style={{ backgroundColor: "rgba(212, 160, 32, 0.15)", color: "#D4A020" }}>
+                                                {new Date(image.date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                                              </span>
                                             </div>
 
                                             {/* Guide & Reflection */}
@@ -4101,7 +4109,8 @@ export default function FaithJourneyPage() {
                                     })}
                                   </div>
                                 </div>
-                              ))}
+                                );
+                              })}
                           </div>
                         );
                       })()}

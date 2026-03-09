@@ -366,7 +366,7 @@
     },
     {
       "date": "2026-03-09",
-      "global_fg": 24.5,
+      "global_fg": 24.0,
       "sectors": {
         "broad_market": 42.6,
         "technology": 43.2,
@@ -379,21 +379,21 @@
         "commodities": 61.3
       },
       "divergences": {
-        "broad_market": 18.1,
-        "technology": 18.7,
-        "healthcare": 20.0,
-        "financials": 11.2,
-        "real_estate": 34.4,
-        "energy": 41.2,
-        "bonds": 33.0,
-        "international": 13.1,
-        "commodities": 36.8
+        "broad_market": 18.6,
+        "technology": 19.2,
+        "healthcare": 20.5,
+        "financials": 11.7,
+        "real_estate": 34.9,
+        "energy": 41.7,
+        "bonds": 33.5,
+        "international": 13.6,
+        "commodities": 37.3
       }
     }
   ],
   "stats": {
     "broad_market": {
-      "mean_div": 16.2,
+      "mean_div": 16.3,
       "std_div": 6.0,
       "data_points": 15,
       "confidence": "moderate"
@@ -405,7 +405,7 @@
       "confidence": "moderate"
     },
     "healthcare": {
-      "mean_div": 24.1,
+      "mean_div": 24.2,
       "std_div": 5.2,
       "data_points": 15,
       "confidence": "moderate"
@@ -417,19 +417,19 @@
       "confidence": "moderate"
     },
     "real_estate": {
-      "mean_div": 32.0,
+      "mean_div": 32.1,
       "std_div": 4.7,
       "data_points": 15,
       "confidence": "moderate"
     },
     "energy": {
       "mean_div": 35.8,
-      "std_div": 4.7,
+      "std_div": 4.8,
       "data_points": 15,
       "confidence": "moderate"
     },
     "bonds": {
-      "mean_div": 29.8,
+      "mean_div": 29.9,
       "std_div": 3.3,
       "data_points": 15,
       "confidence": "moderate"
@@ -441,11 +441,11 @@
       "confidence": "moderate"
     },
     "commodities": {
-      "mean_div": 18.9,
-      "std_div": 11.7,
+      "mean_div": 19.0,
+      "std_div": 11.8,
       "data_points": 15,
       "confidence": "moderate"
     }
   },
-  "last_updated": "2026-03-09T10:33:59.394070"
+  "last_updated": "2026-03-09T11:18:58.344504"
 }

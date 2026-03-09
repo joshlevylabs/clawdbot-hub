@@ -56,6 +56,18 @@ interface MRESignalsData {
 }
 
 export async function loadSignalsData(request: NextRequest): Promise<MRESignalsData> {
+  // Prefer Supabase (always fresh) over static files (stale after deploy)
+  if (isPaperSupabaseConfigured()) {
+    try {
+      const { data, error } = await paperSupabase
+        .from('mre_signal_data')
+        .select('data')
+        .eq('id', 'universe')
+        .single();
+      if (!error && data?.data) return data.data as MRESignalsData;
+    } catch { /* fall through to file-based fallback */ }
+  }
+
   try {
     const signalsPath = join(process.cwd(), 'public', 'data', 'trading', 'mre-signals-universe.json');
     return JSON.parse(readFileSync(signalsPath, 'utf-8'));

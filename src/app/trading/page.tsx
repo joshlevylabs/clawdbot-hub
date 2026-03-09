@@ -45,6 +45,7 @@ import MarketCycles from "./MarketCycles";
 import SignalFlowTab from "./SignalFlowTab";
 import RealTimePnLDashboard from "@/components/trading/RealTimePnLDashboard";
 import RealTimePositionsTable from "@/components/trading/RealTimePositionsTable";
+import FibonacciModal from "@/components/FibonacciModal";
 import BrierCalibrationCard from "@/components/BrierCalibrationCard";
 import CorrelationPanel from "@/components/CorrelationPanel";
 import { getAgentConfig, getAgentDisplayName, AGENT_CONFIGS } from "@/lib/agent-config";
@@ -400,7 +401,7 @@ export default function TradingPage() {
     invalidated: number;
   } | null>(null);
 
-  // Fetch signal health on mount
+  // Fetch signal health on mount + build fibonacci map
   const fetchSignalHealth = useCallback(() => {
     fetch('/api/trading/signals?type=universe')
       .then(r => r.ok ? r.json() : null)
@@ -421,6 +422,18 @@ export default function TradingPage() {
             buySignals: buyCount,
             invalidated,
           });
+
+          // Build fibonacci data map from universe signals
+          const fibMap: Record<string, any> = {};
+          const assets = d.signals?.by_asset_class;
+          if (Array.isArray(assets)) {
+            for (const item of assets) {
+              if (item?.symbol && item?.fibonacci) {
+                fibMap[item.symbol] = item.fibonacci;
+              }
+            }
+          }
+          setFibonacciMap(fibMap);
         }
       })
       .catch(() => {});
@@ -429,6 +442,10 @@ export default function TradingPage() {
   useEffect(() => {
     fetchSignalHealth();
   }, [fetchSignalHealth]);
+
+  // Fibonacci modal + data map
+  const [fibModalSymbol, setFibModalSymbol] = useState<string | null>(null);
+  const [fibonacciMap, setFibonacciMap] = useState<Record<string, any>>({});
 
   // Analyze feature: open signal analysis modal
   const [analyzeModalSymbol, setAnalyzeModalSymbol] = useState<string | null>(null);

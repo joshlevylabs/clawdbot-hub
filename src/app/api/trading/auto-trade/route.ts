@@ -326,11 +326,42 @@ export async function POST(request: NextRequest) {
 
         // Use Fibonacci levels for stop loss and take profit
         // Guard: only use targets that are ABOVE current price (inverted targets = stale swing data)
-        // Fibonacci-based stop loss and take profit with strict validation
+        // Check if Fibonacci data is stale (60+ days old)
         const fib = signal.fibonacci;
-        let stopLoss = fib?.nearest_support && fib.nearest_support < signal.price ? fib.nearest_support : null;
-        const validTargets = fib?.profit_targets?.filter((t: number) => t > signal.price) || [];
-        let takeProfit = validTargets[0] || (fib?.nearest_resistance && fib.nearest_resistance > signal.price ? fib.nearest_resistance : null);
+        const isFibStale = fib?.fibonacci_stale === true;
+        let stopLoss = null;
+        let takeProfit = null;
+
+        // If Fibonacci is not stale, try to use Fibonacci levels
+        if (!isFibStale) {
+          stopLoss = fib?.nearest_support && fib.nearest_support < signal.price ? fib.nearest_support : null;
+          const validTargets = fib?.profit_targets?.filter((t: number) => t > signal.price) || [];
+          takeProfit = validTargets[0] || (fib?.nearest_resistance && fib.nearest_resistance > signal.price ? fib.nearest_resistance : null);
+        }
+
+        // Enhanced fallback logic: if Fibonacci is missing/stale but we have price data, use 20-day low/high
+        if (!stopLoss || !takeProfit) {
+          // Try to get price_data from signal for enhanced fallback
+          const priceData = signal.price_data;
+          let enhancedSL = null;
+          let enhancedTP = null;
+
+          if (priceData?.low_20d && priceData?.high_20d) {
+            // Use 20-day low as support (SL) and 20-day high as resistance (TP) if reasonable
+            if (priceData.low_20d < signal.price && priceData.high_20d > signal.price) {
+              enhancedSL = priceData.low_20d;
+              enhancedTP = priceData.high_20d;
+              console.log(`[auto-trade] ${signal.symbol}: Using 20-day range fallback SL=${enhancedSL} TP=${enhancedTP}`);
+            }
+          }
+
+          if (!stopLoss) {
+            stopLoss = enhancedSL || Math.round(signal.price * 0.95 * 100) / 100; // Enhanced or -5% default
+          }
+          if (!takeProfit) {
+            takeProfit = enhancedTP || Math.round(signal.price * 1.10 * 100) / 100; // Enhanced or +10% default
+          }
+        }
 
         // SAFETY: If SL/TP are still inverted after Fibonacci lookup, fall back to percentage-based defaults
         // SL must be BELOW entry, TP must be ABOVE entry for long positions
@@ -341,13 +372,6 @@ export async function POST(request: NextRequest) {
         if (takeProfit && takeProfit <= signal.price) {
           console.warn(`[auto-trade] ${signal.symbol}: TP ${takeProfit} <= entry ${signal.price}, falling back to +10%`);
           takeProfit = Math.round(signal.price * 1.10 * 100) / 100;
-        }
-        // If no SL/TP from Fibonacci at all, use sensible defaults
-        if (!stopLoss) {
-          stopLoss = Math.round(signal.price * 0.95 * 100) / 100; // -5% default
-        }
-        if (!takeProfit) {
-          takeProfit = Math.round(signal.price * 1.10 * 100) / 100; // +10% default
         }
 
         const proposal: TradeProposal = {

@@ -284,125 +284,274 @@ function YearComparison({ records }: { records: TaxHistoryRecord[] }) {
   );
 }
 
-export default function TaxHistory({ data }: TaxHistoryProps) {
-  const [uploadModalOpen, setUploadModalOpen] = useState(false);
-  
-  const sortedHistory = [...data.history].sort((a, b) => b.year - a.year);
-  
+function YearlyComparison({ year, sCorpData, personalData }: {
+  year: number;
+  sCorpData: any;
+  personalData: any;
+}) {
   return (
-    <div className="space-y-6">
-      {/* Year-over-Year Comparison */}
-      <YearComparison records={data.history} />
-      
-      {/* Payment Tracker */}
-      <PaymentTracker data={data} />
-      
-      {/* Historical Records */}
-      <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700/50">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
-            <History className="w-5 h-5 text-primary-400" />
-            <h2 className="text-lg font-semibold text-slate-100">Tax History</h2>
-          </div>
-          
-          {/* Placeholder for document upload - V2 feature */}
-          <button 
-            onClick={() => setUploadModalOpen(true)}
-            className="flex items-center gap-2 px-3 py-2 bg-slate-700/50 hover:bg-slate-600/50 rounded-lg transition-colors text-sm text-slate-300 border border-slate-600/30"
-            disabled
-          >
-            <Upload className="w-4 h-4" />
-            Upload Returns (V2)
-          </button>
-        </div>
-        
-        {sortedHistory.length > 0 ? (
-          <div className="space-y-6">
-            {sortedHistory.map((record) => (
-              <HistoryCard key={record.id} record={record} />
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-12">
-            <FileText className="w-8 h-8 text-slate-600 mx-auto mb-3" />
-            <h3 className="text-slate-400 font-medium mb-1">No Tax History</h3>
-            <p className="text-slate-600 text-sm">Tax return summaries will appear here once filed.</p>
-          </div>
-        )}
+    <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700/50">
+      <div className="flex items-center gap-3 mb-6">
+        <Calendar className="w-5 h-5 text-[#D4A020]" />
+        <h2 className="text-lg font-semibold text-slate-100">{year} Tax Year</h2>
       </div>
       
-      {/* Validation Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* S-Corp Panel */}
+        <div className="bg-slate-900/30 rounded-lg p-5">
+          <div className="flex items-center gap-2 mb-4">
+            <Building className="w-4 h-4 text-[#D4A020]" />
+            <h3 className="font-semibold text-slate-100">S-Corp (Josh Levy Labs Inc)</h3>
+          </div>
+          
+          {sCorpData ? (
+            <div className="space-y-3">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="bg-slate-800/50 rounded-lg p-3 text-center">
+                  <p className="text-xs text-slate-500 mb-1">Gross Receipts</p>
+                  <p className="text-lg font-bold text-emerald-400">
+                    {formatCurrency(sCorpData.grossReceipts)}
+                  </p>
+                </div>
+                <div className="bg-slate-800/50 rounded-lg p-3 text-center">
+                  <p className="text-xs text-slate-500 mb-1">Officer Comp</p>
+                  <p className="text-lg font-bold text-slate-300">
+                    {formatCurrency(sCorpData.officerComp)}
+                  </p>
+                </div>
+                <div className="bg-slate-800/50 rounded-lg p-3 text-center">
+                  <p className="text-xs text-slate-500 mb-1">K-1 Pass-through</p>
+                  <p className="text-lg font-bold text-[#D4A020]">
+                    {formatCurrency(sCorpData.passthrough)}
+                  </p>
+                </div>
+                <div className="bg-slate-800/50 rounded-lg p-3 text-center">
+                  <p className="text-xs text-slate-500 mb-1">Form</p>
+                  <p className="text-lg font-bold text-slate-400">1120-S</p>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="text-center py-4">
+              <p className="text-slate-500 text-sm">No S-Corp data for {year}</p>
+            </div>
+          )}
+        </div>
+
+        {/* Personal Panel */}
+        <div className="bg-slate-900/30 rounded-lg p-5">
+          <div className="flex items-center gap-2 mb-4">
+            <User className="w-4 h-4 text-[#D4A020]" />
+            <h3 className="font-semibold text-slate-100">Personal (Joshua & Jillian)</h3>
+          </div>
+          
+          {personalData ? (
+            <div className="space-y-3">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="bg-slate-800/50 rounded-lg p-3 text-center">
+                  <p className="text-xs text-slate-500 mb-1">AGI</p>
+                  <p className="text-lg font-bold text-emerald-400">
+                    {formatCurrency(personalData.agi)}
+                  </p>
+                </div>
+                <div className="bg-slate-800/50 rounded-lg p-3 text-center">
+                  <p className="text-xs text-slate-500 mb-1">Total Tax</p>
+                  <p className="text-lg font-bold text-slate-300">
+                    {formatCurrency(personalData.totalTax)}
+                  </p>
+                </div>
+                <div className="bg-slate-800/50 rounded-lg p-3 text-center">
+                  <p className="text-xs text-slate-500 mb-1">Balance Due/Refund</p>
+                  <p className={`text-lg font-bold ${personalData.balance >= 0 ? 'text-red-400' : 'text-emerald-400'}`}>
+                    {personalData.balance >= 0 
+                      ? `+${formatCurrency(personalData.balance)}`
+                      : `${formatCurrency(personalData.balance)}`
+                    }
+                  </p>
+                </div>
+                <div className="bg-slate-800/50 rounded-lg p-3 text-center">
+                  <p className="text-xs text-slate-500 mb-1">Form</p>
+                  <p className="text-lg font-bold text-slate-400">1040</p>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="text-center py-4">
+              <p className="text-slate-500 text-sm">No personal data for {year}</p>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function TaxHistory({ data }: TaxHistoryProps) {
+  // Real historical tax data from extracted memory file
+  const historicalData: Record<number, {
+    scorp: { grossReceipts: number; officerComp: number; passthrough: number; };
+    personal: { agi: number; totalTax: number; balance: number; };
+  }> = {
+    2024: {
+      scorp: {
+        grossReceipts: 198752,
+        officerComp: 63333,
+        passthrough: 84884
+      },
+      personal: {
+        agi: 195896,
+        totalTax: 37648,
+        balance: -3024 // Refund
+      }
+    },
+    2023: {
+      scorp: {
+        grossReceipts: 207784,
+        officerComp: 54415,
+        passthrough: 75460
+      },
+      personal: {
+        agi: 217927,
+        totalTax: 23559,
+        balance: 2870 // Owed
+      }
+    },
+    2022: {
+      scorp: {
+        grossReceipts: 272297,
+        officerComp: 12000,
+        passthrough: 91953
+      },
+      personal: {
+        agi: 299443,
+        totalTax: 48652,
+        balance: 17764 // Owed
+      }
+    }
+  };
+  
+  // Calculate year-over-year trends
+  const years = [2024, 2023, 2022];
+  const latestYear = years[0];
+  const previousYear = years[1];
+  
+  const revenueChange = ((historicalData[latestYear].scorp.grossReceipts - historicalData[previousYear].scorp.grossReceipts) / historicalData[previousYear].scorp.grossReceipts * 100);
+  const agiChange = ((historicalData[latestYear].personal.agi - historicalData[previousYear].personal.agi) / historicalData[previousYear].personal.agi * 100);
+  const taxChange = historicalData[latestYear].personal.totalTax - historicalData[previousYear].personal.totalTax;
+
+  return (
+    <div className="space-y-6">
+      {/* Year-over-Year Summary */}
       <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700/50">
         <div className="flex items-center gap-3 mb-6">
-          <CheckCircle className="w-5 h-5 text-primary-400" />
-          <h2 className="text-lg font-semibold text-slate-100">Validation & Accuracy</h2>
+          <TrendingUp className="w-5 h-5 text-[#D4A020]" />
+          <h2 className="text-lg font-semibold text-slate-100">
+            Year-over-Year Summary ({previousYear} → {latestYear})
+          </h2>
+        </div>
+        
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <div className="bg-slate-900/30 rounded-lg p-4 text-center">
+            <div className="flex items-center justify-center gap-2 mb-2">
+              <Building className="w-4 h-4 text-slate-500" />
+              <p className="text-sm font-medium text-slate-300">S-Corp Revenue</p>
+            </div>
+            <p className={`text-2xl font-bold ${revenueChange >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+              {revenueChange >= 0 ? "+" : ""}{revenueChange.toFixed(1)}%
+            </p>
+            <p className="text-xs text-slate-500 mt-1">
+              {formatCurrency(historicalData[previousYear].scorp.grossReceipts)} → {formatCurrency(historicalData[latestYear].scorp.grossReceipts)}
+            </p>
+          </div>
+          
+          <div className="bg-slate-900/30 rounded-lg p-4 text-center">
+            <div className="flex items-center justify-center gap-2 mb-2">
+              <User className="w-4 h-4 text-slate-500" />
+              <p className="text-sm font-medium text-slate-300">Personal AGI</p>
+            </div>
+            <p className={`text-2xl font-bold ${agiChange >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+              {agiChange >= 0 ? "+" : ""}{agiChange.toFixed(1)}%
+            </p>
+            <p className="text-xs text-slate-500 mt-1">
+              {formatCurrency(historicalData[previousYear].personal.agi)} → {formatCurrency(historicalData[latestYear].personal.agi)}
+            </p>
+          </div>
+          
+          <div className="bg-slate-900/30 rounded-lg p-4 text-center">
+            <div className="flex items-center justify-center gap-2 mb-2">
+              <DollarSign className="w-4 h-4 text-slate-500" />
+              <p className="text-sm font-medium text-slate-300">Tax Change</p>
+            </div>
+            <p className={`text-2xl font-bold ${taxChange >= 0 ? "text-red-400" : "text-emerald-400"}`}>
+              {taxChange >= 0 ? "+" : ""}{formatCurrency(taxChange)}
+            </p>
+            <p className="text-xs text-slate-500 mt-1">Personal tax liability</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Yearly Breakdown - S-Corp vs Personal Side by Side */}
+      <div className="space-y-6">
+        {years.map(year => (
+          <YearlyComparison 
+            key={year}
+            year={year}
+            sCorpData={historicalData[year].scorp}
+            personalData={historicalData[year].personal}
+          />
+        ))}
+      </div>
+
+      {/* Summary Insights */}
+      <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700/50">
+        <div className="flex items-center gap-3 mb-6">
+          <BarChart3 className="w-5 h-5 text-[#D4A020]" />
+          <h2 className="text-lg font-semibold text-slate-100">Three-Year Tax Summary</h2>
         </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-slate-900/30 rounded-lg p-4">
-            <h3 className="font-medium text-slate-200 mb-3">Your Records vs Filed Returns</h3>
-            {sortedHistory.length > 0 ? (
-              <div className="space-y-3">
-                {sortedHistory.slice(0, 3).map((record) => {
-                  const variance = Math.abs((record.accountant_estimate || 0) - 
-                    ((record.federal_tax_owed || 0) + (record.state_tax_owed || 0)));
-                  const isAccurate = variance < 1000;
-                  
-                  return (
-                    <div key={record.id} className="flex items-center justify-between">
-                      <span className="text-sm text-slate-300">{record.year}</span>
-                      <div className="flex items-center gap-2">
-                        {isAccurate ? (
-                          <CheckCircle className="w-4 h-4 text-emerald-400" />
-                        ) : (
-                          <AlertCircle className="w-4 h-4 text-amber-400" />
-                        )}
-                        <span className={`text-sm ${isAccurate ? "text-emerald-400" : "text-amber-400"}`}>
-                          {isAccurate ? "Accurate" : `${formatCurrency(variance)} variance`}
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })}
+          {/* S-Corp Trends */}
+          <div className="bg-slate-900/30 rounded-lg p-5">
+            <h3 className="font-semibold text-slate-100 mb-4 flex items-center gap-2">
+              <Building className="w-4 h-4 text-[#D4A020]" />
+              S-Corp Performance
+            </h3>
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-slate-400">Peak Revenue Year:</span>
+                <span className="text-sm font-medium text-emerald-400">2022 ({formatCurrency(272297)})</span>
               </div>
-            ) : (
-              <p className="text-sm text-slate-500">No historical data for comparison</p>
-            )}
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-slate-400">Highest K-1 Pass-through:</span>
+                <span className="text-sm font-medium text-[#D4A020]">2022 ({formatCurrency(91953)})</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-slate-400">Officer Comp Growth:</span>
+                <span className="text-sm font-medium text-slate-300">$12k → $63k (2022-2024)</span>
+              </div>
+            </div>
           </div>
-          
-          <div className="bg-slate-900/30 rounded-lg p-4">
-            <h3 className="font-medium text-slate-200 mb-3">Estimated vs Actual Payments</h3>
-            {data.estimates.length > 0 ? (
-              <div className="space-y-3">
-                {data.estimates
-                  .filter(e => e.actual_amount)
-                  .slice(0, 3)
-                  .map((estimate) => {
-                    const variance = Math.abs((estimate.actual_amount || 0) - (estimate.estimated_amount || 0));
-                    const isAccurate = variance < (estimate.estimated_amount || 0) * 0.1; // Within 10%
-                    
-                    return (
-                      <div key={estimate.id} className="flex items-center justify-between">
-                        <span className="text-sm text-slate-300">
-                          {estimate.year} Q{estimate.quarter} {estimate.type}
-                        </span>
-                        <div className="flex items-center gap-2">
-                          {isAccurate ? (
-                            <CheckCircle className="w-4 h-4 text-emerald-400" />
-                          ) : (
-                            <AlertCircle className="w-4 h-4 text-amber-400" />
-                          )}
-                          <span className={`text-sm ${isAccurate ? "text-emerald-400" : "text-amber-400"}`}>
-                            {isAccurate ? "On target" : `${formatCurrency(variance)} diff`}
-                          </span>
-                        </div>
-                      </div>
-                    );
-                  })}
+
+          {/* Personal Tax Trends */}
+          <div className="bg-slate-900/30 rounded-lg p-5">
+            <h3 className="font-semibold text-slate-100 mb-4 flex items-center gap-2">
+              <User className="w-4 h-4 text-[#D4A020]" />
+              Personal Tax Performance
+            </h3>
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-slate-400">Highest Tax Year:</span>
+                <span className="text-sm font-medium text-red-400">2022 ({formatCurrency(48652)})</span>
               </div>
-            ) : (
-              <p className="text-sm text-slate-500">No payment data for comparison</p>
-            )}
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-slate-400">Best Outcome:</span>
+                <span className="text-sm font-medium text-emerald-400">2024 (${formatCurrency(3024)} refund)</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-slate-400">Effective Rate (2024):</span>
+                <span className="text-sm font-medium text-slate-300">~17.5%</span>
+              </div>
+            </div>
           </div>
         </div>
         
@@ -410,10 +559,10 @@ export default function TaxHistory({ data }: TaxHistoryProps) {
           <div className="flex items-start gap-3">
             <CheckCircle className="w-5 h-5 text-blue-400 mt-0.5" />
             <div>
-              <p className="text-blue-300 font-medium mb-1">Continuous Improvement</p>
+              <p className="text-blue-300 font-medium mb-1">Tax Planning Insights</p>
               <p className="text-sm text-blue-200">
-                Track the accuracy of your estimates over time to improve tax planning. 
-                Regular validation helps refine your quarterly payment calculations and reduces year-end surprises.
+                The move from $12k to $63k officer compensation (2022→2024) improved tax efficiency by reducing 
+                pass-through income subject to self-employment tax. 2024 federal refund suggests good withholding strategy.
               </p>
             </div>
           </div>

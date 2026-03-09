@@ -269,12 +269,22 @@
       "estimatedCost": 0.0346,
       "model": "claude-sonnet-4-20250514",
       "duration": "48.9s"
+    },
+    {
+      "date": "2026-03-08",
+      "type": "adhoc-marin-daily-component-sourcing-optical-stack-electrical-design-firmware-progress",
+      "inputTokens": 2432,
+      "outputTokens": 2119,
+      "totalTokens": 4551,
+      "estimatedCost": 0.0391,
+      "model": "claude-sonnet-4-20250514",
+      "duration": "52.9s"
     }
   ],
   "totals": {
-    "today": 0.0346,
-    "week": 0.6835,
-    "month": 1.0862,
-    "standupCount": 27
+    "today": 0.0391,
+    "week": 0.4359,
+    "month": 1.1253,
+    "standupCount": 28
   }
 }

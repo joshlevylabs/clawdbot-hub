@@ -122,27 +122,21 @@ interface TradeProposal {
 
 // ── Helpers ──
 
-function loadSignals(): { signals: MRESignal[]; timestamp: string; regime: string } {
+async function loadSignals(request: NextRequest): Promise<{ signals: MRESignal[]; timestamp: string; regime: string }> {
   try {
-    const signalsPath = join(process.cwd(), 'public', 'data', 'trading', 'mre-signals-universe.json');
-    const data = JSON.parse(readFileSync(signalsPath, 'utf-8'));
+    const origin = request.headers.get('host');
+    const protocol = origin?.includes('localhost') ? 'http' : 'https';
+    const res = await fetch(`${protocol}://${origin}/api/trading/signals?type=universe`);
+    if (!res.ok) throw new Error(`Signal data unavailable (${res.status})`);
+    const data = await res.json();
     return {
       signals: data.signals.by_asset_class || [],
       timestamp: data.timestamp || '',
       regime: data.regime?.global || 'unknown',
     };
-  } catch {
-    try {
-      const altPath = join(process.cwd(), '.next', 'server', 'app', 'data', 'trading', 'mre-signals-universe.json');
-      const data = JSON.parse(readFileSync(altPath, 'utf-8'));
-      return {
-        signals: data.signals.by_asset_class || [],
-        timestamp: data.timestamp || '',
-        regime: data.regime?.global || 'unknown',
-      };
-    } catch {
-      return { signals: [], timestamp: '', regime: 'unknown' };
-    }
+  } catch (error) {
+    console.error('Failed to fetch signals from API:', error);
+    return { signals: [], timestamp: '', regime: 'unknown' };
   }
 }
 
@@ -224,7 +218,7 @@ export async function POST(request: NextRequest) {
     const agentFilter: string | undefined = body.agent_id;
 
     // Load MRE signals
-    const { signals: allSignals, timestamp, regime: globalRegime } = loadSignals();
+    const { signals: allSignals, timestamp, regime: globalRegime } = await loadSignals(request);
     const buySignals = allSignals.filter(s => s.signal === 'BUY');
 
     if (buySignals.length === 0) {

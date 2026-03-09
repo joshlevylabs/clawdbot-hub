@@ -1308,7 +1308,7 @@ export default function MarketsOverview({ initialSymbol, onSymbolConsumed }: Mar
 
   // Fetch all MRE signals and Pit recommendations on mount
   useEffect(() => {
-    fetch('/data/trading/mre-signals.json?' + Date.now())
+    fetch('/api/trading/signals?type=core')
       .then(r => r.json())
       .then(data => {
         const signals = data?.signals?.by_asset_class || [];

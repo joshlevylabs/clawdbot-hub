@@ -9,12 +9,13 @@ import {
   type GraphEdge
 } from "@/lib/signal-flow-transform";
 
-const MRE_SIGNALS_PATH = path.join(process.cwd(), "public", "data", "trading", "mre-signals.json");
-
-async function loadMRESignals() {
+async function loadMRESignals(request: NextRequest) {
   try {
-    const data = await fs.readFile(MRE_SIGNALS_PATH, "utf8");
-    return JSON.parse(data);
+    const origin = request.headers.get('host');
+    const protocol = origin?.includes('localhost') ? 'http' : 'https';
+    const res = await fetch(`${protocol}://${origin}/api/trading/signals?type=core`);
+    if (!res.ok) throw new Error(`Signal data unavailable (${res.status})`);
+    return await res.json();
   } catch (error) {
     console.error("Failed to load MRE signals:", error);
     return null;
@@ -92,7 +93,7 @@ function filterGraphData(
  */
 export async function GET(request: NextRequest) {
   try {
-    const mreSignals = await loadMRESignals();
+    const mreSignals = await loadMRESignals(request);
     if (!mreSignals) {
       return NextResponse.json(
         { error: "Failed to load MRE signals data" },

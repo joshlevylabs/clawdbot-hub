@@ -90,8 +90,8 @@ function formatPercent(value: number): string {
 async function fetchMRESignals(): Promise<MRESignal[]> {
   try {
     const [coreRes, uniRes] = await Promise.allSettled([
-      fetch("/data/trading/mre-signals.json"),
-      fetch("/data/trading/mre-signals-universe.json"),
+      fetch("/api/trading/signals?type=core"),
+      fetch("/api/trading/signals?type=universe"),
     ]);
     const results: MRESignal[] = [];
     for (const res of [coreRes, uniRes]) {

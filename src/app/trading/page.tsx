@@ -402,7 +402,7 @@ export default function TradingPage() {
 
   // Fetch signal health on mount
   const fetchSignalHealth = useCallback(() => {
-    fetch('/data/trading/mre-signals-universe.json')
+    fetch('/api/trading/signals?type=universe')
       .then(r => r.ok ? r.json() : null)
       .then(d => {
         if (d) {

@@ -854,8 +854,8 @@ export default function MREDashboard() {
     try {
       setLoading(true);
       const [coreRes, universeRes] = await Promise.all([
-        fetch("/data/trading/mre-signals.json?" + Date.now()),
-        fetch("/data/trading/mre-signals-universe.json?" + Date.now())
+        fetch("/api/trading/signals?type=core"),
+        fetch("/api/trading/signals?type=universe")
       ]);
       
       if (!coreRes.ok) throw new Error("Failed to fetch core");

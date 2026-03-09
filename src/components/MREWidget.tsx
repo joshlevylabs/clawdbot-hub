@@ -84,7 +84,7 @@ export default function MREWidget() {
   useEffect(() => {
     async function load() {
       try {
-        const res = await fetch("/data/trading/mre-signals.json");
+        const res = await fetch("/api/trading/signals?type=core");
         if (res.ok) setData(await res.json());
       } catch (e) {
         console.error("MRE load error:", e);

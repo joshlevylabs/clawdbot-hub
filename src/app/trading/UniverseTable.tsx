@@ -218,7 +218,7 @@ export default function UniverseTable() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const res = await fetch("/data/trading/mre-signals-universe.json?" + Date.now());
+      const res = await fetch("/api/trading/signals?type=universe");
       if (!res.ok) throw new Error("Failed to fetch universe signals");
       const json: UniverseData = await res.json();
       setData(json);

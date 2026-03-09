@@ -1818,8 +1818,8 @@ export default function SignalFlowTab() {
         
         // Fetch directly from public JSON files (the raw MRE signal data + versions)
         const [coreResponse, universeResponse, versionsResponse, stratVersionsResponse] = await Promise.allSettled([
-          fetch('/data/trading/mre-signals.json'),
-          fetch('/data/trading/mre-signals-universe.json'),
+          fetch('/api/trading/signals?type=core'),
+          fetch('/api/trading/signals?type=universe'),
           fetch('/data/trading/mre-versions.json'),
           fetch('/data/trading/strategy-versions.json'),
         ]);

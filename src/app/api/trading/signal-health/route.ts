@@ -20,22 +20,17 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    // Load signal data
+    // Load signal data from Supabase API
     let signalsData: Record<string, unknown>;
     try {
-      const signalsPath = join(process.cwd(), 'public', 'data', 'trading', 'mre-signals-universe.json');
-      signalsData = JSON.parse(readFileSync(signalsPath, 'utf-8'));
-    } catch {
-      try {
-        const altPath = join(process.cwd(), '.next', 'server', 'app', 'data', 'trading', 'mre-signals-universe.json');
-        signalsData = JSON.parse(readFileSync(altPath, 'utf-8'));
-      } catch {
-        const origin = request.headers.get('host');
-        const protocol = origin?.includes('localhost') ? 'http' : 'https';
-        const res = await fetch(`${protocol}://${origin}/data/trading/mre-signals-universe.json`);
-        if (!res.ok) throw new Error(`Signal data unavailable (${res.status})`);
-        signalsData = await res.json();
-      }
+      const origin = request.headers.get('host');
+      const protocol = origin?.includes('localhost') ? 'http' : 'https';
+      const res = await fetch(`${protocol}://${origin}/api/trading/signals?type=universe`);
+      if (!res.ok) throw new Error(`Signal data unavailable (${res.status})`);
+      signalsData = await res.json();
+    } catch (error) {
+      console.error('Failed to fetch signals from API:', error);
+      throw new Error('Signal data unavailable');
     }
 
     const timestamp = signalsData.timestamp as string;

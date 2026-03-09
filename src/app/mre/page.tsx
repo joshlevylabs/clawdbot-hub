@@ -995,7 +995,7 @@ export default function MREDashboard() {
     try {
       setLoading(true);
       const [mreRes, rotRes] = await Promise.all([
-        fetch("/data/trading/mre-signals.json?" + Date.now()),
+        fetch("/api/trading/signals?type=core"),
         fetch("/data/trading/rotation-status.json?" + Date.now()).catch(() => null),
       ]);
       if (!mreRes.ok) throw new Error("Failed to fetch");

@@ -66,7 +66,7 @@ export async function loadSignalsData(request: NextRequest): Promise<MRESignalsD
     } catch {
       const origin = request.headers.get('host');
       const protocol = origin?.includes('localhost') ? 'http' : 'https';
-      const res = await fetch(`${protocol}://${origin}/data/trading/mre-signals-universe.json`, {
+      const res = await fetch(`${protocol}://${origin}/api/trading/signals?type=universe`, {
         headers: { 'Cookie': request.headers.get('cookie') || '' }
       });
       if (!res.ok) throw new Error(`Signal data unavailable (${res.status})`);

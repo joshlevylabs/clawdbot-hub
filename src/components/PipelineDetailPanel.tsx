@@ -391,7 +391,7 @@ function StrategyTechnicalOverview({ strategyName, tickers }: { strategyName: st
     if (strategyName.includes('VIX')) {
       const fetchVixData = async () => {
         try {
-          const res = await fetch('/data/trading/mre-signals-universe.json');
+          const res = await fetch('/api/trading/signals?type=universe');
           if (res.ok) {
             const data = await res.json();
             setVixData({
@@ -1914,7 +1914,7 @@ function BlendedFGSectorOverview({ tickers }: { tickers: TickerDetail[] }) {
   useEffect(() => {
     const fetchSectorData = async () => {
       try {
-        const res = await fetch('/data/trading/mre-signals.json');
+        const res = await fetch('/api/trading/signals?type=core');
         if (res.ok) {
           const data = await res.json();
           setGlobalFG(data.fear_greed?.current ?? null);

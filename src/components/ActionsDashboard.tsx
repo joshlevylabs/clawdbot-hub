@@ -813,8 +813,8 @@ export default function ActionsDashboard({
       try {
         // Load core, universe, and pit data
         const [coreRes, universeRes, pitRes] = await Promise.all([
-          fetch("/data/trading/mre-signals.json"),
-          fetch("/data/trading/mre-signals-universe.json"),
+          fetch("/api/trading/signals?type=core"),
+          fetch("/api/trading/signals?type=universe"),
           fetch("/data/trading/pit-recommendations.json"),
         ]);
         

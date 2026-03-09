@@ -503,8 +503,8 @@ export default function SignalAnalysisModal({ symbol, onClose }: SignalAnalysisM
 
         // Fetch MRE signals and pit fleet in parallel
         const [signalsRes, universeRes, pitRes] = await Promise.all([
-          fetch("/data/trading/mre-signals.json"),
-          fetch("/data/trading/mre-signals-universe.json"),
+          fetch("/api/trading/signals?type=core"),
+          fetch("/api/trading/signals?type=universe"),
           fetch("/data/trading/pit-recommendations.json"),
         ]);
 

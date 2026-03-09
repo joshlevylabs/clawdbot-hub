@@ -132,7 +132,7 @@ export default function VoteConsensusModal({ symbol, onClose }: VoteConsensusMod
         setLoading(true);
         setError(null);
 
-        const response = await fetch("/data/trading/mre-signals-universe.json?" + Date.now());
+        const response = await fetch("/api/trading/signals?type=universe");
         if (!response.ok) throw new Error("Failed to fetch universe signals");
         
         const data: UniverseData = await response.json();

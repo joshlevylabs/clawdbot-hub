@@ -1133,6 +1133,7 @@ export default function TradingPage() {
                           <th className="text-right py-2 px-2">Target</th>
                           <th className="text-right py-2 px-2">Days</th>
                           <th className="text-center py-2 px-2">Auto</th>
+                          <th className="text-center py-2 px-2">Fib</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -1227,6 +1228,19 @@ export default function TradingPage() {
                               <td className="py-3 px-2 text-center">
                                 {pos.auto_tracked ? <Zap className="w-4 h-4 text-primary-400 mx-auto" /> : <span className="text-xs text-slate-600">—</span>}
                               </td>
+                              <td className="py-3 px-2 text-center">
+                                {fibonacciMap[pos.symbol] ? (
+                                  <button
+                                    onClick={() => setFibModalSymbol(pos.symbol)}
+                                    className="text-primary-400 hover:text-primary-300 transition-colors"
+                                    title={`Fibonacci Analysis — ${pos.symbol}`}
+                                  >
+                                    📐
+                                  </button>
+                                ) : (
+                                  <span className="text-slate-700 text-xs">—</span>
+                                )}
+                              </td>
                             </tr>
                           );
                         })}
@@ -1272,6 +1286,7 @@ export default function TradingPage() {
                                   <td className="py-2 px-2 text-right font-mono text-slate-600">—</td>
                                   <td className="py-2 px-2 text-right text-sm text-slate-600">—</td>
                                   <td className="py-2 px-2 text-center"><span className="text-xs text-slate-600">—</span></td>
+                                  <td className="py-2 px-2 text-center"><span className="text-xs text-slate-600">—</span></td>
                                 </tr>
                               );
                             });
@@ -1306,6 +1321,7 @@ export default function TradingPage() {
                                 <td className="py-3 px-2 text-right font-mono text-slate-600">—</td>
                                 <td className="py-3 px-2 text-right font-mono text-slate-600">—</td>
                                 <td className="py-3 px-2 text-right text-sm text-slate-600">—</td>
+                                <td className="py-3 px-2 text-center"><span className="text-xs text-slate-600">—</span></td>
                                 <td className="py-3 px-2 text-center"><span className="text-xs text-slate-600">—</span></td>
                               </tr>
                             );
@@ -1343,7 +1359,7 @@ export default function TradingPage() {
                                 <td className="py-3 px-2 text-right font-mono text-slate-400">
                                   100%
                                 </td>
-                                <td colSpan={6} className="py-3 px-2 text-right text-sm text-slate-500">
+                                <td colSpan={7} className="py-3 px-2 text-right text-sm text-slate-500">
                                   Positions: ${formatCurrency(fPosValue)} + Cash: ${formatCurrency(allCash)} · 7 portfolios × $100K = $700K AUM
                                 </td>
                               </tr>
@@ -1379,7 +1395,7 @@ export default function TradingPage() {
                                 <td className="py-3 px-2 text-right font-mono text-slate-400">
                                   100%
                                 </td>
-                                <td colSpan={6} className="py-3 px-2 text-right text-sm text-slate-500">
+                                <td colSpan={7} className="py-3 px-2 text-right text-sm text-slate-500">
                                   Positions: ${formatCurrency(fPosValue)} + Cash: ${formatCurrency(filteredCash)}{!isAgent && ` + Interest: $${formatCurrency(fInterest)}`}
                                 </td>
                               </tr>
@@ -1442,11 +1458,14 @@ export default function TradingPage() {
                           <th className="text-right py-2 px-2">Qty</th>
                           <th className="text-right py-2 px-2">Entry</th>
                           <th className="text-right py-2 px-2">Current</th>
+                          <th className="text-right py-2 px-2">SL</th>
+                          <th className="text-right py-2 px-2">TP</th>
                           <th className="text-right py-2 px-2">Unrealized P/L</th>
                           <th className="text-right py-2 px-2">P/L %</th>
                           <th className="text-right py-2 px-2">Days Held</th>
                           <th className="text-right py-2 px-2">Hold Target</th>
                           <th className="text-left py-2 px-2">Status</th>
+                          <th className="text-center py-2 px-2">Fib</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -1477,6 +1496,12 @@ export default function TradingPage() {
                                 <td className="py-2 px-2 text-right font-mono text-slate-300">{pos.qty}</td>
                                 <td className="py-2 px-2 text-right font-mono text-slate-400">${formatCurrency(pos.entry_price)}</td>
                                 <td className="py-2 px-2 text-right font-mono text-slate-300">${formatCurrency(curPrice)}</td>
+                                <td className="py-2 px-2 text-right font-mono text-red-400/70">
+                                  {pos.stop_loss ? `$${formatCurrency(pos.stop_loss)}` : "—"}
+                                </td>
+                                <td className="py-2 px-2 text-right font-mono text-emerald-400/70">
+                                  {pos.take_profit ? `$${formatCurrency(pos.take_profit)}` : "—"}
+                                </td>
                                 <td className={`py-2 px-2 text-right font-mono font-bold ${isProfit ? "text-emerald-400" : "text-red-400"}`}>
                                   {isProfit ? "+" : ""}${formatCurrency(unrealizedPnl)}
                                 </td>
@@ -1504,6 +1529,19 @@ export default function TradingPage() {
                                     <span className="px-2 py-0.5 rounded text-xs bg-amber-900/30 text-amber-400">Expiring</span>
                                   ) : (
                                     <span className="px-2 py-0.5 rounded text-xs bg-emerald-900/30 text-emerald-400">Holding</span>
+                                  )}
+                                </td>
+                                <td className="py-2 px-2 text-center">
+                                  {fibonacciMap[pos.symbol] ? (
+                                    <button
+                                      onClick={() => setFibModalSymbol(pos.symbol)}
+                                      className="text-primary-400 hover:text-primary-300 transition-colors"
+                                      title={`Fibonacci Analysis — ${pos.symbol}`}
+                                    >
+                                      📐
+                                    </button>
+                                  ) : (
+                                    <span className="text-slate-700 text-xs">—</span>
                                   )}
                                 </td>
                               </tr>
@@ -1574,6 +1612,7 @@ export default function TradingPage() {
                           <th className="text-right py-2 px-2">P/L %</th>
                           <th className="text-right py-2 px-2">Hold</th>
                           <th className="text-left py-2 px-2">Reason</th>
+                          <th className="text-center py-2 px-2">Fib</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -1616,6 +1655,19 @@ export default function TradingPage() {
                                     {trade.close_reason.replace(/_/g, " ")}
                                   </span>
                                 ) : "—"}
+                              </td>
+                              <td className="py-2 px-2 text-center">
+                                {fibonacciMap[trade.symbol] ? (
+                                  <button
+                                    onClick={() => setFibModalSymbol(trade.symbol)}
+                                    className="text-primary-400 hover:text-primary-300 transition-colors"
+                                    title={`Fibonacci Analysis — ${trade.symbol}`}
+                                  >
+                                    📐
+                                  </button>
+                                ) : (
+                                  <span className="text-slate-700 text-xs">—</span>
+                                )}
                               </td>
                             </tr>
                           );
@@ -1775,6 +1827,15 @@ export default function TradingPage() {
         <SignalAnalysisModal
           symbol={analyzeModalSymbol}
           onClose={() => setAnalyzeModalSymbol(null)}
+        />
+      )}
+
+      {/* Fibonacci Analysis Modal */}
+      {fibModalSymbol && fibonacciMap[fibModalSymbol] && (
+        <FibonacciModal
+          symbol={fibModalSymbol}
+          fibonacci={fibonacciMap[fibModalSymbol]}
+          onClose={() => setFibModalSymbol(null)}
         />
       )}
     </div>

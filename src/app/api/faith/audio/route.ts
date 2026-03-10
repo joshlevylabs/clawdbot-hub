@@ -140,43 +140,76 @@ export async function POST(request: NextRequest) {
     // Use v3 for Joshua's cloned voice (highest quality), turbo for premade voices (cost-efficient)
     const JOSH_VOICE_ID = 'VTn3ZhBirl7Eonh6soN9'
     const isJoshVoice = voice === JOSH_VOICE_ID
-    const modelId = isJoshVoice ? 'eleven_v3' : 'eleven_turbo_v2_5'
+    const modelId = isJoshVoice ? 'eleven_multilingual_v2' : 'eleven_turbo_v2_5'
+    const MAX_CHARS = 4500 // Stay under 5K limit with margin
 
-    const elevenLabsResponse = await fetch(
-      `https://api.elevenlabs.io/v1/text-to-speech/${voice}`,
-      {
-        method: 'POST',
-        headers: {
-          'Accept': 'audio/mpeg',
-          'Content-Type': 'application/json',
-          'xi-api-key': process.env.ELEVENLABS_API_KEY!,
-        },
-        body: JSON.stringify({
-          text: cleanText,
-          model_id: modelId,
-          voice_settings: {
-            stability: isJoshVoice ? 0.35 : 0.3, // Low stability = more expressive, less monotone
-            similarity_boost: isJoshVoice ? 0.85 : 0.75,
-            speed: isJoshVoice ? 0.92 : 0.95,
-          },
-        }),
+    // Split text into chunks if needed (split at paragraph boundaries)
+    const chunks: string[] = []
+    if (cleanText.length <= MAX_CHARS) {
+      chunks.push(cleanText)
+    } else {
+      const paragraphs = cleanText.split('\n\n')
+      let current = ''
+      for (const para of paragraphs) {
+        if (current.length + para.length + 2 > MAX_CHARS && current.length > 0) {
+          chunks.push(current.trim())
+          current = para
+        } else {
+          current += (current ? '\n\n' : '') + para
+        }
       }
-    )
-
-    if (!elevenLabsResponse.ok) {
-      const errorText = await elevenLabsResponse.text()
-      console.error('ElevenLabs API error:', errorText)
-      
-      if (elevenLabsResponse.status === 401) {
-        return NextResponse.json({ error: 'Audio service authentication failed' }, { status: 500 })
-      } else if (elevenLabsResponse.status === 429) {
-        return NextResponse.json({ error: 'Audio generation quota exceeded. Please try again later.' }, { status: 429 })
-      } else {
-        return NextResponse.json({ error: `Audio generation failed: ${errorText.slice(0, 200)}` }, { status: 500 })
-      }
+      if (current.trim()) chunks.push(current.trim())
     }
 
-    const audioBuffer = await elevenLabsResponse.arrayBuffer()
+    // Generate audio for each chunk
+    const audioChunks: ArrayBuffer[] = []
+    for (const chunk of chunks) {
+      const elevenLabsResponse = await fetch(
+        `https://api.elevenlabs.io/v1/text-to-speech/${voice}`,
+        {
+          method: 'POST',
+          headers: {
+            'Accept': 'audio/mpeg',
+            'Content-Type': 'application/json',
+            'xi-api-key': process.env.ELEVENLABS_API_KEY!,
+          },
+          body: JSON.stringify({
+            text: chunk,
+            model_id: modelId,
+            voice_settings: {
+              stability: isJoshVoice ? 0.35 : 0.3, // Low stability = more expressive, less monotone
+              similarity_boost: isJoshVoice ? 0.85 : 0.75,
+              speed: isJoshVoice ? 0.92 : 0.95,
+            },
+          }),
+        }
+      )
+
+      if (!elevenLabsResponse.ok) {
+        const errorText = await elevenLabsResponse.text()
+        console.error('ElevenLabs API error:', errorText)
+        
+        if (elevenLabsResponse.status === 401) {
+          return NextResponse.json({ error: 'Audio service authentication failed' }, { status: 500 })
+        } else if (elevenLabsResponse.status === 429) {
+          return NextResponse.json({ error: 'Audio generation quota exceeded. Please try again later.' }, { status: 429 })
+        } else {
+          return NextResponse.json({ error: `Audio generation failed: ${errorText.slice(0, 200)}` }, { status: 500 })
+        }
+      }
+
+      audioChunks.push(await elevenLabsResponse.arrayBuffer())
+    }
+
+    // Concatenate audio chunks
+    const totalSize = audioChunks.reduce((sum, buf) => sum + buf.byteLength, 0)
+    const audioBuffer = new ArrayBuffer(totalSize)
+    const combined = new Uint8Array(audioBuffer)
+    let offset = 0
+    for (const chunk of audioChunks) {
+      combined.set(new Uint8Array(chunk), offset)
+      offset += chunk.byteLength
+    }
     const fileSize = audioBuffer.byteLength
 
     // Upload to Supabase Storage

@@ -151,7 +151,7 @@ export async function POST(request: NextRequest) {
     // Use v3 for Joshua's cloned voice (highest quality), turbo for premade voices (cost-efficient)
     const JOSH_VOICE_ID = 'VTn3ZhBirl7Eonh6soN9'
     const isJoshVoice = voice === JOSH_VOICE_ID
-    const modelId = isJoshVoice ? 'eleven_v3' : 'eleven_turbo_v2_5'
+    const modelId = isJoshVoice ? 'eleven_multilingual_v2' : 'eleven_turbo_v2_5'
 
     const elevenLabsResponse = await fetch(
       `https://api.elevenlabs.io/v1/text-to-speech/${voice}`,
@@ -183,7 +183,7 @@ export async function POST(request: NextRequest) {
       } else if (elevenLabsResponse.status === 429) {
         return NextResponse.json({ error: 'Audio generation quota exceeded. Please try again later.' }, { status: 429 })
       } else {
-        return NextResponse.json({ error: 'Audio generation failed' }, { status: 500 })
+        return NextResponse.json({ error: `Audio generation failed: ${errorText.slice(0, 200)}` }, { status: 500 })
       }
     }
 

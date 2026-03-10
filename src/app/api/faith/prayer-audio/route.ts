@@ -151,7 +151,7 @@ export async function POST(request: NextRequest) {
     // Use v3 for Joshua's cloned voice (highest quality), turbo for premade voices (cost-efficient)
     const JOSH_VOICE_ID = 'VTn3ZhBirl7Eonh6soN9'
     const isJoshVoice = voice === JOSH_VOICE_ID
-    const modelId = isJoshVoice ? 'eleven_multilingual_v2' : 'eleven_turbo_v2_5'
+    const modelId = isJoshVoice ? 'eleven_v3' : 'eleven_turbo_v2_5'
 
     const elevenLabsResponse = await fetch(
       `https://api.elevenlabs.io/v1/text-to-speech/${voice}`,
@@ -166,9 +166,9 @@ export async function POST(request: NextRequest) {
           text: cleanText,
           model_id: modelId,
           voice_settings: {
-            stability: isJoshVoice ? 0.7 : 0.65, // Higher stability = calmer, more measured
+            stability: isJoshVoice ? 0.6 : 0.55,
             similarity_boost: isJoshVoice ? 0.8 : 0.75,
-            speed: isJoshVoice ? 0.78 : 0.82, // Peaceful, prayerful pacing for all voices
+            speed: isJoshVoice ? 0.92 : 0.95, // Natural pace — not rushed, not dragging
           },
         }),
       }

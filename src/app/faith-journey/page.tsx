@@ -1557,6 +1557,7 @@ export default function FaithJourneyPage() {
   const [audioFilter, setAudioFilter] = useState<string>("all");
   const [audioSearch, setAudioSearch] = useState("");
   const [audioDate, setAudioDate] = useState<string>("all");
+  const [audioViewMode, setAudioViewMode] = useState<"tradition" | "date">("tradition");
   const [elevenlabsUsage, setElevenlabsUsage] = useState<any>(null);
   const [usageLoading, setUsageLoading] = useState(false);
   const [currentlyPlaying, setCurrentlyPlaying] = useState<string | null>(null);
@@ -3543,6 +3544,155 @@ export default function FaithJourneyPage() {
             {/* Audio Tab */}
             {activeTab === "audio" && (
               <div className="space-y-6">
+                {/* Background Music Management */}
+                <div className="rounded-xl p-4 border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+                  <h2 className="text-lg font-semibold text-slate-100 mb-4 flex items-center gap-2">
+                    <Music className="w-5 h-5" style={{ color: "#D4A020" }} />
+                    Ambient Background Tracks
+                  </h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {[
+                      { id: 'ethereal-pad', name: 'Ethereal Pad', icon: '🌌' },
+                      { id: 'gentle-piano', name: 'Gentle Piano', icon: '🎹' },
+                      { id: 'spiritual-journey', name: 'Spiritual Journey', icon: '✨' },
+                      { id: 'calm-meditation', name: 'Calm Meditation', icon: '🧘' },
+                      { id: 'singing-bowls', name: 'Singing Bowls', icon: '🎵' },
+                      { id: 'peaceful-ambient', name: 'Peaceful Ambient', icon: '🌸' },
+                      { id: 'nature-calm', name: 'Nature Calm', icon: '🌿' },
+                    ].map((track) => (
+                      <div 
+                        key={track.id}
+                        className="flex items-center justify-between p-3 rounded-lg border"
+                        style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}
+                      >
+                        <div className="flex items-center gap-3">
+                          <span className="text-lg">{track.icon}</span>
+                          <span className="text-sm text-slate-300">{track.name}</span>
+                        </div>
+                        <button
+                          onClick={() => toggleAudio(`ambient-${track.id}`, `https://atldnpjaxaeqzgtqbrpy.supabase.co/storage/v1/object/public/faith-audio/ambient/${track.id}.mp3`)}
+                          className="flex items-center justify-center w-8 h-8 rounded-full transition-colors"
+                          style={{ 
+                            backgroundColor: currentlyPlaying === `ambient-${track.id}` ? "#D4A020" : "#2A2A38",
+                            color: currentlyPlaying === `ambient-${track.id}` ? "#0B0B11" : "#64748B"
+                          }}
+                        >
+                          {currentlyPlaying === `ambient-${track.id}` ? (
+                            <Pause className="w-4 h-4" />
+                          ) : (
+                            <Play className="w-4 h-4" />
+                          )}
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Audio Statistics */}
+                <div className="rounded-xl p-4 border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+                  <h2 className="text-lg font-semibold text-slate-100 mb-4 flex items-center gap-2">
+                    <TrendingUp className="w-5 h-5" style={{ color: "#D4A020" }} />
+                    Audio Generation Statistics
+                  </h2>
+                  <div className="space-y-6">
+                    {/* Overall Stats */}
+                    <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-slate-100">{audioFiles.length}</div>
+                        <div className="text-sm text-slate-400">Total Generations</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-slate-100">
+                          {audioFiles.reduce((sum, audio) => sum + (audio.char_count || 0), 0).toLocaleString()}
+                        </div>
+                        <div className="text-sm text-slate-400">Total Characters</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-slate-100">
+                          {audioFiles.length > 0 ? 
+                            Object.entries(audioFiles.reduce((acc, audio) => {
+                              const voice = audio.voice_id || 'Unknown';
+                              acc[voice] = (acc[voice] || 0) + 1;
+                              return acc;
+                            }, {} as Record<string, number>)).sort(([,a], [,b]) => b - a)[0]?.[0] || 'Unknown'
+                            : 'None'
+                          }
+                        </div>
+                        <div className="text-sm text-slate-400">Most Popular Voice</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-slate-100">
+                          {Math.round(audioFiles.reduce((sum, audio) => sum + (audio.file_size_bytes || 0), 0) / 1024 / 1024)}MB
+                        </div>
+                        <div className="text-sm text-slate-400">Total Size</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-2xl font-bold" style={{ color: "#D4A020" }}>
+                          ${(audioFiles.reduce((sum, audio) => sum + (audio.char_count || 0), 0) * 0.00022).toFixed(2)}
+                        </div>
+                        <div className="text-sm text-slate-400">Est. Cost</div>
+                      </div>
+                    </div>
+
+                    {/* Generations by Tradition */}
+                    <div>
+                      <h3 className="text-sm font-medium text-slate-300 mb-3">Generations by Tradition</h3>
+                      <div className="space-y-2">
+                        {Object.entries(
+                          audioFiles.reduce((acc, audio) => {
+                            const tradition = audio.tradition?.name || 'Unknown';
+                            if (!acc[tradition]) {
+                              acc[tradition] = {
+                                count: 0,
+                                characters: 0,
+                                color: audio.tradition?.color || "#6B7280",
+                                icon: audio.tradition?.icon || "🔯"
+                              };
+                            }
+                            acc[tradition].count += 1;
+                            acc[tradition].characters += audio.char_count || 0;
+                            return acc;
+                          }, {} as Record<string, { count: number; characters: number; color: string; icon: string }>)
+                        )
+                        .sort(([,a], [,b]) => b.count - a.count)
+                        .map(([tradition, stats]) => {
+                          const maxCount = Math.max(...Object.values(
+                            audioFiles.reduce((acc, audio) => {
+                              const t = audio.tradition?.name || 'Unknown';
+                              acc[t] = (acc[t] || 0) + 1;
+                              return acc;
+                            }, {} as Record<string, number>)
+                          ));
+                          const percentage = (stats.count / maxCount) * 100;
+                          
+                          return (
+                            <div key={tradition} className="space-y-1">
+                              <div className="flex items-center justify-between text-sm">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-lg">{stats.icon}</span>
+                                  <span className="text-slate-300">{tradition}</span>
+                                </div>
+                                <div className="text-slate-400">
+                                  {stats.count} files • {stats.characters.toLocaleString()} chars
+                                </div>
+                              </div>
+                              <div className="w-full bg-slate-700 rounded-full h-2">
+                                <div 
+                                  className="h-2 rounded-full transition-all" 
+                                  style={{ 
+                                    backgroundColor: stats.color, 
+                                    width: `${percentage}%`
+                                  }}
+                                ></div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
                 {/* ElevenLabs Quota Usage */}
                 <div className="rounded-xl p-4 border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
                   <h2 className="text-lg font-semibold text-slate-100 mb-4 flex items-center gap-2">
@@ -3619,10 +3769,43 @@ export default function FaithJourneyPage() {
 
                 {/* Audio Library */}
                 <div className="rounded-xl p-4 border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
-                  <h2 className="text-lg font-semibold text-slate-100 mb-4 flex items-center gap-2">
-                    <Volume2 className="w-5 h-5" style={{ color: "#D4A020" }} />
-                    Audio Library
-                  </h2>
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-lg font-semibold text-slate-100 flex items-center gap-2">
+                      <Volume2 className="w-5 h-5" style={{ color: "#D4A020" }} />
+                      Audio Library
+                    </h2>
+                    {/* View Mode Toggle */}
+                    <div className="flex items-center gap-1 p-1 rounded-lg" style={{ backgroundColor: "#0B0B11", border: "1px solid #2A2A38" }}>
+                      <button
+                        onClick={() => setAudioViewMode("tradition")}
+                        className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                          audioViewMode === "tradition" 
+                            ? "text-slate-900" 
+                            : "text-slate-400 hover:text-slate-300"
+                        }`}
+                        style={{ 
+                          backgroundColor: audioViewMode === "tradition" ? "#D4A020" : "transparent"
+                        }}
+                      >
+                        <Globe className="w-4 h-4 inline mr-1" />
+                        By Tradition
+                      </button>
+                      <button
+                        onClick={() => setAudioViewMode("date")}
+                        className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                          audioViewMode === "date" 
+                            ? "text-slate-900" 
+                            : "text-slate-400 hover:text-slate-300"
+                        }`}
+                        style={{ 
+                          backgroundColor: audioViewMode === "date" ? "#D4A020" : "transparent"
+                        }}
+                      >
+                        <Calendar className="w-4 h-4 inline mr-1" />
+                        By Date
+                      </button>
+                    </div>
+                  </div>
                   {audioLoading ? (
                     <div className="text-center py-8">
                       <Loader className="w-6 h-6 animate-spin mx-auto mb-2 text-slate-400" />
@@ -3686,91 +3869,194 @@ export default function FaithJourneyPage() {
                         </div>
                       </div>
 
-                      {/* Audio Files Table */}
+                      {/* Audio Files Display */}
                       <div className="space-y-3">
-                        {(Object.entries(audioFiles
-                          .filter(audio => {
-                            const matchesTradition = audioFilter === 'all' || (audio.tradition?.name === audioFilter);
-                            const matchesSearch = !audioSearch || 
-                              (audio.lesson?.topic || '').toLowerCase().includes(audioSearch.toLowerCase());
-                            
-                            let matchesDate = true;
-                            if (audioDate !== 'all') {
-                              const audioDateObj = new Date(audio.date);
-                              const now = new Date();
-                              if (audioDate === 'today') {
-                                matchesDate = audioDateObj.toDateString() === now.toDateString();
-                              } else if (audioDate === 'week') {
-                                const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-                                matchesDate = audioDateObj >= weekAgo;
-                              } else if (audioDate === 'month') {
-                                const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-                                matchesDate = audioDateObj >= monthAgo;
+                        {audioViewMode === "tradition" ? (
+                          // Group by Tradition
+                          Object.entries(audioFiles
+                            .filter(audio => {
+                              const matchesTradition = audioFilter === 'all' || (audio.tradition?.name === audioFilter);
+                              const matchesSearch = !audioSearch || 
+                                (audio.lesson?.topic || '').toLowerCase().includes(audioSearch.toLowerCase());
+                              
+                              let matchesDate = true;
+                              if (audioDate !== 'all') {
+                                // Fix timezone issue by using UTC
+                                const audioDateObj = new Date(audio.date + 'T00:00:00.000Z');
+                                const now = new Date();
+                                if (audioDate === 'today') {
+                                  const today = new Date().toISOString().split('T')[0];
+                                  matchesDate = audio.date === today;
+                                } else if (audioDate === 'week') {
+                                  const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                                  matchesDate = audioDateObj >= weekAgo;
+                                } else if (audioDate === 'month') {
+                                  const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+                                  matchesDate = audioDateObj >= monthAgo;
+                                }
                               }
-                            }
-                            
-                            return matchesTradition && matchesSearch && matchesDate;
-                          })
-                          .reduce((grouped, audio) => {
-                            const dateKey = new Date(audio.date).toLocaleDateString();
-                            if (!grouped[dateKey]) grouped[dateKey] = [];
-                            grouped[dateKey].push(audio);
-                            return grouped;
-                          }, {} as Record<string, any[]>)
-                        ) as Array<[string, any[]]>).map(([date, audios]) => (
-                          <div key={date} className="space-y-2">
-                            <h3 className="text-sm font-medium text-slate-300 border-b border-slate-600 pb-1">
-                              {date}
-                            </h3>
-                            {audios.map((audio) => (
-                              <div 
-                                key={audio.id}
-                                className="flex items-center gap-4 p-3 rounded-lg border hover:bg-slate-900/30 transition-colors"
-                                style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}
-                              >
-                                {/* Tradition */}
-                                <div className="flex items-center gap-2 min-w-0 flex-1">
-                                  <span className="text-lg" style={{ color: audio.tradition?.color || "#6B7280" }}>
-                                    {audio.tradition?.icon || "🔯"}
-                                  </span>
-                                  <span className="text-sm text-slate-300 truncate">
-                                    {audio.tradition?.name || "Unknown"}
-                                  </span>
-                                </div>
-                                
-                                {/* Topic */}
-                                <div className="min-w-0 flex-2">
-                                  <span className="text-sm text-slate-200 truncate">
-                                    {audio.lesson?.topic || "Unknown Topic"}
-                                  </span>
-                                </div>
-                                
-                                {/* Duration & Size */}
-                                <div className="flex gap-4 text-xs text-slate-400">
-                                  <span>{audio.duration_seconds ? `${Math.round(audio.duration_seconds)}s` : "—"}</span>
-                                  <span>{audio.file_size_bytes ? `${Math.round(audio.file_size_bytes / 1024)}KB` : "—"}</span>
-                                  <span>{audio.char_count ? `${audio.char_count}c` : "—"}</span>
-                                </div>
-                                
-                                {/* Play Button */}
-                                <button
-                                  onClick={() => toggleAudio(audio.id, audio.audioUrl)}
-                                  className="flex items-center justify-center w-8 h-8 rounded-full transition-colors"
-                                  style={{ 
-                                    backgroundColor: currentlyPlaying === audio.id ? "#D4A020" : "#2A2A38",
-                                    color: currentlyPlaying === audio.id ? "#0B0B11" : "#64748B"
-                                  }}
-                                >
-                                  {currentlyPlaying === audio.id ? (
-                                    <Pause className="w-4 h-4" />
-                                  ) : (
-                                    <Play className="w-4 h-4" />
-                                  )}
-                                </button>
+                              
+                              return matchesTradition && matchesSearch && matchesDate;
+                            })
+                            .reduce((grouped, audio) => {
+                              const traditionKey = audio.tradition?.name || 'Unknown';
+                              if (!grouped[traditionKey]) grouped[traditionKey] = [];
+                              grouped[traditionKey].push(audio);
+                              return grouped;
+                            }, {} as Record<string, any[]>)
+                          )
+                          .sort(([a], [b]) => a.localeCompare(b))
+                          .map(([tradition, audios]) => (
+                            <div key={tradition} className="space-y-2">
+                              <div className="flex items-center gap-2 border-b border-slate-600 pb-2">
+                                <span className="text-lg">
+                                  {audios[0]?.tradition?.icon || "🔯"}
+                                </span>
+                                <h3 className="text-sm font-medium text-slate-300">
+                                  {tradition} ({audios.length})
+                                </h3>
                               </div>
-                            ))}
-                          </div>
-                        ))}
+                              {audios
+                                .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+                                .map((audio) => (
+                                <div 
+                                  key={audio.id}
+                                  className="flex items-center gap-4 p-3 rounded-lg border hover:bg-slate-900/30 transition-colors ml-4"
+                                  style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}
+                                >
+                                  {/* Date */}
+                                  <div className="text-xs text-slate-400 w-20">
+                                    {new Date(audio.date + 'T00:00:00.000Z').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                                  </div>
+                                  
+                                  {/* Topic */}
+                                  <div className="min-w-0 flex-1">
+                                    <span className="text-sm text-slate-200 truncate">
+                                      {audio.lesson?.topic || "Unknown Topic"}
+                                    </span>
+                                  </div>
+                                  
+                                  {/* Duration & Size */}
+                                  <div className="flex gap-4 text-xs text-slate-400">
+                                    <span>{audio.duration_seconds ? `${Math.round(audio.duration_seconds)}s` : "—"}</span>
+                                    <span>{audio.file_size_bytes ? `${Math.round(audio.file_size_bytes / 1024)}KB` : "—"}</span>
+                                    <span>{audio.char_count ? `${audio.char_count}c` : "—"}</span>
+                                  </div>
+                                  
+                                  {/* Play Button */}
+                                  <button
+                                    onClick={() => toggleAudio(audio.id, audio.audioUrl)}
+                                    className="flex items-center justify-center w-8 h-8 rounded-full transition-colors"
+                                    style={{ 
+                                      backgroundColor: currentlyPlaying === audio.id ? "#D4A020" : "#2A2A38",
+                                      color: currentlyPlaying === audio.id ? "#0B0B11" : "#64748B"
+                                    }}
+                                  >
+                                    {currentlyPlaying === audio.id ? (
+                                      <Pause className="w-4 h-4" />
+                                    ) : (
+                                      <Play className="w-4 h-4" />
+                                    )}
+                                  </button>
+                                </div>
+                              ))}
+                            </div>
+                          ))
+                        ) : (
+                          // Group by Date (original implementation with timezone fix)
+                          Object.entries(audioFiles
+                            .filter(audio => {
+                              const matchesTradition = audioFilter === 'all' || (audio.tradition?.name === audioFilter);
+                              const matchesSearch = !audioSearch || 
+                                (audio.lesson?.topic || '').toLowerCase().includes(audioSearch.toLowerCase());
+                              
+                              let matchesDate = true;
+                              if (audioDate !== 'all') {
+                                // Fix timezone issue by using UTC
+                                const audioDateObj = new Date(audio.date + 'T00:00:00.000Z');
+                                const now = new Date();
+                                if (audioDate === 'today') {
+                                  const today = new Date().toISOString().split('T')[0];
+                                  matchesDate = audio.date === today;
+                                } else if (audioDate === 'week') {
+                                  const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                                  matchesDate = audioDateObj >= weekAgo;
+                                } else if (audioDate === 'month') {
+                                  const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+                                  matchesDate = audioDateObj >= monthAgo;
+                                }
+                              }
+                              
+                              return matchesTradition && matchesSearch && matchesDate;
+                            })
+                            .reduce((grouped, audio) => {
+                              // Fix timezone issue by using UTC and proper date formatting
+                              const dateKey = new Date(audio.date + 'T00:00:00.000Z').toLocaleDateString('en-US', { 
+                                month: 'long', 
+                                day: 'numeric',
+                                year: 'numeric'
+                              });
+                              if (!grouped[dateKey]) grouped[dateKey] = [];
+                              grouped[dateKey].push(audio);
+                              return grouped;
+                            }, {} as Record<string, any[]>)
+                          )
+                          .sort(([a], [b]) => new Date(b).getTime() - new Date(a).getTime()) // Sort dates descending
+                          .map(([date, audios]) => (
+                            <div key={date} className="space-y-2">
+                              <h3 className="text-sm font-medium text-slate-300 border-b border-slate-600 pb-1">
+                                {date} ({audios.length})
+                              </h3>
+                              {audios.map((audio) => (
+                                <div 
+                                  key={audio.id}
+                                  className="flex items-center gap-4 p-3 rounded-lg border hover:bg-slate-900/30 transition-colors"
+                                  style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}
+                                >
+                                  {/* Tradition */}
+                                  <div className="flex items-center gap-2 min-w-0 flex-1">
+                                    <span className="text-lg" style={{ color: audio.tradition?.color || "#6B7280" }}>
+                                      {audio.tradition?.icon || "🔯"}
+                                    </span>
+                                    <span className="text-sm text-slate-300 truncate">
+                                      {audio.tradition?.name || "Unknown"}
+                                    </span>
+                                  </div>
+                                  
+                                  {/* Topic */}
+                                  <div className="min-w-0 flex-2">
+                                    <span className="text-sm text-slate-200 truncate">
+                                      {audio.lesson?.topic || "Unknown Topic"}
+                                    </span>
+                                  </div>
+                                  
+                                  {/* Duration & Size */}
+                                  <div className="flex gap-4 text-xs text-slate-400">
+                                    <span>{audio.duration_seconds ? `${Math.round(audio.duration_seconds)}s` : "—"}</span>
+                                    <span>{audio.file_size_bytes ? `${Math.round(audio.file_size_bytes / 1024)}KB` : "—"}</span>
+                                    <span>{audio.char_count ? `${audio.char_count}c` : "—"}</span>
+                                  </div>
+                                  
+                                  {/* Play Button */}
+                                  <button
+                                    onClick={() => toggleAudio(audio.id, audio.audioUrl)}
+                                    className="flex items-center justify-center w-8 h-8 rounded-full transition-colors"
+                                    style={{ 
+                                      backgroundColor: currentlyPlaying === audio.id ? "#D4A020" : "#2A2A38",
+                                      color: currentlyPlaying === audio.id ? "#0B0B11" : "#64748B"
+                                    }}
+                                  >
+                                    {currentlyPlaying === audio.id ? (
+                                      <Pause className="w-4 h-4" />
+                                    ) : (
+                                      <Play className="w-4 h-4" />
+                                    )}
+                                  </button>
+                                </div>
+                              ))}
+                            </div>
+                          ))
+                        )}
                         
                         {audioFiles.length === 0 && (
                           <div className="text-center py-8">

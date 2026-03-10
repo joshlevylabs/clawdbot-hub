@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
     }
     
     if (!authenticated) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return NextResponse.json({ error: 'Unauthorized', debug: 'Auth failed — check Bearer token' }, { status: 401 })
     }
 
     // Create Supabase client with service role for database operations
@@ -225,8 +225,11 @@ export async function POST(request: NextRequest) {
       charCount: charCount,
     })
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('Audio generation error:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    return NextResponse.json({ 
+      error: `Audio generation failed: ${error?.message || 'Unknown error'}`,
+      stage: error?.stage || 'unknown',
+    }, { status: 500 })
   }
 }

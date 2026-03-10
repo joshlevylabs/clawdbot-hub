@@ -3656,13 +3656,13 @@ export default function FaithJourneyPage() {
                         )
                         .sort(([,a], [,b]) => (b as any).count - (a as any).count)
                         .map(([tradition, stats]) => {
-                          const maxCount = Math.max(...Object.values(
+                          const maxCount = Math.max(...(Object.values(
                             audioFiles.reduce((acc, audio) => {
                               const t = audio.tradition?.name || 'Unknown';
                               acc[t] = (acc[t] || 0) + 1;
                               return acc;
                             }, {} as Record<string, number>)
-                          ));
+                          ) as number[]));
                           const percentage = (stats.count / maxCount) * 100;
                           
                           return (

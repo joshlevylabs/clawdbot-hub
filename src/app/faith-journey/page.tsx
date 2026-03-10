@@ -3966,8 +3966,8 @@ export default function FaithJourneyPage() {
                             return acc;
                           }, {} as Record<string, { count: number; characters: number; color: string; icon: string }>)
                         )
-                        .sort(([,a], [,b]) => (b as any).count - (a as any).count)
-                        .map(([tradition, stats]) => {
+                        .sort(([,a], [,b]) => ((b as any).count || 0) - ((a as any).count || 0))
+                        .map(([tradition, stats]: [string, any]) => {
                           const maxCount = Math.max(...(Object.values(
                             audioFiles.reduce((acc, audio) => {
                               const t = audio.tradition?.name || 'Unknown';
@@ -4215,7 +4215,7 @@ export default function FaithJourneyPage() {
                               if (!grouped[traditionKey]) grouped[traditionKey] = [];
                               grouped[traditionKey].push(audio);
                               return grouped;
-                            }, {} as Record<string, any[]>)
+                            }, {} as Record<string, any[]>) as Record<string, any[]>
                           )
                           .sort(([a], [b]) => a.localeCompare(b))
                           .map(([tradition, audios]) => (
@@ -4311,7 +4311,7 @@ export default function FaithJourneyPage() {
                               if (!grouped[dateKey]) grouped[dateKey] = [];
                               grouped[dateKey].push(audio);
                               return grouped;
-                            }, {} as Record<string, any[]>)
+                            }, {} as Record<string, any[]>) as Record<string, any[]>
                           )
                           .sort(([a], [b]) => new Date(b).getTime() - new Date(a).getTime()) // Sort dates descending
                           .map(([date, audios]) => (

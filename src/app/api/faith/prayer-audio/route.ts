@@ -160,9 +160,9 @@ export async function POST(request: NextRequest) {
           text: cleanText,
           model_id: modelId,
           voice_settings: {
-            stability: isJoshVoice ? 0.6 : 0.5,
+            stability: isJoshVoice ? 0.7 : 0.65, // Higher stability = calmer, more measured
             similarity_boost: isJoshVoice ? 0.8 : 0.75,
-            speed: isJoshVoice ? 0.85 : 0.92, // Slower, more contemplative pacing
+            speed: isJoshVoice ? 0.78 : 0.82, // Peaceful, prayerful pacing for all voices
           },
         }),
       }

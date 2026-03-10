@@ -226,8 +226,8 @@ export async function POST(request: NextRequest) {
     const fileSize = audioBuffer.byteLength
 
     // Upload to Supabase Storage at prayers/{date}/{tradition}_{voice}.mp3
-    const traditionSlug = UUID_TO_SLUG[prayer.tradition_id] || 'interfaith';
-    const storageFileName = `prayers/${prayer.date}/${traditionSlug}_${voiceName.toLowerCase()}.mp3`
+    const traditionSlug = UUID_TO_SLUG[prayer?.tradition_id || ''] || 'interfaith';
+    const storageFileName = `prayers/${prayer?.date || 'unknown'}/${traditionSlug}_${voiceName.toLowerCase()}.mp3`
     
     const { data: uploadData, error: uploadError } = await supabase.storage
       .from('faith-audio')
@@ -246,8 +246,8 @@ export async function POST(request: NextRequest) {
       .from('faith_lesson_audio')
       .insert({
         lesson_id: prayerId, // Store prayer ID in lesson_id field
-        tradition_id: prayer.tradition_id,
-        date: prayer.date,
+        tradition_id: prayer?.tradition_id,
+        date: prayer?.date,
         voice: voiceName,
         model: modelId,
         storage_path: uploadData.path,

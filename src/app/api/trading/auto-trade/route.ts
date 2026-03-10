@@ -3,6 +3,7 @@ import { readFileSync } from 'fs';
 import { join } from 'path';
 import { paperSupabase, isPaperSupabaseConfigured } from '@/lib/paper-supabase';
 import { getSessionAny } from '@/lib/auth';
+import { logTradeProposal, logTradeExecution, logMarketObservation } from '@/lib/agent-memory';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60;
@@ -394,6 +395,17 @@ export async function POST(request: NextRequest) {
           status: mode === 'execute' ? 'proposed' : 'proposed',
         };
 
+        // Layer 3: Log trade proposal to agent memory
+        logTradeProposal({
+          agentId: style.id,
+          symbol: signal.symbol,
+          action: 'BUY',
+          reasoning: proposal.rationale,
+          confidence: signal.signal_strength / 100,
+          price: signal.price,
+          strategies: Array.from({ length: signal.strategies_agreeing }, (_, i) => `strategy-${i + 1}`),
+        }).catch(() => {}); // fire-and-forget
+
         if (mode === 'execute') {
           // Execute the trade
           const { data: position, error: posError } = await paperSupabase
@@ -429,6 +441,16 @@ export async function POST(request: NextRequest) {
             
             remainingCash = newCash;
             proposal.status = 'executed';
+
+            // Layer 3: Log trade execution to agent memory
+            logTradeExecution({
+              agentId: style.id,
+              symbol: signal.symbol,
+              action: 'BUY',
+              quantity: qty,
+              price: signal.price,
+              orderId: position?.id,
+            }).catch(() => {}); // fire-and-forget
           }
         }
 

@@ -1,7 +1,7 @@
 {
   "timestamp": "2026-03-10T03:33:36.611800",
-  "last_updated": "2026-03-10T13:32:12Z",
-  "last_updated_unix": 1773149532,
+  "last_updated": "2026-03-10T13:47:15Z",
+  "last_updated_unix": 1773150435,
   "fear_greed": {
     "current": 27.8296846011132,
     "rating": "fear",
@@ -245,7 +245,7 @@
   "regime": {
     "spy": {
       "regime": "sideways",
-      "price": 678.63,
+      "price": 677.27,
       "ema_20": 684.25,
       "ema_50": 684.59,
       "ema_100": 677.47,
@@ -267,7 +267,7 @@
     },
     "qqq": {
       "regime": "sideways",
-      "price": 609.74,
+      "price": 609.09,
       "ema_20": 608.26,
       "ema_50": 611.34,
       "ema_100": 607.42,
@@ -330,7 +330,7 @@
           "error": "insufficient_data_for_volatility",
           "normalization_enabled": true
         },
-        "price": 678.63,
+        "price": 677.27,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -356,7 +356,7 @@
         "version": "4.0.0",
         "fibonacci": {
           "symbol": "SPY",
-          "current_price": 678.63,
+          "current_price": 677.27,
           "swing_high": 697.8400268554688,
           "swing_low": 648.9324254696204,
           "swing_high_idx": 96,
@@ -450,7 +450,7 @@
           "error": "insufficient_data_for_volatility",
           "normalization_enabled": true
         },
-        "price": 609.74,
+        "price": 609.09,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -476,7 +476,7 @@
         "version": "4.0.0",
         "fibonacci": {
           "symbol": "QQQ",
-          "current_price": 609.74,
+          "current_price": 609.09,
           "swing_high": 636.5999755859375,
           "swing_low": 579.992718365408,
           "swing_high_idx": 96,
@@ -570,7 +570,7 @@
           "error": "insufficient_data_for_volatility",
           "normalization_enabled": true
         },
-        "price": 253.66,
+        "price": 253.12,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -596,7 +596,7 @@
         "version": "4.0.0",
         "fibonacci": {
           "symbol": "IWM",
-          "current_price": 253.66,
+          "current_price": 253.12,
           "swing_high": 271.6000061035156,
           "swing_low": 228.13496396973687,
           "swing_high_idx": 92,
@@ -690,7 +690,7 @@
           "error": "insufficient_data_for_volatility",
           "normalization_enabled": true
         },
-        "price": 140.19,
+        "price": 140.03,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -716,7 +716,7 @@
         "version": "4.0.0",
         "fibonacci": {
           "symbol": "XLK",
-          "current_price": 140.19,
+          "current_price": 140.03,
           "swing_high": 152.76328574939558,
           "swing_low": 85.84163713098569,
           "swing_high_idx": 162,
@@ -810,7 +810,7 @@
           "error": "insufficient_data_for_volatility",
           "normalization_enabled": true
         },
-        "price": 117.86,
+        "price": 117.5,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -836,7 +836,7 @@
         "version": "4.0.0",
         "fibonacci": {
           "symbol": "XLC",
-          "current_price": 117.86,
+          "current_price": 117.5,
           "swing_high": 120.40499877929688,
           "swing_low": 109.51047067492786,
           "swing_high_idx": 226,
@@ -930,7 +930,7 @@
           "error": "insufficient_data_for_volatility",
           "normalization_enabled": true
         },
-        "price": 50.31,
+        "price": 50.01,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -956,7 +956,7 @@
         "version": "4.0.0",
         "fibonacci": {
           "symbol": "XLF",
-          "current_price": 50.31,
+          "current_price": 50.01,
           "swing_high": 56.52000045776367,
           "swing_low": 51.360492181391045,
           "swing_high_idx": 457,
@@ -1050,7 +1050,7 @@
           "error": "insufficient_data_for_volatility",
           "normalization_enabled": true
         },
-        "price": 154.18,
+        "price": 153.54,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -1076,7 +1076,7 @@
         "version": "4.0.0",
         "fibonacci": {
           "symbol": "XLV",
-          "current_price": 154.18,
+          "current_price": 153.54,
           "swing_high": 158.2759966493031,
           "swing_low": 133.16293579669355,
           "swing_high_idx": 55,
@@ -1170,7 +1170,7 @@
           "error": "insufficient_data_for_volatility",
           "normalization_enabled": true
         },
-        "price": 85.66,
+        "price": 85.55,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -1196,7 +1196,7 @@
         "version": "4.0.0",
         "fibonacci": {
           "symbol": "XLP",
-          "current_price": 85.66,
+          "current_price": 85.55,
           "swing_high": 90.13999938964844,
           "swing_low": 74.56181333345582,
           "swing_high_idx": 236,
@@ -1290,7 +1290,7 @@
           "error": "insufficient_data_for_volatility",
           "normalization_enabled": true
         },
-        "price": 55.74,
+        "price": 55.77,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -1316,7 +1316,7 @@
         "version": "4.0.0",
         "fibonacci": {
           "symbol": "XLE",
-          "current_price": 55.74,
+          "current_price": 55.77,
           "swing_high": 46.26561493376992,
           "swing_low": 41.99204467312608,
           "swing_high_idx": 61,
@@ -1410,7 +1410,7 @@
           "error": "insufficient_data_for_volatility",
           "normalization_enabled": true
         },
-        "price": 49.82,
+        "price": 49.73,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -1436,7 +1436,7 @@
         "version": "4.0.0",
         "fibonacci": {
           "symbol": "XLB",
-          "current_price": 49.82,
+          "current_price": 49.73,
           "swing_high": 54.13999938964844,
           "swing_low": 43.12737337019588,
           "swing_high_idx": 107,
@@ -1526,7 +1526,7 @@
           "error": "insufficient_data_for_volatility",
           "normalization_enabled": true
         },
-        "price": 46.57,
+        "price": 46.58,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -1552,7 +1552,7 @@
         "version": "4.0.0",
         "fibonacci": {
           "symbol": "XLU",
-          "current_price": 46.57,
+          "current_price": 46.58,
           "swing_high": 43.81999969482422,
           "swing_low": 41.7400016784668,
           "swing_high_idx": 88,
@@ -1646,7 +1646,7 @@
           "error": "insufficient_data_for_volatility",
           "normalization_enabled": true
         },
-        "price": 99.78,
+        "price": 99.49,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -1672,7 +1672,7 @@
         "version": "4.0.0",
         "fibonacci": {
           "symbol": "EFA",
-          "current_price": 99.78,
+          "current_price": 99.49,
           "swing_high": 94.96912173066355,
           "swing_low": 69.65949896486606,
           "swing_high_idx": 421,
@@ -1766,7 +1766,7 @@
           "error": "insufficient_data_for_volatility",
           "normalization_enabled": true
         },
-        "price": 58.7,
+        "price": 58.62,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -1792,7 +1792,7 @@
         "version": "4.0.0",
         "fibonacci": {
           "symbol": "EEM",
-          "current_price": 58.7,
+          "current_price": 58.62,
           "swing_high": 55.51553891465469,
           "swing_low": 48.65373346867458,
           "swing_high_idx": 162,
@@ -1886,7 +1886,7 @@
           "error": "insufficient_data_for_volatility",
           "normalization_enabled": true
         },
-        "price": 50.13,
+        "price": 50.02,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -1912,7 +1912,7 @@
         "version": "4.0.0",
         "fibonacci": {
           "symbol": "INDA",
-          "current_price": 50.13,
+          "current_price": 50.02,
           "swing_high": 55.099998474121094,
           "swing_low": 50.939998626708984,
           "swing_high_idx": 51,
@@ -2006,7 +2006,7 @@
           "error": "insufficient_data_for_volatility",
           "normalization_enabled": true
         },
-        "price": 36.51,
+        "price": 36.46,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -2032,7 +2032,7 @@
         "version": "4.0.0",
         "fibonacci": {
           "symbol": "FXI",
-          "current_price": 36.51,
+          "current_price": 36.46,
           "swing_high": 39.5803612024792,
           "swing_low": 38.08000183105469,
           "swing_high_idx": 61,
@@ -2126,7 +2126,7 @@
           "error": "insufficient_data_for_volatility",
           "normalization_enabled": true
         },
-        "price": 86.61,
+        "price": 86.35,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -2152,7 +2152,7 @@
         "version": "4.0.0",
         "fibonacci": {
           "symbol": "EWJ",
-          "current_price": 86.61,
+          "current_price": 86.35,
           "swing_high": 94.27999877929688,
           "swing_low": 76.61340520975051,
           "swing_high_idx": 234,
@@ -2362,7 +2362,7 @@
           "error": "insufficient_data_for_volatility",
           "normalization_enabled": true
         },
-        "price": 96.71,
+        "price": 96.68,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -2388,7 +2388,7 @@
         "version": "4.0.0",
         "fibonacci": {
           "symbol": "IEF",
-          "current_price": 96.71,
+          "current_price": 96.68,
           "swing_high": 96.81592203782888,
           "swing_low": 93.30237492422222,
           "swing_high_idx": 181,
@@ -2482,7 +2482,7 @@
           "error": "insufficient_data_for_volatility",
           "normalization_enabled": true
         },
-        "price": 80.22,
+        "price": 80.18,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -2508,7 +2508,7 @@
         "version": "4.0.0",
         "fibonacci": {
           "symbol": "HYG",
-          "current_price": 80.22,
+          "current_price": 80.18,
           "swing_high": 80.84345714579534,
           "swing_low": 78.41793060302734,
           "swing_high_idx": 92,
@@ -2602,7 +2602,7 @@
           "error": "insufficient_data_for_volatility",
           "normalization_enabled": true
         },
-        "price": 479.32,
+        "price": 477.83,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -2628,7 +2628,7 @@
         "version": "4.0.0",
         "fibonacci": {
           "symbol": "GLD",
-          "current_price": 479.32,
+          "current_price": 477.83,
           "swing_high": 509.70001220703125,
           "swing_low": 360.1199951171875,
           "swing_high_idx": 97,
@@ -2722,7 +2722,7 @@
           "error": "insufficient_data_for_volatility",
           "normalization_enabled": true
         },
-        "price": 103.95,
+        "price": 103.49,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -2748,7 +2748,7 @@
         "version": "4.0.0",
         "fibonacci": {
           "symbol": "GDX",
-          "current_price": 103.95,
+          "current_price": 103.49,
           "swing_high": 113.5,
           "swing_low": 67.63875758780028,
           "swing_high_idx": 97,
@@ -2842,7 +2842,7 @@
           "error": "insufficient_data_for_volatility",
           "normalization_enabled": true
         },
-        "price": 26.57,
+        "price": 26.62,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -2868,7 +2868,7 @@
         "version": "4.0.0",
         "fibonacci": {
           "symbol": "DBA",
-          "current_price": 26.57,
+          "current_price": 26.62,
           "swing_high": 26.010000228881836,
           "swing_low": 24.660624550871383,
           "swing_high_idx": 97,
@@ -2962,7 +2962,7 @@
           "error": "insufficient_data_for_volatility",
           "normalization_enabled": true
         },
-        "price": 9.74,
+        "price": 9.67,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -2988,7 +2988,7 @@
         "version": "4.0.0",
         "fibonacci": {
           "symbol": "BITO",
-          "current_price": 9.74,
+          "current_price": 9.67,
           "swing_high": 17.73617347969841,
           "swing_low": 8.596694818145188,
           "swing_high_idx": 18,
@@ -3078,7 +3078,7 @@
           "error": "insufficient_data_for_volatility",
           "normalization_enabled": true
         },
-        "price": 93.42,
+        "price": 93.14,
         "tlt_filtered": false,
         "kalshi_applied": false,
         "kalshi_adjustment": 0,
@@ -3104,7 +3104,7 @@
         "version": "4.0.0",
         "fibonacci": {
           "symbol": "VNQ",
-          "current_price": 93.42,
+          "current_price": 93.14,
           "swing_high": 92.81999969482422,
           "swing_low": 87.3133358153632,
           "swing_high_idx": 89,

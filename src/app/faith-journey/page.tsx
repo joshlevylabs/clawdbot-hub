@@ -3719,7 +3719,7 @@ export default function FaithJourneyPage() {
                             return grouped;
                           }, {} as Record<string, any[]>)
                         }
-                        {Object.entries(audioFiles
+                        {(Object.entries(audioFiles
                           .filter(audio => {
                             const matchesTradition = audioFilter === 'all' || (audio.tradition?.name === audioFilter);
                             const matchesSearch = !audioSearch || 
@@ -3748,7 +3748,7 @@ export default function FaithJourneyPage() {
                             grouped[dateKey].push(audio);
                             return grouped;
                           }, {} as Record<string, any[]>)
-                        ).map(([date, audios]) => (
+                        ) as Array<[string, any[]]>).map(([date, audios]) => (
                           <div key={date} className="space-y-2">
                             <h3 className="text-sm font-medium text-slate-300 border-b border-slate-600 pb-1">
                               {date}

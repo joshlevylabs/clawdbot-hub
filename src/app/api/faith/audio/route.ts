@@ -130,6 +130,11 @@ export async function POST(request: NextRequest) {
       .replace(/\n{3,}/g, '\n\n') // Normalize line breaks
       .trim()
 
+    // Add natural pauses: double newlines become "..." for breathing room
+    cleanText = cleanText
+      .replace(/\n\n/g, '...\n\n') // Add ellipsis pause between paragraphs
+      .replace(/\.\.\.\.\.\./g, '...') // Don't double up
+
     if (cleanText.length === 0) {
       return NextResponse.json({ error: 'No valid text content after cleaning' }, { status: 400 })
     }
@@ -137,10 +142,10 @@ export async function POST(request: NextRequest) {
     const charCount = cleanText.length
 
     // Generate audio with ElevenLabs
-    // Use v3 for Joshua's cloned voice (highest quality), turbo for premade voices (cost-efficient)
+    // flash_v2_5 for all voices: English-focused (no accent drift), 12x faster, 0.5x cost
     const JOSH_VOICE_ID = 'VTn3ZhBirl7Eonh6soN9'
     const isJoshVoice = voice === JOSH_VOICE_ID
-    const modelId = isJoshVoice ? 'eleven_multilingual_v2' : 'eleven_turbo_v2_5'
+    const modelId = 'eleven_flash_v2_5'
     const MAX_CHARS = 4500 // Stay under 5K limit with margin
 
     // Split text into chunks if needed (split at paragraph boundaries)
@@ -177,8 +182,8 @@ export async function POST(request: NextRequest) {
             text: chunk,
             model_id: modelId,
             voice_settings: {
-              stability: isJoshVoice ? 0.35 : 0.3, // Low stability = more expressive, less monotone
-              similarity_boost: isJoshVoice ? 0.85 : 0.75,
+              stability: isJoshVoice ? 0.3 : 0.3, // Low stability = expressive, natural
+              similarity_boost: isJoshVoice ? 0.6 : 0.65, // Lower = softer, airier tone
               speed: isJoshVoice ? 0.92 : 0.95,
             },
           }),

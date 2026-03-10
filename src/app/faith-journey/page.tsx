@@ -39,6 +39,8 @@ import {
   ChevronRight,
   ArrowLeft,
   ImageIcon,
+  Upload,
+  Trash2,
 } from "lucide-react";
 
 // ===== Types =====
@@ -1562,6 +1564,20 @@ export default function FaithJourneyPage() {
   const [usageLoading, setUsageLoading] = useState(false);
   const [currentlyPlaying, setCurrentlyPlaying] = useState<string | null>(null);
   const [audioElements, setAudioElements] = useState<Record<string, HTMLAudioElement>>({});
+  const [ambientTracks, setAmbientTracks] = useState<any[]>([]);
+
+  // Fetch ambient tracks from API
+  const fetchAmbientTracks = async () => {
+    try {
+      const res = await fetch('/api/faith/ambient-tracks');
+      if (res.ok) {
+        const data = await res.json();
+        setAmbientTracks(data.tracks || []);
+      }
+    } catch (e) {
+      console.error('Failed to fetch ambient tracks:', e);
+    }
+  };
 
   // Tradition families configuration for badge filters
   const traditionFamilies = [
@@ -2126,6 +2142,7 @@ export default function FaithJourneyPage() {
     if (activeTab === "audio" && audioFiles.length === 0) {
       fetchAudioFiles();
       fetchElevenlabsUsage();
+      fetchAmbientTracks();
     }
   }, [activeTab]);
 
@@ -3551,38 +3568,84 @@ export default function FaithJourneyPage() {
                     Ambient Background Tracks
                   </h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {[
-                      { id: 'an-evening-of-elegance', name: 'An Evening of Elegance', icon: '🕯️', duration: '1:30' },
-                      { id: 'cathedralis', name: 'Cathedralis', icon: '⛪', duration: '3:00' },
-                      { id: 'guide-us-through-the-night', name: 'Guide Us Through the Night', icon: '🌙', duration: '2:05' },
-                      { id: 'stream-and-sing', name: 'Stream and Sing', icon: '🌊', duration: '1:00' },
-                      { id: 'the-divine-accord', name: 'The Divine Accord', icon: '✨', duration: '2:00' },
-                    ].map((track) => (
+                    {(ambientTracks.length > 0 ? ambientTracks : [
+                      { id: 'an-evening-of-elegance', name: 'An Evening of Elegance', url: '' },
+                      { id: 'cathedralis', name: 'Cathedralis', url: '' },
+                      { id: 'guide-us-through-the-night', name: 'Guide Us Through the Night', url: '' },
+                      { id: 'stream-and-sing', name: 'Stream and Sing', url: '' },
+                      { id: 'the-divine-accord', name: 'The Divine Accord', url: '' },
+                    ]).map((track: any) => (
                       <div 
                         key={track.id}
                         className="flex items-center justify-between p-3 rounded-lg border"
                         style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}
                       >
-                        <div className="flex items-center gap-3">
-                          <span className="text-lg">{track.icon}</span>
-                          <span className="text-sm text-slate-300">{track.name}</span>
+                        <div className="flex items-center gap-3 flex-1 min-w-0">
+                          <span className="text-sm text-slate-300 truncate">{track.name}</span>
                         </div>
-                        <button
-                          onClick={() => toggleAudio(`ambient-${track.id}`, `https://atldnpjaxaeqzgtqbrpy.supabase.co/storage/v1/object/public/faith-audio/ambient/${track.id}.mp3`)}
-                          className="flex items-center justify-center w-8 h-8 rounded-full transition-colors"
-                          style={{ 
-                            backgroundColor: currentlyPlaying === `ambient-${track.id}` ? "#D4A020" : "#2A2A38",
-                            color: currentlyPlaying === `ambient-${track.id}` ? "#0B0B11" : "#64748B"
-                          }}
-                        >
-                          {currentlyPlaying === `ambient-${track.id}` ? (
-                            <Pause className="w-4 h-4" />
-                          ) : (
-                            <Play className="w-4 h-4" />
-                          )}
-                        </button>
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => toggleAudio(`ambient-${track.id}`, track.url || `https://atldnpjaxaeqzgtqbrpy.supabase.co/storage/v1/object/public/faith-audio/ambient/${track.id}.mp3`)}
+                            className="flex items-center justify-center w-8 h-8 rounded-full transition-colors"
+                            style={{ 
+                              backgroundColor: currentlyPlaying === `ambient-${track.id}` ? "#D4A020" : "#2A2A38",
+                              color: currentlyPlaying === `ambient-${track.id}` ? "#0B0B11" : "#64748B"
+                            }}
+                          >
+                            {currentlyPlaying === `ambient-${track.id}` ? (
+                              <Pause className="w-4 h-4" />
+                            ) : (
+                              <Play className="w-4 h-4" />
+                            )}
+                          </button>
+                          <button
+                            onClick={async () => {
+                              if (confirm(`Delete "${track.name}"?`)) {
+                                await fetch('/api/faith/ambient-tracks', {
+                                  method: 'DELETE',
+                                  headers: { 'Content-Type': 'application/json' },
+                                  body: JSON.stringify({ id: track.id }),
+                                });
+                                fetchAmbientTracks();
+                              }
+                            }}
+                            className="flex items-center justify-center w-8 h-8 rounded-full transition-colors"
+                            style={{ backgroundColor: "#2A2A38", color: "#ef4444" }}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
                       </div>
                     ))}
+                  </div>
+                  {/* Upload new track */}
+                  <div className="mt-4 p-3 rounded-lg border border-dashed flex items-center gap-3"
+                       style={{ borderColor: "#D4A020", backgroundColor: "rgba(212,160,32,0.05)" }}>
+                    <input
+                      type="file"
+                      accept="audio/*"
+                      id="ambient-upload"
+                      className="hidden"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        const name = prompt('Track name:', file.name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' '));
+                        if (!name) return;
+                        const formData = new FormData();
+                        formData.append('file', file);
+                        formData.append('name', name);
+                        const res = await fetch('/api/faith/ambient-tracks', { method: 'POST', body: formData });
+                        if (res.ok) {
+                          fetchAmbientTracks();
+                        } else {
+                          alert('Upload failed');
+                        }
+                      }}
+                    />
+                    <label htmlFor="ambient-upload" className="cursor-pointer flex items-center gap-2 text-sm" style={{ color: "#D4A020" }}>
+                      <Upload className="w-4 h-4" />
+                      Upload New Track
+                    </label>
                   </div>
                 </div>
 

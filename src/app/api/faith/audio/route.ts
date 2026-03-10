@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
 
 export const dynamic = 'force-dynamic'
+export const maxDuration = 120 // ElevenLabs multilingual_v2 can take 50-90s for full lessons
 
 const VOICE_NAMES: Record<string, string> = {
   'VTn3ZhBirl7Eonh6soN9': 'Josh',

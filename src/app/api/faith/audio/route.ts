@@ -61,7 +61,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'lessonId is required' }, { status: 400 })
     }
 
-    const voice = voiceId || process.env.ELEVENLABS_VOICE_ID
+    // Fix truncated voice IDs from older app builds
+    const VOICE_ID_FIXES: Record<string, string> = {
+      'VTn3ZhBirl7E': 'VTn3ZhBirl7Eonh6soN9', // Truncated Josh voice ID
+    }
+    const rawVoice = voiceId || process.env.ELEVENLABS_VOICE_ID
+    const voice = VOICE_ID_FIXES[rawVoice] || rawVoice
     const voiceName = VOICE_NAMES[voice] || 'Josh'
 
     // Check if audio already cached

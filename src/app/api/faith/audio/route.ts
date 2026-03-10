@@ -22,7 +22,7 @@ const VOICE_NAMES: Record<string, string> = {
   'pFZP5JQG7iQj': 'Lily',
 };
 
-// Map tradition slugs to their default voice IDs
+// Default map — DB overrides (faith_voice_config) take precedence at runtime
 const TRADITION_VOICE_MAP: Record<string, string> = {
   // Judaism → Rabbi Shafier
   'orthodox-judaism': 'W1EJxHy9vl73xgPIKgpn',
@@ -132,10 +132,20 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Lesson not found' }, { status: 404 })
     }
 
-    // Resolve voice: explicit > tradition default > fallback to Serena
+    // Resolve voice: explicit > DB override > hardcoded tradition default > fallback to Serena
     const tradition = lesson.faith_traditions as any
     const traditionSlug = tradition?.slug || ''
-    let voice = explicitVoice || TRADITION_VOICE_MAP[traditionSlug] || 'RGb96Dcl0k5eVje8EBch' // Fallback: Serena
+    let voice = explicitVoice
+    if (!voice && traditionSlug) {
+      // Check DB for voice config override first
+      const { data: voiceConfig } = await supabase
+        .from('faith_voice_config')
+        .select('voice_id')
+        .eq('tradition_slug', traditionSlug)
+        .single()
+      voice = voiceConfig?.voice_id || TRADITION_VOICE_MAP[traditionSlug] || 'RGb96Dcl0k5eVje8EBch'
+    }
+    if (!voice) voice = 'RGb96Dcl0k5eVje8EBch' // Fallback: Serena
     let voiceName = VOICE_NAMES[voice] || 'Unknown'
 
     // Check if audio already cached for this lesson+voice

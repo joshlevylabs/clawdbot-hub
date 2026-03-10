@@ -41,6 +41,10 @@ import {
   ImageIcon,
   Upload,
   Trash2,
+  Edit3,
+  Save,
+  Plus,
+  Check,
 } from "lucide-react";
 
 // ===== Types =====
@@ -1565,6 +1569,68 @@ export default function FaithJourneyPage() {
   const [currentlyPlaying, setCurrentlyPlaying] = useState<string | null>(null);
   const [audioElements, setAudioElements] = useState<Record<string, HTMLAudioElement>>({});
   const [ambientTracks, setAmbientTracks] = useState<any[]>([]);
+  const [voiceConfig, setVoiceConfig] = useState<any>(null);
+  const [voiceConfigLoading, setVoiceConfigLoading] = useState(false);
+  const [editingVoice, setEditingVoice] = useState<string | null>(null); // tradition slug being edited
+  const [editVoiceId, setEditVoiceId] = useState('');
+  const [voiceSaving, setVoiceSaving] = useState(false);
+  const [addingCustomVoice, setAddingCustomVoice] = useState(false);
+  const [newVoiceId, setNewVoiceId] = useState('');
+  const [newVoiceName, setNewVoiceName] = useState('');
+
+  // Fetch voice configuration from API
+  const fetchVoiceConfig = async () => {
+    setVoiceConfigLoading(true);
+    try {
+      const res = await fetch('/api/faith/voice-config');
+      if (res.ok) {
+        const data = await res.json();
+        setVoiceConfig(data);
+      }
+    } catch (e) {
+      console.error('Failed to fetch voice config:', e);
+    }
+    setVoiceConfigLoading(false);
+  };
+
+  // Save voice mapping change
+  const saveVoiceMapping = async (slug: string, voiceId: string) => {
+    setVoiceSaving(true);
+    try {
+      const res = await fetch('/api/faith/voice-config', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ updates: [{ slug, voiceId }] }),
+      });
+      if (res.ok) {
+        await fetchVoiceConfig();
+        setEditingVoice(null);
+      }
+    } catch (e) {
+      console.error('Failed to save voice mapping:', e);
+    }
+    setVoiceSaving(false);
+  };
+
+  // Add custom voice
+  const addCustomVoice = async () => {
+    if (!newVoiceId || !newVoiceName) return;
+    try {
+      const res = await fetch('/api/faith/voice-config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ voiceId: newVoiceId, voiceName: newVoiceName, category: 'custom' }),
+      });
+      if (res.ok) {
+        await fetchVoiceConfig();
+        setNewVoiceId('');
+        setNewVoiceName('');
+        setAddingCustomVoice(false);
+      }
+    } catch (e) {
+      console.error('Failed to add custom voice:', e);
+    }
+  };
 
   // Fetch ambient tracks from API
   const fetchAmbientTracks = async () => {
@@ -2143,6 +2209,7 @@ export default function FaithJourneyPage() {
       fetchAudioFiles();
       fetchElevenlabsUsage();
       fetchAmbientTracks();
+      fetchVoiceConfig();
     }
   }, [activeTab]);
 
@@ -3647,6 +3714,190 @@ export default function FaithJourneyPage() {
                       Upload New Track
                     </label>
                   </div>
+                </div>
+
+                {/* Voice Configuration Management */}
+                <div className="rounded-xl p-4 border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-lg font-semibold text-slate-100 flex items-center gap-2">
+                      <Mic className="w-5 h-5" style={{ color: "#D4A020" }} />
+                      Tradition Voice Mappings
+                    </h2>
+                    <button
+                      onClick={() => setAddingCustomVoice(!addingCustomVoice)}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors"
+                      style={{ backgroundColor: addingCustomVoice ? "#2A2A38" : "rgba(212,160,32,0.15)", color: "#D4A020" }}
+                    >
+                      <Plus className="w-4 h-4" />
+                      Add Voice
+                    </button>
+                  </div>
+                  <p className="text-sm text-slate-500 mb-4">
+                    Configure which ElevenLabs voice narrates each religious tradition. Changes take effect on next audio generation.
+                  </p>
+
+                  {/* Add Custom Voice Form */}
+                  {addingCustomVoice && (
+                    <div className="mb-4 p-3 rounded-lg border" style={{ backgroundColor: "#0B0B11", borderColor: "#D4A020" }}>
+                      <h3 className="text-sm font-medium text-slate-300 mb-3">Add Custom ElevenLabs Voice</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div>
+                          <label className="text-xs text-slate-400">Voice ID</label>
+                          <input
+                            type="text"
+                            placeholder="e.g. W1EJxHy9vl73xgPIKgpn"
+                            value={newVoiceId}
+                            onChange={(e) => setNewVoiceId(e.target.value)}
+                            className="w-full mt-1 px-3 py-2 rounded-lg border text-sm font-mono"
+                            style={{ backgroundColor: "#13131B", borderColor: "#2A2A38", color: "#E2E8F0" }}
+                          />
+                        </div>
+                        <div>
+                          <label className="text-xs text-slate-400">Voice Name</label>
+                          <input
+                            type="text"
+                            placeholder="e.g. Rabbi David"
+                            value={newVoiceName}
+                            onChange={(e) => setNewVoiceName(e.target.value)}
+                            className="w-full mt-1 px-3 py-2 rounded-lg border text-sm"
+                            style={{ backgroundColor: "#13131B", borderColor: "#2A2A38", color: "#E2E8F0" }}
+                          />
+                        </div>
+                        <div className="flex items-end gap-2">
+                          <button
+                            onClick={addCustomVoice}
+                            disabled={!newVoiceId || !newVoiceName}
+                            className="px-4 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-40"
+                            style={{ backgroundColor: "#D4A020", color: "#0B0B11" }}
+                          >
+                            Add Voice
+                          </button>
+                          <button
+                            onClick={() => { setAddingCustomVoice(false); setNewVoiceId(''); setNewVoiceName(''); }}
+                            className="px-4 py-2 rounded-lg text-sm transition-colors"
+                            style={{ backgroundColor: "#2A2A38", color: "#94A3B8" }}
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {voiceConfigLoading ? (
+                    <div className="text-center py-8">
+                      <Loader className="w-6 h-6 animate-spin mx-auto mb-2 text-slate-400" />
+                      <p className="text-slate-400">Loading voice configuration...</p>
+                    </div>
+                  ) : voiceConfig ? (
+                    <div className="space-y-4">
+                      {/* Available Voices Reference */}
+                      <div className="p-3 rounded-lg" style={{ backgroundColor: "#0B0B11" }}>
+                        <h3 className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-2">Available Voices</h3>
+                        <div className="flex flex-wrap gap-2">
+                          {(voiceConfig.availableVoices || []).map((v: any) => (
+                            <span key={v.id} className="inline-flex items-center gap-1 px-2 py-1 rounded text-xs" style={{ backgroundColor: "#1A1A28", color: v.category === 'tradition' ? '#D4A020' : v.category === 'clone' ? '#8B5CF6' : '#64748B' }}>
+                              {v.name}
+                              <span className="text-slate-600 font-mono text-[10px]">{v.id.slice(0, 8)}…</span>
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Grouped by Tradition Family */}
+                      {Object.entries(voiceConfig.grouped || {}).sort(([a], [b]) => a.localeCompare(b)).map(([family, traditions]: [string, any]) => {
+                        const familyEmoji: Record<string, string> = {
+                          'Judaism': '✡️', 'Christianity': '✝️', 'Islam': '☪️',
+                          'Hinduism': '🕉️', 'Buddhism': '☸️', 'Secular': '🌍',
+                          "Bahá'í": '⭐', 'Interfaith': '🌈', 'Jainism': '🔶',
+                          'Sikhism': '🪯', 'Zoroastrianism': '🔥',
+                        };
+                        return (
+                          <div key={family}>
+                            <h3 className="text-sm font-medium text-slate-300 mb-2 flex items-center gap-2">
+                              <span>{familyEmoji[family] || '📿'}</span>
+                              {family}
+                              <span className="text-xs text-slate-600">({traditions.length} traditions)</span>
+                            </h3>
+                            <div className="space-y-1">
+                              {traditions.map((t: any) => (
+                                <div key={t.slug} className="flex items-center justify-between p-2 rounded-lg hover:bg-[#1A1A28] transition-colors group">
+                                  <div className="flex items-center gap-3 flex-1 min-w-0">
+                                    <span className="text-sm text-slate-400 truncate w-48" title={t.slug}>
+                                      {t.slug.split('-').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
+                                    </span>
+                                    {editingVoice === t.slug ? (
+                                      <div className="flex items-center gap-2">
+                                        <select
+                                          value={editVoiceId}
+                                          onChange={(e) => setEditVoiceId(e.target.value)}
+                                          className="px-2 py-1 rounded border text-sm"
+                                          style={{ backgroundColor: "#0B0B11", borderColor: "#D4A020", color: "#D4A020" }}
+                                        >
+                                          {(voiceConfig.availableVoices || []).map((v: any) => (
+                                            <option key={v.id} value={v.id}>{v.name} ({v.id.slice(0, 8)}…)</option>
+                                          ))}
+                                        </select>
+                                        <input
+                                          type="text"
+                                          placeholder="Or paste voice ID…"
+                                          value={editVoiceId}
+                                          onChange={(e) => setEditVoiceId(e.target.value)}
+                                          className="px-2 py-1 rounded border text-sm font-mono w-48"
+                                          style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38", color: "#E2E8F0" }}
+                                        />
+                                        <button
+                                          onClick={() => saveVoiceMapping(t.slug, editVoiceId)}
+                                          disabled={voiceSaving || !editVoiceId}
+                                          className="p-1.5 rounded transition-colors disabled:opacity-40"
+                                          style={{ backgroundColor: "#D4A020", color: "#0B0B11" }}
+                                        >
+                                          {voiceSaving ? <Loader className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />}
+                                        </button>
+                                        <button
+                                          onClick={() => setEditingVoice(null)}
+                                          className="p-1.5 rounded transition-colors"
+                                          style={{ backgroundColor: "#2A2A38", color: "#94A3B8" }}
+                                        >
+                                          <X className="w-3.5 h-3.5" />
+                                        </button>
+                                      </div>
+                                    ) : (
+                                      <div className="flex items-center gap-2">
+                                        <span className="text-sm font-medium" style={{ color: "#D4A020" }}>{t.voiceName}</span>
+                                        <span className="text-xs text-slate-600 font-mono">{t.voiceId.slice(0, 12)}…</span>
+                                      </div>
+                                    )}
+                                  </div>
+                                  {editingVoice !== t.slug && (
+                                    <button
+                                      onClick={() => { setEditingVoice(t.slug); setEditVoiceId(t.voiceId); }}
+                                      className="opacity-0 group-hover:opacity-100 p-1.5 rounded transition-all"
+                                      style={{ backgroundColor: "#2A2A38", color: "#94A3B8" }}
+                                    >
+                                      <Edit3 className="w-3.5 h-3.5" />
+                                    </button>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8">
+                      <AlertTriangle className="w-6 h-6 mx-auto mb-2 text-slate-400" />
+                      <p className="text-slate-400">Failed to load voice configuration</p>
+                      <button
+                        onClick={fetchVoiceConfig}
+                        className="mt-2 px-4 py-2 rounded-lg text-sm transition-colors"
+                        style={{ backgroundColor: "#D4A020", color: "#0B0B11" }}
+                      >
+                        Retry
+                      </button>
+                    </div>
+                  )}
                 </div>
 
                 {/* Audio Statistics */}

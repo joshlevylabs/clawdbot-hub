@@ -97,9 +97,18 @@ export async function POST(request: NextRequest) {
       .eq('id', prayerId)
       .single()
 
-    // Resolve voice: explicit > tradition default > fallback Serena
+    // Resolve voice: explicit > DB override > hardcoded default > fallback Serena
     const traditionFamily = prayer?.tradition_id ? (UUID_TO_SLUG[prayer.tradition_id] || 'interfaith') : 'interfaith'
-    const voice = explicitVoice || TRADITION_FAMILY_VOICE_MAP[traditionFamily] || 'RGb96Dcl0k5eVje8EBch'
+    let voice = explicitVoice
+    if (!voice) {
+      // Check DB for any voice config overrides (match on tradition family prefix)
+      const { data: voiceConfigs } = await supabase
+        .from('faith_voice_config')
+        .select('voice_id, tradition_family')
+        .ilike('tradition_family', traditionFamily)
+        .limit(1)
+      voice = voiceConfigs?.[0]?.voice_id || TRADITION_FAMILY_VOICE_MAP[traditionFamily] || 'RGb96Dcl0k5eVje8EBch'
+    }
     const voiceName = VOICE_NAMES[voice] || 'Unknown'
 
     // Check if audio already cached
@@ -127,8 +136,8 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    // Fetch prayer data with tradition info
-    const { data: prayer, error: prayerError } = await supabase
+    // Fetch prayer data with tradition info for TTS generation
+    const { data: prayerFull, error: prayerError } = await supabase
       .from('faith_prayers')
       .select(`
         id,
@@ -144,16 +153,16 @@ export async function POST(request: NextRequest) {
       .eq('id', prayerId)
       .single()
 
-    if (prayerError || !prayer) {
+    if (prayerError || !prayerFull) {
       return NextResponse.json({ error: 'Prayer not found' }, { status: 404 })
     }
 
-    if (!prayer.prayer_text) {
+    if (!prayerFull.prayer_text) {
       return NextResponse.json({ error: 'No text content for this prayer' }, { status: 400 })
     }
 
     // Clean text for TTS - remove markdown formatting, headers, etc.
-    let cleanText = prayer.prayer_text
+    let cleanText = prayerFull.prayer_text
       .replace(/^#+\s+.*$/gm, '') // Remove headers
       .replace(/\*\*(.*?)\*\*/g, '$1') // Remove bold
       .replace(/\*(.*?)\*/g, '$1') // Remove italic
@@ -163,8 +172,8 @@ export async function POST(request: NextRequest) {
       .trim()
 
     // Add prayer title as introduction if it's not already in the text
-    if (!cleanText.toLowerCase().includes(prayer.title.toLowerCase())) {
-      cleanText = `${prayer.title}.\n\n${cleanText}`;
+    if (!cleanText.toLowerCase().includes(prayerFull.title.toLowerCase())) {
+      cleanText = `${prayerFull.title}.\n\n${cleanText}`;
     }
 
     if (cleanText.length === 0) {

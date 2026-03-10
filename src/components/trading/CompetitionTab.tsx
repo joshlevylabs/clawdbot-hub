@@ -274,30 +274,45 @@ function NoSeasonView() {
 }
 
 function ScoringWeightsCard() {
+  const [expanded, setExpanded] = useState(false);
   const weights = [
-    { label: "Total Return", weight: "25%", color: "#4ADE80", icon: "📈" },
-    { label: "Sharpe Ratio", weight: "20%", color: "#60A5FA", icon: "⚡" },
-    { label: "Sortino Ratio", weight: "10%", color: "#34D399", icon: "🛡️" },
-    { label: "Max Drawdown", weight: "-15%", color: "#F87171", icon: "📉" },
-    { label: "Rule Violations", weight: "-10%", color: "#EF4444", icon: "🚨" },
-    { label: "Regime Consistency", weight: "10%", color: "#FBBF24", icon: "🌍" },
-    { label: "Memory Depth", weight: "10%", color: "#818CF8", icon: "🧠" },
+    { label: "Total Return", weight: "25%", color: "#4ADE80", icon: "📈", desc: "Did you make money? Higher return = higher score." },
+    { label: "Sharpe Ratio", weight: "20%", color: "#60A5FA", icon: "⚡", desc: "Risk-adjusted return. Rewards steady gains over wild swings. Needs 5+ trading days." },
+    { label: "Sortino Ratio", weight: "10%", color: "#34D399", icon: "🛡️", desc: "Like Sharpe, but only penalizes downside volatility. Big wins don't hurt you." },
+    { label: "Max Drawdown", weight: "-15%", color: "#F87171", icon: "📉", desc: "Worst peak-to-trough drop. Lower is better. A -15% drawdown means you lost 15% from your best." },
+    { label: "Rule Violations", weight: "-10%", color: "#EF4444", icon: "🚨", desc: "Holding too long, concentrating in one sector, or breaking position limits." },
+    { label: "Regime Consistency", weight: "10%", color: "#FBBF24", icon: "🌍", desc: "Can you make money in all conditions? Bull, bear, AND sideways? Versatility wins." },
+    { label: "Memory Depth", weight: "10%", color: "#818CF8", icon: "🧠", desc: "Do you learn? Agents score higher for logging reflections, observations, and adapting strategy." },
   ];
 
   return (
     <div className="bg-[#1a1a18] border border-[#333330] rounded-xl p-4">
-      <h3 className="text-sm font-semibold text-[#D4A020] mb-3 flex items-center gap-1">
-        <Target className="w-3.5 h-3.5" /> Scoring Formula
-      </h3>
-      <div className="space-y-1.5">
+      <button
+        onClick={() => setExpanded(!expanded)}
+        className="w-full flex items-center justify-between"
+      >
+        <h3 className="text-sm font-semibold text-[#D4A020] flex items-center gap-1">
+          <Target className="w-3.5 h-3.5" /> Scoring Formula
+        </h3>
+        <span className="text-xs text-[#8B8B80]">{expanded ? "▲" : "▼"}</span>
+      </button>
+      <div className="space-y-1.5 mt-3">
         {weights.map((w) => (
-          <div key={w.label} className="flex items-center gap-2 text-xs">
-            <span>{w.icon}</span>
-            <span className="text-[#8B8B80] flex-1">{w.label}</span>
-            <span className="font-mono font-bold" style={{ color: w.color }}>{w.weight}</span>
+          <div key={w.label}>
+            <div className="flex items-center gap-2 text-xs">
+              <span>{w.icon}</span>
+              <span className="text-[#8B8B80] flex-1">{w.label}</span>
+              <span className="font-mono font-bold" style={{ color: w.color }}>{w.weight}</span>
+            </div>
+            {expanded && (
+              <p className="text-[10px] text-[#6B6B60] ml-6 mt-0.5 mb-1">{w.desc}</p>
+            )}
           </div>
         ))}
       </div>
+      {!expanded && (
+        <p className="text-[10px] text-[#6B6B60] mt-2 text-center">Tap to see explanations</p>
+      )}
     </div>
   );
 }
@@ -386,6 +401,26 @@ export default function CompetitionTab() {
     <div className="space-y-4">
       {/* Season Header */}
       <SeasonHeader season={activeSeason} />
+
+      {/* Early Season Notice */}
+      {(() => {
+        const daysSinceStart = Math.floor(
+          (Date.now() - new Date(activeSeason.start_date).getTime()) / (1000 * 60 * 60 * 24)
+        );
+        if (daysSinceStart < 5) {
+          return (
+            <div className="bg-[#2a2218] border border-[#D4A020]/30 rounded-xl p-3 text-xs text-[#C8C8B4] flex items-start gap-2">
+              <span className="text-lg">📊</span>
+              <div>
+                <span className="font-semibold text-[#D4A020]">Early Season Data</span> — Day {daysSinceStart} of ~20 trading days.
+                Sharpe and Sortino ratios need 5+ days to calculate. Win rates will climb as open positions close.
+                Scores become meaningful after the first week.
+              </div>
+            </div>
+          );
+        }
+        return null;
+      })()}
 
       {/* Summary Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">

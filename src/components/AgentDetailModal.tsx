@@ -195,12 +195,17 @@ function AgentKnowledgeBase({ agentId }: { agentId: string }) {
   const [kbSearch, setKbSearch] = useState("");
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [isSearchingKb, setIsSearchingKb] = useState(false);
+  const [activeKind, setActiveKind] = useState<string>("all");
+
+  // Episodic kinds (Layer 3) vs Knowledge (Layer 2)
+  const EPISODIC_KINDS = ["reflection", "observation", "decision", "episode", "error", "execution", "signal"];
+  const isEpisodic = (kind: string) => EPISODIC_KINDS.includes(kind);
 
   useEffect(() => {
     async function fetchKnowledge() {
       try {
         const [itemsRes, statsRes] = await Promise.all([
-          fetch(`/api/agent-memories?agent_id=${agentId}&limit=50`),
+          fetch(`/api/agent-memories?agent_id=${agentId}&limit=200`),
           fetch(`/api/agent-memories/stats?agent_id=${agentId}`),
         ]);
         if (itemsRes.ok) {
@@ -258,21 +263,45 @@ function AgentKnowledgeBase({ agentId }: { agentId: string }) {
     observation: "bg-amber-500/20 text-amber-400",
     decision: "bg-emerald-500/20 text-emerald-400",
     reflection: "bg-purple-500/20 text-purple-400",
+    episode: "bg-cyan-500/20 text-cyan-400",
     interaction: "bg-pink-500/20 text-pink-400",
     error: "bg-red-500/20 text-red-400",
+    execution: "bg-teal-500/20 text-teal-400",
+    signal: "bg-indigo-500/20 text-indigo-400",
   };
 
-  return (
-    <div className="mt-6 pt-6" style={{ borderTop: "1px solid #2A2A38" }}>
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <Brain className="w-4 h-4" style={{ color: "#D4A020" }} />
-          <h3 className="text-sm font-semibold uppercase tracking-wider" style={{ color: "#8B8B80" }}>
-            Knowledge Base ({knowledgeCount})
-          </h3>
-        </div>
-      </div>
+  const KIND_ICONS: Record<string, string> = {
+    reflection: "🪞",
+    observation: "🔍",
+    decision: "📝",
+    episode: "📊",
+    error: "⚠️",
+    execution: "⚡",
+    signal: "📡",
+    knowledge: "📚",
+  };
 
+  // Split items into episodic (Layer 3) and knowledge (Layer 2)
+  const episodicItems = knowledgeItems.filter(i => isEpisodic(i.kind));
+  const knowledgeOnlyItems = knowledgeItems.filter(i => !isEpisodic(i.kind));
+
+  // Count by kind for episodic
+  const kindCounts: Record<string, number> = {};
+  episodicItems.forEach(i => {
+    kindCounts[i.kind] = (kindCounts[i.kind] || 0) + 1;
+  });
+
+  // Filter items based on activeKind
+  const filteredItems = activeKind === "all"
+    ? knowledgeItems
+    : activeKind === "episodic"
+    ? episodicItems
+    : activeKind === "knowledge-only"
+    ? knowledgeOnlyItems
+    : knowledgeItems.filter(i => i.kind === activeKind);
+
+  return (
+    <div className="space-y-5">
       {knowledgeLoading ? (
         <div className="text-center py-4">
           <Loader2 className="w-5 h-5 animate-spin mx-auto" style={{ color: "#626259" }} />
@@ -280,13 +309,104 @@ function AgentKnowledgeBase({ agentId }: { agentId: string }) {
       ) : knowledgeItems.length === 0 ? (
         <div className="text-center py-6" style={{ color: "#626259" }}>
           <Brain className="w-6 h-6 mx-auto mb-2 opacity-40" />
-          <p className="text-xs">No knowledge entries yet</p>
-          <p className="text-[10px] mt-1 opacity-60">Run the ingestion script to populate</p>
+          <p className="text-xs">No memory entries yet</p>
         </div>
       ) : (
         <>
-          {/* Semantic search */}
-          <div className="flex gap-2 mb-3">
+          {/* ── Memory Explorer Header ── */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Brain className="w-4 h-4" style={{ color: "#D4A020" }} />
+              <h3 className="text-sm font-semibold uppercase tracking-wider" style={{ color: "#8B8B80" }}>
+                Memory Explorer
+              </h3>
+              <span className="text-[10px] px-1.5 py-0.5 rounded-md" style={{ backgroundColor: "#1A1A24", color: "#626259" }}>
+                {knowledgeCount} total
+              </span>
+            </div>
+          </div>
+
+          {/* ── Layer Stats Cards ── */}
+          <div className="grid grid-cols-2 gap-2">
+            <div className="p-3 rounded-lg border" style={{ backgroundColor: "#13131B", borderColor: episodicItems.length > 0 ? "rgba(168,85,247,0.3)" : "#2A2A38" }}>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-sm">🧠</span>
+                <span className="text-xs font-semibold" style={{ color: "#A855F7" }}>Episodic Memory</span>
+                <span className="text-[10px] ml-auto font-mono" style={{ color: "#626259" }}>{episodicItems.length}</span>
+              </div>
+              <p className="text-[10px]" style={{ color: "#626259" }}>
+                Reflections, observations, trade decisions, episodes. What the agent has learned from experience.
+              </p>
+              {episodicItems.length > 0 && (
+                <div className="flex flex-wrap gap-1 mt-2">
+                  {Object.entries(kindCounts).map(([kind, count]) => (
+                    <button
+                      key={kind}
+                      onClick={() => setActiveKind(activeKind === kind ? "all" : kind)}
+                      className={`px-1.5 py-0.5 rounded text-[9px] font-medium transition-colors ${
+                        activeKind === kind ? "ring-1 ring-white/30" : ""
+                      } ${KIND_COLORS[kind] || "bg-slate-700 text-slate-300"}`}
+                    >
+                      {KIND_ICONS[kind] || "•"} {kind} ({count})
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+            <div className="p-3 rounded-lg border" style={{ backgroundColor: "#13131B", borderColor: knowledgeOnlyItems.length > 0 ? "rgba(59,130,246,0.3)" : "#2A2A38" }}>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-sm">📚</span>
+                <span className="text-xs font-semibold" style={{ color: "#3B82F6" }}>Knowledge Base</span>
+                <span className="text-[10px] ml-auto font-mono" style={{ color: "#626259" }}>{knowledgeOnlyItems.length}</span>
+              </div>
+              <p className="text-[10px]" style={{ color: "#626259" }}>
+                Strategy docs, personality traits, and domain expertise. The agent&apos;s training data.
+              </p>
+              <button
+                onClick={() => setActiveKind(activeKind === "knowledge-only" ? "all" : "knowledge-only")}
+                className={`mt-2 px-1.5 py-0.5 rounded text-[9px] font-medium transition-colors ${
+                  activeKind === "knowledge-only" ? "ring-1 ring-white/30" : ""
+                } bg-blue-500/20 text-blue-400`}
+              >
+                📚 knowledge ({knowledgeOnlyItems.length})
+              </button>
+            </div>
+          </div>
+
+          {/* ── Filter Bar ── */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setActiveKind("all")}
+              className={`px-2 py-1 rounded text-[10px] font-medium transition-colors ${
+                activeKind === "all" ? "bg-[#D4A020]/20 text-[#D4A020]" : "text-[#626259] hover:text-[#8B8B80]"
+              }`}
+            >
+              All ({knowledgeItems.length})
+            </button>
+            <button
+              onClick={() => setActiveKind("episodic")}
+              className={`px-2 py-1 rounded text-[10px] font-medium transition-colors ${
+                activeKind === "episodic" ? "bg-purple-500/20 text-purple-400" : "text-[#626259] hover:text-[#8B8B80]"
+              }`}
+            >
+              🧠 Episodic ({episodicItems.length})
+            </button>
+            <button
+              onClick={() => setActiveKind("knowledge-only")}
+              className={`px-2 py-1 rounded text-[10px] font-medium transition-colors ${
+                activeKind === "knowledge-only" ? "bg-blue-500/20 text-blue-400" : "text-[#626259] hover:text-[#8B8B80]"
+              }`}
+            >
+              📚 Knowledge ({knowledgeOnlyItems.length})
+            </button>
+            <div className="flex-1" />
+            <span className="text-[10px]" style={{ color: "#626259" }}>
+              Showing {filteredItems.length} entries
+            </span>
+          </div>
+
+          {/* ── Semantic Search ── */}
+          <div className="flex gap-2">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5" style={{ color: "#626259" }} />
               <input
@@ -294,7 +414,7 @@ function AgentKnowledgeBase({ agentId }: { agentId: string }) {
                 value={kbSearch}
                 onChange={(e) => setKbSearch(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleKbSearch()}
-                placeholder="Semantic search this agent's knowledge…"
+                placeholder="Semantic search this agent's memory…"
                 className="w-full h-8 pl-9 pr-3 rounded-lg text-xs transition-all focus:outline-none"
                 style={{ backgroundColor: "#1A1A24", border: "1px solid #2A2A38", color: "#F5F5F0" }}
               />
@@ -311,16 +431,16 @@ function AgentKnowledgeBase({ agentId }: { agentId: string }) {
 
           {/* Search results */}
           {searchResults.length > 0 && (
-            <div className="space-y-2 mb-4 p-3 rounded-lg" style={{ backgroundColor: "rgba(212, 160, 32, 0.05)", border: "1px solid rgba(212, 160, 32, 0.15)" }}>
+            <div className="space-y-2 p-3 rounded-lg" style={{ backgroundColor: "rgba(212, 160, 32, 0.05)", border: "1px solid rgba(212, 160, 32, 0.15)" }}>
               <p className="text-[10px] font-semibold uppercase" style={{ color: "#D4A020" }}>Search Results</p>
               {searchResults.map((r: any) => (
                 <div key={r.id} className="p-2 rounded" style={{ backgroundColor: "#13131B" }}>
                   <div className="flex items-center gap-2 mb-1">
                     <span className={`px-1.5 py-0.5 rounded text-[9px] font-medium ${KIND_COLORS[r.kind] || "bg-slate-700 text-slate-300"}`}>
-                      {r.kind}
+                      {KIND_ICONS[r.kind] || "•"} {r.kind}
                     </span>
                     <span className="text-[10px] font-mono" style={{ color: "#D4A020" }}>
-                      {(r.similarity * 100).toFixed(1)}%
+                      {(r.similarity * 100).toFixed(1)}% match
                     </span>
                   </div>
                   <p className="text-xs leading-relaxed" style={{ color: "#B8B8AD" }}>
@@ -331,55 +451,64 @@ function AgentKnowledgeBase({ agentId }: { agentId: string }) {
             </div>
           )}
 
-          {/* Knowledge items list */}
-          <div className="space-y-1.5 max-h-64 overflow-auto">
-            {knowledgeItems.map((item) => (
-              <div key={item.id} className="rounded-lg border group" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
-                <button
-                  onClick={() => setExpandedKb(expandedKb === item.id ? null : item.id)}
-                  className="w-full text-left px-3 py-2 flex items-center gap-2"
-                >
-                  <span className={`px-1.5 py-0.5 rounded text-[9px] font-medium flex-shrink-0 ${KIND_COLORS[item.kind] || "bg-slate-700 text-slate-300"}`}>
-                    {item.kind}
-                  </span>
-                  <p className="text-xs flex-1 truncate" style={{ color: "#B8B8AD" }}>
-                    {item.summary || item.content.slice(0, 120)}
-                  </p>
-                  {item.importance > 0.7 && (
-                    <span className="text-[9px] flex-shrink-0" style={{ color: "#D4A020" }}>★</span>
-                  )}
-                </button>
-                {expandedKb === item.id && (
-                  <div className="px-3 pb-3 space-y-2" style={{ borderTop: "1px solid #2A2A38" }}>
-                    <p className="text-xs leading-relaxed pt-2" style={{ color: "#B8B8AD" }}>{item.content}</p>
-                    {item.source && (
-                      <p className="text-[10px] font-mono" style={{ color: "#626259" }}>Source: {item.source}</p>
-                    )}
-                    {item.tags && item.tags.length > 0 && (
-                      <div className="flex gap-1 flex-wrap">
-                        {item.tags.map(tag => (
-                          <span key={tag} className="px-1.5 py-0.5 rounded text-[9px]" style={{ backgroundColor: "#1A1A24", color: "#8B8B80" }}>
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                    <div className="flex items-center justify-between pt-1">
-                      <span className="text-[9px]" style={{ color: "#626259" }}>
-                        Importance: {item.importance} • Recalled: {item.recalled_count}×
-                      </span>
-                      <button
-                        onClick={() => handleDeleteKb(item.id)}
-                        className="opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-white/10 transition-all"
-                        style={{ color: "#DC2626" }}
-                      >
-                        <Trash2 className="w-3 h-3" />
-                      </button>
-                    </div>
-                  </div>
-                )}
+          {/* ── Memory Items List ── */}
+          <div className="space-y-1.5 max-h-96 overflow-auto">
+            {filteredItems.length === 0 ? (
+              <div className="text-center py-6" style={{ color: "#626259" }}>
+                <p className="text-xs">No {activeKind === "all" ? "" : activeKind} entries found</p>
               </div>
-            ))}
+            ) : (
+              filteredItems.map((item) => (
+                <div key={item.id} className="rounded-lg border group" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+                  <button
+                    onClick={() => setExpandedKb(expandedKb === item.id ? null : item.id)}
+                    className="w-full text-left px-3 py-2 flex items-center gap-2"
+                  >
+                    <span className={`px-1.5 py-0.5 rounded text-[9px] font-medium flex-shrink-0 ${KIND_COLORS[item.kind] || "bg-slate-700 text-slate-300"}`}>
+                      {KIND_ICONS[item.kind] || "•"} {item.kind}
+                    </span>
+                    <p className="text-xs flex-1 truncate" style={{ color: "#B8B8AD" }}>
+                      {item.summary || item.content.slice(0, 120)}
+                    </p>
+                    {item.importance > 0.7 && (
+                      <span className="text-[9px] flex-shrink-0" style={{ color: "#D4A020" }}>★</span>
+                    )}
+                    <span className="text-[9px] flex-shrink-0" style={{ color: "#626259" }}>
+                      {new Date(item.created_at).toLocaleDateString()}
+                    </span>
+                  </button>
+                  {expandedKb === item.id && (
+                    <div className="px-3 pb-3 space-y-2" style={{ borderTop: "1px solid #2A2A38" }}>
+                      <p className="text-xs leading-relaxed pt-2 whitespace-pre-wrap" style={{ color: "#B8B8AD" }}>{item.content}</p>
+                      <div className="flex items-center gap-3 flex-wrap">
+                        {item.source && (
+                          <span className="text-[10px] font-mono" style={{ color: "#626259" }}>Source: {item.source}</span>
+                        )}
+                        <span className="text-[10px]" style={{ color: "#626259" }}>
+                          Importance: {item.importance} • Recalled: {item.recalled_count}×
+                        </span>
+                        {item.tags && item.tags.length > 0 && (
+                          <div className="flex gap-1 flex-wrap">
+                            {item.tags.map(tag => (
+                              <span key={tag} className="px-1.5 py-0.5 rounded text-[9px]" style={{ backgroundColor: "#1A1A24", color: "#8B8B80" }}>
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                        <button
+                          onClick={() => handleDeleteKb(item.id)}
+                          className="opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-white/10 transition-all ml-auto"
+                          style={{ color: "#DC2626" }}
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))
+            )}
           </div>
         </>
       )}
@@ -966,195 +1095,9 @@ export default function AgentDetailModal({ agent, onClose }: AgentDetailModalPro
         );
 
       case "memory":
-        const filteredMemories = data.memories.filter(memory =>
-          memory.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          memory.type.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-
         return (
           <div className="space-y-4">
-            {/* Header with controls */}
-            <div className="flex items-center justify-between">
-              <h3 className="text-sm font-semibold uppercase tracking-wider" style={{ color: "#8B8B80" }}>
-                Agent Memories ({data.memoryCount})
-              </h3>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => startEditing('new_memory', '')}
-                  className="flex items-center gap-1 px-3 py-1.5 rounded text-xs font-medium transition-colors"
-                  style={{ backgroundColor: "#10B981", color: "#FFFFFF" }}
-                >
-                  <Plus className="w-3 h-3" />
-                  Add Memory
-                </button>
-                {data.memoryCount > 0 && (
-                  <button
-                    onClick={clearAllMemories}
-                    className="flex items-center gap-1 px-3 py-1.5 rounded text-xs font-medium transition-colors"
-                    style={{ backgroundColor: "#DC2626", color: "#FFFFFF" }}
-                  >
-                    <Trash2 className="w-3 h-3" />
-                    Clear All
-                  </button>
-                )}
-              </div>
-            </div>
-
-            {/* Search bar */}
-            {data.memoryCount > 0 && (
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: "#626259" }} />
-                <input
-                  type="text"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Search memories..."
-                  className="w-full h-9 pl-10 pr-4 rounded-lg text-sm transition-all focus:outline-none"
-                  style={{ backgroundColor: "#1A1A24", border: "1px solid #2A2A38", color: "#F5F5F0" }}
-                />
-              </div>
-            )}
-
-            {/* Add new memory form */}
-            {isEditing.new_memory && (
-              <div className="p-4 rounded-xl border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
-                <h4 className="text-sm font-semibold mb-3" style={{ color: "#F5F5F0" }}>Add New Memory</h4>
-                <div className="space-y-3">
-                  <div>
-                    <label className="block text-xs font-semibold mb-2" style={{ color: "#8B8B80" }}>Type</label>
-                    <select
-                      value={editValues.memory_type || 'note'}
-                      onChange={(e) => setEditValues(prev => ({ ...prev, memory_type: e.target.value }))}
-                      className="w-full p-2 rounded border text-sm"
-                      style={{ backgroundColor: "#1A1A24", borderColor: "#2A2A38", color: "#F5F5F0" }}
-                    >
-                      <option value="note">Note</option>
-                      <option value="preference">Preference</option>
-                      <option value="context">Context</option>
-                      <option value="instruction">Instruction</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-xs font-semibold mb-2" style={{ color: "#8B8B80" }}>Content</label>
-                    <textarea
-                      value={editValues.memory_content || ''}
-                      onChange={(e) => setEditValues(prev => ({ ...prev, memory_content: e.target.value }))}
-                      rows={3}
-                      className="w-full p-2 rounded border text-sm"
-                      style={{ backgroundColor: "#1A1A24", borderColor: "#2A2A38", color: "#F5F5F0" }}
-                      placeholder="Enter memory content..."
-                    />
-                  </div>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => {
-                        // This would need a new API endpoint
-                        console.log('Save memory:', editValues.memory_type, editValues.memory_content);
-                        cancelEditing('new_memory');
-                      }}
-                      className="flex items-center gap-1 px-3 py-1.5 rounded text-xs font-medium transition-colors"
-                      style={{ backgroundColor: "#10B981", color: "#FFFFFF" }}
-                    >
-                      <Save className="w-3 h-3" />
-                      Save Memory
-                    </button>
-                    <button
-                      onClick={() => cancelEditing('new_memory')}
-                      className="flex items-center gap-1 px-3 py-1.5 rounded text-xs font-medium transition-colors"
-                      style={{ backgroundColor: "#2A2A38", color: "#B8B8AD" }}
-                    >
-                      <RotateCcw className="w-3 h-3" />
-                      Cancel
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Memories list */}
-            <div className="space-y-3 max-h-96 overflow-auto">
-              {filteredMemories.length > 0 ? (
-                filteredMemories.map((memory) => (
-                  <div key={memory.id} className="p-3 rounded-lg border group" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs px-2 py-1 rounded" style={{ backgroundColor: "#D4A02020", color: "#D4A020" }}>
-                        {memory.type}
-                      </span>
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs" style={{ color: "#626259" }}>
-                          {new Date(memory.created_at).toLocaleDateString()}
-                        </span>
-                        <div className="opacity-0 group-hover:opacity-100 flex gap-1 transition-opacity">
-                          <button
-                            onClick={() => startEditing(`edit_memory_${memory.id}`, memory.content)}
-                            className="p-1 rounded hover:bg-white/10 transition-colors"
-                            style={{ color: "#626259" }}
-                          >
-                            <Edit className="w-3 h-3" />
-                          </button>
-                          <button
-                            onClick={() => {
-                              // This would need a new API endpoint
-                              console.log('Delete memory:', memory.id);
-                            }}
-                            className="p-1 rounded hover:bg-white/10 transition-colors"
-                            style={{ color: "#DC2626" }}
-                          >
-                            <Trash2 className="w-3 h-3" />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                    {isEditing[`edit_memory_${memory.id}`] ? (
-                      <div className="space-y-2">
-                        <textarea
-                          value={editValues[`edit_memory_${memory.id}`] || memory.content}
-                          onChange={(e) => setEditValues(prev => ({ ...prev, [`edit_memory_${memory.id}`]: e.target.value }))}
-                          rows={2}
-                          className="w-full p-2 rounded border text-sm"
-                          style={{ backgroundColor: "#1A1A24", borderColor: "#2A2A38", color: "#F5F5F0" }}
-                        />
-                        <div className="flex gap-2">
-                          <button
-                            onClick={() => {
-                              // This would need a new API endpoint
-                              console.log('Update memory:', memory.id, editValues[`edit_memory_${memory.id}`]);
-                              cancelEditing(`edit_memory_${memory.id}`);
-                            }}
-                            className="flex items-center gap-1 px-2 py-1 rounded text-xs font-medium transition-colors"
-                            style={{ backgroundColor: "#10B981", color: "#FFFFFF" }}
-                          >
-                            <Save className="w-3 h-3" />
-                            Save
-                          </button>
-                          <button
-                            onClick={() => cancelEditing(`edit_memory_${memory.id}`)}
-                            className="flex items-center gap-1 px-2 py-1 rounded text-xs font-medium transition-colors"
-                            style={{ backgroundColor: "#2A2A38", color: "#B8B8AD" }}
-                          >
-                            Cancel
-                          </button>
-                        </div>
-                      </div>
-                    ) : (
-                      <p className="text-sm" style={{ color: "#B8B8AD" }}>{memory.content}</p>
-                    )}
-                  </div>
-                ))
-              ) : data.memories.length === 0 ? (
-                <div className="text-center p-6" style={{ color: "#626259" }}>
-                  <Database className="w-8 h-8 mx-auto mb-2" />
-                  <p className="text-sm">No memories found</p>
-                </div>
-              ) : (
-                <div className="text-center p-6" style={{ color: "#626259" }}>
-                  <Search className="w-8 h-8 mx-auto mb-2" />
-                  <p className="text-sm">No memories match your search</p>
-                </div>
-              )}
-            </div>
-
-            {/* Knowledge Base Section */}
+            {/* Unified Memory Explorer — replaces old split layout */}
             <AgentKnowledgeBase agentId={data.config?.id || agent.id} />
           </div>
         );

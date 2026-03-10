@@ -166,7 +166,7 @@ export async function POST(request: NextRequest) {
           text: cleanText,
           model_id: modelId,
           voice_settings: {
-            stability: isJoshVoice ? 0.6 : 0.55,
+            stability: isJoshVoice ? 0.35 : 0.3, // Low stability = more expressive, less monotone
             similarity_boost: isJoshVoice ? 0.8 : 0.75,
             speed: isJoshVoice ? 0.92 : 0.95, // Natural pace — not rushed, not dragging
           },

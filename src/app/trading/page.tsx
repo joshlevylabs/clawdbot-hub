@@ -48,6 +48,7 @@ import RealTimePositionsTable from "@/components/trading/RealTimePositionsTable"
 import FibonacciModal from "@/components/FibonacciModal";
 import BrierCalibrationCard from "@/components/BrierCalibrationCard";
 import CorrelationPanel from "@/components/CorrelationPanel";
+import CompetitionTab from "@/components/trading/CompetitionTab";
 import { getAgentConfig, getAgentDisplayName, AGENT_CONFIGS } from "@/lib/agent-config";
 import { AgentBadge } from "@/components/AgentBadge";
 
@@ -371,7 +372,7 @@ function SignalAccuracyPanel({ stats }: { stats: SignalStats }) {
 
 // ===== Unified Trading Page with Single Tab Bar =====
 
-type ActiveTab = "overview" | "real-time" | "plays" | "positions" | "trades" | "signals" | "signal-flow" | "mre" | "universe" | "optimizer" | "backtests" | "versions" | "markets" | "cycles" | "validation";
+type ActiveTab = "overview" | "real-time" | "plays" | "positions" | "trades" | "signals" | "signal-flow" | "mre" | "universe" | "optimizer" | "backtests" | "versions" | "markets" | "cycles" | "validation" | "competition";
 
 export default function TradingPage() {
   // Support ?tab= query param for deep linking
@@ -729,6 +730,7 @@ export default function TradingPage() {
     { key: "positions", label: "Positions" },
     { key: "trades", label: "Trades" },
     { key: "signal-flow", label: "Signal Flow" },
+    { key: "competition", label: "🏆 Competition" },
     { key: "markets", label: "Markets" },
   ];
 
@@ -1818,6 +1820,9 @@ export default function TradingPage() {
 
           {/* ===== SIGNAL FLOW TAB (includes Core, Universe, Geopolitical sub-tabs) ===== */}
           {activeTab === "signal-flow" && <SignalFlowTab />}
+
+          {/* ===== COMPETITION TAB ===== */}
+          {activeTab === "competition" && <CompetitionTab />}
 
         </div>
       </div>

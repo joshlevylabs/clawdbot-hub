@@ -113,6 +113,19 @@ interface AgentDetailData {
   conversationCount: number;
 }
 
+interface KnowledgeMemory {
+  id: string;
+  agent_id: string;
+  kind: string;
+  content: string;
+  summary?: string;
+  source?: string;
+  importance: number;
+  tags: string[];
+  recalled_count: number;
+  created_at: string;
+}
+
 interface AgentDetailModalProps {
   agent: Agent;
   onClose: () => void;
@@ -169,6 +182,207 @@ function DepartmentBadge({ department }: { department: string }) {
     <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg ${config.bg} ${config.text} text-sm font-medium`}>
       <span>{config.emoji}</span>
       <span>{department.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</span>
+    </div>
+  );
+}
+
+// ── Agent Knowledge Base (from agent_memories table) ──────────────
+function AgentKnowledgeBase({ agentId }: { agentId: string }) {
+  const [knowledgeItems, setKnowledgeItems] = useState<KnowledgeMemory[]>([]);
+  const [knowledgeLoading, setKnowledgeLoading] = useState(true);
+  const [knowledgeCount, setKnowledgeCount] = useState(0);
+  const [expandedKb, setExpandedKb] = useState<string | null>(null);
+  const [kbSearch, setKbSearch] = useState("");
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [isSearchingKb, setIsSearchingKb] = useState(false);
+
+  useEffect(() => {
+    async function fetchKnowledge() {
+      try {
+        const [itemsRes, statsRes] = await Promise.all([
+          fetch(`/api/agent-memories?agent_id=${agentId}&limit=50`),
+          fetch(`/api/agent-memories/stats?agent_id=${agentId}`),
+        ]);
+        if (itemsRes.ok) {
+          const data = await itemsRes.json();
+          setKnowledgeItems(data.memories || []);
+        }
+        if (statsRes.ok) {
+          const stats = await statsRes.json();
+          setKnowledgeCount(stats.total_memories || 0);
+        }
+      } catch (err) {
+        console.error("Failed to fetch knowledge:", err);
+      } finally {
+        setKnowledgeLoading(false);
+      }
+    }
+    fetchKnowledge();
+  }, [agentId]);
+
+  const handleKbSearch = async () => {
+    if (!kbSearch.trim()) return;
+    setIsSearchingKb(true);
+    try {
+      const res = await fetch("/api/agent-memories/search", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query: kbSearch, agent_id: agentId, limit: 10 }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setSearchResults(data.results || []);
+      }
+    } catch (err) {
+      console.error("KB search failed:", err);
+    } finally {
+      setIsSearchingKb(false);
+    }
+  };
+
+  const handleDeleteKb = async (id: string) => {
+    if (!confirm("Delete this knowledge entry?")) return;
+    try {
+      const res = await fetch(`/api/agent-memories/${id}`, { method: "DELETE" });
+      if (res.ok) {
+        setKnowledgeItems(prev => prev.filter(k => k.id !== id));
+        setKnowledgeCount(prev => prev - 1);
+      }
+    } catch (err) {
+      console.error("Delete failed:", err);
+    }
+  };
+
+  const KIND_COLORS: Record<string, string> = {
+    knowledge: "bg-blue-500/20 text-blue-400",
+    observation: "bg-amber-500/20 text-amber-400",
+    decision: "bg-emerald-500/20 text-emerald-400",
+    reflection: "bg-purple-500/20 text-purple-400",
+    interaction: "bg-pink-500/20 text-pink-400",
+    error: "bg-red-500/20 text-red-400",
+  };
+
+  return (
+    <div className="mt-6 pt-6" style={{ borderTop: "1px solid #2A2A38" }}>
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <Brain className="w-4 h-4" style={{ color: "#D4A020" }} />
+          <h3 className="text-sm font-semibold uppercase tracking-wider" style={{ color: "#8B8B80" }}>
+            Knowledge Base ({knowledgeCount})
+          </h3>
+        </div>
+      </div>
+
+      {knowledgeLoading ? (
+        <div className="text-center py-4">
+          <Loader2 className="w-5 h-5 animate-spin mx-auto" style={{ color: "#626259" }} />
+        </div>
+      ) : knowledgeItems.length === 0 ? (
+        <div className="text-center py-6" style={{ color: "#626259" }}>
+          <Brain className="w-6 h-6 mx-auto mb-2 opacity-40" />
+          <p className="text-xs">No knowledge entries yet</p>
+          <p className="text-[10px] mt-1 opacity-60">Run the ingestion script to populate</p>
+        </div>
+      ) : (
+        <>
+          {/* Semantic search */}
+          <div className="flex gap-2 mb-3">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5" style={{ color: "#626259" }} />
+              <input
+                type="text"
+                value={kbSearch}
+                onChange={(e) => setKbSearch(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleKbSearch()}
+                placeholder="Semantic search this agent's knowledge…"
+                className="w-full h-8 pl-9 pr-3 rounded-lg text-xs transition-all focus:outline-none"
+                style={{ backgroundColor: "#1A1A24", border: "1px solid #2A2A38", color: "#F5F5F0" }}
+              />
+            </div>
+            <button
+              onClick={handleKbSearch}
+              disabled={isSearchingKb || !kbSearch.trim()}
+              className="px-3 h-8 rounded-lg text-xs font-medium transition-colors disabled:opacity-40"
+              style={{ backgroundColor: "#D4A020", color: "#000" }}
+            >
+              {isSearchingKb ? "…" : "Search"}
+            </button>
+          </div>
+
+          {/* Search results */}
+          {searchResults.length > 0 && (
+            <div className="space-y-2 mb-4 p-3 rounded-lg" style={{ backgroundColor: "rgba(212, 160, 32, 0.05)", border: "1px solid rgba(212, 160, 32, 0.15)" }}>
+              <p className="text-[10px] font-semibold uppercase" style={{ color: "#D4A020" }}>Search Results</p>
+              {searchResults.map((r: any) => (
+                <div key={r.id} className="p-2 rounded" style={{ backgroundColor: "#13131B" }}>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className={`px-1.5 py-0.5 rounded text-[9px] font-medium ${KIND_COLORS[r.kind] || "bg-slate-700 text-slate-300"}`}>
+                      {r.kind}
+                    </span>
+                    <span className="text-[10px] font-mono" style={{ color: "#D4A020" }}>
+                      {(r.similarity * 100).toFixed(1)}%
+                    </span>
+                  </div>
+                  <p className="text-xs leading-relaxed" style={{ color: "#B8B8AD" }}>
+                    {r.content.length > 300 ? r.content.slice(0, 300) + "…" : r.content}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Knowledge items list */}
+          <div className="space-y-1.5 max-h-64 overflow-auto">
+            {knowledgeItems.map((item) => (
+              <div key={item.id} className="rounded-lg border group" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+                <button
+                  onClick={() => setExpandedKb(expandedKb === item.id ? null : item.id)}
+                  className="w-full text-left px-3 py-2 flex items-center gap-2"
+                >
+                  <span className={`px-1.5 py-0.5 rounded text-[9px] font-medium flex-shrink-0 ${KIND_COLORS[item.kind] || "bg-slate-700 text-slate-300"}`}>
+                    {item.kind}
+                  </span>
+                  <p className="text-xs flex-1 truncate" style={{ color: "#B8B8AD" }}>
+                    {item.summary || item.content.slice(0, 120)}
+                  </p>
+                  {item.importance > 0.7 && (
+                    <span className="text-[9px] flex-shrink-0" style={{ color: "#D4A020" }}>★</span>
+                  )}
+                </button>
+                {expandedKb === item.id && (
+                  <div className="px-3 pb-3 space-y-2" style={{ borderTop: "1px solid #2A2A38" }}>
+                    <p className="text-xs leading-relaxed pt-2" style={{ color: "#B8B8AD" }}>{item.content}</p>
+                    {item.source && (
+                      <p className="text-[10px] font-mono" style={{ color: "#626259" }}>Source: {item.source}</p>
+                    )}
+                    {item.tags && item.tags.length > 0 && (
+                      <div className="flex gap-1 flex-wrap">
+                        {item.tags.map(tag => (
+                          <span key={tag} className="px-1.5 py-0.5 rounded text-[9px]" style={{ backgroundColor: "#1A1A24", color: "#8B8B80" }}>
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                    <div className="flex items-center justify-between pt-1">
+                      <span className="text-[9px]" style={{ color: "#626259" }}>
+                        Importance: {item.importance} • Recalled: {item.recalled_count}×
+                      </span>
+                      <button
+                        onClick={() => handleDeleteKb(item.id)}
+                        className="opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-white/10 transition-all"
+                        style={{ color: "#DC2626" }}
+                      >
+                        <Trash2 className="w-3 h-3" />
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 }
@@ -939,6 +1153,9 @@ export default function AgentDetailModal({ agent, onClose }: AgentDetailModalPro
                 </div>
               )}
             </div>
+
+            {/* Knowledge Base Section */}
+            <AgentKnowledgeBase agentId={data.config?.id || agent.id} />
           </div>
         );
 

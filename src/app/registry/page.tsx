@@ -27,6 +27,7 @@ import {
   ChevronDown,
   X,
   Eye,
+  Brain,
 } from "lucide-react";
 
 import AgentDetailModal from '@/components/AgentDetailModal';
@@ -466,6 +467,10 @@ export default function RegistryPage() {
   const [showDeptDropdown, setShowDeptDropdown] = useState(false);
   const [showStatusDropdown, setShowStatusDropdown] = useState(false);
   const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
+  const [memoryStats, setMemoryStats] = useState<any>(null);
+  const [memorySearch, setMemorySearch] = useState("");
+  const [memoryResults, setMemoryResults] = useState<any[]>([]);
+  const [isMemorySearching, setIsMemorySearching] = useState(false);
   const filterRef = useRef<HTMLDivElement>(null);
 
   // Close dropdowns on outside click
@@ -484,9 +489,10 @@ export default function RegistryPage() {
   useEffect(() => {
     async function fetchAgentsData() {
       try {
-        const [agentsRes, statsRes] = await Promise.all([
+        const [agentsRes, statsRes, memStatsRes] = await Promise.all([
           fetch('/api/agents'),
-          fetch('/api/agents/stats')
+          fetch('/api/agents/stats'),
+          fetch('/api/agent-memories/stats'),
         ]);
 
         const agentsData = await agentsRes.json();
@@ -494,6 +500,11 @@ export default function RegistryPage() {
 
         setAgents(agentsData.agents || []);
         setAgentStats(statsData);
+
+        if (memStatsRes.ok) {
+          const memData = await memStatsRes.json();
+          setMemoryStats(memData);
+        }
       } catch (error) {
         console.error('Failed to fetch agents data:', error);
       } finally {
@@ -518,6 +529,26 @@ export default function RegistryPage() {
       }
     } catch (e) {
       console.error('Failed to update model:', e);
+    }
+  };
+
+  const handleMemorySearch = async () => {
+    if (!memorySearch.trim()) return;
+    setIsMemorySearching(true);
+    try {
+      const res = await fetch("/api/agent-memories/search", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query: memorySearch, limit: 10 }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setMemoryResults(data.results || []);
+      }
+    } catch (err) {
+      console.error("Memory search failed:", err);
+    } finally {
+      setIsMemorySearching(false);
     }
   };
 
@@ -818,6 +849,79 @@ export default function RegistryPage() {
                       Configs: <code className="font-mono" style={{ color: "#6366F1" }}>~/clawd/agents/</code>
                     </div>
                   </div>
+                </div>
+              )}
+
+              {/* Knowledge Base Overview */}
+              {memoryStats && memoryStats.total_memories > 0 && (
+                <div className="p-4 rounded-xl border mb-4" style={{ backgroundColor: "rgba(212, 160, 32, 0.05)", borderColor: "rgba(212, 160, 32, 0.15)" }}>
+                  <div className="flex items-center gap-2 mb-3">
+                    <Brain className="w-4 h-4" style={{ color: "#D4A020" }} />
+                    <h3 className="text-sm font-semibold" style={{ color: "#D4A020" }}>Knowledge Base</h3>
+                  </div>
+                  <div className="flex flex-wrap gap-4 mb-3 text-xs" style={{ color: "#B8B8AD" }}>
+                    <span><strong style={{ color: "#F5F5F0" }}>{memoryStats.total_memories}</strong> memories</span>
+                    <span><strong style={{ color: "#F5F5F0" }}>{memoryStats.total_embeddings}</strong> embeddings</span>
+                    {memoryStats.by_kind && Object.entries(memoryStats.by_kind).map(([kind, count]) => (
+                      <span key={kind} className="px-2 py-0.5 rounded-full" style={{ backgroundColor: "#1A1A24" }}>
+                        {kind}: {count as number}
+                      </span>
+                    ))}
+                  </div>
+                  {/* Per-agent breakdown */}
+                  {memoryStats.by_agent && Object.keys(memoryStats.by_agent).length > 0 && (
+                    <div className="flex flex-wrap gap-2 mb-3">
+                      {Object.entries(memoryStats.by_agent).sort((a, b) => (b[1] as number) - (a[1] as number)).map(([agent, count]) => (
+                        <span key={agent} className="px-2 py-1 rounded text-[10px] font-medium" style={{ backgroundColor: "#1A1A24", color: "#B8B8AD" }}>
+                          {agent}: <strong style={{ color: "#D4A020" }}>{count as number}</strong>
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  {/* Semantic search */}
+                  <div className="flex gap-2">
+                    <div className="relative flex-1">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5" style={{ color: "#626259" }} />
+                      <input
+                        type="text"
+                        value={memorySearch}
+                        onChange={(e) => setMemorySearch(e.target.value)}
+                        onKeyDown={(e) => e.key === "Enter" && handleMemorySearch()}
+                        placeholder="Semantic search across all agent knowledge…"
+                        className="w-full h-8 pl-9 pr-3 rounded-lg text-xs transition-all focus:outline-none"
+                        style={{ backgroundColor: "#1A1A24", border: "1px solid #2A2A38", color: "#F5F5F0" }}
+                      />
+                    </div>
+                    <button
+                      onClick={handleMemorySearch}
+                      disabled={isMemorySearching || !memorySearch.trim()}
+                      className="px-4 h-8 rounded-lg text-xs font-medium transition-colors disabled:opacity-40"
+                      style={{ backgroundColor: "#D4A020", color: "#000" }}
+                    >
+                      {isMemorySearching ? "…" : "Search"}
+                    </button>
+                  </div>
+                  {/* Search results */}
+                  {memoryResults.length > 0 && (
+                    <div className="mt-3 space-y-2 max-h-60 overflow-auto">
+                      {memoryResults.map((r: any) => (
+                        <div key={r.id} className="p-2.5 rounded-lg" style={{ backgroundColor: "#13131B", border: "1px solid #2A2A38" }}>
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="text-[10px] font-semibold" style={{ color: "#6366F1" }}>{r.agent_id}</span>
+                            <span className="px-1.5 py-0.5 rounded text-[9px] font-medium" style={{ backgroundColor: "rgba(59, 130, 246, 0.15)", color: "#60A5FA" }}>
+                              {r.kind}
+                            </span>
+                            <span className="text-[10px] font-mono ml-auto" style={{ color: "#D4A020" }}>
+                              {(r.similarity * 100).toFixed(1)}%
+                            </span>
+                          </div>
+                          <p className="text-xs leading-relaxed" style={{ color: "#B8B8AD" }}>
+                            {r.content?.length > 250 ? r.content.slice(0, 250) + "…" : r.content}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
 

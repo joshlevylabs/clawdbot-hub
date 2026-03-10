@@ -22,7 +22,6 @@ import {
   Package,
   BookOpen,
   Receipt,
-  Brain,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -35,7 +34,6 @@ const navItems = [
   { href: "/morning-brief", icon: Clock, label: "Morning Brief" },
   { href: "/marketing", icon: Mic, label: "Marketing" },
   { href: "/faith-journey", icon: BookOpen, label: "Faith Journey" },
-  { href: "/memories", icon: Brain, label: "Agent Memory" },
   { href: "/registry", icon: Package, label: "Registry" },
   { href: "/brand", icon: Palette, label: "Brand" },
   { href: "/vault", icon: Lock, label: "Secure Vault" },

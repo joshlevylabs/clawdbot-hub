@@ -5,7 +5,7 @@ import { getSession } from '@/lib/auth'
 export const dynamic = 'force-dynamic'
 
 const VOICE_NAMES: Record<string, string> = {
-  'VTn3ZhBirl7E': 'Josh',
+  'VTn3ZhBirl7Eonh6soN9': 'Josh',
   'JBFqnCBsd6RM': 'George',
   'nPczCjzI2dev': 'Brian',
   'pqHfZKP75CvO': 'Bill',
@@ -143,7 +143,7 @@ export async function POST(request: NextRequest) {
 
     // Generate audio with ElevenLabs
     // Use v3 for Joshua's cloned voice (highest quality), turbo for premade voices (cost-efficient)
-    const JOSH_VOICE_ID = 'VTn3ZhBirl7E'
+    const JOSH_VOICE_ID = 'VTn3ZhBirl7Eonh6soN9'
     const isJoshVoice = voice === JOSH_VOICE_ID
     const modelId = isJoshVoice ? 'eleven_multilingual_v2' : 'eleven_turbo_v2_5'
 

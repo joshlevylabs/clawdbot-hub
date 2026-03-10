@@ -2019,8 +2019,8 @@ export default function FaithJourneyPage() {
         const audioData = await audioResponse.json();
         
         // Fetch related data for lessons and traditions
-        const lessonIds = [...new Set(audioData.map((audio: any) => audio.lesson_id))];
-        const traditionIds = [...new Set(audioData.map((audio: any) => audio.tradition_id))];
+        const lessonIds = Array.from(new Set(audioData.map((audio: any) => audio.lesson_id)));
+        const traditionIds = Array.from(new Set(audioData.map((audio: any) => audio.tradition_id)));
         
         // Fetch lessons
         const lessonsResponse = await fetch(

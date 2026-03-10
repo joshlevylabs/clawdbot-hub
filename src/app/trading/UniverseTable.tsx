@@ -38,6 +38,8 @@ interface UniverseSignal {
   };
   asset_class: string;
   sector: string;
+  industry_group?: string;
+  industry?: string;
   price: number;
   regime: string;
   hold_days: number;
@@ -766,7 +768,7 @@ export default function UniverseTable() {
                       setModalType("consensus");
                     }}
                   >
-                    {/* Symbol + Name */}
+                    {/* Symbol + Name + Industry */}
                     <td className="py-2 px-3 sticky left-0 bg-slate-900/80 z-10">
                       <div className="flex items-center gap-1.5">
                         <div>
@@ -779,10 +781,16 @@ export default function UniverseTable() {
                             )}
                           </div>
                           {sig.name && sig.name !== sig.symbol && (
-                            <div className="text-[10px] text-slate-500 truncate max-w-[140px]" title={sig.name}>
+                            <div className="text-[10px] text-slate-400 truncate max-w-[160px]" title={sig.name}>
                               {sig.name}
                             </div>
                           )}
+                          <div
+                            className="text-[9px] text-slate-600 truncate max-w-[160px]"
+                            title={[sig.sector, sig.industry_group, sig.industry].filter(Boolean).join(" › ")}
+                          >
+                            {sig.industry || sig.sector}
+                          </div>
                         </div>
                       </div>
                     </td>

@@ -106,6 +106,8 @@ interface AssetSignal {
   signal_source?: string;
   strategies_agreeing?: number;
   sector?: string;
+  industry_group?: string;
+  industry?: string;
   is_core?: boolean;
   signal_strength?: number;
   rsi_14?: number;
@@ -236,6 +238,8 @@ interface ActionItem {
   rsi14?: number;
   dipPercent?: number;
   sector?: string;
+  industryGroup?: string;
+  industry?: string;
   // Computed composite score (for swap comparison)
   swapScore?: number;
   // Consensus: how many of 5 strategies agree
@@ -377,6 +381,8 @@ function generateActions(data: MREData): ActionItem[] {
       rsi14: asset.rsi_14,
       dipPercent: asset.dip_5d_pct,
       sector: asset.sector,
+      industryGroup: asset.industry_group,
+      industry: asset.industry,
       // Composite swap score: same formula as _score_new_signal in mre_signal_exporter.py
       swapScore: Math.round(
         (asset.signal_strength || 0) * 0.40 +
@@ -1091,9 +1097,14 @@ export default function ActionsDashboard({
             <div>
               <span className="font-bold text-slate-100">{item.symbol}</span>
               {item.name && item.name !== item.symbol && (
-                <p className="text-[10px] text-slate-400 truncate max-w-[130px]" title={item.name}>{item.name}</p>
+                <p className="text-[10px] text-slate-400 truncate max-w-[140px]" title={item.name}>{item.name}</p>
               )}
-              <p className="text-[10px] text-slate-500">{item.sector || item.assetClass}</p>
+              <p
+                className="text-[10px] text-slate-500 truncate max-w-[140px]"
+                title={[item.sector, item.industryGroup, item.industry].filter(Boolean).join(" › ")}
+              >
+                {item.industry || item.sector || item.assetClass}
+              </p>
             </div>
             <span className="text-xs opacity-80">{item.categoryIcon}</span>
           </div>

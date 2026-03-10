@@ -3654,7 +3654,7 @@ export default function FaithJourneyPage() {
                             return acc;
                           }, {} as Record<string, { count: number; characters: number; color: string; icon: string }>)
                         )
-                        .sort(([,a], [,b]) => b.count - a.count)
+                        .sort(([,a], [,b]) => (b as any).count - (a as any).count)
                         .map(([tradition, stats]) => {
                           const maxCount = Math.max(...Object.values(
                             audioFiles.reduce((acc, audio) => {

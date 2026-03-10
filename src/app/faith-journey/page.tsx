@@ -1572,11 +1572,19 @@ export default function FaithJourneyPage() {
   const [voiceConfig, setVoiceConfig] = useState<any>(null);
   const [voiceConfigLoading, setVoiceConfigLoading] = useState(false);
   const [editingVoice, setEditingVoice] = useState<string | null>(null); // tradition slug being edited
+  const [editingFamily, setEditingFamily] = useState<string | null>(null); // tradition family being edited
   const [editVoiceId, setEditVoiceId] = useState('');
   const [voiceSaving, setVoiceSaving] = useState(false);
   const [addingCustomVoice, setAddingCustomVoice] = useState(false);
   const [newVoiceId, setNewVoiceId] = useState('');
   const [newVoiceName, setNewVoiceName] = useState('');
+
+  // Prayer data state  
+  const [dailyPrayers, setDailyPrayers] = useState<any[]>([]);
+  const [sleepPrayers, setSleepPrayers] = useState<any[]>([]);
+
+  // Calendar content sections collapse state
+  const [collapsedSections, setCollapsedSections] = useState<Set<string>>(new Set());
 
   // Fetch voice configuration from API
   const fetchVoiceConfig = async () => {
@@ -1608,6 +1616,31 @@ export default function FaithJourneyPage() {
       }
     } catch (e) {
       console.error('Failed to save voice mapping:', e);
+    }
+    setVoiceSaving(false);
+  };
+
+  // Save voice mapping for entire tradition family
+  const saveFamilyVoiceMapping = async (family: string, voiceId: string) => {
+    if (!voiceConfig?.grouped?.[family]) return;
+    
+    setVoiceSaving(true);
+    try {
+      // Get all tradition slugs in this family
+      const traditions = voiceConfig.grouped[family];
+      const updates = traditions.map((t: any) => ({ slug: t.slug, voiceId }));
+      
+      const res = await fetch('/api/faith/voice-config', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ updates }),
+      });
+      if (res.ok) {
+        await fetchVoiceConfig();
+        setEditingFamily(null);
+      }
+    } catch (e) {
+      console.error('Failed to save family voice mapping:', e);
     }
     setVoiceSaving(false);
   };
@@ -1722,13 +1755,44 @@ export default function FaithJourneyPage() {
     try {
       setLoading(true);
       setError(null);
-      const res = await fetch("/api/faith/dashboard");
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.error || `HTTP ${res.status}`);
+      
+      // Fetch dashboard data, daily prayers, and sleep prayers in parallel
+      const [dashboardRes, dailyPrayersRes, sleepPrayersRes] = await Promise.all([
+        fetch("/api/faith/dashboard"),
+        fetch("/api/faith/daily-prayers"),
+        fetch("/api/faith/sleep-prayers")
+      ]);
+      
+      if (!dashboardRes.ok) {
+        const errorData = await dashboardRes.json();
+        throw new Error(errorData.error || `HTTP ${dashboardRes.status}`);
       }
-      const dashboardData: DashboardData = await res.json();
+      
+      const dashboardData: DashboardData = await dashboardRes.json();
       setData(dashboardData);
+      
+      // Handle daily prayers (non-fatal if it fails)
+      try {
+        if (dailyPrayersRes.ok) {
+          const dailyPrayersData = await dailyPrayersRes.json();
+          setDailyPrayers(dailyPrayersData.prayers || []);
+        }
+      } catch (e) {
+        console.warn('Failed to load daily prayers:', e);
+        setDailyPrayers([]);
+      }
+      
+      // Handle sleep prayers (non-fatal if it fails)  
+      try {
+        if (sleepPrayersRes.ok) {
+          const sleepPrayersData = await sleepPrayersRes.json();
+          setSleepPrayers(sleepPrayersData.prayers || []);
+        }
+      } catch (e) {
+        console.warn('Failed to load sleep prayers:', e);
+        setSleepPrayers([]);
+      }
+      
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load data");
     } finally {
@@ -1758,6 +1822,16 @@ export default function FaithJourneyPage() {
       newExpanded.add(lessonId);
     }
     setExpandedLessons(newExpanded);
+  };
+
+  const toggleSectionCollapse = (sectionKey: string) => {
+    const newCollapsed = new Set(collapsedSections);
+    if (newCollapsed.has(sectionKey)) {
+      newCollapsed.delete(sectionKey);
+    } else {
+      newCollapsed.add(sectionKey);
+    }
+    setCollapsedSections(newCollapsed);
   };
 
   const toggleHolidayFilter = (tradition: string) => {
@@ -3045,6 +3119,150 @@ export default function FaithJourneyPage() {
                                     </div>
                                   )}
                                   
+                                  {/* Three Content Containers: Lessons, Daily Prayers, Sleep Prayers */}
+                                  {(() => {
+                                    const selectedDateStr = selectedDay.toISOString().split('T')[0];
+                                    const dayLessons = events.lessons;
+                                    const dayDailyPrayers = dailyPrayers.filter(prayer => prayer.date === selectedDateStr);
+                                    const daySleepPrayers = sleepPrayers.filter(prayer => prayer.date === selectedDateStr);
+
+                                    return (
+                                      <div className="space-y-3">
+                                        {/* 📖 Lessons */}
+                                        <div className="rounded-lg border" style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}>
+                                          <button
+                                            onClick={() => toggleSectionCollapse('lessons')}
+                                            className="w-full flex items-center justify-between p-3 text-left hover:bg-slate-800/30 transition-colors"
+                                          >
+                                            <div className="flex items-center gap-2">
+                                              <BookOpen className="w-4 h-4 text-blue-400" />
+                                              <span className="text-sm font-medium text-slate-200">Lessons</span>
+                                              <span className="px-1.5 py-0.5 text-xs rounded bg-slate-700 text-slate-300">
+                                                {dayLessons.length}
+                                              </span>
+                                            </div>
+                                            {collapsedSections.has('lessons') ? 
+                                              <ChevronDown className="w-4 h-4 text-slate-400" /> : 
+                                              <ChevronUp className="w-4 h-4 text-slate-400" />
+                                            }
+                                          </button>
+                                          {!collapsedSections.has('lessons') && (
+                                            <div className="px-3 pb-3 space-y-2">
+                                              {dayLessons.length > 0 ? dayLessons.map((lesson: any, idx: number) => (
+                                                <div
+                                                  key={idx}
+                                                  onClick={() => setSelectedLesson(lesson)}
+                                                  className="p-2 rounded border cursor-pointer hover:border-yellow-500 transition-colors"
+                                                  style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}
+                                                >
+                                                  <h5 className="font-medium text-slate-200 text-sm leading-tight">{lesson.title}</h5>
+                                                  <p className="text-xs text-slate-400 mt-1 line-clamp-2">
+                                                    {lesson.content ? lesson.content.substring(0, 120) + '...' : 'Click to view lesson content'}
+                                                  </p>
+                                                </div>
+                                              )) : (
+                                                <p className="text-xs text-slate-500 text-center py-4">No lessons for this day</p>
+                                              )}
+                                            </div>
+                                          )}
+                                        </div>
+
+                                        {/* 🙏 Daily Prayers */}
+                                        <div className="rounded-lg border" style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}>
+                                          <button
+                                            onClick={() => toggleSectionCollapse('daily-prayers')}
+                                            className="w-full flex items-center justify-between p-3 text-left hover:bg-slate-800/30 transition-colors"
+                                          >
+                                            <div className="flex items-center gap-2">
+                                              <span className="text-sm">🙏</span>
+                                              <span className="text-sm font-medium text-slate-200">Daily Prayers</span>
+                                              <span className="px-1.5 py-0.5 text-xs rounded bg-slate-700 text-slate-300">
+                                                {dayDailyPrayers.length}
+                                              </span>
+                                            </div>
+                                            {collapsedSections.has('daily-prayers') ? 
+                                              <ChevronDown className="w-4 h-4 text-slate-400" /> : 
+                                              <ChevronUp className="w-4 h-4 text-slate-400" />
+                                            }
+                                          </button>
+                                          {!collapsedSections.has('daily-prayers') && (
+                                            <div className="px-3 pb-3 space-y-2">
+                                              {dayDailyPrayers.length > 0 ? dayDailyPrayers.map((prayer: any, idx: number) => (
+                                                <div
+                                                  key={idx}
+                                                  className="p-2 rounded border"
+                                                  style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}
+                                                >
+                                                  <div className="flex items-center gap-2 mb-1">
+                                                    {prayer.tradition_icon && <span className="text-sm">{prayer.tradition_icon}</span>}
+                                                    <span className="text-sm font-medium text-slate-200">{prayer.tradition_name}</span>
+                                                  </div>
+                                                  {prayer.opening && (
+                                                    <p className="text-xs text-slate-400 mb-1 line-clamp-2">{prayer.opening.substring(0, 120)}...</p>
+                                                  )}
+                                                  {prayer.scripture_ref && (
+                                                    <span className="text-xs px-2 py-0.5 rounded bg-slate-800 text-slate-400">
+                                                      📖 {prayer.scripture_ref}
+                                                    </span>
+                                                  )}
+                                                </div>
+                                              )) : (
+                                                <p className="text-xs text-slate-500 text-center py-4">No daily prayers for this day</p>
+                                              )}
+                                            </div>
+                                          )}
+                                        </div>
+
+                                        {/* 🌙 Sleep Prayers */}
+                                        <div className="rounded-lg border" style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}>
+                                          <button
+                                            onClick={() => toggleSectionCollapse('sleep-prayers')}
+                                            className="w-full flex items-center justify-between p-3 text-left hover:bg-slate-800/30 transition-colors"
+                                          >
+                                            <div className="flex items-center gap-2">
+                                              <Moon className="w-4 h-4 text-purple-400" />
+                                              <span className="text-sm font-medium text-slate-200">Sleep Prayers</span>
+                                              <span className="px-1.5 py-0.5 text-xs rounded bg-slate-700 text-slate-300">
+                                                {daySleepPrayers.length}
+                                              </span>
+                                            </div>
+                                            {collapsedSections.has('sleep-prayers') ? 
+                                              <ChevronDown className="w-4 h-4 text-slate-400" /> : 
+                                              <ChevronUp className="w-4 h-4 text-slate-400" />
+                                            }
+                                          </button>
+                                          {!collapsedSections.has('sleep-prayers') && (
+                                            <div className="px-3 pb-3 space-y-2">
+                                              {daySleepPrayers.length > 0 ? daySleepPrayers.map((prayer: any, idx: number) => (
+                                                <div
+                                                  key={idx}
+                                                  className="p-2 rounded border"
+                                                  style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}
+                                                >
+                                                  {prayer.tradition_alignment && (
+                                                    <div className="flex items-center gap-2 mb-1">
+                                                      <span className="text-sm font-medium text-slate-200">{prayer.tradition_alignment}</span>
+                                                    </div>
+                                                  )}
+                                                  {prayer.opening && (
+                                                    <p className="text-xs text-slate-400 mb-1 line-clamp-2">{prayer.opening.substring(0, 120)}...</p>
+                                                  )}
+                                                  {prayer.scripture_ref && (
+                                                    <span className="text-xs px-2 py-0.5 rounded bg-slate-800 text-slate-400">
+                                                      📖 {prayer.scripture_ref}
+                                                    </span>
+                                                  )}
+                                                </div>
+                                              )) : (
+                                                <p className="text-xs text-slate-500 text-center py-4">No sleep prayers for this day</p>
+                                              )}
+                                            </div>
+                                          )}
+                                        </div>
+                                      </div>
+                                    );
+                                  })()}
+                                  
                                   {/* Explore by Tradition */}
                                   <div>
                                     <h4 className="text-sm font-medium text-slate-200 mb-2 flex items-center gap-2">
@@ -3792,98 +4010,131 @@ export default function FaithJourneyPage() {
                   ) : voiceConfig ? (
                     <div className="space-y-4">
                       {/* Available Voices Reference */}
-                      <div className="p-3 rounded-lg" style={{ backgroundColor: "#0B0B11" }}>
+                      <div className="p-3 rounded-lg mb-4" style={{ backgroundColor: "#0B0B11" }}>
                         <h3 className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-2">Available Voices</h3>
-                        <div className="flex flex-wrap gap-2">
+                        <div className="flex flex-wrap gap-1">
                           {(voiceConfig.availableVoices || []).map((v: any) => (
                             <span key={v.id} className="inline-flex items-center gap-1 px-2 py-1 rounded text-xs" style={{ backgroundColor: "#1A1A28", color: v.category === 'tradition' ? '#D4A020' : v.category === 'clone' ? '#8B5CF6' : '#64748B' }}>
                               {v.name}
-                              <span className="text-slate-600 font-mono text-[10px]">{v.id.slice(0, 8)}…</span>
                             </span>
                           ))}
                         </div>
                       </div>
 
-                      {/* Grouped by Tradition Family */}
-                      {Object.entries(voiceConfig.grouped || {}).sort(([a], [b]) => a.localeCompare(b)).map(([family, traditions]: [string, any]) => {
-                        const familyEmoji: Record<string, string> = {
-                          'Judaism': '✡️', 'Christianity': '✝️', 'Islam': '☪️',
-                          'Hinduism': '🕉️', 'Buddhism': '☸️', 'Secular': '🌍',
-                          "Bahá'í": '⭐', 'Interfaith': '🌈', 'Jainism': '🔶',
-                          'Sikhism': '🪯', 'Zoroastrianism': '🔥',
-                        };
-                        return (
-                          <div key={family}>
-                            <h3 className="text-sm font-medium text-slate-300 mb-2 flex items-center gap-2">
-                              <span>{familyEmoji[family] || '📿'}</span>
-                              {family}
-                              <span className="text-xs text-slate-600">({traditions.length} traditions)</span>
-                            </h3>
-                            <div className="space-y-1">
-                              {traditions.map((t: any) => (
-                                <div key={t.slug} className="flex items-center justify-between p-2 rounded-lg hover:bg-[#1A1A28] transition-colors group">
-                                  <div className="flex items-center gap-3 flex-1 min-w-0">
-                                    <span className="text-sm text-slate-400 truncate w-48" title={t.slug}>
-                                      {t.slug.split('-').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
-                                    </span>
-                                    {editingVoice === t.slug ? (
+                      {/* Tradition Family Voice Mappings Table */}
+                      <div className="rounded-lg border overflow-hidden" style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}>
+                        <table className="w-full table-fixed">
+                          <thead>
+                            <tr className="border-b border-slate-700/50">
+                              <th className="text-left px-3 py-2 text-[11px] font-semibold text-slate-400 uppercase tracking-wider w-[200px]">Tradition</th>
+                              <th className="text-left px-3 py-2 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Voice</th>
+                              <th className="text-left px-3 py-2 text-[11px] font-semibold text-slate-400 uppercase tracking-wider w-[150px]">Voice ID</th>
+                              <th className="text-left px-3 py-2 text-[11px] font-semibold text-slate-400 uppercase tracking-wider w-[80px]">Action</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {(() => {
+                              const familyVoiceMap = {
+                                'Judaism': 'Rabbi Shafier',
+                                'Christianity': 'Reverend',
+                                'Islam': 'Rehan Imam',
+                                'Buddhism': 'Moses Sam Paul',
+                                'Hinduism': 'Rehan Imam',
+                                'Secular/Interfaith': 'Serena'
+                              };
+                              const familyEmojis = {
+                                'Judaism': '✡️',
+                                'Christianity': '✝️', 
+                                'Islam': '☪️',
+                                'Buddhism': '☸️',
+                                'Hinduism': '🕉️',
+                                'Secular/Interfaith': '🌍'
+                              };
+                              
+                              return Object.entries(familyVoiceMap).map(([family, defaultVoice]) => {
+                                // Find actual voice data from the first tradition in this family
+                                const traditions = voiceConfig.grouped?.[family] || voiceConfig.grouped?.[family.split('/')[0]] || [];
+                                const firstTradition = traditions[0];
+                                const voiceName = firstTradition?.voiceName || defaultVoice;
+                                const voiceId = firstTradition?.voiceId || '';
+                                const emoji = familyEmojis[family as keyof typeof familyEmojis];
+                                
+                                return (
+                                  <tr key={family} className="border-b border-slate-700/50 hover:bg-slate-800/30">
+                                    <td className="px-3 py-2">
                                       <div className="flex items-center gap-2">
-                                        <select
-                                          value={editVoiceId}
-                                          onChange={(e) => setEditVoiceId(e.target.value)}
-                                          className="px-2 py-1 rounded border text-sm"
-                                          style={{ backgroundColor: "#0B0B11", borderColor: "#D4A020", color: "#D4A020" }}
-                                        >
-                                          {(voiceConfig.availableVoices || []).map((v: any) => (
-                                            <option key={v.id} value={v.id}>{v.name} ({v.id.slice(0, 8)}…)</option>
-                                          ))}
-                                        </select>
-                                        <input
-                                          type="text"
-                                          placeholder="Or paste voice ID…"
-                                          value={editVoiceId}
-                                          onChange={(e) => setEditVoiceId(e.target.value)}
-                                          className="px-2 py-1 rounded border text-sm font-mono w-48"
-                                          style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38", color: "#E2E8F0" }}
-                                        />
-                                        <button
-                                          onClick={() => saveVoiceMapping(t.slug, editVoiceId)}
-                                          disabled={voiceSaving || !editVoiceId}
-                                          className="p-1.5 rounded transition-colors disabled:opacity-40"
-                                          style={{ backgroundColor: "#D4A020", color: "#0B0B11" }}
-                                        >
-                                          {voiceSaving ? <Loader className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />}
-                                        </button>
-                                        <button
-                                          onClick={() => setEditingVoice(null)}
-                                          className="p-1.5 rounded transition-colors"
-                                          style={{ backgroundColor: "#2A2A38", color: "#94A3B8" }}
-                                        >
-                                          <X className="w-3.5 h-3.5" />
-                                        </button>
+                                        <span className="text-sm">{emoji}</span>
+                                        <span className="text-sm font-medium text-slate-200">{family}</span>
                                       </div>
-                                    ) : (
-                                      <div className="flex items-center gap-2">
-                                        <span className="text-sm font-medium" style={{ color: "#D4A020" }}>{t.voiceName}</span>
-                                        <span className="text-xs text-slate-600 font-mono">{t.voiceId.slice(0, 12)}…</span>
-                                      </div>
-                                    )}
-                                  </div>
-                                  {editingVoice !== t.slug && (
-                                    <button
-                                      onClick={() => { setEditingVoice(t.slug); setEditVoiceId(t.voiceId); }}
-                                      className="opacity-0 group-hover:opacity-100 p-1.5 rounded transition-all"
-                                      style={{ backgroundColor: "#2A2A38", color: "#94A3B8" }}
-                                    >
-                                      <Edit3 className="w-3.5 h-3.5" />
-                                    </button>
-                                  )}
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        );
-                      })}
+                                    </td>
+                                    <td className="px-3 py-2">
+                                      {editingFamily === family ? (
+                                        <div className="flex items-center gap-2">
+                                          <select
+                                            value={editVoiceId}
+                                            onChange={(e) => setEditVoiceId(e.target.value)}
+                                            className="px-2 py-1 rounded border text-sm flex-1"
+                                            style={{ backgroundColor: "#13131B", borderColor: "#D4A020", color: "#D4A020" }}
+                                          >
+                                            <option value="">Select voice...</option>
+                                            {(voiceConfig.availableVoices || []).map((v: any) => (
+                                              <option key={v.id} value={v.id}>{v.name}</option>
+                                            ))}
+                                          </select>
+                                          <input
+                                            type="text"
+                                            placeholder="Custom voice ID..."
+                                            value={editVoiceId}
+                                            onChange={(e) => setEditVoiceId(e.target.value)}
+                                            className="px-2 py-1 rounded border text-sm font-mono flex-1"
+                                            style={{ backgroundColor: "#13131B", borderColor: "#2A2A38", color: "#E2E8F0" }}
+                                          />
+                                        </div>
+                                      ) : (
+                                        <span className="text-sm text-slate-200">{voiceName}</span>
+                                      )}
+                                    </td>
+                                    <td className="px-3 py-2">
+                                      <span className="text-xs font-mono text-slate-400">
+                                        {voiceId ? `${voiceId.slice(0, 12)}...` : 'Not set'}
+                                      </span>
+                                    </td>
+                                    <td className="px-3 py-2">
+                                      {editingFamily === family ? (
+                                        <div className="flex gap-1">
+                                          <button
+                                            onClick={() => saveFamilyVoiceMapping(family, editVoiceId)}
+                                            disabled={voiceSaving || !editVoiceId}
+                                            className="p-1.5 rounded transition-colors disabled:opacity-40"
+                                            style={{ backgroundColor: "#D4A020", color: "#0B0B11" }}
+                                          >
+                                            {voiceSaving ? <Loader className="w-3 h-3 animate-spin" /> : <Save className="w-3 h-3" />}
+                                          </button>
+                                          <button
+                                            onClick={() => setEditingFamily(null)}
+                                            className="p-1.5 rounded transition-colors"
+                                            style={{ backgroundColor: "#2A2A38", color: "#94A3B8" }}
+                                          >
+                                            <X className="w-3 h-3" />
+                                          </button>
+                                        </div>
+                                      ) : (
+                                        <button
+                                          onClick={() => { setEditingFamily(family); setEditVoiceId(voiceId); }}
+                                          className="p-1.5 rounded transition-colors hover:bg-slate-700"
+                                          style={{ color: "#94A3B8" }}
+                                        >
+                                          <Edit3 className="w-3 h-3" />
+                                        </button>
+                                      )}
+                                    </td>
+                                  </tr>
+                                );
+                              });
+                            })()}
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
                   ) : (
                     <div className="text-center py-8">

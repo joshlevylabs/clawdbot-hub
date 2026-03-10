@@ -18,9 +18,9 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { agent_id, query, user_id, kinds, limit = 10 } = body;
 
-    if (!agent_id || !query) {
+    if (!query) {
       return NextResponse.json({ 
-        error: 'agent_id and query are required' 
+        error: 'query is required' 
       }, { status: 400 });
     }
 
@@ -41,17 +41,40 @@ export async function POST(request: NextRequest) {
 
     // Call the RPC function for semantic search
     const { data, error } = await supabase.rpc('search_agent_memories', {
-      p_agent_id: agent_id,
+      p_agent_id: agent_id || null,
       p_embedding: queryEmbedding,
       p_user_id: user_id || null,
       p_kinds: kinds || null,
       p_limit: limit,
-      p_min_importance: null, // Could be made configurable
+      p_min_importance: 0.0,
     });
 
     if (error) {
       console.error('Error searching agent memories:', error);
-      return NextResponse.json({ error: 'Failed to search memories' }, { status: 500 });
+      // Fallback: basic text search if RPC fails
+      let fallbackQuery = supabase
+        .from('agent_memories')
+        .select('id, agent_id, kind, content, summary, importance, created_at')
+        .ilike('content', `%${query}%`)
+        .order('importance', { ascending: false })
+        .limit(limit);
+
+      if (agent_id) {
+        fallbackQuery = fallbackQuery.eq('agent_id', agent_id);
+      }
+
+      const { data: fallbackData, error: fallbackError } = await fallbackQuery;
+
+      if (fallbackError) {
+        return NextResponse.json({ error: 'Failed to search memories' }, { status: 500 });
+      }
+
+      return NextResponse.json({
+        query,
+        results: (fallbackData || []).map((r: any) => ({ ...r, similarity: 0 })),
+        count: fallbackData?.length || 0,
+        fallback: true,
+      });
     }
 
     return NextResponse.json({ 

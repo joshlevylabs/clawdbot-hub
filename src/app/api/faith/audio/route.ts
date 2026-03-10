@@ -127,6 +127,11 @@ export async function POST(request: NextRequest) {
     const charCount = cleanText.length
 
     // Generate audio with ElevenLabs
+    // Use v3 for Joshua's cloned voice (highest quality), turbo for premade voices (cost-efficient)
+    const JOSH_VOICE_ID = 'VTn3ZhBirl7E'
+    const isJoshVoice = voice === JOSH_VOICE_ID
+    const modelId = isJoshVoice ? 'eleven_multilingual_v2' : 'eleven_turbo_v2_5'
+
     const elevenLabsResponse = await fetch(
       `https://api.elevenlabs.io/v1/text-to-speech/${voice}`,
       {
@@ -138,10 +143,11 @@ export async function POST(request: NextRequest) {
         },
         body: JSON.stringify({
           text: cleanText,
-          model_id: 'eleven_turbo_v2_5',
+          model_id: modelId,
           voice_settings: {
-            stability: 0.5,
-            similarity_boost: 0.75,
+            stability: isJoshVoice ? 0.6 : 0.5,
+            similarity_boost: isJoshVoice ? 0.8 : 0.75,
+            speed: isJoshVoice ? 0.85 : 0.92, // Slower, more contemplative pacing
           },
         }),
       }
@@ -187,7 +193,7 @@ export async function POST(request: NextRequest) {
         tradition_id: lesson.baseline_tradition_id,
         date: lesson.date,
         voice: voiceName,
-        model: 'eleven_turbo_v2_5',
+        model: modelId,
         storage_path: uploadData.path,
         file_size_bytes: fileSize,
         char_count: charCount,

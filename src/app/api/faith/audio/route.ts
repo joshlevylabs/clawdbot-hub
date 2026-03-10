@@ -2,11 +2,36 @@ import { createClient } from '@supabase/supabase-js'
 import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
 
+export const dynamic = 'force-dynamic'
+
 export async function POST(request: NextRequest) {
   try {
-    // Check authentication using the existing auth system
+    // Check authentication — support both cookie auth (web) and Bearer token (mobile)
+    let authenticated = false
+    
+    // 1. Try cookie-based session (Hub web)
     const session = await getSession()
-    if (!session) {
+    if (session?.authenticated) {
+      authenticated = true
+    }
+    
+    // 2. Try Bearer token (mobile app sends Supabase access token)
+    if (!authenticated) {
+      const authHeader = request.headers.get('Authorization')
+      if (authHeader?.startsWith('Bearer ')) {
+        const token = authHeader.slice(7)
+        const supabaseAuth = createClient(
+          process.env.NEXT_PUBLIC_SUPABASE_URL!,
+          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY!
+        )
+        const { data: { user }, error } = await supabaseAuth.auth.getUser(token)
+        if (user && !error) {
+          authenticated = true
+        }
+      }
+    }
+    
+    if (!authenticated) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 

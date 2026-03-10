@@ -1775,7 +1775,7 @@ export default function FaithJourneyPage() {
       try {
         if (dailyPrayersRes.ok) {
           const dailyPrayersData = await dailyPrayersRes.json();
-          setDailyPrayers(dailyPrayersData.prayers || []);
+          setDailyPrayers(Array.isArray(dailyPrayersData) ? dailyPrayersData : (dailyPrayersData.prayers || []));
         }
       } catch (e) {
         console.warn('Failed to load daily prayers:', e);
@@ -1786,7 +1786,7 @@ export default function FaithJourneyPage() {
       try {
         if (sleepPrayersRes.ok) {
           const sleepPrayersData = await sleepPrayersRes.json();
-          setSleepPrayers(sleepPrayersData.prayers || []);
+          setSleepPrayers(Array.isArray(sleepPrayersData) ? sleepPrayersData : (sleepPrayersData.prayers || []));
         }
       } catch (e) {
         console.warn('Failed to load sleep prayers:', e);

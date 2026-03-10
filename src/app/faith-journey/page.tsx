@@ -3614,7 +3614,7 @@ export default function FaithJourneyPage() {
                               const voice = audio.voice_id || 'Unknown';
                               acc[voice] = (acc[voice] || 0) + 1;
                               return acc;
-                            }, {} as Record<string, number>)).sort(([,a], [,b]) => b - a)[0]?.[0] || 'Unknown'
+                            }, {} as Record<string, number>)).sort(([,a], [,b]) => (b as number) - (a as number))[0]?.[0] || 'Unknown'
                             : 'None'
                           }
                         </div>

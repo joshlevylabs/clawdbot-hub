@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import {
   Calendar,
   Clock,
@@ -14,12 +15,26 @@ import {
   ArrowRight,
   ArrowDown,
   Activity,
+  RefreshCw,
+  Loader2,
+  ExternalLink,
 } from "lucide-react";
 import { TaxData } from "../page";
 import { formatCurrency, formatDate, daysUntil } from "../utils";
 
 interface TaxDashboardProps {
   data: TaxData;
+}
+
+// Types for live QuickBooks data
+interface LiveFinancialData {
+  revenue: number;
+  cogs: number;
+  grossProfit: number;
+  expenses: { [category: string]: number };
+  totalExpenses: number;
+  netIncome: number;
+  period: string;
 }
 
 function StatCard({
@@ -92,7 +107,155 @@ function MoneyFlowCard({
   );
 }
 
+function LiveDataSection({ 
+  liveData, 
+  loading, 
+  error, 
+  onRefresh 
+}: { 
+  liveData: LiveFinancialData | null;
+  loading: boolean;
+  error: string | null;
+  onRefresh: () => void;
+}) {
+  if (error) {
+    return (
+      <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700/50">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-5 h-5 text-red-400">⚡</div>
+          <h2 className="text-lg font-semibold text-slate-100">2025 YTD (Live) — Connection Error</h2>
+        </div>
+        <div className="text-center py-8">
+          <AlertCircle className="w-8 h-8 text-red-400 mx-auto mb-3" />
+          <p className="text-red-300 mb-4">{error}</p>
+          <button
+            onClick={onRefresh}
+            className="px-4 py-2 bg-[#D4A020] hover:bg-[#D4A020]/80 rounded-lg text-sm text-slate-900 font-medium transition-colors"
+          >
+            Retry Connection
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700/50">
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3">
+          <div className="w-5 h-5 text-[#D4A020]">⚡</div>
+          <h2 className="text-lg font-semibold text-slate-100">2025 YTD (Live)</h2>
+          <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center gap-1">
+            <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
+            Live Data
+          </span>
+        </div>
+        <button
+          onClick={onRefresh}
+          disabled={loading}
+          className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-700/50 hover:bg-slate-700 rounded-lg text-xs text-slate-300 transition-colors disabled:opacity-50"
+        >
+          <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
+          Refresh
+        </button>
+      </div>
+
+      {loading ? (
+        <div className="text-center py-8">
+          <Loader2 className="w-8 h-8 text-[#D4A020] animate-spin mx-auto mb-3" />
+          <p className="text-slate-400">Syncing with QuickBooks...</p>
+        </div>
+      ) : liveData ? (
+        <>
+          {/* Live Financial Flow */}
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-3 items-center">
+              <MoneyFlowCard label="Revenue" amount={liveData.revenue} />
+              <div className="flex justify-center">
+                <ArrowRight className="w-5 h-5 text-slate-500" />
+              </div>
+              <MoneyFlowCard label="COGS" amount={liveData.cogs} isPositive={false} />
+              <div className="flex justify-center">
+                <ArrowRight className="w-5 h-5 text-slate-500" />
+              </div>
+              <MoneyFlowCard label="Gross Profit" amount={liveData.grossProfit} />
+            </div>
+
+            <div className="flex justify-center">
+              <div className="flex flex-col items-center">
+                <ArrowDown className="w-5 h-5 text-slate-500 mb-1" />
+                <span className="text-xs text-slate-500">Less Expenses</span>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <MoneyFlowCard 
+                label="Total Expenses" 
+                amount={liveData.totalExpenses}
+                isPositive={false}
+                size="large"
+              />
+              <MoneyFlowCard 
+                label="Net Income" 
+                amount={liveData.netIncome}
+                isPositive={liveData.netIncome >= 0}
+                size="large"
+              />
+            </div>
+          </div>
+
+          {/* Expense Breakdown */}
+          {Object.keys(liveData.expenses).length > 0 && (
+            <div className="mt-6 pt-4 border-t border-slate-700">
+              <h3 className="text-sm font-medium text-slate-300 mb-3">Top Expense Categories</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+                {Object.entries(liveData.expenses)
+                  .sort(([, a], [, b]) => b - a)
+                  .slice(0, 6)
+                  .map(([category, amount]) => (
+                    <div key={category} className="flex justify-between items-center p-2 bg-slate-900/50 rounded text-xs">
+                      <span className="text-slate-400 truncate mr-2">{category}</span>
+                      <span className="text-slate-200 font-medium">{formatCurrency(amount)}</span>
+                    </div>
+                  ))}
+              </div>
+            </div>
+          )}
+
+          <div className="mt-4 pt-2 border-t border-slate-800">
+            <div className="flex items-center justify-between text-xs text-slate-500">
+              <span>Period: {liveData.period}</span>
+              <span>Last synced: {new Date().toLocaleString()}</span>
+            </div>
+          </div>
+        </>
+      ) : (
+        <div className="text-center py-8">
+          <div className="w-16 h-16 mx-auto bg-slate-700/50 rounded-2xl flex items-center justify-center mb-4">
+            <div className="text-2xl">📊</div>
+          </div>
+          <h3 className="text-slate-400 font-medium">No Live Data</h3>
+          <p className="text-slate-600 text-sm mt-1 mb-4">
+            Click refresh to sync with QuickBooks
+          </p>
+          <button
+            onClick={onRefresh}
+            className="px-4 py-2 bg-[#D4A020] hover:bg-[#D4A020]/80 rounded-lg text-sm text-slate-900 font-medium"
+          >
+            Sync Now
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function TaxDashboard({ data }: TaxDashboardProps) {
+  // Live data state
+  const [liveData, setLiveData] = useState<LiveFinancialData | null>(null);
+  const [liveLoading, setLiveLoading] = useState(false);
+  const [liveError, setLiveError] = useState<string | null>(null);
+
   // Real tax data from extracted file (2024)
   const realTaxData = {
     scorp2024: {
@@ -140,6 +303,47 @@ export default function TaxDashboard({ data }: TaxDashboardProps) {
   // Find primary accountant
   const accountant = data.contacts.find(c => c.role === 'accountant');
 
+  // Fetch live QuickBooks data
+  const fetchLiveData = async () => {
+    setLiveLoading(true);
+    setLiveError(null);
+
+    try {
+      // Get YTD data (January 1, 2025 to current date)
+      const currentDate = new Date();
+      const startDate = '2025-01-01';
+      const endDate = currentDate.toISOString().split('T')[0]; // Today in YYYY-MM-DD format
+
+      const response = await fetch(`/api/quickbooks/pnl?start_date=${startDate}&end_date=${endDate}`);
+      const result = await response.json();
+
+      if (!response.ok) {
+        if (result.code === 'TOKEN_EXPIRED') {
+          setLiveError('QuickBooks connection expired. Please reconnect to view live data.');
+        } else {
+          setLiveError(result.error || 'Failed to fetch live data');
+        }
+        return;
+      }
+
+      if (result.success && result.data) {
+        setLiveData(result.data);
+      } else {
+        setLiveError('Invalid response from QuickBooks API');
+      }
+    } catch (err) {
+      console.error('Error fetching live data:', err);
+      setLiveError('Network error while fetching live data');
+    } finally {
+      setLiveLoading(false);
+    }
+  };
+
+  // Load live data on component mount
+  useEffect(() => {
+    fetchLiveData();
+  }, []);
+
   return (
     <div className="space-y-6">
       {/* Tax Deadline Countdown */}
@@ -177,11 +381,19 @@ export default function TaxDashboard({ data }: TaxDashboardProps) {
         </div>
       )}
 
-      {/* Money Flow Visualization */}
+      {/* Live QuickBooks Data Section */}
+      <LiveDataSection
+        liveData={liveData}
+        loading={liveLoading}
+        error={liveError}
+        onRefresh={fetchLiveData}
+      />
+
+      {/* Historical Money Flow Visualization */}
       <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700/50">
         <div className="flex items-center gap-3 mb-6">
           <Activity className="w-5 h-5 text-[#D4A020]" />
-          <h2 className="text-lg font-semibold text-slate-100">2024 Money Flow Diagram</h2>
+          <h2 className="text-lg font-semibold text-slate-100">2024 Money Flow Diagram (Historical)</h2>
         </div>
         
         {/* S-Corp to Personal Flow */}

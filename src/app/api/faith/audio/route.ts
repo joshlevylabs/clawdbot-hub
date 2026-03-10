@@ -172,7 +172,7 @@ export async function POST(request: NextRequest) {
       } else if (elevenLabsResponse.status === 429) {
         return NextResponse.json({ error: 'Audio generation quota exceeded. Please try again later.' }, { status: 429 })
       } else {
-        return NextResponse.json({ error: 'Audio generation failed' }, { status: 500 })
+        return NextResponse.json({ error: `Audio generation failed: ${errorText.slice(0, 200)}` }, { status: 500 })
       }
     }
 

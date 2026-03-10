@@ -256,8 +256,40 @@ export default function TaxDashboard({ data }: TaxDashboardProps) {
   const [liveLoading, setLiveLoading] = useState(false);
   const [liveError, setLiveError] = useState<string | null>(null);
 
-  // Real tax data from extracted file (2024)
+  // Real tax data from extracted files
   const realTaxData = {
+    scorp2025: {
+      grossReceipts: 210300,
+      cogs: 440,
+      grossProfit: 209860,
+      totalExpenses: 107090,
+      officerCompensation: 63333,
+      solo401k: 7000,
+      ordinaryBusinessIncome: 96215, // K-1 pass-through
+      caFranchiseTax: 1443,
+    },
+    personal2025: {
+      joshuaW2: 63333,
+      jillianW2: 115090,
+      totalW2: 178423,
+      k1PassThrough: 96215,
+      interestIncome: 4735,
+      dividendIncome: 316,
+      capitalLoss: -271,
+      agi: 279419,
+      itemizedDeductions: 50463,
+      qbiDeduction: 19243,
+      taxableIncome: 209713,
+      federalTaxGross: 36025,
+      totalCredits: 15600,
+      federalTaxNet: 20425,
+      federalWithheld: 25959,
+      federalRefund: 5534,
+      caTax: 13997,
+      caWithheld: 11201,
+      caOwed: 2796,
+      netRefund: 1294, // After S-Corp franchise tax
+    },
     scorp2024: {
       grossReceipts: 198752,
       totalIncome: 190893,
@@ -274,6 +306,26 @@ export default function TaxDashboard({ data }: TaxDashboardProps) {
       caStateTax: 13512, // CA Form 540 total tax
       caStateWithheld: 12665, // CA income tax withheld
       caStateOwed: 847, // $13,512 - $12,665 = $847 owed
+    },
+    scorp2023: {
+      grossReceipts: 207784,
+      officerCompensation: 54415,
+      ordinaryBusinessIncome: 75460,
+    },
+    personal2023: {
+      totalTax: 23559,
+      federalOwed: 2870,
+      caRefund: 2576,
+    },
+    scorp2022: {
+      grossReceipts: 272297,
+      officerCompensation: 12000,
+      ordinaryBusinessIncome: 91953,
+    },
+    personal2022: {
+      totalTax: 48652,
+      federalOwed: 17764,
+      caOwed: 5919,
     }
   };
 
@@ -381,6 +433,89 @@ export default function TaxDashboard({ data }: TaxDashboardProps) {
         </div>
       )}
 
+      {/* 2025 Tax Filing Estimates */}
+      <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700/50">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-5 h-5 text-[#D4A020]">🎯</div>
+          <h2 className="text-lg font-semibold text-slate-100">2025 Tax Filing Estimates</h2>
+          <span className="text-xs px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400">
+            Final Estimates
+          </span>
+        </div>
+        
+        {/* Tax Summary Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+          <div className="bg-slate-900/50 rounded-lg p-4 text-center">
+            <div className="text-xs text-slate-500 mb-1">Federal</div>
+            <div className="text-2xl font-bold text-emerald-400">
+              +{formatCurrency(realTaxData.personal2025.federalRefund)}
+            </div>
+            <div className="text-xs text-emerald-500">REFUND</div>
+          </div>
+          <div className="bg-slate-900/50 rounded-lg p-4 text-center">
+            <div className="text-xs text-slate-500 mb-1">CA State</div>
+            <div className="text-2xl font-bold text-red-400">
+              {formatCurrency(realTaxData.personal2025.caOwed)}
+            </div>
+            <div className="text-xs text-red-400">OWED</div>
+          </div>
+          <div className="bg-slate-900/50 rounded-lg p-4 text-center">
+            <div className="text-xs text-slate-500 mb-1">S-Corp CA</div>
+            <div className="text-2xl font-bold text-red-400">
+              {formatCurrency(realTaxData.scorp2025.caFranchiseTax)}
+            </div>
+            <div className="text-xs text-red-400">FRANCHISE TAX</div>
+          </div>
+          <div className="bg-slate-900/50 rounded-lg p-4 text-center">
+            <div className="text-xs text-slate-500 mb-1">Net Total</div>
+            <div className="text-2xl font-bold text-emerald-400">
+              +{formatCurrency(realTaxData.personal2025.netRefund)}
+            </div>
+            <div className="text-xs text-emerald-500">NET REFUND</div>
+          </div>
+        </div>
+
+        {/* Income Sources Breakdown */}
+        <div className="space-y-4">
+          <h3 className="text-sm font-medium text-slate-300 mb-3">2025 Income Sources</h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <MoneyFlowCard label="Joshua W-2" amount={realTaxData.personal2025.joshuaW2} size="small" />
+            <MoneyFlowCard label="Jillian W-2" amount={realTaxData.personal2025.jillianW2} size="small" />
+            <MoneyFlowCard label="K-1 Pass-through" amount={realTaxData.personal2025.k1PassThrough} size="small" />
+            <MoneyFlowCard label="Investment Income" amount={realTaxData.personal2025.interestIncome + realTaxData.personal2025.dividendIncome} size="small" />
+          </div>
+        </div>
+
+        {/* Tax Credits Breakdown */}
+        <div className="mt-4 pt-4 border-t border-slate-700">
+          <h3 className="text-sm font-medium text-slate-300 mb-3">Tax Credits Applied</h3>
+          <div className="grid grid-cols-3 gap-3">
+            <div className="bg-slate-900/30 rounded p-3 text-center">
+              <div className="text-sm text-slate-400">Child Tax Credit</div>
+              <div className="text-lg font-bold text-emerald-400">{formatCurrency(4000)}</div>
+            </div>
+            <div className="bg-slate-900/30 rounded p-3 text-center">
+              <div className="text-sm text-slate-400">Solar ITC</div>
+              <div className="text-lg font-bold text-emerald-400">{formatCurrency(11400)}</div>
+            </div>
+            <div className="bg-slate-900/30 rounded p-3 text-center">
+              <div className="text-sm text-slate-400">Childcare Credit</div>
+              <div className="text-lg font-bold text-emerald-400">{formatCurrency(200)}</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Key Tax Numbers */}
+        <div className="mt-4 pt-4 border-t border-slate-700">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+            <div className="text-slate-500">AGI: <span className="text-slate-200">{formatCurrency(realTaxData.personal2025.agi)}</span></div>
+            <div className="text-slate-500">Taxable Income: <span className="text-slate-200">{formatCurrency(realTaxData.personal2025.taxableIncome)}</span></div>
+            <div className="text-slate-500">Federal Withheld: <span className="text-slate-200">{formatCurrency(realTaxData.personal2025.federalWithheld)}</span></div>
+            <div className="text-slate-500">CA Withheld: <span className="text-slate-200">{formatCurrency(realTaxData.personal2025.caWithheld)}</span></div>
+          </div>
+        </div>
+      </div>
+
       {/* Live QuickBooks Data Section */}
       <LiveDataSection
         liveData={liveData}
@@ -389,11 +524,14 @@ export default function TaxDashboard({ data }: TaxDashboardProps) {
         onRefresh={fetchLiveData}
       />
 
-      {/* Historical Money Flow Visualization */}
+      {/* 2025 Money Flow Visualization */}
       <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700/50">
         <div className="flex items-center gap-3 mb-6">
           <Activity className="w-5 h-5 text-[#D4A020]" />
-          <h2 className="text-lg font-semibold text-slate-100">2024 Money Flow Diagram (Historical)</h2>
+          <h2 className="text-lg font-semibold text-slate-100">2025 Money Flow Diagram</h2>
+          <span className="text-xs px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400">
+            Tax Filing Data
+          </span>
         </div>
         
         {/* S-Corp to Personal Flow */}
@@ -401,16 +539,28 @@ export default function TaxDashboard({ data }: TaxDashboardProps) {
           {/* S-Corp Revenue Flow */}
           <div className="space-y-3">
             <h3 className="text-sm font-medium text-slate-300 mb-3">📊 S-Corp (Josh Levy Labs Inc) — 1120-S</h3>
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-3 items-center">
-              <MoneyFlowCard label="Gross Receipts" amount={realTaxData.scorp2024.grossReceipts} />
+            <div className="grid grid-cols-1 md:grid-cols-7 gap-3 items-center">
+              <MoneyFlowCard label="Revenue" amount={realTaxData.scorp2025.grossReceipts} />
               <div className="flex justify-center">
                 <ArrowRight className="w-5 h-5 text-slate-500" />
               </div>
-              <MoneyFlowCard label="Deductions" amount={-realTaxData.scorp2024.totalDeductions} isPositive={false} />
+              <MoneyFlowCard label="COGS" amount={-realTaxData.scorp2025.cogs} isPositive={false} />
               <div className="flex justify-center">
                 <ArrowRight className="w-5 h-5 text-slate-500" />
               </div>
-              <MoneyFlowCard label="Net Income" amount={realTaxData.scorp2024.ordinaryBusinessIncome} />
+              <MoneyFlowCard label="Gross Profit" amount={realTaxData.scorp2025.grossProfit} />
+              <div className="flex justify-center">
+                <ArrowRight className="w-5 h-5 text-slate-500" />
+              </div>
+              <MoneyFlowCard label="Net Income" amount={realTaxData.scorp2025.ordinaryBusinessIncome} />
+            </div>
+            
+            <div className="mt-3 text-center">
+              <div className="inline-flex items-center gap-2 text-xs text-slate-500">
+                <span>Total Expenses: {formatCurrency(realTaxData.scorp2025.totalExpenses)}</span>
+                <span>•</span>
+                <span>401k Contribution: {formatCurrency(realTaxData.scorp2025.solo401k)}</span>
+              </div>
             </div>
           </div>
 
@@ -425,12 +575,12 @@ export default function TaxDashboard({ data }: TaxDashboardProps) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <MoneyFlowCard 
               label="Officer W-2 Salary" 
-              amount={realTaxData.scorp2024.officerCompensation}
+              amount={realTaxData.scorp2025.officerCompensation}
               size="large"
             />
             <MoneyFlowCard 
               label="K-1 Pass-through" 
-              amount={realTaxData.scorp2024.ordinaryBusinessIncome}
+              amount={realTaxData.scorp2025.ordinaryBusinessIncome}
               size="large"
             />
           </div>
@@ -440,21 +590,29 @@ export default function TaxDashboard({ data }: TaxDashboardProps) {
             <div className="flex justify-center mt-4 mb-3">
               <div className="flex flex-col items-center">
                 <ArrowDown className="w-5 h-5 text-slate-500 mb-1" />
-                <span className="text-xs text-slate-500">Flows to Personal</span>
+                <span className="text-xs text-slate-500">Combined with Jillian's Income</span>
               </div>
             </div>
             
             <h3 className="text-sm font-medium text-slate-300 mb-3">👫 Personal (Joshua & Jillian Levy) — 1040</h3>
             <div className="grid grid-cols-1 md:grid-cols-5 gap-3 items-center">
-              <MoneyFlowCard label="Total Income" amount={realTaxData.personal2024.totalIncome} />
+              <MoneyFlowCard label="Total Income" amount={realTaxData.personal2025.agi + realTaxData.personal2025.itemizedDeductions} />
               <div className="flex justify-center">
                 <ArrowRight className="w-5 h-5 text-slate-500" />
               </div>
-              <MoneyFlowCard label="AGI" amount={realTaxData.personal2024.agi} />
+              <MoneyFlowCard label="AGI" amount={realTaxData.personal2025.agi} />
               <div className="flex justify-center">
                 <ArrowRight className="w-5 h-5 text-slate-500" />
               </div>
-              <MoneyFlowCard label="Taxable Income" amount={realTaxData.personal2024.taxableIncome} />
+              <MoneyFlowCard label="Taxable Income" amount={realTaxData.personal2025.taxableIncome} />
+            </div>
+            
+            <div className="mt-3 text-center">
+              <div className="inline-flex items-center gap-2 text-xs text-slate-500">
+                <span>Itemized Deductions: {formatCurrency(realTaxData.personal2025.itemizedDeductions)}</span>
+                <span>•</span>
+                <span>QBI Deduction: {formatCurrency(realTaxData.personal2025.qbiDeduction)}</span>
+              </div>
             </div>
           </div>
 
@@ -463,19 +621,116 @@ export default function TaxDashboard({ data }: TaxDashboardProps) {
             <div className="flex justify-center">
               <div className="flex flex-col items-center">
                 <ArrowDown className="w-5 h-5 text-slate-500 mb-1" />
-                <span className="text-xs text-slate-500">Tax Liability</span>
+                <span className="text-xs text-slate-500">Tax Calculation</span>
               </div>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <MoneyFlowCard label="Total Tax Paid" amount={realTaxData.personal2024.totalTax} />
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <MoneyFlowCard label="Fed Tax (gross)" amount={realTaxData.personal2025.federalTaxGross} isPositive={false} />
+              <MoneyFlowCard label="Credits Applied" amount={realTaxData.personal2025.totalCredits} />
               <MoneyFlowCard 
                 label="Federal Refund" 
-                amount={realTaxData.personal2024.federalRefund}
+                amount={realTaxData.personal2025.federalRefund}
                 isPositive={true}
                 size="large"
               />
-              <MoneyFlowCard label="CA State Owed" amount={realTaxData.personal2024.caStateOwed} isPositive={false} />
+              <MoneyFlowCard label="CA State Owed" amount={realTaxData.personal2025.caOwed} isPositive={false} />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Year-over-Year Comparison */}
+      <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700/50">
+        <div className="flex items-center gap-3 mb-6">
+          <TrendingUp className="w-5 h-5 text-[#D4A020]" />
+          <h2 className="text-lg font-semibold text-slate-100">Year-over-Year Comparison</h2>
+        </div>
+        
+        <div className="space-y-6">
+          {/* S-Corp Comparison */}
+          <div>
+            <h3 className="text-sm font-medium text-slate-300 mb-3">S-Corp Performance</h3>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-slate-700">
+                    <th className="text-left text-slate-400 pb-2">Year</th>
+                    <th className="text-right text-slate-400 pb-2">Gross Revenue</th>
+                    <th className="text-right text-slate-400 pb-2">Officer Comp</th>
+                    <th className="text-right text-slate-400 pb-2">K-1 Pass-through</th>
+                  </tr>
+                </thead>
+                <tbody className="space-y-2">
+                  <tr className="border-b border-slate-800">
+                    <td className="py-2 text-slate-300 font-medium">2025</td>
+                    <td className="py-2 text-right text-slate-200">{formatCurrency(realTaxData.scorp2025.grossReceipts)}</td>
+                    <td className="py-2 text-right text-slate-200">{formatCurrency(realTaxData.scorp2025.officerCompensation)}</td>
+                    <td className="py-2 text-right text-emerald-400 font-medium">{formatCurrency(realTaxData.scorp2025.ordinaryBusinessIncome)}</td>
+                  </tr>
+                  <tr className="border-b border-slate-800">
+                    <td className="py-2 text-slate-400">2024</td>
+                    <td className="py-2 text-right text-slate-400">{formatCurrency(realTaxData.scorp2024.grossReceipts)}</td>
+                    <td className="py-2 text-right text-slate-400">{formatCurrency(realTaxData.scorp2024.officerCompensation)}</td>
+                    <td className="py-2 text-right text-slate-400">{formatCurrency(realTaxData.scorp2024.ordinaryBusinessIncome)}</td>
+                  </tr>
+                  <tr className="border-b border-slate-800">
+                    <td className="py-2 text-slate-500">2023</td>
+                    <td className="py-2 text-right text-slate-500">{formatCurrency(realTaxData.scorp2023.grossReceipts)}</td>
+                    <td className="py-2 text-right text-slate-500">{formatCurrency(realTaxData.scorp2023.officerCompensation)}</td>
+                    <td className="py-2 text-right text-slate-500">{formatCurrency(realTaxData.scorp2023.ordinaryBusinessIncome)}</td>
+                  </tr>
+                  <tr>
+                    <td className="py-2 text-slate-600">2022</td>
+                    <td className="py-2 text-right text-slate-600">{formatCurrency(realTaxData.scorp2022.grossReceipts)}</td>
+                    <td className="py-2 text-right text-slate-600">{formatCurrency(realTaxData.scorp2022.officerCompensation)}</td>
+                    <td className="py-2 text-right text-slate-600">{formatCurrency(realTaxData.scorp2022.ordinaryBusinessIncome)}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Tax Outcome Comparison */}
+          <div>
+            <h3 className="text-sm font-medium text-slate-300 mb-3">Personal Tax Outcomes</h3>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-slate-700">
+                    <th className="text-left text-slate-400 pb-2">Year</th>
+                    <th className="text-right text-slate-400 pb-2">Federal</th>
+                    <th className="text-right text-slate-400 pb-2">CA State</th>
+                    <th className="text-right text-slate-400 pb-2">Net Result</th>
+                  </tr>
+                </thead>
+                <tbody className="space-y-2">
+                  <tr className="border-b border-slate-800">
+                    <td className="py-2 text-slate-300 font-medium">2025</td>
+                    <td className="py-2 text-right text-emerald-400 font-medium">+{formatCurrency(realTaxData.personal2025.federalRefund)} refund</td>
+                    <td className="py-2 text-right text-red-400">{formatCurrency(realTaxData.personal2025.caOwed)} owed</td>
+                    <td className="py-2 text-right text-emerald-400 font-medium">+{formatCurrency(realTaxData.personal2025.netRefund)}</td>
+                  </tr>
+                  <tr className="border-b border-slate-800">
+                    <td className="py-2 text-slate-400">2024</td>
+                    <td className="py-2 text-right text-emerald-400">+{formatCurrency(realTaxData.personal2024.federalRefund)} refund</td>
+                    <td className="py-2 text-right text-red-400">{formatCurrency(realTaxData.personal2024.caStateOwed)} owed</td>
+                    <td className="py-2 text-right text-emerald-400">+{formatCurrency(realTaxData.personal2024.federalRefund - realTaxData.personal2024.caStateOwed)}</td>
+                  </tr>
+                  <tr className="border-b border-slate-800">
+                    <td className="py-2 text-slate-500">2023</td>
+                    <td className="py-2 text-right text-red-400">{formatCurrency(realTaxData.personal2023.federalOwed)} owed</td>
+                    <td className="py-2 text-right text-emerald-400">+{formatCurrency(realTaxData.personal2023.caRefund)} refund</td>
+                    <td className="py-2 text-right text-red-400">-{formatCurrency(realTaxData.personal2023.federalOwed - realTaxData.personal2023.caRefund)}</td>
+                  </tr>
+                  <tr>
+                    <td className="py-2 text-slate-600">2022</td>
+                    <td className="py-2 text-right text-red-400">{formatCurrency(realTaxData.personal2022.federalOwed)} owed</td>
+                    <td className="py-2 text-right text-red-400">{formatCurrency(realTaxData.personal2022.caOwed)} owed</td>
+                    <td className="py-2 text-right text-red-400">-{formatCurrency(realTaxData.personal2022.federalOwed + realTaxData.personal2022.caOwed)}</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
@@ -485,89 +740,101 @@ export default function TaxDashboard({ data }: TaxDashboardProps) {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* S-Corp Panel */}
         <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700/50">
-          <div className="flex items-center gap-3 mb-4">
-            <Building className="w-5 h-5 text-[#D4A020]" />
-            <h2 className="text-lg font-semibold text-slate-100">S-Corp (Josh Levy Labs Inc)</h2>
-          </div>
-          
-          {latestSCorp && (
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-3">
-                <div className="text-center p-3 bg-slate-900/50 rounded-lg">
-                  <p className="text-xs text-slate-500 mb-1">2024 Gross Revenue</p>
-                  <p className="text-lg font-bold text-emerald-400">
-                    {formatCurrency(realTaxData.scorp2024.grossReceipts)}
-                  </p>
-                </div>
-                <div className="text-center p-3 bg-slate-900/50 rounded-lg">
-                  <p className="text-xs text-slate-500 mb-1">Officer W-2</p>
-                  <p className="text-lg font-bold text-slate-100">
-                    {formatCurrency(realTaxData.scorp2024.officerCompensation)}
-                  </p>
-                </div>
-                <div className="text-center p-3 bg-slate-900/50 rounded-lg">
-                  <p className="text-xs text-slate-500 mb-1">K-1 Pass-through</p>
-                  <p className="text-lg font-bold text-[#D4A020]">
-                    {formatCurrency(realTaxData.scorp2024.ordinaryBusinessIncome)}
-                  </p>
-                </div>
-                <div className="text-center p-3 bg-slate-900/50 rounded-lg">
-                  <p className="text-xs text-slate-500 mb-1">Total Deductions</p>
-                  <p className="text-lg font-bold text-slate-400">
-                    {formatCurrency(realTaxData.scorp2024.totalDeductions)}
-                  </p>
-                </div>
-              </div>
-              
-              <div className="bg-slate-900/30 rounded-lg p-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-slate-400">Next Deadline:</span>
-                  <span className="text-sm font-medium text-[#D4A020]">Mar 15, 2026 (1120-S)</span>
-                </div>
-              </div>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <Building className="w-5 h-5 text-[#D4A020]" />
+              <h2 className="text-lg font-semibold text-slate-100">S-Corp (Josh Levy Labs Inc)</h2>
             </div>
-          )}
-        </div>
-
-        {/* Personal Panel */}
-        <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700/50">
-          <div className="flex items-center gap-3 mb-4">
-            <User className="w-5 h-5 text-[#D4A020]" />
-            <h2 className="text-lg font-semibold text-slate-100">Personal (Joshua & Jillian Levy)</h2>
+            <span className="text-xs px-2 py-1 rounded bg-blue-500/20 text-blue-400">2025</span>
           </div>
           
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-3">
               <div className="text-center p-3 bg-slate-900/50 rounded-lg">
-                <p className="text-xs text-slate-500 mb-1">2024 Total Income</p>
+                <p className="text-xs text-slate-500 mb-1">Gross Revenue</p>
                 <p className="text-lg font-bold text-emerald-400">
-                  {formatCurrency(realTaxData.personal2024.totalIncome)}
+                  {formatCurrency(realTaxData.scorp2025.grossReceipts)}
                 </p>
               </div>
               <div className="text-center p-3 bg-slate-900/50 rounded-lg">
-                <p className="text-xs text-slate-500 mb-1">AGI</p>
+                <p className="text-xs text-slate-500 mb-1">Officer W-2</p>
                 <p className="text-lg font-bold text-slate-100">
-                  {formatCurrency(realTaxData.personal2024.agi)}
+                  {formatCurrency(realTaxData.scorp2025.officerCompensation)}
                 </p>
               </div>
               <div className="text-center p-3 bg-slate-900/50 rounded-lg">
-                <p className="text-xs text-slate-500 mb-1">Federal Refund</p>
+                <p className="text-xs text-slate-500 mb-1">K-1 Pass-through</p>
+                <p className="text-lg font-bold text-[#D4A020]">
+                  {formatCurrency(realTaxData.scorp2025.ordinaryBusinessIncome)}
+                </p>
+              </div>
+              <div className="text-center p-3 bg-slate-900/50 rounded-lg">
+                <p className="text-xs text-slate-500 mb-1">Solo 401k Contrib</p>
                 <p className="text-lg font-bold text-emerald-400">
-                  +{formatCurrency(realTaxData.personal2024.federalRefund)}
+                  {formatCurrency(realTaxData.scorp2025.solo401k)}
+                </p>
+              </div>
+            </div>
+            
+            <div className="bg-slate-900/30 rounded-lg p-3 space-y-2">
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-slate-400">CA Franchise Tax:</span>
+                <span className="text-red-400 font-medium">{formatCurrency(realTaxData.scorp2025.caFranchiseTax)}</span>
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-slate-400">Next Deadline:</span>
+                <span className="text-[#D4A020] font-medium">Mar 15, 2026 (1120-S)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Personal Panel */}
+        <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700/50">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <User className="w-5 h-5 text-[#D4A020]" />
+              <h2 className="text-lg font-semibold text-slate-100">Personal (Joshua & Jillian Levy)</h2>
+            </div>
+            <span className="text-xs px-2 py-1 rounded bg-blue-500/20 text-blue-400">2025</span>
+          </div>
+          
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-3">
+              <div className="text-center p-3 bg-slate-900/50 rounded-lg">
+                <p className="text-xs text-slate-500 mb-1">Combined AGI</p>
+                <p className="text-lg font-bold text-emerald-400">
+                  {formatCurrency(realTaxData.personal2025.agi)}
+                </p>
+              </div>
+              <div className="text-center p-3 bg-slate-900/50 rounded-lg">
+                <p className="text-xs text-slate-500 mb-1">Taxable Income</p>
+                <p className="text-lg font-bold text-slate-100">
+                  {formatCurrency(realTaxData.personal2025.taxableIncome)}
+                </p>
+              </div>
+              <div className="text-center p-3 bg-slate-900/50 rounded-lg">
+                <p className="text-xs text-slate-500 mb-1">Federal Result</p>
+                <p className="text-lg font-bold text-emerald-400">
+                  +{formatCurrency(realTaxData.personal2025.federalRefund)}
                 </p>
               </div>
               <div className="text-center p-3 bg-slate-900/50 rounded-lg">
                 <p className="text-xs text-slate-500 mb-1">CA State Owed</p>
                 <p className="text-lg font-bold text-red-400">
-                  {formatCurrency(realTaxData.personal2024.caStateOwed)}
+                  {formatCurrency(realTaxData.personal2025.caOwed)}
                 </p>
               </div>
             </div>
             
-            <div className="bg-slate-900/30 rounded-lg p-3">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-slate-400">Next Deadline:</span>
-                <span className="text-sm font-medium text-[#D4A020]">Apr 15, 2026 (1040)</span>
+            <div className="bg-slate-900/30 rounded-lg p-3 space-y-2">
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-slate-400">Net Refund:</span>
+                <span className="text-emerald-400 font-medium">+{formatCurrency(realTaxData.personal2025.netRefund)}</span>
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-slate-400">Next Deadline:</span>
+                <span className="text-[#D4A020] font-medium">Apr 15, 2026 (1040)</span>
               </div>
             </div>
           </div>

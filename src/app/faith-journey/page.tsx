@@ -1551,6 +1551,17 @@ export default function FaithJourneyPage() {
   const [imageDate, setImageDate] = useState<string>("all");
   const [expandedTraditions, setExpandedTraditions] = useState<Set<string>>(new Set());
 
+  // Audio tab state
+  const [audioFiles, setAudioFiles] = useState<any[]>([]);
+  const [audioLoading, setAudioLoading] = useState(false);
+  const [audioFilter, setAudioFilter] = useState<string>("all");
+  const [audioSearch, setAudioSearch] = useState("");
+  const [audioDate, setAudioDate] = useState<string>("all");
+  const [elevenlabsUsage, setElevenlabsUsage] = useState<any>(null);
+  const [usageLoading, setUsageLoading] = useState(false);
+  const [currentlyPlaying, setCurrentlyPlaying] = useState<string | null>(null);
+  const [audioElements, setAudioElements] = useState<Record<string, HTMLAudioElement>>({});
+
   // Tradition families configuration for badge filters
   const traditionFamilies = [
     { id: "all", name: "All", emoji: "🌟", color: "#6366F1" },
@@ -1986,6 +1997,136 @@ export default function FaithJourneyPage() {
       setImagesLoading(false);
     }
   };
+
+  // Fetch audio files function
+  const fetchAudioFiles = async () => {
+    if (audioLoading) return;
+    
+    setAudioLoading(true);
+    try {
+      // First fetch audio files
+      const audioResponse = await fetch(
+        "https://atldnpjaxaeqzgtqbrpy.supabase.co/rest/v1/faith_lesson_audio?select=*&order=date.desc,created_at.desc",
+        {
+          headers: {
+            'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF0bGRucGpheGFlcXpndHFicnB5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk0Nzc0MDYsImV4cCI6MjA4NTA1MzQwNn0.40LmcgShkiG18aa6aF7vk6wT_Ft5ohWeUtRAG_reizs',
+            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF0bGRucGpheGFlcXpndHFicnB5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk0Nzc0MDYsImV4cCI6MjA4NTA1MzQwNn0.40LmcgShkiG18aa6aF7vk6wT_Ft5ohWeUtRAG_reizs'
+          }
+        }
+      );
+
+      if (audioResponse.ok) {
+        const audioData = await audioResponse.json();
+        
+        // Fetch related data for lessons and traditions
+        const lessonIds = [...new Set(audioData.map((audio: any) => audio.lesson_id))];
+        const traditionIds = [...new Set(audioData.map((audio: any) => audio.tradition_id))];
+        
+        // Fetch lessons
+        const lessonsResponse = await fetch(
+          `https://atldnpjaxaeqzgtqbrpy.supabase.co/rest/v1/faith_lessons?select=id,topic,date&id=in.(${lessonIds.join(',')})`,
+          {
+            headers: {
+              'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF0bGRucGpheGFlcXpndHFicnB5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk0Nzc0MDYsImV4cCI6MjA4NTA1MzQwNn0.40LmcgShkiG18aa6aF7vk6wT_Ft5ohWeUtRAG_reizs',
+              'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF0bGRucGpheGFlcXpndHFicnB5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk0Nzc0MDYsImV4cCI6MjA4NTA1MzQwNn0.40LmcgShkiG18aa6aF7vk6wT_Ft5ohWeUtRAG_reizs'
+            }
+          }
+        );
+        
+        // Fetch traditions
+        const traditionsResponse = await fetch(
+          `https://atldnpjaxaeqzgtqbrpy.supabase.co/rest/v1/faith_traditions?select=id,slug,name,icon,color&id=in.(${traditionIds.join(',')})`,
+          {
+            headers: {
+              'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF0bGRucGpheGFlcXpndHFicnB5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk0Nzc0MDYsImV4cCI6MjA4NTA1MzQwNn0.40LmcgShkiG18aa6aF7vk6wT_Ft5ohWeUtRAG_reizs',
+              'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF0bGRucGpheGFlcXpndHFicnB5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk0Nzc0MDYsImV4cCI6MjA4NTA1MzQwNn0.40LmcgShkiG18aa6aF7vk6wT_Ft5ohWeUtRAG_reizs'
+            }
+          }
+        );
+        
+        const lessons = lessonsResponse.ok ? await lessonsResponse.json() : [];
+        const traditions = traditionsResponse.ok ? await traditionsResponse.json() : [];
+        
+        // Create lookup maps
+        const lessonMap = new Map(lessons.map((lesson: any) => [lesson.id, lesson]));
+        const traditionMap = new Map(traditions.map((tradition: any) => [tradition.id, tradition]));
+        
+        // Combine the data
+        const enrichedAudio = audioData.map((audio: any) => ({
+          ...audio,
+          lesson: lessonMap.get(audio.lesson_id),
+          tradition: traditionMap.get(audio.tradition_id),
+          audioUrl: `https://atldnpjaxaeqzgtqbrpy.supabase.co/storage/v1/object/public/faith-audio/${audio.storage_path}`
+        }));
+        
+        setAudioFiles(enrichedAudio);
+      } else {
+        console.error('Failed to fetch audio files');
+      }
+    } catch (error) {
+      console.error('Error fetching audio files:', error);
+    } finally {
+      setAudioLoading(false);
+    }
+  };
+
+  // Fetch ElevenLabs usage
+  const fetchElevenlabsUsage = async () => {
+    if (usageLoading) return;
+    
+    setUsageLoading(true);
+    try {
+      const response = await fetch('/api/faith/audio/usage');
+      if (response.ok) {
+        const data = await response.json();
+        setElevenlabsUsage(data);
+      } else {
+        console.error('Failed to fetch ElevenLabs usage');
+      }
+    } catch (error) {
+      console.error('Error fetching ElevenLabs usage:', error);
+    } finally {
+      setUsageLoading(false);
+    }
+  };
+
+  // Audio playback controls
+  const toggleAudio = (audioId: string, audioUrl: string) => {
+    // Pause all other audio
+    Object.values(audioElements).forEach(audio => {
+      if (!audio.paused) {
+        audio.pause();
+      }
+    });
+
+    if (currentlyPlaying === audioId) {
+      // Stop current audio
+      const audio = audioElements[audioId];
+      if (audio) {
+        audio.pause();
+        audio.currentTime = 0;
+      }
+      setCurrentlyPlaying(null);
+    } else {
+      // Start new audio
+      let audio = audioElements[audioId];
+      if (!audio) {
+        audio = new Audio(audioUrl);
+        audio.onended = () => setCurrentlyPlaying(null);
+        setAudioElements(prev => ({ ...prev, [audioId]: audio }));
+      }
+      audio.play();
+      setCurrentlyPlaying(audioId);
+    }
+  };
+
+  // Lazy load audio when tab is selected
+  useEffect(() => {
+    if (activeTab === "audio" && audioFiles.length === 0) {
+      fetchAudioFiles();
+      fetchElevenlabsUsage();
+    }
+  }, [activeTab]);
 
   // Lazy load images when tab is selected
   useEffect(() => {
@@ -3399,263 +3540,375 @@ export default function FaithJourneyPage() {
               </div>
             )}
 
-            {/* Audio Tab - Keep exactly as before */}
+            {/* Audio Tab */}
             {activeTab === "audio" && (
               <div className="space-y-6">
-                {/* Available Voices */}
-                <div className="rounded-xl p-4 border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
-                  <h2 className="text-lg font-semibold text-slate-100 mb-4 flex items-center gap-2">
-                    <Mic className="w-5 h-5" style={{ color: "#D4A020" }} />
-                    Available Voices (ElevenLabs)
-                  </h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {[
-                      { name: "Joshua", description: "Personal voice clone", type: "Cloned", recommended: true },
-                      { name: "Rabbi Voice", description: "Warm, authoritative male", type: "Generated", recommended: false },
-                      { name: "Narrator Voice", description: "Clear, neutral storytelling", type: "Generated", recommended: false },
-                    ].map((voice, index) => (
-                      <div key={index} 
-                           className="rounded-lg p-3 border"
-                           style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}>
-                        <div className="flex items-center justify-between mb-2">
-                          <h3 className="font-medium text-slate-200">{voice.name}</h3>
-                          <div className="flex items-center gap-2">
-                            {voice.recommended && (
-                              <span className="text-xs px-2 py-0.5 rounded border"
-                                    style={{ 
-                                      backgroundColor: "rgba(34, 197, 94, 0.1)", 
-                                      borderColor: "rgba(34, 197, 94, 0.3)",
-                                      color: "#22C55E" 
-                                    }}>
-                                Recommended
-                              </span>
-                            )}
-                            <span className="text-xs px-2 py-0.5 rounded border"
-                                  style={{ 
-                                    backgroundColor: "rgba(100, 116, 139, 0.1)", 
-                                    borderColor: "rgba(100, 116, 139, 0.3)",
-                                    color: "#64748B" 
-                                  }}>
-                              {voice.type}
-                            </span>
-                          </div>
-                        </div>
-                        <p className="text-xs text-slate-400 mb-3">{voice.description}</p>
-                        <div className="flex items-center gap-2">
-                          <button 
-                            onClick={() => {
-                              if (window.speechSynthesis) {
-                                const utterance = new SpeechSynthesisUtterance("Peace be with you on your spiritual journey");
-                                window.speechSynthesis.speak(utterance);
-                              }
-                            }}
-                            className="text-xs text-slate-500 hover:text-slate-400 flex items-center gap-1"
-                          >
-                            <Play className="w-3 h-3" />
-                            Sample
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* ElevenLabs Account Management */}
+                {/* ElevenLabs Quota Usage */}
                 <div className="rounded-xl p-4 border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
                   <h2 className="text-lg font-semibold text-slate-100 mb-4 flex items-center gap-2">
                     <Settings className="w-5 h-5" style={{ color: "#D4A020" }} />
-                    ElevenLabs Account Management
+                    ElevenLabs Quota Usage
                   </h2>
-                  
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    {/* Account Status */}
-                    <div>
-                      <h3 className="text-slate-300 font-medium mb-3">Account Status</h3>
-                      <div className="space-y-3">
-                        <div className="flex items-center justify-between text-sm">
-                          <span className="text-slate-400">API Key:</span>
-                          <span className="text-slate-300 font-mono">sk-...7x3f</span>
+                  {usageLoading ? (
+                    <div className="text-center py-8">
+                      <Loader className="w-6 h-6 animate-spin mx-auto mb-2 text-slate-400" />
+                      <p className="text-slate-400">Loading usage data...</p>
+                    </div>
+                  ) : elevenlabsUsage ? (
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="text-center">
+                          <div className="text-lg font-bold text-slate-100">{elevenlabsUsage.tier}</div>
+                          <div className="text-sm text-slate-400">Plan Tier</div>
                         </div>
-                        <div className="flex items-center justify-between text-sm">
-                          <span className="text-slate-400">Plan Tier:</span>
-                          <span className="text-emerald-400 font-medium">Creator</span>
+                        <div className="text-center">
+                          <div className="text-lg font-bold text-slate-100">
+                            {elevenlabsUsage.character_count?.toLocaleString()} / {elevenlabsUsage.character_limit?.toLocaleString()}
+                          </div>
+                          <div className="text-sm text-slate-400">Characters Used</div>
                         </div>
-                        <div className="flex items-center justify-between text-sm">
-                          <span className="text-slate-400">Rate Limit:</span>
-                          <span className="text-slate-300">120 requests/min</span>
-                        </div>
-                        <div className="flex items-center justify-between text-sm">
-                          <span className="text-slate-400">Concurrent Requests:</span>
-                          <span className="text-slate-300">3 max</span>
+                        <div className="text-center">
+                          <div className="text-lg font-bold" style={{ color: "#D4A020" }}>
+                            {elevenlabsUsage.character_limit && elevenlabsUsage.character_count 
+                              ? Math.floor((elevenlabsUsage.character_limit - elevenlabsUsage.character_count) / 6000)
+                              : 0}
+                          </div>
+                          <div className="text-sm text-slate-400">Lessons Remaining</div>
                         </div>
                       </div>
-
-                      {/* Usage Progress */}
+                      
+                      {/* Usage Progress Bar */}
                       <div className="mt-4">
                         <div className="flex items-center justify-between text-sm mb-2">
                           <span className="text-slate-400">Monthly Usage</span>
-                          <span className="text-slate-300">45,000 / 100,000 characters</span>
+                          <span className="text-slate-300">
+                            {Math.round(((elevenlabsUsage.character_count || 0) / (elevenlabsUsage.character_limit || 1)) * 100)}% used
+                          </span>
                         </div>
                         <div className="w-full bg-slate-700 rounded-full h-2">
                           <div 
                             className="h-2 rounded-full" 
                             style={{ 
                               backgroundColor: "#D4A020", 
-                              width: "45%" 
+                              width: `${Math.min(((elevenlabsUsage.character_count || 0) / (elevenlabsUsage.character_limit || 1)) * 100, 100)}%`
                             }}
                           ></div>
                         </div>
                         <div className="flex items-center justify-between text-xs text-slate-500 mt-1">
-                          <span>Resets Feb 1st</span>
-                          <span>55% used</span>
+                          <span>
+                            Resets {elevenlabsUsage.next_reset_unix ? new Date(elevenlabsUsage.next_reset_unix * 1000).toLocaleDateString() : 'Unknown'}
+                          </span>
+                          <span>{elevenlabsUsage.character_count?.toLocaleString()} chars</span>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center py-8">
+                      <AlertTriangle className="w-6 h-6 mx-auto mb-2 text-slate-400" />
+                      <p className="text-slate-400">Failed to load usage data</p>
+                      <button 
+                        onClick={fetchElevenlabsUsage}
+                        className="mt-2 px-4 py-2 rounded-lg text-sm transition-colors"
+                        style={{ backgroundColor: "#D4A020", color: "#0B0B11" }}
+                      >
+                        Retry
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                {/* Audio Library */}
+                <div className="rounded-xl p-4 border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+                  <h2 className="text-lg font-semibold text-slate-100 mb-4 flex items-center gap-2">
+                    <Volume2 className="w-5 h-5" style={{ color: "#D4A020" }} />
+                    Audio Library
+                  </h2>
+                  {audioLoading ? (
+                    <div className="text-center py-8">
+                      <Loader className="w-6 h-6 animate-spin mx-auto mb-2 text-slate-400" />
+                      <p className="text-slate-400">Loading audio files...</p>
+                    </div>
+                  ) : (
+                    <>
+                      {/* Filters */}
+                      <div className="space-y-4 mb-6">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          {/* Tradition Filter */}
+                          <div>
+                            <label className="text-xs font-medium text-slate-400">Filter by Tradition</label>
+                            <select 
+                              value={audioFilter}
+                              onChange={(e) => setAudioFilter(e.target.value)}
+                              className="w-full mt-1 px-3 py-2 rounded-lg border text-sm"
+                              style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38", color: "#D4A020" }}
+                            >
+                              <option value="all">All Traditions</option>
+                              <option value="Judaism">Judaism</option>
+                              <option value="Christianity">Christianity</option>
+                              <option value="Islam">Islam</option>
+                              <option value="Hinduism">Hinduism</option>
+                              <option value="Buddhism">Buddhism</option>
+                              <option value="Bahá'í">Bahá'í</option>
+                            </select>
+                          </div>
+                          
+                          {/* Search */}
+                          <div>
+                            <label className="text-xs font-medium text-slate-400">Search Topics</label>
+                            <div className="relative mt-1">
+                              <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500" />
+                              <input
+                                type="text"
+                                placeholder="Search by topic..."
+                                value={audioSearch}
+                                onChange={(e) => setAudioSearch(e.target.value)}
+                                className="w-full pl-10 pr-3 py-2 rounded-lg border text-sm"
+                                style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38", color: "#E2E8F0" }}
+                              />
+                            </div>
+                          </div>
+                          
+                          {/* Date Filter */}
+                          <div>
+                            <label className="text-xs font-medium text-slate-400">Filter by Date</label>
+                            <select 
+                              value={audioDate}
+                              onChange={(e) => setAudioDate(e.target.value)}
+                              className="w-full mt-1 px-3 py-2 rounded-lg border text-sm"
+                              style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38", color: "#D4A020" }}
+                            >
+                              <option value="all">All Dates</option>
+                              <option value="today">Today</option>
+                              <option value="week">This Week</option>
+                              <option value="month">This Month</option>
+                            </select>
+                          </div>
                         </div>
                       </div>
 
-                      {/* Usage Warning */}
-                      <div className="mt-4">
-                        <label className="text-sm text-slate-400">Warning threshold:</label>
-                        <select className="w-full mt-1 px-2 py-1 rounded text-sm" style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38", color: "#D4A020" }}>
-                          <option>80% of monthly limit</option>
-                          <option>90% of monthly limit</option>
-                          <option>95% of monthly limit</option>
-                        </select>
-                      </div>
-                    </div>
-
-                    {/* Available Models */}
-                    <div>
-                      <h3 className="text-slate-300 font-medium mb-3">Available Models</h3>
+                      {/* Audio Files Table */}
                       <div className="space-y-3">
-                        {[
-                          { name: "eleven_v3", description: "Highest quality, most natural voice", recommended: true },
-                          { name: "eleven_turbo_v2", description: "Fast generation, good quality", recommended: false },
-                          { name: "eleven_multilingual_v2", description: "Supports multiple languages", recommended: false }
-                        ].map((model, index) => (
-                          <div key={index} 
-                               className="rounded-lg p-3 border"
-                               style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}>
-                            <div className="flex items-center justify-between mb-1">
-                              <h4 className="font-medium text-slate-200">{model.name}</h4>
-                              {model.recommended && (
-                                <span className="text-xs px-2 py-0.5 rounded border"
-                                      style={{ 
-                                        backgroundColor: "rgba(34, 197, 94, 0.1)", 
-                                        borderColor: "rgba(34, 197, 94, 0.3)",
-                                        color: "#22C55E" 
-                                      }}>
-                                  Recommended
-                                </span>
-                              )}
-                            </div>
-                            <p className="text-xs text-slate-400">{model.description}</p>
+                        {audioFiles
+                          .filter(audio => {
+                            // Apply filters
+                            const matchesTradition = audioFilter === 'all' || (audio.tradition?.name === audioFilter);
+                            const matchesSearch = !audioSearch || 
+                              (audio.lesson?.topic || '').toLowerCase().includes(audioSearch.toLowerCase());
+                            
+                            let matchesDate = true;
+                            if (audioDate !== 'all') {
+                              const audioDateObj = new Date(audio.date);
+                              const now = new Date();
+                              if (audioDate === 'today') {
+                                matchesDate = audioDateObj.toDateString() === now.toDateString();
+                              } else if (audioDate === 'week') {
+                                const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                                matchesDate = audioDateObj >= weekAgo;
+                              } else if (audioDate === 'month') {
+                                const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+                                matchesDate = audioDateObj >= monthAgo;
+                              }
+                            }
+                            
+                            return matchesTradition && matchesSearch && matchesDate;
+                          })
+                          .reduce((grouped, audio) => {
+                            const dateKey = new Date(audio.date).toLocaleDateString();
+                            if (!grouped[dateKey]) grouped[dateKey] = [];
+                            grouped[dateKey].push(audio);
+                            return grouped;
+                          }, {} as Record<string, any[]>)
+                        }
+                        {Object.entries(audioFiles
+                          .filter(audio => {
+                            const matchesTradition = audioFilter === 'all' || (audio.tradition?.name === audioFilter);
+                            const matchesSearch = !audioSearch || 
+                              (audio.lesson?.topic || '').toLowerCase().includes(audioSearch.toLowerCase());
+                            
+                            let matchesDate = true;
+                            if (audioDate !== 'all') {
+                              const audioDateObj = new Date(audio.date);
+                              const now = new Date();
+                              if (audioDate === 'today') {
+                                matchesDate = audioDateObj.toDateString() === now.toDateString();
+                              } else if (audioDate === 'week') {
+                                const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                                matchesDate = audioDateObj >= weekAgo;
+                              } else if (audioDate === 'month') {
+                                const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+                                matchesDate = audioDateObj >= monthAgo;
+                              }
+                            }
+                            
+                            return matchesTradition && matchesSearch && matchesDate;
+                          })
+                          .reduce((grouped, audio) => {
+                            const dateKey = new Date(audio.date).toLocaleDateString();
+                            if (!grouped[dateKey]) grouped[dateKey] = [];
+                            grouped[dateKey].push(audio);
+                            return grouped;
+                          }, {} as Record<string, any[]>)
+                        ).map(([date, audios]) => (
+                          <div key={date} className="space-y-2">
+                            <h3 className="text-sm font-medium text-slate-300 border-b border-slate-600 pb-1">
+                              {date}
+                            </h3>
+                            {audios.map((audio) => (
+                              <div 
+                                key={audio.id}
+                                className="flex items-center gap-4 p-3 rounded-lg border hover:bg-slate-900/30 transition-colors"
+                                style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}
+                              >
+                                {/* Tradition */}
+                                <div className="flex items-center gap-2 min-w-0 flex-1">
+                                  <span className="text-lg" style={{ color: audio.tradition?.color || "#6B7280" }}>
+                                    {audio.tradition?.icon || "🔯"}
+                                  </span>
+                                  <span className="text-sm text-slate-300 truncate">
+                                    {audio.tradition?.name || "Unknown"}
+                                  </span>
+                                </div>
+                                
+                                {/* Topic */}
+                                <div className="min-w-0 flex-2">
+                                  <span className="text-sm text-slate-200 truncate">
+                                    {audio.lesson?.topic || "Unknown Topic"}
+                                  </span>
+                                </div>
+                                
+                                {/* Duration & Size */}
+                                <div className="flex gap-4 text-xs text-slate-400">
+                                  <span>{audio.duration_seconds ? `${Math.round(audio.duration_seconds)}s` : "—"}</span>
+                                  <span>{audio.file_size_bytes ? `${Math.round(audio.file_size_bytes / 1024)}KB` : "—"}</span>
+                                  <span>{audio.char_count ? `${audio.char_count}c` : "—"}</span>
+                                </div>
+                                
+                                {/* Play Button */}
+                                <button
+                                  onClick={() => toggleAudio(audio.id, audio.audioUrl)}
+                                  className="flex items-center justify-center w-8 h-8 rounded-full transition-colors"
+                                  style={{ 
+                                    backgroundColor: currentlyPlaying === audio.id ? "#D4A020" : "#2A2A38",
+                                    color: currentlyPlaying === audio.id ? "#0B0B11" : "#64748B"
+                                  }}
+                                >
+                                  {currentlyPlaying === audio.id ? (
+                                    <Pause className="w-4 h-4" />
+                                  ) : (
+                                    <Play className="w-4 h-4" />
+                                  )}
+                                </button>
+                              </div>
+                            ))}
                           </div>
                         ))}
+                        
+                        {audioFiles.length === 0 && (
+                          <div className="text-center py-8">
+                            <Music className="w-8 h-8 mx-auto mb-2 text-slate-400" />
+                            <p className="text-slate-400">No audio files found</p>
+                          </div>
+                        )}
                       </div>
+                    </>
+                  )}
+                </div>
 
-                      {/* Default Model Selection */}
-                      <div className="mt-4">
-                        <label className="text-sm text-slate-400">Default model for voices:</label>
-                        <select className="w-full mt-1 px-2 py-1 rounded text-sm" style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38", color: "#D4A020" }}>
-                          <option>eleven_v3 (Recommended)</option>
-                          <option>eleven_turbo_v2</option>
-                          <option>eleven_multilingual_v2</option>
-                        </select>
+                {/* Stats Summary */}
+                <div className="rounded-xl p-4 border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+                  <h2 className="text-lg font-semibold text-slate-100 mb-4 flex items-center gap-2">
+                    <TrendingUp className="w-5 h-5" style={{ color: "#D4A020" }} />
+                    Audio Statistics
+                  </h2>
+                  <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-slate-100">{audioFiles.length}</div>
+                      <div className="text-sm text-slate-400">Total Files</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-slate-100">
+                        {audioFiles.reduce((sum, audio) => sum + (audio.char_count || 0), 0).toLocaleString()}
                       </div>
+                      <div className="text-sm text-slate-400">Characters</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-slate-100">
+                        {Math.round(audioFiles.reduce((sum, audio) => sum + (audio.file_size_bytes || 0), 0) / 1024 / 1024)}MB
+                      </div>
+                      <div className="text-sm text-slate-400">Total Size</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-slate-100">
+                        {audioFiles.length > 0 ? Math.round(audioFiles.reduce((sum, audio) => sum + (audio.duration_seconds || 0), 0) / audioFiles.length) : 0}s
+                      </div>
+                      <div className="text-sm text-slate-400">Avg Duration</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold" style={{ color: "#D4A020" }}>
+                        ${(audioFiles.reduce((sum, audio) => sum + (audio.char_count || 0), 0) * 0.00022).toFixed(2)}
+                      </div>
+                      <div className="text-sm text-slate-400">Est. Cost</div>
                     </div>
                   </div>
                 </div>
 
-                {/* Daily Prayer Audio — ALL Religions & Denominations */}
+                {/* Generate Audio Section */}
                 <div className="rounded-xl p-4 border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
                   <h2 className="text-lg font-semibold text-slate-100 mb-4 flex items-center gap-2">
-                    <Heart className="w-5 h-5" style={{ color: "#D4A020" }} />
-                    Daily Prayer Audio — ALL Religions & Denominations
+                    <Mic className="w-5 h-5" style={{ color: "#D4A020" }} />
+                    Generate Audio
                   </h2>
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {/* Batch Generation */}
                     <div>
-                      <h3 className="text-slate-300 font-medium mb-2">Tradition & Denomination</h3>
+                      <h3 className="text-slate-300 font-medium mb-3">Generate Audio for Date</h3>
                       <div className="space-y-3">
                         <div>
-                          <label className="text-sm text-slate-500">Tradition:</label>
-                          <select className="w-full px-2 py-1 rounded text-sm" style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38", color: "#D4A020" }}>
+                          <label className="text-sm text-slate-400">Select Date</label>
+                          <input
+                            type="date"
+                            className="w-full mt-1 px-3 py-2 rounded-lg border text-sm"
+                            style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38", color: "#D4A020" }}
+                            defaultValue={new Date().toISOString().split('T')[0]}
+                          />
+                        </div>
+                        <button 
+                          disabled
+                          className="w-full py-2 rounded-lg text-sm transition-colors opacity-50 cursor-not-allowed"
+                          style={{ backgroundColor: "#2A2A38", color: "#64748B" }}
+                          title="Coming soon"
+                        >
+                          Generate All 25 Lessons
+                        </button>
+                        <p className="text-xs text-slate-500">This will generate audio for all traditions on the selected date</p>
+                      </div>
+                    </div>
+                    
+                    {/* Single Generation */}
+                    <div>
+                      <h3 className="text-slate-300 font-medium mb-3">Generate Single Lesson</h3>
+                      <div className="space-y-3">
+                        <div>
+                          <label className="text-sm text-slate-400">Select Tradition</label>
+                          <select className="w-full mt-1 px-3 py-2 rounded-lg border text-sm"
+                                  style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38", color: "#D4A020" }}>
                             <option>Judaism</option>
                             <option>Christianity</option>
                             <option>Islam</option>
                             <option>Hinduism</option>
                             <option>Buddhism</option>
                             <option>Bahá'í</option>
-                            <option>Secular Humanism</option>
-                            <option>Interfaith</option>
                           </select>
                         </div>
-                        <div>
-                          <label className="text-sm text-slate-500">Denomination:</label>
-                          <select className="w-full px-2 py-1 rounded text-sm" style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38", color: "#D4A020" }}>
-                            <option>Orthodox</option>
-                            <option>Conservative/Masorti</option>
-                            <option>Reform</option>
-                            <option>Messianic</option>
-                          </select>
-                        </div>
-                        <div>
-                          <label className="text-sm text-slate-500">Voice Assignment:</label>
-                          <select className="w-full px-2 py-1 rounded text-sm" style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38", color: "#D4A020" }}>
-                            <option>Rabbi Voice</option>
-                            <option>Joshua</option>
-                            <option>Narrator Voice</option>
-                          </select>
-                        </div>
-                      </div>
-                      
-                      <h3 className="text-slate-300 font-medium mb-2 mt-4">Today's Prayer Preview</h3>
-                      <div className="rounded-lg p-3 border text-sm" style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}>
-                        <p className="text-slate-400 italic">
-                          "Baruch Atah Adonai, Eloheinu Melech ha'olam, asher kidshanu b'mitzvotav v'tzivanu al netilat yadayim..."
-                        </p>
-                        <p className="text-slate-500 text-xs mt-2">
-                          Orthodox tradition • Morning blessings • Hebrew with English translation
-                        </p>
-                      </div>
-                    </div>
-                    <div>
-                      <h3 className="text-slate-300 font-medium mb-2">Generation Status</h3>
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between text-sm">
-                          <span className="text-slate-400">Status:</span>
-                          <span className="text-emerald-400">Ready to generate</span>
-                        </div>
-                        <div className="flex items-center justify-between text-sm">
-                          <span className="text-slate-400">Last generated:</span>
-                          <span className="text-slate-500">Yesterday 7:00 AM</span>
-                        </div>
-                        <div className="flex items-center justify-between text-sm">
-                          <span className="text-slate-400">Current tradition:</span>
-                          <span className="text-slate-300">Judaism • Orthodox</span>
-                        </div>
-                        <div className="flex items-center justify-between text-sm">
-                          <span className="text-slate-400">Estimated duration:</span>
-                          <span className="text-slate-300">~3 minutes</span>
-                        </div>
-                        <button className="w-full py-2 mt-3 rounded-lg text-sm transition-colors"
-                                style={{ backgroundColor: "#D4A020", color: "#0B0B11" }}>
-                          Generate Audio
+                        <button 
+                          disabled
+                          className="w-full py-2 rounded-lg text-sm transition-colors opacity-50 cursor-not-allowed"
+                          style={{ backgroundColor: "#2A2A38", color: "#64748B" }}
+                          title="Coming soon"
+                        >
+                          Generate Single
                         </button>
-                      </div>
-                      
-                      <h3 className="text-slate-300 font-medium mb-2 mt-4">Recent Audio</h3>
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between text-sm p-2 rounded border" style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}>
-                          <span className="text-slate-400">Jan 26 - Morning Prayers</span>
-                          <button className="text-slate-500 hover:text-slate-400">
-                            <Play className="w-4 h-4" />
-                          </button>
-                        </div>
-                        <div className="flex items-center justify-between text-sm p-2 rounded border" style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}>
-                          <span className="text-slate-400">Jan 25 - Evening Prayers</span>
-                          <button className="text-slate-500 hover:text-slate-400">
-                            <Play className="w-4 h-4" />
-                          </button>
-                        </div>
+                        <p className="text-xs text-slate-500">Generate audio for a specific tradition and date</p>
                       </div>
                     </div>
                   </div>

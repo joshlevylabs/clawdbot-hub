@@ -1,157 +1,129 @@
 {
-  "date": "2026-03-09",
-  "time": "06:00 AM",
+  "timestamp": "2026-03-10T06:00:16.825479",
+  "date": "Tuesday, March 10, 2026",
   "timezone": "America/Los_Angeles",
-  "generated_at": "2026-03-09T06:00:00-08:00",
   "prayer": {
-    "date": "Monday, March 09, 2026",
-    "hebrew_date": "9 Kislev",
-    "parsha": "Vayechi",
-    "parsha_theme": "blessing children, final words, lasting impact",
+    "date": "Tuesday, March 10, 2026",
+    "hebrew_date": "10 Kislev",
+    "parsha": {
+      "name": "Vayechi",
+      "theme": "blessing children, final words, lasting impact"
+    },
     "modeh_ani": "מודה אני לפניך — I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
-    "blessing": "Blessed are You who raises the lowly — lift me to accomplish Your purposes.",
-    "psalm": "Psalm 20:4: \"May He give you the desire of your heart and make all your plans succeed.\"",
-    "proverb": "Proverbs 16:9: \"The heart of man plans his way, but the Lord establishes his steps.\"",
-    "intention": "Protect my family while I work. Guard their hearts and minds.",
-    "closing": "May your work today be a pleasing offering. May your rest tonight be deep and restorative."
+    "blessing": "Blessed are You who has provided me with all I need — I lack nothing essential.",
+    "psalm": "**Psalm 127:1**: \"Unless the Lord builds the house, the builders labor in vain.\"",
+    "proverb": "**Proverbs 3:5-6**: \"Trust in the Lord with all your heart; lean not on your own understanding.\"",
+    "intention": "Help me lead with integrity. Let my yes be yes and my no be no.",
+    "closing": "The Lord goes before you today. He will be with you; He will never leave you nor forsake you. Do not be afraid; do not be discouraged."
   },
   "weather": {
-    "location": "Temecula, CA",
-    "status": "unavailable",
-    "message": "Weather service temporarily unavailable"
+    "location": "Temecula, California",
+    "today": {
+      "high": 75,
+      "low": 40,
+      "conditions": "Clear"
+    },
+    "summary": "Clear skies with highs around 75°F, lows around 40°F. Perfect weather for outdoor activities."
   },
   "calendar": {
-    "status": "error",
-    "message": "OAuth tokens expired - need re-authentication",
-    "today_events": [],
-    "week_events": [],
-    "month_events": []
+    "status": "auth_issues",
+    "message": "OAuth tokens need refresh for most accounts. Only josh@joshlevylabs.com accessible.",
+    "today": [],
+    "week": [],
+    "month": []
   },
   "email_highlights": {
-    "josh@joshlevylabs.com": [
-      {
-        "from": "Dropbox",
-        "subject": "Final reminder: Manage storage so files aren't deleted tomorrow",
-        "date": "2026-03-09 05:58",
-        "priority": "high"
-      },
-      {
-        "from": "noreply@dmarc.yahoo.com",
-        "subject": "Report Domain: joshlevylabs.com Submitter: yahoo.com",
-        "date": "2026-03-09 01:31",
-        "priority": "low"
-      },
-      {
-        "from": "noreply-dmarc-support@google.com",
-        "subject": "Report domain: joshlevylabs.com Submitter: google.com",
-        "date": "2026-03-08 16:59",
-        "priority": "low"
-      },
-      {
-        "from": "Indeed",
-        "subject": "1 new acoustic engineer job in Tempe, AZ",
-        "date": "2026-03-08 16:57",
-        "priority": "low"
-      }
-    ],
-    "joshua.seth.levy@gmail.com": {
-      "status": "error",
-      "message": "OAuth token expired"
+    "josh@joshlevylabs.com": {
+      "unread_count": 10,
+      "urgent": [
+        {
+          "from": "Vercel",
+          "subject": "Failed production deployment on team 'joshlevylabs' projects",
+          "date": "2026-03-10 05:35",
+          "priority": "high"
+        },
+        {
+          "from": "LifeLock",
+          "subject": "We've detected a change to your credit limit",
+          "date": "2026-03-10 05:08",
+          "priority": "medium"
+        },
+        {
+          "from": "Anthropic, PBC",
+          "subject": "Your receipt from Anthropic, PBC #2126-6354-9429",
+          "date": "2026-03-09 16:43",
+          "priority": "low"
+        }
+      ]
     }
   },
-  "trading_signals": {
-    "market_status": "OPEN",
-    "sentiment": "BEARISH",
-    "vix": 31.56,
-    "volatility": "HIGH",
-    "spy": {
-      "price": 672.38,
-      "change_pct": -1.31
+  "trading": {
+    "fear_greed_index": {
+      "current": 27.8,
+      "rating": "fear",
+      "summary": "Markets are fearful at 28. Sentiment is negative — watch for oversold bounces."
     },
-    "fear_greed_index": 26.7,
-    "fear_greed_rating": "fear",
-    "key_signals": [
-      {
-        "type": "BUY",
-        "symbol": "UNG",
-        "price": 12.75,
-        "target": 14.79,
-        "stop": 11.39,
-        "confidence": "MEDIUM",
-        "rationale": "Trend: BULLISH | High volume (2.2x avg) | Price near BB resistance"
-      },
-      {
-        "type": "BUY",
-        "symbol": "EFA",
-        "price": 98.28,
-        "confidence": "HIGH",
-        "rationale": "International equities opportunity - sideways regime with strong signals"
-      },
-      {
-        "type": "SELL",
-        "symbol": "IWM",
-        "price": 250.89,
-        "target": 233.83,
-        "stop": 262.27,
-        "confidence": "MEDIUM",
-        "rationale": "Trend: BEARISH | High volume (1.5x avg) | Price near BB support"
-      },
-      {
-        "type": "SELL",
-        "symbol": "USO",
-        "price": 108.77,
-        "target": 97.44,
-        "stop": 116.32,
-        "confidence": "MEDIUM", 
-        "rationale": "RSI overbought (89.3) | High volume (3.7x avg) | Price near BB resistance"
-      }
-    ],
-    "regime": "sideways",
-    "summary": "Markets are fearful at 27. Sentiment is negative — watch for oversold bounces."
+    "regime": {
+      "spy": "sideways",
+      "qqq": "sideways", 
+      "summary": "SPY is sideways, QQQ is sideways. Momentum is weakening."
+    },
+    "signals": {
+      "total_buy": 0,
+      "total_hold": 24,
+      "total_watch": 0,
+      "summary": "All positions on HOLD across 24 tracked assets. No new buy signals in current fearful market environment."
+    }
   },
   "relationship_analysis": {
-    "status": "CRITICAL",
     "temperature": "critical",
     "trend": "urgent",
     "ratio": 1.2,
-    "stats": {
-      "total": 11,
-      "positive": 6,
-      "negative": 5
-    },
     "recommendations": [
       "PRIORITY: Focus on repair. Acknowledge recent conflicts without defending.",
       "Increase acts of service dramatically this week.",
       "Create space for her to express frustrations without fixing."
-    ],
-    "love_languages": {
-      "primary": "quality_time",
-      "secondary": "acts_of_service"
-    }
+    ]
   },
   "world_news": {
-    "middle_east": {
-      "headline": "Iran-Israel Conflict Escalates",
-      "summary": "IDF launches extensive airstrikes in Iran. Mojtaba Khamenei named as successor to supreme leader. Fighting escalates across Middle East including Hezbollah involvement.",
-      "priority": "urgent",
-      "conservative_perspective": "Regional instability requires strong US support for Israel and containment of Iranian expansion."
-    }
+    "israel_policy": [
+      {
+        "title": "US bypasses congressional review to approve munitions sale to Israel",
+        "summary": "Trump administration used emergency authority to expedite $650M sale of 20,000+ bombs to Israel",
+        "date": "March 7, 2026",
+        "source": "Reuters"
+      },
+      {
+        "title": "US-Israeli war with Iran continues",
+        "summary": "CNN reports from Tehran as Iranian officials warn conflict isn't ending soon",
+        "date": "March 9, 2026",
+        "source": "CNN"
+      }
+    ]
   },
-  "ai_news": {
-    "manufacturing": {
-      "headline": "SageX Introduces AI Data Transformation for Manufacturing",
-      "summary": "New AI-powered automation platform eliminates manual ERP data entry for manufacturing companies.",
-      "relevance": "Practical AI application in industrial sector - relevant to Lyceum positioning"
+  "ai_news": [
+    {
+      "title": "Oracle announces $50B AI infrastructure expansion",
+      "summary": "Shares declined premarket after ambitious funding announcement",
+      "relevance": "enterprise_infrastructure"
     },
-    "research": {
-      "headline": "AI Societies Taking Shape",
-      "summary": "Scientists studying social interactions between AI agents - exploring new forms of AI sociology.",
-      "relevance": "Fundamental AI research with potential implications for multi-agent systems"
+    {
+      "title": "AI funding surge continues in 2026",
+      "summary": "Over $25B raised in 200+ funding rounds, including Elon Musk's xAI $20B Series E",
+      "relevance": "market_trends"
+    },
+    {
+      "title": "Nvidia-backed Nscale valued at $14.6B",
+      "summary": "Fresh funding round values AI infrastructure company highly",
+      "relevance": "valuation_trends"
     }
-  },
-  "family_focus": {
-    "status": "unavailable",
-    "message": "Family data file not found"
-  },
-  "summary": "Critical day ahead. Relationship requires immediate attention with focus on repair and acts of service. Markets showing fear with selective opportunities in UNG and international equities (EFA). Major geopolitical developments in Middle East require monitoring. Dropbox storage issue needs attention."
+  ],
+  "action_items": [
+    "🚨 Check Vercel deployment failures - production issues need immediate attention",
+    "💰 Review LifeLock credit limit change notification",
+    "💔 Relationship focus: Plan acts of service for Jillian today",
+    "📈 Markets fearful - watch for oversold bounce opportunities"
+  ],
+  "generated_at": "2026-03-10T06:00:16.825479",
+  "version": "1.0"
 }

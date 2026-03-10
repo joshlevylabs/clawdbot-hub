@@ -7,6 +7,12 @@ export const maxDuration = 120 // ElevenLabs multilingual_v2 can take 50-90s for
 
 const VOICE_NAMES: Record<string, string> = {
   'VTn3ZhBirl7Eonh6soN9': 'Josh',
+  'W1EJxHy9vl73xgPIKgpn': 'Rabbi Shafier',
+  '87tjwokZlpNU7QL3HaLP': 'Reverend',
+  'ZxleDRZQVNyTR38t1M06': 'Rehan Imam',
+  'sUwtOYEjCoROzbhBKwqi': 'Moses Sam Paul',
+  '6EphsklDopDQ6eRkwNHT': 'Shardul K',
+  'RGb96Dcl0k5eVje8EBch': 'Serena',
   'JBFqnCBsd6RM': 'George',
   'nPczCjzI2dev': 'Brian',
   'pqHfZKP75CvO': 'Bill',
@@ -14,6 +20,42 @@ const VOICE_NAMES: Record<string, string> = {
   'EXAVITQu4vr4': 'Sarah',
   'XrExE9yKIg1W': 'Matilda',
   'pFZP5JQG7iQj': 'Lily',
+};
+
+// Map tradition slugs to their default voice IDs
+const TRADITION_VOICE_MAP: Record<string, string> = {
+  // Judaism → Rabbi Shafier
+  'orthodox-judaism': 'W1EJxHy9vl73xgPIKgpn',
+  'conservative-judaism': 'W1EJxHy9vl73xgPIKgpn',
+  'reform-judaism': 'W1EJxHy9vl73xgPIKgpn',
+  'messianic-judaism': 'W1EJxHy9vl73xgPIKgpn',
+  'reconstructionist-judaism': 'W1EJxHy9vl73xgPIKgpn',
+  // Christianity → Reverend
+  'catholicism': '87tjwokZlpNU7QL3HaLP',
+  'evangelical-protestant': '87tjwokZlpNU7QL3HaLP',
+  'mainline-protestant': '87tjwokZlpNU7QL3HaLP',
+  'eastern-orthodox': '87tjwokZlpNU7QL3HaLP',
+  // Islam → Rehan Imam
+  'sunni-islam': 'ZxleDRZQVNyTR38t1M06',
+  'shia-islam': 'ZxleDRZQVNyTR38t1M06',
+  'sufi-islam': 'ZxleDRZQVNyTR38t1M06',
+  // Buddhism → Moses Sam Paul
+  'theravada-buddhism': 'sUwtOYEjCoROzbhBKwqi',
+  'mahayana-buddhism': 'sUwtOYEjCoROzbhBKwqi',
+  'vajrayana-buddhism': 'sUwtOYEjCoROzbhBKwqi',
+  // Hinduism → Rehan Imam (English), Shardul K available for Hindi
+  'vaishnavism': 'ZxleDRZQVNyTR38t1M06',
+  'shaivism': 'ZxleDRZQVNyTR38t1M06',
+  'shaktism': 'ZxleDRZQVNyTR38t1M06',
+  'advaita-vedanta': 'ZxleDRZQVNyTR38t1M06',
+  // Secular → Serena
+  'secular-humanism': 'RGb96Dcl0k5eVje8EBch',
+  // Other
+  'bahai-faith': 'ZxleDRZQVNyTR38t1M06',
+  'jainism': 'ZxleDRZQVNyTR38t1M06',
+  'sikhism': 'ZxleDRZQVNyTR38t1M06',
+  'zoroastrianism': 'ZxleDRZQVNyTR38t1M06',
+  'interfaith-mysticism': 'RGb96Dcl0k5eVje8EBch',
 };
 
 export async function POST(request: NextRequest) {
@@ -66,36 +108,10 @@ export async function POST(request: NextRequest) {
     const VOICE_ID_FIXES: Record<string, string> = {
       'VTn3ZhBirl7E': 'VTn3ZhBirl7Eonh6soN9', // Truncated Josh voice ID
     }
-    const rawVoice = voiceId || process.env.ELEVENLABS_VOICE_ID
-    const voice = VOICE_ID_FIXES[rawVoice] || rawVoice
-    const voiceName = VOICE_NAMES[voice] || 'Josh'
 
-    // Check if audio already cached
-    const { data: cachedAudio, error: cacheError } = await supabase
-      .from('faith_lesson_audio')
-      .select('storage_path')
-      .eq('lesson_id', lessonId)
-      .eq('voice', voiceName)
-      .single()
+    const explicitVoice = voiceId ? (VOICE_ID_FIXES[voiceId] || voiceId) : null
 
-    if (cacheError && cacheError.code !== 'PGRST116') { // PGRST116 = not found
-      console.error('Error checking audio cache:', cacheError)
-      return NextResponse.json({ error: 'Database error' }, { status: 500 })
-    }
-
-    if (cachedAudio) {
-      // Return cached audio URL
-      const { data } = supabase.storage
-        .from('faith-audio')
-        .getPublicUrl(cachedAudio.storage_path)
-      
-      return NextResponse.json({ 
-        audioUrl: data.publicUrl, 
-        cached: true 
-      })
-    }
-
-    // Fetch lesson data with tradition info
+    // Fetch lesson data with tradition info (needed for voice resolution + text)
     const { data: lesson, error: lessonError } = await supabase
       .from('faith_lessons')
       .select(`
@@ -114,6 +130,32 @@ export async function POST(request: NextRequest) {
 
     if (lessonError || !lesson) {
       return NextResponse.json({ error: 'Lesson not found' }, { status: 404 })
+    }
+
+    // Resolve voice: explicit > tradition default > fallback to Serena
+    const tradition = lesson.faith_traditions as any
+    const traditionSlug = tradition?.slug || ''
+    let voice = explicitVoice || TRADITION_VOICE_MAP[traditionSlug] || 'RGb96Dcl0k5eVje8EBch' // Fallback: Serena
+    let voiceName = VOICE_NAMES[voice] || 'Unknown'
+
+    // Check if audio already cached for this lesson+voice
+    const { data: cachedAudio, error: cacheError } = await supabase
+      .from('faith_lesson_audio')
+      .select('storage_path')
+      .eq('lesson_id', lessonId)
+      .eq('voice', voiceName)
+      .single()
+
+    if (cacheError && cacheError.code !== 'PGRST116') {
+      console.error('Error checking audio cache:', cacheError)
+      return NextResponse.json({ error: 'Database error' }, { status: 500 })
+    }
+
+    if (cachedAudio) {
+      const { data } = supabase.storage
+        .from('faith-audio')
+        .getPublicUrl(cachedAudio.storage_path)
+      return NextResponse.json({ audioUrl: data.publicUrl, cached: true, voice: voiceName })
     }
 
     if (!lesson.baseline_text) {
@@ -218,8 +260,8 @@ export async function POST(request: NextRequest) {
     const fileSize = audioBuffer.byteLength
 
     // Upload to Supabase Storage
-    const tradition = lesson.faith_traditions as any
-    const storageFileName = `${lesson.date}/${tradition.slug}_${voiceName.toLowerCase()}.mp3`
+    const safeVoiceName = voiceName.toLowerCase().replace(/\s+/g, '-')
+    const storageFileName = `${lesson.date}/${traditionSlug}_${safeVoiceName}.mp3`
     
     const { data: uploadData, error: uploadError } = await supabase.storage
       .from('faith-audio')
@@ -261,6 +303,8 @@ export async function POST(request: NextRequest) {
       audioUrl: data.publicUrl,
       cached: false,
       charCount: charCount,
+      voice: voiceName,
+      tradition: traditionSlug,
     })
 
   } catch (error: any) {

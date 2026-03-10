@@ -102,6 +102,7 @@ interface AssetSignal {
   expected_sharpe: number;
   hold_days: number;
   // Universe-specific fields
+  name?: string;
   signal_source?: string;
   strategies_agreeing?: number;
   sector?: string;
@@ -207,6 +208,7 @@ function getCategoryForAsset(assetClass: string): typeof ASSET_CATEGORIES_DASH[k
 
 interface ActionItem {
   symbol: string;
+  name?: string;
   assetClass: string;
   category: string; // Add category field
   categoryIcon: string; // Add category icon
@@ -347,6 +349,7 @@ function generateActions(data: MREData): ActionItem[] {
 
     actions.push({
       symbol,
+      name: asset.name,
       assetClass: asset.asset_class.replace(/_/g, " "),
       category: categoryInfo.name,
       categoryIcon: categoryInfo.icon,
@@ -1087,7 +1090,10 @@ export default function ActionsDashboard({
           <div className="flex items-center gap-2">
             <div>
               <span className="font-bold text-slate-100">{item.symbol}</span>
-              <p className="text-[10px] text-slate-500 capitalize">{item.assetClass}</p>
+              {item.name && item.name !== item.symbol && (
+                <p className="text-[10px] text-slate-400 truncate max-w-[130px]" title={item.name}>{item.name}</p>
+              )}
+              <p className="text-[10px] text-slate-500">{item.sector || item.assetClass}</p>
             </div>
             <span className="text-xs opacity-80">{item.categoryIcon}</span>
           </div>

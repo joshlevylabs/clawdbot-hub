@@ -380,7 +380,7 @@ export default function TradingPage() {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
       const tab = params.get('tab') as ActiveTab | null;
-      if (tab && ["overview","plays","positions","trades","signals","signal-flow","mre","universe","optimizer","backtests","versions","markets","cycles","validation"].includes(tab)) {
+      if (tab && ["overview","plays","positions","trades","signals","signal-flow","competition","mre","universe","optimizer","backtests","versions","markets","cycles","validation"].includes(tab)) {
         return tab;
       }
     }

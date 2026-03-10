@@ -25,6 +25,7 @@ import SignalAnalysisModal from "@/components/SignalAnalysisModal";
 
 interface UniverseSignal {
   symbol: string;
+  name?: string;
   signal: string;
   signal_strength: number;
   strategies_agreeing: number;
@@ -765,15 +766,24 @@ export default function UniverseTable() {
                       setModalType("consensus");
                     }}
                   >
-                    {/* Symbol */}
+                    {/* Symbol + Name */}
                     <td className="py-2 px-3 sticky left-0 bg-slate-900/80 z-10">
                       <div className="flex items-center gap-1.5">
-                        <span className="font-mono font-semibold text-slate-100 text-sm">
-                          {sig.symbol}
-                        </span>
-                        {sig.is_core && (
-                          <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400 flex-shrink-0" />
-                        )}
+                        <div>
+                          <div className="flex items-center gap-1">
+                            <span className="font-mono font-semibold text-slate-100 text-sm">
+                              {sig.symbol}
+                            </span>
+                            {sig.is_core && (
+                              <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400 flex-shrink-0" />
+                            )}
+                          </div>
+                          {sig.name && sig.name !== sig.symbol && (
+                            <div className="text-[10px] text-slate-500 truncate max-w-[140px]" title={sig.name}>
+                              {sig.name}
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </td>
 

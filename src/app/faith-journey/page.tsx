@@ -3688,37 +3688,6 @@ export default function FaithJourneyPage() {
 
                       {/* Audio Files Table */}
                       <div className="space-y-3">
-                        {audioFiles
-                          .filter(audio => {
-                            // Apply filters
-                            const matchesTradition = audioFilter === 'all' || (audio.tradition?.name === audioFilter);
-                            const matchesSearch = !audioSearch || 
-                              (audio.lesson?.topic || '').toLowerCase().includes(audioSearch.toLowerCase());
-                            
-                            let matchesDate = true;
-                            if (audioDate !== 'all') {
-                              const audioDateObj = new Date(audio.date);
-                              const now = new Date();
-                              if (audioDate === 'today') {
-                                matchesDate = audioDateObj.toDateString() === now.toDateString();
-                              } else if (audioDate === 'week') {
-                                const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-                                matchesDate = audioDateObj >= weekAgo;
-                              } else if (audioDate === 'month') {
-                                const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-                                matchesDate = audioDateObj >= monthAgo;
-                              }
-                            }
-                            
-                            return matchesTradition && matchesSearch && matchesDate;
-                          })
-                          .reduce((grouped, audio) => {
-                            const dateKey = new Date(audio.date).toLocaleDateString();
-                            if (!grouped[dateKey]) grouped[dateKey] = [];
-                            grouped[dateKey].push(audio);
-                            return grouped;
-                          }, {} as Record<string, any[]>)
-                        }
                         {(Object.entries(audioFiles
                           .filter(audio => {
                             const matchesTradition = audioFilter === 'all' || (audio.tradition?.name === audioFilter);

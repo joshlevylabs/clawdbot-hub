@@ -4,6 +4,17 @@ import { getSession } from '@/lib/auth'
 
 export const dynamic = 'force-dynamic'
 
+const VOICE_NAMES: Record<string, string> = {
+  'VTn3ZhBirl7E': 'Josh',
+  'JBFqnCBsd6RM': 'George',
+  'nPczCjzI2dev': 'Brian',
+  'pqHfZKP75CvO': 'Bill',
+  'onwK4e9ZLuTA': 'Daniel',
+  'EXAVITQu4vr4': 'Sarah',
+  'XrExE9yKIg1W': 'Matilda',
+  'pFZP5JQG7iQj': 'Lily',
+};
+
 export async function POST(request: NextRequest) {
   try {
     // Check authentication — support both cookie auth (web) and Bearer token (mobile)
@@ -41,16 +52,20 @@ export async function POST(request: NextRequest) {
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     )
 
-    const { lessonId } = await request.json()
+    const { lessonId, voiceId } = await request.json()
     if (!lessonId) {
       return NextResponse.json({ error: 'lessonId is required' }, { status: 400 })
     }
+
+    const voice = voiceId || process.env.ELEVENLABS_VOICE_ID
+    const voiceName = VOICE_NAMES[voice] || 'Josh'
 
     // Check if audio already cached
     const { data: cachedAudio, error: cacheError } = await supabase
       .from('faith_lesson_audio')
       .select('storage_path')
       .eq('lesson_id', lessonId)
+      .eq('voice', voiceName)
       .single()
 
     if (cacheError && cacheError.code !== 'PGRST116') { // PGRST116 = not found
@@ -113,7 +128,7 @@ export async function POST(request: NextRequest) {
 
     // Generate audio with ElevenLabs
     const elevenLabsResponse = await fetch(
-      `https://api.elevenlabs.io/v1/text-to-speech/${process.env.ELEVENLABS_VOICE_ID}`,
+      `https://api.elevenlabs.io/v1/text-to-speech/${voice}`,
       {
         method: 'POST',
         headers: {
@@ -150,7 +165,7 @@ export async function POST(request: NextRequest) {
 
     // Upload to Supabase Storage
     const tradition = lesson.faith_traditions as any
-    const storageFileName = `${lesson.date}/${tradition.slug}.mp3`
+    const storageFileName = `${lesson.date}/${tradition.slug}_${voiceName.toLowerCase()}.mp3`
     
     const { data: uploadData, error: uploadError } = await supabase.storage
       .from('faith-audio')
@@ -171,7 +186,7 @@ export async function POST(request: NextRequest) {
         lesson_id: lessonId,
         tradition_id: lesson.baseline_tradition_id,
         date: lesson.date,
-        voice: 'Josh',
+        voice: voiceName,
         model: 'eleven_turbo_v2_5',
         storage_path: uploadData.path,
         file_size_bytes: fileSize,

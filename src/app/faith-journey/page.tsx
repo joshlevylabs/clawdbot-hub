@@ -3552,13 +3552,11 @@ export default function FaithJourneyPage() {
                   </h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {[
-                      { id: 'ethereal-pad', name: 'Ethereal Pad', icon: '🌌' },
-                      { id: 'gentle-piano', name: 'Gentle Piano', icon: '🎹' },
-                      { id: 'spiritual-journey', name: 'Spiritual Journey', icon: '✨' },
-                      { id: 'calm-meditation', name: 'Calm Meditation', icon: '🧘' },
-                      { id: 'singing-bowls', name: 'Singing Bowls', icon: '🎵' },
-                      { id: 'peaceful-ambient', name: 'Peaceful Ambient', icon: '🌸' },
-                      { id: 'nature-calm', name: 'Nature Calm', icon: '🌿' },
+                      { id: 'an-evening-of-elegance', name: 'An Evening of Elegance', icon: '🕯️', duration: '1:30' },
+                      { id: 'cathedralis', name: 'Cathedralis', icon: '⛪', duration: '3:00' },
+                      { id: 'guide-us-through-the-night', name: 'Guide Us Through the Night', icon: '🌙', duration: '2:05' },
+                      { id: 'stream-and-sing', name: 'Stream and Sing', icon: '🌊', duration: '1:00' },
+                      { id: 'the-divine-accord', name: 'The Divine Accord', icon: '✨', duration: '2:00' },
                     ].map((track) => (
                       <div 
                         key={track.id}

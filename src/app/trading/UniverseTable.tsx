@@ -686,14 +686,25 @@ export default function UniverseTable() {
       {/* ===== Data Table ===== */}
       <div className="bg-slate-800/50 rounded-xl border border-slate-700/50 overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[900px]">
+          <table className="w-full min-w-[1100px]">
             <thead>
               <tr className="text-xs text-slate-500 uppercase border-b border-slate-700 bg-slate-800/80">
                 <th
                   className="text-left py-2.5 px-3 cursor-pointer hover:text-slate-300 transition-colors sticky left-0 bg-slate-800/95 z-10"
                   onClick={() => handleSort("symbol")}
                 >
-                  Symbol <SortIcon field="symbol" sortField={sortField} sortDir={sortDir} />
+                  Asset <SortIcon field="symbol" sortField={sortField} sortDir={sortDir} />
+                </th>
+                <th
+                  className="text-left py-2.5 px-3 cursor-pointer hover:text-slate-300 transition-colors"
+                  onClick={() => handleSort("sector")}
+                >
+                  Sector <SortIcon field="sector" sortField={sortField} sortDir={sortDir} />
+                </th>
+                <th
+                  className="text-left py-2.5 px-3 cursor-pointer hover:text-slate-300 transition-colors"
+                >
+                  Industry
                 </th>
                 <th
                   className="text-left py-2.5 px-3 cursor-pointer hover:text-slate-300 transition-colors"
@@ -732,12 +743,6 @@ export default function UniverseTable() {
                   Regime <SortIcon field="regime" sortField={sortField} sortDir={sortDir} />
                 </th>
                 <th
-                  className="text-left py-2.5 px-3 cursor-pointer hover:text-slate-300 transition-colors"
-                  onClick={() => handleSort("sector")}
-                >
-                  Sector <SortIcon field="sector" sortField={sortField} sortDir={sortDir} />
-                </th>
-                <th
                   className="text-right py-2.5 px-3 cursor-pointer hover:text-slate-300 transition-colors"
                   onClick={() => handleSort("momentum_20d")}
                 >
@@ -754,7 +759,7 @@ export default function UniverseTable() {
             <tbody>
               {pageSignals.length === 0 ? (
                 <tr>
-                  <td colSpan={10} className="py-12 text-center text-slate-500">
+                  <td colSpan={11} className="py-12 text-center text-slate-500">
                     No assets match your filters
                   </td>
                 </tr>
@@ -768,7 +773,7 @@ export default function UniverseTable() {
                       setModalType("consensus");
                     }}
                   >
-                    {/* Symbol + Name + Industry */}
+                    {/* Asset (Symbol + Name) */}
                     <td className="py-2 px-3 sticky left-0 bg-slate-900/80 z-10">
                       <div className="flex items-center gap-1.5">
                         <div>
@@ -785,14 +790,18 @@ export default function UniverseTable() {
                               {sig.name}
                             </div>
                           )}
-                          <div
-                            className="text-[9px] text-slate-600 truncate max-w-[160px]"
-                            title={[sig.sector, sig.industry_group, sig.industry].filter(Boolean).join(" › ")}
-                          >
-                            {sig.industry || sig.sector}
-                          </div>
                         </div>
                       </div>
+                    </td>
+
+                    {/* Sector */}
+                    <td className="py-2 px-3 text-xs text-slate-400 max-w-[140px] truncate" title={sig.sector}>
+                      {sig.sector}
+                    </td>
+
+                    {/* Industry */}
+                    <td className="py-2 px-3 text-xs text-slate-500 max-w-[160px] truncate" title={[sig.industry_group, sig.industry].filter(Boolean).join(" › ")}>
+                      {sig.industry || sig.industry_group || "—"}
                     </td>
 
                     {/* Signal */}
@@ -918,11 +927,6 @@ export default function UniverseTable() {
                         ) : null}
                         {sig.regime}
                       </span>
-                    </td>
-
-                    {/* Sector */}
-                    <td className="py-2 px-3 text-xs text-slate-400 max-w-[140px] truncate">
-                      {sig.sector}
                     </td>
 
                     {/* Momentum 20d */}

@@ -2106,7 +2106,9 @@ export default function FaithJourneyPage() {
     const dateStr = date.toISOString().split('T')[0];
     const holidays = getFilteredHolidays().filter(holiday => holiday.date === dateStr);
     const lessons = data?.lessons?.filter(lesson => lesson.date === dateStr) || [];
-    return { holidays, lessons };
+    const prayers = dailyPrayers.filter(prayer => prayer.date === dateStr);
+    const sleepPrayersForDate = sleepPrayers.filter(prayer => prayer.date === dateStr);
+    return { holidays, lessons, prayers: [...prayers, ...sleepPrayersForDate] };
   };
 
   const getTraditionColors = () => ({
@@ -2886,6 +2888,22 @@ export default function FaithJourneyPage() {
                       );
                     })}
                   </div>
+                  
+                  {/* Calendar Legend */}
+                  <div className="flex items-center gap-3 text-[10px] sm:text-xs text-slate-400 mt-1 mb-2 px-1">
+                    <div className="flex items-center gap-1">
+                      <div className="w-2 h-2 rounded-sm" style={{ backgroundColor: '#3B82F6' }} />
+                      <span>Holiday</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <div className="px-1 rounded text-[9px] font-bold" style={{ backgroundColor: 'rgba(6, 182, 212, 0.2)', color: '#06B6D4', border: '1px solid rgba(6, 182, 212, 0.3)' }}>L</div>
+                      <span>Lessons</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <div className="px-1 rounded text-[9px] font-bold" style={{ backgroundColor: 'rgba(245, 158, 11, 0.2)', color: '#F59E0B', border: '1px solid rgba(245, 158, 11, 0.3)' }}>P</div>
+                      <span>Prayers</span>
+                    </div>
+                  </div>
                 </div>
 
                 {/* Calendar Grid */}
@@ -2934,31 +2952,47 @@ export default function FaithJourneyPage() {
                             )}
                           </div>
                           
-                          {/* Event dots */}
-                          {events.holidays.length > 0 || events.lessons.length > 0 ? (
-                            <div className="flex gap-0.5 sm:gap-1 mt-0.5 sm:mt-1 flex-wrap justify-center sm:justify-start">
+                          {/* Calendar Day Indicators */}
+                          {(events.holidays.length > 0 || events.lessons.length > 0 || events.prayers.length > 0) && (
+                            <div className="flex gap-0.5 items-center mt-0.5 flex-wrap justify-center sm:justify-start">
+                              {/* Holiday indicators - colored squares */}
                               {events.holidays.slice(0, 3).map((holiday, idx) => (
                                 <div
-                                  key={`holiday-${idx}`}
-                                  className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full"
+                                  key={`h-${idx}`}
+                                  className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-sm"
                                   style={{ backgroundColor: holiday.color }}
-                                  title={holiday.name}
-                                ></div>
+                                  title={`${holiday.name} (${holiday.tradition})`}
+                                />
                               ))}
-                              {(() => {
-                                // Group lessons by tradition and show one dot per tradition
-                                const traditionSet = new Set(events.lessons.map((l: any) => l.tradition || "Other"));
-                                const colors = getTraditionColors();
-                                return Array.from(traditionSet).slice(0, 3).map((tradition, idx) => (
-                                  <div key={`lesson-${idx}`}
-                                    className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full ring-1 ring-black/20"
-                                    style={{ backgroundColor: colors[tradition as keyof typeof colors] || "#D4A020" }}
-                                    title={`${tradition} lesson`}
-                                  ></div>
-                                ));
-                              })()}
+                              {events.holidays.length > 3 && (
+                                <span className="text-[8px] sm:text-[9px] text-slate-500" title={`${events.holidays.length} holidays`}>
+                                  +{events.holidays.length - 3}
+                                </span>
+                              )}
+                              
+                              {/* Lesson indicator - cyan pill */}
+                              {events.lessons.length > 0 && (
+                                <div
+                                  className="px-0.5 sm:px-1 rounded text-[7px] sm:text-[9px] font-bold leading-tight"
+                                  style={{ backgroundColor: 'rgba(6, 182, 212, 0.2)', color: '#06B6D4', border: '1px solid rgba(6, 182, 212, 0.3)' }}
+                                  title={`${events.lessons.length} lessons`}
+                                >
+                                  L
+                                </div>
+                              )}
+                              
+                              {/* Prayer indicator - amber pill */}
+                              {events.prayers.length > 0 && (
+                                <div
+                                  className="px-0.5 sm:px-1 rounded text-[7px] sm:text-[9px] font-bold leading-tight"
+                                  style={{ backgroundColor: 'rgba(245, 158, 11, 0.2)', color: '#F59E0B', border: '1px solid rgba(245, 158, 11, 0.3)' }}
+                                  title={`${events.prayers.length} prayers`}
+                                >
+                                  P
+                                </div>
+                              )}
                             </div>
-                          ) : null}
+                          )}
                         </div>
                       );
                     })}

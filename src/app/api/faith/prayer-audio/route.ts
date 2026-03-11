@@ -90,15 +90,49 @@ export async function POST(request: NextRequest) {
     }
     const explicitVoice = voiceId ? (VOICE_ID_FIXES[voiceId] || voiceId) : null
 
-    // Fetch prayer to get tradition info for voice resolution
-    const { data: prayer } = await supabase
-      .from('faith_prayers')
-      .select('id, tradition_id, date, text')
+    // Fetch prayer — try faith_daily_prayers first (mobile app), then faith_prayers (legacy)
+    let prayer: { id: string; tradition_id?: string; tradition_key?: string; date: string; text?: string } | null = null
+
+    // Try faith_daily_prayers (mobile app sends IDs from this table)
+    const { data: dailyPrayer } = await supabase
+      .from('faith_daily_prayers')
+      .select('id, tradition_key, tradition_name, date, full_text')
       .eq('id', prayerId)
       .single()
 
+    if (dailyPrayer) {
+      prayer = {
+        id: dailyPrayer.id,
+        tradition_key: dailyPrayer.tradition_key,
+        date: dailyPrayer.date,
+        text: dailyPrayer.full_text,
+      }
+    } else {
+      // Fall back to faith_prayers table
+      const { data: legacyPrayer } = await supabase
+        .from('faith_prayers')
+        .select('id, tradition_id, date, text')
+        .eq('id', prayerId)
+        .single()
+      if (legacyPrayer) {
+        prayer = legacyPrayer
+      }
+    }
+
     // Resolve voice: explicit > DB override > hardcoded default > fallback Serena
-    const traditionFamily = prayer?.tradition_id ? (UUID_TO_SLUG[prayer.tradition_id] || 'interfaith') : 'interfaith'
+    // tradition_key is a slug like "orthodox-judaism" — extract the family (e.g., "judaism")
+    let traditionFamily = 'interfaith'
+    if (prayer?.tradition_id) {
+      traditionFamily = UUID_TO_SLUG[prayer.tradition_id] || 'interfaith'
+    } else if (prayer?.tradition_key) {
+      // Extract family from tradition key slug: "orthodox-judaism" → "judaism", "sunni-islam" → "islam"
+      const key = prayer.tradition_key.toLowerCase()
+      if (key.includes('judaism') || key.includes('jewish')) traditionFamily = 'judaism'
+      else if (key.includes('islam') || key.includes('muslim')) traditionFamily = 'islam'
+      else if (key.includes('christian') || key.includes('catholic') || key.includes('orthodox') || key.includes('protestant') || key.includes('evangelical')) traditionFamily = 'christianity'
+      else if (key.includes('hindu') || key.includes('vedanta') || key.includes('shaiv') || key.includes('vaishnav') || key.includes('shakti')) traditionFamily = 'hinduism'
+      else if (key.includes('buddhi') || key.includes('zen') || key.includes('theravada') || key.includes('mahayana') || key.includes('vajrayana')) traditionFamily = 'buddhism'
+    }
     let voice = explicitVoice
     if (!voice) {
       // Check DB for any voice config overrides (match on tradition family prefix)
@@ -136,33 +170,46 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    // Fetch prayer data with tradition info for TTS generation
-    const { data: prayerFull, error: prayerError } = await supabase
-      .from('faith_prayers')
-      .select(`
-        id,
-        date,
-        title,
-        prayer_text,
-        tradition_id,
-        faith_traditions!tradition_id (
-          id,
-          name
-        )
-      `)
-      .eq('id', prayerId)
-      .single()
+    // Fetch prayer data for TTS generation — try daily_prayers first, then legacy
+    let prayerTitle = ''
+    let prayerText = ''
 
-    if (prayerError || !prayerFull) {
-      return NextResponse.json({ error: 'Prayer not found' }, { status: 404 })
+    if (dailyPrayer) {
+      // Use daily prayer data (already fetched above)
+      prayerTitle = `${dailyPrayer.tradition_name || ''} Daily Prayer`.trim()
+      prayerText = dailyPrayer.full_text || ''
+    } else {
+      // Fetch from legacy faith_prayers table
+      const { data: prayerFull, error: prayerError } = await supabase
+        .from('faith_prayers')
+        .select(`
+          id,
+          date,
+          title,
+          prayer_text,
+          tradition_id,
+          faith_traditions!tradition_id (
+            id,
+            name
+          )
+        `)
+        .eq('id', prayerId)
+        .single()
+
+      if (prayerError || !prayerFull) {
+        return NextResponse.json({ error: 'Prayer not found' }, { status: 404 })
+      }
+
+      prayerTitle = prayerFull.title || ''
+      prayerText = prayerFull.prayer_text || ''
     }
 
-    if (!prayerFull.prayer_text) {
+    if (!prayerText) {
       return NextResponse.json({ error: 'No text content for this prayer' }, { status: 400 })
     }
 
     // Clean text for TTS - remove markdown formatting, headers, etc.
-    let cleanText = prayerFull.prayer_text
+    let cleanText = prayerText
       .replace(/^#+\s+.*$/gm, '') // Remove headers
       .replace(/\*\*(.*?)\*\*/g, '$1') // Remove bold
       .replace(/\*(.*?)\*/g, '$1') // Remove italic
@@ -172,8 +219,8 @@ export async function POST(request: NextRequest) {
       .trim()
 
     // Add prayer title as introduction if it's not already in the text
-    if (!cleanText.toLowerCase().includes(prayerFull.title.toLowerCase())) {
-      cleanText = `${prayerFull.title}.\n\n${cleanText}`;
+    if (prayerTitle && !cleanText.toLowerCase().includes(prayerTitle.toLowerCase())) {
+      cleanText = `${prayerTitle}.\n\n${cleanText}`;
     }
 
     if (cleanText.length === 0) {

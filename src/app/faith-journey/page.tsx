@@ -467,60 +467,6 @@ const denominationAgents: DenominationAgent[] = [
   }
 ];
 
-const religiousHolidays: HolidayEvent[] = [
-  // Jewish Holidays 2026
-  { name: "Tu BiShvat", date: "2026-02-03", tradition: "Judaism", description: "New Year of the Trees", color: "#3B82F6" },
-  { name: "Purim", date: "2026-03-24", tradition: "Judaism", description: "Festival celebrating deliverance from Haman", color: "#3B82F6" },
-  { name: "Passover (Pesach)", date: "2026-04-13", tradition: "Judaism", description: "Celebration of exodus from Egypt", color: "#3B82F6" },
-  { name: "Yom HaShoah", date: "2026-05-05", tradition: "Judaism", description: "Holocaust Remembrance Day", color: "#3B82F6" },
-  { name: "Shavuot", date: "2026-06-02", tradition: "Judaism", description: "Festival of Weeks, giving of Torah", color: "#3B82F6" },
-  { name: "Rosh Hashanah", date: "2026-09-21", tradition: "Judaism", description: "Jewish New Year", color: "#3B82F6" },
-  { name: "Yom Kippur", date: "2026-09-30", tradition: "Judaism", description: "Day of Atonement", color: "#3B82F6" },
-  { name: "Sukkot", date: "2026-10-05", tradition: "Judaism", description: "Festival of Booths", color: "#3B82F6" },
-  { name: "Hanukkah", date: "2026-12-18", tradition: "Judaism", description: "Festival of Lights", color: "#3B82F6" },
-
-  // Christian Holidays 2026
-  { name: "Epiphany", date: "2026-01-06", tradition: "Christianity", description: "Manifestation of Christ to the Gentiles", color: "#8B5CF6" },
-  { name: "Ash Wednesday", date: "2026-02-18", tradition: "Christianity", description: "Beginning of Lent", color: "#8B5CF6" },
-  { name: "Palm Sunday", date: "2026-03-29", tradition: "Christianity", description: "Jesus' triumphal entry into Jerusalem", color: "#8B5CF6" },
-  { name: "Good Friday", date: "2026-04-03", tradition: "Christianity", description: "Crucifixion of Jesus", color: "#8B5CF6" },
-  { name: "Easter", date: "2026-04-05", tradition: "Christianity", description: "Resurrection of Jesus", color: "#8B5CF6" },
-  { name: "Pentecost", date: "2026-05-24", tradition: "Christianity", description: "Descent of Holy Spirit", color: "#8B5CF6" },
-  { name: "All Saints' Day", date: "2026-11-01", tradition: "Christianity", description: "Honoring all saints", color: "#8B5CF6" },
-  { name: "Advent", date: "2026-11-29", tradition: "Christianity", description: "Beginning of Christian liturgical year", color: "#8B5CF6" },
-  { name: "Christmas", date: "2026-12-25", tradition: "Christianity", description: "Birth of Jesus Christ", color: "#8B5CF6" },
-
-  // Islamic Holidays 2026 (approximate)
-  { name: "Islamic New Year", date: "2026-01-18", tradition: "Islam", description: "Beginning of Islamic calendar year", color: "#10B981" },
-  { name: "Ashura", date: "2026-01-27", tradition: "Islam", description: "Day of remembrance, especially for Shia Muslims", color: "#10B981" },
-  { name: "Ramadan Begins", date: "2026-02-28", tradition: "Islam", description: "Month of fasting begins", color: "#10B981" },
-  { name: "Laylat al-Qadr", date: "2026-03-25", tradition: "Islam", description: "Night of Power", color: "#10B981" },
-  { name: "Eid al-Fitr", date: "2026-03-30", tradition: "Islam", description: "End of Ramadan", color: "#10B981" },
-  { name: "Eid al-Adha", date: "2026-06-07", tradition: "Islam", description: "Festival of Sacrifice", color: "#10B981" },
-  { name: "Mawlid", date: "2026-08-26", tradition: "Islam", description: "Prophet Muhammad's birthday", color: "#10B981" },
-
-  // Hindu Holidays 2026 (approximate)
-  { name: "Vasant Panchami", date: "2026-01-23", tradition: "Hinduism", description: "Spring festival honoring Saraswati", color: "#F59E0B" },
-  { name: "Maha Shivratri", date: "2026-02-20", tradition: "Hinduism", description: "Great Night of Shiva", color: "#F59E0B" },
-  { name: "Holi", date: "2026-03-14", tradition: "Hinduism", description: "Festival of Colors", color: "#F59E0B" },
-  { name: "Ram Navami", date: "2026-04-10", tradition: "Hinduism", description: "Birth of Lord Rama", color: "#F59E0B" },
-  { name: "Janmashtami", date: "2026-08-14", tradition: "Hinduism", description: "Birth of Lord Krishna", color: "#F59E0B" },
-  { name: "Ganesh Chaturthi", date: "2026-08-29", tradition: "Hinduism", description: "Birth of Lord Ganesha", color: "#F59E0B" },
-  { name: "Navratri", date: "2026-09-17", tradition: "Hinduism", description: "Nine nights honoring Goddess Durga", color: "#F59E0B" },
-  { name: "Diwali", date: "2026-11-08", tradition: "Hinduism", description: "Festival of Lights", color: "#F59E0B" },
-
-  // Buddhist Holidays 2026 (approximate)
-  { name: "Magha Puja", date: "2026-02-11", tradition: "Buddhism", description: "Sangha Day", color: "#06B6D4" },
-  { name: "Vesak", date: "2026-05-15", tradition: "Buddhism", description: "Buddha's birth, enlightenment, and passing", color: "#06B6D4" },
-  { name: "Dharma Day", date: "2026-07-09", tradition: "Buddhism", description: "Buddha's first teaching", color: "#06B6D4" },
-  { name: "Kathina", date: "2026-10-15", tradition: "Buddhism", description: "Robe-offering ceremony", color: "#06B6D4" },
-  { name: "Losar", date: "2026-02-19", tradition: "Buddhism", denomination: "Tibetan", description: "Tibetan New Year", color: "#06B6D4" },
-
-  // Other Religious Holidays
-  { name: "Ridván", date: "2026-04-21", tradition: "Bahá'í", description: "Most holy Bahá'í festival", color: "#EC4899" },
-  { name: "Declaration of the Báb", date: "2026-05-23", tradition: "Bahá'í", description: "Beginning of Bahá'í Faith", color: "#EC4899" },
-  { name: "Birth of Bahá'u'lláh", date: "2026-11-12", tradition: "Bahá'í", description: "Founder of Bahá'í Faith", color: "#EC4899" },
-];
 
 // Sample lessons for when no data is available
 const sampleLessons = [
@@ -1707,6 +1653,7 @@ export default function FaithJourneyPage() {
   const [selectedMonth, setSelectedMonth] = useState<number>(new Date().getMonth());
   const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
   const [selectedDay, setSelectedDay] = useState<Date | null>(null);
+  const [religiousHolidays, setReligiousHolidays] = useState<HolidayEvent[]>([]);
   const [selectedReligion, setSelectedReligion] = useState<string | null>(null);
   const [selectedDenomination, setSelectedDenomination] = useState<string | null>(null);
   const [selectedLesson, setSelectedLesson] = useState<any>(null);
@@ -1934,6 +1881,46 @@ export default function FaithJourneyPage() {
       .then(data => setSacredTexts(data.texts || []))
       .catch(() => {});
   }, []);
+
+  // Fetch religious holidays from API
+  useEffect(() => {
+    const fetchHolidays = async () => {
+      try {
+        const res = await fetch(`/api/faith/holidays?year=${selectedYear}`);
+        if (res.ok) {
+          const data = await res.json();
+          
+          // Map traditions to colors
+          const traditionColors: Record<string, string> = {
+            'Judaism': '#3B82F6',
+            'Christianity': '#8B5CF6', 
+            'Islam': '#10B981',
+            'Hinduism': '#F59E0B',
+            'Buddhism': '#06B6D4',
+            'Bahá\'í': '#EC4899',
+            'Sikhism': '#1E40AF'
+          };
+          
+          // Transform API response to HolidayEvent format
+          const transformedHolidays: HolidayEvent[] = (data.holidays || []).map((holiday: any) => ({
+            name: holiday.name,
+            date: holiday.startDate,
+            tradition: holiday.tradition,
+            description: holiday.description,
+            color: traditionColors[holiday.tradition] || '#6B7280'
+          }));
+          
+          setReligiousHolidays(transformedHolidays);
+        }
+      } catch (error) {
+        console.error('Failed to fetch holidays:', error);
+        // Keep empty array on error
+        setReligiousHolidays([]);
+      }
+    };
+    
+    fetchHolidays();
+  }, [selectedYear]);
 
   const loadData = async () => {
     try {

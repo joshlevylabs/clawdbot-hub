@@ -153,94 +153,13 @@ export async function GET(request: NextRequest) {
       })
     }
 
-    // 4. Generate missing content via Claude
-    const anthropic = new Anthropic({ apiKey: anthropicKey })
-
-    const needsHistory = !history
-    const traditionNames = missingObservanceSlugs.map(slug => {
-      const meta = traditionNameMap.get(slug)
-      return { slug, name: meta?.name || slug }
-    })
-
-    let prompt = `You are a scholar of comparative religion. Generate content about the holiday "${holidayName}".`
-    prompt += `\n\nGenerate the following as JSON:\n\n{`
-
-    if (needsHistory) {
-      prompt += `\n  "history": "A 2-3 paragraph overview of the holiday's origins, historical significance, and why it's celebrated. Write for a thoughtful adult who wants depth, not a Wikipedia summary. Include key scriptural/historical references.",`
-    }
-
-    if (missingObservanceSlugs.length > 0) {
-      const entries = traditionNames.map(({ slug, name }) =>
-        `    "${slug}": "A 2-3 paragraph description of how ${name} specifically celebrates/observes this holiday. Include specific rituals, prayers, foods, customs, and the spiritual meaning behind them. Be specific to this tradition — not generic. If the tradition doesn't directly observe the holiday but has a meaningful connection (historical, theological), explain that connection."`
-      )
-      prompt += `\n  "observances": {\n${entries.join(',\n')}\n  }`
-    }
-
-    prompt += `\n}\n\nRespond with ONLY valid JSON. No markdown, no explanation.`
-
-    const response = await anthropic.messages.create({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 6000,
-      messages: [{ role: 'user', content: prompt }],
-    })
-
-    const content = response.content[0]
-    if (content.type !== 'text') {
-      return NextResponse.json({ error: 'Unexpected response format' }, { status: 500 })
-    }
-
-    let generated: any
-    try {
-      generated = JSON.parse(content.text)
-    } catch {
-      const jsonMatch = content.text.match(/\{[\s\S]*\}/)
-      if (jsonMatch) {
-        generated = JSON.parse(jsonMatch[0])
-      } else {
-        return NextResponse.json({ error: 'Failed to parse generated content' }, { status: 500 })
-      }
-    }
-
-    // 5. Cache generated content
-    if (needsHistory && generated.history) {
-      history = generated.history
-    }
-
-    // Upsert each tradition's observance
-    if (generated.observances) {
-      const upsertRows = missingObservanceSlugs
-        .filter(slug => generated.observances[slug])
-        .map(slug => ({
-          holiday_name: holidayName,
-          tradition_slug: slug,
-          tradition_id: traditionNameMap.get(slug)?.id || null,
-          history: history || generated.history || '',
-          observance: generated.observances[slug],
-          year,
-          model: 'claude-sonnet-4-20250514',
-        }))
-
-      if (upsertRows.length > 0) {
-        await supabase.from('faith_holiday_content').upsert(
-          upsertRows,
-          { onConflict: 'holiday_name,tradition_slug,year' }
-        )
-      }
-
-      // Update in-memory results
-      for (const t of traditionsWithObservance) {
-        if (!t.observance && generated.observances[t.slug]) {
-          t.observance = generated.observances[t.slug]
-          t.cached = false
-        }
-      }
-    }
-
+    // 4. If content not found, return message about pipeline
     return NextResponse.json({
       holidayName,
-      history,
+      history: history || null,
       traditions: traditionsWithObservance,
       cached: false,
+      message: "Content not yet generated. Run the monthly pipeline."
     })
 
   } catch (error: any) {

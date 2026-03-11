@@ -66,101 +66,180 @@ interface HolidayDetailRequest {
 }
 
 // GET handler for admin dashboard (no auth required)
+// GET endpoint for Hub admin dashboard — generates content for ALL observing traditions
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
     const holidayName = searchParams.get('name')
-    const userTraditionSlug = searchParams.get('tradition') || 'orthodox-judaism'
-    const exploringParam = searchParams.get('exploring') || ''
     const year = parseInt(searchParams.get('year') || '2026')
 
     if (!holidayName) {
       return NextResponse.json({ error: 'name parameter required' }, { status: 400 })
     }
 
-    const exploringTraditionSlugs = exploringParam ? exploringParam.split(',').filter(Boolean) : []
-
     const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
-    // Rest of logic is the same as POST, but without auth check
-    // 1. Check cache for history + user's tradition observance
-    const { data: cached } = await supabase
+    // Get ALL observing traditions for this holiday
+    const observingTraditionSlugs = HOLIDAY_OBSERVANCES[holidayName] || []
+    if (observingTraditionSlugs.length === 0) {
+      return NextResponse.json({
+        holidayName,
+        history: null,
+        traditions: [],
+        cached: false,
+        message: `No tradition observances configured for "${holidayName}"`,
+      })
+    }
+
+    // Get tradition metadata
+    const { data: traditions } = await supabase
+      .from('faith_traditions')
+      .select('id, slug, name, icon')
+      .in('slug', observingTraditionSlugs)
+
+    const traditionNameMap = new Map(
+      (traditions || []).map(t => [t.slug, { name: t.name, icon: t.icon, id: t.id }])
+    )
+
+    // 1. Check cache for history (use first tradition as anchor — history is universal)
+    const { data: cachedContent } = await supabase
       .from('faith_holiday_content')
       .select('*')
       .eq('holiday_name', holidayName)
-      .eq('tradition_slug', userTraditionSlug)
       .eq('year', year)
-      .single()
+      .limit(10)
 
-    let history = cached?.history
-    let userObservance = cached?.observance
-
-    // 2. Check cache for cross-tradition perspectives
-    const observingTraditions = HOLIDAY_OBSERVANCES[holidayName] || []
-    const relevantExploring = exploringTraditionSlugs.filter(
-      slug => slug !== userTraditionSlug && observingTraditions.includes(slug)
+    const cachedContentMap = new Map(
+      (cachedContent || []).map(c => [c.tradition_slug, c])
     )
 
-    const { data: cachedPerspectives } = await supabase
-      .from('faith_holiday_perspectives')
-      .select('*')
-      .eq('holiday_name', holidayName)
-      .eq('source_tradition_slug', userTraditionSlug)
-      .in('comparing_tradition_slug', relevantExploring.length > 0 ? relevantExploring : ['__none__'])
-      .eq('year', year)
+    // History is the same regardless of tradition — grab from any cached entry
+    let history = cachedContent?.find(c => c.history)?.history || null
 
-    const cachedPerspectiveMap = new Map(
-      (cachedPerspectives || []).map(p => [p.comparing_tradition_slug, p])
-    )
-    const missingPerspectives = relevantExploring.filter(slug => !cachedPerspectiveMap.has(slug))
+    // 2. Check cache for each tradition's observance
+    const traditionsWithObservance: Array<{ slug: string; name: string; icon: string; observance: string | null; cached: boolean }> = []
+    const missingObservanceSlugs: string[] = []
 
-    // 3. If everything cached, return immediately
-    if (history && userObservance && missingPerspectives.length === 0) {
-      // Get tradition names
-      const allSlugs = [userTraditionSlug, ...relevantExploring]
-      const { data: traditions } = await supabase
-        .from('faith_traditions')
-        .select('id, slug, name, icon')
-        .in('slug', allSlugs)
+    for (const slug of observingTraditionSlugs) {
+      const cached = cachedContentMap.get(slug)
+      const meta = traditionNameMap.get(slug)
+      if (cached?.observance) {
+        traditionsWithObservance.push({
+          slug,
+          name: meta?.name || slug,
+          icon: meta?.icon || '',
+          observance: cached.observance,
+          cached: true,
+        })
+      } else {
+        missingObservanceSlugs.push(slug)
+        traditionsWithObservance.push({
+          slug,
+          name: meta?.name || slug,
+          icon: meta?.icon || '',
+          observance: null,
+          cached: false,
+        })
+      }
+    }
 
-      const traditionNameMap = new Map(
-        (traditions || []).map(t => [t.slug, { name: t.name, icon: t.icon }])
-      )
-
+    // 3. If everything is cached, return immediately
+    if (history && missingObservanceSlugs.length === 0) {
       return NextResponse.json({
         holidayName,
-        holidayEmoji: cached?.holiday_emoji || '',
         history,
-        userTradition: {
-          slug: userTraditionSlug,
-          name: traditionNameMap.get(userTraditionSlug)?.name || userTraditionSlug,
-          icon: traditionNameMap.get(userTraditionSlug)?.icon || '',
-          observance: userObservance,
-        },
-        perspectives: relevantExploring.map(slug => ({
-          traditionSlug: slug,
-          traditionName: traditionNameMap.get(slug)?.name || slug,
-          traditionIcon: traditionNameMap.get(slug)?.icon || '',
-          perspectiveText: cachedPerspectiveMap.get(slug)?.perspective_text || '',
-          connectionType: cachedPerspectiveMap.get(slug)?.connection_type || 'cultural_connection',
-        })),
+        traditions: traditionsWithObservance,
         cached: true,
       })
     }
 
-    // For admin dashboard, if not cached, return a simplified response with just the holiday name
-    // Full generation can be triggered via the POST endpoint when needed
+    // 4. Generate missing content via Claude
+    const anthropic = new Anthropic({ apiKey: anthropicKey })
+
+    const needsHistory = !history
+    const traditionNames = missingObservanceSlugs.map(slug => {
+      const meta = traditionNameMap.get(slug)
+      return { slug, name: meta?.name || slug }
+    })
+
+    let prompt = `You are a scholar of comparative religion. Generate content about the holiday "${holidayName}".`
+    prompt += `\n\nGenerate the following as JSON:\n\n{`
+
+    if (needsHistory) {
+      prompt += `\n  "history": "A 2-3 paragraph overview of the holiday's origins, historical significance, and why it's celebrated. Write for a thoughtful adult who wants depth, not a Wikipedia summary. Include key scriptural/historical references.",`
+    }
+
+    if (missingObservanceSlugs.length > 0) {
+      const entries = traditionNames.map(({ slug, name }) =>
+        `    "${slug}": "A 2-3 paragraph description of how ${name} specifically celebrates/observes this holiday. Include specific rituals, prayers, foods, customs, and the spiritual meaning behind them. Be specific to this tradition — not generic. If the tradition doesn't directly observe the holiday but has a meaningful connection (historical, theological), explain that connection."`
+      )
+      prompt += `\n  "observances": {\n${entries.join(',\n')}\n  }`
+    }
+
+    prompt += `\n}\n\nRespond with ONLY valid JSON. No markdown, no explanation.`
+
+    const response = await anthropic.messages.create({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 6000,
+      messages: [{ role: 'user', content: prompt }],
+    })
+
+    const content = response.content[0]
+    if (content.type !== 'text') {
+      return NextResponse.json({ error: 'Unexpected response format' }, { status: 500 })
+    }
+
+    let generated: any
+    try {
+      generated = JSON.parse(content.text)
+    } catch {
+      const jsonMatch = content.text.match(/\{[\s\S]*\}/)
+      if (jsonMatch) {
+        generated = JSON.parse(jsonMatch[0])
+      } else {
+        return NextResponse.json({ error: 'Failed to parse generated content' }, { status: 500 })
+      }
+    }
+
+    // 5. Cache generated content
+    if (needsHistory && generated.history) {
+      history = generated.history
+    }
+
+    // Upsert each tradition's observance
+    if (generated.observances) {
+      const upsertRows = missingObservanceSlugs
+        .filter(slug => generated.observances[slug])
+        .map(slug => ({
+          holiday_name: holidayName,
+          tradition_slug: slug,
+          tradition_id: traditionNameMap.get(slug)?.id || null,
+          history: history || generated.history || '',
+          observance: generated.observances[slug],
+          year,
+          model: 'claude-sonnet-4-20250514',
+        }))
+
+      if (upsertRows.length > 0) {
+        await supabase.from('faith_holiday_content').upsert(
+          upsertRows,
+          { onConflict: 'holiday_name,tradition_slug,year' }
+        )
+      }
+
+      // Update in-memory results
+      for (const t of traditionsWithObservance) {
+        if (!t.observance && generated.observances[t.slug]) {
+          t.observance = generated.observances[t.slug]
+          t.cached = false
+        }
+      }
+    }
+
     return NextResponse.json({
       holidayName,
-      holidayEmoji: '',
-      history: 'Content not yet generated. Use the mobile app to generate detailed content.',
-      userTradition: {
-        slug: userTraditionSlug,
-        name: userTraditionSlug,
-        icon: '',
-        observance: 'Content not yet generated.',
-      },
-      perspectives: [],
+      history,
+      traditions: traditionsWithObservance,
       cached: false,
     })
 

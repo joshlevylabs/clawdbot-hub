@@ -1525,10 +1525,11 @@ function HolidayDetailModal({
   holiday: any; 
   onClose: () => void;
 }) {
-  const [activeTab, setActiveTab] = useState<'history' | 'tradition' | 'others'>('history');
+  const [activeTab, setActiveTab] = useState<'history' | 'traditions'>('history');
   const [detail, setDetail] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [expandedTradition, setExpandedTradition] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchHolidayDetail = async () => {
@@ -1536,13 +1537,8 @@ function HolidayDetailModal({
         setLoading(true);
         setError(null);
         
-        // Build exploring traditions list from tradition slugs
-        const exploringTraditions = ['orthodox-judaism', 'conservative-judaism', 'reform-judaism', 'catholicism', 'eastern-orthodox', 'evangelical-protestant', 'mainline-protestant', 'sunni-islam', 'shia-islam', 'vaishnavism', 'shaivism', 'theravada-buddhism', 'mahayana-buddhism'];
-        
         const params = new URLSearchParams({
           name: holiday.name,
-          tradition: 'orthodox-judaism',
-          exploring: exploringTraditions.join(','),
           year: '2026'
         });
         
@@ -1562,6 +1558,8 @@ function HolidayDetailModal({
 
     fetchHolidayDetail();
   }, [holiday.name]);
+
+  const traditionsCount = detail?.traditions?.filter((t: any) => t.observance)?.length || 0;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
@@ -1587,19 +1585,18 @@ function HolidayDetailModal({
             </button>
           </div>
 
-          {/* Tab Navigation */}
+          {/* Tab Navigation — 2 tabs: History + Traditions */}
           <div className="flex gap-1">
             {[
               { key: "history", label: "History", icon: BookOpen },
-              { key: "tradition", label: "Your Tradition", icon: Star },
-              { key: "others", label: detail?.perspectives?.length > 0 ? `Others (${detail.perspectives.length})` : "Others", icon: Globe }
+              { key: "traditions", label: traditionsCount > 0 ? `Traditions (${traditionsCount})` : "Traditions", icon: Globe },
             ].map((tab) => {
               const isActive = activeTab === tab.key;
               const Icon = tab.icon;
               return (
                 <button
                   key={tab.key}
-                  onClick={() => setActiveTab(tab.key as 'history' | 'tradition' | 'others')}
+                  onClick={() => setActiveTab(tab.key as 'history' | 'traditions')}
                   className="px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2"
                   style={{
                     backgroundColor: isActive ? "rgba(212, 160, 32, 0.15)" : "transparent",
@@ -1619,9 +1616,9 @@ function HolidayDetailModal({
         <div className="flex-1 overflow-y-auto p-4">
           {loading ? (
             <div className="text-center py-12">
-              <Loader className="w-8 h-8 text-slate-600 mx-auto mb-3 animate-spin" />
-              <h3 className="text-slate-400 font-medium mb-1">Loading holiday details...</h3>
-              <p className="text-slate-600 text-sm">Gathering rich content about {holiday.name}</p>
+              <Loader className="w-8 h-8 mx-auto mb-3 animate-spin" style={{ color: "#D4A020" }} />
+              <h3 className="text-slate-400 font-medium mb-1">Generating holiday content...</h3>
+              <p className="text-slate-600 text-sm">This may take a moment for first-time generation</p>
             </div>
           ) : error ? (
             <div className="text-center py-12">
@@ -1644,66 +1641,51 @@ function HolidayDetailModal({
                 </div>
               )}
 
-              {activeTab === 'tradition' && (
-                <div className="space-y-4">
-                  <div className="flex items-center gap-2">
-                    <h3 className="text-xl font-semibold text-slate-100">Your Tradition</h3>
-                    {detail?.userTradition?.name && (
-                      <span className="text-sm px-2 py-1 rounded" style={{ backgroundColor: "#D4A02020", color: "#D4A020" }}>
-                        {detail.userTradition.name}
-                      </span>
-                    )}
-                  </div>
-                  {detail?.userTradition?.observance ? (
-                    <div className="text-slate-300 prose-sm max-w-none">
-                      {renderMarkdown(detail.userTradition.observance)}
-                    </div>
-                  ) : (
-                    <p className="text-slate-400">No observance information available for your tradition.</p>
-                  )}
-                </div>
-              )}
-
-              {activeTab === 'others' && (
-                <div className="space-y-4">
-                  <h3 className="text-xl font-semibold text-slate-100">Other Perspectives</h3>
-                  {detail?.perspectives?.length > 0 ? (
-                    <div className="space-y-4">
-                      {detail.perspectives.map((perspective: any, idx: number) => {
-                        const connectionTypeLabels: Record<string, string> = {
-                          'shared_origin': 'Shared Origin',
-                          'parallel_observance': 'Parallel Observance',
-                          'cultural_connection': 'Cultural Connection',
-                          'theological_link': 'Theological Link'
-                        };
-                        
+              {activeTab === 'traditions' && (
+                <div className="space-y-3">
+                  <h3 className="text-xl font-semibold text-slate-100">How Each Tradition Observes</h3>
+                  <p className="text-sm text-slate-500">
+                    {traditionsCount} tradition{traditionsCount !== 1 ? 's' : ''} with content for {holiday.name}
+                  </p>
+                  {detail?.traditions?.length > 0 ? (
+                    <div className="space-y-2">
+                      {detail.traditions.filter((t: any) => t.observance).map((tradition: any, idx: number) => {
+                        const isExpanded = expandedTradition === tradition.slug;
                         return (
                           <div 
                             key={idx} 
-                            className="p-4 rounded-lg border"
-                            style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}
+                            className="rounded-lg border overflow-hidden"
+                            style={{ backgroundColor: "#13131B", borderColor: isExpanded ? "#D4A02050" : "#2A2A38" }}
                           >
-                            <div className="flex items-center justify-between mb-3">
-                              <div className="flex items-center gap-2">
-                                <span className="text-lg">{perspective.traditionIcon}</span>
-                                <h4 className="text-lg font-medium text-slate-100">{perspective.traditionName}</h4>
+                            {/* Tradition header — clickable accordion */}
+                            <button
+                              onClick={() => setExpandedTradition(isExpanded ? null : tradition.slug)}
+                              className="w-full flex items-center justify-between p-4 text-left hover:bg-slate-800/20 transition-colors"
+                            >
+                              <div className="flex items-center gap-3">
+                                <span className="text-lg">{tradition.icon || '📖'}</span>
+                                <h4 className="text-base font-medium text-slate-100">{tradition.name}</h4>
+                                {tradition.cached && (
+                                  <span className="text-xs px-1.5 py-0.5 rounded bg-emerald-900/30 text-emerald-400">cached</span>
+                                )}
                               </div>
-                              <span 
-                                className="text-xs px-2 py-1 rounded"
-                                style={{ backgroundColor: "#D4A02020", color: "#D4A020" }}
-                              >
-                                {connectionTypeLabels[perspective.connectionType] || perspective.connectionType}
-                              </span>
-                            </div>
-                            <div className="text-slate-300 prose-sm max-w-none">
-                              {renderMarkdown(perspective.perspectiveText)}
-                            </div>
+                              {isExpanded ? <ChevronUp className="w-4 h-4 text-slate-400" /> : <ChevronDown className="w-4 h-4 text-slate-400" />}
+                            </button>
+                            
+                            {/* Expanded content */}
+                            {isExpanded && (
+                              <div className="px-4 pb-4 border-t" style={{ borderColor: "#2A2A3850" }}>
+                                <div className="pt-3 text-slate-300 prose-sm max-w-none">
+                                  {renderMarkdown(tradition.observance)}
+                                </div>
+                              </div>
+                            )}
                           </div>
                         );
                       })}
                     </div>
                   ) : (
-                    <p className="text-slate-400">No perspectives from other traditions available.</p>
+                    <p className="text-slate-400">No tradition observances found for this holiday.</p>
                   )}
                 </div>
               )}

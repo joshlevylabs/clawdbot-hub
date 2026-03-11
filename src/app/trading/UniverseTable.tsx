@@ -124,6 +124,9 @@ const REGIME_ORDER: Record<string, number> = { bull: 0, sideways: 1, bear: 2 };
 const PAGE_SIZE = 50;
 
 // Sector groups for hierarchical filtering
+const SECTOR_DISPLAY: Record<string, string> = { "Information Technology": "Technology" };
+function displaySector(s?: string) { return s ? (SECTOR_DISPLAY[s] || s) : ""; }
+
 const SECTOR_GROUPS: { label: string; emoji: string; sectors: string[] }[] = [
   { label: "Technology", emoji: "💻", sectors: ["Information Technology", "Communication Services"] },
   { label: "Healthcare", emoji: "🏥", sectors: ["Health Care"] },
@@ -796,7 +799,7 @@ export default function UniverseTable() {
 
                     {/* Sector */}
                     <td className="py-2 px-3 text-xs text-slate-400 max-w-[140px] truncate" title={sig.sector}>
-                      {sig.sector}
+                      {displaySector(sig.sector)}
                     </td>
 
                     {/* Industry */}

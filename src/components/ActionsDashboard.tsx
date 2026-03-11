@@ -203,6 +203,9 @@ const ASSET_CLASS_MAPPING_DASH: Record<string, keyof typeof ASSET_CATEGORIES_DAS
   commodities: "commodities"
 };
 
+const SECTOR_DISPLAY: Record<string, string> = { "Information Technology": "Technology" };
+function displaySector(s?: string) { return s ? (SECTOR_DISPLAY[s] || s) : ""; }
+
 function getCategoryForAsset(assetClass: string): typeof ASSET_CATEGORIES_DASH[keyof typeof ASSET_CATEGORIES_DASH] {
   const category = ASSET_CLASS_MAPPING_DASH[assetClass];
   return ASSET_CATEGORIES_DASH[category] || ASSET_CATEGORIES_DASH.broad_market;
@@ -1105,7 +1108,7 @@ export default function ActionsDashboard({
         </td>
         {/* Sector */}
         <td className="py-2.5 px-2 text-[10px] text-slate-400 max-w-[120px] truncate" title={item.sector}>
-          {item.sector || item.assetClass}
+          {displaySector(item.sector) || item.assetClass}
         </td>
         {/* Industry */}
         <td className="py-2.5 px-2 text-[10px] text-slate-500 max-w-[140px] truncate" title={[item.industryGroup, item.industry].filter(Boolean).join(" › ")}>

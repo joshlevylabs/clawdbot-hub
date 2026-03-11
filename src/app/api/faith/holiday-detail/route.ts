@@ -65,6 +65,114 @@ interface HolidayDetailRequest {
   year?: number
 }
 
+// GET handler for admin dashboard (no auth required)
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url)
+    const holidayName = searchParams.get('name')
+    const userTraditionSlug = searchParams.get('tradition') || 'orthodox-judaism'
+    const exploringParam = searchParams.get('exploring') || ''
+    const year = parseInt(searchParams.get('year') || '2026')
+
+    if (!holidayName) {
+      return NextResponse.json({ error: 'name parameter required' }, { status: 400 })
+    }
+
+    const exploringTraditionSlugs = exploringParam ? exploringParam.split(',').filter(Boolean) : []
+
+    const supabase = createClient(supabaseUrl, supabaseServiceKey)
+
+    // Rest of logic is the same as POST, but without auth check
+    // 1. Check cache for history + user's tradition observance
+    const { data: cached } = await supabase
+      .from('faith_holiday_content')
+      .select('*')
+      .eq('holiday_name', holidayName)
+      .eq('tradition_slug', userTraditionSlug)
+      .eq('year', year)
+      .single()
+
+    let history = cached?.history
+    let userObservance = cached?.observance
+
+    // 2. Check cache for cross-tradition perspectives
+    const observingTraditions = HOLIDAY_OBSERVANCES[holidayName] || []
+    const relevantExploring = exploringTraditionSlugs.filter(
+      slug => slug !== userTraditionSlug && observingTraditions.includes(slug)
+    )
+
+    const { data: cachedPerspectives } = await supabase
+      .from('faith_holiday_perspectives')
+      .select('*')
+      .eq('holiday_name', holidayName)
+      .eq('source_tradition_slug', userTraditionSlug)
+      .in('comparing_tradition_slug', relevantExploring.length > 0 ? relevantExploring : ['__none__'])
+      .eq('year', year)
+
+    const cachedPerspectiveMap = new Map(
+      (cachedPerspectives || []).map(p => [p.comparing_tradition_slug, p])
+    )
+    const missingPerspectives = relevantExploring.filter(slug => !cachedPerspectiveMap.has(slug))
+
+    // 3. If everything cached, return immediately
+    if (history && userObservance && missingPerspectives.length === 0) {
+      // Get tradition names
+      const allSlugs = [userTraditionSlug, ...relevantExploring]
+      const { data: traditions } = await supabase
+        .from('faith_traditions')
+        .select('id, slug, name, icon')
+        .in('slug', allSlugs)
+
+      const traditionNameMap = new Map(
+        (traditions || []).map(t => [t.slug, { name: t.name, icon: t.icon }])
+      )
+
+      return NextResponse.json({
+        holidayName,
+        holidayEmoji: cached?.holiday_emoji || '',
+        history,
+        userTradition: {
+          slug: userTraditionSlug,
+          name: traditionNameMap.get(userTraditionSlug)?.name || userTraditionSlug,
+          icon: traditionNameMap.get(userTraditionSlug)?.icon || '',
+          observance: userObservance,
+        },
+        perspectives: relevantExploring.map(slug => ({
+          traditionSlug: slug,
+          traditionName: traditionNameMap.get(slug)?.name || slug,
+          traditionIcon: traditionNameMap.get(slug)?.icon || '',
+          perspectiveText: cachedPerspectiveMap.get(slug)?.perspective_text || '',
+          connectionType: cachedPerspectiveMap.get(slug)?.connection_type || 'cultural_connection',
+        })),
+        cached: true,
+      })
+    }
+
+    // For admin dashboard, if not cached, return a simplified response with just the holiday name
+    // Full generation can be triggered via the POST endpoint when needed
+    return NextResponse.json({
+      holidayName,
+      holidayEmoji: '',
+      history: 'Content not yet generated. Use the mobile app to generate detailed content.',
+      userTradition: {
+        slug: userTraditionSlug,
+        name: userTraditionSlug,
+        icon: '',
+        observance: 'Content not yet generated.',
+      },
+      perspectives: [],
+      cached: false,
+    })
+
+  } catch (error: any) {
+    console.error('Holiday detail GET error:', error)
+    return NextResponse.json(
+      { error: error.message || 'Internal server error' },
+      { status: 500 }
+    )
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
     // Auth check

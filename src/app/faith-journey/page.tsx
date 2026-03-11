@@ -1516,6 +1516,205 @@ function GuideChatModal({
 
 // ===== Main Page =====
 
+// ===== Holiday Detail Modal =====
+
+function HolidayDetailModal({ 
+  holiday, 
+  onClose 
+}: { 
+  holiday: any; 
+  onClose: () => void;
+}) {
+  const [activeTab, setActiveTab] = useState<'history' | 'tradition' | 'others'>('history');
+  const [detail, setDetail] = useState<any | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchHolidayDetail = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        // Build exploring traditions list from tradition slugs
+        const exploringTraditions = ['orthodox-judaism', 'conservative-judaism', 'reform-judaism', 'catholicism', 'eastern-orthodox', 'evangelical-protestant', 'mainline-protestant', 'sunni-islam', 'shia-islam', 'vaishnavism', 'shaivism', 'theravada-buddhism', 'mahayana-buddhism'];
+        
+        const params = new URLSearchParams({
+          name: holiday.name,
+          tradition: 'orthodox-judaism',
+          exploring: exploringTraditions.join(','),
+          year: '2026'
+        });
+        
+        const response = await fetch(`/api/faith/holiday-detail?${params}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch holiday detail');
+        }
+        
+        const data = await response.json();
+        setDetail(data);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to load holiday detail');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchHolidayDetail();
+  }, [holiday.name]);
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+      <div 
+        className="w-full max-w-4xl max-h-[90vh] rounded-xl border overflow-hidden flex flex-col"
+        style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}
+      >
+        {/* Header */}
+        <div className="p-4 border-b" style={{ borderColor: "#2A2A38" }}>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">{holiday.emoji || '🎉'}</span>
+              <div>
+                <h1 className="text-lg font-bold text-slate-100">{holiday.name}</h1>
+                <p className="text-sm text-slate-400">{holiday.tradition} • {holiday.description}</p>
+              </div>
+            </div>
+            <button
+              onClick={onClose}
+              className="text-slate-400 hover:text-slate-300"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+
+          {/* Tab Navigation */}
+          <div className="flex gap-1">
+            {[
+              { key: "history", label: "History", icon: BookOpen },
+              { key: "tradition", label: "Your Tradition", icon: Star },
+              { key: "others", label: detail?.perspectives?.length > 0 ? `Others (${detail.perspectives.length})` : "Others", icon: Globe }
+            ].map((tab) => {
+              const isActive = activeTab === tab.key;
+              const Icon = tab.icon;
+              return (
+                <button
+                  key={tab.key}
+                  onClick={() => setActiveTab(tab.key as 'history' | 'tradition' | 'others')}
+                  className="px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2"
+                  style={{
+                    backgroundColor: isActive ? "rgba(212, 160, 32, 0.15)" : "transparent",
+                    color: isActive ? "#D4A020" : "#8B8B80",
+                    border: isActive ? "1px solid rgba(212, 160, 32, 0.3)" : "1px solid transparent",
+                  }}
+                >
+                  <Icon className="w-4 h-4" />
+                  {tab.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="flex-1 overflow-y-auto p-4">
+          {loading ? (
+            <div className="text-center py-12">
+              <Loader className="w-8 h-8 text-slate-600 mx-auto mb-3 animate-spin" />
+              <h3 className="text-slate-400 font-medium mb-1">Loading holiday details...</h3>
+              <p className="text-slate-600 text-sm">Gathering rich content about {holiday.name}</p>
+            </div>
+          ) : error ? (
+            <div className="text-center py-12">
+              <AlertTriangle className="w-8 h-8 text-red-400 mx-auto mb-3" />
+              <h3 className="text-red-400 font-medium mb-1">Error Loading Content</h3>
+              <p className="text-slate-600 text-sm">{error}</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {activeTab === 'history' && (
+                <div className="space-y-4">
+                  <h3 className="text-xl font-semibold text-slate-100">History & Origins</h3>
+                  {detail?.history ? (
+                    <div className="text-slate-300 prose-sm max-w-none">
+                      {renderMarkdown(detail.history)}
+                    </div>
+                  ) : (
+                    <p className="text-slate-400">No historical information available for this holiday.</p>
+                  )}
+                </div>
+              )}
+
+              {activeTab === 'tradition' && (
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-xl font-semibold text-slate-100">Your Tradition</h3>
+                    {detail?.userTradition?.name && (
+                      <span className="text-sm px-2 py-1 rounded" style={{ backgroundColor: "#D4A02020", color: "#D4A020" }}>
+                        {detail.userTradition.name}
+                      </span>
+                    )}
+                  </div>
+                  {detail?.userTradition?.observance ? (
+                    <div className="text-slate-300 prose-sm max-w-none">
+                      {renderMarkdown(detail.userTradition.observance)}
+                    </div>
+                  ) : (
+                    <p className="text-slate-400">No observance information available for your tradition.</p>
+                  )}
+                </div>
+              )}
+
+              {activeTab === 'others' && (
+                <div className="space-y-4">
+                  <h3 className="text-xl font-semibold text-slate-100">Other Perspectives</h3>
+                  {detail?.perspectives?.length > 0 ? (
+                    <div className="space-y-4">
+                      {detail.perspectives.map((perspective: any, idx: number) => {
+                        const connectionTypeLabels: Record<string, string> = {
+                          'shared_origin': 'Shared Origin',
+                          'parallel_observance': 'Parallel Observance',
+                          'cultural_connection': 'Cultural Connection',
+                          'theological_link': 'Theological Link'
+                        };
+                        
+                        return (
+                          <div 
+                            key={idx} 
+                            className="p-4 rounded-lg border"
+                            style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}
+                          >
+                            <div className="flex items-center justify-between mb-3">
+                              <div className="flex items-center gap-2">
+                                <span className="text-lg">{perspective.traditionIcon}</span>
+                                <h4 className="text-lg font-medium text-slate-100">{perspective.traditionName}</h4>
+                              </div>
+                              <span 
+                                className="text-xs px-2 py-1 rounded"
+                                style={{ backgroundColor: "#D4A02020", color: "#D4A020" }}
+                              >
+                                {connectionTypeLabels[perspective.connectionType] || perspective.connectionType}
+                              </span>
+                            </div>
+                            <div className="text-slate-300 prose-sm max-w-none">
+                              {renderMarkdown(perspective.perspectiveText)}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <p className="text-slate-400">No perspectives from other traditions available.</p>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function FaithJourneyPage() {
   const [activeTab, setActiveTab] = useState<ActiveTab>("overview");
   const [data, setData] = useState<DashboardData | null>(null);
@@ -1547,6 +1746,9 @@ export default function FaithJourneyPage() {
   
   // Guide chat modal
   const [selectedGuide, setSelectedGuide] = useState<DenominationAgent | null>(null);
+
+  // Holiday detail modal
+  const [selectedHoliday, setSelectedHoliday] = useState<any | null>(null);
 
   // Images tab state
   const [images, setImages] = useState<FaithImage[]>([]);
@@ -2857,11 +3059,12 @@ export default function FaithJourneyPage() {
                                     {events.holidays.map((holiday, idx) => (
                                       <div
                                         key={idx}
-                                        className="p-2 rounded border"
+                                        className="p-2 rounded border cursor-pointer hover:border-slate-500 transition-colors"
                                         style={{ 
                                           backgroundColor: "#0B0B11", 
                                           borderColor: holiday.color + "30"
                                         }}
+                                        onClick={() => setSelectedHoliday(holiday)}
                                       >
                                         <div className="flex items-center gap-1 mb-0.5">
                                           <span style={{ color: holiday.color, fontSize: "10px" }}>●</span>
@@ -3103,7 +3306,7 @@ export default function FaithJourneyPage() {
                                         {events.holidays.map((holiday, idx) => (
                                           <div key={idx} className="p-2 rounded-lg border cursor-pointer hover:border-slate-500 transition-colors"
                                             style={{ backgroundColor: "#0B0B11", borderColor: holiday.color + "50" }}
-                                            onClick={() => { setSelectedReligion(holiday.tradition); setSelectedDenomination(null); }}
+                                            onClick={() => { setSelectedHoliday(holiday); setSelectedReligion(holiday.tradition); setSelectedDenomination(null); }}
                                           >
                                             <div className="flex items-center gap-2">
                                               <span style={{ color: holiday.color }}>●</span>
@@ -5239,6 +5442,13 @@ export default function FaithJourneyPage() {
         <GuideChatModal
           guide={selectedGuide}
           onClose={() => setSelectedGuide(null)}
+        />
+      )}
+
+      {selectedHoliday && (
+        <HolidayDetailModal
+          holiday={selectedHoliday}
+          onClose={() => setSelectedHoliday(null)}
         />
       )}
     </div>

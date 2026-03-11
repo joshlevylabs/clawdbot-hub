@@ -1099,15 +1099,17 @@ export default function ActionsDashboard({
               {item.name && item.name !== item.symbol && (
                 <p className="text-[10px] text-slate-400 truncate max-w-[140px]" title={item.name}>{item.name}</p>
               )}
-              <p
-                className="text-[10px] text-slate-500 truncate max-w-[140px]"
-                title={[item.sector, item.industryGroup, item.industry].filter(Boolean).join(" › ")}
-              >
-                {item.industry || item.sector || item.assetClass}
-              </p>
             </div>
             <span className="text-xs opacity-80">{item.categoryIcon}</span>
           </div>
+        </td>
+        {/* Sector */}
+        <td className="py-2.5 px-2 text-[10px] text-slate-400 max-w-[120px] truncate" title={item.sector}>
+          {item.sector || item.assetClass}
+        </td>
+        {/* Industry */}
+        <td className="py-2.5 px-2 text-[10px] text-slate-500 max-w-[140px] truncate" title={[item.industryGroup, item.industry].filter(Boolean).join(" › ")}>
+          {item.industry || item.industryGroup || "—"}
         </td>
         {/* Signal */}
         <td className="py-2.5 px-2"><ActionBadge action={item.action} /></td>
@@ -1450,7 +1452,9 @@ export default function ActionsDashboard({
               <table className="w-full text-xs">
                 <thead>
                   <tr className="text-[10px] text-slate-500 uppercase border-b border-slate-700">
-                    <SortHeader label="Asset" sortKey="symbol" currentSort={sortKey} currentDir={sortDir} onSort={handleSort} className="text-left" title="Ticker symbol and sector" />
+                    <SortHeader label="Asset" sortKey="symbol" currentSort={sortKey} currentDir={sortDir} onSort={handleSort} className="text-left" title="Ticker symbol and company name" />
+                    <th className="text-left py-2 px-2" title="GICS sector classification">Sector</th>
+                    <th className="text-left py-2 px-2" title="Industry sub-classification">Industry</th>
                     <SortHeader label="Signal" sortKey="action" currentSort={sortKey} currentDir={sortDir} onSort={handleSort} className="text-left" title="MRE engine recommendation: BUY, HOLD, WATCH, or WAIT" />
                     <th className="text-left py-2 px-2" title="Pit Agent Fleet verdict — independent technical analysis by AI agents">Pit</th>
                     <th className="text-left py-2 px-2" title="How many of 5 internal strategies agree: Fear/Greed, Regime Confirmation, RSI Oversold, Mean Reversion, Momentum">Consensus</th>

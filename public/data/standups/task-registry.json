@@ -1167,6 +1167,142 @@
       "acceptanceCriteria": "Integration plan: how ClawdHub skills compose into hosted agents, API surface, developer workflow",
       "source": "STD-EVE (Evening Standup 2026-03-03)",
       "approvedAt": "2026-03-03T21:37:00-08:00"
+    },
+    {
+      "key": "J-008",
+      "title": "Supabase migration — resonance + tension + compass tables",
+      "assignee": "agent",
+      "type": "AGENT",
+      "priority": "high",
+      "status": "backlog",
+      "phase": "resonance-compass",
+      "description": "Create database schema for the Faith Compass Resonance Pipeline including faith_resonance table for swipe choices, faith_tension_map for theological conflicts, faith_compass_conversations for multi-guide dialogues, and faith_compass_scores for evolving compass scores.",
+      "acceptanceCriteria": [
+        "faith_resonance table created with user_id, perspective_id, tradition_id, dimension_scores columns",
+        "faith_tension_map table populated with tradition pair conflicts and dialogue prompts",
+        "faith_compass_conversations table set up for transcript storage and priority extraction",
+        "faith_compass_scores table configured with source attribution and confidence tracking"
+      ],
+      "createdAt": "2025-01-27T14:45:00Z"
+    },
+    {
+      "key": "J-009",
+      "title": "API endpoints — resonance save/summary/tensions",
+      "assignee": "agent", 
+      "type": "AGENT",
+      "priority": "high",
+      "status": "backlog",
+      "phase": "resonance-compass",
+      "description": "Implement core API endpoints for resonance tracking including POST /api/faith/resonance for saving swipe choices, GET /api/faith/resonance/summary for user's complete resonance profile, and GET /api/faith/resonance/tensions for detected theological conflicts.",
+      "acceptanceCriteria": [
+        "POST /api/faith/resonance saves swipe choices and triggers tension detection",
+        "GET /api/faith/resonance/summary returns user's resonance patterns and tradition breakdown",
+        "GET /api/faith/resonance/tensions detects and returns pending conversation opportunities",
+        "All endpoints include proper error handling and response formatting"
+      ],
+      "createdAt": "2025-01-27T14:45:00Z"
+    },
+    {
+      "key": "J-010",
+      "title": "App: sync swipe data to Supabase (replace AsyncStorage-only)",
+      "assignee": "agent",
+      "type": "AGENT", 
+      "priority": "high",
+      "status": "backlog",
+      "phase": "resonance-compass",
+      "description": "Modify the Faith Journey app's perspective swiping to sync choices to Supabase instead of only saving locally to AsyncStorage. Maintain backward compatibility and handle offline scenarios gracefully.",
+      "acceptanceCriteria": [
+        "Swipe choices automatically sync to Supabase when online",
+        "Offline swipes queue locally and sync when connectivity restored",
+        "Existing AsyncStorage data migrated to Supabase on app update",
+        "Initial Faith Compass scores calculated from historical swipe data"
+      ],
+      "createdAt": "2025-01-27T14:45:00Z"
+    },
+    {
+      "key": "J-011", 
+      "title": "Tension detection engine — map tradition pairs, score conflicts",
+      "assignee": "agent",
+      "type": "AGENT",
+      "priority": "medium",
+      "status": "backlog",
+      "phase": "resonance-compass",
+      "description": "Build the tension detection algorithm that identifies theological conflicts between user's resonated perspectives. Combine mathematical dimension vector analysis with theological knowledge base to trigger meaningful conversations.",
+      "acceptanceCriteria": [
+        "Mathematical tension scoring comparing dimension vectors across traditions",
+        "Theological tension map populated with known tradition pair conflicts", 
+        "Trigger logic: 3+ resonated perspectives with tension score > 0.7",
+        "Frequency limiting: max 1 conversation per week per user"
+      ],
+      "createdAt": "2025-01-27T14:45:00Z"
+    },
+    {
+      "key": "J-012",
+      "title": "Multi-guide conversation UI + engine",
+      "assignee": "agent",
+      "type": "AGENT",
+      "priority": "medium", 
+      "status": "backlog",
+      "phase": "resonance-compass",
+      "description": "Create the multi-guide conversation system where user's journey guide moderates dialogue with tradition guides from resonated perspectives. Build UI for multiple avatars and conversation context display.",
+      "acceptanceCriteria": [
+        "Multi-avatar chat interface showing 2-3 participating guides",
+        "Conversation context panel with triggering perspectives and current compass scores",
+        "Guide personality system using existing TRADITION_MAP from app",
+        "Real-time conversation updates via Supabase subscriptions"
+      ],
+      "createdAt": "2025-01-27T14:45:00Z"
+    },
+    {
+      "key": "J-013",
+      "title": "Compass score extraction from conversations",
+      "assignee": "agent",
+      "type": "AGENT",
+      "priority": "medium",
+      "status": "backlog", 
+      "phase": "resonance-compass",
+      "description": "Implement LLM analysis of conversation transcripts to extract user's authentic value priorities. Convert dialogue insights into weighted compass dimension scores with confidence tracking.",
+      "acceptanceCriteria": [
+        "LLM conversation analysis extracts priority weights for 8 compass dimensions",
+        "Hybrid score calculation combining swipe data with conversation insights",
+        "Confidence scoring increases with more conversation data points", 
+        "Priority extraction system handles conversation quality variations"
+      ],
+      "createdAt": "2025-01-27T14:45:00Z"
+    },
+    {
+      "key": "J-014",
+      "title": "Updated Faith Compass visualization",
+      "assignee": "ceo",
+      "type": "CEO",
+      "priority": "low",
+      "status": "backlog",
+      "phase": "resonance-compass", 
+      "description": "Enhance the existing Faith Compass radar chart to show score sources (swipes vs conversations), confidence levels through visual opacity, and interactive details for each dimension's contributing factors.",
+      "acceptanceCriteria": [
+        "Visual indicators distinguish swipe-based vs conversation-refined scores",
+        "Opacity/saturation reflects confidence levels for each dimension",
+        "Interactive details show contributing perspectives and conversation excerpts",
+        "Score evolution timeline displays major updates with source attribution"
+      ],
+      "createdAt": "2025-01-27T14:45:00Z"
+    },
+    {
+      "key": "J-015",
+      "title": "Home screen tension notification card",
+      "assignee": "ceo", 
+      "type": "CEO",
+      "priority": "low",
+      "status": "backlog",
+      "phase": "resonance-compass",
+      "description": "Design and implement the home screen notification card that appears when theological tensions are detected, inviting users to explore their perspectives with multiple guides. Focus on warm, engaging tone rather than urgent alerts.",
+      "acceptanceCriteria": [
+        "Notification card appears on home screen when tensions detected",
+        "Warm, inviting copy: 'We noticed something interesting about your perspectives...'",
+        "User can accept, dismiss, or snooze tension conversations",
+        "Card states: hidden, visible, snoozed, acknowledged with proper transitions"
+      ],
+      "createdAt": "2025-01-27T14:45:00Z"
     }
   ]
 }

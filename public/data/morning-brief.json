@@ -1,129 +1,78 @@
 {
-  "timestamp": "2026-03-10T06:00:16.825479",
-  "date": "Tuesday, March 10, 2026",
-  "timezone": "America/Los_Angeles",
+  "date": "2026-03-11",
+  "timestamp": "2026-03-11T06:01:00-08:00",
   "prayer": {
-    "date": "Tuesday, March 10, 2026",
-    "hebrew_date": "10 Kislev",
-    "parsha": {
-      "name": "Vayechi",
-      "theme": "blessing children, final words, lasting impact"
-    },
+    "title": "🕊️ Morning Prayer",
+    "date": "Wednesday, March 11, 2026",
+    "hebrew_date": "11 Kislev",
+    "parsha": "Vayechi",
+    "parsha_theme": "blessing children, final words, lasting impact",
     "modeh_ani": "מודה אני לפניך — I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
-    "blessing": "Blessed are You who has provided me with all I need — I lack nothing essential.",
-    "psalm": "**Psalm 127:1**: \"Unless the Lord builds the house, the builders labor in vain.\"",
-    "proverb": "**Proverbs 3:5-6**: \"Trust in the Lord with all your heart; lean not on your own understanding.\"",
-    "intention": "Help me lead with integrity. Let my yes be yes and my no be no.",
-    "closing": "The Lord goes before you today. He will be with you; He will never leave you nor forsake you. Do not be afraid; do not be discouraged."
+    "blessing": "Blessed are You who opens the eyes of the blind — help me see opportunities today.",
+    "psalm": "**Psalm 1:3**: \"He is like a tree planted by streams of water, yielding fruit in season.\"",
+    "proverb": "**Proverbs 10:4**: \"A slack hand causes poverty, but the hand of the diligent makes rich.\"",
+    "intention": "Give me discernment between opportunities and distractions. Not everything good is good for me right now.",
+    "closing": "Go in peace. Build with purpose. Return with gratitude."
   },
   "weather": {
-    "location": "Temecula, California",
-    "today": {
-      "high": 75,
-      "low": 40,
-      "conditions": "Clear"
-    },
-    "summary": "Clear skies with highs around 75°F, lows around 40°F. Perfect weather for outdoor activities."
+    "location": "Temecula, CA",
+    "current": "Partly cloudy, 51°F",
+    "today": "Sunny, high 77°F",
+    "tomorrow": "Sunny, high 87°F",
+    "forecast": "Beautiful sunny weather continuing through Friday"
   },
   "calendar": {
-    "status": "auth_issues",
-    "message": "OAuth tokens need refresh for most accounts. Only josh@joshlevylabs.com accessible.",
-    "today": [],
-    "week": [],
-    "month": []
+    "today": "No events scheduled",
+    "week": "Calendar access temporarily unavailable",
+    "month": "Calendar access temporarily unavailable"
   },
-  "email_highlights": {
-    "josh@joshlevylabs.com": {
-      "unread_count": 10,
-      "urgent": [
-        {
-          "from": "Vercel",
-          "subject": "Failed production deployment on team 'joshlevylabs' projects",
-          "date": "2026-03-10 05:35",
-          "priority": "high"
-        },
-        {
-          "from": "LifeLock",
-          "subject": "We've detected a change to your credit limit",
-          "date": "2026-03-10 05:08",
-          "priority": "medium"
-        },
-        {
-          "from": "Anthropic, PBC",
-          "subject": "Your receipt from Anthropic, PBC #2126-6354-9429",
-          "date": "2026-03-09 16:43",
-          "priority": "low"
-        }
-      ]
+  "email_highlights": [
+    {
+      "from": "Anthropic, PBC",
+      "subject": "Your receipt from Anthropic, PBC #2160-2968-9002",
+      "priority": "low"
+    },
+    {
+      "from": "Amazon Web Services",
+      "subject": "Important – AWS Invoice e-mail address changes",
+      "priority": "medium"
+    },
+    {
+      "from": "Supabase",
+      "subject": "Security vulnerabilities detected in your Supabase projects",
+      "priority": "high"
     }
-  },
+  ],
   "trading": {
-    "fear_greed_index": {
-      "current": 27.8,
-      "rating": "fear",
-      "summary": "Markets are fearful at 28. Sentiment is negative — watch for oversold bounces."
-    },
-    "regime": {
-      "spy": "sideways",
-      "qqq": "sideways", 
-      "summary": "SPY is sideways, QQQ is sideways. Momentum is weakening."
-    },
-    "signals": {
-      "total_buy": 0,
-      "total_hold": 24,
-      "total_watch": 0,
-      "summary": "All positions on HOLD across 24 tracked assets. No new buy signals in current fearful market environment."
-    }
+    "fear_greed_index": 25.47,
+    "sentiment": "Fear",
+    "regime": "sideways",
+    "summary": "Markets in fear territory with sideways regime. VIX at 25.5, signaling elevated volatility.",
+    "signals": "All holdings on HOLD across broad market and sectors"
   },
   "relationship_analysis": {
     "temperature": "critical",
     "trend": "urgent",
-    "ratio": 1.2,
-    "recommendations": [
-      "PRIORITY: Focus on repair. Acknowledge recent conflicts without defending.",
+    "priority_actions": [
+      "Focus on repair. Acknowledge recent conflicts without defending.",
       "Increase acts of service dramatically this week.",
       "Create space for her to express frustrations without fixing."
     ]
   },
-  "world_news": {
-    "israel_policy": [
-      {
-        "title": "US bypasses congressional review to approve munitions sale to Israel",
-        "summary": "Trump administration used emergency authority to expedite $650M sale of 20,000+ bombs to Israel",
-        "date": "March 7, 2026",
-        "source": "Reuters"
-      },
-      {
-        "title": "US-Israeli war with Iran continues",
-        "summary": "CNN reports from Tehran as Iranian officials warn conflict isn't ending soon",
-        "date": "March 9, 2026",
-        "source": "CNN"
-      }
+  "news": {
+    "ai": [
+      "Apple announces completely reimagined AI-powered Siri for 2026 with on-screen awareness",
+      "Yann LeCun's AMI Labs raises record $1.03B seed round to build world models",
+      "OpenAI integrates Promptfoo security tech to catch AI vulnerabilities early"
+    ],
+    "world": [
+      "US-Israel joint strikes on Iran targeting leadership and nuclear program",
+      "Iran's Houthi leader warns 'finger on the trigger' in Middle East conflict",
+      "Trump says US in 'strong position' on Iran amid ongoing tensions"
     ]
   },
-  "ai_news": [
-    {
-      "title": "Oracle announces $50B AI infrastructure expansion",
-      "summary": "Shares declined premarket after ambitious funding announcement",
-      "relevance": "enterprise_infrastructure"
-    },
-    {
-      "title": "AI funding surge continues in 2026",
-      "summary": "Over $25B raised in 200+ funding rounds, including Elon Musk's xAI $20B Series E",
-      "relevance": "market_trends"
-    },
-    {
-      "title": "Nvidia-backed Nscale valued at $14.6B",
-      "summary": "Fresh funding round values AI infrastructure company highly",
-      "relevance": "valuation_trends"
-    }
-  ],
-  "action_items": [
-    "🚨 Check Vercel deployment failures - production issues need immediate attention",
-    "💰 Review LifeLock credit limit change notification",
-    "💔 Relationship focus: Plan acts of service for Jillian today",
-    "📈 Markets fearful - watch for oversold bounce opportunities"
-  ],
-  "generated_at": "2026-03-10T06:00:16.825479",
-  "version": "1.0"
+  "family_focus": {
+    "message": "Family data temporarily unavailable",
+    "priority": "Quality time with Jillian and kids"
+  }
 }

@@ -59,7 +59,8 @@
       "sourceDate": "2026-02-25",
       "createdAt": "2026-02-25T18:12:00.402517-08:00",
       "approvedAt": "2026-02-25T18:12:00.402917-08:00",
-      "approvedBy": "joshua"
+      "approvedBy": "joshua",
+      "sprintReady": true
     },
     {
       "key": "J-003",
@@ -720,13 +721,15 @@
       "priority": "high",
       "tag": "JOSHUA",
       "source": "Mosaic Build Pipeline Audit",
-      "status": "pending",
+      "status": "done",
       "approvedAt": "2026-02-28T12:34:00-08:00",
       "description": "Evaluate and decide on hardware upgrade path for the Mac Mini M1 8GB build machine. Current M1 has 8GB soldered RAM causing 50% build failure rate due to OOM during Xcode builds.",
       "acceptanceCriteria": [
         "Hardware option selected (M4 Mac Mini 16GB or EAS cloud builds)",
         "Build success rate improved to >90%"
-      ]
+      ],
+      "updatedAt": "2026-02-20T21:21:20.016+00:00",
+      "completedAt": "2026-02-20T21:21:20.016+00:00"
     },
     {
       "key": "A-018",
@@ -954,7 +957,7 @@
       "tag": "JOSHUA",
       "priority": "high",
       "assignee": "Jordan Peterson",
-      "status": "approved",
+      "status": "done",
       "sourceStandup": "2026-03-02-adhoc-faith-journey-app-ai-religious-guide-builder",
       "sourceDate": "2026-03-02",
       "createdAt": "2026-03-02T12:56:00",
@@ -963,7 +966,9 @@
         "2-3 evangelical theological advisors identified and contacted",
         "At least 1 advisor committed to reviewing Faith Journey content",
         "Review framework established"
-      ]
+      ],
+      "updatedAt": "2026-02-20T21:22:06.09+00:00",
+      "completedAt": "2026-02-20T21:22:06.09+00:00"
     },
     {
       "key": "A-032",

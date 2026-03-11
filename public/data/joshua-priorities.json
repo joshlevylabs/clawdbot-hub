@@ -1,6 +1,6 @@
 {
-  "date": "2026-03-08",
-  "generatedAt": "2026-03-08T21:33:25.477626-08:00",
+  "date": "2026-03-10",
+  "generatedAt": "2026-03-10T16:00:29.781294-08:00",
   "priorities": [
     {
       "text": "Submit current Lever build to App Store as planned",
@@ -10,21 +10,9 @@
     },
     {
       "text": "Finalize Lever App Store submission",
-      "source": "night-wrap",
+      "source": "adhoc-marin-daily-component-sourcing-optical-stack-electrical-design-firmware-progress",
       "urgency": "high",
       "taskKey": "CVS-017"
-    },
-    {
-      "text": "Upgrade Mac Mini RAM and diagnose build resource exhaustion",
-      "source": "night-wrap",
-      "urgency": "high",
-      "taskKey": "J-004"
-    },
-    {
-      "text": "Establish evangelical theological advisory relationships",
-      "source": "night-wrap",
-      "urgency": "high",
-      "taskKey": "J-005"
     },
     {
       "text": "Define external deployment monetization strategy",

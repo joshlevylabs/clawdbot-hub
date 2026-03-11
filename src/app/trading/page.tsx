@@ -663,7 +663,7 @@ export default function TradingPage() {
   });
 
   // Generate summary data for all agents when "all" filter is selected
-  const agentSummaryData = selectedAgentFilter === 'all' ? (() => {
+  const agentSummaryData = (() => {
     const agentGroups: Record<string, { 
       accountId: string | null; 
       positions: any[]; 
@@ -719,7 +719,7 @@ export default function TradingPage() {
         totalPnL: computedTotalPnL,
       };
     });
-  })() : [];
+  })();
 
   const isPortfolioTab = activeTab === "overview" || activeTab === "plays" || activeTab === "positions" || activeTab === "trades" || activeTab === "signals";
 

@@ -1038,19 +1038,49 @@ export default function TradingPage() {
           {/* ===== POSITIONS TAB ===== */}
           {activeTab === "positions" && !loading && !error && (
             <>
-              {/* All Agents Summary - shown when "All Portfolios" is selected */}
-              {selectedAgentFilter === 'all' && agentSummaryData.length > 0 && (
+              {/* All Agents Summary - always visible as portfolio navigator */}
+              {agentSummaryData.length > 0 && (
                 <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50 mb-4">
-                  <h2 className="text-lg font-semibold text-slate-100 mb-3 flex items-center gap-2">
-                    <Activity className="w-5 h-5 text-primary-400" />
-                    All Agents Portfolio Overview
-                  </h2>
+                  <div className="flex items-center justify-between mb-3">
+                    <h2 className="text-lg font-semibold text-slate-100 flex items-center gap-2">
+                      <Activity className="w-5 h-5 text-primary-400" />
+                      Portfolio Overview
+                    </h2>
+                  </div>
                   <div className="flex gap-3 overflow-x-auto pb-2">
+                    {/* "All" toggle */}
+                    <button
+                      onClick={() => setSelectedAgentFilter('all')}
+                      className={`flex-shrink-0 border rounded-lg p-3 min-w-[140px] transition-colors ${
+                        selectedAgentFilter === 'all'
+                          ? 'bg-primary-600/20 border-primary-500/50 ring-1 ring-primary-500/30'
+                          : 'bg-slate-700/30 border-slate-600/30 hover:bg-slate-700/50'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-lg">📊</span>
+                        <span className={`text-sm font-medium ${selectedAgentFilter === 'all' ? 'text-primary-400' : 'text-slate-300'}`}>All Agents</span>
+                      </div>
+                      <div className="space-y-1 text-xs">
+                        <div className="flex justify-between">
+                          <span className="text-slate-400">Positions:</span>
+                          <span className="text-slate-300">{agentSummaryData.reduce((s, a) => s + a.positionCount, 0)}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-slate-400">AUM:</span>
+                          <span className="text-slate-300">${(agentSummaryData.reduce((s, a) => s + a.totalEquity, 0) / 1000).toFixed(0)}K</span>
+                        </div>
+                      </div>
+                    </button>
                     {agentSummaryData.map((agent) => (
                       <button
                         key={agent.accountId || 'user'}
                         onClick={() => setSelectedAgentFilter(agent.accountId || 'user')}
-                        className={`flex-shrink-0 bg-slate-700/30 border rounded-lg p-3 min-w-[200px] hover:bg-slate-700/50 transition-colors ${agent.config.borderColor}/30 hover:${agent.config.borderColor}/50`}
+                        className={`flex-shrink-0 border rounded-lg p-3 min-w-[200px] transition-colors ${
+                          selectedAgentFilter === (agent.accountId || 'user')
+                            ? `bg-slate-700/50 ${agent.config.borderColor}/50 ring-1 ${agent.config.borderColor}/30`
+                            : `bg-slate-700/30 ${agent.config.borderColor}/30 hover:bg-slate-700/50`
+                        }`}
                       >
                         <div className="flex items-center gap-2 mb-2">
                           <span className="text-lg">{agent.config.emoji}</span>
@@ -1080,11 +1110,6 @@ export default function TradingPage() {
                 </div>
               )}
 
-              {/* Position Charts */}
-              {filteredPositions.length > 0 && (
-                <PositionCharts positions={filteredPositions} />
-              )}
-
               {filteredPositions.length === 0 ? (
                 <div className="bg-slate-800/50 rounded-xl p-12 border border-slate-700/50 text-center">
                   <Database className="w-8 h-8 text-slate-600 mx-auto mb-3" />
@@ -1096,24 +1121,12 @@ export default function TradingPage() {
                     <h2 className="text-lg font-semibold text-slate-100 flex items-center gap-2">
                       <Activity className="w-5 h-5 text-primary-400" />
                       Open Positions ({filteredPositions.length})
+                      {selectedAgentFilter !== 'all' && (
+                        <span className="text-sm font-normal text-slate-400">
+                          — {selectedAgentFilter === 'user' ? 'My Portfolio' : selectedAgentFilter.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join(' ')}
+                        </span>
+                      )}
                     </h2>
-                    <div className="flex items-center gap-2">
-                      <label className="text-xs text-slate-400">Filter:</label>
-                      <select
-                        value={selectedAgentFilter}
-                        onChange={(e) => setSelectedAgentFilter(e.target.value)}
-                        className="bg-slate-700/50 border border-slate-600/30 rounded-md px-2 py-1 text-xs text-slate-100 focus:border-primary-400 focus:outline-none"
-                      >
-                        <option value="all">All Portfolios</option>
-                        <option value="user">My Portfolio</option>
-                        <option value="chris-vermeulen">Chris Vermeulen</option>
-                        <option value="warren-buffett">Warren Buffett</option>
-                        <option value="peter-schiff">Peter Schiff</option>
-                        <option value="raoul-pal">Raoul Pal</option>
-                        <option value="peter-lynch">Peter Lynch</option>
-                        <option value="ray-dalio">Ray Dalio</option>
-                      </select>
-                    </div>
                   </div>
                   <div className="overflow-x-auto">
                     <table className="w-full">
@@ -1408,6 +1421,11 @@ export default function TradingPage() {
                     </table>
                   </div>
                 </div>
+              )}
+
+              {/* Position Charts — below the table */}
+              {filteredPositions.length > 0 && (
+                <PositionCharts positions={filteredPositions} />
               )}
             </>
           )}

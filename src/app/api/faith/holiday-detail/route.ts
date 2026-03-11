@@ -147,7 +147,7 @@ export async function POST(request: NextRequest) {
     const allSlugs = [userTraditionSlug, ...missingPerspectives]
     const { data: traditions } = await supabase
       .from('faith_traditions')
-      .select('slug, name, icon')
+      .select('id, slug, name, icon')
       .in('slug', allSlugs)
 
     const traditionNameMap = new Map(

@@ -418,7 +418,7 @@
     },
     {
       "date": "2026-03-11",
-      "global_fg": 26.0,
+      "global_fg": 25.3,
       "sectors": {
         "broad_market": 45.6,
         "technology": 45.9,
@@ -431,15 +431,15 @@
         "commodities": 62.3
       },
       "divergences": {
-        "broad_market": 19.6,
-        "technology": 19.9,
-        "healthcare": 25.2,
-        "financials": 12.1,
-        "real_estate": 35.4,
-        "energy": 34.5,
-        "bonds": 33.0,
-        "international": 14.8,
-        "commodities": 36.3
+        "broad_market": 20.3,
+        "technology": 20.6,
+        "healthcare": 25.9,
+        "financials": 12.8,
+        "real_estate": 36.1,
+        "energy": 35.2,
+        "bonds": 33.7,
+        "international": 15.5,
+        "commodities": 37.0
       }
     }
   ],
@@ -452,24 +452,24 @@
     },
     "technology": {
       "mean_div": 11.6,
-      "std_div": 6.0,
+      "std_div": 6.1,
       "data_points": 17,
       "confidence": "moderate"
     },
     "healthcare": {
-      "mean_div": 23.9,
+      "mean_div": 24.0,
       "std_div": 5.1,
       "data_points": 17,
       "confidence": "moderate"
     },
     "financials": {
       "mean_div": 7.0,
-      "std_div": 4.5,
+      "std_div": 4.6,
       "data_points": 17,
       "confidence": "moderate"
     },
     "real_estate": {
-      "mean_div": 32.2,
+      "mean_div": 32.3,
       "std_div": 4.5,
       "data_points": 17,
       "confidence": "moderate"
@@ -482,22 +482,22 @@
     },
     "bonds": {
       "mean_div": 30.1,
-      "std_div": 3.2,
+      "std_div": 3.3,
       "data_points": 17,
       "confidence": "moderate"
     },
     "international": {
-      "mean_div": 16.8,
+      "mean_div": 16.9,
       "std_div": 5.6,
       "data_points": 17,
       "confidence": "moderate"
     },
     "commodities": {
       "mean_div": 20.6,
-      "std_div": 11.9,
+      "std_div": 12.0,
       "data_points": 17,
       "confidence": "moderate"
     }
   },
-  "last_updated": "2026-03-11T08:48:45.739815"
+  "last_updated": "2026-03-11T09:33:43.266214"
 }

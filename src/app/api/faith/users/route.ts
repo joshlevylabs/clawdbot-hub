@@ -61,7 +61,8 @@ export async function GET() {
     }
 
     const authUsersData = await authUsersResponse.json();
-    const authUsers: AuthUser[] = authUsersData.result || [];
+    // Management API returns a plain array, not {result: [...]}
+    const authUsers: AuthUser[] = Array.isArray(authUsersData) ? authUsersData : (authUsersData.result || []);
 
     // Get all user profiles
     const profilesRes = await faithSupabase.from('fj_user_profiles').select('*');
@@ -74,7 +75,7 @@ export async function GET() {
     }
 
     const profiles = profilesRes.data || [];
-    const profileMap = new Map(profiles.map(p => [p.id, p]));
+    const profileMap = new Map(profiles.map(p => [p.user_id, p]));
 
     // Combine auth users with profile data
     const usersWithProfiles: UserWithProfile[] = authUsers.map(user => {
@@ -147,7 +148,7 @@ export async function DELETE(request: NextRequest) {
 
     // Clean up related data in parallel
     const cleanupPromises = [
-      faithSupabase.from('fj_user_profiles').delete().eq('id', userId),
+      faithSupabase.from('fj_user_profiles').delete().eq('user_id', userId),
       faithSupabase.from('fj_conversations').delete().eq('user_id', userId),
       faithSupabase.from('fj_messages').delete().eq('user_id', userId),
       faithSupabase.from('fj_lesson_progress').delete().eq('user_id', userId),

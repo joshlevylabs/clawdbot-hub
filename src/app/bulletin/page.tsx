@@ -24,7 +24,7 @@ interface Task {
   tag: "AGENT" | "JOSHUA" | "PLAN" | "CEO";
   priority: "high" | "medium" | "low";
   assignee: string;
-  status: "pending" | "backlog" | "in-progress" | "done" | "done_but_unverified" | "approved";
+  status: "pending" | "in-progress" | "done" | "done_but_unverified" | "approved";
   sourceStandup: string;
   sourceStandupType: string;
   sourceDate: string;
@@ -49,8 +49,8 @@ function normalizeTask(task: any): Task {
   return {
     ...task,
     text: task.text || task.title || task.key,
-    tag: (task.tag || task.type || "AGENT").toUpperCase(),
-    status: task.status === "backlog" ? "pending" : (task.status || "pending"),
+    tag: (task.tag || task.type || "AGENT").toUpperCase() as Task["tag"],
+    status: task.status === "backlog" ? "pending" : (task.status || "pending") as Task["status"],
     sourceStandup: task.sourceStandup || "",
     sourceStandupType: task.sourceStandupType || "",
     sourceDate: task.sourceDate || task.createdAt || "",

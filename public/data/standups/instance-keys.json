@@ -1,5 +1,5 @@
 {
-  "global_counter": 34,
+  "global_counter": 36,
   "counters": {
     "adhoc-hub-standup-system-overhaul": 1,
     "adhoc-lever-financial-app-separation": 1,
@@ -18,10 +18,10 @@
     "adhoc-mosaic-plugin-strategy": 1,
     "adhoc-strip-lever-branding-from-mosaic-identify-and-remove-all-remaining-lever-references-branding-naming-and-identity-from-the-mosaic-codebase-this-includes-app-display-name-splash-screens-navigation-headers-about-settings-screens-supabase-table-references-analytics-event-prefixes-push-notification-identifiers-deep-link-schemes-app-store-metadata-code-comments-variable-names-file-paths-the-goal-is-zero-lever-footprint-mosaic-must-stand-on-its-own-as-a-completely-separate-product": 1,
     "adhoc-mosaic-pipeline-audit": 1,
-    "adhoc-marin-daily-component-sourcing-optical-stack-electrical-design-firmware-progress": 5,
+    "adhoc-marin-daily-component-sourcing-optical-stack-electrical-design-firmware-progress": 6,
     "adhoc-mosaic-ux-overhaul": 1,
     "adhoc-faith-journey-app-ai-religious-guide-builder": 2,
-    "marin-daily": 2,
+    "marin-daily": 3,
     "adhoc-evening-session-hub-progress-faith-journey-pipeline": 1,
     "adhoc-dlp230np-projection-lens-selection-for-hemisphere-poc-what-lens-do-we-actually-need-to-project-from-the-dlp230np-evm-onto-a-6-inch-hemisphere-dome-the-current-mar-010-ticket-incorrectly-lists-a-camera-fisheye-lens-we-need-the-team-especially-palmer-and-ive-to-identify-the-correct-optical-element-to-spread-bend-the-dlp-projected-image-onto-the-hemisphere-interior-consider-projection-specific-wide-angle-adapters-short-throw-conversion-lenses-concave-convex-mirrors-fresnel-lenses-or-custom-optics-must-be-purchasable-for-the-poc-budget": 1,
     "adhoc-agent-hosting-deployment-platform-using-the-hub-to-host-manage-and-deploy-guide-agents-externally-making-faith-journey-guides-accessible-on-3rd-party-apps-and-platforms-hub-becomes-the-agent-management-layer": 1,

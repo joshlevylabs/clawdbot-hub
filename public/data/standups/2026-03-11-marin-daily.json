@@ -1,8 +1,8 @@
 {
   "date": "2026-03-11",
   "time": "17:00",
-  "generatedAt": "2026-03-11T16:00:21.461580-08:00",
-  "topic": "Marin Daily: Component sourcing, optical stack, electrical design, firmware progress \u2014 Wednesday Mar 11",
+  "generatedAt": "2026-03-11T16:00:09.916845-08:00",
+  "topic": "Marin Daily Standup \u2014 Wednesday Mar 11",
   "summary": "",
   "status": "completed",
   "participants": [
@@ -13,20 +13,14 @@
       "description": ""
     },
     {
-      "name": "marin-pdd",
-      "role": "MARIN-PDD",
-      "emoji": "",
-      "description": ""
-    },
-    {
-      "name": "marin-mktg",
-      "role": "MARIN-MKTG",
-      "emoji": "",
-      "description": ""
-    },
-    {
       "name": "marin-optics",
       "role": "MARIN-OPTICS",
+      "emoji": "",
+      "description": ""
+    },
+    {
+      "name": "marin-mechanical",
+      "role": "MARIN-MECHANICAL",
       "emoji": "",
       "description": ""
     },
@@ -49,7 +43,7 @@
     {
       "speaker": "Theo",
       "role": "COO",
-      "message": "Morning team. It's Wednesday, Mar 11. Running our Marin Daily: Component sourcing, optical stack, electrical design, firmware progress standup."
+      "message": "Morning team. It's Wednesday, Mar 11. Running our Marin Daily Standup standup."
     },
     {
       "speaker": "Theo",
@@ -103,13 +97,13 @@
       "priority": "high"
     }
   ],
-  "type": "adhoc-marin-daily-component-sourcing-optical-stack-electrical-design-firmware-progress",
-  "typeName": "Marin Daily: Component sourcing, optical stack, electrical design, firmware progress",
+  "type": "marin-daily",
+  "typeName": "Marin Daily Standup",
   "typeEmoji": "\ud83d\udd2e",
   "conversationMode": "template",
   "model": null,
   "tokenUsage": null,
-  "instanceKey": "STD-36",
+  "instanceKey": "STD-35",
   "verticals": [],
   "initiatives": [],
   "verticalDetails": [],
@@ -121,20 +115,14 @@
       "emoji": "",
       "description": ""
     },
-    "marin-pdd": {
-      "name": "marin-pdd",
-      "title": "",
-      "emoji": "",
-      "description": ""
-    },
-    "marin-mktg": {
-      "name": "marin-mktg",
-      "title": "",
-      "emoji": "",
-      "description": ""
-    },
     "marin-optics": {
       "name": "marin-optics",
+      "title": "",
+      "emoji": "",
+      "description": ""
+    },
+    "marin-mechanical": {
+      "name": "marin-mechanical",
       "title": "",
       "emoji": "",
       "description": ""

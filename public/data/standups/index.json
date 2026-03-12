@@ -1,6 +1,32 @@
 {
   "standups": [
     {
+      "date": "2026-03-11",
+      "time": "17:00",
+      "type": "adhoc-marin-daily-component-sourcing-optical-stack-electrical-design-firmware-progress",
+      "typeName": "Marin Daily: Component sourcing, optical stack, electrical design, firmware progress",
+      "typeEmoji": "\ud83d\udd2e",
+      "topic": "Marin Daily: Component sourcing, optical stack, electrical design, firmware progress \u2014 Wednesday Mar 11",
+      "file": "2026-03-11-adhoc-marin-daily-component-sourcing-optical-stack-electrical-design-firmware-progress.json",
+      "tokenCost": 0,
+      "verticals": [],
+      "initiatives": [],
+      "instanceKey": "STD-36"
+    },
+    {
+      "date": "2026-03-11",
+      "time": "17:00",
+      "type": "marin-daily",
+      "typeName": "Marin Daily Standup",
+      "typeEmoji": "\ud83d\udd2e",
+      "topic": "Marin Daily Standup \u2014 Wednesday Mar 11",
+      "file": "2026-03-11-marin-daily.json",
+      "tokenCost": 0,
+      "verticals": [],
+      "initiatives": [],
+      "instanceKey": "STD-35"
+    },
+    {
       "date": "2026-03-10",
       "time": "17:00",
       "type": "adhoc-marin-daily-component-sourcing-optical-stack-electrical-design-firmware-progress",

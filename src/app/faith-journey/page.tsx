@@ -179,7 +179,7 @@ interface ChatMessage {
   timestamp: string;
 }
 
-type ActiveTab = "overview" | "guides" | "calendar" | "audio" | "texts" | "conversations" | "images";
+type ActiveTab = "overview" | "users" | "guides" | "calendar" | "audio" | "texts" | "conversations" | "images";
 
 interface FaithImage {
   id: string;
@@ -1717,6 +1717,13 @@ export default function FaithJourneyPage() {
   // Calendar content sections collapse state
   const [collapsedSections, setCollapsedSections] = useState<Set<string>>(new Set());
 
+  // Users tab state
+  const [usersData, setUsersData] = useState<any[]>([]);
+  const [usersLoading, setUsersLoading] = useState(false);
+  const [deletingUser, setDeletingUser] = useState<string | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
+  const [totalAuthUsers, setTotalAuthUsers] = useState<number>(0);
+
   // Fetch voice configuration from API
   const fetchVoiceConfig = async () => {
     setVoiceConfigLoading(true);
@@ -1807,6 +1814,44 @@ export default function FaithJourneyPage() {
     } catch (e) {
       console.error('Failed to fetch ambient tracks:', e);
     }
+  };
+
+  // Fetch users data from API
+  const fetchUsersData = async () => {
+    setUsersLoading(true);
+    try {
+      const res = await fetch('/api/faith/users');
+      if (res.ok) {
+        const data = await res.json();
+        setUsersData(data.users || []);
+        setTotalAuthUsers(data.totalAuthUsers || 0);
+      }
+    } catch (e) {
+      console.error('Failed to fetch users:', e);
+    }
+    setUsersLoading(false);
+  };
+
+  // Delete a user
+  const deleteUser = async (userId: string) => {
+    setDeletingUser(userId);
+    try {
+      const res = await fetch(`/api/faith/users?userId=${userId}`, {
+        method: 'DELETE',
+      });
+      if (res.ok) {
+        // Refresh users list
+        await fetchUsersData();
+        // Refresh dashboard data to update overview stats
+        await loadData();
+        setShowDeleteConfirm(null);
+      } else {
+        console.error('Failed to delete user');
+      }
+    } catch (e) {
+      console.error('Failed to delete user:', e);
+    }
+    setDeletingUser(null);
   };
 
   // Tradition families configuration for badge filters
@@ -1975,8 +2020,16 @@ export default function FaithJourneyPage() {
     loadData();
   }, []);
 
+  // Fetch users when users tab is active
+  useEffect(() => {
+    if (activeTab === "users") {
+      fetchUsersData();
+    }
+  }, [activeTab]);
+
   const tabs: { key: ActiveTab; label: string; icon: React.ElementType }[] = [
     { key: "overview", label: "Overview", icon: BarChart3 },
+    { key: "users", label: "Users", icon: Users },
     { key: "guides", label: "Guides", icon: MessageSquare },
     { key: "calendar", label: "Calendar", icon: Calendar },
     { key: "audio", label: "Audio", icon: Volume2 },
@@ -2565,9 +2618,9 @@ export default function FaithJourneyPage() {
                   <StatCard
                     icon={Users}
                     label="Total Users"
-                    value={data?.overview.totalUsers || 0}
-                    subValue="Onboarded users"
-                    trend={data?.overview.totalUsers && data.overview.totalUsers > 0 ? "up" : "neutral"}
+                    value={totalAuthUsers || data?.overview.totalUsers || 0}
+                    subValue={`${data?.overview.totalUsers || 0} with profiles`}
+                    trend={totalAuthUsers > 0 ? "up" : "neutral"}
                   />
                   <StatCard
                     icon={MessageSquare}
@@ -2633,6 +2686,175 @@ export default function FaithJourneyPage() {
                         </div>
                       ))}
                     </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Users Tab */}
+            {activeTab === "users" && (
+              <div className="space-y-6">
+                {/* Users Stats */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <StatCard
+                    icon={Users}
+                    label="Total Auth Users"
+                    value={totalAuthUsers}
+                    subValue="Registered accounts"
+                    trend="neutral"
+                  />
+                  <StatCard
+                    icon={Database}
+                    label="With Profiles"
+                    value={usersData.filter(u => u.hasProfile).length}
+                    subValue={`${Math.round((usersData.filter(u => u.hasProfile).length / Math.max(totalAuthUsers, 1)) * 100)}% coverage`}
+                    trend="neutral"
+                  />
+                  <StatCard
+                    icon={AlertTriangle}
+                    label="Profile Missing"
+                    value={usersData.filter(u => !u.hasProfile).length}
+                    subValue="Need onboarding"
+                    trend="neutral"
+                  />
+                </div>
+
+                {/* Users Table */}
+                <div className="rounded-xl border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+                  <div className="p-6 border-b" style={{ borderColor: "#2A2A38" }}>
+                    <h2 className="text-lg font-semibold text-slate-100 flex items-center gap-2">
+                      <Users className="w-5 h-5" style={{ color: "#D4A020" }} />
+                      All Registered Users ({totalAuthUsers})
+                    </h2>
+                    <p className="text-slate-400 text-sm mt-1">
+                      Manage all users with authentication accounts, including those without profiles.
+                    </p>
+                  </div>
+
+                  <div className="p-6">
+                    {usersLoading ? (
+                      <div className="text-center py-8">
+                        <Loader className="w-6 h-6 animate-spin mx-auto text-slate-400" />
+                        <p className="text-slate-400 mt-2">Loading users...</p>
+                      </div>
+                    ) : usersData.length === 0 ? (
+                      <EmptyState 
+                        icon={Users} 
+                        title="No Users Found" 
+                        description="No registered users in the system yet." 
+                      />
+                    ) : (
+                      <div className="overflow-x-auto">
+                        <table className="w-full">
+                          <thead>
+                            <tr className="border-b" style={{ borderColor: "#2A2A38" }}>
+                              <th className="text-left py-3 px-4 text-slate-400 font-medium">Email</th>
+                              <th className="text-left py-3 px-4 text-slate-400 font-medium">Created</th>
+                              <th className="text-left py-3 px-4 text-slate-400 font-medium">Status</th>
+                              <th className="text-left py-3 px-4 text-slate-400 font-medium">Profile</th>
+                              <th className="text-left py-3 px-4 text-slate-400 font-medium">Last Sign In</th>
+                              <th className="text-left py-3 px-4 text-slate-400 font-medium">App</th>
+                              <th className="text-right py-3 px-4 text-slate-400 font-medium">Actions</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {usersData.map((user) => (
+                              <tr key={user.id} className="border-b" style={{ borderColor: "#2A2A38" }}>
+                                <td className="py-3 px-4">
+                                  <div className="text-slate-300">{user.email}</div>
+                                  <div className="text-xs text-slate-500">{user.id}</div>
+                                </td>
+                                <td className="py-3 px-4 text-slate-400 text-sm">
+                                  {new Date(user.created_at).toLocaleDateString()}
+                                </td>
+                                <td className="py-3 px-4">
+                                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                    user.email_confirmed_at 
+                                      ? 'bg-green-900/30 text-green-400' 
+                                      : 'bg-yellow-900/30 text-yellow-400'
+                                  }`}>
+                                    {user.email_confirmed_at ? 'Confirmed' : 'Unconfirmed'}
+                                  </span>
+                                </td>
+                                <td className="py-3 px-4">
+                                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                    user.hasProfile 
+                                      ? 'bg-blue-900/30 text-blue-400' 
+                                      : 'bg-red-900/30 text-red-400'
+                                  }`}>
+                                    {user.hasProfile ? 'Yes' : 'No'}
+                                  </span>
+                                  {user.hasProfile && user.profileData && (
+                                    <div className="text-xs text-slate-500 mt-1">
+                                      {user.profileData.guide_name} • {user.profileData.primary_tradition}
+                                    </div>
+                                  )}
+                                </td>
+                                <td className="py-3 px-4 text-slate-400 text-sm">
+                                  {user.last_sign_in_at 
+                                    ? new Date(user.last_sign_in_at).toLocaleDateString()
+                                    : 'Never'
+                                  }
+                                </td>
+                                <td className="py-3 px-4 text-slate-400 text-sm">
+                                  {user.raw_app_meta_data?.provider || 'Unknown'}
+                                </td>
+                                <td className="py-3 px-4 text-right">
+                                  <button
+                                    onClick={() => setShowDeleteConfirm(user.id)}
+                                    disabled={deletingUser === user.id}
+                                    className="bg-red-600 hover:bg-red-700 disabled:bg-red-700/50 text-white px-3 py-1 rounded text-sm font-medium transition-colors"
+                                  >
+                                    {deletingUser === user.id ? (
+                                      <Loader className="w-4 h-4 animate-spin" />
+                                    ) : (
+                                      <Trash2 className="w-4 h-4" />
+                                    )}
+                                  </button>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Delete Confirmation Modal */}
+            {showDeleteConfirm && (
+              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+                <div className="rounded-xl border p-6 max-w-md w-full" style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}>
+                  <div className="flex items-center gap-3 mb-4">
+                    <AlertTriangle className="w-6 h-6 text-red-400" />
+                    <h3 className="text-lg font-semibold text-slate-100">Delete User</h3>
+                  </div>
+                  <p className="text-slate-300 mb-6">
+                    Are you sure you want to delete this user? This will remove their auth account and all associated data including:
+                  </p>
+                  <ul className="text-slate-400 text-sm mb-6 space-y-1 ml-4">
+                    <li>• User profile</li>
+                    <li>• All conversations and messages</li>
+                    <li>• Lesson progress</li>
+                    <li>• API usage records</li>
+                  </ul>
+                  <p className="text-red-400 text-sm mb-6 font-medium">This action cannot be undone.</p>
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => setShowDeleteConfirm(null)}
+                      className="flex-1 bg-slate-700 hover:bg-slate-600 text-slate-100 px-4 py-2 rounded font-medium transition-colors"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={() => deleteUser(showDeleteConfirm)}
+                      disabled={deletingUser === showDeleteConfirm}
+                      className="flex-1 bg-red-600 hover:bg-red-700 disabled:bg-red-700/50 text-white px-4 py-2 rounded font-medium transition-colors"
+                    >
+                      {deletingUser === showDeleteConfirm ? 'Deleting...' : 'Delete User'}
+                    </button>
                   </div>
                 </div>
               </div>

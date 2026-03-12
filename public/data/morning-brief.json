@@ -1,78 +1,140 @@
 {
-  "date": "2026-03-11",
-  "timestamp": "2026-03-11T06:01:00-08:00",
-  "prayer": {
-    "title": "🕊️ Morning Prayer",
-    "date": "Wednesday, March 11, 2026",
-    "hebrew_date": "11 Kislev",
-    "parsha": "Vayechi",
-    "parsha_theme": "blessing children, final words, lasting impact",
-    "modeh_ani": "מודה אני לפניך — I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
-    "blessing": "Blessed are You who opens the eyes of the blind — help me see opportunities today.",
-    "psalm": "**Psalm 1:3**: \"He is like a tree planted by streams of water, yielding fruit in season.\"",
-    "proverb": "**Proverbs 10:4**: \"A slack hand causes poverty, but the hand of the diligent makes rich.\"",
-    "intention": "Give me discernment between opportunities and distractions. Not everything good is good for me right now.",
-    "closing": "Go in peace. Build with purpose. Return with gratitude."
-  },
-  "weather": {
-    "location": "Temecula, CA",
-    "current": "Partly cloudy, 51°F",
-    "today": "Sunny, high 77°F",
-    "tomorrow": "Sunny, high 87°F",
-    "forecast": "Beautiful sunny weather continuing through Friday"
-  },
-  "calendar": {
-    "today": "No events scheduled",
-    "week": "Calendar access temporarily unavailable",
-    "month": "Calendar access temporarily unavailable"
-  },
-  "email_highlights": [
-    {
-      "from": "Anthropic, PBC",
-      "subject": "Your receipt from Anthropic, PBC #2160-2968-9002",
-      "priority": "low"
+  "date": "2026-03-12",
+  "timestamp": "2026-03-12T06:00:00-08:00",
+  "version": "2.0",
+  "sections": {
+    "prayer": {
+      "title": "🕐️ Morning Prayer",
+      "date": "Thursday, March 12, 2026",
+      "hebrew_date": "12 Kislev",
+      "parsha": "Vayechi",
+      "parsha_theme": "blessing children, final words, lasting impact",
+      "modeh_ani": "מודה אני לפניך — I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
+      "blessing": "Blessed are You who gives strength to the weary and renews the spirit of the exhausted.",
+      "psalm": "**Psalm 32:8**: \"I will instruct you and teach you in the way you should go.\"",
+      "proverb": "**Proverbs 27:23**: \"Know well the condition of your flocks, and give attention to your herds.\"",
+      "intention": "Help me see people as You see them — partners, not obstacles.",
+      "closing": "May your work today be a pleasing offering. May your rest tonight be deep and restorative."
     },
-    {
-      "from": "Amazon Web Services",
-      "subject": "Important – AWS Invoice e-mail address changes",
-      "priority": "medium"
+    "weather": {
+      "title": "🌤️ Weather",
+      "location": "Temecula, CA",
+      "status": "Unable to fetch current conditions",
+      "note": "Weather services temporarily unavailable"
     },
-    {
-      "from": "Supabase",
-      "subject": "Security vulnerabilities detected in your Supabase projects",
-      "priority": "high"
+    "relationship": {
+      "title": "💗 Relationship Focus", 
+      "temperature": "critical",
+      "trend": "urgent",
+      "ratio": 1.2,
+      "stats": {
+        "total": 11,
+        "positive": 6,
+        "negative": 5
+      },
+      "love_languages": {
+        "primary": "quality_time", 
+        "secondary": "acts_of_service"
+      },
+      "recommendations": [
+        "PRIORITY: Focus on repair. Acknowledge recent conflicts without defending.",
+        "Increase acts of service dramatically this week.",
+        "Create space for her to express frustrations without fixing."
+      ],
+      "peak_hours": {
+        "positive": [21, 19, 20],
+        "negative": [21, 1, 5]
+      }
+    },
+    "trading": {
+      "title": "📈 Market Summary",
+      "fear_greed": {
+        "current": 23.9,
+        "rating": "extreme fear", 
+        "summary": "Markets in extreme fear at 24. Panic selling may create opportunities for contrarians."
+      },
+      "regime": {
+        "spy": "sideways",
+        "qqq": "sideways",
+        "global": "sideways",
+        "summary": "SPY is sideways, QQQ is sideways. Momentum is weakening."
+      },
+      "signals": {
+        "buy": 0,
+        "hold": 24,
+        "watch": 0,
+        "summary": "All signals in HOLD mode. Market uncertainty persisting."
+      },
+      "key_levels": {
+        "spy": {
+          "price": 676.33,
+          "support": 673.39,
+          "resistance": 679.16
+        },
+        "qqq": {
+          "price": 607.69,
+          "support": 601.62,
+          "resistance": 608.3
+        }
+      }
+    },
+    "calendar": {
+      "title": "📅 Calendar",
+      "status": "Unable to fetch calendar events",
+      "note": "Calendar integration temporarily unavailable"
+    },
+    "email": {
+      "title": "📧 Email Highlights",
+      "status": "Unable to fetch email",
+      "note": "Email integration temporarily unavailable"  
+    },
+    "world_news": {
+      "title": "🌍 World & Policy",
+      "items": [
+        {
+          "source": "Times of Israel",
+          "headline": "Ministers reportedly say Iran regime change may take a year amid 'fog' over war's length",
+          "summary": "Israeli Finance Minister shelves ultra-Orthodox draft exemption law as government focuses on war priorities",
+          "relevance": "Israel policy developments"
+        }
+      ]
+    },
+    "ai_news": {
+      "title": "🤖 AI Updates",
+      "items": [
+        {
+          "source": "NVIDIA Blog",
+          "headline": "42% of companies prioritize optimizing AI workflows in 2026",
+          "summary": "State of AI report shows workflow optimization as top spending priority, followed by finding new use cases",
+          "relevance": "Industry trends for builders"
+        },
+        {
+          "source": "FinTech Weekly", 
+          "headline": "BNB Chain deploys infrastructure for autonomous agent payments",
+          "summary": "ERC-8004 standard creates verifiable on-chain identities for AI agents on BNB Chain mainnet",
+          "relevance": "AI agent infrastructure developments"
+        },
+        {
+          "source": "Crescendo AI",
+          "headline": "Oracle announces $50B AI infrastructure expansion",
+          "summary": "Oracle Corp shares decline after announcing massive AI infrastructure funding plans",
+          "relevance": "Major enterprise AI investment"
+        }
+      ]
     }
-  ],
-  "trading": {
-    "fear_greed_index": 25.47,
-    "sentiment": "Fear",
-    "regime": "sideways",
-    "summary": "Markets in fear territory with sideways regime. VIX at 25.5, signaling elevated volatility.",
-    "signals": "All holdings on HOLD across broad market and sectors"
   },
-  "relationship_analysis": {
-    "temperature": "critical",
-    "trend": "urgent",
-    "priority_actions": [
-      "Focus on repair. Acknowledge recent conflicts without defending.",
-      "Increase acts of service dramatically this week.",
-      "Create space for her to express frustrations without fixing."
-    ]
-  },
-  "news": {
-    "ai": [
-      "Apple announces completely reimagined AI-powered Siri for 2026 with on-screen awareness",
-      "Yann LeCun's AMI Labs raises record $1.03B seed round to build world models",
-      "OpenAI integrates Promptfoo security tech to catch AI vulnerabilities early"
+  "summary": {
+    "key_themes": [
+      "Relationship requires immediate attention - focus on repair and acknowledgment",
+      "Markets in extreme fear mode - all signals on HOLD, opportunities may emerge",
+      "AI infrastructure investments accelerating across enterprise and crypto",
+      "Torah focus on blessing and lasting impact aligns with current family priorities"
     ],
-    "world": [
-      "US-Israel joint strikes on Iran targeting leadership and nuclear program",
-      "Iran's Houthi leader warns 'finger on the trigger' in Middle East conflict",
-      "Trump says US in 'strong position' on Iran amid ongoing tensions"
+    "priorities_today": [
+      "Address relationship temperature with quality time and acts of service",
+      "Monitor market sentiment for potential turning points", 
+      "Stay informed on AI agent infrastructure developments",
+      "Apply Torah wisdom of blessing others in all interactions"
     ]
-  },
-  "family_focus": {
-    "message": "Family data temporarily unavailable",
-    "priority": "Quality time with Jillian and kids"
   }
 }

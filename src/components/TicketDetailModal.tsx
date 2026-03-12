@@ -37,6 +37,9 @@ interface Task {
   completedAt?: string | null;
   sprintReady?: boolean;
   specFile?: string;
+  description?: string;
+  acceptanceCriteria?: string[];
+  phase?: string;
 }
 
 interface TicketDetailModalProps {
@@ -247,17 +250,22 @@ function DescriptionSection({ task, onUpdate }: { task: Task; onUpdate: (updates
   const [isSaving, setIsSaving] = useState(false);
   const [lastSaved, setLastSaved] = useState<string | null>(null);
 
-  // Load initial description from API
+  // Load initial description from API, fall back to task data
   useEffect(() => {
     fetch("/api/task-notes")
       .then(res => res.json())
       .then(notes => {
         if (notes[task.key]?.description) {
           setDescription(notes[task.key].description);
+        } else if (task.description) {
+          setDescription(task.description);
         }
       })
-      .catch(console.error);
-  }, [task.key]);
+      .catch(() => {
+        // Fallback to task data if API fails
+        if (task.description) setDescription(task.description);
+      });
+  }, [task.key, task.description]);
 
   const handleSave = async (value: string) => {
     setIsSaving(true);
@@ -312,17 +320,29 @@ function AcceptanceCriteriaSection({ task, onUpdate }: { task: Task; onUpdate: (
   const [criteria, setCriteria] = useState<{ text: string; completed: boolean }[]>([]);
   const [isSaving, setIsSaving] = useState(false);
 
-  // Load initial criteria from API
+  // Load initial criteria from API, fall back to task data
   useEffect(() => {
     fetch("/api/task-notes")
       .then(res => res.json())
       .then(notes => {
         if (notes[task.key]?.acceptanceCriteria) {
           setCriteria(notes[task.key].acceptanceCriteria);
+        } else if (task.acceptanceCriteria && task.acceptanceCriteria.length > 0) {
+          // Fall back to task registry data (string array → {text, completed} format)
+          setCriteria(task.acceptanceCriteria.map((ac: string | { text: string; completed: boolean }) => 
+            typeof ac === 'string' ? { text: ac, completed: false } : ac
+          ));
         }
       })
-      .catch(console.error);
-  }, [task.key]);
+      .catch(() => {
+        // Fallback to task data if API fails
+        if (task.acceptanceCriteria && task.acceptanceCriteria.length > 0) {
+          setCriteria(task.acceptanceCriteria.map((ac: string | { text: string; completed: boolean }) => 
+            typeof ac === 'string' ? { text: ac, completed: false } : ac
+          ));
+        }
+      });
+  }, [task.key, task.acceptanceCriteria]);
 
   const saveCriteria = async (newCriteria: { text: string; completed: boolean }[]) => {
     setIsSaving(true);

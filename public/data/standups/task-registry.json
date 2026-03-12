@@ -20,7 +20,9 @@
       "createdAt": "2026-02-25T17:47:35.312656-08:00",
       "approvedAt": "2026-02-25T17:47:35.312927-08:00",
       "approvedBy": "joshua",
-      "completedAt": "2026-02-25T18:17:40.264962-08:00"
+      "completedAt": "2026-02-25T18:17:40.264962-08:00",
+      "sourceStandupType": "resonance-compass",
+      "updatedAt": "2026-02-25T17:47:35.312656-08:00"
     },
     {
       "key": "A-002",
@@ -40,7 +42,9 @@
       "createdAt": "2026-02-25T17:47:48.495383-08:00",
       "approvedAt": "2026-02-25T17:47:48.495696-08:00",
       "approvedBy": "joshua",
-      "completedAt": "2026-02-25T18:17:56.229324-08:00"
+      "completedAt": "2026-02-25T18:17:56.229324-08:00",
+      "sourceStandupType": "resonance-compass",
+      "updatedAt": "2026-02-25T17:47:48.495383-08:00"
     },
     {
       "key": "J-001",
@@ -60,7 +64,9 @@
       "createdAt": "2026-02-25T18:12:00.402517-08:00",
       "approvedAt": "2026-02-25T18:12:00.402917-08:00",
       "approvedBy": "joshua",
-      "sprintReady": true
+      "sprintReady": true,
+      "sourceStandupType": "resonance-compass",
+      "updatedAt": "2026-02-25T18:12:00.402517-08:00"
     },
     {
       "key": "J-003",
@@ -195,7 +201,8 @@
       "approvedBy": "joshua",
       "updatedAt": "2026-02-26T09:17:05.780507-08:00",
       "dispatchedAt": "2026-02-26T09:11:36.456830-08:00",
-      "completedAt": "2026-02-26T09:17:05.780252-08:00"
+      "completedAt": "2026-02-26T09:17:05.780252-08:00",
+      "sourceStandupType": "resonance-compass"
     },
     {
       "key": "A-010",
@@ -218,7 +225,8 @@
       "approvedBy": "joshua",
       "updatedAt": "2026-02-26T09:17:22.882064-08:00",
       "dispatchedAt": "2026-02-26T09:11:37.097412-08:00",
-      "completedAt": "2026-02-26T09:17:22.881684-08:00"
+      "completedAt": "2026-02-26T09:17:22.881684-08:00",
+      "sourceStandupType": "resonance-compass"
     },
     {
       "key": "A-011",
@@ -241,7 +249,8 @@
       "approvedBy": "joshua",
       "updatedAt": "2026-02-26T09:20:09.481443-08:00",
       "dispatchedAt": "2026-02-26T09:11:37.714239-08:00",
-      "completedAt": "2026-02-26T09:20:09.481163-08:00"
+      "completedAt": "2026-02-26T09:20:09.481163-08:00",
+      "sourceStandupType": "resonance-compass"
     },
     {
       "key": "A-012",
@@ -262,7 +271,8 @@
       "approvedBy": "joshua",
       "updatedAt": "2026-02-26T09:16:33.094451-08:00",
       "dispatchedAt": "2026-02-26T09:11:38.391022-08:00",
-      "completedAt": "2026-02-26T09:16:33.094197-08:00"
+      "completedAt": "2026-02-26T09:16:33.094197-08:00",
+      "sourceStandupType": "resonance-compass"
     },
     {
       "key": "A-013",
@@ -285,7 +295,8 @@
       "approvedBy": "joshua",
       "updatedAt": "2026-02-26T09:19:03.634776-08:00",
       "dispatchedAt": "2026-02-26T09:11:38.914001-08:00",
-      "completedAt": "2026-02-26T09:19:03.634516-08:00"
+      "completedAt": "2026-02-26T09:19:03.634516-08:00",
+      "sourceStandupType": "resonance-compass"
     },
     {
       "key": "A-014",
@@ -307,7 +318,8 @@
       "approvedBy": "joshua",
       "updatedAt": "2026-02-26T09:20:22.246782-08:00",
       "dispatchedAt": "2026-02-26T09:11:39.454168-08:00",
-      "completedAt": "2026-02-26T09:20:22.246498-08:00"
+      "completedAt": "2026-02-26T09:20:22.246498-08:00",
+      "sourceStandupType": "resonance-compass"
     },
     {
       "key": "A-015",
@@ -329,7 +341,8 @@
       "approvedBy": "joshua",
       "updatedAt": "2026-02-26T09:15:54.819163-08:00",
       "dispatchedAt": "2026-02-26T09:11:40.094075-08:00",
-      "completedAt": "2026-02-26T09:15:54.818809-08:00"
+      "completedAt": "2026-02-26T09:15:54.818809-08:00",
+      "sourceStandupType": "resonance-compass"
     },
     {
       "key": "A-016",
@@ -351,7 +364,8 @@
       "approvedBy": "joshua",
       "updatedAt": "2026-02-26T09:16:42.418440-08:00",
       "dispatchedAt": "2026-02-26T09:11:40.860849-08:00",
-      "completedAt": "2026-02-26T09:16:42.418174-08:00"
+      "completedAt": "2026-02-26T09:16:42.418174-08:00",
+      "sourceStandupType": "resonance-compass"
     },
     {
       "key": "A-017",
@@ -373,7 +387,8 @@
       "approvedBy": "joshua",
       "updatedAt": "2026-02-26T09:18:30.901833-08:00",
       "dispatchedAt": "2026-02-26T09:11:41.536297-08:00",
-      "completedAt": "2026-02-26T09:18:30.901556-08:00"
+      "completedAt": "2026-02-26T09:18:30.901556-08:00",
+      "sourceStandupType": "resonance-compass"
     },
     {
       "key": "CVS-001",
@@ -393,7 +408,9 @@
       "approvedAt": "2026-02-26T21:38:26.540294-08:00",
       "approvedBy": "joshua",
       "resolution": "Completed: Mosaic brand established, app icon created, ASC app registered",
-      "completedAt": "2026-03-02T14:22:16.541111"
+      "completedAt": "2026-03-02T14:22:16.541111",
+      "sourceStandupType": "resonance-compass",
+      "updatedAt": "2026-02-26T21:38:26.540294-08:00"
     },
     {
       "key": "CVS-002",
@@ -413,7 +430,9 @@
       "approvedAt": "2026-02-26T21:38:26.540294-08:00",
       "approvedBy": "joshua",
       "resolution": "Completed: Mosaic registered as ecosystem vertical, PROJECT.md created",
-      "completedAt": "2026-03-02T14:22:16.541111"
+      "completedAt": "2026-03-02T14:22:16.541111",
+      "sourceStandupType": "resonance-compass",
+      "updatedAt": "2026-02-26T21:38:26.540294-08:00"
     },
     {
       "key": "CVS-003",
@@ -433,7 +452,9 @@
       "approvedAt": "2026-02-26T21:38:26.540294-08:00",
       "approvedBy": "joshua",
       "resolution": "Completed: Architecture doc delivered (Wave 1, 22KB spec)",
-      "completedAt": "2026-03-02T14:22:16.541111"
+      "completedAt": "2026-03-02T14:22:16.541111",
+      "sourceStandupType": "resonance-compass",
+      "updatedAt": "2026-02-26T21:38:26.540294-08:00"
     },
     {
       "key": "CVS-004",
@@ -453,7 +474,9 @@
       "approvedAt": "2026-02-26T21:38:26.540294-08:00",
       "approvedBy": "joshua",
       "resolution": "Completed: Widget API defined (Wave 2, 33KB spec), implemented in code",
-      "completedAt": "2026-03-02T14:22:16.541111"
+      "completedAt": "2026-03-02T14:22:16.541111",
+      "sourceStandupType": "resonance-compass",
+      "updatedAt": "2026-02-26T21:38:26.540294-08:00"
     },
     {
       "key": "CVS-005",
@@ -473,7 +496,9 @@
       "approvedAt": "2026-02-26T21:38:26.540294-08:00",
       "approvedBy": "joshua",
       "resolution": "Completed: Finance widget extracted and built (FinanceWidget.tsx)",
-      "completedAt": "2026-03-02T14:22:16.541111"
+      "completedAt": "2026-03-02T14:22:16.541111",
+      "sourceStandupType": "resonance-compass",
+      "updatedAt": "2026-02-26T21:38:26.540294-08:00"
     },
     {
       "key": "CVS-006",
@@ -493,7 +518,9 @@
       "approvedAt": "2026-02-26T21:38:26.540294-08:00",
       "approvedBy": "joshua",
       "resolution": "Completed: Faith widget extracted and built (FaithWidget.tsx + ScriptureWidget)",
-      "completedAt": "2026-03-02T14:22:16.541111"
+      "completedAt": "2026-03-02T14:22:16.541111",
+      "sourceStandupType": "resonance-compass",
+      "updatedAt": "2026-02-26T21:38:26.540294-08:00"
     },
     {
       "key": "CVS-007",
@@ -513,7 +540,9 @@
       "approvedAt": "2026-02-26T21:38:26.540294-08:00",
       "approvedBy": "joshua",
       "resolution": "Completed: Family widget extracted and built (FamilyWidget.tsx + FamilyEventsWidget)",
-      "completedAt": "2026-03-02T14:22:16.541111"
+      "completedAt": "2026-03-02T14:22:16.541111",
+      "sourceStandupType": "resonance-compass",
+      "updatedAt": "2026-02-26T21:38:26.540294-08:00"
     },
     {
       "key": "CVS-008",
@@ -533,7 +562,9 @@
       "approvedAt": "2026-02-26T21:38:26.540294-08:00",
       "approvedBy": "joshua",
       "resolution": "Completed: Marriage widget extracted and built (MarriageWidget.tsx + TouchpointWidget)",
-      "completedAt": "2026-03-02T14:22:16.541111"
+      "completedAt": "2026-03-02T14:22:16.541111",
+      "sourceStandupType": "resonance-compass",
+      "updatedAt": "2026-02-26T21:38:26.540294-08:00"
     },
     {
       "key": "CVS-009",
@@ -553,7 +584,9 @@
       "approvedAt": "2026-02-26T21:38:26.540294-08:00",
       "approvedBy": "joshua",
       "resolution": "Completed: Grid layout engine built (WidgetGrid.tsx, MosaicDashboard.tsx)",
-      "completedAt": "2026-03-02T14:22:16.541111"
+      "completedAt": "2026-03-02T14:22:16.541111",
+      "sourceStandupType": "resonance-compass",
+      "updatedAt": "2026-02-26T21:38:26.540294-08:00"
     },
     {
       "key": "CVS-010",
@@ -573,7 +606,9 @@
       "approvedAt": "2026-02-26T21:38:26.540294-08:00",
       "approvedBy": "joshua",
       "resolution": "Completed: UX patterns delivered (Wave 1, 16KB spec)",
-      "completedAt": "2026-03-02T14:22:16.541111"
+      "completedAt": "2026-03-02T14:22:16.541111",
+      "sourceStandupType": "resonance-compass",
+      "updatedAt": "2026-02-26T21:38:26.540294-08:00"
     },
     {
       "key": "CVS-011",
@@ -593,7 +628,9 @@
       "approvedAt": "2026-02-26T21:38:26.540294-08:00",
       "approvedBy": "joshua",
       "resolution": "Completed: Onboarding flow built (MosaicOnboarding.tsx + OpenClaw MosaicChat)",
-      "completedAt": "2026-03-02T14:22:16.541111"
+      "completedAt": "2026-03-02T14:22:16.541111",
+      "sourceStandupType": "resonance-compass",
+      "updatedAt": "2026-02-26T21:38:26.540294-08:00"
     },
     {
       "key": "CVS-012",
@@ -613,7 +650,9 @@
       "approvedAt": "2026-02-26T21:38:26.540294-08:00",
       "approvedBy": "joshua",
       "resolution": "Completed: Monetization model delivered (Wave 1, 10KB spec)",
-      "completedAt": "2026-03-02T14:22:16.541111"
+      "completedAt": "2026-03-02T14:22:16.541111",
+      "sourceStandupType": "resonance-compass",
+      "updatedAt": "2026-02-26T21:38:26.540294-08:00"
     },
     {
       "key": "CVS-013",
@@ -633,7 +672,9 @@
       "approvedAt": "2026-02-26T21:38:26.540294-08:00",
       "approvedBy": "joshua",
       "resolution": "Completed: GTM strategy delivered (Wave 1, 12KB spec)",
-      "completedAt": "2026-03-02T14:22:16.541111"
+      "completedAt": "2026-03-02T14:22:16.541111",
+      "sourceStandupType": "resonance-compass",
+      "updatedAt": "2026-02-26T21:38:26.540294-08:00"
     },
     {
       "key": "CVS-014",
@@ -653,7 +694,9 @@
       "approvedAt": "2026-02-26T21:38:26.540294-08:00",
       "approvedBy": "joshua",
       "resolution": "Completed: Telemetry spec delivered (Wave 1, 18KB spec)",
-      "completedAt": "2026-03-02T14:22:16.541111"
+      "completedAt": "2026-03-02T14:22:16.541111",
+      "sourceStandupType": "resonance-compass",
+      "updatedAt": "2026-02-26T21:38:26.540294-08:00"
     },
     {
       "key": "CVS-015",
@@ -673,7 +716,9 @@
       "approvedAt": "2026-02-26T21:38:26.540294-08:00",
       "approvedBy": "joshua",
       "resolution": "Completed: Safeguards spec delivered (Wave 1, 11KB spec)",
-      "completedAt": "2026-03-02T14:22:16.541111"
+      "completedAt": "2026-03-02T14:22:16.541111",
+      "sourceStandupType": "resonance-compass",
+      "updatedAt": "2026-02-26T21:38:26.540294-08:00"
     },
     {
       "key": "CVS-016",
@@ -693,7 +738,9 @@
       "approvedAt": "2026-02-26T21:38:26.540294-08:00",
       "approvedBy": "joshua",
       "resolution": "Completed: Trading widget spec delivered (Wave 2, 16KB spec)",
-      "completedAt": "2026-03-02T14:22:16.541111"
+      "completedAt": "2026-03-02T14:22:16.541111",
+      "sourceStandupType": "resonance-compass",
+      "updatedAt": "2026-02-26T21:38:26.540294-08:00"
     },
     {
       "key": "CVS-017",
@@ -712,7 +759,9 @@
       "createdAt": "2026-02-26T21:38:26.540294-08:00",
       "approvedAt": "2026-02-26T21:38:26.540294-08:00",
       "approvedBy": "joshua",
-      "resolution": "Obsolete \u2014 Lever killed 2026-02-27"
+      "resolution": "Obsolete \u2014 Lever killed 2026-02-27",
+      "sourceStandupType": "resonance-compass",
+      "updatedAt": "2026-02-26T21:38:26.540294-08:00"
     },
     {
       "key": "J-004",
@@ -729,7 +778,10 @@
         "Build success rate improved to >90%"
       ],
       "updatedAt": "2026-02-20T21:21:20.016+00:00",
-      "completedAt": "2026-02-20T21:21:20.016+00:00"
+      "completedAt": "2026-02-20T21:21:20.016+00:00",
+      "sourceStandup": "",
+      "sourceStandupType": "resonance-compass",
+      "sourceDate": ""
     },
     {
       "key": "A-018",
@@ -746,7 +798,11 @@
         "Results documented or committed"
       ],
       "resolvedAt": "2026-02-28T12:45:00-08:00",
-      "resolution": "Added Stage 0 memory gate (warns <1500MB, blocks <800MB with FORCE_BUILD override) and Stage 7 ASC API verification loop (polls processingState + internalBuildState). Stage 8 now reports truthful status instead of hardcoded success. Commit 63ab43e6."
+      "resolution": "Added Stage 0 memory gate (warns <1500MB, blocks <800MB with FORCE_BUILD override) and Stage 7 ASC API verification loop (polls processingState + internalBuildState). Stage 8 now reports truthful status instead of hardcoded success. Commit 63ab43e6.",
+      "sourceStandup": "",
+      "sourceStandupType": "resonance-compass",
+      "sourceDate": "",
+      "updatedAt": ""
     },
     {
       "key": "A-019",
@@ -762,7 +818,11 @@
         "Task 'Design production-grade Mosaic CI/CD architecture with monit' is completed and verified",
         "Results documented or committed"
       ],
-      "resolution": "Superseded: Mosaic CI/CD \u2014 pivoted to Faith Journey"
+      "resolution": "Superseded: Mosaic CI/CD \u2014 pivoted to Faith Journey",
+      "sourceStandup": "",
+      "sourceStandupType": "resonance-compass",
+      "sourceDate": "",
+      "updatedAt": ""
     },
     {
       "key": "A-020",
@@ -779,7 +839,11 @@
         "Results documented or committed"
       ],
       "resolvedAt": "2026-02-28T12:45:00-08:00",
-      "resolution": "Audited: root package-lock.json committed and tracked. 30 floating deps (normal for Expo \u2014 ^/~ ranges pinned by lockfile). npm workspaces monorepo structure correct. Build 5 failure was transient network/registry issue, not dep management. No code changes needed \u2014 lockfile provides deterministic installs."
+      "resolution": "Audited: root package-lock.json committed and tracked. 30 floating deps (normal for Expo \u2014 ^/~ ranges pinned by lockfile). npm workspaces monorepo structure correct. Build 5 failure was transient network/registry issue, not dep management. No code changes needed \u2014 lockfile provides deterministic installs.",
+      "sourceStandup": "",
+      "sourceStandupType": "resonance-compass",
+      "sourceDate": "",
+      "updatedAt": ""
     },
     {
       "key": "A-021",
@@ -795,7 +859,11 @@
         "Task 'Define Mosaic build notification and error UX flow' is completed and verified",
         "Results documented or committed"
       ],
-      "resolution": "Superseded: Mosaic notification UX \u2014 pivoted to Faith Journey"
+      "resolution": "Superseded: Mosaic notification UX \u2014 pivoted to Faith Journey",
+      "sourceStandup": "",
+      "sourceStandupType": "resonance-compass",
+      "sourceDate": "",
+      "updatedAt": ""
     },
     {
       "key": "A-022",
@@ -811,7 +879,11 @@
         "Task 'Design and implement agent conversation interface for Mosaic' is completed and verified",
         "Results documented or committed"
       ],
-      "resolution": "Superseded: Mosaic conversation interface \u2014 replaced by OpenClaw + Faith Journey"
+      "resolution": "Superseded: Mosaic conversation interface \u2014 replaced by OpenClaw + Faith Journey",
+      "sourceStandup": "",
+      "sourceStandupType": "resonance-compass",
+      "sourceDate": "",
+      "updatedAt": ""
     },
     {
       "key": "A-023",
@@ -827,7 +899,11 @@
         "Task 'Extend CVS-003 to include agent orchestration architecture' is completed and verified",
         "Results documented or committed"
       ],
-      "resolution": "Superseded: Mosaic agent orchestration \u2014 replaced by Faith Journey architecture"
+      "resolution": "Superseded: Mosaic agent orchestration \u2014 replaced by Faith Journey architecture",
+      "sourceStandup": "",
+      "sourceStandupType": "resonance-compass",
+      "sourceDate": "",
+      "updatedAt": ""
     },
     {
       "key": "A-024",
@@ -843,7 +919,11 @@
         "Task 'Design consent-based engagement depth model with privacy saf' is completed and verified",
         "Results documented or committed"
       ],
-      "resolution": "Superseded: Mosaic engagement model \u2014 replaced by A-027 Faith ethics"
+      "resolution": "Superseded: Mosaic engagement model \u2014 replaced by A-027 Faith ethics",
+      "sourceStandup": "",
+      "sourceStandupType": "resonance-compass",
+      "sourceDate": "",
+      "updatedAt": ""
     },
     {
       "key": "A-025",
@@ -859,7 +939,11 @@
         "Task 'Expand widget ecosystems within Faith, Family, Finance categ' is completed and verified",
         "Results documented or committed"
       ],
-      "resolution": "Superseded: Mosaic widget ecosystems \u2014 replaced by Faith Journey focus"
+      "resolution": "Superseded: Mosaic widget ecosystems \u2014 replaced by Faith Journey focus",
+      "sourceStandup": "",
+      "sourceStandupType": "resonance-compass",
+      "sourceDate": "",
+      "updatedAt": ""
     },
     {
       "key": "A-026",
@@ -875,7 +959,9 @@
       "approvedAt": "2026-03-02T12:38:17.694098",
       "approvedBy": "joshua",
       "resolution": "Completed: 27KB architecture spec at mosaic/specs/FAITH-JOURNEY-ARCHITECTURE.md",
-      "completedAt": "2026-03-02T14:22:16.541111"
+      "completedAt": "2026-03-02T14:22:16.541111",
+      "sourceStandupType": "resonance-compass",
+      "updatedAt": "2026-03-02T12:36:23.376029"
     },
     {
       "key": "A-027",
@@ -891,7 +977,9 @@
       "approvedAt": "2026-03-02T12:39:10.430276",
       "approvedBy": "joshua",
       "resolution": "Completed: Ethics framework spec delivered",
-      "completedAt": "2026-03-02T14:22:16.541111"
+      "completedAt": "2026-03-02T14:22:16.541111",
+      "sourceStandupType": "resonance-compass",
+      "updatedAt": "2026-03-02T12:36:23.376029"
     },
     {
       "key": "A-028",
@@ -907,7 +995,9 @@
       "approvedAt": "2026-03-02T12:40:54.899675",
       "approvedBy": "joshua",
       "resolution": "Completed: User research spec delivered",
-      "completedAt": "2026-03-02T14:22:16.541111"
+      "completedAt": "2026-03-02T14:22:16.541111",
+      "sourceStandupType": "resonance-compass",
+      "updatedAt": "2026-03-02T12:36:23.376029"
     },
     {
       "key": "A-029",
@@ -921,7 +1011,9 @@
       "sourceDate": "2026-03-02",
       "createdAt": "2026-03-02T12:36:23.376029",
       "resolution": "Completed: Content strategy at mosaic/specs/A-029-CONTENT-STRATEGY.md",
-      "completedAt": "2026-03-02T14:22:16.541111"
+      "completedAt": "2026-03-02T14:22:16.541111",
+      "sourceStandupType": "resonance-compass",
+      "updatedAt": "2026-03-02T12:36:23.376029"
     },
     {
       "key": "A-030",
@@ -935,7 +1027,9 @@
       "sourceDate": "2026-03-02",
       "createdAt": "2026-03-02T12:36:23.376029",
       "resolution": "Completed: Revenue model at mosaic/specs/A-030-REVENUE-MODEL.md",
-      "completedAt": "2026-03-02T14:22:16.541111"
+      "completedAt": "2026-03-02T14:22:16.541111",
+      "sourceStandupType": "resonance-compass",
+      "updatedAt": "2026-03-02T12:36:23.376029"
     },
     {
       "key": "A-031",
@@ -949,7 +1043,9 @@
       "sourceDate": "2026-03-02",
       "createdAt": "2026-03-02T12:36:23.376029",
       "resolution": "Completed: Export format spec (PSAEF v1.0) at mosaic/specs/A-031-EXPORT-FORMAT.md",
-      "completedAt": "2026-03-02T14:22:16.541111"
+      "completedAt": "2026-03-02T14:22:16.541111",
+      "sourceStandupType": "resonance-compass",
+      "updatedAt": "2026-03-02T12:36:23.376029"
     },
     {
       "key": "J-005",
@@ -968,7 +1064,8 @@
         "Review framework established"
       ],
       "updatedAt": "2026-02-20T21:22:06.09+00:00",
-      "completedAt": "2026-02-20T21:22:06.09+00:00"
+      "completedAt": "2026-02-20T21:22:06.09+00:00",
+      "sourceStandupType": "resonance-compass"
     },
     {
       "key": "A-032",
@@ -981,7 +1078,9 @@
       "sourceDate": "2026-03-02",
       "createdAt": "2026-03-02T12:56:00",
       "resolution": "Completed: Faith UX design at mosaic/specs/A-032-FAITH-UX.md",
-      "completedAt": "2026-03-02T14:22:16.541111"
+      "completedAt": "2026-03-02T14:22:16.541111",
+      "sourceStandupType": "resonance-compass",
+      "updatedAt": "2026-03-02T12:56:00"
     },
     {
       "key": "A-033",
@@ -994,7 +1093,9 @@
       "sourceDate": "2026-03-02",
       "createdAt": "2026-03-02T12:56:00",
       "resolution": "Completed: Evangelical partnerships at mosaic/specs/A-033-EVANGELICAL-PARTNERSHIPS.md",
-      "completedAt": "2026-03-02T14:22:16.541111"
+      "completedAt": "2026-03-02T14:22:16.541111",
+      "sourceStandupType": "resonance-compass",
+      "updatedAt": "2026-03-02T12:56:00"
     },
     {
       "key": "A-034",
@@ -1013,7 +1114,9 @@
         "pgvector semantic search endpoint functional with test queries",
         "AI guide agent creation pipeline prototyped",
         "Portable export format (PSAEF v1.0) implementation started"
-      ]
+      ],
+      "sourceStandupType": "resonance-compass",
+      "updatedAt": "2026-03-02T12:56:00"
     },
     {
       "key": "A-035",
@@ -1086,95 +1189,121 @@
     },
     {
       "key": "A-037",
-      "title": "Agent Registry Technical Architecture",
       "assignee": "CTO (Chris Vermeulen)",
       "persona": "chris vermeulen",
-      "type": "AGENT",
       "status": "approved",
       "description": "Design multi-tenant hosting platform with API gateway, billing, and ClawdHub integration",
       "acceptanceCriteria": "Architecture doc covering: container runtime, API gateway, auth/billing, ClawdHub skill integration, SDK design",
       "source": "STD-EVE (Evening Standup 2026-03-03)",
-      "approvedAt": "2026-03-03T21:37:00-08:00"
+      "approvedAt": "2026-03-03T21:37:00-08:00",
+      "text": "Agent Registry Technical Architecture",
+      "tag": "AGENT",
+      "sourceStandup": "",
+      "sourceStandupType": "resonance-compass",
+      "sourceDate": "",
+      "updatedAt": ""
     },
     {
       "key": "A-038",
-      "title": "Agent Monetization Strategy",
       "assignee": "CRO (Alex Hormozi)",
       "persona": "alex hormozi",
-      "type": "AGENT",
       "status": "approved",
       "description": "Define pricing tiers, freemium model, and enterprise white-label opportunities",
       "acceptanceCriteria": "Pricing doc with Free/Pro/Enterprise tiers, unit economics, enterprise licensing model",
       "source": "STD-EVE (Evening Standup 2026-03-03)",
-      "approvedAt": "2026-03-03T21:37:00-08:00"
+      "approvedAt": "2026-03-03T21:37:00-08:00",
+      "text": "Agent Monetization Strategy",
+      "tag": "AGENT",
+      "sourceStandup": "",
+      "sourceStandupType": "resonance-compass",
+      "sourceDate": "",
+      "updatedAt": ""
     },
     {
       "key": "A-039",
-      "title": "Agent Discovery Experience",
       "assignee": "CMO (Steve Jobs)",
       "persona": "steve jobs",
-      "type": "AGENT",
       "status": "approved",
       "description": "Design beautiful developer portal with one-click deployment and monitoring dashboard",
       "acceptanceCriteria": "UX spec for agent marketplace/portal: discovery, deployment flow, monitoring dashboard",
       "source": "STD-EVE (Evening Standup 2026-03-03)",
-      "approvedAt": "2026-03-03T21:37:00-08:00"
+      "approvedAt": "2026-03-03T21:37:00-08:00",
+      "text": "Agent Discovery Experience",
+      "tag": "AGENT",
+      "sourceStandup": "",
+      "sourceStandupType": "resonance-compass",
+      "sourceDate": "",
+      "updatedAt": ""
     },
     {
       "key": "A-040",
-      "title": "Unit Economics Analysis",
       "assignee": "CFTO (Dave Ramsey)",
       "persona": "dave ramsey",
-      "type": "AGENT",
       "status": "approved",
       "description": "Model compute costs, pricing scenarios, and path to profitability",
       "acceptanceCriteria": "Financial model with cost projections per agent tier, break-even analysis, margin targets",
       "source": "STD-EVE (Evening Standup 2026-03-03)",
-      "approvedAt": "2026-03-03T21:37:00-08:00"
+      "approvedAt": "2026-03-03T21:37:00-08:00",
+      "text": "Unit Economics Analysis",
+      "tag": "AGENT",
+      "sourceStandup": "",
+      "sourceStandupType": "resonance-compass",
+      "sourceDate": "",
+      "updatedAt": ""
     },
     {
       "key": "A-041",
-      "title": "Industrial Agent Capabilities",
       "assignee": "CTIO (James Truchard)",
       "persona": "james truchard",
-      "type": "AGENT",
       "status": "approved",
       "description": "Define specialized industrial/hardware integration features as key differentiator",
       "acceptanceCriteria": "Capability spec for industrial agents: protocols, equipment types, integration patterns",
       "source": "STD-EVE (Evening Standup 2026-03-03)",
-      "approvedAt": "2026-03-03T21:37:00-08:00"
+      "approvedAt": "2026-03-03T21:37:00-08:00",
+      "text": "Industrial Agent Capabilities",
+      "tag": "AGENT",
+      "sourceStandup": "",
+      "sourceStandupType": "resonance-compass",
+      "sourceDate": "",
+      "updatedAt": ""
     },
     {
       "key": "A-042",
-      "title": "Agent Reliability Framework",
       "assignee": "CPO (Jordan Peterson)",
       "persona": "jordan peterson",
-      "type": "AGENT",
       "status": "approved",
       "description": "Create competence metrics and quality standards for registry agents",
       "acceptanceCriteria": "Quality framework doc: reliability metrics, competence scoring, trust signals, review system",
       "source": "STD-EVE (Evening Standup 2026-03-03)",
-      "approvedAt": "2026-03-03T21:37:00-08:00"
+      "approvedAt": "2026-03-03T21:37:00-08:00",
+      "text": "Agent Reliability Framework",
+      "tag": "AGENT",
+      "sourceStandup": "",
+      "sourceStandupType": "resonance-compass",
+      "sourceDate": "",
+      "updatedAt": ""
     },
     {
       "key": "J-007",
-      "title": "ClawdHub Integration Planning",
-      "assignee": "CEO (Joshua)",
+      "assignee": "Joshua",
       "persona": "joshua",
-      "type": "CEO",
       "status": "approved",
       "description": "Map how existing skill marketplace enhances agent capabilities",
       "acceptanceCriteria": "Integration plan: how ClawdHub skills compose into hosted agents, API surface, developer workflow",
       "source": "STD-EVE (Evening Standup 2026-03-03)",
-      "approvedAt": "2026-03-03T21:37:00-08:00"
+      "approvedAt": "2026-03-03T21:37:00-08:00",
+      "text": "ClawdHub Integration Planning",
+      "tag": "JOSHUA",
+      "sourceStandup": "",
+      "sourceStandupType": "resonance-compass",
+      "sourceDate": "",
+      "updatedAt": ""
     },
     {
       "key": "J-008",
-      "title": "Supabase migration — resonance + tension + compass tables",
-      "assignee": "agent",
-      "type": "AGENT",
+      "assignee": "Theo",
       "priority": "high",
-      "status": "backlog",
+      "status": "pending",
       "phase": "resonance-compass",
       "description": "Create database schema for the Faith Compass Resonance Pipeline including faith_resonance table for swipe choices, faith_tension_map for theological conflicts, faith_compass_conversations for multi-guide dialogues, and faith_compass_scores for evolving compass scores.",
       "acceptanceCriteria": [
@@ -1183,15 +1312,19 @@
         "faith_compass_conversations table set up for transcript storage and priority extraction",
         "faith_compass_scores table configured with source attribution and confidence tracking"
       ],
-      "createdAt": "2025-01-27T14:45:00Z"
+      "createdAt": "2025-01-27T14:45:00Z",
+      "text": "Supabase migration \u2014 resonance + tension + compass tables",
+      "tag": "AGENT",
+      "sourceStandup": "",
+      "sourceStandupType": "resonance-compass",
+      "sourceDate": "2025-01-27T14:45:00Z",
+      "updatedAt": "2025-01-27T14:45:00Z"
     },
     {
       "key": "J-009",
-      "title": "API endpoints — resonance save/summary/tensions",
-      "assignee": "agent", 
-      "type": "AGENT",
+      "assignee": "Theo",
       "priority": "high",
-      "status": "backlog",
+      "status": "pending",
       "phase": "resonance-compass",
       "description": "Implement core API endpoints for resonance tracking including POST /api/faith/resonance for saving swipe choices, GET /api/faith/resonance/summary for user's complete resonance profile, and GET /api/faith/resonance/tensions for detected theological conflicts.",
       "acceptanceCriteria": [
@@ -1200,15 +1333,19 @@
         "GET /api/faith/resonance/tensions detects and returns pending conversation opportunities",
         "All endpoints include proper error handling and response formatting"
       ],
-      "createdAt": "2025-01-27T14:45:00Z"
+      "createdAt": "2025-01-27T14:45:00Z",
+      "text": "API endpoints \u2014 resonance save/summary/tensions",
+      "tag": "AGENT",
+      "sourceStandup": "",
+      "sourceStandupType": "resonance-compass",
+      "sourceDate": "2025-01-27T14:45:00Z",
+      "updatedAt": "2025-01-27T14:45:00Z"
     },
     {
       "key": "J-010",
-      "title": "App: sync swipe data to Supabase (replace AsyncStorage-only)",
-      "assignee": "agent",
-      "type": "AGENT", 
+      "assignee": "Theo",
       "priority": "high",
-      "status": "backlog",
+      "status": "pending",
       "phase": "resonance-compass",
       "description": "Modify the Faith Journey app's perspective swiping to sync choices to Supabase instead of only saving locally to AsyncStorage. Maintain backward compatibility and handle offline scenarios gracefully.",
       "acceptanceCriteria": [
@@ -1217,32 +1354,40 @@
         "Existing AsyncStorage data migrated to Supabase on app update",
         "Initial Faith Compass scores calculated from historical swipe data"
       ],
-      "createdAt": "2025-01-27T14:45:00Z"
+      "createdAt": "2025-01-27T14:45:00Z",
+      "text": "App: sync swipe data to Supabase (replace AsyncStorage-only)",
+      "tag": "AGENT",
+      "sourceStandup": "",
+      "sourceStandupType": "resonance-compass",
+      "sourceDate": "2025-01-27T14:45:00Z",
+      "updatedAt": "2025-01-27T14:45:00Z"
     },
     {
-      "key": "J-011", 
-      "title": "Tension detection engine — map tradition pairs, score conflicts",
-      "assignee": "agent",
-      "type": "AGENT",
+      "key": "J-011",
+      "assignee": "Theo",
       "priority": "medium",
-      "status": "backlog",
+      "status": "pending",
       "phase": "resonance-compass",
       "description": "Build the tension detection algorithm that identifies theological conflicts between user's resonated perspectives. Combine mathematical dimension vector analysis with theological knowledge base to trigger meaningful conversations.",
       "acceptanceCriteria": [
         "Mathematical tension scoring comparing dimension vectors across traditions",
-        "Theological tension map populated with known tradition pair conflicts", 
+        "Theological tension map populated with known tradition pair conflicts",
         "Trigger logic: 3+ resonated perspectives with tension score > 0.7",
         "Frequency limiting: max 1 conversation per week per user"
       ],
-      "createdAt": "2025-01-27T14:45:00Z"
+      "createdAt": "2025-01-27T14:45:00Z",
+      "text": "Tension detection engine \u2014 map tradition pairs, score conflicts",
+      "tag": "AGENT",
+      "sourceStandup": "",
+      "sourceStandupType": "resonance-compass",
+      "sourceDate": "2025-01-27T14:45:00Z",
+      "updatedAt": "2025-01-27T14:45:00Z"
     },
     {
       "key": "J-012",
-      "title": "Multi-guide conversation UI + engine",
-      "assignee": "agent",
-      "type": "AGENT",
-      "priority": "medium", 
-      "status": "backlog",
+      "assignee": "Theo",
+      "priority": "medium",
+      "status": "pending",
       "phase": "resonance-compass",
       "description": "Create the multi-guide conversation system where user's journey guide moderates dialogue with tradition guides from resonated perspectives. Build UI for multiple avatars and conversation context display.",
       "acceptanceCriteria": [
@@ -1251,33 +1396,41 @@
         "Guide personality system using existing TRADITION_MAP from app",
         "Real-time conversation updates via Supabase subscriptions"
       ],
-      "createdAt": "2025-01-27T14:45:00Z"
+      "createdAt": "2025-01-27T14:45:00Z",
+      "text": "Multi-guide conversation UI + engine",
+      "tag": "AGENT",
+      "sourceStandup": "",
+      "sourceStandupType": "resonance-compass",
+      "sourceDate": "2025-01-27T14:45:00Z",
+      "updatedAt": "2025-01-27T14:45:00Z"
     },
     {
       "key": "J-013",
-      "title": "Compass score extraction from conversations",
-      "assignee": "agent",
-      "type": "AGENT",
+      "assignee": "Theo",
       "priority": "medium",
-      "status": "backlog", 
+      "status": "pending",
       "phase": "resonance-compass",
       "description": "Implement LLM analysis of conversation transcripts to extract user's authentic value priorities. Convert dialogue insights into weighted compass dimension scores with confidence tracking.",
       "acceptanceCriteria": [
         "LLM conversation analysis extracts priority weights for 8 compass dimensions",
         "Hybrid score calculation combining swipe data with conversation insights",
-        "Confidence scoring increases with more conversation data points", 
+        "Confidence scoring increases with more conversation data points",
         "Priority extraction system handles conversation quality variations"
       ],
-      "createdAt": "2025-01-27T14:45:00Z"
+      "createdAt": "2025-01-27T14:45:00Z",
+      "text": "Compass score extraction from conversations",
+      "tag": "AGENT",
+      "sourceStandup": "",
+      "sourceStandupType": "resonance-compass",
+      "sourceDate": "2025-01-27T14:45:00Z",
+      "updatedAt": "2025-01-27T14:45:00Z"
     },
     {
       "key": "J-014",
-      "title": "Updated Faith Compass visualization",
-      "assignee": "ceo",
-      "type": "CEO",
+      "assignee": "Joshua",
       "priority": "low",
-      "status": "backlog",
-      "phase": "resonance-compass", 
+      "status": "pending",
+      "phase": "resonance-compass",
       "description": "Enhance the existing Faith Compass radar chart to show score sources (swipes vs conversations), confidence levels through visual opacity, and interactive details for each dimension's contributing factors.",
       "acceptanceCriteria": [
         "Visual indicators distinguish swipe-based vs conversation-refined scores",
@@ -1285,15 +1438,19 @@
         "Interactive details show contributing perspectives and conversation excerpts",
         "Score evolution timeline displays major updates with source attribution"
       ],
-      "createdAt": "2025-01-27T14:45:00Z"
+      "createdAt": "2025-01-27T14:45:00Z",
+      "text": "Updated Faith Compass visualization",
+      "tag": "JOSHUA",
+      "sourceStandup": "",
+      "sourceStandupType": "resonance-compass",
+      "sourceDate": "2025-01-27T14:45:00Z",
+      "updatedAt": "2025-01-27T14:45:00Z"
     },
     {
       "key": "J-015",
-      "title": "Home screen tension notification card",
-      "assignee": "ceo", 
-      "type": "CEO",
+      "assignee": "Joshua",
       "priority": "low",
-      "status": "backlog",
+      "status": "pending",
       "phase": "resonance-compass",
       "description": "Design and implement the home screen notification card that appears when theological tensions are detected, inviting users to explore their perspectives with multiple guides. Focus on warm, engaging tone rather than urgent alerts.",
       "acceptanceCriteria": [
@@ -1302,7 +1459,13 @@
         "User can accept, dismiss, or snooze tension conversations",
         "Card states: hidden, visible, snoozed, acknowledged with proper transitions"
       ],
-      "createdAt": "2025-01-27T14:45:00Z"
+      "createdAt": "2025-01-27T14:45:00Z",
+      "text": "Home screen tension notification card",
+      "tag": "JOSHUA",
+      "sourceStandup": "",
+      "sourceStandupType": "resonance-compass",
+      "sourceDate": "2025-01-27T14:45:00Z",
+      "updatedAt": "2025-01-27T14:45:00Z"
     }
   ]
 }

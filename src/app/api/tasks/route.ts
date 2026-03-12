@@ -16,7 +16,7 @@ const supabaseHeaders = {
 interface Task {
   key: string;
   text: string;
-  tag: "AGENT" | "JOSHUA" | "PLAN";
+  tag: "AGENT" | "JOSHUA" | "PLAN" | "CEO";
   priority: "high" | "medium" | "low";
   assignee: string;
   status: "pending" | "in-progress" | "done" | "done_but_unverified" | "resolved" | "approved";
@@ -29,6 +29,27 @@ interface Task {
   sprintReady?: boolean;
   resolution?: string;
   specFile?: string;
+  description?: string;
+  acceptanceCriteria?: string[];
+  phase?: string;
+  // Alternate field names from newer tickets
+  title?: string;
+  type?: string;
+}
+
+// Normalize tasks that may use alternate field names
+function normalizeTask(task: any): Task {
+  return {
+    ...task,
+    text: task.text || task.title || task.key,
+    tag: (task.tag || task.type || "AGENT").toUpperCase() as Task["tag"],
+    status: (task.status === "backlog" ? "pending" : (task.status || "pending")) as Task["status"],
+    sourceStandup: task.sourceStandup || "",
+    sourceStandupType: task.sourceStandupType || "",
+    sourceDate: task.sourceDate || task.createdAt || "",
+    assignee: task.assignee || "—",
+    updatedAt: task.updatedAt || task.createdAt || "",
+  };
 }
 
 interface TaskRegistry {
@@ -95,8 +116,8 @@ export async function GET(request: NextRequest) {
     const filterSprintReady = searchParams.get("sprintReady");
     const filterStatus = searchParams.get("status");
 
-    // Merge overrides from Supabase into task data
-    let tasks = registry.tasks.map(t => {
+    // Normalize and merge overrides from Supabase into task data
+    let tasks = registry.tasks.map(normalizeTask).map(t => {
       const override = statusOverrides.get(t.key);
       return {
         ...t,

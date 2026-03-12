@@ -35,6 +35,7 @@ interface Task {
   specFile?: string;
   phase?: string;
   description?: string;
+  acceptanceCriteria?: string[];
   // Alternate field names (some tasks use title/type instead of text/tag)
   title?: string;
   type?: string;

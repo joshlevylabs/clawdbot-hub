@@ -25,7 +25,7 @@ import {
 interface Task {
   key: string;
   text: string;
-  tag: "AGENT" | "JOSHUA" | "PLAN";
+  tag: "AGENT" | "JOSHUA" | "PLAN" | "CEO";
   priority: "high" | "medium" | "low";
   assignee: string;
   status: "pending" | "in-progress" | "done" | "done_but_unverified" | "approved";

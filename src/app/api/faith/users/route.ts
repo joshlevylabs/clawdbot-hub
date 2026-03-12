@@ -126,19 +126,32 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: 'userId parameter is required' }, { status: 400 });
     }
 
-    // Delete user from auth.users via Management API
-    const deleteUserResponse = await fetch(
-      `https://api.supabase.com/v1/projects/atldnpjaxaeqzgtqbrpy/auth/users/${userId}`,
+    // Delete user from auth.users via Supabase Management API (SQL query)
+    // Must delete from auth.identities first (FK constraint), then auth.users
+    const deleteResponse = await fetch(
+      `https://api.supabase.com/v1/projects/atldnpjaxaeqzgtqbrpy/database/query`,
       {
-        method: 'DELETE',
+        method: 'POST',
         headers: {
           'Authorization': `Bearer ${managementToken}`,
+          'Content-Type': 'application/json',
         },
+        body: JSON.stringify({
+          query: `
+            DELETE FROM auth.identities WHERE user_id = '${userId}';
+            DELETE FROM auth.sessions WHERE user_id = '${userId}';
+            DELETE FROM auth.refresh_tokens WHERE instance_id IN (
+              SELECT instance_id FROM auth.users WHERE id = '${userId}'
+            );
+            DELETE FROM auth.mfa_factors WHERE user_id = '${userId}';
+            DELETE FROM auth.users WHERE id = '${userId}';
+          `
+        }),
       }
     );
 
-    if (!deleteUserResponse.ok) {
-      const errorText = await deleteUserResponse.text();
+    if (!deleteResponse.ok) {
+      const errorText = await deleteResponse.text();
       console.error('Auth user deletion failed:', errorText);
       return NextResponse.json({ 
         error: 'Failed to delete auth user',

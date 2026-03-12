@@ -21,10 +21,10 @@ import TicketDetailModal from "@/components/TicketDetailModal";
 interface Task {
   key: string;
   text: string;
-  tag: "AGENT" | "JOSHUA" | "PLAN";
+  tag: "AGENT" | "JOSHUA" | "PLAN" | "CEO";
   priority: "high" | "medium" | "low";
   assignee: string;
-  status: "pending" | "in-progress" | "done" | "done_but_unverified" | "approved";
+  status: "pending" | "backlog" | "in-progress" | "done" | "done_but_unverified" | "approved";
   sourceStandup: string;
   sourceStandupType: string;
   sourceDate: string;
@@ -33,10 +33,29 @@ interface Task {
   completedAt?: string | null;
   sprintReady?: boolean;
   specFile?: string;
+  phase?: string;
+  description?: string;
+  // Alternate field names (some tasks use title/type instead of text/tag)
+  title?: string;
+  type?: string;
 }
 
 interface TaskRegistry {
   tasks: Task[];
+}
+
+// Normalize tasks that may use alternate field names
+function normalizeTask(task: any): Task {
+  return {
+    ...task,
+    text: task.text || task.title || task.key,
+    tag: (task.tag || task.type || "AGENT").toUpperCase(),
+    status: task.status === "backlog" ? "pending" : (task.status || "pending"),
+    sourceStandup: task.sourceStandup || "",
+    sourceStandupType: task.sourceStandupType || "",
+    sourceDate: task.sourceDate || task.createdAt || "",
+    assignee: task.assignee || "—",
+  };
 }
 
 type ViewMode = "table" | "kanban";
@@ -286,12 +305,13 @@ export default function BulletinPage() {
         const res = await fetch("/api/tasks");
         if (res.ok) {
           const data = await res.json();
-          setTaskRegistry({ tasks: data.tasks });
+          setTaskRegistry({ tasks: (data.tasks || []).map(normalizeTask) });
         } else {
           // Fallback to static file
           const staticRes = await fetch("/data/standups/task-registry.json");
           if (staticRes.ok) {
-            setTaskRegistry(await staticRes.json());
+            const staticData = await staticRes.json();
+            setTaskRegistry({ tasks: (staticData.tasks || []).map(normalizeTask) });
           }
         }
 
@@ -332,13 +352,13 @@ export default function BulletinPage() {
   // Calculate stats
   const totalTasks = taskRegistry?.tasks.length || 0;
   const agentTasks = taskRegistry?.tasks.filter((t: Task) => t.tag === "AGENT").length || 0;
-  const joshuaTasks = taskRegistry?.tasks.filter((t: Task) => t.tag === "JOSHUA").length || 0;
+  const joshuaTasks = taskRegistry?.tasks.filter((t: Task) => t.tag === "JOSHUA" || t.tag === "CEO").length || 0;
   const planTasks = taskRegistry?.tasks.filter((t: Task) => t.tag === "PLAN").length || 0;
   const doneTasks = taskRegistry?.tasks.filter((t: Task) => t.status === "done" || t.status === "approved").length || 0;
   const completionPercent = totalTasks > 0 ? Math.round((doneTasks / totalTasks) * 100) : 0;
 
   // Get unique standup types for filter
-  const standupTypes: string[] = taskRegistry ? Array.from(new Set(taskRegistry.tasks.map((t: Task) => t.sourceStandupType as string))) : [];
+  const standupTypes: string[] = taskRegistry ? Array.from(new Set(taskRegistry.tasks.map((t: Task) => t.sourceStandupType as string))).filter(Boolean) : [];
 
   // Get unique verticals from standup index
   const allVerticals = standupIndex ? Array.from(new Set(
@@ -510,6 +530,7 @@ export default function BulletinPage() {
               options={[
                 {value: "agent", label: "🤖 Agent"},
                 {value: "joshua", label: "👤 Joshua"},
+                {value: "ceo", label: "👤 CEO"},
                 {value: "plan", label: "📋 Plan"}
               ]}
               selected={typeFilter}

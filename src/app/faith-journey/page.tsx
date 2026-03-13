@@ -1734,6 +1734,7 @@ export default function FaithJourneyPage() {
   const [deletingUser, setDeletingUser] = useState<string | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
   const [totalAuthUsers, setTotalAuthUsers] = useState<number>(0);
+  const [traditionBreakdown, setTraditionBreakdown] = useState<Record<string, number>>({});
 
   // Fetch voice configuration from API
   const fetchVoiceConfig = async () => {
@@ -1836,6 +1837,7 @@ export default function FaithJourneyPage() {
         const data = await res.json();
         setUsersData(data.users || []);
         setTotalAuthUsers(data.totalAuthUsers || 0);
+        setTraditionBreakdown(data.traditionBreakdown || {});
       }
     } catch (e) {
       console.error('Failed to fetch users:', e);
@@ -2729,6 +2731,134 @@ export default function FaithJourneyPage() {
                     trend="neutral"
                   />
                 </div>
+
+                {/* Tradition Breakdown */}
+                {Object.keys(traditionBreakdown).length > 0 && (
+                  <div className="rounded-xl border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+                    <div className="p-6 border-b" style={{ borderColor: "#2A2A38" }}>
+                      <h2 className="text-lg font-semibold text-slate-100 flex items-center gap-2">
+                        <Globe className="w-5 h-5" style={{ color: "#D4A020" }} />
+                        Tradition Breakdown
+                      </h2>
+                      <p className="text-slate-400 text-sm mt-1">
+                        Anonymized breakdown of user faith traditions — helps prioritize content generation pipeline.
+                      </p>
+                    </div>
+                    <div className="p-6">
+                      {(() => {
+                        // Separate primary traditions from exploring
+                        const primary: Record<string, number> = {};
+                        const exploring: Record<string, number> = {};
+                        for (const [key, count] of Object.entries(traditionBreakdown)) {
+                          if (key.startsWith('exploring:')) {
+                            exploring[key.replace('exploring:', '')] = count;
+                          } else {
+                            primary[key] = count;
+                          }
+                        }
+                        const totalPrimary = Object.values(primary).reduce((a, b) => a + b, 0);
+
+                        // Tradition display names and colors
+                        const TRADITION_DISPLAY: Record<string, { name: string; emoji: string; color: string }> = {
+                          'judaism': { name: 'Judaism', emoji: '✡️', color: '#3B82F6' },
+                          'orthodox-judaism': { name: 'Orthodox Judaism', emoji: '✡️', color: '#0047AB' },
+                          'conservative-judaism': { name: 'Conservative Judaism', emoji: '✡️', color: '#2E5CB8' },
+                          'reform-judaism': { name: 'Reform Judaism', emoji: '✡️', color: '#4A90D9' },
+                          'reconstructionist-judaism': { name: 'Reconstructionist Judaism', emoji: '✡️', color: '#6BA3E8' },
+                          'messianic-judaism': { name: 'Messianic Judaism', emoji: '✡️✝️', color: '#3D6098' },
+                          'christianity': { name: 'Christianity', emoji: '✝️', color: '#8B5CF6' },
+                          'catholicism': { name: 'Catholicism', emoji: '✝️', color: '#8B0000' },
+                          'eastern-orthodox': { name: 'Eastern Orthodox', emoji: '☦️', color: '#8B4513' },
+                          'evangelical-protestant': { name: 'Evangelical Protestant', emoji: '📖', color: '#4169E1' },
+                          'mainline-protestant': { name: 'Mainline Protestant', emoji: '🕊️', color: '#6366F1' },
+                          'non-denominational-christian': { name: 'Non-Denominational', emoji: '✝️', color: '#EF4444' },
+                          'islam': { name: 'Islam', emoji: '☪️', color: '#10B981' },
+                          'sunni-islam': { name: 'Sunni Islam', emoji: '☪️', color: '#006400' },
+                          'shia-islam': { name: 'Shia Islam', emoji: '☪️', color: '#228B22' },
+                          'sufi-islam': { name: 'Sufi Islam', emoji: '🌀', color: '#047857' },
+                          'hinduism': { name: 'Hinduism', emoji: '🕉️', color: '#F59E0B' },
+                          'vaishnavism': { name: 'Vaishnavism', emoji: '🕉️', color: '#FF6B00' },
+                          'shaivism': { name: 'Shaivism', emoji: '🕉️', color: '#E85D04' },
+                          'shaktism': { name: 'Shaktism', emoji: '🕉️', color: '#DC2F02' },
+                          'advaita-vedanta': { name: 'Advaita Vedanta', emoji: '🕉️', color: '#CA8A04' },
+                          'buddhism': { name: 'Buddhism', emoji: '☸️', color: '#06B6D4' },
+                          'theravada-buddhism': { name: 'Theravada Buddhism', emoji: '☸️', color: '#06B6D4' },
+                          'mahayana-buddhism': { name: 'Mahayana Buddhism', emoji: '☸️', color: '#0891B2' },
+                          'vajrayana-buddhism': { name: 'Vajrayana Buddhism', emoji: '☸️', color: '#0E7490' },
+                          'sikhism': { name: 'Sikhism', emoji: '🪯', color: '#1E40AF' },
+                          'bahai-faith': { name: "Bahá'í Faith", emoji: '✯', color: '#7C3AED' },
+                          'jainism': { name: 'Jainism', emoji: '🙏', color: '#059669' },
+                          'zoroastrianism': { name: 'Zoroastrianism', emoji: '🔥', color: '#DC2626' },
+                          'secular-humanism': { name: 'Secular Humanism', emoji: '🌍', color: '#6B7280' },
+                          'interfaith-mysticism': { name: 'Interfaith Mysticism', emoji: '✨', color: '#A855F7' },
+                        };
+
+                        const sortedPrimary = Object.entries(primary).sort((a, b) => b[1] - a[1]);
+                        const sortedExploring = Object.entries(exploring).sort((a, b) => b[1] - a[1]);
+
+                        return (
+                          <div className="space-y-6">
+                            {/* Primary Traditions */}
+                            <div>
+                              <h3 className="text-sm font-medium text-slate-300 mb-3 uppercase tracking-wide">Primary Tradition ({totalPrimary} users)</h3>
+                              <div className="space-y-2">
+                                {sortedPrimary.map(([key, count]) => {
+                                  const display = TRADITION_DISPLAY[key] || { name: key, emoji: '📖', color: '#94A3B8' };
+                                  const pct = Math.round((count / Math.max(totalPrimary, 1)) * 100);
+                                  return (
+                                    <div key={key} className="flex items-center gap-3">
+                                      <span className="text-lg w-8 text-center">{display.emoji}</span>
+                                      <div className="flex-1">
+                                        <div className="flex items-center justify-between mb-1">
+                                          <span className="text-sm text-slate-200">{display.name}</span>
+                                          <span className="text-sm text-slate-400">{count} user{count !== 1 ? 's' : ''} ({pct}%)</span>
+                                        </div>
+                                        <div className="h-2 rounded-full overflow-hidden" style={{ backgroundColor: "#2A2A38" }}>
+                                          <div 
+                                            className="h-full rounded-full transition-all duration-500"
+                                            style={{ width: `${pct}%`, backgroundColor: display.color }}
+                                          />
+                                        </div>
+                                      </div>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                              {sortedPrimary.length === 0 && (
+                                <p className="text-slate-500 text-sm italic">No primary tradition data yet — users need to complete onboarding.</p>
+                              )}
+                            </div>
+
+                            {/* Exploring Traditions */}
+                            {sortedExploring.length > 0 && (
+                              <div>
+                                <h3 className="text-sm font-medium text-slate-300 mb-3 uppercase tracking-wide">Also Exploring</h3>
+                                <div className="flex flex-wrap gap-2">
+                                  {sortedExploring.map(([key, count]) => {
+                                    const display = TRADITION_DISPLAY[key] || { name: key, emoji: '📖', color: '#94A3B8' };
+                                    return (
+                                      <span 
+                                        key={key}
+                                        className="px-3 py-1.5 rounded-full text-sm border"
+                                        style={{ 
+                                          borderColor: `${display.color}50`,
+                                          backgroundColor: `${display.color}15`,
+                                          color: display.color
+                                        }}
+                                      >
+                                        {display.emoji} {display.name} ({count})
+                                      </span>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })()}
+                    </div>
+                  </div>
+                )}
 
                 {/* Users Table */}
                 <div className="rounded-xl border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>

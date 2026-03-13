@@ -80,6 +80,7 @@ export async function GET() {
     // Combine auth users with profile data
     const usersWithProfiles: UserWithProfile[] = authUsers.map(user => {
       const profile = profileMap.get(user.id);
+      const onboarding = profile?.onboarding as Record<string, any> | null;
       return {
         ...user,
         hasProfile: !!profile,
@@ -88,14 +89,36 @@ export async function GET() {
           primary_tradition: profile.primary_tradition,
           created_at: profile.created_at,
           last_active_at: profile.last_active_at,
+          traditions: onboarding?.tradition || [],
+          selected_tradition_ids: onboarding?.selected_tradition_ids || [],
         } : undefined,
       };
     });
+
+    // Build anonymized tradition breakdown
+    const traditionCounts: Record<string, number> = {};
+    for (const profile of profiles) {
+      const onboarding = profile.onboarding as Record<string, any> | null;
+      if (onboarding?.tradition && Array.isArray(onboarding.tradition)) {
+        for (const t of onboarding.tradition) {
+          traditionCounts[t] = (traditionCounts[t] || 0) + 1;
+        }
+      }
+      // Also count selected_tradition_ids (additional traditions they're exploring)
+      if (onboarding?.selected_tradition_ids && Array.isArray(onboarding.selected_tradition_ids)) {
+        for (const t of onboarding.selected_tradition_ids) {
+          // Use a separate key to distinguish primary vs exploring
+          const key = `exploring:${t}`;
+          traditionCounts[key] = (traditionCounts[key] || 0) + 1;
+        }
+      }
+    }
 
     return NextResponse.json({
       users: usersWithProfiles,
       totalAuthUsers: authUsers.length,
       totalWithProfiles: profiles.length,
+      traditionBreakdown: traditionCounts,
       timestamp: new Date().toISOString(),
     });
 

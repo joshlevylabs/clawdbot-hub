@@ -1708,6 +1708,7 @@ export default function FaithJourneyPage() {
   const [audioFilter, setAudioFilter] = useState<string>("all");
   const [audioSearch, setAudioSearch] = useState("");
   const [audioDate, setAudioDate] = useState<string>("all");
+  const [audioTypeFilter, setAudioTypeFilter] = useState<string>("all");
   const [audioViewMode, setAudioViewMode] = useState<"tradition" | "date">("tradition");
   const [elevenlabsUsage, setElevenlabsUsage] = useState<any>(null);
   const [usageLoading, setUsageLoading] = useState(false);
@@ -2418,65 +2419,69 @@ export default function FaithJourneyPage() {
     
     setAudioLoading(true);
     try {
-      // First fetch audio files
+      const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF0bGRucGpheGFlcXpndHFicnB5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk0Nzc0MDYsImV4cCI6MjA4NTA1MzQwNn0.40LmcgShkiG18aa6aF7vk6wT_Ft5ohWeUtRAG_reizs';
+      const sbHeaders = { 'apikey': SUPABASE_ANON, 'Authorization': `Bearer ${SUPABASE_ANON}` };
+      
+      // Fetch lesson/prayer audio files
       const audioResponse = await fetch(
         "https://atldnpjaxaeqzgtqbrpy.supabase.co/rest/v1/faith_lesson_audio?select=*&order=date.desc,created_at.desc",
-        {
-          headers: {
-            'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF0bGRucGpheGFlcXpndHFicnB5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk0Nzc0MDYsImV4cCI6MjA4NTA1MzQwNn0.40LmcgShkiG18aa6aF7vk6wT_Ft5ohWeUtRAG_reizs',
-            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF0bGRucGpheGFlcXpndHFicnB5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk0Nzc0MDYsImV4cCI6MjA4NTA1MzQwNn0.40LmcgShkiG18aa6aF7vk6wT_Ft5ohWeUtRAG_reizs'
-          }
-        }
+        { headers: sbHeaders }
       );
 
-      if (audioResponse.ok) {
-        const audioData = await audioResponse.json();
-        
-        // Fetch related data for lessons and traditions
-        const lessonIds = Array.from(new Set(audioData.map((audio: any) => audio.lesson_id)));
-        const traditionIds = Array.from(new Set(audioData.map((audio: any) => audio.tradition_id)));
-        
-        // Fetch lessons
-        const lessonsResponse = await fetch(
-          `https://atldnpjaxaeqzgtqbrpy.supabase.co/rest/v1/faith_lessons?select=id,topic,date&id=in.(${lessonIds.join(',')})`,
-          {
-            headers: {
-              'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF0bGRucGpheGFlcXpndHFicnB5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk0Nzc0MDYsImV4cCI6MjA4NTA1MzQwNn0.40LmcgShkiG18aa6aF7vk6wT_Ft5ohWeUtRAG_reizs',
-              'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF0bGRucGpheGFlcXpndHFicnB5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk0Nzc0MDYsImV4cCI6MjA4NTA1MzQwNn0.40LmcgShkiG18aa6aF7vk6wT_Ft5ohWeUtRAG_reizs'
-            }
-          }
-        );
-        
-        // Fetch traditions
-        const traditionsResponse = await fetch(
-          `https://atldnpjaxaeqzgtqbrpy.supabase.co/rest/v1/faith_traditions?select=id,slug,name,icon,color&id=in.(${traditionIds.join(',')})`,
-          {
-            headers: {
-              'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF0bGRucGpheGFlcXpndHFicnB5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk0Nzc0MDYsImV4cCI6MjA4NTA1MzQwNn0.40LmcgShkiG18aa6aF7vk6wT_Ft5ohWeUtRAG_reizs',
-              'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF0bGRucGpheGFlcXpndHFicnB5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk0Nzc0MDYsImV4cCI6MjA4NTA1MzQwNn0.40LmcgShkiG18aa6aF7vk6wT_Ft5ohWeUtRAG_reizs'
-            }
-          }
-        );
-        
-        const lessons = lessonsResponse.ok ? await lessonsResponse.json() : [];
-        const traditions = traditionsResponse.ok ? await traditionsResponse.json() : [];
-        
-        // Create lookup maps
-        const lessonMap = new Map(lessons.map((lesson: any) => [lesson.id, lesson]));
-        const traditionMap = new Map(traditions.map((tradition: any) => [tradition.id, tradition]));
-        
-        // Combine the data
-        const enrichedAudio = audioData.map((audio: any) => ({
-          ...audio,
-          lesson: lessonMap.get(audio.lesson_id),
-          tradition: traditionMap.get(audio.tradition_id),
-          audioUrl: `https://atldnpjaxaeqzgtqbrpy.supabase.co/storage/v1/object/public/faith-audio/${audio.storage_path}`
-        }));
-        
-        setAudioFiles(enrichedAudio);
-      } else {
-        console.error('Failed to fetch audio files');
-      }
+      // Fetch podcast episodes
+      const podcastResponse = await fetch(
+        "https://atldnpjaxaeqzgtqbrpy.supabase.co/rest/v1/faith_podcast_episodes?select=*&order=date.desc,created_at.desc",
+        { headers: sbHeaders }
+      );
+
+      const audioData = audioResponse.ok ? await audioResponse.json() : [];
+      const podcastData = podcastResponse.ok ? await podcastResponse.json() : [];
+      
+      // Fetch related data for lessons and traditions
+      const lessonIds = Array.from(new Set(audioData.map((audio: any) => audio.lesson_id).filter(Boolean)));
+      const allTraditionIds = Array.from(new Set([
+        ...audioData.map((a: any) => a.tradition_id),
+        ...podcastData.map((p: any) => p.tradition_id)
+      ].filter(Boolean)));
+      
+      // Fetch lessons
+      const lessonsResponse = lessonIds.length > 0 ? await fetch(
+        `https://atldnpjaxaeqzgtqbrpy.supabase.co/rest/v1/faith_lessons?select=id,topic,date&id=in.(${lessonIds.join(',')})`,
+        { headers: sbHeaders }
+      ) : null;
+      
+      // Fetch traditions
+      const traditionsResponse = allTraditionIds.length > 0 ? await fetch(
+        `https://atldnpjaxaeqzgtqbrpy.supabase.co/rest/v1/faith_traditions?select=id,slug,name,icon,color&id=in.(${allTraditionIds.join(',')})`,
+        { headers: sbHeaders }
+      ) : null;
+      
+      const lessons = lessonsResponse?.ok ? await lessonsResponse.json() : [];
+      const traditions = traditionsResponse?.ok ? await traditionsResponse.json() : [];
+      
+      // Create lookup maps
+      const lessonMap = new Map(lessons.map((lesson: any) => [lesson.id, lesson]));
+      const traditionMap = new Map(traditions.map((tradition: any) => [tradition.id, tradition]));
+      
+      // Enrich lesson/prayer audio
+      const enrichedAudio = audioData.map((audio: any) => ({
+        ...audio,
+        audio_type: audio.audio_type || (audio.storage_path?.startsWith('prayers/') ? 'prayer' : 'lesson'),
+        lesson: lessonMap.get(audio.lesson_id),
+        tradition: traditionMap.get(audio.tradition_id),
+        audioUrl: `https://atldnpjaxaeqzgtqbrpy.supabase.co/storage/v1/object/public/faith-audio/${audio.storage_path}`
+      }));
+      
+      // Enrich podcast episodes and normalize into same shape
+      const enrichedPodcast = podcastData.map((ep: any) => ({
+        ...ep,
+        audio_type: 'podcast',
+        lesson: { topic: ep.title, date: ep.date },
+        tradition: traditionMap.get(ep.tradition_id),
+        audioUrl: ep.storage_path ? `https://atldnpjaxaeqzgtqbrpy.supabase.co/storage/v1/object/public/faith-audio/${ep.storage_path}` : null
+      }));
+      
+      setAudioFiles([...enrichedAudio, ...enrichedPodcast]);
     } catch (error) {
       console.error('Error fetching audio files:', error);
     } finally {
@@ -5509,7 +5514,23 @@ export default function FaithJourneyPage() {
                     <>
                       {/* Filters */}
                       <div className="space-y-4 mb-6">
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                          {/* Audio Type Filter */}
+                          <div>
+                            <label className="text-xs font-medium text-slate-400">Audio Type</label>
+                            <select 
+                              value={audioTypeFilter}
+                              onChange={(e) => setAudioTypeFilter(e.target.value)}
+                              className="w-full mt-1 px-3 py-2 rounded-lg border text-sm"
+                              style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38", color: "#D4A020" }}
+                            >
+                              <option value="all">All Types</option>
+                              <option value="lesson">📖 Lessons</option>
+                              <option value="prayer">🙏 Daily Prayers</option>
+                              <option value="podcast">🎙️ Podcast Episodes</option>
+                            </select>
+                          </div>
+
                           {/* Tradition Filter */}
                           <div>
                             <label className="text-xs font-medium text-slate-400">Filter by Tradition</label>
@@ -5525,7 +5546,7 @@ export default function FaithJourneyPage() {
                               <option value="Islam">Islam</option>
                               <option value="Hinduism">Hinduism</option>
                               <option value="Buddhism">Buddhism</option>
-                              <option value="Bahá'í">Bahá'í</option>
+                              <option value="Bahá&apos;í">Bahá&apos;í</option>
                             </select>
                           </div>
                           
@@ -5560,6 +5581,19 @@ export default function FaithJourneyPage() {
                               <option value="month">This Month</option>
                             </select>
                           </div>
+                        </div>
+
+                        {/* Type counts summary */}
+                        <div className="flex items-center gap-4 text-xs text-slate-400">
+                          <span className="flex items-center gap-1">
+                            📖 {audioFiles.filter(a => a.audio_type === 'lesson').length} lessons
+                          </span>
+                          <span className="flex items-center gap-1">
+                            🙏 {audioFiles.filter(a => a.audio_type === 'prayer').length} prayers
+                          </span>
+                          <span className="flex items-center gap-1">
+                            🎙️ {audioFiles.filter(a => a.audio_type === 'podcast').length} podcast episodes
+                          </span>
                         </div>
                       </div>
 
@@ -5767,6 +5801,7 @@ export default function FaithJourneyPage() {
                           // Group by Tradition
                           Object.entries(audioFiles
                             .filter(audio => {
+                              const matchesType = audioTypeFilter === 'all' || audio.audio_type === audioTypeFilter;
                               const matchesTradition = audioFilter === 'all' || (audio.tradition?.name === audioFilter);
                               const matchesSearch = !audioSearch || 
                                 (audio.lesson?.topic || '').toLowerCase().includes(audioSearch.toLowerCase());
@@ -5788,7 +5823,7 @@ export default function FaithJourneyPage() {
                                 }
                               }
                               
-                              return matchesTradition && matchesSearch && matchesDate;
+                              return matchesType && matchesTradition && matchesSearch && matchesDate;
                             })
                             .reduce((grouped, audio) => {
                               const traditionKey = audio.tradition?.name || 'Unknown';
@@ -5821,6 +5856,17 @@ export default function FaithJourneyPage() {
                                     {new Date(audio.date + 'T00:00:00.000Z').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                                   </div>
                                   
+                                  {/* Type Badge */}
+                                  <div className="w-16">
+                                    <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${
+                                      audio.audio_type === 'podcast' ? 'bg-purple-500/20 text-purple-400' :
+                                      audio.audio_type === 'prayer' ? 'bg-blue-500/20 text-blue-400' :
+                                      'bg-green-500/20 text-green-400'
+                                    }`}>
+                                      {audio.audio_type === 'podcast' ? '🎙️ EP' : audio.audio_type === 'prayer' ? '🙏' : '📖'}
+                                    </span>
+                                  </div>
+
                                   {/* Topic */}
                                   <div className="min-w-0 flex-1">
                                     <span className="text-sm text-slate-200 truncate">
@@ -5837,12 +5883,13 @@ export default function FaithJourneyPage() {
                                   
                                   {/* Play Button */}
                                   <button
-                                    onClick={() => toggleAudio(audio.id, audio.audioUrl)}
+                                    onClick={() => audio.audioUrl ? toggleAudio(audio.id, audio.audioUrl) : null}
                                     className="flex items-center justify-center w-8 h-8 rounded-full transition-colors"
                                     style={{ 
                                       backgroundColor: currentlyPlaying === audio.id ? "#D4A020" : "#2A2A38",
-                                      color: currentlyPlaying === audio.id ? "#0B0B11" : "#64748B"
+                                      color: currentlyPlaying === audio.id ? "#0B0B11" : audio.audioUrl ? "#64748B" : "#333"
                                     }}
+                                    disabled={!audio.audioUrl}
                                   >
                                     {currentlyPlaying === audio.id ? (
                                       <Pause className="w-4 h-4" />
@@ -5858,6 +5905,7 @@ export default function FaithJourneyPage() {
                           // Group by Date (original implementation with timezone fix)
                           Object.entries(audioFiles
                             .filter(audio => {
+                              const matchesType = audioTypeFilter === 'all' || audio.audio_type === audioTypeFilter;
                               const matchesTradition = audioFilter === 'all' || (audio.tradition?.name === audioFilter);
                               const matchesSearch = !audioSearch || 
                                 (audio.lesson?.topic || '').toLowerCase().includes(audioSearch.toLowerCase());
@@ -5879,7 +5927,7 @@ export default function FaithJourneyPage() {
                                 }
                               }
                               
-                              return matchesTradition && matchesSearch && matchesDate;
+                              return matchesType && matchesTradition && matchesSearch && matchesDate;
                             })
                             .reduce((grouped, audio) => {
                               // Fix timezone issue by using UTC and proper date formatting

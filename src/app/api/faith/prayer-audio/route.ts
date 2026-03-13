@@ -312,6 +312,7 @@ export async function POST(request: NextRequest) {
         storage_path: uploadData.path,
         file_size_bytes: fileSize,
         char_count: charCount,
+        audio_type: 'prayer',
       })
 
     if (dbError) {

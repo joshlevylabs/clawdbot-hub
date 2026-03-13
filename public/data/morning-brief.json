@@ -1,140 +1,67 @@
 {
-  "date": "2026-03-12",
-  "timestamp": "2026-03-12T06:00:00-08:00",
-  "version": "2.0",
-  "sections": {
-    "prayer": {
-      "title": "🕐️ Morning Prayer",
-      "date": "Thursday, March 12, 2026",
-      "hebrew_date": "12 Kislev",
-      "parsha": "Vayechi",
-      "parsha_theme": "blessing children, final words, lasting impact",
-      "modeh_ani": "מודה אני לפניך — I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
-      "blessing": "Blessed are You who gives strength to the weary and renews the spirit of the exhausted.",
-      "psalm": "**Psalm 32:8**: \"I will instruct you and teach you in the way you should go.\"",
-      "proverb": "**Proverbs 27:23**: \"Know well the condition of your flocks, and give attention to your herds.\"",
-      "intention": "Help me see people as You see them — partners, not obstacles.",
-      "closing": "May your work today be a pleasing offering. May your rest tonight be deep and restorative."
-    },
-    "weather": {
-      "title": "🌤️ Weather",
-      "location": "Temecula, CA",
-      "status": "Unable to fetch current conditions",
-      "note": "Weather services temporarily unavailable"
-    },
-    "relationship": {
-      "title": "💗 Relationship Focus", 
-      "temperature": "critical",
-      "trend": "urgent",
-      "ratio": 1.2,
-      "stats": {
-        "total": 11,
-        "positive": 6,
-        "negative": 5
+  "date": "2026-03-13",
+  "timestamp": "2026-03-13T06:00:00-08:00",
+  "prayer": {
+    "hebrew_date": "13 Kislev",
+    "parsha": "Vayechi",
+    "theme": "blessing children, final words, lasting impact",
+    "modeh_ani": "מודה אני לפניך — I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
+    "psalm": "Psalm 16:8: 'I have set the Lord always before me; He is at my right hand, I will not be shaken.'",
+    "proverb": "Proverbs 27:23: 'Know well the condition of your flocks, and give attention to your herds.'",
+    "intention": "Help me be present with my family. Let my work create margin, not distance."
+  },
+  "relationship_analysis": {
+    "temperature": "critical",
+    "trend": "urgent", 
+    "priority_recommendations": [
+      "PRIORITY: Focus on repair. Acknowledge recent conflicts without defending.",
+      "Increase acts of service dramatically this week.",
+      "Create space for her to express frustrations without fixing."
+    ]
+  },
+  "weather": {
+    "location": "Temecula, CA",
+    "current": "Sunny, 83°F",
+    "forecast": "High 92°F / Low 54°F, Wind 7 mph from Northwest"
+  },
+  "email_highlights": {
+    "josh_joshlevylabs": [
+      {
+        "from": "Joe Dewulf <joe@partnrup.ai>",
+        "subject": "Openclaw intro",
+        "priority": "IMPORTANT"
       },
-      "love_languages": {
-        "primary": "quality_time", 
-        "secondary": "acts_of_service"
+      {
+        "from": "Vercel",
+        "subject": "Failed production deployment on team 'joshlevylabs' projects'",
+        "status": "URGENT - needs attention"
       },
-      "recommendations": [
-        "PRIORITY: Focus on repair. Acknowledge recent conflicts without defending.",
-        "Increase acts of service dramatically this week.",
-        "Create space for her to express frustrations without fixing."
-      ],
-      "peak_hours": {
-        "positive": [21, 19, 20],
-        "negative": [21, 1, 5]
+      {
+        "from": "Anthropic",
+        "subject": "Your receipt from Anthropic, PBC #2320-0911-5214"
       }
-    },
-    "trading": {
-      "title": "📈 Market Summary",
-      "fear_greed": {
-        "current": 23.9,
-        "rating": "extreme fear", 
-        "summary": "Markets in extreme fear at 24. Panic selling may create opportunities for contrarians."
-      },
-      "regime": {
-        "spy": "sideways",
-        "qqq": "sideways",
-        "global": "sideways",
-        "summary": "SPY is sideways, QQQ is sideways. Momentum is weakening."
-      },
-      "signals": {
-        "buy": 0,
-        "hold": 24,
-        "watch": 0,
-        "summary": "All signals in HOLD mode. Market uncertainty persisting."
-      },
-      "key_levels": {
-        "spy": {
-          "price": 676.33,
-          "support": 673.39,
-          "resistance": 679.16
-        },
-        "qqq": {
-          "price": 607.69,
-          "support": 601.62,
-          "resistance": 608.3
-        }
-      }
-    },
-    "calendar": {
-      "title": "📅 Calendar",
-      "status": "Unable to fetch calendar events",
-      "note": "Calendar integration temporarily unavailable"
-    },
-    "email": {
-      "title": "📧 Email Highlights",
-      "status": "Unable to fetch email",
-      "note": "Email integration temporarily unavailable"  
-    },
-    "world_news": {
-      "title": "🌍 World & Policy",
-      "items": [
-        {
-          "source": "Times of Israel",
-          "headline": "Ministers reportedly say Iran regime change may take a year amid 'fog' over war's length",
-          "summary": "Israeli Finance Minister shelves ultra-Orthodox draft exemption law as government focuses on war priorities",
-          "relevance": "Israel policy developments"
-        }
-      ]
-    },
-    "ai_news": {
-      "title": "🤖 AI Updates",
-      "items": [
-        {
-          "source": "NVIDIA Blog",
-          "headline": "42% of companies prioritize optimizing AI workflows in 2026",
-          "summary": "State of AI report shows workflow optimization as top spending priority, followed by finding new use cases",
-          "relevance": "Industry trends for builders"
-        },
-        {
-          "source": "FinTech Weekly", 
-          "headline": "BNB Chain deploys infrastructure for autonomous agent payments",
-          "summary": "ERC-8004 standard creates verifiable on-chain identities for AI agents on BNB Chain mainnet",
-          "relevance": "AI agent infrastructure developments"
-        },
-        {
-          "source": "Crescendo AI",
-          "headline": "Oracle announces $50B AI infrastructure expansion",
-          "summary": "Oracle Corp shares decline after announcing massive AI infrastructure funding plans",
-          "relevance": "Major enterprise AI investment"
-        }
-      ]
+    ]
+  },
+  "mre_trading": {
+    "fear_greed_index": 20.2,
+    "sentiment": "extreme fear",
+    "summary": "Markets in extreme fear at 20. Panic selling may create opportunities for contrarians.",
+    "regime": "SPY sideways, QQQ bear. Momentum is weakening.",
+    "signals": {
+      "total_buy": 2,
+      "total_hold": 22,
+      "notable": "EFA (international) showing BUY signal with 6.1 strength"
     }
   },
-  "summary": {
-    "key_themes": [
-      "Relationship requires immediate attention - focus on repair and acknowledgment",
-      "Markets in extreme fear mode - all signals on HOLD, opportunities may emerge",
-      "AI infrastructure investments accelerating across enterprise and crypto",
-      "Torah focus on blessing and lasting impact aligns with current family priorities"
-    ],
-    "priorities_today": [
-      "Address relationship temperature with quality time and acts of service",
-      "Monitor market sentiment for potential turning points", 
-      "Stay informed on AI agent infrastructure developments",
-      "Apply Torah wisdom of blessing others in all interactions"
-    ]
-  }
+  "world_news": [
+    "Gavin Newsom compares Israel to 'apartheid state,' questions military support (NYT, March 4)",
+    "BGU experts analyze current Israeli-Iranian relations and Middle East implications (JPost, today)",
+    "Focus on conservative perspective: Strong support for Israel continues despite political pressures"
+  ],
+  "ai_news": [
+    "Apple announces completely reimagined, AI-powered Siri set to debut in 2026",
+    "AI funding trends shift from hype to pragmatism - investors prioritizing real production usage and revenue",
+    "NVIDIA report: 42% of companies prioritizing AI workflow optimization as top spending priority in 2026",
+    "TechCrunch Founder Summit 2026 focusing on AI tactical playbooks for founders"
+  ]
 }

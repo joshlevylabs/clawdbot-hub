@@ -49,7 +49,9 @@ async function runSupabaseQuery(query: string): Promise<any[]> {
   });
 
   if (!response.ok) {
-    throw new Error(`Supabase query failed: ${response.statusText}`);
+    const errorBody = await response.text();
+    console.error('Supabase query error:', response.status, errorBody, 'Query:', query.substring(0, 100));
+    throw new Error(`Supabase query failed: ${response.status} ${response.statusText} - ${errorBody.substring(0, 200)}`);
   }
 
   const data = await response.json();
@@ -83,13 +85,9 @@ function addDays(date: Date, days: number): Date {
 export async function GET() {
   try {
     // Query 1: Lessons by date (last 14 days)
-    const lessonsData = await runSupabaseQuery(`
-      SELECT date, COUNT(*) as count 
-      FROM faith_lessons 
-      WHERE date >= CURRENT_DATE - INTERVAL '14 days' 
-      GROUP BY date 
-      ORDER BY date DESC
-    `);
+    const lessonsData = await runSupabaseQuery(
+      "SELECT date, COUNT(*) as count FROM faith_lessons WHERE date >= CURRENT_DATE - INTERVAL '14 days' GROUP BY date ORDER BY date DESC"
+    );
 
     // Query 2: Prayers by date
     const prayersData = await runSupabaseQuery(`
@@ -121,24 +119,24 @@ export async function GET() {
 
     // Query 5: Lesson traditions for latest date
     const lessonTraditionsData = await runSupabaseQuery(`
-      SELECT tradition, COUNT(*) as count 
+      SELECT baseline_tradition_id as tradition, COUNT(*) as count 
       FROM faith_lessons 
       WHERE date = (
         SELECT MAX(date) 
         FROM faith_lessons 
         WHERE date <= CURRENT_DATE + INTERVAL '2 days'
       ) 
-      GROUP BY tradition 
-      ORDER BY tradition
+      GROUP BY baseline_tradition_id 
+      ORDER BY baseline_tradition_id
     `);
 
     // Query 6: Audio traditions for latest date
     const audioTraditionsData = await runSupabaseQuery(`
-      SELECT tradition_name, COUNT(*) as count 
+      SELECT tradition_id as tradition, COUNT(*) as count 
       FROM faith_lesson_audio 
       WHERE date = (SELECT MAX(date) FROM faith_lesson_audio) 
-      GROUP BY tradition_name 
-      ORDER BY tradition_name
+      GROUP BY tradition_id 
+      ORDER BY tradition_id
     `);
 
     // Create lookup maps
@@ -212,7 +210,7 @@ export async function GET() {
       dailyContent: dailyContent.reverse(), // Show most recent first
       latestTraditions: {
         lessons: lessonTraditionsData.map(row => ({ tradition: row.tradition, count: row.count })),
-        audio: audioTraditionsData.map(row => ({ tradition: row.tradition_name, count: row.count }))
+        audio: audioTraditionsData.map(row => ({ tradition: row.tradition, count: row.count }))
       },
       nextDate,
       coverage: {

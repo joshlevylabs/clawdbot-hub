@@ -3090,6 +3090,7 @@ export default function FaithJourneyPage() {
                               <th className="text-left py-3 px-4 text-slate-400 font-medium">Created</th>
                               <th className="text-left py-3 px-4 text-slate-400 font-medium">Status</th>
                               <th className="text-left py-3 px-4 text-slate-400 font-medium">Profile</th>
+                              <th className="text-left py-3 px-4 text-slate-400 font-medium">Faith Guide</th>
                               <th className="text-left py-3 px-4 text-slate-400 font-medium">Last Sign In</th>
                               <th className="text-left py-3 px-4 text-slate-400 font-medium">App</th>
                               <th className="text-right py-3 px-4 text-slate-400 font-medium">Actions</th>
@@ -3122,10 +3123,22 @@ export default function FaithJourneyPage() {
                                   }`}>
                                     {user.hasProfile ? 'Yes' : 'No'}
                                   </span>
-                                  {user.hasProfile && user.profileData && (
+                                  {user.hasProfile && user.profileData?.primary_tradition && (
                                     <div className="text-xs text-slate-500 mt-1">
-                                      {user.profileData.guide_name} • {user.profileData.primary_tradition}
+                                      {user.profileData.primary_tradition}
                                     </div>
+                                  )}
+                                </td>
+                                <td className="py-3 px-4">
+                                  {user.hasProfile && user.profileData?.guide_name ? (
+                                    <div className="flex items-center gap-2">
+                                      <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold" style={{ backgroundColor: "#D4A020", color: "#0B0B11" }}>
+                                        {user.profileData.guide_name.charAt(0)}
+                                      </div>
+                                      <span className="text-sm text-slate-200">{user.profileData.guide_name}</span>
+                                    </div>
+                                  ) : (
+                                    <span className="text-xs text-slate-600">—</span>
                                   )}
                                 </td>
                                 <td className="py-3 px-4 text-slate-400 text-sm">

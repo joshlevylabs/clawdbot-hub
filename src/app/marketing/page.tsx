@@ -40,6 +40,12 @@ import {
   TrendingUp,
   Globe,
   Edit,
+  BookOpen,
+  Radio,
+  Clock,
+  CheckCircle,
+  AlertCircle,
+  ArrowRight,
 } from "lucide-react";
 // Show types (embedded — no API dependency)
 interface ShowEpisode {
@@ -198,6 +204,7 @@ interface SocialPlatform {
 
 const TABS = [
   { id: 'podcast', label: 'Podcast', icon: Mic },
+  { id: 'dailydvar', label: 'Daily Dvar', icon: BookOpen },
   { id: 'newsletter', label: 'Newsletter', icon: Mail },
   { id: 'social', label: 'Social Media', icon: TrendingUp },
 ] as const;
@@ -1303,6 +1310,150 @@ function PodcastDashboard() {
   );
 }
 
+// Daily Dvar Dashboard Component
+function DailyDvarDashboard() {
+  const pipelineStages = [
+    { id: 'upstream', name: 'Upstream Content', icon: '📝', status: 'active' as const, description: 'Lesson + prayer text from nightly generation (25 traditions)', detail: 'faith_lessons + faith_daily_prayers tables' },
+    { id: 'tts-content', name: 'Lesson & Prayer TTS', icon: '🎙️', status: 'active' as const, description: 'ElevenLabs audio for lesson + prayer (reused from app)', detail: 'Rabbi Shafier voice • Cached in faith_lesson_audio' },
+    { id: 'wrapper-gen', name: 'Podcast Wrapper Generation', icon: '✍️', status: 'development' as const, description: 'AI-generated intro, transitions, outro, app promo', detail: 'In-character as Rabbi Moshe • Anthropic API' },
+    { id: 'wrapper-tts', name: 'Wrapper TTS', icon: '🔊', status: 'development' as const, description: 'Voice synthesis for intro, transitions, outro', detail: 'Same voice ID (W1EJxHy9vl73) • Same settings' },
+    { id: 'assembly', name: 'Episode Assembly', icon: '🎵', status: 'development' as const, description: 'Stitch all audio + ambient music bed → final MP3', detail: 'Ambient at -12dB • Fade in/out • ~10 min episodes' },
+    { id: 'marketing', name: 'Marketing Hub Post', icon: '📊', status: 'planned' as const, description: 'Auto-post episode details to Hub marketing page', detail: 'Title, description, duration, tradition' },
+    { id: 'distribution', name: 'Distribution', icon: '📡', status: 'planned' as const, description: 'Auto-upload to Spotify for Podcasters → Apple + Spotify', detail: 'RSS feed generation • Platform distribution' },
+  ];
+
+  const statusColors = {
+    active: { bg: 'bg-green-900/30', text: 'text-green-400', label: 'Active' },
+    development: { bg: 'bg-yellow-900/30', text: 'text-yellow-400', label: 'In Development' },
+    planned: { bg: 'bg-slate-700/30', text: 'text-slate-400', label: 'Planned' },
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Podcast Info Header */}
+      <div className="rounded-xl border p-6" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+        <div className="flex items-start gap-4">
+          <div className="w-16 h-16 rounded-xl flex items-center justify-center text-2xl" style={{ backgroundColor: "#D4A020" }}>
+            ✡️
+          </div>
+          <div className="flex-1">
+            <h2 className="text-xl font-bold text-slate-100">The Daily Dvar with AI Rabbi Moshe</h2>
+            <p className="text-slate-400 text-sm mt-2 max-w-3xl">
+              Your daily Torah teaching from Rabbi Moshe — an AI-powered Orthodox Judaism guide on the Faith Journey app. 
+              Each episode weaves a lesson and prayer grounded in millennia of Jewish tradition, generated fresh every day 
+              by artificial intelligence trained on Torah, Talmud, and rabbinic commentary. Short enough for your commute. 
+              Deep enough to sit with all day. The future of faith meets ancient wisdom.
+            </p>
+            <div className="flex gap-4 mt-3">
+              <span className="text-xs px-2 py-1 rounded-full bg-blue-900/30 text-blue-400">Orthodox Judaism</span>
+              <span className="text-xs px-2 py-1 rounded-full bg-purple-900/30 text-purple-400">Rabbi Shafier Voice</span>
+              <span className="text-xs px-2 py-1 rounded-full bg-amber-900/30 text-amber-400">~10 min episodes</span>
+              <span className="text-xs px-2 py-1 rounded-full bg-green-900/30 text-green-400">Daily</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Distribution Status */}
+      <div className="rounded-xl border p-6" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+        <h3 className="text-lg font-semibold text-slate-100 flex items-center gap-2 mb-4">
+          <Radio className="w-5 h-5" style={{ color: "#D4A020" }} />
+          Distribution Platforms
+        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {[
+            { name: 'Spotify for Podcasters', icon: '🎧', status: 'Setting up', color: 'text-yellow-400' },
+            { name: 'Apple Podcasts', icon: '🍎', status: 'Setting up', color: 'text-yellow-400' },
+            { name: 'RSS Feed', icon: '📡', status: 'Planned', color: 'text-slate-500' },
+          ].map((platform) => (
+            <div key={platform.name} className="rounded-lg border p-4" style={{ borderColor: "#2A2A38", backgroundColor: "#0B0B11" }}>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-lg">{platform.icon}</span>
+                  <span className="text-sm font-medium text-slate-200">{platform.name}</span>
+                </div>
+                <span className={`text-xs ${platform.color}`}>{platform.status}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Episode Generation Pipeline */}
+      <div className="rounded-xl border p-6" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+        <h3 className="text-lg font-semibold text-slate-100 flex items-center gap-2 mb-6">
+          <Settings2 className="w-5 h-5" style={{ color: "#D4A020" }} />
+          Daily Episode Generation Pipeline
+        </h3>
+        <div className="space-y-1">
+          {pipelineStages.map((stage, index) => {
+            const statusStyle = statusColors[stage.status];
+            return (
+              <div key={stage.id}>
+                <div className="flex items-start gap-4 p-4 rounded-lg" style={{ backgroundColor: "#0B0B11" }}>
+                  {/* Stage number + connector */}
+                  <div className="flex flex-col items-center">
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold" 
+                      style={{ backgroundColor: stage.status === 'active' ? '#166534' : stage.status === 'development' ? '#854d0e' : '#374151', color: '#fff' }}>
+                      {index + 1}
+                    </div>
+                  </div>
+                  {/* Content */}
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-lg">{stage.icon}</span>
+                      <span className="text-sm font-semibold text-slate-100">{stage.name}</span>
+                      <span className={`text-xs px-2 py-0.5 rounded-full ${statusStyle.bg} ${statusStyle.text}`}>
+                        {statusStyle.label}
+                      </span>
+                    </div>
+                    <p className="text-sm text-slate-400">{stage.description}</p>
+                    <p className="text-xs text-slate-600 mt-1">{stage.detail}</p>
+                  </div>
+                </div>
+                {/* Connector arrow */}
+                {index < pipelineStages.length - 1 && (
+                  <div className="flex justify-center py-1">
+                    <div className="w-0.5 h-4" style={{ backgroundColor: "#2A2A38" }} />
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Episode History (Placeholder) */}
+      <div className="rounded-xl border p-6" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+        <h3 className="text-lg font-semibold text-slate-100 flex items-center gap-2 mb-4">
+          <Clock className="w-5 h-5" style={{ color: "#D4A020" }} />
+          Episode History
+        </h3>
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b" style={{ borderColor: "#2A2A38" }}>
+                <th className="text-left py-3 px-4 text-slate-400 font-medium text-sm">Date</th>
+                <th className="text-left py-3 px-4 text-slate-400 font-medium text-sm">Topic</th>
+                <th className="text-left py-3 px-4 text-slate-400 font-medium text-sm">Duration</th>
+                <th className="text-left py-3 px-4 text-slate-400 font-medium text-sm">Status</th>
+                <th className="text-right py-3 px-4 text-slate-400 font-medium text-sm">Listen</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td colSpan={5} className="py-8 text-center text-slate-500 text-sm italic">
+                  No episodes generated yet. Pipeline stages 3-5 are in development.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // Main Marketing Page Component
 export default function MarketingPage() {
   const [activeTab, setActiveTab] = useState<TabId>('podcast');
@@ -1344,6 +1495,7 @@ export default function MarketingPage() {
       {/* Tab Content */}
       <div>
         {activeTab === 'podcast' && <PodcastDashboard />}
+        {activeTab === 'dailydvar' && <DailyDvarDashboard />}
         {activeTab === 'newsletter' && <NewsletterDashboard />}
         {activeTab === 'social' && <SocialMediaDashboard />}
       </div>

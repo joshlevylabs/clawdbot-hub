@@ -65,12 +65,24 @@ export async function POST(request: NextRequest) {
         const { data: { user }, error } = await supabaseAuth.auth.getUser(token)
         if (user && !error) {
           authenticated = true
+        } else {
+          console.error('Bearer token auth failed:', {
+            hasUser: !!user,
+            error: error?.message,
+            userEmail: user?.email,
+            emailVerified: user?.email_confirmed_at
+          })
         }
+      } else {
+        console.error('No Bearer token found in Authorization header')
       }
     }
     
     if (!authenticated) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return NextResponse.json({ 
+        error: 'Unauthorized',
+        details: 'Authentication failed. Please sign in again or verify your email.'
+      }, { status: 401 })
     }
 
     // Create Supabase client with service role for database operations
@@ -129,7 +141,7 @@ export async function POST(request: NextRequest) {
       const key = prayer.tradition_key.toLowerCase()
       if (key.includes('judaism') || key.includes('jewish')) traditionFamily = 'judaism'
       else if (key.includes('islam') || key.includes('muslim')) traditionFamily = 'islam'
-      else if (key.includes('christian') || key.includes('catholic') || key.includes('orthodox') || key.includes('protestant') || key.includes('evangelical')) traditionFamily = 'christianity'
+      else if (key.includes('christian') || key.includes('catholic') || key.includes('orthodox') || key.includes('protestant') || key.includes('evangelical') || key.includes('non-denominational')) traditionFamily = 'christianity'
       else if (key.includes('hindu') || key.includes('vedanta') || key.includes('shaiv') || key.includes('vaishnav') || key.includes('shakti')) traditionFamily = 'hinduism'
       else if (key.includes('buddhi') || key.includes('zen') || key.includes('theravada') || key.includes('mahayana') || key.includes('vajrayana')) traditionFamily = 'buddhism'
     }

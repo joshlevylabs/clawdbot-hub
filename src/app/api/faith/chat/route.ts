@@ -147,6 +147,9 @@ export async function POST(request: NextRequest) {
 
     // 5. Build system prompt: guide persona + user memory context
     let systemPrompt = guide.system_prompt;
+    
+    // Add scripture citation instruction
+    systemPrompt += '\n\nIMPORTANT: Always include specific scripture references (book, chapter:verse) when relevant. Quote brief passages directly when they support your point. For example: "As it says in Proverbs 3:5-6, \'Trust in the LORD with all your heart and lean not on your own understanding; in all your ways submit to him, and he will make your paths straight.\'" Be natural and contextual with these citations.';
 
     // Add user context
     if (recentReflections.length > 0 || recentEngagement.length > 0) {

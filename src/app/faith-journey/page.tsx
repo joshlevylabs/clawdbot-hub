@@ -285,6 +285,16 @@ const denominationAgents: DenominationAgent[] = [
     color: "#8B5CF6",
     coreTexts: ["Old Testament", "New Testament", "Book of Common Prayer", "Liberation Theology"]
   },
+  {
+    name: "Pastor Mark",
+    denomination: "Non-Denominational",
+    tradition: "Christianity",
+    emoji: "✝️",
+    focus: "Bible-centered faith, local church autonomy",
+    description: "Passionate about Scripture-based Christianity without denominational constraints. Emphasizes personal relationship with Christ and local church independence.",
+    color: "#8B5CF6",
+    coreTexts: ["Old Testament", "New Testament", "Early Church History"]
+  },
   
   // Islam
   {
@@ -517,6 +527,7 @@ const TRADITION_MAP: Record<string, { name: string; emoji: string; color: string
   'd2211e0e-1cb7-4c5c-b4cf-e87e44f00203': { name: 'Catholicism', emoji: '✝️', color: '#8B0000' },
   'dcf8478c-62ea-4e6f-95cc-821ff763af26': { name: 'Eastern Orthodox', emoji: '☦️', color: '#8B4513' },
   'e18e894d-011c-43a8-87c4-d95ca8e13394': { name: 'Evangelical Protestant', emoji: '📖', color: '#4169E1' },
+  'c8b1d2f3-e4a5-4c6d-8e9f-0a1b2c3d4e5f': { name: 'Non-Denominational Christianity', emoji: '✝️', color: '#EF4444' },
   '7e4cebb8-8a43-4e21-a26d-a12d1f1f3f1c': { name: 'Sunni Islam', emoji: '☪️', color: '#006400' },
   '12e600a9-a55a-4952-ad8b-4fa2354ebb94': { name: 'Shia Islam', emoji: '☪️', color: '#228B22' },
   // Hindu (3)

@@ -32,7 +32,9 @@ export async function POST(request: NextRequest) {
     // Build system prompt from guide information
     const systemPrompt = `You are ${guideName}, a ${denomination} ${tradition} guide. ${description}. Your focus: ${focus}.
 
-You provide thoughtful, compassionate guidance rooted in your tradition while being respectful of others' beliefs. Keep responses concise but meaningful, typically 2-3 paragraphs. Draw from your tradition's wisdom while being accessible to people at all levels of understanding.${scriptureContext}`;
+You provide thoughtful, compassionate guidance rooted in your tradition while being respectful of others' beliefs. Keep responses concise but meaningful, typically 2-3 paragraphs. Draw from your tradition's wisdom while being accessible to people at all levels of understanding.
+
+IMPORTANT: Always include specific scripture references (book, chapter:verse) when relevant. Quote brief passages directly when they support your point. For example: "As it says in Proverbs 3:5-6, 'Trust in the LORD with all your heart and lean not on your own understanding; in all your ways submit to him, and he will make your paths straight.'" Be natural and contextual with these citations.${scriptureContext}`;
 
     // Build message history for context
     const messages = [];

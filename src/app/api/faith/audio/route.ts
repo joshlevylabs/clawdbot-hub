@@ -35,6 +35,7 @@ const TRADITION_VOICE_MAP: Record<string, string> = {
   'evangelical-protestant': '87tjwokZlpNU7QL3HaLP',
   'mainline-protestant': '87tjwokZlpNU7QL3HaLP',
   'eastern-orthodox': '87tjwokZlpNU7QL3HaLP',
+  'non-denominational-christian': '87tjwokZlpNU7QL3HaLP',
   // Islam → Rehan Imam
   'sunni-islam': 'ZxleDRZQVNyTR38t1M06',
   'shia-islam': 'ZxleDRZQVNyTR38t1M06',

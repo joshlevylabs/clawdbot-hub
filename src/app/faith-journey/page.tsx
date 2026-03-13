@@ -3019,16 +3019,16 @@ export default function FaithJourneyPage() {
                       </div>
 
                       {/* Stage 3: Podcast Wrapper Generation */}
-                      <div className="flex items-center gap-4 p-4 rounded-lg border-l-4" style={{ backgroundColor: "#0B0B11", borderLeftColor: "#F59E0B" }}>
+                      <div className="flex items-center gap-4 p-4 rounded-lg border-l-4" style={{ backgroundColor: "#0B0B11", borderLeftColor: "#10B981" }}>
                         <div className="flex items-center gap-2">
-                          <Edit3 className="w-6 h-6 text-yellow-400" />
+                          <Edit3 className="w-6 h-6 text-green-400" />
                           <div>
                             <h4 className="text-sm font-semibold text-slate-200">Stage 3: Podcast Wrapper Generation</h4>
-                            <p className="text-xs text-slate-400">✍️ AI Text</p>
+                            <p className="text-xs text-slate-400">✅ generate_episode.py</p>
                           </div>
                         </div>
                         <div className="ml-auto">
-                          <div className="px-2 py-1 rounded text-xs font-medium bg-yellow-500/20 text-yellow-400">In Development</div>
+                          <div className="px-2 py-1 rounded text-xs font-medium bg-green-500/20 text-green-400">Active</div>
                         </div>
                       </div>
                       <div className="ml-8 text-xs text-slate-400 space-y-1">
@@ -3039,16 +3039,16 @@ export default function FaithJourneyPage() {
                       </div>
 
                       {/* Stage 4: Wrapper TTS */}
-                      <div className="flex items-center gap-4 p-4 rounded-lg border-l-4" style={{ backgroundColor: "#0B0B11", borderLeftColor: "#F59E0B" }}>
+                      <div className="flex items-center gap-4 p-4 rounded-lg border-l-4" style={{ backgroundColor: "#0B0B11", borderLeftColor: "#10B981" }}>
                         <div className="flex items-center gap-2">
-                          <Mic className="w-6 h-6 text-yellow-400" />
+                          <Mic className="w-6 h-6 text-green-400" />
                           <div>
                             <h4 className="text-sm font-semibold text-slate-200">Stage 4: Wrapper TTS</h4>
-                            <p className="text-xs text-slate-400">🔊 ElevenLabs</p>
+                            <p className="text-xs text-slate-400">✅ ElevenLabs (Rabbi Shafier voice)</p>
                           </div>
                         </div>
                         <div className="ml-auto">
-                          <div className="px-2 py-1 rounded text-xs font-medium bg-yellow-500/20 text-yellow-400">In Development</div>
+                          <div className="px-2 py-1 rounded text-xs font-medium bg-green-500/20 text-green-400">Active</div>
                         </div>
                       </div>
                       <div className="ml-8 text-xs text-slate-400 space-y-1">
@@ -3057,16 +3057,16 @@ export default function FaithJourneyPage() {
                       </div>
 
                       {/* Stage 5: Episode Assembly */}
-                      <div className="flex items-center gap-4 p-4 rounded-lg border-l-4" style={{ backgroundColor: "#0B0B11", borderLeftColor: "#F59E0B" }}>
+                      <div className="flex items-center gap-4 p-4 rounded-lg border-l-4" style={{ backgroundColor: "#0B0B11", borderLeftColor: "#10B981" }}>
                         <div className="flex items-center gap-2">
-                          <Music className="w-6 h-6 text-yellow-400" />
+                          <Music className="w-6 h-6 text-green-400" />
                           <div>
                             <h4 className="text-sm font-semibold text-slate-200">Stage 5: Episode Assembly</h4>
-                            <p className="text-xs text-slate-400">🎵 Audio Stitching</p>
+                            <p className="text-xs text-slate-400">✅ pydub + ffmpeg (music bed at -12dB)</p>
                           </div>
                         </div>
                         <div className="ml-auto">
-                          <div className="px-2 py-1 rounded text-xs font-medium bg-yellow-500/20 text-yellow-400">In Development</div>
+                          <div className="px-2 py-1 rounded text-xs font-medium bg-green-500/20 text-green-400">Active</div>
                         </div>
                       </div>
                       <div className="ml-8 text-xs text-slate-400 space-y-1">
@@ -3121,11 +3121,7 @@ export default function FaithJourneyPage() {
                         <div className="flex items-center gap-4 text-xs">
                           <span className="flex items-center gap-1">
                             <div className="w-2 h-2 rounded-full bg-green-400"></div>
-                            2 Active
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <div className="w-2 h-2 rounded-full bg-yellow-400"></div>
-                            3 In Development
+                            5 Active
                           </span>
                           <span className="flex items-center gap-1">
                             <div className="w-2 h-2 rounded-full bg-slate-400"></div>

@@ -53,7 +53,7 @@ async function runSupabaseQuery(query: string): Promise<any[]> {
   }
 
   const data = await response.json();
-  return data.result || [];
+  return Array.isArray(data) ? data : (data.result || []);
 }
 
 function getStatusForDay(lessons: number, prayers: number, images: number): string {

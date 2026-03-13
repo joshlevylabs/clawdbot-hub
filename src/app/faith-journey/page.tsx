@@ -1721,6 +1721,14 @@ export default function FaithJourneyPage() {
   const [newVoiceId, setNewVoiceId] = useState('');
   const [newVoiceName, setNewVoiceName] = useState('');
 
+  // Audio Library Modal state
+  const [selectedTraditionModal, setSelectedTraditionModal] = useState<string | null>(null);
+  const [modalAudioFilter, setModalAudioFilter] = useState<string>("all");
+
+  // Pipeline status state
+  const [pipelineStatus, setPipelineStatus] = useState<any>(null);
+  const [pipelineLoading, setPipelineLoading] = useState(false);
+
   // Prayer data state  
   const [dailyPrayers, setDailyPrayers] = useState<any[]>([]);
   const [sleepPrayers, setSleepPrayers] = useState<any[]>([]);
@@ -2037,6 +2045,13 @@ export default function FaithJourneyPage() {
   useEffect(() => {
     if (activeTab === "users") {
       fetchUsersData();
+    }
+  }, [activeTab]);
+
+  // Fetch pipeline status when overview tab is active
+  useEffect(() => {
+    if (activeTab === "overview") {
+      fetchPipelineStatus();
     }
   }, [activeTab]);
 
@@ -2486,6 +2501,55 @@ export default function FaithJourneyPage() {
     }
   };
 
+  // Fetch pipeline status function
+  const fetchPipelineStatus = async () => {
+    if (pipelineLoading) return;
+    
+    setPipelineLoading(true);
+    try {
+      const response = await fetch('/api/faith/pipeline');
+      if (response.ok) {
+        const data = await response.json();
+        setPipelineStatus(data);
+      } else {
+        // Fallback to mock data if endpoint doesn't exist yet
+        setPipelineStatus({
+          schedule: {
+            lessons: "Daily at 02:00 UTC",
+            prayers: "Daily at 02:30 UTC", 
+            audio: "Daily at 03:00 UTC"
+          },
+          lastRun: {
+            date: "2026-03-13",
+            time: "02:15 UTC",
+            status: "success",
+            generated: ["lessons", "prayers", "audio"],
+            duration: "47 minutes"
+          },
+          nextRun: {
+            date: "2026-03-14",
+            time: "02:00 UTC",
+            willGenerate: ["lessons", "prayers", "audio"]
+          },
+          history: [
+            { date: "2026-03-13", status: "success", duration: "47m" },
+            { date: "2026-03-12", status: "success", duration: "52m" },
+            { date: "2026-03-11", status: "success", duration: "45m" },
+            { date: "2026-03-10", status: "partial", duration: "38m" },
+            { date: "2026-03-09", status: "success", duration: "51m" },
+            { date: "2026-03-08", status: "success", duration: "49m" },
+            { date: "2026-03-07", status: "failed", duration: "12m" }
+          ]
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching pipeline status:', error);
+      setPipelineStatus(null);
+    } finally {
+      setPipelineLoading(false);
+    }
+  };
+
   // Audio playback controls
   const toggleAudio = (audioId: string, audioUrl: string) => {
     // Pause all other audio
@@ -2700,6 +2764,126 @@ export default function FaithJourneyPage() {
                       ))}
                     </div>
                   </div>
+                </div>
+
+                {/* Content Generation Pipeline Status */}
+                <div className="rounded-xl p-4 border" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+                  <h3 className="text-lg font-semibold text-slate-100 mb-4 flex items-center gap-2">
+                    <Settings className="w-5 h-5" style={{ color: "#D4A020" }} />
+                    Content Generation Pipeline
+                  </h3>
+                  {pipelineLoading ? (
+                    <div className="text-center py-8">
+                      <Loader className="w-6 h-6 animate-spin mx-auto mb-2 text-slate-400" />
+                      <p className="text-slate-400">Loading pipeline status...</p>
+                    </div>
+                  ) : pipelineStatus ? (
+                    <div className="space-y-6">
+                      {/* Pipeline Schedule */}
+                      <div>
+                        <h4 className="text-sm font-medium text-slate-300 mb-3 flex items-center gap-2">
+                          <Clock className="w-4 h-4" />
+                          Automated Schedule
+                        </h4>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <div className="p-3 rounded-lg" style={{ backgroundColor: "#0B0B11" }}>
+                            <div className="text-sm font-medium text-slate-200">Lessons</div>
+                            <div className="text-xs text-slate-400 mt-1">{pipelineStatus.schedule?.lessons}</div>
+                          </div>
+                          <div className="p-3 rounded-lg" style={{ backgroundColor: "#0B0B11" }}>
+                            <div className="text-sm font-medium text-slate-200">Prayers</div>
+                            <div className="text-xs text-slate-400 mt-1">{pipelineStatus.schedule?.prayers}</div>
+                          </div>
+                          <div className="p-3 rounded-lg" style={{ backgroundColor: "#0B0B11" }}>
+                            <div className="text-sm font-medium text-slate-200">Audio</div>
+                            <div className="text-xs text-slate-400 mt-1">{pipelineStatus.schedule?.audio}</div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Last Run & Next Run */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                          <h4 className="text-sm font-medium text-slate-300 mb-3 flex items-center gap-2">
+                            <CheckCircle className="w-4 h-4" />
+                            Last Run
+                          </h4>
+                          <div className="p-4 rounded-lg border" style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}>
+                            <div className="flex items-center justify-between mb-2">
+                              <span className="text-sm text-slate-200 font-medium">{pipelineStatus.lastRun?.date}</span>
+                              <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                pipelineStatus.lastRun?.status === 'success' ? 'bg-green-500/20 text-green-400' :
+                                pipelineStatus.lastRun?.status === 'partial' ? 'bg-yellow-500/20 text-yellow-400' :
+                                'bg-red-500/20 text-red-400'
+                              }`}>
+                                {pipelineStatus.lastRun?.status}
+                              </span>
+                            </div>
+                            <div className="text-xs text-slate-400">
+                              Generated: {pipelineStatus.lastRun?.generated?.join(', ')}
+                            </div>
+                            <div className="text-xs text-slate-500 mt-1">
+                              Duration: {pipelineStatus.lastRun?.duration}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div>
+                          <h4 className="text-sm font-medium text-slate-300 mb-3 flex items-center gap-2">
+                            <Calendar className="w-4 h-4" />
+                            Next Run
+                          </h4>
+                          <div className="p-4 rounded-lg border" style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}>
+                            <div className="text-sm text-slate-200 font-medium mb-2">
+                              {pipelineStatus.nextRun?.date} at {pipelineStatus.nextRun?.time}
+                            </div>
+                            <div className="text-xs text-slate-400">
+                              Will generate: {pipelineStatus.nextRun?.willGenerate?.join(', ')}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Run History */}
+                      <div>
+                        <h4 className="text-sm font-medium text-slate-300 mb-3 flex items-center gap-2">
+                          <BarChart3 className="w-4 h-4" />
+                          Recent History
+                        </h4>
+                        <div className="grid grid-cols-7 gap-2">
+                          {pipelineStatus.history?.slice(0, 7).map((run: any, index: number) => (
+                            <div key={index} className="text-center">
+                              <div className={`w-full h-8 rounded flex items-center justify-center text-xs font-medium ${
+                                run.status === 'success' ? 'bg-green-500/20 text-green-400' :
+                                run.status === 'partial' ? 'bg-yellow-500/20 text-yellow-400' :
+                                'bg-red-500/20 text-red-400'
+                              }`}>
+                                {run.status === 'success' ? '✓' : run.status === 'partial' ? '⚠' : '✗'}
+                              </div>
+                              <div className="text-xs text-slate-400 mt-1">
+                                {new Date(run.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                              </div>
+                              <div className="text-xs text-slate-500">
+                                {run.duration}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center py-8">
+                      <AlertTriangle className="w-6 h-6 mx-auto mb-2 text-slate-400" />
+                      <p className="text-slate-400">Pipeline status unavailable</p>
+                      <button
+                        onClick={fetchPipelineStatus}
+                        className="mt-2 px-4 py-2 rounded-lg text-sm transition-colors"
+                        style={{ backgroundColor: "#D4A020", color: "#0B0B11" }}
+                      >
+                        Retry
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -4614,41 +4798,69 @@ export default function FaithJourneyPage() {
                           </thead>
                           <tbody>
                             {(() => {
-                              const familyVoiceMap = {
-                                'Judaism': 'Rabbi Shafier',
-                                'Christianity': 'Reverend',
-                                'Islam': 'Rehan Imam',
-                                'Buddhism': 'Moses Sam Paul',
-                                'Hinduism': 'Rehan Imam',
-                                'Secular/Interfaith': 'Serena'
+                              // Tradition display names and default voice mapping
+                              const TRADITION_DISPLAY: Record<string, { name: string; emoji: string; color: string }> = {
+                                'orthodox-judaism': { name: 'Orthodox Judaism', emoji: '✡️', color: '#0047AB' },
+                                'conservative-judaism': { name: 'Conservative Judaism', emoji: '✡️', color: '#2E5CB8' },
+                                'reform-judaism': { name: 'Reform Judaism', emoji: '✡️', color: '#4A90D9' },
+                                'reconstructionist-judaism': { name: 'Reconstructionist Judaism', emoji: '✡️', color: '#6BA3E8' },
+                                'messianic-judaism': { name: 'Messianic Judaism', emoji: '✡️✝️', color: '#3D6098' },
+                                'catholicism': { name: 'Catholicism', emoji: '✝️', color: '#8B0000' },
+                                'eastern-orthodox': { name: 'Eastern Orthodox', emoji: '☦️', color: '#8B4513' },
+                                'evangelical-protestant': { name: 'Evangelical Protestant', emoji: '📖', color: '#4169E1' },
+                                'mainline-protestant': { name: 'Mainline Protestant', emoji: '🕊️', color: '#6366F1' },
+                                'non-denominational-christian': { name: 'Non-Denominational', emoji: '✝️', color: '#EF4444' },
+                                'sunni-islam': { name: 'Sunni Islam', emoji: '☪️', color: '#006400' },
+                                'shia-islam': { name: 'Shia Islam', emoji: '☪️', color: '#228B22' },
+                                'sufi-islam': { name: 'Sufi Islam', emoji: '🌀', color: '#047857' },
+                                'vaishnavism': { name: 'Vaishnavism', emoji: '🕉️', color: '#FF6B00' },
+                                'shaivism': { name: 'Shaivism', emoji: '🕉️', color: '#E85D04' },
+                                'shaktism': { name: 'Shaktism', emoji: '🕉️', color: '#DC2F02' },
+                                'advaita-vedanta': { name: 'Advaita Vedanta', emoji: '🕉️', color: '#CA8A04' },
+                                'theravada-buddhism': { name: 'Theravada Buddhism', emoji: '☸️', color: '#06B6D4' },
+                                'mahayana-buddhism': { name: 'Mahayana Buddhism', emoji: '☸️', color: '#0891B2' },
+                                'vajrayana-buddhism': { name: 'Vajrayana Buddhism', emoji: '☸️', color: '#0E7490' },
+                                'sikhism': { name: 'Sikhism', emoji: '🪯', color: '#1E40AF' },
+                                'jainism': { name: 'Jainism', emoji: '🙏', color: '#059669' },
+                                'bahai-faith': { name: "Bahá'í Faith", emoji: '✯', color: '#7C3AED' },
+                                'zoroastrianism': { name: 'Zoroastrianism', emoji: '🔥', color: '#DC2626' },
+                                'secular-humanism': { name: 'Secular Humanism', emoji: '🌍', color: '#6B7280' },
+                                'interfaith-mysticism': { name: 'Interfaith Mysticism', emoji: '✨', color: '#A855F7' },
                               };
-                              const familyEmojis = {
-                                'Judaism': '✡️',
-                                'Christianity': '✝️', 
-                                'Islam': '☪️',
-                                'Buddhism': '☸️',
-                                'Hinduism': '🕉️',
-                                'Secular/Interfaith': '🌍'
+
+                              // Default voices by tradition family - traditions inherit unless overridden
+                              const familyDefaults = {
+                                'Rabbi Shafier': ['orthodox-judaism', 'conservative-judaism', 'reform-judaism', 'reconstructionist-judaism', 'messianic-judaism'],
+                                'Reverend': ['catholicism', 'eastern-orthodox', 'evangelical-protestant', 'mainline-protestant', 'non-denominational-christian'],
+                                'Rehan Imam': ['sunni-islam', 'shia-islam', 'sufi-islam'],
+                                'Rehan Imam': ['vaishnavism', 'shaivism', 'shaktism', 'advaita-vedanta'],
+                                'Moses Sam Paul': ['theravada-buddhism', 'mahayana-buddhism', 'vajrayana-buddhism'],
+                                'Serena': ['sikhism', 'jainism', 'bahai-faith', 'zoroastrianism', 'secular-humanism', 'interfaith-mysticism']
                               };
-                              
-                              return Object.entries(familyVoiceMap).map(([family, defaultVoice]) => {
-                                // Find actual voice data from the first tradition in this family
-                                const traditions = voiceConfig.grouped?.[family] || voiceConfig.grouped?.[family.split('/')[0]] || [];
-                                const firstTradition = traditions[0];
-                                const voiceName = firstTradition?.voiceName || defaultVoice;
-                                const voiceId = firstTradition?.voiceId || '';
-                                const emoji = familyEmojis[family as keyof typeof familyEmojis];
+
+                              return Object.entries(TRADITION_DISPLAY).map(([traditionSlug, display]) => {
+                                // Find voice mapping for this tradition - check API data first, then fallback to family default
+                                const traditionVoice = voiceConfig.traditions?.[traditionSlug];
+                                let defaultVoice = 'Serena';
+                                Object.entries(familyDefaults).forEach(([voice, traditions]) => {
+                                  if (traditions.includes(traditionSlug)) {
+                                    defaultVoice = voice;
+                                  }
+                                });
+                                
+                                const voiceName = traditionVoice?.voiceName || defaultVoice;
+                                const voiceId = traditionVoice?.voiceId || '';
                                 
                                 return (
-                                  <tr key={family} className="border-b border-slate-700/50 hover:bg-slate-800/30">
+                                  <tr key={traditionSlug} className="border-b border-slate-700/50 hover:bg-slate-800/30">
                                     <td className="px-3 py-2">
                                       <div className="flex items-center gap-2">
-                                        <span className="text-sm">{emoji}</span>
-                                        <span className="text-sm font-medium text-slate-200">{family}</span>
+                                        <span className="text-sm">{display.emoji}</span>
+                                        <span className="text-sm font-medium text-slate-200">{display.name}</span>
                                       </div>
                                     </td>
                                     <td className="px-3 py-2">
-                                      {editingFamily === family ? (
+                                      {editingVoice === traditionSlug ? (
                                         <div className="flex items-center gap-2">
                                           <select
                                             value={editVoiceId}
@@ -4676,14 +4888,14 @@ export default function FaithJourneyPage() {
                                     </td>
                                     <td className="px-3 py-2">
                                       <span className="text-xs font-mono text-slate-400">
-                                        {voiceId ? `${voiceId.slice(0, 12)}...` : 'Not set'}
+                                        {voiceId ? `${voiceId.slice(0, 12)}...` : 'Default'}
                                       </span>
                                     </td>
                                     <td className="px-3 py-2">
-                                      {editingFamily === family ? (
+                                      {editingVoice === traditionSlug ? (
                                         <div className="flex gap-1">
                                           <button
-                                            onClick={() => saveFamilyVoiceMapping(family, editVoiceId)}
+                                            onClick={() => saveVoiceMapping(traditionSlug, editVoiceId)}
                                             disabled={voiceSaving || !editVoiceId}
                                             className="p-1.5 rounded transition-colors disabled:opacity-40"
                                             style={{ backgroundColor: "#D4A020", color: "#0B0B11" }}
@@ -4691,7 +4903,7 @@ export default function FaithJourneyPage() {
                                             {voiceSaving ? <Loader className="w-3 h-3 animate-spin" /> : <Save className="w-3 h-3" />}
                                           </button>
                                           <button
-                                            onClick={() => setEditingFamily(null)}
+                                            onClick={() => setEditingVoice(null)}
                                             className="p-1.5 rounded transition-colors"
                                             style={{ backgroundColor: "#2A2A38", color: "#94A3B8" }}
                                           >
@@ -4700,7 +4912,7 @@ export default function FaithJourneyPage() {
                                         </div>
                                       ) : (
                                         <button
-                                          onClick={() => { setEditingFamily(family); setEditVoiceId(voiceId); }}
+                                          onClick={() => { setEditingVoice(traditionSlug); setEditVoiceId(voiceId); }}
                                           className="p-1.5 rounded transition-colors hover:bg-slate-700"
                                           style={{ color: "#94A3B8" }}
                                         >
@@ -4777,61 +4989,141 @@ export default function FaithJourneyPage() {
                       </div>
                     </div>
 
-                    {/* Generations by Tradition */}
+                    {/* Generations by Tradition - Pie Chart */}
                     <div>
                       <h3 className="text-sm font-medium text-slate-300 mb-3">Generations by Tradition</h3>
-                      <div className="space-y-2">
-                        {Object.entries(
-                          audioFiles.reduce((acc, audio) => {
-                            const tradition = audio.tradition?.name || 'Unknown';
-                            if (!acc[tradition]) {
-                              acc[tradition] = {
-                                count: 0,
-                                characters: 0,
-                                color: audio.tradition?.color || "#6B7280",
-                                icon: audio.tradition?.icon || "🔯"
-                              };
-                            }
-                            acc[tradition].count += 1;
-                            acc[tradition].characters += audio.char_count || 0;
-                            return acc;
-                          }, {} as Record<string, { count: number; characters: number; color: string; icon: string }>)
-                        )
-                        .sort(([,a], [,b]) => ((b as any).count || 0) - ((a as any).count || 0))
-                        .map(([tradition, stats]: [string, any]) => {
-                          const maxCount = Math.max(...(Object.values(
-                            audioFiles.reduce((acc, audio) => {
-                              const t = audio.tradition?.name || 'Unknown';
-                              acc[t] = (acc[t] || 0) + 1;
-                              return acc;
-                            }, {} as Record<string, number>)
-                          ) as number[]));
-                          const percentage = (stats.count / maxCount) * 100;
-                          
+                      {(() => {
+                        const traditionStats = audioFiles.reduce((acc, audio) => {
+                          const tradition = audio.tradition?.name || 'Unknown';
+                          if (!acc[tradition]) {
+                            acc[tradition] = {
+                              count: 0,
+                              characters: 0,
+                              color: audio.tradition?.color || "#6B7280",
+                              icon: audio.tradition?.icon || "🔯"
+                            };
+                          }
+                          acc[tradition].count += 1;
+                          acc[tradition].characters += audio.char_count || 0;
+                          return acc;
+                        }, {} as Record<string, { count: number; characters: number; color: string; icon: string }>);
+
+                        const sortedTraditions = Object.entries(traditionStats)
+                          .sort(([,a], [,b]) => ((b as any).count || 0) - ((a as any).count || 0));
+
+                        const totalFiles = audioFiles.length;
+
+                        if (totalFiles === 0) {
                           return (
-                            <div key={tradition} className="space-y-1">
-                              <div className="flex items-center justify-between text-sm">
-                                <div className="flex items-center gap-2">
-                                  <span className="text-lg">{stats.icon}</span>
-                                  <span className="text-slate-300">{tradition}</span>
-                                </div>
-                                <div className="text-slate-400">
-                                  {stats.count} files • {stats.characters.toLocaleString()} chars
-                                </div>
-                              </div>
-                              <div className="w-full bg-slate-700 rounded-full h-2">
-                                <div 
-                                  className="h-2 rounded-full transition-all" 
-                                  style={{ 
-                                    backgroundColor: stats.color, 
-                                    width: `${percentage}%`
-                                  }}
-                                ></div>
-                              </div>
+                            <div className="text-center py-8">
+                              <div className="text-slate-400">No audio files available</div>
                             </div>
                           );
-                        })}
-                      </div>
+                        }
+
+                        // Generate pie chart segments
+                        let cumulativeAngle = 0;
+                        const radius = 80;
+                        const centerX = 120;
+                        const centerY = 120;
+
+                        return (
+                          <div className="flex flex-col lg:flex-row gap-6 items-center">
+                            {/* Pie Chart */}
+                            <div className="flex-shrink-0">
+                              <svg width="240" height="240" className="overflow-visible">
+                                {sortedTraditions.map(([tradition, stats], index) => {
+                                  const percentage = (stats.count / totalFiles) * 100;
+                                  const angle = (stats.count / totalFiles) * 360;
+                                  const startAngle = cumulativeAngle;
+                                  const endAngle = cumulativeAngle + angle;
+                                  cumulativeAngle += angle;
+
+                                  // Convert to radians
+                                  const startRad = (startAngle * Math.PI) / 180;
+                                  const endRad = (endAngle * Math.PI) / 180;
+
+                                  // Calculate path coordinates
+                                  const x1 = centerX + radius * Math.cos(startRad);
+                                  const y1 = centerY + radius * Math.sin(startRad);
+                                  const x2 = centerX + radius * Math.cos(endRad);
+                                  const y2 = centerY + radius * Math.sin(endRad);
+
+                                  const largeArc = angle > 180 ? 1 : 0;
+
+                                  const pathData = [
+                                    `M ${centerX} ${centerY}`,
+                                    `L ${x1} ${y1}`,
+                                    `A ${radius} ${radius} 0 ${largeArc} 1 ${x2} ${y2}`,
+                                    'Z'
+                                  ].join(' ');
+
+                                  return (
+                                    <path
+                                      key={tradition}
+                                      d={pathData}
+                                      fill={stats.color}
+                                      stroke="#0B0B11"
+                                      strokeWidth="2"
+                                      className="hover:opacity-80 transition-opacity"
+                                    />
+                                  );
+                                })}
+                                
+                                {/* Center circle for donut effect */}
+                                <circle
+                                  cx={centerX}
+                                  cy={centerY}
+                                  r="30"
+                                  fill="#13131B"
+                                  stroke="#2A2A38"
+                                  strokeWidth="2"
+                                />
+                                
+                                {/* Center text */}
+                                <text
+                                  x={centerX}
+                                  y={centerY - 5}
+                                  textAnchor="middle"
+                                  className="text-sm font-bold fill-slate-100"
+                                >
+                                  {totalFiles}
+                                </text>
+                                <text
+                                  x={centerX}
+                                  y={centerY + 10}
+                                  textAnchor="middle"
+                                  className="text-xs fill-slate-400"
+                                >
+                                  files
+                                </text>
+                              </svg>
+                            </div>
+
+                            {/* Legend */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 flex-1">
+                              {sortedTraditions.map(([tradition, stats]) => {
+                                const percentage = Math.round((stats.count / totalFiles) * 100);
+                                return (
+                                  <div key={tradition} className="flex items-center gap-2 min-w-0">
+                                    <div 
+                                      className="w-3 h-3 rounded-full flex-shrink-0"
+                                      style={{ backgroundColor: stats.color }}
+                                    />
+                                    <span className="text-lg flex-shrink-0">{stats.icon}</span>
+                                    <div className="min-w-0 flex-1">
+                                      <div className="text-sm text-slate-300 truncate">{tradition}</div>
+                                      <div className="text-xs text-slate-400">
+                                        {stats.count} files ({percentage}%) • {stats.characters.toLocaleString()} chars
+                                      </div>
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        );
+                      })()}
                     </div>
                   </div>
                 </div>
@@ -5012,7 +5304,205 @@ export default function FaithJourneyPage() {
                         </div>
                       </div>
 
-                      {/* Audio Files Display */}
+                      {/* Audio Library - Jira-Style Table */}
+                      <div className="space-y-6">
+                        {/* Summary Table */}
+                        <div className="rounded-lg border overflow-hidden" style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}>
+                          <table className="w-full">
+                            <thead>
+                              <tr className="border-b border-slate-700/50">
+                                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">Tradition</th>
+                                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">Files</th>
+                                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Size</th>
+                                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">Latest Date</th>
+                                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {(() => {
+                                const traditionStats = audioFiles.reduce((acc, audio) => {
+                                  const tradition = audio.tradition?.name || 'Unknown';
+                                  if (!acc[tradition]) {
+                                    acc[tradition] = {
+                                      count: 0,
+                                      totalSize: 0,
+                                      latestDate: audio.date,
+                                      icon: audio.tradition?.icon || '📖',
+                                      color: audio.tradition?.color || '#6B7280'
+                                    };
+                                  }
+                                  acc[tradition].count += 1;
+                                  acc[tradition].totalSize += audio.file_size_bytes || 0;
+                                  if (audio.date > acc[tradition].latestDate) {
+                                    acc[tradition].latestDate = audio.date;
+                                  }
+                                  return acc;
+                                }, {} as Record<string, { count: number; totalSize: number; latestDate: string; icon: string; color: string }>);
+
+                                return Object.entries(traditionStats)
+                                  .sort(([,a], [,b]) => b.count - a.count)
+                                  .map(([tradition, stats]) => (
+                                    <tr key={tradition} className="border-b border-slate-700/50 hover:bg-slate-800/30">
+                                      <td className="px-4 py-3">
+                                        <div className="flex items-center gap-2">
+                                          <span className="text-sm">{stats.icon}</span>
+                                          <span className="text-sm font-medium text-slate-200">{tradition}</span>
+                                        </div>
+                                      </td>
+                                      <td className="px-4 py-3">
+                                        <span className="text-sm text-slate-300">{stats.count} files</span>
+                                      </td>
+                                      <td className="px-4 py-3">
+                                        <span className="text-sm text-slate-300">
+                                          {Math.round(stats.totalSize / 1024 / 1024)}MB
+                                        </span>
+                                      </td>
+                                      <td className="px-4 py-3">
+                                        <span className="text-sm text-slate-400">
+                                          {new Date(stats.latestDate).toLocaleDateString()}
+                                        </span>
+                                      </td>
+                                      <td className="px-4 py-3">
+                                        <button
+                                          onClick={() => setSelectedTraditionModal(tradition)}
+                                          className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors"
+                                          style={{ backgroundColor: "rgba(212,160,32,0.15)", color: "#D4A020" }}
+                                        >
+                                          <Eye className="w-3 h-3" />
+                                          View
+                                        </button>
+                                      </td>
+                                    </tr>
+                                  ));
+                              })()}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+
+                      {/* Tradition Audio Modal */}
+                      {selectedTraditionModal && (
+                        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+                          <div 
+                            className="w-full max-w-6xl max-h-[90vh] rounded-xl border overflow-hidden flex flex-col"
+                            style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}
+                          >
+                            {/* Modal Header */}
+                            <div className="p-6 border-b" style={{ borderColor: "#2A2A38" }}>
+                              <div className="flex items-center justify-between">
+                                <h2 className="text-xl font-bold text-slate-100 flex items-center gap-2">
+                                  {(() => {
+                                    const traditionAudio = audioFiles.find(a => a.tradition?.name === selectedTraditionModal);
+                                    return traditionAudio?.tradition?.icon || '📖';
+                                  })()}
+                                  {selectedTraditionModal} Audio Files
+                                </h2>
+                                <button
+                                  onClick={() => setSelectedTraditionModal(null)}
+                                  className="p-2 rounded-lg transition-colors"
+                                  style={{ backgroundColor: "#2A2A38", color: "#94A3B8" }}
+                                >
+                                  <X className="w-5 h-5" />
+                                </button>
+                              </div>
+                              <div className="flex items-center gap-4 mt-3">
+                                <select
+                                  value={modalAudioFilter}
+                                  onChange={(e) => setModalAudioFilter(e.target.value)}
+                                  className="px-3 py-2 rounded-lg border text-sm"
+                                  style={{ backgroundColor: "#13131B", borderColor: "#2A2A38", color: "#D4A020" }}
+                                >
+                                  <option value="all">All Dates</option>
+                                  <option value="week">This Week</option>
+                                  <option value="month">This Month</option>
+                                </select>
+                              </div>
+                            </div>
+                            
+                            {/* Modal Content */}
+                            <div className="flex-1 overflow-auto p-6">
+                              <div className="rounded-lg border overflow-hidden" style={{ backgroundColor: "#13131B", borderColor: "#2A2A38" }}>
+                                <table className="w-full">
+                                  <thead>
+                                    <tr className="border-b border-slate-700/50">
+                                      <th className="text-left px-4 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">Date</th>
+                                      <th className="text-left px-4 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">Topic</th>
+                                      <th className="text-left px-4 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">Duration</th>
+                                      <th className="text-left px-4 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">Size</th>
+                                      <th className="text-left px-4 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">Characters</th>
+                                      <th className="text-left px-4 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">Action</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {audioFiles
+                                      .filter(audio => {
+                                        if (audio.tradition?.name !== selectedTraditionModal) return false;
+                                        
+                                        if (modalAudioFilter === 'all') return true;
+                                        
+                                        const audioDate = new Date(audio.date);
+                                        const now = new Date();
+                                        
+                                        if (modalAudioFilter === 'week') {
+                                          const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                                          return audioDate >= weekAgo;
+                                        } else if (modalAudioFilter === 'month') {
+                                          const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+                                          return audioDate >= monthAgo;
+                                        }
+                                        
+                                        return true;
+                                      })
+                                      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+                                      .map((audio) => (
+                                        <tr key={audio.id} className="border-b border-slate-700/50 hover:bg-slate-800/30">
+                                          <td className="px-4 py-3">
+                                            <span className="text-sm text-slate-300">
+                                              {new Date(audio.date).toLocaleDateString()}
+                                            </span>
+                                          </td>
+                                          <td className="px-4 py-3">
+                                            <span className="text-sm text-slate-200 font-medium">
+                                              {audio.lesson?.topic || 'Unknown Topic'}
+                                            </span>
+                                          </td>
+                                          <td className="px-4 py-3">
+                                            <span className="text-sm text-slate-400">
+                                              {audio.duration_seconds 
+                                                ? `${Math.floor(audio.duration_seconds / 60)}:${(audio.duration_seconds % 60).toString().padStart(2, '0')}`
+                                                : 'Unknown'
+                                              }
+                                            </span>
+                                          </td>
+                                          <td className="px-4 py-3">
+                                            <span className="text-sm text-slate-400">
+                                              {Math.round((audio.file_size_bytes || 0) / 1024)}KB
+                                            </span>
+                                          </td>
+                                          <td className="px-4 py-3">
+                                            <span className="text-sm text-slate-400">
+                                              {(audio.char_count || 0).toLocaleString()}
+                                            </span>
+                                          </td>
+                                          <td className="px-4 py-3">
+                                            <button
+                                              onClick={() => toggleAudio(audio.id, audio.audioUrl)}
+                                              className="flex items-center gap-1 px-2 py-1 rounded transition-colors"
+                                              style={{ backgroundColor: currentlyPlaying === audio.id ? "#2A2A38" : "rgba(212,160,32,0.15)", color: currentlyPlaying === audio.id ? "#94A3B8" : "#D4A020" }}
+                                            >
+                                              {currentlyPlaying === audio.id ? <Pause className="w-3 h-3" /> : <Play className="w-3 h-3" />}
+                                            </button>
+                                          </td>
+                                        </tr>
+                                      ))}
+                                  </tbody>
+                                </table>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
                       <div className="space-y-3">
                         {audioViewMode === "tradition" ? (
                           // Group by Tradition

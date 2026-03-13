@@ -45,6 +45,8 @@ import {
   Save,
   Plus,
   Check,
+  CheckCircle,
+  Eye,
 } from "lucide-react";
 
 // ===== Types =====
@@ -4832,8 +4834,7 @@ export default function FaithJourneyPage() {
                               const familyDefaults = {
                                 'Rabbi Shafier': ['orthodox-judaism', 'conservative-judaism', 'reform-judaism', 'reconstructionist-judaism', 'messianic-judaism'],
                                 'Reverend': ['catholicism', 'eastern-orthodox', 'evangelical-protestant', 'mainline-protestant', 'non-denominational-christian'],
-                                'Rehan Imam': ['sunni-islam', 'shia-islam', 'sufi-islam'],
-                                'Rehan Imam': ['vaishnavism', 'shaivism', 'shaktism', 'advaita-vedanta'],
+                                'Rehan Imam': ['sunni-islam', 'shia-islam', 'sufi-islam', 'vaishnavism', 'shaivism', 'shaktism', 'advaita-vedanta'],
                                 'Moses Sam Paul': ['theravada-buddhism', 'mahayana-buddhism', 'vajrayana-buddhism'],
                                 'Serena': ['sikhism', 'jainism', 'bahai-faith', 'zoroastrianism', 'secular-humanism', 'interfaith-mysticism']
                               };
@@ -5008,8 +5009,8 @@ export default function FaithJourneyPage() {
                           return acc;
                         }, {} as Record<string, { count: number; characters: number; color: string; icon: string }>);
 
-                        const sortedTraditions = Object.entries(traditionStats)
-                          .sort(([,a], [,b]) => ((b as any).count || 0) - ((a as any).count || 0));
+                        const sortedTraditions = Object.entries(traditionStats) as [string, { count: number; characters: number; color: string; icon: string }][];
+                        sortedTraditions.sort(([,a], [,b]) => b.count - a.count);
 
                         const totalFiles = audioFiles.length;
 
@@ -5339,7 +5340,7 @@ export default function FaithJourneyPage() {
                                   return acc;
                                 }, {} as Record<string, { count: number; totalSize: number; latestDate: string; icon: string; color: string }>);
 
-                                return Object.entries(traditionStats)
+                                return (Object.entries(traditionStats) as [string, { count: number; totalSize: number; latestDate: string; icon: string; color: string }][])
                                   .sort(([,a], [,b]) => b.count - a.count)
                                   .map(([tradition, stats]) => (
                                     <tr key={tradition} className="border-b border-slate-700/50 hover:bg-slate-800/30">

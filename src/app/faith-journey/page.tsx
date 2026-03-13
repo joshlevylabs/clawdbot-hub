@@ -2779,94 +2779,176 @@ export default function FaithJourneyPage() {
                       <Loader className="w-6 h-6 animate-spin mx-auto mb-2 text-slate-400" />
                       <p className="text-slate-400">Loading pipeline status...</p>
                     </div>
-                  ) : pipelineStatus ? (
+                  ) : pipelineStatus?.pipeline ? (
                     <div className="space-y-6">
-                      {/* Pipeline Schedule */}
+                      {/* A. Automated Schedule */}
                       <div>
                         <h4 className="text-sm font-medium text-slate-300 mb-3 flex items-center gap-2">
                           <Clock className="w-4 h-4" />
                           Automated Schedule
                         </h4>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                          <div className="p-3 rounded-lg" style={{ backgroundColor: "#0B0B11" }}>
-                            <div className="text-sm font-medium text-slate-200">Lessons</div>
-                            <div className="text-xs text-slate-400 mt-1">{pipelineStatus.schedule?.lessons}</div>
-                          </div>
-                          <div className="p-3 rounded-lg" style={{ backgroundColor: "#0B0B11" }}>
-                            <div className="text-sm font-medium text-slate-200">Prayers</div>
-                            <div className="text-xs text-slate-400 mt-1">{pipelineStatus.schedule?.prayers}</div>
-                          </div>
-                          <div className="p-3 rounded-lg" style={{ backgroundColor: "#0B0B11" }}>
-                            <div className="text-sm font-medium text-slate-200">Audio</div>
-                            <div className="text-xs text-slate-400 mt-1">{pipelineStatus.schedule?.audio}</div>
-                          </div>
+                        <div className="text-xs text-slate-400 mb-3">{pipelineStatus.pipeline.schedule}</div>
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                          {pipelineStatus.pipeline.stages.map((stage: any) => (
+                            <div key={stage.id} className="p-3 rounded-lg" style={{ backgroundColor: "#0B0B11" }}>
+                              <div className="text-sm font-medium text-slate-200">{stage.name}</div>
+                              <div className="text-xs text-slate-400 mt-1">Target: {stage.target}</div>
+                              <div className="text-xs text-slate-500 mt-1">{stage.description}</div>
+                            </div>
+                          ))}
                         </div>
                       </div>
 
-                      {/* Last Run & Next Run */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                          <h4 className="text-sm font-medium text-slate-300 mb-3 flex items-center gap-2">
-                            <CheckCircle className="w-4 h-4" />
-                            Last Run
-                          </h4>
-                          <div className="p-4 rounded-lg border" style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}>
-                            <div className="flex items-center justify-between mb-2">
-                              <span className="text-sm text-slate-200 font-medium">{pipelineStatus.lastRun?.date}</span>
-                              <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                pipelineStatus.lastRun?.status === 'success' ? 'bg-green-500/20 text-green-400' :
-                                pipelineStatus.lastRun?.status === 'partial' ? 'bg-yellow-500/20 text-yellow-400' :
-                                'bg-red-500/20 text-red-400'
-                              }`}>
-                                {pipelineStatus.lastRun?.status}
-                              </span>
-                            </div>
-                            <div className="text-xs text-slate-400">
-                              Generated: {pipelineStatus.lastRun?.generated?.join(', ')}
-                            </div>
-                            <div className="text-xs text-slate-500 mt-1">
-                              Duration: {pipelineStatus.lastRun?.duration}
-                            </div>
-                          </div>
+                      {/* B. Daily Content Calendar */}
+                      <div>
+                        <h4 className="text-sm font-medium text-slate-300 mb-3 flex items-center gap-2">
+                          <Calendar className="w-4 h-4" />
+                          Daily Content Calendar (Last 14 Days)
+                        </h4>
+                        <div className="overflow-x-auto">
+                          <table className="w-full text-sm">
+                            <thead>
+                              <tr className="text-slate-400 text-xs">
+                                <th className="text-left p-2">Date</th>
+                                <th className="text-center p-2">Lessons</th>
+                                <th className="text-center p-2">Prayers</th>
+                                <th className="text-center p-2">Images</th>
+                                <th className="text-center p-2">Audio</th>
+                                <th className="text-center p-2">Status</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {pipelineStatus.pipeline.dailyContent.map((day: any, index: number) => {
+                                const isToday = day.date === new Date().toISOString().split('T')[0];
+                                const isNextDate = day.date === pipelineStatus.pipeline.nextDate;
+                                const statusColor = 
+                                  day.status === 'complete' ? 'bg-green-500/20 text-green-400' :
+                                  day.status === 'partial' ? 'bg-yellow-500/20 text-yellow-400' :
+                                  day.status === 'missing' ? 'bg-red-500/20 text-red-400' :
+                                  'bg-slate-500/20 text-slate-400';
+                                
+                                return (
+                                  <tr key={index} className={`border-t border-slate-700/30 ${isToday ? 'bg-blue-500/10' : ''}`}>
+                                    <td className="p-2">
+                                      <div className="text-slate-200">
+                                        {new Date(day.date).toLocaleDateString('en-US', { 
+                                          month: 'short', 
+                                          day: 'numeric',
+                                          year: '2-digit'
+                                        })}
+                                      </div>
+                                      {isToday && <div className="text-xs text-blue-400">Today</div>}
+                                      {isNextDate && <div className="text-xs" style={{ color: "#D4A020" }}>Next Run</div>}
+                                    </td>
+                                    <td className="p-2 text-center">
+                                      <span className="text-slate-200">{day.lessons}</span>
+                                      <span className="text-slate-500">/25</span>
+                                      {day.lessons > 0 && day.lessons < 25 && (
+                                        <div className="w-full bg-slate-700 rounded-full h-1 mt-1">
+                                          <div 
+                                            className="bg-yellow-400 h-1 rounded-full" 
+                                            style={{ width: `${(day.lessons / 25) * 100}%` }}
+                                          ></div>
+                                        </div>
+                                      )}
+                                    </td>
+                                    <td className="p-2 text-center">
+                                      <span className="text-slate-200">{day.prayers}</span>
+                                      <span className="text-slate-500">/25</span>
+                                    </td>
+                                    <td className="p-2 text-center">
+                                      <span className="text-slate-200">{day.images}</span>
+                                      <span className="text-slate-500">/6</span>
+                                    </td>
+                                    <td className="p-2 text-center text-slate-200">{day.audio}</td>
+                                    <td className="p-2 text-center">
+                                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusColor}`}>
+                                        {day.status === 'complete' ? '✓' : 
+                                         day.status === 'partial' ? '⚠' : 
+                                         day.status === 'missing' ? '✗' : '-'}
+                                      </span>
+                                    </td>
+                                  </tr>
+                                );
+                              })}
+                            </tbody>
+                          </table>
                         </div>
-
-                        <div>
-                          <h4 className="text-sm font-medium text-slate-300 mb-3 flex items-center gap-2">
-                            <Calendar className="w-4 h-4" />
-                            Next Run
-                          </h4>
-                          <div className="p-4 rounded-lg border" style={{ backgroundColor: "#0B0B11", borderColor: "#2A2A38" }}>
-                            <div className="text-sm text-slate-200 font-medium mb-2">
-                              {pipelineStatus.nextRun?.date} at {pipelineStatus.nextRun?.time}
-                            </div>
-                            <div className="text-xs text-slate-400">
-                              Will generate: {pipelineStatus.nextRun?.willGenerate?.join(', ')}
-                            </div>
-                          </div>
+                        <div className="mt-3 text-xs text-slate-400">
+                          Coverage: {pipelineStatus.pipeline.coverage.completeDays} complete, {pipelineStatus.pipeline.coverage.partialDays} partial, {pipelineStatus.pipeline.coverage.totalDays - pipelineStatus.pipeline.coverage.completeDays - pipelineStatus.pipeline.coverage.partialDays} missing
                         </div>
                       </div>
 
-                      {/* Run History */}
+                      {/* C. Tradition Coverage */}
+                      {(pipelineStatus.pipeline.latestTraditions.lessons.length > 0 || pipelineStatus.pipeline.latestTraditions.audio.length > 0) && (
+                        <div>
+                          <h4 className="text-sm font-medium text-slate-300 mb-3 flex items-center gap-2">
+                            <Globe className="w-4 h-4" />
+                            Tradition Coverage (Latest Complete Date)
+                          </h4>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {pipelineStatus.pipeline.latestTraditions.lessons.length > 0 && (
+                              <div className="p-3 rounded-lg" style={{ backgroundColor: "#0B0B11" }}>
+                                <div className="text-sm font-medium text-slate-200 mb-2">Lessons ({pipelineStatus.pipeline.latestTraditions.lessons.length} traditions)</div>
+                                <div className="text-xs text-slate-400 space-y-1">
+                                  {pipelineStatus.pipeline.latestTraditions.lessons.slice(0, 8).map((tradition: any, index: number) => (
+                                    <div key={index} className="flex items-center gap-2">
+                                      <Check className="w-3 h-3 text-green-400" />
+                                      <span>{tradition.tradition}</span>
+                                      <span className="text-slate-500">({tradition.count})</span>
+                                    </div>
+                                  ))}
+                                  {pipelineStatus.pipeline.latestTraditions.lessons.length > 8 && (
+                                    <div className="text-slate-500">+{pipelineStatus.pipeline.latestTraditions.lessons.length - 8} more...</div>
+                                  )}
+                                </div>
+                              </div>
+                            )}
+                            {pipelineStatus.pipeline.latestTraditions.audio.length > 0 && (
+                              <div className="p-3 rounded-lg" style={{ backgroundColor: "#0B0B11" }}>
+                                <div className="text-sm font-medium text-slate-200 mb-2">Audio ({pipelineStatus.pipeline.latestTraditions.audio.length} traditions)</div>
+                                <div className="text-xs text-slate-400 space-y-1">
+                                  {pipelineStatus.pipeline.latestTraditions.audio.slice(0, 8).map((tradition: any, index: number) => (
+                                    <div key={index} className="flex items-center gap-2">
+                                      <Volume2 className="w-3 h-3 text-blue-400" />
+                                      <span>{tradition.tradition}</span>
+                                      <span className="text-slate-500">({tradition.count})</span>
+                                    </div>
+                                  ))}
+                                  {pipelineStatus.pipeline.latestTraditions.audio.length > 8 && (
+                                    <div className="text-slate-500">+{pipelineStatus.pipeline.latestTraditions.audio.length - 8} more...</div>
+                                  )}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* D. Run History (Enhanced) */}
                       <div>
                         <h4 className="text-sm font-medium text-slate-300 mb-3 flex items-center gap-2">
                           <BarChart3 className="w-4 h-4" />
-                          Recent History
+                          Recent History (Last 7 Days)
                         </h4>
                         <div className="grid grid-cols-7 gap-2">
-                          {pipelineStatus.history?.slice(0, 7).map((run: any, index: number) => (
+                          {pipelineStatus.pipeline.dailyContent.slice(-7).map((day: any, index: number) => (
                             <div key={index} className="text-center">
-                              <div className={`w-full h-8 rounded flex items-center justify-center text-xs font-medium ${
-                                run.status === 'success' ? 'bg-green-500/20 text-green-400' :
-                                run.status === 'partial' ? 'bg-yellow-500/20 text-yellow-400' :
-                                'bg-red-500/20 text-red-400'
-                              }`}>
-                                {run.status === 'success' ? '✓' : run.status === 'partial' ? '⚠' : '✗'}
+                              <div 
+                                className={`w-full h-8 rounded flex items-center justify-center text-xs font-medium ${
+                                  day.status === 'complete' ? 'bg-green-500/20 text-green-400' :
+                                  day.status === 'partial' ? 'bg-yellow-500/20 text-yellow-400' :
+                                  day.status === 'missing' ? 'bg-red-500/20 text-red-400' :
+                                  'bg-slate-500/20 text-slate-400'
+                                }`}
+                                title={`${day.date}: L:${day.lessons} P:${day.prayers} I:${day.images} A:${day.audio}`}
+                              >
+                                {day.status === 'complete' ? '✓' : 
+                                 day.status === 'partial' ? '⚠' : 
+                                 day.status === 'missing' ? '✗' : '-'}
                               </div>
                               <div className="text-xs text-slate-400 mt-1">
-                                {new Date(run.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                              </div>
-                              <div className="text-xs text-slate-500">
-                                {run.duration}
+                                {new Date(day.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                               </div>
                             </div>
                           ))}

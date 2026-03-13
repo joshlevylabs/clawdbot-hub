@@ -17,9 +17,12 @@ interface UserWithProfile extends AuthUser {
   hasProfile: boolean;
   profileData?: {
     guide_name: string;
-    primary_tradition: string;
+    primary_tradition: string | null;
     created_at: string;
     last_active_at: string;
+    traditions: string[];
+    selected_tradition_ids: string[];
+    onboarding_complete: boolean;
   };
 }
 
@@ -81,37 +84,84 @@ export async function GET() {
     const usersWithProfiles: UserWithProfile[] = authUsers.map(user => {
       const profile = profileMap.get(user.id);
       const onboarding = profile?.onboarding as Record<string, any> | null;
+      
+      // Derive primary tradition from onboarding data
+      let primaryTradition: string | null = null;
+      if (onboarding?.baseline_tradition_id) {
+        primaryTradition = onboarding.baseline_tradition_id;
+      } else if (onboarding?.tradition) {
+        if (typeof onboarding.tradition === 'string') {
+          primaryTradition = onboarding.tradition;
+        } else if (Array.isArray(onboarding.tradition) && onboarding.tradition.length > 0) {
+          primaryTradition = onboarding.tradition[0];
+        }
+      }
+      
       return {
         ...user,
         hasProfile: !!profile,
         profileData: profile ? {
           guide_name: profile.guide_name,
-          primary_tradition: profile.primary_tradition,
+          primary_tradition: primaryTradition,
           created_at: profile.created_at,
-          last_active_at: profile.last_active_at,
-          traditions: onboarding?.tradition || [],
+          last_active_at: profile.updated_at,
+          traditions: onboarding?.tradition ? (Array.isArray(onboarding.tradition) ? onboarding.tradition : [onboarding.tradition]) : [],
           selected_tradition_ids: onboarding?.selected_tradition_ids || [],
+          onboarding_complete: !!onboarding,
         } : undefined,
       };
     });
 
     // Build anonymized tradition breakdown
+    // The onboarding data can have:
+    //   - tradition: string (specific denomination ID like "orthodox-judaism") — current format
+    //   - tradition: string[] (family key like ["judaism"]) — legacy format
+    //   - baseline_tradition_id: string (specific denomination ID) — always set in current format
+    //   - selected_tradition_ids: string[] (traditions they want to explore)
     const traditionCounts: Record<string, number> = {};
+    let onboardingIncomplete = 0;
+    
     for (const profile of profiles) {
       const onboarding = profile.onboarding as Record<string, any> | null;
-      if (onboarding?.tradition && Array.isArray(onboarding.tradition)) {
-        for (const t of onboarding.tradition) {
-          traditionCounts[t] = (traditionCounts[t] || 0) + 1;
+      
+      if (!onboarding) {
+        onboardingIncomplete++;
+        continue;
+      }
+      
+      // Determine primary tradition — prefer baseline_tradition_id (specific denomination)
+      let primaryTradition: string | null = null;
+      
+      if (onboarding.baseline_tradition_id && typeof onboarding.baseline_tradition_id === 'string') {
+        // Current format: specific denomination ID
+        primaryTradition = onboarding.baseline_tradition_id;
+      } else if (onboarding.tradition) {
+        if (typeof onboarding.tradition === 'string') {
+          primaryTradition = onboarding.tradition;
+        } else if (Array.isArray(onboarding.tradition) && onboarding.tradition.length > 0) {
+          // Legacy format: array of family keys — use first entry
+          primaryTradition = onboarding.tradition[0];
         }
       }
+      
+      if (primaryTradition) {
+        traditionCounts[primaryTradition] = (traditionCounts[primaryTradition] || 0) + 1;
+      }
+      
       // Also count selected_tradition_ids (additional traditions they're exploring)
-      if (onboarding?.selected_tradition_ids && Array.isArray(onboarding.selected_tradition_ids)) {
+      if (onboarding.selected_tradition_ids && Array.isArray(onboarding.selected_tradition_ids)) {
         for (const t of onboarding.selected_tradition_ids) {
-          // Use a separate key to distinguish primary vs exploring
+          // Skip if it's the same as primary (don't double count)
+          if (t === primaryTradition) continue;
           const key = `exploring:${t}`;
           traditionCounts[key] = (traditionCounts[key] || 0) + 1;
         }
       }
+    }
+    
+    // Include incomplete onboarding count so the frontend can display it
+    if (onboardingIncomplete > 0) {
+      traditionCounts['_onboarding_incomplete'] = onboardingIncomplete;
     }
 
     return NextResponse.json({

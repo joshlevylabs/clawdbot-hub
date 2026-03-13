@@ -2746,11 +2746,14 @@ export default function FaithJourneyPage() {
                     </div>
                     <div className="p-6">
                       {(() => {
-                        // Separate primary traditions from exploring
+                        // Separate primary traditions from exploring and meta keys
                         const primary: Record<string, number> = {};
                         const exploring: Record<string, number> = {};
+                        let onboardingIncomplete = 0;
                         for (const [key, count] of Object.entries(traditionBreakdown)) {
-                          if (key.startsWith('exploring:')) {
+                          if (key === '_onboarding_incomplete') {
+                            onboardingIncomplete = count;
+                          } else if (key.startsWith('exploring:')) {
                             exploring[key.replace('exploring:', '')] = count;
                           } else {
                             primary[key] = count;
@@ -2824,8 +2827,16 @@ export default function FaithJourneyPage() {
                                   );
                                 })}
                               </div>
-                              {sortedPrimary.length === 0 && (
+                              {sortedPrimary.length === 0 && onboardingIncomplete === 0 && (
                                 <p className="text-slate-500 text-sm italic">No primary tradition data yet — users need to complete onboarding.</p>
+                              )}
+                              {onboardingIncomplete > 0 && (
+                                <div className="mt-3 flex items-center gap-2 px-3 py-2 rounded-lg" style={{ backgroundColor: "#1E1E2E" }}>
+                                  <span className="text-amber-400 text-sm">⚠️</span>
+                                  <span className="text-sm text-slate-400">
+                                    {onboardingIncomplete} user{onboardingIncomplete !== 1 ? 's' : ''} haven&apos;t completed onboarding yet
+                                  </span>
+                                </div>
                               )}
                             </div>
 

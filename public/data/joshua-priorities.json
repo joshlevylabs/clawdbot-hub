@@ -1,6 +1,6 @@
 {
-  "date": "2026-03-11",
-  "generatedAt": "2026-03-11T16:00:21.461580-08:00",
+  "date": "2026-03-13",
+  "generatedAt": "2026-03-13T16:00:17.603291-08:00",
   "priorities": [
     {
       "text": "Submit current Lever build to App Store as planned",
@@ -10,7 +10,7 @@
     },
     {
       "text": "Finalize Lever App Store submission",
-      "source": "adhoc-marin-daily-component-sourcing-optical-stack-electrical-design-firmware-progress",
+      "source": "resonance-compass",
       "urgency": "high",
       "taskKey": "CVS-017"
     },
@@ -19,6 +19,24 @@
       "source": "Agent Hosting & Deployment Platform \u2014 Using the Hub to host, manage, and deploy guide agents externally. Making faith journey guides accessible on 3rd party apps and platforms. Hub becomes the agent management layer.",
       "urgency": "medium",
       "taskKey": "J-006"
+    },
+    {
+      "text": "ClawdHub Integration Planning",
+      "source": "resonance-compass",
+      "urgency": "medium",
+      "taskKey": "J-007"
+    },
+    {
+      "text": "Updated Faith Compass visualization",
+      "source": "resonance-compass",
+      "urgency": "low",
+      "taskKey": "J-014"
+    },
+    {
+      "text": "Home screen tension notification card",
+      "source": "resonance-compass",
+      "urgency": "low",
+      "taskKey": "J-015"
     }
   ],
   "agentHandled": [
@@ -77,94 +95,76 @@
       "taskKey": "A-036"
     },
     {
-      "text": "",
+      "text": "Agent Registry Technical Architecture",
       "assignee": "CTO (Chris Vermeulen)",
       "status": "approved",
       "taskKey": "A-037"
     },
     {
-      "text": "",
+      "text": "Agent Monetization Strategy",
       "assignee": "CRO (Alex Hormozi)",
       "status": "approved",
       "taskKey": "A-038"
     },
     {
-      "text": "",
+      "text": "Agent Discovery Experience",
       "assignee": "CMO (Steve Jobs)",
       "status": "approved",
       "taskKey": "A-039"
     },
     {
-      "text": "",
+      "text": "Unit Economics Analysis",
       "assignee": "CFTO (Dave Ramsey)",
       "status": "approved",
       "taskKey": "A-040"
     },
     {
-      "text": "",
+      "text": "Industrial Agent Capabilities",
       "assignee": "CTIO (James Truchard)",
       "status": "approved",
       "taskKey": "A-041"
     },
     {
-      "text": "",
+      "text": "Agent Reliability Framework",
       "assignee": "CPO (Jordan Peterson)",
       "status": "approved",
       "taskKey": "A-042"
     },
     {
-      "text": "",
-      "assignee": "CEO (Joshua)",
-      "status": "approved",
-      "taskKey": "J-007"
+      "text": "Supabase migration \u2014 resonance + tension + compass tables",
+      "assignee": "Theo",
+      "status": "pending",
+      "taskKey": "A-043"
     },
     {
-      "text": "",
-      "assignee": "agent",
-      "status": "backlog",
-      "taskKey": "J-008"
+      "text": "API endpoints \u2014 resonance save/summary/tensions",
+      "assignee": "Theo",
+      "status": "pending",
+      "taskKey": "A-044"
     },
     {
-      "text": "",
-      "assignee": "agent",
-      "status": "backlog",
-      "taskKey": "J-009"
+      "text": "App: sync swipe data to Supabase (replace AsyncStorage-only)",
+      "assignee": "Theo",
+      "status": "pending",
+      "taskKey": "A-045"
     },
     {
-      "text": "",
-      "assignee": "agent",
-      "status": "backlog",
-      "taskKey": "J-010"
+      "text": "Tension detection engine \u2014 map tradition pairs, score conflicts",
+      "assignee": "Theo",
+      "status": "pending",
+      "taskKey": "A-046"
     },
     {
-      "text": "",
-      "assignee": "agent",
-      "status": "backlog",
-      "taskKey": "J-011"
+      "text": "Multi-guide conversation UI + engine",
+      "assignee": "Theo",
+      "status": "pending",
+      "taskKey": "A-047"
     },
     {
-      "text": "",
-      "assignee": "agent",
-      "status": "backlog",
-      "taskKey": "J-012"
-    },
-    {
-      "text": "",
-      "assignee": "agent",
-      "status": "backlog",
-      "taskKey": "J-013"
-    },
-    {
-      "text": "",
-      "assignee": "ceo",
-      "status": "backlog",
-      "taskKey": "J-014"
-    },
-    {
-      "text": "",
-      "assignee": "ceo",
-      "status": "backlog",
-      "taskKey": "J-015"
+      "text": "Compass score extraction from conversations",
+      "assignee": "Theo",
+      "status": "pending",
+      "taskKey": "A-048"
     }
   ]
 }

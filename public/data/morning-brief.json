@@ -1,67 +1,97 @@
 {
-  "date": "2026-03-13",
-  "timestamp": "2026-03-13T06:00:00-08:00",
+  "timestamp": "2026-03-14T06:01:00.000Z",
+  "date": "Saturday, March 14, 2026",
+  "time": "6:00 AM PST",
   "prayer": {
-    "hebrew_date": "13 Kislev",
+    "date": "Saturday, March 14, 2026",
+    "hebrew_date": "14 Kislev",
     "parsha": "Vayechi",
-    "theme": "blessing children, final words, lasting impact",
+    "parsha_theme": "blessing children, final words, lasting impact",
     "modeh_ani": "מודה אני לפניך — I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
-    "psalm": "Psalm 16:8: 'I have set the Lord always before me; He is at my right hand, I will not be shaken.'",
-    "proverb": "Proverbs 27:23: 'Know well the condition of your flocks, and give attention to your herds.'",
-    "intention": "Help me be present with my family. Let my work create margin, not distance."
+    "blessing": "Blessed are You who spreads the earth upon the waters — ground me in stability.",
+    "psalm": "**Psalm 16:8**: \"I have set the Lord always before me; He is at my right hand, I will not be shaken.\"",
+    "proverb": "**Proverbs 22:29**: \"Do you see a man skilled in his work? He will stand before kings.\"",
+    "intention": "Open doors that no one can shut, and close doors that would lead me astray.",
+    "closing": "The Lord goes before you today. He will be with you; He will never leave you nor forsake you. Do not be afraid; do not be discouraged."
   },
-  "relationship_analysis": {
+  "weather": {
+    "current": "Overcast, 64°F (feels like 62°F)",
+    "forecast": {
+      "today": {
+        "high": 82,
+        "low": 80,
+        "condition": "Overcast",
+        "precipitation": "0%",
+        "wind": "2-3 mph"
+      },
+      "tonight": {
+        "temp": 66,
+        "condition": "Overcast"
+      },
+      "tomorrow": {
+        "high": 84,
+        "low": 68,
+        "condition": "Sunny to Overcast"
+      }
+    },
+    "summary": "Pleasant weekend weather ahead with mild temperatures in the 80s."
+  },
+  "calendar": {
+    "status": "oauth_expired",
+    "today": [],
+    "week": [],
+    "message": "Calendar unavailable due to expired OAuth tokens"
+  },
+  "email": {
+    "josh_joshlevylabs": {
+      "highlights": [
+        "DMARC report from Google for joshlevylabs.com domain",
+        "Multiple password reset emails sent from Faith Journey"
+      ],
+      "unread_count": 1
+    },
+    "personal": {
+      "status": "oauth_expired",
+      "message": "Personal Gmail unavailable due to expired OAuth"
+    }
+  },
+  "trading": {
+    "fear_greed_index": {
+      "current": 20.0,
+      "rating": "Extreme Fear",
+      "summary": "Markets in extreme fear. Panic selling may create opportunities for contrarians."
+    },
+    "regime": {
+      "spy": "sideways (12 days)",
+      "qqq": "bear (3 days)",
+      "global": "sideways",
+      "summary": "SPY sideways, QQQ bear. Momentum weakening."
+    },
+    "signals": {
+      "total_buy": 2,
+      "total_hold": 22,
+      "notable": "EFA (international) showing BUY signal with 2.3 strength"
+    }
+  },
+  "relationship": {
     "temperature": "critical",
     "trend": "urgent", 
-    "priority_recommendations": [
+    "ratio": 1.2,
+    "recommendations": [
       "PRIORITY: Focus on repair. Acknowledge recent conflicts without defending.",
       "Increase acts of service dramatically this week.",
       "Create space for her to express frustrations without fixing."
     ]
   },
-  "weather": {
-    "location": "Temecula, CA",
-    "current": "Sunny, 83°F",
-    "forecast": "High 92°F / Low 54°F, Wind 7 mph from Northwest"
-  },
-  "email_highlights": {
-    "josh_joshlevylabs": [
-      {
-        "from": "Joe Dewulf <joe@partnrup.ai>",
-        "subject": "Openclaw intro",
-        "priority": "IMPORTANT"
-      },
-      {
-        "from": "Vercel",
-        "subject": "Failed production deployment on team 'joshlevylabs' projects'",
-        "status": "URGENT - needs attention"
-      },
-      {
-        "from": "Anthropic",
-        "subject": "Your receipt from Anthropic, PBC #2320-0911-5214"
-      }
+  "news": {
+    "world": [
+      "Iranian politics in focus - analysis of 47 years of repression",
+      "Israeli elections 2026 coverage ongoing"
+    ],
+    "ai_tech": [
+      "Grand Valley State University awarded $1M for AI consortium in West Michigan",
+      "2026 predicted as year AI moves from hype to pragmatism",
+      "MCP (Model Context Protocol) adoption accelerating - OpenAI, Microsoft, Anthropic embracing standardization"
     ]
-  },
-  "mre_trading": {
-    "fear_greed_index": 20.2,
-    "sentiment": "extreme fear",
-    "summary": "Markets in extreme fear at 20. Panic selling may create opportunities for contrarians.",
-    "regime": "SPY sideways, QQQ bear. Momentum is weakening.",
-    "signals": {
-      "total_buy": 2,
-      "total_hold": 22,
-      "notable": "EFA (international) showing BUY signal with 6.1 strength"
-    }
-  },
-  "world_news": [
-    "Gavin Newsom compares Israel to 'apartheid state,' questions military support (NYT, March 4)",
-    "BGU experts analyze current Israeli-Iranian relations and Middle East implications (JPost, today)",
-    "Focus on conservative perspective: Strong support for Israel continues despite political pressures"
-  ],
-  "ai_news": [
-    "Apple announces completely reimagined, AI-powered Siri set to debut in 2026",
-    "AI funding trends shift from hype to pragmatism - investors prioritizing real production usage and revenue",
-    "NVIDIA report: 42% of companies prioritizing AI workflow optimization as top spending priority in 2026",
-    "TechCrunch Founder Summit 2026 focusing on AI tactical playbooks for founders"
-  ]
+  }
 }

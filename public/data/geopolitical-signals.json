@@ -1,235 +1,236 @@
 {
-  "timestamp": "2026-02-28T18:00:00Z",
-  "conflict": "US-Israel-Iran",
-  "overall_regime": "ESCALATION",
-  "escalation_score": 85,
+  "timestamp": "2026-03-15T18:00:00Z",
+  "conflict": "US-Israel-Iran War",
+  "overall_regime": "EXTREME_ESCALATION",
+  "escalation_score": 98,
   "signals": {
     "oil_price_shock": {
       "name": "Oil Price Shock",
-      "status": "ESCALATION",
-      "score": 78,
+      "status": "EXTREME_ESCALATION",
+      "score": 95,
       "data": {
-        "brent_current": 72.5,
-        "brent_change_pct": 4.8,
-        "wti_current": 70.2,
-        "wti_change_pct": 5.1,
+        "brent_current": 103.86,
+        "brent_change_pct": 43.3,
+        "wti_current": 98.71,
+        "wti_change_pct": 40.6,
         "threshold_escalation": 5,
         "threshold_deescalation": -5
       },
-      "detail": "Brent crude surged above $72/bbl on Strait of Hormuz disruption fears"
+      "detail": "Oil prices surged 43% since late February as Iran closed Strait of Hormuz. Brent above $104, WTI near $99."
     },
     "hormuz_flow": {
       "name": "Strait of Hormuz Flow",
-      "status": "ESCALATION",
-      "score": 92,
+      "status": "CRITICAL_DISRUPTION",
+      "score": 100,
       "data": {
-        "tanker_status": "SUSPENDED",
-        "oil_majors_shipping": "PAUSED",
+        "tanker_status": "COMPLETELY_BLOCKED",
+        "oil_majors_shipping": "HALTED",
         "irgc_closure_order": true,
-        "us_navy_advisory": "AVOID",
-        "insurance_status": "RESTRICTED"
+        "us_navy_advisory": "COMBAT_ZONE",
+        "insurance_status": "UNAVAILABLE"
       },
-      "detail": "Oil majors suspended Hormuz shipments. IRGC ordered closure. Lloyd's restricting insurance for US/Israel-linked vessels."
+      "detail": "Strait completely closed for 15+ days. Iran enforcing total blockade. 20% of global oil transit eliminated. US Navy in active combat operations."
     },
     "vix_fear": {
       "name": "VIX Fear Gauge",
       "status": "ELEVATED",
-      "score": 65,
+      "score": 72,
       "data": {
-        "vix_current": 19.9,
-        "vix_change_pct": 12.3,
-        "futures_implied": 25.5,
+        "vix_current": 24.0,
+        "vix_change_pct": 20.6,
+        "futures_implied": 28.5,
         "threshold_elevated": 20,
         "threshold_extreme": 35
       },
-      "detail": "VIX at 19.9 but futures implying 25+ at Monday open. Expect significant gap up."
+      "detail": "VIX at 24, up from 19.9 in late February. Futures pricing in continued volatility above 28."
     },
     "defense_momentum": {
       "name": "Defense Sector Momentum",
-      "status": "ESCALATION",
-      "score": 82,
+      "status": "EXTREME_ESCALATION",
+      "score": 95,
       "data": {
-        "ita_return_1d": 2.8,
-        "ita_vs_spy_spread": 3.9,
-        "lmt_return": 4.1,
-        "rtx_return": 3.5,
-        "noc_return": 3.2,
-        "volume_surge_pct": 185
+        "lmt_return_3m": 37.0,
+        "rtx_return_1y": 62.0,
+        "noc_return_recent": 60.0,
+        "gd_return_recent": 57.0,
+        "volume_surge_pct": 280,
+        "operation_epic_fury": true
       },
-      "detail": "Defense ETF ITA outperforming SPY by 3.9%. Volume surge 185% above average."
+      "detail": "Defense stocks hitting 52-week highs. LMT +37% in 3 months, RTX +62% over year. 'Operation Epic Fury' driving massive weapons demand."
     },
     "gold_safe_haven": {
       "name": "Gold Safe Haven Flow",
-      "status": "ESCALATION",
-      "score": 75,
+      "status": "EXTREME_ESCALATION",
+      "score": 88,
       "data": {
-        "gld_return_1d": 2.1,
-        "gld_return_mtd": 11.0,
-        "gld_volume_surge_pct": 142,
-        "silver_return_1d": 1.8,
-        "best_month_since": "2012"
+        "gold_current": 5020.0,
+        "gold_historical_high": true,
+        "currency_debasement_fears": true,
+        "inflation_hedge_demand": "EXTREME",
+        "central_bank_buying": true
       },
-      "detail": "Gold +2% today, +11% in February — strongest monthly gain since 2012. Classic flight to safety."
+      "detail": "Gold at unprecedented ~$5,020/oz reflecting extreme monetary debasement fears and inflation from energy crisis."
     },
     "diplomatic_signals": {
       "name": "Diplomatic Activity",
-      "status": "MIXED",
-      "score": 35,
+      "status": "FAILED",
+      "score": 15,
       "data": {
-        "china_ceasefire_call": true,
-        "un_emergency_session": true,
-        "backchannel_active": "Unknown",
-        "regime_change_rhetoric": true,
-        "congressional_opposition": true
+        "china_mediation_attempt": "FAILED",
+        "un_security_council": "DEADLOCKED",
+        "trump_regime_change": true,
+        "khamenei_killed": true,
+        "iran_government_collapse": "PARTIAL"
       },
-      "detail": "China called for immediate ceasefire. UN emergency session. But Trump calling for regime change — escalatory rhetoric."
+      "detail": "Diplomatic channels collapsed. Iran's Supreme Leader killed. Trump demanding regime change. China's mediation efforts failed."
     },
     "military_posture": {
       "name": "Military Posture",
-      "status": "ESCALATION",
-      "score": 95,
+      "status": "ACTIVE_WAR",
+      "score": 100,
       "data": {
-        "us_status": "MAJOR_COMBAT_OPS",
-        "strikes_confirmed": true,
-        "iran_retaliation": true,
-        "targets_hit": ["Tehran", "Military bases", "Nuclear facilities"],
-        "iran_targets": ["US bases Bahrain", "Kuwait", "Qatar", "UAE"],
-        "china_russia_exercises": "Maritime Security Belt 2026",
-        "carrier_groups_deployed": 2
+        "us_status": "ACTIVE_WAR_OPERATIONS",
+        "war_duration_days": 15,
+        "strikes_daily": true,
+        "iran_nuclear_facilities": "TARGETED",
+        "kharg_island_hit": true,
+        "tehran_under_attack": true,
+        "carrier_groups_deployed": 3,
+        "operation_name": "Operation Epic Fury"
       },
-      "detail": "Trump declared 'major combat operations'. Iran retaliating against US bases across Gulf. Two US carrier strike groups deployed."
+      "detail": "Day 15 of 'Operation Epic Fury'. US-Israel conducting daily airstrikes on Iranian oil infrastructure, nuclear sites, military bases. Iran retaliating."
     }
   },
   "sector_recommendations": {
     "OVERWEIGHT": [
       {
         "sector": "Energy",
-        "tickers": ["XLE", "XOM", "CVX", "OXY", "DVN"],
-        "rationale": "Direct beneficiary of oil supply disruption",
-        "conviction": 90
+        "tickers": ["XLE", "XOM", "CVX", "OXY", "DVN", "COP"],
+        "rationale": "Historic supply shock from Hormuz closure driving oil to $100+. Domestic producers major beneficiaries.",
+        "conviction": 98
       },
       {
         "sector": "Defense",
-        "tickers": ["ITA", "LMT", "RTX", "NOC", "GD"],
-        "rationale": "Major combat operations = sustained defense spending",
-        "conviction": 92
+        "tickers": ["ITA", "LMT", "RTX", "NOC", "GD", "BA"],
+        "rationale": "Active war driving unprecedented weapons consumption. Defense stocks hitting all-time highs.",
+        "conviction": 95
       },
       {
         "sector": "Gold/Precious Metals",
-        "tickers": ["GLD", "GDX", "SLV", "NEM", "GOLD"],
-        "rationale": "Flight to safety + inflation hedge",
-        "conviction": 85
+        "tickers": ["GLD", "GDX", "SLV", "NEM", "GOLD", "AEM"],
+        "rationale": "Ultimate safe haven during wartime. Gold at historic highs on currency debasement fears.",
+        "conviction": 90
       },
       {
         "sector": "US Shale/Domestic Energy",
-        "tickers": ["PXD", "FANG", "EOG", "HES"],
-        "rationale": "Domestic production benefits from supply disruption without Hormuz risk",
-        "conviction": 80
+        "tickers": ["PXD", "FANG", "EOG", "HES", "MRO"],
+        "rationale": "Zero Middle East exposure, maximum benefit from $100+ oil prices",
+        "conviction": 92
       }
     ],
     "UNDERWEIGHT": [
       {
         "sector": "Airlines/Travel",
         "tickers": ["JETS", "DAL", "UAL", "AAL", "LUV"],
-        "rationale": "Fuel cost surge + Middle East route disruptions",
-        "conviction": 88
+        "rationale": "Jet fuel costs surged 40%+. Middle East routes completely shut. Major airline bankruptcies possible.",
+        "conviction": 95
       },
       {
         "sector": "Tech/Growth",
-        "tickers": ["QQQ", "XLK"],
-        "rationale": "Risk-off rotation, capital flowing to commodities and defense",
-        "conviction": 70
+        "tickers": ["QQQ", "XLK", "AAPL", "MSFT"],
+        "rationale": "Massive risk-off rotation to commodities/defense. Tech multiples collapsing in inflationary environment.",
+        "conviction": 85
       },
       {
         "sector": "Consumer Discretionary",
-        "tickers": ["XLY"],
-        "rationale": "Higher energy costs compress consumer spending",
-        "conviction": 65
+        "tickers": ["XLY", "AMZN", "TSLA"],
+        "rationale": "Energy cost surge destroying consumer discretionary spending power",
+        "conviction": 80
       },
       {
-        "sector": "Shipping",
-        "tickers": ["ZIM", "SBLK"],
-        "rationale": "Hormuz closure disrupts global shipping routes, insurance costs spike",
-        "conviction": 82
+        "sector": "Shipping/Logistics",
+        "tickers": ["ZIM", "SBLK", "FDX", "UPS"],
+        "rationale": "Global shipping disrupted. Alternative routes 40%+ longer. Insurance costs prohibitive.",
+        "conviction": 90
       }
     ],
     "MONITOR": [
       {
-        "sector": "Financials",
-        "tickers": ["XLF", "GS", "JPM"],
-        "rationale": "Mixed — volatility trading revenue up but credit risk rising",
-        "conviction": 50
+        "sector": "China-Exposed Equities",
+        "tickers": ["FXI", "KWEB", "BABA", "PDD"],
+        "rationale": "China economy devastated by oil import disruption but some benefit from Iran trade",
+        "conviction": 70
       },
       {
-        "sector": "China-Exposed",
-        "tickers": ["FXI", "KWEB", "BABA"],
-        "rationale": "China most economically damaged by Hormuz disruption, 50% oil imports transit strait",
-        "conviction": 75
+        "sector": "European Energy",
+        "tickers": ["SHEL", "BP", "TTE"],
+        "rationale": "Mixed exposure - Gulf assets at risk but benefiting from higher prices",
+        "conviction": 60
       }
     ]
   },
   "scenarios": [
     {
-      "name": "Contained Strike",
-      "probability": 35,
-      "description": "Limited air/missile exchange, ceasefire within days/weeks",
-      "oil_target": "$75-80",
-      "market_impact": "Vol spike then mean-revert, dip = buying opportunity",
-      "positioning": "Reduce hedge positions on ceasefire signals"
+      "name": "Regime Change Success",
+      "probability": 30,
+      "description": "Iranian government collapses, new regime reopens Hormuz within 2-4 weeks",
+      "oil_target": "$75-85",
+      "market_impact": "Sharp risk-on rotation back to tech/growth. Defense stocks give back gains.",
+      "positioning": "Lock in energy/defense profits, prepare to rotate back to growth"
     },
     {
-      "name": "Prolonged Campaign",
-      "probability": 45,
-      "description": "Weeks of air strikes + proxy warfare, Hormuz partially disrupted",
-      "oil_target": "$80-100",
-      "market_impact": "Sustained rotation into energy/defense, sticky inflation, Fed delays cuts",
-      "positioning": "Heavy overweight energy + defense, underweight growth"
+      "name": "Prolonged Conflict",
+      "probability": 50,
+      "description": "War continues 2-6 months, Hormuz partially reopens with heavy military escort",
+      "oil_target": "$80-120",
+      "market_impact": "Sustained inflation, Fed forced to hike rates. Recession risk high.",
+      "positioning": "Maximum overweight energy/defense/gold. Underweight everything else."
     },
     {
-      "name": "Regional Fracture",
+      "name": "Regional War Expansion",
       "probability": 20,
-      "description": "Full regional war, Hormuz closed, multiple fronts",
-      "oil_target": "$100-200",
-      "market_impact": "1970s-style energy crisis, structural repricing",
-      "positioning": "Maximum defensive: gold, energy, cash. Exit growth entirely."
+      "description": "China/Russia military intervention, global conflict, complete energy system breakdown",
+      "oil_target": "$150-300",
+      "market_impact": "1970s-style stagflation. Potential market system breakdown.",
+      "positioning": "Physical assets only: gold, oil, defense. Exit financial assets entirely."
     }
   ],
   "key_watchpoints": [
     {
-      "indicator": "Strait of Hormuz tanker traffic",
-      "current": "Suspended",
-      "escalation_trigger": "IRGC mines or attacks tanker",
-      "deescalation_trigger": "Shipments resume"
+      "indicator": "Iran Government Stability",
+      "current": "Supreme Leader killed, partial collapse",
+      "escalation_trigger": "Total government collapse",
+      "deescalation_trigger": "Negotiated ceasefire"
     },
     {
-      "indicator": "VIX level",
-      "current": "19.9 (futures: 25+)",
-      "escalation_trigger": ">35",
-      "deescalation_trigger": "<20"
+      "indicator": "Strait of Hormuz Status",
+      "current": "Completely closed 15+ days",
+      "escalation_trigger": "Mining of strait",
+      "deescalation_trigger": "Partial reopening with escorts"
     },
     {
-      "indicator": "Oil price (Brent)",
-      "current": "$72.5",
-      "escalation_trigger": ">$85",
-      "deescalation_trigger": "<$70"
+      "indicator": "Oil Price (Brent)",
+      "current": "$103.86",
+      "escalation_trigger": ">$120",
+      "deescalation_trigger": "<$90"
     },
     {
-      "indicator": "China response",
-      "current": "Diplomatic only",
-      "escalation_trigger": "Naval deployment",
-      "deescalation_trigger": "Backs ceasefire deal"
+      "indicator": "China Military Response",
+      "current": "Diplomatic only, trade benefits",
+      "escalation_trigger": "Naval deployment to Gulf",
+      "deescalation_trigger": "Pressure Iran for ceasefire"
     },
     {
-      "indicator": "Iran nuclear sites",
-      "current": "Targeted",
-      "escalation_trigger": "Nuclear material release",
-      "deescalation_trigger": "Deal framework emerges"
+      "indicator": "US Domestic Politics",
+      "current": "War powers active",
+      "escalation_trigger": "Congress authorizes formal war declaration",
+      "deescalation_trigger": "Congressional opposition forces withdrawal"
     },
     {
-      "indicator": "Gulf state stability",
-      "current": "Bases hit",
-      "escalation_trigger": "Civilian infrastructure targeted",
-      "deescalation_trigger": "Gulf states broker ceasefire"
+      "indicator": "Global Energy Emergency",
+      "current": "Strategic reserves being released",
+      "escalation_trigger": "Reserves depleted",
+      "deescalation_trigger": "Alternative supply routes established"
     }
   ],
   "bloc_exposure": {
@@ -238,44 +239,32 @@
         {
           "ticker": "XOM",
           "name": "ExxonMobil",
-          "exposure": "Qatar North Field LNG, 12/14 trains",
-          "risk": "HIGH"
+          "exposure": "Qatar North Field LNG operations suspended",
+          "risk": "CRITICAL"
         },
         {
           "ticker": "CVX",
           "name": "Chevron",
-          "exposure": "Qatar petrochemicals, Kuwait, Saudi ops",
-          "risk": "HIGH"
-        },
-        {
-          "ticker": "BP",
-          "name": "BP",
-          "exposure": "Iraq Rumaila (largest field), Oman, UAE",
-          "risk": "HIGH"
-        },
-        {
-          "ticker": "SHEL",
-          "name": "Shell",
-          "exposure": "Qatar LNG, UAE operations",
-          "risk": "HIGH"
+          "exposure": "All Gulf operations halted",
+          "risk": "CRITICAL"
         },
         {
           "ticker": "LMT",
           "name": "Lockheed Martin",
-          "exposure": "F-35s, Patriot, THAAD deployed in Gulf",
-          "risk": "BENEFICIARY"
+          "exposure": "Massive weapons orders from Operation Epic Fury",
+          "risk": "MAJOR_BENEFICIARY"
         },
         {
           "ticker": "RTX",
           "name": "RTX/Raytheon",
-          "exposure": "Patriot missiles, Tomahawks",
-          "risk": "BENEFICIARY"
+          "exposure": "Patriot missile systems in heavy demand",
+          "risk": "MAJOR_BENEFICIARY"
         },
         {
           "ticker": "ZIM",
           "name": "ZIM Shipping",
-          "exposure": "Israeli flag carrier, uninsurable near Hormuz",
-          "risk": "CRITICAL"
+          "exposure": "Israeli flag carrier, routes completely disrupted",
+          "risk": "EXISTENTIAL"
         }
       ]
     },
@@ -284,23 +273,17 @@
         {
           "ticker": "PTR",
           "name": "PetroChina/CNPC",
-          "exposure": "Iran Azadegan field, 87% of Iran oil exports",
-          "risk": "CRITICAL"
+          "exposure": "Buying Iranian oil at massive discounts",
+          "risk": "BENEFICIARY"
         },
         {
           "ticker": "SNP",
           "name": "Sinopec",
-          "exposure": "Iran Yadavaran field, Iraq ops",
-          "risk": "CRITICAL"
-        },
-        {
-          "ticker": "CEO",
-          "name": "CNOOC",
-          "exposure": "Gulf of Oman interests",
-          "risk": "HIGH"
+          "exposure": "Iran oil imports via overland routes",
+          "risk": "BENEFICIARY"
         }
       ],
-      "dependency": "China imports 50% of oil via Hormuz — most exposed major economy"
+      "dependency": "China economy severely impacted but some energy companies benefit from discounted Iran oil"
     }
   }
 }

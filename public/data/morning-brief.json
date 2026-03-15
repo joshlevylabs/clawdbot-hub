@@ -1,82 +1,62 @@
 {
-  "timestamp": "2026-03-14T06:01:00.000Z",
-  "date": "Saturday, March 14, 2026",
-  "time": "6:00 AM PST",
+  "date": "Sunday, March 15, 2026",
+  "generated_at": "2026-03-15T06:00:00-08:00",
   "prayer": {
-    "date": "Saturday, March 14, 2026",
-    "hebrew_date": "14 Kislev",
+    "title": "🕐️ Morning Prayer",
+    "date": "Sunday, March 15, 2026",
+    "hebrew_date": "15 Kislev",
     "parsha": "Vayechi",
     "parsha_theme": "blessing children, final words, lasting impact",
     "modeh_ani": "מודה אני לפניך — I gratefully thank You, living and eternal King, for returning my soul within me with compassion.",
-    "blessing": "Blessed are You who spreads the earth upon the waters — ground me in stability.",
-    "psalm": "**Psalm 16:8**: \"I have set the Lord always before me; He is at my right hand, I will not be shaken.\"",
-    "proverb": "**Proverbs 22:29**: \"Do you see a man skilled in his work? He will stand before kings.\"",
-    "intention": "Open doors that no one can shut, and close doors that would lead me astray.",
-    "closing": "The Lord goes before you today. He will be with you; He will never leave you nor forsake you. Do not be afraid; do not be discouraged."
+    "blessing": "Blessed are You who crowns Israel with glory — let my work bring You honor.",
+    "psalm": "**Psalm 121:8**: \"The Lord will watch over your coming and going both now and forevermore.\"",
+    "proverb": "**Proverbs 27:23**: \"Know well the condition of your flocks, and give attention to your herds.\"",
+    "intention": "Let today's small faithfulness lead to tomorrow's greater stewardship.",
+    "closing": "May your work today be a pleasing offering. May your rest tonight be deep and restorative."
   },
   "weather": {
-    "current": "Overcast, 64°F (feels like 62°F)",
-    "forecast": {
-      "today": {
-        "high": 82,
-        "low": 80,
-        "condition": "Overcast",
-        "precipitation": "0%",
-        "wind": "2-3 mph"
-      },
-      "tonight": {
-        "temp": 66,
-        "condition": "Overcast"
-      },
-      "tomorrow": {
-        "high": 84,
-        "low": 68,
-        "condition": "Sunny to Overcast"
-      }
-    },
-    "summary": "Pleasant weekend weather ahead with mild temperatures in the 80s."
+    "location": "Temecula, CA",
+    "current": "Clear, 53°F",
+    "today": "Sunny, high 86°F, evening 82°F",
+    "tomorrow": "Partly cloudy, high 84°F",
+    "summary": "Perfect sunny weather all week. Clear skies, minimal wind."
   },
   "calendar": {
-    "status": "oauth_expired",
+    "status": "OAuth tokens expired - calendar access unavailable",
     "today": [],
     "week": [],
-    "message": "Calendar unavailable due to expired OAuth tokens"
+    "month": []
   },
   "email": {
-    "josh_joshlevylabs": {
-      "highlights": [
-        "DMARC report from Google for joshlevylabs.com domain",
-        "Multiple password reset emails sent from Faith Journey"
-      ],
-      "unread_count": 1
-    },
-    "personal": {
-      "status": "oauth_expired",
-      "message": "Personal Gmail unavailable due to expired OAuth"
-    }
+    "status": "Partial access - some OAuth tokens expired",
+    "highlights": [
+      "Anthropic invoice #2827-7048-5538 (Mar 14, 11:13 PM)",
+      "Google Workspace security alert - potential issues (Mar 14, 11:52 AM)",
+      "Multiple Faith Journey password reset attempts (Mar 14, various times)"
+    ]
   },
   "trading": {
     "fear_greed_index": {
       "current": 20.0,
-      "rating": "Extreme Fear",
-      "summary": "Markets in extreme fear. Panic selling may create opportunities for contrarians."
+      "rating": "extreme fear",
+      "summary": "Markets in extreme fear at 20. Panic selling may create opportunities for contrarians."
     },
     "regime": {
-      "spy": "sideways (12 days)",
-      "qqq": "bear (3 days)",
-      "global": "sideways",
-      "summary": "SPY sideways, QQQ bear. Momentum weakening."
+      "spy": "sideways (12 days, early stage)",
+      "qqq": "bear (3 days, early stage)", 
+      "summary": "SPY is sideways, QQQ is bear. Momentum is weakening."
     },
     "signals": {
-      "total_buy": 2,
-      "total_hold": 22,
-      "notable": "EFA (international) showing BUY signal with 2.3 strength"
+      "buy": 2,
+      "hold": 22, 
+      "watch": 0,
+      "summary": "EFA (international) showing BUY signal - opportunistic track, 2.3 strength. Most positions HOLD."
     }
   },
   "relationship": {
+    "status": "CRITICAL",
     "temperature": "critical",
     "trend": "urgent", 
-    "ratio": 1.2,
     "recommendations": [
       "PRIORITY: Focus on repair. Acknowledge recent conflicts without defending.",
       "Increase acts of service dramatically this week.",
@@ -84,14 +64,17 @@
     ]
   },
   "news": {
-    "world": [
-      "Iranian politics in focus - analysis of 47 years of repression",
-      "Israeli elections 2026 coverage ongoing"
+    "ai_highlights": [
+      "Advanced Machine Intelligence (Yann LeCun co-founded) raises $1.03B for 'world models'",
+      "xAI moved to #2 startup by valuation (reflecting SpaceX merger at ~$1.25T)", 
+      "ElevenLabs jumped to #10 (tripled valuation)",
+      "Waymo entered top 10 at #7 ($126B, $16B round)"
     ],
-    "ai_tech": [
-      "Grand Valley State University awarded $1M for AI consortium in West Michigan",
-      "2026 predicted as year AI moves from hype to pragmatism",
-      "MCP (Model Context Protocol) adoption accelerating - OpenAI, Microsoft, Anthropic embracing standardization"
+    "israel_geopolitics": [
+      "ACTIVE CONFLICT: Israel conducting 'extensive strikes' on Iran",
+      "Iran missile attacks on central Israel - 2 injured in Bnei Brak and Ramat Gan",
+      "U.S. Embassy suspended all routine consular services through March 20", 
+      "Hezbollah firing rockets and drones - no imminent direct talks with Lebanon"
     ]
   }
 }

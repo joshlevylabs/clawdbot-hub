@@ -1093,9 +1093,9 @@ export default function ActionsDashboard({
     const isUp = pnl >= 0;
 
     return (
-      <tr key={item.symbol} className="border-b border-slate-800 hover:bg-slate-800/50">
-        {/* Asset */}
-        <td className="py-2.5 px-2">
+      <tr key={item.symbol} className="border-b border-slate-800 hover:bg-slate-800/50 group">
+        {/* Asset — sticky first column for mobile scroll */}
+        <td className="py-2.5 px-2 sticky left-0 z-10 bg-slate-900 group-hover:bg-slate-800/90">
           <div className="flex items-center gap-2">
             <div>
               <span className="font-bold text-slate-100">{item.symbol}</span>
@@ -1451,11 +1451,11 @@ export default function ActionsDashboard({
               )}
             </div>
           ) : (
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto relative">
               <table className="w-full text-xs">
                 <thead>
                   <tr className="text-[10px] text-slate-500 uppercase border-b border-slate-700">
-                    <SortHeader label="Asset" sortKey="symbol" currentSort={sortKey} currentDir={sortDir} onSort={handleSort} className="text-left" title="Ticker symbol and company name" />
+                    <SortHeader label="Asset" sortKey="symbol" currentSort={sortKey} currentDir={sortDir} onSort={handleSort} className="text-left sticky left-0 z-20 bg-slate-900 after:absolute after:right-0 after:top-0 after:bottom-0 after:w-px after:bg-slate-700/50" title="Ticker symbol and company name" />
                     <th className="text-left py-2 px-2" title="GICS sector classification">Sector</th>
                     <th className="text-left py-2 px-2" title="Industry sub-classification">Industry</th>
                     <SortHeader label="Signal" sortKey="action" currentSort={sortKey} currentDir={sortDir} onSort={handleSort} className="text-left" title="MRE engine recommendation: BUY, HOLD, WATCH, or WAIT" />
@@ -1500,7 +1500,7 @@ export default function ActionsDashboard({
                   {/* CASH row */}
                   {cash > 0 && (
                     <tr className="border-b border-slate-800 bg-amber-900/10">
-                      <td className="py-2.5 px-2">
+                      <td className="py-2.5 px-2 sticky left-0 z-10 bg-[#1a1612]">
                         <div className="flex items-center gap-2">
                           <div>
                             <span className="font-bold text-slate-100">CASH 💵</span>

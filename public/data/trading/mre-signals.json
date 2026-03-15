@@ -1,7 +1,7 @@
 {
-  "timestamp": "2026-03-14T03:33:57.872348",
-  "last_updated": "2026-03-14 03:33:57",
-  "last_updated_unix": 1773484437,
+  "timestamp": "2026-03-15T03:34:48.254340",
+  "last_updated": "2026-03-15 03:34:48",
+  "last_updated_unix": 1773570888,
   "fear_greed": {
     "current": 19.9685352622062,
     "rating": "extreme fear",
@@ -307,11 +307,11 @@
         "effective_fg": 34.6,
         "fg_divergence": 26.6,
         "fg_divergence_bonus": 0.25,
-        "fg_divergence_z_score": 1.41,
+        "fg_divergence_z_score": 1.33,
         "fg_divergence_label": "elevated",
         "fg_divergence_confidence": "moderate",
-        "fg_divergence_data_points": 20,
-        "fg_divergence_historical_mean": 17.7,
+        "fg_divergence_data_points": 21,
+        "fg_divergence_historical_mean": 18.1,
         "fg_blend_weights": {
           "global": 0.45,
           "sector": 0.55
@@ -427,11 +427,11 @@
         "effective_fg": 34.6,
         "fg_divergence": 26.6,
         "fg_divergence_bonus": 0.25,
-        "fg_divergence_z_score": 1.41,
+        "fg_divergence_z_score": 1.33,
         "fg_divergence_label": "elevated",
         "fg_divergence_confidence": "moderate",
-        "fg_divergence_data_points": 20,
-        "fg_divergence_historical_mean": 17.7,
+        "fg_divergence_data_points": 21,
+        "fg_divergence_historical_mean": 18.1,
         "fg_blend_weights": {
           "global": 0.45,
           "sector": 0.55
@@ -547,11 +547,11 @@
         "effective_fg": 34.6,
         "fg_divergence": 26.6,
         "fg_divergence_bonus": 0.25,
-        "fg_divergence_z_score": 1.41,
+        "fg_divergence_z_score": 1.33,
         "fg_divergence_label": "elevated",
         "fg_divergence_confidence": "moderate",
-        "fg_divergence_data_points": 20,
-        "fg_divergence_historical_mean": 17.7,
+        "fg_divergence_data_points": 21,
+        "fg_divergence_historical_mean": 18.1,
         "fg_blend_weights": {
           "global": 0.45,
           "sector": 0.55
@@ -661,20 +661,20 @@
         "fear_threshold_conservative": 8,
         "fear_threshold_opportunistic": 19,
         "signal_track": "none",
-        "current_fg": 37.8,
+        "current_fg": 41.7,
         "global_fg": 19.9685352622062,
         "sector_fg": 45.5,
-        "effective_fg": 37.8,
+        "effective_fg": 41.7,
         "fg_divergence": 25.5,
         "fg_divergence_bonus": 0.25,
-        "fg_divergence_z_score": 1.46,
+        "fg_divergence_z_score": 1.35,
         "fg_divergence_label": "elevated",
         "fg_divergence_confidence": "moderate",
-        "fg_divergence_data_points": 20,
-        "fg_divergence_historical_mean": 13.8,
+        "fg_divergence_data_points": 21,
+        "fg_divergence_historical_mean": 14.4,
         "fg_blend_weights": {
-          "global": 0.3,
-          "sector": 0.7
+          "global": 0.15,
+          "sector": 0.85
         },
         "regime": "bear",
         "regime_weight": 1.0,
@@ -781,20 +781,20 @@
         "fear_threshold_conservative": 8,
         "fear_threshold_opportunistic": 19,
         "signal_track": "none",
-        "current_fg": 37.8,
+        "current_fg": 41.7,
         "global_fg": 19.9685352622062,
         "sector_fg": 45.5,
-        "effective_fg": 37.8,
+        "effective_fg": 41.7,
         "fg_divergence": 25.5,
         "fg_divergence_bonus": 0.25,
-        "fg_divergence_z_score": 1.46,
+        "fg_divergence_z_score": 1.35,
         "fg_divergence_label": "elevated",
         "fg_divergence_confidence": "moderate",
-        "fg_divergence_data_points": 20,
-        "fg_divergence_historical_mean": 13.8,
+        "fg_divergence_data_points": 21,
+        "fg_divergence_historical_mean": 14.4,
         "fg_blend_weights": {
-          "global": 0.3,
-          "sector": 0.7
+          "global": 0.15,
+          "sector": 0.85
         },
         "regime": "sideways",
         "regime_weight": 1.0,
@@ -907,11 +907,11 @@
         "effective_fg": 34.3,
         "fg_divergence": 20.5,
         "fg_divergence_bonus": 0.25,
-        "fg_divergence_z_score": 1.97,
+        "fg_divergence_z_score": 1.75,
         "fg_divergence_label": "unusual",
         "fg_divergence_confidence": "moderate",
-        "fg_divergence_data_points": 20,
-        "fg_divergence_historical_mean": 8.7,
+        "fg_divergence_data_points": 21,
+        "fg_divergence_historical_mean": 9.3,
         "fg_blend_weights": {
           "global": 0.3,
           "sector": 0.7
@@ -1017,20 +1017,20 @@
         "fear_threshold_conservative": 8,
         "fear_threshold_opportunistic": 19,
         "signal_track": "none",
-        "current_fg": 40.5,
+        "current_fg": 44.6,
         "global_fg": 19.9685352622062,
         "sector_fg": 47.3,
-        "effective_fg": 40.5,
+        "effective_fg": 44.6,
         "fg_divergence": 27.3,
         "fg_divergence_bonus": 0.25,
-        "fg_divergence_z_score": 0.57,
+        "fg_divergence_z_score": 0.56,
         "fg_divergence_label": "normal",
         "fg_divergence_confidence": "moderate",
-        "fg_divergence_data_points": 20,
-        "fg_divergence_historical_mean": 24.4,
+        "fg_divergence_data_points": 21,
+        "fg_divergence_historical_mean": 24.5,
         "fg_blend_weights": {
-          "global": 0.25,
-          "sector": 0.75
+          "global": 0.1,
+          "sector": 0.9
         },
         "regime": "bear",
         "regime_weight": 1.0,
@@ -1137,20 +1137,20 @@
         "fear_threshold_conservative": 8,
         "fear_threshold_opportunistic": 19,
         "signal_track": "none",
-        "current_fg": 40.5,
+        "current_fg": 44.6,
         "global_fg": 19.9685352622062,
         "sector_fg": 47.3,
-        "effective_fg": 40.5,
+        "effective_fg": 44.6,
         "fg_divergence": 27.3,
         "fg_divergence_bonus": 0.25,
-        "fg_divergence_z_score": 0.57,
+        "fg_divergence_z_score": 0.56,
         "fg_divergence_label": "normal",
         "fg_divergence_confidence": "moderate",
-        "fg_divergence_data_points": 20,
-        "fg_divergence_historical_mean": 24.4,
+        "fg_divergence_data_points": 21,
+        "fg_divergence_historical_mean": 24.5,
         "fg_blend_weights": {
-          "global": 0.25,
-          "sector": 0.75
+          "global": 0.1,
+          "sector": 0.9
         },
         "regime": "sideways",
         "regime_weight": 1.5,
@@ -1257,20 +1257,20 @@
         "fear_threshold_conservative": 6,
         "fear_threshold_opportunistic": 16,
         "signal_track": "none",
-        "current_fg": 72.7,
+        "current_fg": 77.7,
         "global_fg": 19.9685352622062,
         "sector_fg": 70.2,
-        "effective_fg": 72.7,
+        "effective_fg": 77.7,
         "fg_divergence": 50.2,
         "fg_divergence_bonus": 0.25,
-        "fg_divergence_z_score": 2.03,
-        "fg_divergence_label": "extreme",
+        "fg_divergence_z_score": 1.82,
+        "fg_divergence_label": "unusual",
         "fg_divergence_confidence": "moderate",
-        "fg_divergence_data_points": 20,
-        "fg_divergence_historical_mean": 37.6,
+        "fg_divergence_data_points": 21,
+        "fg_divergence_historical_mean": 38.2,
         "fg_blend_weights": {
-          "global": -0.05,
-          "sector": 1.05
+          "global": -0.15,
+          "sector": 1.15
         },
         "regime": "bull",
         "regime_weight": 0.5,
@@ -1377,20 +1377,20 @@
         "fear_threshold_conservative": 6,
         "fear_threshold_opportunistic": 16,
         "signal_track": "none",
-        "current_fg": 72.7,
+        "current_fg": 77.7,
         "global_fg": 19.9685352622062,
         "sector_fg": 70.2,
-        "effective_fg": 72.7,
+        "effective_fg": 77.7,
         "fg_divergence": 50.2,
         "fg_divergence_bonus": 0.25,
-        "fg_divergence_z_score": 2.03,
-        "fg_divergence_label": "extreme",
+        "fg_divergence_z_score": 1.82,
+        "fg_divergence_label": "unusual",
         "fg_divergence_confidence": "moderate",
-        "fg_divergence_data_points": 20,
-        "fg_divergence_historical_mean": 37.6,
+        "fg_divergence_data_points": 21,
+        "fg_divergence_historical_mean": 38.2,
         "fg_blend_weights": {
-          "global": -0.05,
-          "sector": 1.05
+          "global": -0.15,
+          "sector": 1.15
         },
         "regime": "sideways",
         "regime_weight": 1.5,
@@ -1499,11 +1499,11 @@
         "effective_fg": 51.5,
         "fg_divergence": 39.4,
         "fg_divergence_bonus": 0.25,
-        "fg_divergence_z_score": 1.33,
+        "fg_divergence_z_score": 1.24,
         "fg_divergence_label": "elevated",
         "fg_divergence_confidence": "moderate",
-        "fg_divergence_data_points": 20,
-        "fg_divergence_historical_mean": 33.0,
+        "fg_divergence_data_points": 21,
+        "fg_divergence_historical_mean": 33.3,
         "fg_blend_weights": {
           "global": 0.2,
           "sector": 0.8
@@ -1619,11 +1619,11 @@
         "effective_fg": 31.5,
         "fg_divergence": 18.7,
         "fg_divergence_bonus": 0.218,
-        "fg_divergence_z_score": 0.3,
+        "fg_divergence_z_score": 0.29,
         "fg_divergence_label": "normal",
         "fg_divergence_confidence": "moderate",
-        "fg_divergence_data_points": 20,
-        "fg_divergence_historical_mean": 17.1,
+        "fg_divergence_data_points": 21,
+        "fg_divergence_historical_mean": 17.2,
         "fg_blend_weights": {
           "global": 0.382,
           "sector": 0.618
@@ -1735,11 +1735,11 @@
         "effective_fg": 31.5,
         "fg_divergence": 18.7,
         "fg_divergence_bonus": 0.218,
-        "fg_divergence_z_score": 0.3,
+        "fg_divergence_z_score": 0.29,
         "fg_divergence_label": "normal",
         "fg_divergence_confidence": "moderate",
-        "fg_divergence_data_points": 20,
-        "fg_divergence_historical_mean": 17.1,
+        "fg_divergence_data_points": 21,
+        "fg_divergence_historical_mean": 17.2,
         "fg_blend_weights": {
           "global": 0.382,
           "sector": 0.618
@@ -1851,11 +1851,11 @@
         "effective_fg": 31.5,
         "fg_divergence": 18.7,
         "fg_divergence_bonus": 0.218,
-        "fg_divergence_z_score": 0.3,
+        "fg_divergence_z_score": 0.29,
         "fg_divergence_label": "normal",
         "fg_divergence_confidence": "moderate",
-        "fg_divergence_data_points": 20,
-        "fg_divergence_historical_mean": 17.1,
+        "fg_divergence_data_points": 21,
+        "fg_divergence_historical_mean": 17.2,
         "fg_blend_weights": {
           "global": 0.382,
           "sector": 0.618
@@ -1971,11 +1971,11 @@
         "effective_fg": 31.5,
         "fg_divergence": 18.7,
         "fg_divergence_bonus": 0.218,
-        "fg_divergence_z_score": 0.3,
+        "fg_divergence_z_score": 0.29,
         "fg_divergence_label": "normal",
         "fg_divergence_confidence": "moderate",
-        "fg_divergence_data_points": 20,
-        "fg_divergence_historical_mean": 17.1,
+        "fg_divergence_data_points": 21,
+        "fg_divergence_historical_mean": 17.2,
         "fg_blend_weights": {
           "global": 0.382,
           "sector": 0.618
@@ -2091,11 +2091,11 @@
         "effective_fg": 31.5,
         "fg_divergence": 18.7,
         "fg_divergence_bonus": 0.218,
-        "fg_divergence_z_score": 0.3,
+        "fg_divergence_z_score": 0.29,
         "fg_divergence_label": "normal",
         "fg_divergence_confidence": "moderate",
-        "fg_divergence_data_points": 20,
-        "fg_divergence_historical_mean": 17.1,
+        "fg_divergence_data_points": 21,
+        "fg_divergence_historical_mean": 17.2,
         "fg_blend_weights": {
           "global": 0.382,
           "sector": 0.618
@@ -2211,11 +2211,11 @@
         "effective_fg": 34.9,
         "fg_divergence": 27.2,
         "fg_divergence_bonus": 0.25,
-        "fg_divergence_z_score": -0.77,
+        "fg_divergence_z_score": -0.74,
         "fg_divergence_label": "normal",
         "fg_divergence_confidence": "moderate",
-        "fg_divergence_data_points": 20,
-        "fg_divergence_historical_mean": 29.6,
+        "fg_divergence_data_points": 21,
+        "fg_divergence_historical_mean": 29.5,
         "fg_blend_weights": {
           "global": 0.45,
           "sector": 0.55
@@ -2327,11 +2327,11 @@
         "effective_fg": 34.9,
         "fg_divergence": 27.2,
         "fg_divergence_bonus": 0.25,
-        "fg_divergence_z_score": -0.77,
+        "fg_divergence_z_score": -0.74,
         "fg_divergence_label": "normal",
         "fg_divergence_confidence": "moderate",
-        "fg_divergence_data_points": 20,
-        "fg_divergence_historical_mean": 29.6,
+        "fg_divergence_data_points": 21,
+        "fg_divergence_historical_mean": 29.5,
         "fg_blend_weights": {
           "global": 0.45,
           "sector": 0.55
@@ -2447,11 +2447,11 @@
         "effective_fg": 34.9,
         "fg_divergence": 27.2,
         "fg_divergence_bonus": 0.25,
-        "fg_divergence_z_score": -0.77,
+        "fg_divergence_z_score": -0.74,
         "fg_divergence_label": "normal",
         "fg_divergence_confidence": "moderate",
-        "fg_divergence_data_points": 20,
-        "fg_divergence_historical_mean": 29.6,
+        "fg_divergence_data_points": 21,
+        "fg_divergence_historical_mean": 29.5,
         "fg_blend_weights": {
           "global": 0.45,
           "sector": 0.55
@@ -2567,11 +2567,11 @@
         "effective_fg": 55.2,
         "fg_divergence": 41.4,
         "fg_divergence_bonus": 0.25,
-        "fg_divergence_z_score": 1.33,
+        "fg_divergence_z_score": 1.24,
         "fg_divergence_label": "elevated",
         "fg_divergence_confidence": "moderate",
-        "fg_divergence_data_points": 20,
-        "fg_divergence_historical_mean": 23.7,
+        "fg_divergence_data_points": 21,
+        "fg_divergence_historical_mean": 24.5,
         "fg_blend_weights": {
           "global": 0.15,
           "sector": 0.85
@@ -2687,11 +2687,11 @@
         "effective_fg": 55.2,
         "fg_divergence": 41.4,
         "fg_divergence_bonus": 0.25,
-        "fg_divergence_z_score": 1.33,
+        "fg_divergence_z_score": 1.24,
         "fg_divergence_label": "elevated",
         "fg_divergence_confidence": "moderate",
-        "fg_divergence_data_points": 20,
-        "fg_divergence_historical_mean": 23.7,
+        "fg_divergence_data_points": 21,
+        "fg_divergence_historical_mean": 24.5,
         "fg_blend_weights": {
           "global": 0.15,
           "sector": 0.85
@@ -2807,11 +2807,11 @@
         "effective_fg": 55.2,
         "fg_divergence": 41.4,
         "fg_divergence_bonus": 0.25,
-        "fg_divergence_z_score": 1.33,
+        "fg_divergence_z_score": 1.24,
         "fg_divergence_label": "elevated",
         "fg_divergence_confidence": "moderate",
-        "fg_divergence_data_points": 20,
-        "fg_divergence_historical_mean": 23.7,
+        "fg_divergence_data_points": 21,
+        "fg_divergence_historical_mean": 24.5,
         "fg_blend_weights": {
           "global": 0.15,
           "sector": 0.85
@@ -2927,11 +2927,11 @@
         "effective_fg": 55.2,
         "fg_divergence": 41.4,
         "fg_divergence_bonus": 0.25,
-        "fg_divergence_z_score": 1.33,
+        "fg_divergence_z_score": 1.24,
         "fg_divergence_label": "elevated",
         "fg_divergence_confidence": "moderate",
-        "fg_divergence_data_points": 20,
-        "fg_divergence_historical_mean": 23.7,
+        "fg_divergence_data_points": 21,
+        "fg_divergence_historical_mean": 24.5,
         "fg_blend_weights": {
           "global": 0.15,
           "sector": 0.85
@@ -2972,7 +2972,7 @@
         "fibonacci": {
           "symbol": "BITO",
           "current_price": 9.800000190734863,
-          "swing_high": 17.720884528137844,
+          "swing_high": 17.720882606449614,
           "swing_low": 8.596694818145188,
           "swing_high_idx": 141,
           "swing_low_idx": 225,
@@ -3047,11 +3047,11 @@
         "effective_fg": 51.5,
         "fg_divergence": 39.4,
         "fg_divergence_bonus": 0.25,
-        "fg_divergence_z_score": 1.33,
+        "fg_divergence_z_score": 1.24,
         "fg_divergence_label": "elevated",
         "fg_divergence_confidence": "moderate",
-        "fg_divergence_data_points": 20,
-        "fg_divergence_historical_mean": 33.0,
+        "fg_divergence_data_points": 21,
+        "fg_divergence_historical_mean": 33.3,
         "fg_blend_weights": {
           "global": 0.2,
           "sector": 0.8
@@ -4201,7 +4201,7 @@
       "implied_range": null,
       "markets_analyzed": 0,
       "top_markets": [],
-      "timestamp": "2026-03-14T10:33:37.377613+00:00",
+      "timestamp": "2026-03-15T10:34:27.547497+00:00",
       "historical_accuracy": 96.6,
       "source": "kalshi",
       "cached": false
@@ -4215,40 +4215,40 @@
         {
           "title": "Will China invade Taiwan by end of 2026?",
           "probability": null,
-          "liquidity": 534317.41076,
-          "volume": 11022892.480888953,
+          "liquidity": 521957.76054,
+          "volume": 11043212.072628953,
           "id": "34044"
         },
         {
           "title": "MegaETH market cap (FDV) one day after launch?",
           "probability": null,
-          "liquidity": 357236.54432,
-          "volume": 13086934.378700051,
+          "liquidity": 359224.56006,
+          "volume": 13150144.102584047,
           "id": "28999"
         },
         {
           "title": "MicroStrategy sells any Bitcoin by ___ ?",
           "probability": null,
-          "liquidity": 147675.18607,
-          "volume": 21225394.036608007,
+          "liquidity": 152971.16281,
+          "volume": 21247466.510015003,
           "id": "16167"
         },
         {
           "title": "When will Bitcoin hit $150k?",
           "probability": null,
-          "liquidity": 80461.22944,
-          "volume": 3508419.825348998,
+          "liquidity": 78129.06255,
+          "volume": 3519617.5285309977,
           "id": "36173"
         },
         {
           "title": "China x India military clash by...?",
           "probability": null,
-          "liquidity": 10622.6221,
-          "volume": 197467.27934799995,
+          "liquidity": 10835.4029,
+          "volume": 197504.40934799996,
           "id": "17526"
         }
       ],
-      "timestamp": "2026-03-14T10:33:37.868326+00:00",
+      "timestamp": "2026-03-15T10:34:28.152365+00:00",
       "source": "polymarket"
     }
   },
@@ -4266,7 +4266,7 @@
     "spy_price": 662.29,
     "rsp_price": 193.52,
     "methodology": "RSP/SPY relative performance as breadth proxy. RSP outperformance = more stocks participating.",
-    "timestamp": "2026-03-14T03:33:38.362907"
+    "timestamp": "2026-03-15T03:34:28.602737"
   },
   "sector_fear_greed": {
     "available": true,
@@ -4275,145 +4275,145 @@
         "score": 46.6,
         "rating": "Neutral",
         "components": {
-          "momentum": 46.9527951961063,
+          "momentum": 46.9238762541535,
           "strength": 50.0,
           "breadth": 0.0,
           "put_call": 31.23999786376953,
-          "volatility": 93.4953939875952,
+          "volatility": 93.4796944411255,
           "junk_bond": 54.602047381605026,
           "safe_haven": 49.6873400684313
         },
         "valid_components": 7,
         "sector_etf": "SPY",
-        "timestamp": "2026-03-14T03:33:31.266604"
+        "timestamp": "2026-03-15T03:34:21.379021"
       },
       "technology": {
         "score": 45.5,
         "rating": "Neutral",
         "components": {
-          "momentum": 46.00167440607816,
+          "momentum": 45.98329890916994,
           "strength": 50.0,
           "breadth": 0.0,
           "put_call": 31.23999786376953,
-          "volatility": 83.74578544130515,
+          "volatility": 83.73064835181711,
           "junk_bond": 54.602047381605026,
           "safe_haven": 53.20327090012443
         },
         "valid_components": 7,
         "sector_etf": "XLK",
-        "timestamp": "2026-03-14T03:33:32.005067"
+        "timestamp": "2026-03-15T03:34:22.365390"
       },
       "healthcare": {
         "score": 47.3,
         "rating": "Neutral",
         "components": {
-          "momentum": 49.13108774286627,
+          "momentum": 49.13003618764172,
           "strength": 50.0,
           "breadth": 25.0,
           "put_call": 31.23999786376953,
-          "volatility": 75.71964167816768,
+          "volatility": 75.71693995727938,
           "junk_bond": 54.602047381605026,
           "safe_haven": 45.70469251365638
         },
         "valid_components": 7,
         "sector_etf": "XLV",
-        "timestamp": "2026-03-14T03:33:32.579585"
+        "timestamp": "2026-03-15T03:34:23.084772"
       },
       "financials": {
         "score": 40.5,
         "rating": "Fear",
         "components": {
-          "momentum": 39.65061085415071,
+          "momentum": 39.559445361092656,
           "strength": 50.0,
           "breadth": 0.0,
           "put_call": 31.23999786376953,
-          "volatility": 66.85037414930953,
+          "volatility": 66.84706511448978,
           "junk_bond": 54.602047381605026,
           "safe_haven": 40.917580425878185
         },
         "valid_components": 7,
         "sector_etf": "XLF",
-        "timestamp": "2026-03-14T03:33:33.113674"
+        "timestamp": "2026-03-15T03:34:23.612973"
       },
       "real_estate": {
         "score": 59.4,
         "rating": "Greed",
         "components": {
-          "momentum": 53.26021547004988,
+          "momentum": 53.331736263819764,
           "strength": 62.5,
           "breadth": 75.0,
           "put_call": 31.23999786376953,
-          "volatility": 84.95981720567848,
+          "volatility": 84.91465828227297,
           "junk_bond": 54.602047381605026,
           "safe_haven": 54.15316982429273
         },
         "valid_components": 7,
         "sector_etf": "XLRE",
-        "timestamp": "2026-03-14T03:33:33.583002"
+        "timestamp": "2026-03-15T03:34:24.121167"
       },
       "energy": {
         "score": 70.2,
         "rating": "Greed",
         "components": {
-          "momentum": 72.75429300236314,
+          "momentum": 72.86962646131022,
           "strength": 87.5,
           "breadth": 75.0,
           "put_call": 31.23999786376953,
-          "volatility": 88.43676695755315,
+          "volatility": 88.4467836887698,
           "junk_bond": 54.602047381605026,
           "safe_haven": 81.94541627671107
         },
         "valid_components": 7,
         "sector_etf": "XLE",
-        "timestamp": "2026-03-14T03:33:34.107714"
+        "timestamp": "2026-03-15T03:34:24.626248"
       },
       "bonds": {
         "score": 47.2,
         "rating": "Neutral",
         "components": {
-          "momentum": 46.49476453205384,
+          "momentum": 46.483535437668124,
           "strength": 66.66666666666666,
           "breadth": 0.0,
           "put_call": 31.23999786376953,
-          "volatility": 81.71424849229741,
+          "volatility": 81.67929788526776,
           "junk_bond": 54.602047381605026,
           "safe_haven": 50
         },
         "valid_components": 7,
         "sector_etf": "TLT",
-        "timestamp": "2026-03-14T03:33:34.239855"
+        "timestamp": "2026-03-15T03:34:24.755360"
       },
       "international": {
         "score": 38.7,
         "rating": "Fear",
         "components": {
-          "momentum": 50.098011993993744,
+          "momentum": 50.09883211031217,
           "strength": 40.0,
           "breadth": 0.0,
           "put_call": 31.23999786376953,
-          "volatility": 61.05234112671316,
+          "volatility": 61.0442791786601,
           "junk_bond": 54.602047381605026,
           "safe_haven": 33.849923037262634
         },
         "valid_components": 7,
         "sector_etf": "EFA",
-        "timestamp": "2026-03-14T03:33:34.914165"
+        "timestamp": "2026-03-15T03:34:25.468107"
       },
       "commodities": {
         "score": 61.4,
         "rating": "Greed",
         "components": {
-          "momentum": 86.46496343717328,
+          "momentum": 86.46076766165267,
           "strength": 62.5,
           "breadth": 50.0,
           "put_call": 31.23999786376953,
-          "volatility": 44.94817670970228,
+          "volatility": 45.04299923303883,
           "junk_bond": 54.602047381605026,
           "safe_haven": 100
         },
         "valid_components": 7,
         "sector_etf": "DBC",
-        "timestamp": "2026-03-14T03:33:35.439717"
+        "timestamp": "2026-03-15T03:34:25.984492"
       }
     },
     "summary": {
@@ -4433,12 +4433,12 @@
         0.3
       ],
       "technology": [
-        0.55,
-        0.45
+        0.4,
+        0.6
       ],
       "healthcare": [
-        0.5,
-        0.5
+        0.35,
+        0.65
       ],
       "financials": [
         0.55,
@@ -4449,8 +4449,8 @@
         0.55
       ],
       "energy": [
-        0.2,
-        0.8
+        0.1,
+        0.9
       ],
       "bonds": [
         0.7,
@@ -4600,23 +4600,23 @@
           "entry_price": 76.2,
           "unrealized_pnl_pct": 0.0,
           "confidence_score": 50.0,
-          "days_held": 4,
+          "days_held": 5,
           "optimal_hold": 10,
           "regime": "sideways",
-          "score": 52.0,
+          "score": 50.0,
           "weakness_rationale": "Sideways regime, low confidence"
         },
         "buy": {
-          "symbol": "WBD",
-          "current_price": 27.14,
-          "signal_strength": 65.0,
-          "confidence": 83.3,
-          "expected_sharpe": 16.68,
+          "symbol": "OPEN",
+          "current_price": 4.95,
+          "signal_strength": 69.0,
+          "confidence": 75.0,
+          "expected_sharpe": 122.81,
           "regime": "sideways",
-          "score": 74.3,
-          "strength_rationale": "16.7 Sharpe, 83% accuracy"
+          "score": 73.8,
+          "strength_rationale": "122.8 Sharpe, 75% accuracy"
         },
-        "net_improvement": 22.3,
+        "net_improvement": 23.8,
         "capital_freed": 11963.4
       },
       {
@@ -4626,10 +4626,62 @@
           "entry_price": 639.46,
           "unrealized_pnl_pct": 0.0,
           "confidence_score": 50.0,
-          "days_held": 4,
+          "days_held": 5,
           "optimal_hold": 10,
           "regime": "sideways",
-          "score": 52.0,
+          "score": 50.0,
+          "weakness_rationale": "Sideways regime, low confidence"
+        },
+        "buy": {
+          "symbol": "EWT",
+          "current_price": 69.99,
+          "signal_strength": 40.0,
+          "confidence": 90.0,
+          "expected_sharpe": 117.59,
+          "regime": "bull",
+          "score": 73.5,
+          "strength_rationale": "Strong bull regime, 117.6 Sharpe, 90% accuracy"
+        },
+        "net_improvement": 23.5,
+        "capital_freed": 6394.6
+      },
+      {
+        "sell": {
+          "symbol": "ONDS",
+          "current_price": 10.01,
+          "entry_price": 10.01,
+          "unrealized_pnl_pct": 0.0,
+          "confidence_score": 50.0,
+          "days_held": 3,
+          "optimal_hold": 10,
+          "regime": "sideways",
+          "score": 54.0,
+          "weakness_rationale": "Sideways regime, low confidence"
+        },
+        "buy": {
+          "symbol": "EWU",
+          "current_price": 45.33,
+          "signal_strength": 56.8,
+          "confidence": 90.0,
+          "expected_sharpe": 117.59,
+          "regime": "sideways",
+          "score": 72.7,
+          "strength_rationale": "117.6 Sharpe, 90% accuracy"
+        },
+        "net_improvement": 18.7,
+        "capital_freed": 10070.06
+      },
+      {
+        "sell": {
+          "symbol": "NET",
+          "current_price": 190.01,
+          "entry_price": 190.01,
+          "unrealized_pnl_pct": 0.0,
+          "confidence_score": 58.4,
+          "days_held": 9,
+          "optimal_hold": 20,
+          "regime": "sideways",
+          "score": 54.4,
           "weakness_rationale": "Sideways regime, low confidence"
         },
         "buy": {
@@ -4642,60 +4694,8 @@
           "score": 72.7,
           "strength_rationale": "Strong bull regime, 117.6 Sharpe, 90% accuracy"
         },
-        "net_improvement": 20.7,
-        "capital_freed": 6394.6
-      },
-      {
-        "sell": {
-          "symbol": "NET",
-          "current_price": 190.01,
-          "entry_price": 190.01,
-          "unrealized_pnl_pct": 0.0,
-          "confidence_score": 58.4,
-          "days_held": 8,
-          "optimal_hold": 20,
-          "regime": "sideways",
-          "score": 55.4,
-          "weakness_rationale": "Sideways regime, low confidence"
-        },
-        "buy": {
-          "symbol": "DG",
-          "current_price": 131.84,
-          "signal_strength": 58.7,
-          "confidence": 83.3,
-          "expected_sharpe": 33.4,
-          "regime": "sideways",
-          "score": 71.8,
-          "strength_rationale": "33.4 Sharpe, 83% accuracy"
-        },
-        "net_improvement": 16.4,
+        "net_improvement": 18.3,
         "capital_freed": 10070.53
-      },
-      {
-        "sell": {
-          "symbol": "ONDS",
-          "current_price": 10.01,
-          "entry_price": 10.01,
-          "unrealized_pnl_pct": 0.0,
-          "confidence_score": 50.0,
-          "days_held": 2,
-          "optimal_hold": 10,
-          "regime": "sideways",
-          "score": 56.0,
-          "weakness_rationale": "Sideways regime, low confidence"
-        },
-        "buy": {
-          "symbol": "TDY",
-          "current_price": 638.91,
-          "signal_strength": 39.5,
-          "confidence": 83.3,
-          "expected_sharpe": 16.68,
-          "regime": "bull",
-          "score": 71.6,
-          "strength_rationale": "Strong bull regime, 16.7 Sharpe, 83% accuracy"
-        },
-        "net_improvement": 15.6,
-        "capital_freed": 10070.06
       },
       {
         "sell": {
@@ -4704,24 +4704,102 @@
           "entry_price": 166.71,
           "unrealized_pnl_pct": 0.0,
           "confidence_score": 35.3,
-          "days_held": 8,
+          "days_held": 9,
           "optimal_hold": 20,
           "regime": "bull",
-          "score": 56.1,
+          "score": 55.1,
           "weakness_rationale": "low confidence"
         },
         "buy": {
-          "symbol": "HSY",
-          "current_price": 217.09,
-          "signal_strength": 38.5,
+          "symbol": "UGL",
+          "current_price": 71.48,
+          "signal_strength": 50.0,
+          "confidence": 70.6,
+          "expected_sharpe": 10.65,
+          "regime": "bull",
+          "score": 72.7,
+          "strength_rationale": "Strong bull regime, 10.7 Sharpe, 71% accuracy"
+        },
+        "net_improvement": 17.6,
+        "capital_freed": 11836.41
+      },
+      {
+        "sell": {
+          "symbol": "HAL",
+          "current_price": 35.1,
+          "entry_price": 35.1,
+          "unrealized_pnl_pct": 0.0,
+          "confidence_score": 36.0,
+          "days_held": 9,
+          "optimal_hold": 20,
+          "regime": "bull",
+          "score": 55.4,
+          "weakness_rationale": "low confidence"
+        },
+        "buy": {
+          "symbol": "EWC",
+          "current_price": 55.03,
+          "signal_strength": 56.5,
+          "confidence": 90.0,
+          "expected_sharpe": 117.59,
+          "regime": "sideways",
+          "score": 72.6,
+          "strength_rationale": "117.6 Sharpe, 90% accuracy"
+        },
+        "net_improvement": 17.2,
+        "capital_freed": 15268.5
+      },
+      {
+        "sell": {
+          "symbol": "BG",
+          "current_price": 113.34,
+          "entry_price": 113.34,
+          "unrealized_pnl_pct": 0.0,
+          "confidence_score": 37.5,
+          "days_held": 9,
+          "optimal_hold": 20,
+          "regime": "bull",
+          "score": 56.0,
+          "weakness_rationale": "low confidence"
+        },
+        "buy": {
+          "symbol": "IEFA",
+          "current_price": 89.78,
+          "signal_strength": 56.4,
+          "confidence": 90.0,
+          "expected_sharpe": 117.59,
+          "regime": "sideways",
+          "score": 72.6,
+          "strength_rationale": "117.6 Sharpe, 90% accuracy"
+        },
+        "net_improvement": 16.6,
+        "capital_freed": 14734.2
+      },
+      {
+        "sell": {
+          "symbol": "HAS",
+          "current_price": 95.79,
+          "entry_price": 95.79,
+          "unrealized_pnl_pct": 0.0,
+          "confidence_score": 36.5,
+          "days_held": 8,
+          "optimal_hold": 20,
+          "regime": "bull",
+          "score": 56.6,
+          "weakness_rationale": "low confidence"
+        },
+        "buy": {
+          "symbol": "EW",
+          "current_price": 81.81,
+          "signal_strength": 58.9,
           "confidence": 83.3,
           "expected_sharpe": 33.4,
-          "regime": "bull",
-          "score": 71.2,
-          "strength_rationale": "Strong bull regime, 33.4 Sharpe, 83% accuracy"
+          "regime": "sideways",
+          "score": 71.9,
+          "strength_rationale": "33.4 Sharpe, 83% accuracy"
         },
-        "net_improvement": 15.1,
-        "capital_freed": 11836.41
+        "net_improvement": 15.3,
+        "capital_freed": 12165.33
       }
     ],
     "no_swap_reason": null

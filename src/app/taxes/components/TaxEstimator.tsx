@@ -10,6 +10,9 @@ import {
   AlertCircle,
   Info,
   Lightbulb,
+  ExternalLink,
+  CreditCard,
+  ArrowRight,
 } from "lucide-react";
 import { TaxData } from "../page";
 import { formatCurrency } from "../utils";
@@ -102,7 +105,7 @@ function calculateSCorpTaxes(inputs: SCORPInputs): TaxCalculation {
   
   // California state taxes (simplified)
   const caStateTax = Math.max(0, adjustedGrossIncome - 25000) * 0.093; // Simplified CA tax rate
-  const caCorporateTax = netProfitLoss > 0 ? Math.max(800, netProfitLoss * 0.0884) : 800; // CA LLC fee + tax
+  const caCorporateTax = netProfitLoss > 0 ? Math.max(800, netProfitLoss * 0.015) : 800; // CA S-Corp franchise tax (1.5%, min $800)
   
   return {
     scorp: {
@@ -133,14 +136,14 @@ function calculateSCorpTaxes(inputs: SCORPInputs): TaxCalculation {
 }
 
 export default function TaxEstimator({ data }: TaxEstimatorProps) {
-  // Pre-populate with actual 2024 Josh Levy Labs S-Corp numbers
+  // Pre-populated with actual 2025 Josh Levy Labs S-Corp numbers (from QuickBooks P&L)
   const [inputs, setInputs] = useState<SCORPInputs>({
-    grossRevenue: 198752,
-    officerSalary: 63333,
-    businessExpenses: 85000, // Approximate based on 2024 deductions
-    depreciation: 8000,
-    businessDeductions: 13009, // Remaining from total deductions of 106009
-    personalDeductions: 29200, // Standard deduction for married filing jointly 2025
+    grossRevenue: 210300, // 2025 QB actual: $210,299.64
+    officerSalary: 63333, // 2025 W-2 actual: $63,333.40
+    businessExpenses: 38061, // 2025 QB actual: total expenses $107,090 - payroll $69,029
+    depreciation: 0, // Included in business expenses above
+    businessDeductions: 440, // 2025 QB actual: COGS (contractors)
+    personalDeductions: 50463, // 2025 itemized: mortgage $40,463 + SALT cap $10,000
   });
   
   const [calculation, setCalculation] = useState<TaxCalculation | null>(null);
@@ -509,6 +512,144 @@ export default function TaxEstimator({ data }: TaxEstimatorProps) {
           </div>
         </div>
       </div>
+
+      {/* Pay Now — Direct Payment Links */}
+      {calculation && (
+        <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700/50">
+          <div className="flex items-center gap-3 mb-4">
+            <CreditCard className="w-5 h-5 text-emerald-400" />
+            <h2 className="text-lg font-semibold text-slate-100">Pay Your Taxes</h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Federal — IRS Direct Pay */}
+            <a
+              href="https://directpay.irs.gov/directpay/payment?execution=e1s1"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group block bg-gradient-to-br from-blue-900/40 to-blue-800/20 hover:from-blue-900/60 hover:to-blue-800/40 rounded-xl p-5 border border-blue-500/30 hover:border-blue-400/50 transition-all"
+            >
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-xs font-medium text-blue-400 uppercase tracking-wider">Federal — IRS</span>
+                <ExternalLink className="w-4 h-4 text-blue-500 group-hover:text-blue-300 transition-colors" />
+              </div>
+              <p className="text-2xl font-bold text-blue-300 mb-1">
+                {calculation.summary.totalFederal > (inputs.officerSalary > 0 ? 25958.70 : 0)
+                  ? formatCurrency(calculation.summary.totalFederal - 25958.70)
+                  : "Refund"}
+              </p>
+              <p className="text-sm text-blue-400/80 mb-3">
+                {calculation.summary.totalFederal > 25958.70 ? "Estimated amount owed" : "No payment needed — refund expected"}
+              </p>
+              <div className="flex items-center gap-2 text-sm font-medium text-blue-300 group-hover:text-blue-200">
+                <span>IRS Direct Pay</span>
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </div>
+            </a>
+
+            {/* California Personal — FTB Web Pay */}
+            <a
+              href="https://webapp.ftb.ca.gov/webpay/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group block bg-gradient-to-br from-amber-900/40 to-amber-800/20 hover:from-amber-900/60 hover:to-amber-800/40 rounded-xl p-5 border border-amber-500/30 hover:border-amber-400/50 transition-all"
+            >
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-xs font-medium text-amber-400 uppercase tracking-wider">California — Personal</span>
+                <ExternalLink className="w-4 h-4 text-amber-500 group-hover:text-amber-300 transition-colors" />
+              </div>
+              <p className="text-2xl font-bold text-amber-300 mb-1">
+                {formatCurrency(Math.max(0, calculation.state.personalTax - 11200.90))}
+              </p>
+              <p className="text-sm text-amber-400/80 mb-3">
+                Estimated CA personal tax owed
+              </p>
+              <div className="flex items-center gap-2 text-sm font-medium text-amber-300 group-hover:text-amber-200">
+                <span>FTB Web Pay (Form 540)</span>
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </div>
+            </a>
+
+            {/* California S-Corp Franchise Tax — FTB Web Pay */}
+            <a
+              href="https://webapp.ftb.ca.gov/webpay/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group block bg-gradient-to-br from-purple-900/40 to-purple-800/20 hover:from-purple-900/60 hover:to-purple-800/40 rounded-xl p-5 border border-purple-500/30 hover:border-purple-400/50 transition-all"
+            >
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-xs font-medium text-purple-400 uppercase tracking-wider">California — S-Corp</span>
+                <ExternalLink className="w-4 h-4 text-purple-500 group-hover:text-purple-300 transition-colors" />
+              </div>
+              <p className="text-2xl font-bold text-purple-300 mb-1">
+                {formatCurrency(calculation.state.corporateTax)}
+              </p>
+              <p className="text-sm text-purple-400/80 mb-3">
+                1.5% franchise tax (min $800)
+              </p>
+              <div className="flex items-center gap-2 text-sm font-medium text-purple-300 group-hover:text-purple-200">
+                <span>FTB Web Pay (Form 100S)</span>
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </div>
+            </a>
+          </div>
+
+          <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3">
+            <a
+              href="https://www.irs.gov/payments/pay-with-your-bank-account"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 p-3 bg-slate-900/30 hover:bg-slate-800/50 rounded-lg border border-slate-700/50 hover:border-slate-600/50 transition-all group"
+            >
+              <CreditCard className="w-4 h-4 text-slate-400" />
+              <div className="flex-1">
+                <p className="text-sm font-medium text-slate-300 group-hover:text-slate-100">IRS Pay by Bank Account</p>
+                <p className="text-xs text-slate-500">Free, same-day payment via bank account</p>
+              </div>
+              <ExternalLink className="w-3 h-3 text-slate-600" />
+            </a>
+            <a
+              href="https://www.irs.gov/payments/pay-your-taxes-by-debit-or-credit-card"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 p-3 bg-slate-900/30 hover:bg-slate-800/50 rounded-lg border border-slate-700/50 hover:border-slate-600/50 transition-all group"
+            >
+              <CreditCard className="w-4 h-4 text-slate-400" />
+              <div className="flex-1">
+                <p className="text-sm font-medium text-slate-300 group-hover:text-slate-100">IRS Pay by Card</p>
+                <p className="text-xs text-slate-500">Debit/credit card (processing fee applies)</p>
+              </div>
+              <ExternalLink className="w-3 h-3 text-slate-600" />
+            </a>
+            <a
+              href="https://eftps.gov"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 p-3 bg-slate-900/30 hover:bg-slate-800/50 rounded-lg border border-slate-700/50 hover:border-slate-600/50 transition-all group"
+            >
+              <Building className="w-4 h-4 text-slate-400" />
+              <div className="flex-1">
+                <p className="text-sm font-medium text-slate-300 group-hover:text-slate-100">EFTPS (Business Payments)</p>
+                <p className="text-xs text-slate-500">Electronic Federal Tax Payment System for S-Corp</p>
+              </div>
+              <ExternalLink className="w-3 h-3 text-slate-600" />
+            </a>
+            <a
+              href="https://www.ftb.ca.gov/pay/index.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 p-3 bg-slate-900/30 hover:bg-slate-800/50 rounded-lg border border-slate-700/50 hover:border-slate-600/50 transition-all group"
+            >
+              <Building className="w-4 h-4 text-slate-400" />
+              <div className="flex-1">
+                <p className="text-sm font-medium text-slate-300 group-hover:text-slate-100">CA FTB All Payment Options</p>
+                <p className="text-xs text-slate-500">All California payment methods and vouchers</p>
+              </div>
+              <ExternalLink className="w-3 h-3 text-slate-600" />
+            </a>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
